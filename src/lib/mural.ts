@@ -9,14 +9,13 @@ export type PublicMural = {
   nickname: string;
   slug: string;
   title: string;
-  tagline: string;
   question: string;
   stats: MuralStats;
 };
 
 export type ProfileMurals = {
   nickname: string;
-  murals: { slug: string; title: string; tagline: string }[];
+  murals: { slug: string; title: string }[];
 };
 
 export type UnlockResult =

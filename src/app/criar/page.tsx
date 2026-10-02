@@ -8,8 +8,7 @@ import { muralPath, muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
-const STEPS = ["Nome", "Apresentação", "Pergunta", "Publicar"] as const;
-const DEFAULT_TAGLINE = "Mensagens de pessoas que me conhecem";
+const STEPS = ["Nome", "Pergunta", "Publicar"] as const;
 
 export default function CriarMural() {
   const router = useRouter();
@@ -19,7 +18,6 @@ export default function CriarMural() {
 
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
-  const [tagline, setTagline] = useState(DEFAULT_TAGLINE);
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -45,7 +43,6 @@ export default function CriarMural() {
 
   const canNext = [
     title.trim().length >= 1,
-    tagline.trim().length >= 1,
     question.trim().length >= 3 && answers.length >= 1,
     true,
   ][step];
@@ -56,7 +53,6 @@ export default function CriarMural() {
     const sb = getBrowserSupabase();
     const { data, error: err } = await sb.rpc("create_mural", {
       p_title: title.trim(),
-      p_tagline: tagline.trim(),
       p_question: question.trim(),
       p_answers: answers,
     });
@@ -120,7 +116,7 @@ export default function CriarMural() {
         onSubmit={(e) => {
           e.preventDefault();
           if (!canNext) return;
-          if (step < 3) setStep(step + 1);
+          if (step < 2) setStep(step + 1);
           else void publish();
         }}
         className="space-y-5"
@@ -141,16 +137,8 @@ export default function CriarMural() {
           </>
         )}
 
-        {step === 1 && (
-          <>
-            <h1 className="font-title text-2xl font-semibold">Uma frase de boas-vindas</h1>
-            <Field label="Apresentação" hint="Aparece embaixo do nome do mural.">
-              {(id) => <input id={id} value={tagline} onChange={(e) => setTagline(e.target.value)} maxLength={120} className={inputClass} autoFocus />}
-            </Field>
-          </>
-        )}
 
-        {step === 2 && (
+        {step === 1 && (
           <>
             <h1 className="font-title text-2xl font-semibold">Quem realmente te conhece?</h1>
             <p className="text-[#4a3826]">Crie uma pergunta que só quem é próximo de você saiba responder.</p>
@@ -163,14 +151,13 @@ export default function CriarMural() {
           </>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <>
             <h1 className="font-title text-2xl font-semibold">Tudo certo?</h1>
             <dl className="space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-5 text-[15px]">
               <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Mural</dt>
                 <dd className="font-title text-xl font-semibold">{title.trim()}</dd>
-                <dd className="text-[#4a3826] italic">{tagline.trim()}</dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Pergunta</dt>
@@ -194,7 +181,7 @@ export default function CriarMural() {
             </button>
           )}
           <button type="submit" disabled={!canNext || busy} className={`${primaryButton} flex-1`}>
-            {step < 3 ? "Continuar" : busy ? "Publicando…" : "Publicar meu mural"}
+            {step < 2 ? "Continuar" : busy ? "Publicando…" : "Publicar meu mural"}
           </button>
         </div>
       </form>

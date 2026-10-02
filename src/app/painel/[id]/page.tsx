@@ -16,7 +16,6 @@ export default function EditarMural() {
   const [nick, setNick] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
-  const [tagline, setTagline] = useState("");
   const [question, setQuestion] = useState("");
   const [changeAnswers, setChangeAnswers] = useState(false);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -37,7 +36,6 @@ export default function EditarMural() {
       setMural(m);
       setNick(n);
       setTitle(m.title);
-      setTagline(m.tagline);
       setQuestion(m.question);
     });
   }, [loading, session, id, router]);
@@ -45,8 +43,8 @@ export default function EditarMural() {
   async function save(e: FormEvent) {
     e.preventDefault();
     setMsg(null);
-    if (!title.trim() || !tagline.trim() || question.trim().length < 3) {
-      setMsg({ ok: false, text: "Preencha o nome, a apresentação e a pergunta." });
+    if (!title.trim() || question.trim().length < 3) {
+      setMsg({ ok: false, text: "Preencha o nome e a pergunta." });
       return;
     }
     if (changeAnswers && answers.length === 0) {
@@ -57,7 +55,6 @@ export default function EditarMural() {
     const { error } = await getBrowserSupabase().rpc("update_mural", {
       p_id: id,
       p_title: title.trim(),
-      p_tagline: tagline.trim(),
       p_question: question.trim(),
       p_answers: changeAnswers ? answers : null,
     });
@@ -103,7 +100,6 @@ export default function EditarMural() {
 
       <form onSubmit={save} className="mt-6 space-y-5" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Apresentação">{(fid) => <input id={fid} value={tagline} onChange={(e) => setTagline(e.target.value)} maxLength={120} className={inputClass} />}</Field>
         <Field label="Pergunta de desbloqueio">{(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />}</Field>
 
         {changeAnswers ? (

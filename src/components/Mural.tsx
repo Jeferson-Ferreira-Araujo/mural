@@ -19,7 +19,6 @@ import { Toast } from "./Toast";
 
 type Props = {
   title: string;
-  tagline: string;
   question: string;
   stats: MuralStats;
   messages: Message[];

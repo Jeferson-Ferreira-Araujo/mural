@@ -5,7 +5,7 @@ function splitTitle(title: string): { lead: string | null; name: string } {
 }
 
 /** Título manuscrito do mural. Tamanho controlado pelo font-size do pai (em). */
-export function BoardTitle({ title, tagline, tone = "light" }: { title: string; tagline: string; tone?: "light" | "dark" }) {
+export function BoardTitle({ title, tone = "light" }: { title: string; tone?: "light" | "dark" }) {
   const ink = tone === "dark" ? "text-[#fbf3e2]" : "text-[#2a2118]";
   const { lead, name } = splitTitle(title);
   // nomes longos usam letra menor para caber
@@ -23,9 +23,6 @@ export function BoardTitle({ title, tagline, tone = "light" }: { title: string; 
           </svg>
         </span>
       </h1>
-      <p className={`mt-[0.6em] text-[0.95em] ${tone === "dark" ? "text-[#f1e6d0]/85" : "text-[#4a3826]"}`}>
-        {tagline} <span aria-hidden>💙</span>
-      </p>
     </header>
   );
 }

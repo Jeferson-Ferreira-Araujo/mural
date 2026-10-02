@@ -11,7 +11,7 @@ type Params = { params: Promise<{ nick: string; slug: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { nick, slug } = await params;
   const mural = await getPublicMural(getServerSupabase(), { nick, slug });
-  return mural ? { title: { absolute: mural.title }, description: mural.tagline } : { title: "Mural não encontrado" };
+  return mural ? { title: { absolute: mural.title }, description: "Deixe um recado anônimo neste mural." } : { title: "Mural não encontrado" };
 }
 
 export default async function PublicMural({ params }: Params) {
@@ -22,7 +22,6 @@ export default async function PublicMural({ params }: Params) {
     <Mural
       muralRef={{ nick: mural.nickname, slug: mural.slug }}
       title={mural.title}
-      tagline={mural.tagline}
       question={mural.question}
       stats={mural.stats}
       messages={[]}

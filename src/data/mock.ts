@@ -64,7 +64,6 @@ export const messages: Message[] = [
 
 export const boardInfo = {
   title: "Mural do Jeferson",
-  tagline: "Mensagens de pessoas que me conhecem",
   question: "Qual era meu apelido na escola?",
   // Demonstração: números e validação são apenas simulados no frontend.
   stats: { visited: 127, tried: 83, correct: 31, messages: messages.length },

@@ -36,7 +36,6 @@ export default async function Profile({ params }: Params) {
                 className="block rounded-2xl border border-[#e1d3ba] bg-white/60 px-5 py-4 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
               >
                 <span className="font-title block text-lg font-semibold">{m.title}</span>
-                <span className="mt-0.5 block text-sm text-[#6b5440]">{m.tagline}</span>
               </Link>
             </li>
           ))}
