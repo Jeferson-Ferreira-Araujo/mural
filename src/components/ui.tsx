@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState, type ReactNode } from "react";
-import { cleanNickname, NICK_RE, nicknameAvailable, SITE_HOST } from "@/lib/mural";
+import { cleanNickname, NICK_RE, nicknameAvailable } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Brand } from "./Brand";
 import { BOARD_IMAGE } from "./DesktopBoard";
@@ -117,7 +117,7 @@ export function NicknameField({
     <Field
       label="Nickname"
       error={bad ? nickMessage[state] : null}
-      hint={nickMessage[state] ?? `Seu endereço será ${SITE_HOST}/${value || "seu-nickname"}`}
+      hint={nickMessage[state]}
     >
       {(id) => (
         <input
