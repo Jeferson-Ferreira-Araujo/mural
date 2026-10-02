@@ -1,10 +1,10 @@
 /** Título manuscrito do mural. Tamanho controlado pelo font-size do pai (em). */
-export function BoardTitle({ owner, tagline, tone = "light" }: { owner: string; tagline: string; tone?: "light" | "dark" }) {
+export function BoardTitle({ owner, prefix = "do", tagline, tone = "light" }: { owner: string; prefix?: string; tagline: string; tone?: "light" | "dark" }) {
   const ink = tone === "dark" ? "text-[#fbf3e2]" : "text-[#2a2118]";
   return (
     <header className={ink}>
       <h1 className="font-hand leading-[0.85]">
-        <span className="block text-[1.9em] font-medium">Mural do</span>
+        <span className="block text-[1.9em] font-medium">Mural {prefix}</span>
         <span className="flex items-center gap-[0.15em]">
           <span className="text-[3.6em] font-bold">{owner}</span>
           <svg viewBox="0 0 48 48" className="mt-[0.2em] size-[1.5em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>

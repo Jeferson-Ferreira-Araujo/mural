@@ -66,6 +66,6 @@ export const boardInfo = {
   owner: "Jeferson",
   tagline: "Mensagens de pessoas que me conhecem",
   question: "Qual era meu apelido na escola?",
-  // Etapa 1: números e validação são apenas simulados no frontend.
+  // Demonstração: números e validação são apenas simulados no frontend.
   stats: { visited: 127, tried: 83, correct: 31, messages: messages.length },
 };

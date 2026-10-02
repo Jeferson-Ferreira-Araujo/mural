@@ -4,6 +4,8 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { filters, type FilterId, type Message } from "@/lib/types";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
+import { CreateMuralLink } from "./CreateMuralLink";
+import { EmptyNote } from "./EmptyNote";
 import { Sidebar, UNLOCK_INPUT_DESKTOP } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 
@@ -76,7 +78,10 @@ export function DesktopBoard(props: ViewProps) {
               </button>
             ))}
           </div>
-          <ShareButton title="Mural do Jeferson" onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+          <div className="flex items-center gap-2">
+            <CreateMuralLink className="bg-[#2a1c12]/70 text-[#f7f0dd] backdrop-blur-md hover:bg-[#2a1c12]/90" />
+            <ShareButton title={`Mural ${props.prefix} ${props.owner}`} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+          </div>
         </nav>
 
         <main className="relative [container-type:size]">
@@ -97,6 +102,11 @@ export function DesktopBoard(props: ViewProps) {
                 fontSize: "max(6px, 1.1cqw)",
               }}
             >
+              {placed.length === 0 && (
+                <div className="absolute inset-x-0 top-[22%]">
+                  <EmptyNote unlocked={unlocked} />
+                </div>
+              )}
               {placed.map(({ m, slot, z }, i) => (
                 <div
                   key={m.id}

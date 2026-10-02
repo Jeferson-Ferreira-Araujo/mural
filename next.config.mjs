@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export", // site estático: nesta etapa não há backend
+  output: "standalone", // servidor Node (necessário para /[slug] dinâmico)
   images: { unoptimized: true },
-  trailingSlash: true,
 };
 export default nextConfig;

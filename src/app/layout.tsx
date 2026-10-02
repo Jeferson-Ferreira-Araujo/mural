@@ -9,8 +9,8 @@ const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--f
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
 
 export const metadata: Metadata = {
-  title: "Mural do Jeferson",
-  description: "Mensagens de pessoas que me conhecem.",
+  title: { default: "Mural", template: "%s | Mural" },
+  description: "Crie o seu mural de recados anônimos e compartilhe com quem realmente te conhece.",
   robots: { index: false, follow: false },
 };
 

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import type { UnlockResult } from "@/lib/mural";
 
 type Props = {
   question: string;
   unlocked: boolean;
-  onUnlock: () => void;
+  onSubmit: (answer: string) => Promise<UnlockResult>;
   /** id do campo de resposta (usado para focar a partir de outros botões). */
   inputId: string;
   tone?: "light" | "dark";
@@ -18,22 +19,31 @@ const LockIcon = () => (
 );
 
 /**
- * Pergunta de desbloqueio. ETAPA 1: simulação apenas no frontend —
- * qualquer resposta preenchida desbloqueia. A validação real virá com o backend.
+ * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
+ * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onUnlock, inputId, tone = "light" }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light" }: Props) {
   const [answer, setAnswer] = useState("");
-  const [hint, setHint] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const dark = tone === "dark";
 
-  function submit(e: FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
+    if (busy) return;
     if (!answer.trim()) {
-      setHint(true);
+      setHint("Escreva uma resposta para entrar.");
       return;
     }
-    setHint(false);
-    onUnlock();
+    setBusy(true);
+    const res = await onSubmit(answer);
+    setBusy(false);
+    if (res.ok) return;
+    if (res.reason === "wrong") setHint("Essa não é a resposta. Tente de novo!");
+    else if (res.reason === "rate_limited") {
+      const min = Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60));
+      setHint(`Muitas tentativas. Tente novamente em ${min} min.`);
+    } else setHint("Não foi possível verificar agora. Tente de novo.");
   }
 
   return (
@@ -69,11 +79,11 @@ export function UnlockPanel({ question, unlocked, onUnlock, inputId, tone = "lig
             value={answer}
             onChange={(e) => {
               setAnswer(e.target.value);
-              if (hint) setHint(false);
+              if (hint) setHint(null);
             }}
             autoComplete="off"
             placeholder="Digite sua resposta..."
-            aria-invalid={hint}
+            aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
             className={`mt-[0.8em] w-full rounded-[0.6em] border px-[0.9em] py-[0.7em] text-[1em] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#d98a2b]/70 ${
               dark ? "border-transparent bg-[#e9e5df] text-[#2f2218]" : "border-[#e1d3ba] bg-white/80 text-[#2f2218] focus:bg-white"
@@ -81,14 +91,15 @@ export function UnlockPanel({ question, unlocked, onUnlock, inputId, tone = "lig
           />
           {hint && (
             <p id={`${inputId}-hint`} className={`mt-[0.4em] text-[0.85em] ${dark ? "text-[#ffb4a2]" : "text-[#a23b2a]"}`}>
-              Escreva uma resposta para entrar.
+              {hint}
             </p>
           )}
           <button
             type="submit"
-            className="mt-[0.8em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.6em] border border-white/10 bg-[#1f232b] px-[1em] py-[0.8em] text-[1em] font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px"
+            disabled={busy}
+            className="mt-[0.8em] disabled:opacity-70 flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.6em] border border-white/10 bg-[#1f232b] px-[1em] py-[0.8em] text-[1em] font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px"
           >
-            Desbloquear
+            {busy ? "Verificando…" : "Desbloquear"}
             <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>

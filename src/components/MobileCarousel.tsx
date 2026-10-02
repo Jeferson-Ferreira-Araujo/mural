@@ -6,12 +6,14 @@ import { BoardTitle } from "./BoardTitle";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
 import { UnlockPanel } from "./UnlockPanel";
+import { EmptyNote } from "./EmptyNote";
+import { CreateMuralLink } from "./CreateMuralLink";
 import type { ViewProps } from "./viewProps";
 
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. */
-export function MobileCarousel({ messages, owner, tagline, question, unlocked, onUnlock, onNotify }: ViewProps) {
+export function MobileCarousel({ messages, owner, prefix, tagline, question, unlocked, onSubmitAnswer, onNotify, demo }: ViewProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -67,11 +69,19 @@ export function MobileCarousel({ messages, owner, tagline, question, unlocked, o
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
         <div className="mx-auto flex w-[min(90vw,30rem)] items-start justify-between gap-4">
           <div className="rise text-[16px] md:text-[18px]">
-            <BoardTitle owner={owner} tagline={tagline} tone="dark" />
+            <BoardTitle owner={owner} prefix={prefix} tagline={tagline} tone="dark" />
           </div>
-          <ShareButton title="Mural do Jeferson" onNotify={onNotify} className="shrink-0 border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <ShareButton title={`Mural ${prefix} ${owner}`} onNotify={onNotify} className="border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
+            <CreateMuralLink className="border border-white/15 bg-[#fbf6ea] text-[#2a1c12]" />
+          </div>
         </div>
 
+        {messages.length === 0 ? (
+          <div className="py-6 text-[16px] md:text-[20px]">
+            <EmptyNote unlocked={unlocked} />
+          </div>
+        ) : (
         <section aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
           <button type="button" aria-label="Mensagem anterior" disabled={index === 0} onClick={() => goTo(index - 1)} className={`${arrow} left-2`}>
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -112,9 +122,10 @@ export function MobileCarousel({ messages, owner, tagline, question, unlocked, o
             {index + 1} / {messages.length}
           </p>
         </section>
+        )}
 
         <div className="mx-auto mt-auto w-[min(90vw,30rem)] pt-3 text-[15px] md:text-[16px]">
-          <UnlockPanel question={question} unlocked={unlocked} onUnlock={onUnlock} inputId="unlock-answer-mobile" tone="dark" />
+          <UnlockPanel question={question} unlocked={unlocked} onSubmit={onSubmitAnswer} inputId="unlock-answer-mobile" tone="dark" />
         </div>
       </main>
     </div>
