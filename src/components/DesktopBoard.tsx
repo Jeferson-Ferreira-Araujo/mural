@@ -142,8 +142,10 @@ export function DesktopBoard(props: ViewProps) {
                   const tilt = TILT[i];
                   const { dx, dy } = jitter(i);
 
-                  // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera)
+                  // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera).
+                  // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                   if (!item) {
+                    if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
                     return (
                       <div key={`slot-${i}`} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                         {i < available ? <EmptySlot /> : <LockedSlot />}

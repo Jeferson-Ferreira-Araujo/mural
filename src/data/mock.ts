@@ -85,12 +85,12 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number): { items: B
   return { items: allowed.slice(0, count), vault };
 }
 
-/** Mural de exemplo aleatório (12 a 15 mensagens, em ordem embaralhada) para a página inicial. */
+/** Mural de exemplo aleatório (os 15 cartões, em ordem embaralhada) para a página inicial: sem espaços vazios. */
 export function randomMural(nowMs: number): BoardItem[] {
   const { items } = buildPool(nowMs);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
   }
-  return items.slice(0, 12 + Math.floor(Math.random() * 4));
+  return items;
 }
