@@ -126,7 +126,7 @@ export default function CriarMural() {
           <>
             <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
-              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
+              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
@@ -143,13 +143,13 @@ export default function CriarMural() {
             <Field label="Pergunta">
               {(id) => (
                 <>
-                  <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Qual era meu apelido na escola?" className={inputClass} autoFocus />
+                  <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual era meu apelido na escola?" className={inputClass} autoFocus />
                   <QuestionSuggestions onPick={setQuestion} />
                 </>
               )}
             </Field>
             <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam).">
-              {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex.: Jéf" autoComplete="off" className={inputClass} />}
+              {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex: Jéf" autoComplete="off" className={inputClass} />}
             </Field>
           </>
         )}
