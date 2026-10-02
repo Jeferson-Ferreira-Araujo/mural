@@ -20,10 +20,12 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "stats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
   return (
     <aside
-      className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col gap-[1.4em] overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
+      className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">Pinz</h1>
+      {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
+      <div className="my-auto flex flex-col gap-[1.4em]">
       <div className="flex justify-center">
         <Brand className="h-[6.4rem]" />
       </div>
@@ -42,7 +44,7 @@ export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitl
       {notice?.("light")}
 
       {stats && (
-        <ul className="mt-auto grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Números do mural">
+        <ul className="grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Números do mural">
           <Stat
             value={stats.visited}
             label="visitaram"
@@ -85,6 +87,7 @@ export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitl
           />
         </ul>
       )}
+      </div>
     </aside>
   );
 }

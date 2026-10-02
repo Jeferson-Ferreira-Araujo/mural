@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { buildPool } from "@/data/mock";
+import { buildPool, randomMural } from "@/data/mock";
 import {
   checkGrantClient,
   getProfileMurals,
@@ -17,6 +17,7 @@ import {
 } from "@/lib/mural";
 import { getAccount } from "@/lib/account";
 import { getBrowserSupabase } from "@/lib/supabase";
+import type { BoardItem } from "@/lib/types";
 import { MuralScreen } from "./MuralScreen";
 import { useToast } from "./useToast";
 import { SearchBox } from "./SearchBox";
@@ -169,9 +170,12 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     [choices, loading, openMural, pickPerson, selected, submitAnswer, unlocked],
   );
 
-  // quadro desfocado: só decoração (mural de exemplo com 15 espaços). Revelado: o mural real,
+  // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
+  // Revelado: o mural real,
   // que ainda não tem mensagens (o envio real chega na próxima etapa) e usa o plano FREE por padrão.
-  const decor = useMemo(() => buildPool(Date.now()).items, []);
+  // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
+  const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
+  useEffect(() => setDecor(randomMural(Date.now())), []);
   const revealed = unlocked && !!selected;
 
   return (
@@ -180,7 +184,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         items={revealed ? [] : decor}
         plan={revealed ? getAccount().plan : "full"}
         showMeter={revealed}
-        locked={!unlocked}
+        locked={!!selected && !unlocked}
         hasSelection={!!selected}
         landing={!selected && !choices}
         unlocked={unlocked}

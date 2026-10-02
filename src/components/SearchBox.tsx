@@ -66,7 +66,7 @@ export function SearchBox({ onSelect, tone = "light" }: { onSelect: (nickname: s
 
   return (
     <div className="relative">
-      <label htmlFor={id} className={`mb-[0.5em] block text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
+      <label htmlFor={id} className={`mb-[0.5em] block text-center text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
         Procure alguém pelo nickname
       </label>
       <div className="relative">

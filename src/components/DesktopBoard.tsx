@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
-import { BOARD_CAPACITY, formatsFor, slotsFor } from "@/lib/plans";
-import { filters, isSealed, type FilterId } from "@/lib/types";
+import type { CSSProperties } from "react";
+import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { EmptyNote } from "./EmptyNote";
 import { EmptySlot, LockedSlot } from "./board/SlotMarker";
 import { PlanBadge } from "./board/PlanBadge";
-import { SlotMeter } from "./board/SlotMeter";
 import { LockedNotice } from "./LockedNotice";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
@@ -43,13 +41,7 @@ function focusFirstField() {
  */
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, stats, share, panel, panelTitle, notice, onCompose, onNotify } = props;
-  const [filter, setFilter] = useState<FilterId>("all");
-
   const available = slotsFor(plan);
-  const allowedFormats = formatsFor(plan);
-  // só aparecem filtros de formatos que existem neste plano
-  const visibleFilters = filters.filter((f) => !f.types || f.types.some((t) => allowedFormats.includes(t)));
-  const activeTypes = filters.find((f) => f.id === filter)?.types;
 
   function addMessage() {
     if (!unlocked) {
@@ -69,39 +61,25 @@ export function DesktopBoard(props: ViewProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
-        <nav aria-label="Filtrar mensagens" className="relative z-10 flex items-center justify-between gap-4 px-[3vw] pt-5">
-          <div
-            role="tablist"
-            inert={locked}
-            className="no-scrollbar flex max-w-full gap-1 overflow-x-auto rounded-2xl bg-[#2a1c12]/70 p-1.5 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md"
-          >
-            {visibleFilters.map((f) => (
-              <button
-                key={f.id}
-                role="tab"
-                aria-selected={filter === f.id}
-                onClick={() => setFilter(f.id)}
-                className={`cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#f7f0dd] ${
-                  filter === f.id ? "bg-[#fbf6ea] text-[#2a1c12] shadow" : "text-[#f1e6d0]/85 hover:bg-white/10"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            {showMeter && !locked && (
-              <div className="hidden items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md xl:flex" aria-label={`${items.length} de ${available} espaços ocupados`}>
-                <PlanBadge plan={plan} />
-                <span className="text-sm font-semibold text-[#f7f0dd]">
-                  {items.length}/{available}
-                </span>
-              </div>
-            )}
-            {share && (
-              <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+        <nav aria-label="Informações do mural" className="relative z-10 flex items-center justify-between gap-4 px-[3vw] pt-5">
+          <div className="flex min-h-10 items-center">
+            {!hasSelection ? (
+              <span className="rounded-2xl bg-[#2a1c12]/70 px-4 py-2 text-sm font-semibold text-[#f7f0dd] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md">Exemplo de mural</span>
+            ) : (
+              showMeter &&
+              !locked && (
+                <div className="flex items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" aria-label={`${items.length} de ${available} espaços ocupados`}>
+                  <PlanBadge plan={plan} />
+                  <span className="text-sm font-semibold text-[#f7f0dd]">
+                    {items.length}/{available}
+                  </span>
+                </div>
+              )
             )}
           </div>
+          {share && (
+            <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+          )}
         </nav>
 
         <main className="relative [container-type:size]">
@@ -138,11 +116,10 @@ export function DesktopBoard(props: ViewProps) {
                   );
                 }
 
-                const dim = activeTypes && (isSealed(item) || !(activeTypes as readonly string[]).includes(item.type));
                 return (
                   <div
                     key={item.id}
-                    className={`pinned absolute transition-opacity duration-300 ${dim ? "opacity-25 grayscale" : ""}`}
+                    className="pinned absolute"
                     style={
                       {
                         ...pos,
@@ -168,11 +145,6 @@ export function DesktopBoard(props: ViewProps) {
         </main>
 
         <div className="relative z-10 flex flex-col items-center gap-2 pt-1 pb-5">
-          {showMeter && !locked && (
-            <div className="w-[min(22rem,90%)] text-[13px] xl:hidden">
-              <SlotMeter plan={plan} used={items.length} tone="dark" />
-            </div>
-          )}
           {onCompose && (
             <button
               type="button"

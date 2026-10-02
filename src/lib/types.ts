@@ -42,15 +42,3 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(
   Object.entries(formatInfo).map(([k, v]) => [k, v.label]),
 ) as Record<MessageType, string>;
-
-/** Filtros do quadro (desktop). Só aparecem os formatos permitidos no mural. */
-export const filters = [
-  { id: "all", label: "Todas", types: null },
-  { id: "text", label: "Textos", types: ["postit", "text"] },
-  { id: "list", label: "Listas", types: ["list"] },
-  { id: "photo", label: "Fotos", types: ["photo"] },
-  { id: "music", label: "Músicas", types: ["music"] },
-  { id: "video", label: "Vídeos", types: ["video"] },
-] as const satisfies readonly { id: string; label: string; types: readonly MessageType[] | null }[];
-
-export type FilterId = (typeof filters)[number]["id"];
