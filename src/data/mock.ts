@@ -2,82 +2,70 @@ import type { Message } from "@/lib/types";
 
 /**
  * Dados MOCKADOS — apenas para avaliar o frontend (Etapa 1).
- * `pos` é a posição da mensagem no mural (desktop), em % da área de cortiça.
+ * A ordem aqui é a ordem no carrossel mobile e nos "slots" do mural desktop.
  */
 export const messages: Message[] = [
-  {
-    id: "m1",
-    type: "postit",
-    color: "yellow",
-    text: "Nunca vou esquecer a vez que a gente matou aula pra ir no rio!",
-    pos: { x: 29, y: 4, rot: -4, z: 3 },
-  },
+  { id: "m1", type: "postit", color: "yellow", text: "Você sempre foi uma das pessoas mais incríveis que conheci. ❤️" },
   {
     id: "m2",
     type: "text",
-    text: "Jef,\n\nlembrei de você hoje ouvindo aquela música do fundão da sala. Tempo bom, hein? Obrigado por sempre ter sido o cara que defendia todo mundo.\n\nUm abraço enorme!",
-    pos: { x: 47, y: 2, rot: 2, z: 2 },
+    variant: "letter",
+    text: "Obrigado por sempre acreditar em mim, mesmo quando eu não acreditava. Você faz diferença! ☺",
   },
-  {
-    id: "m3",
-    type: "photo",
-    caption: "Churrasco de 2019",
-    pos: { x: 72, y: 5, rot: 5, z: 4 },
-  },
+  { id: "m3", type: "photo", scene: "hills", caption: "Parceiro de sempre! 🐾" },
   {
     id: "m4",
     type: "postit",
     color: "pink",
-    text: "Você era o único que sabia o refrão inteiro. Todo. Mundo. Ria.",
-    pos: { x: 3, y: 34, rot: 3, z: 5 },
+    text: "♡ Você tem um coração gigante e isso faz o mundo ser mais leve. Nunca mude!",
   },
-  {
-    id: "m5",
-    type: "video",
-    caption: "Olha isso aqui 😂",
-    duration: "0:24",
-    pos: { x: 21, y: 32, rot: -2, z: 4 },
-  },
+  { id: "m5", type: "video", caption: "Esse dia foi inesquecível! Obrigado por fazer parte dessa história.", duration: "0:24" },
   {
     id: "m6",
-    type: "postit",
-    color: "green",
-    text: "Valeu por tudo, parceiro. Conta comigo sempre!",
-    pos: { x: 43, y: 46, rot: -6, z: 6 },
+    type: "text",
+    variant: "notebook",
+    text: "Lembro de tantas resenhas boas… que privilégio ter vivido isso com você.",
   },
   {
     id: "m7",
     type: "music",
-    title: "Trem-Bala",
-    artist: "Ana Vilela",
-    pos: { x: 62, y: 37, rot: 4, z: 5 },
+    title: "Aquela Música",
+    artist: "Charlie Brown Jr.",
+    caption: "Essa música me lembra muito a nossa amizade!",
+    duration: "3:45",
   },
   {
     id: "m8",
-    type: "audio",
-    caption: "Recado de voz",
-    duration: "0:38",
-    pos: { x: 4, y: 66, rot: -3, z: 3 },
+    type: "list",
+    title: "Sempre:",
+    items: [
+      { text: "Boa companhia", done: true },
+      { text: "Conversas sem fim", done: true },
+      { text: "Ideias malucas", done: true },
+      { text: "Apoio nos momentos difíceis", done: true },
+      { text: "Alguém presente", done: true },
+    ],
   },
   {
     id: "m9",
-    type: "text",
-    text: "Lista do que eu quero rever:\n• o campinho\n• o pastel da cantina\n• você, claro",
-    compact: true,
-    pos: { x: 27, y: 66, rot: 3, z: 2 },
+    type: "audio",
+    text: "Nunca tive coragem de falar isso pessoalmente, mas… Obrigado por tudo!",
+    duration: "0:32",
   },
+  { id: "m10", type: "photo", scene: "group", caption: "Que venham mais momentos assim!" },
   {
-    id: "m10",
+    id: "m11",
     type: "postit",
-    color: "orange",
-    text: "Saudade da sua risada!",
-    pos: { x: 50, y: 68, rot: -3, z: 4 },
+    color: "blue",
+    text: "Você me inspira a ser uma versão melhor de mim. Valeu por sempre estar por perto! ♡",
   },
+  { id: "m12", type: "draw", caption: "Amizade de verdade!" },
 ];
 
 export const boardInfo = {
   owner: "Jeferson",
-  tagline: "Mensagens de pessoas que me conhecem.",
+  tagline: "Mensagens de pessoas que me conhecem",
   question: "Qual era meu apelido na escola?",
-  // Etapa 1: validação apenas simulada no frontend. Qualquer resposta desbloqueia.
+  // Etapa 1: números e validação são apenas simulados no frontend.
+  stats: { visited: 127, tried: 83, correct: 31, messages: messages.length },
 };

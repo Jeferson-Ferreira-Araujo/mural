@@ -1,37 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { PlayButton, Pin } from "./fasteners";
+import { PlayButton, Tape } from "./fasteners";
 
-const bars = [30, 55, 38, 70, 90, 60, 42, 76, 50, 34, 66, 84, 48, 28, 58, 72, 40, 62, 32, 24, 46, 68, 36, 52];
+const bars = [30, 55, 38, 70, 90, 60, 42, 76, 50, 34, 66, 84, 48, 28, 58, 72, 40, 62, 32, 46];
 
-/** Recado de voz: ficha de papel kraft com forma de onda desenhada à tinta. */
-export function AudioSlip({ caption, duration }: { caption: string; duration: string }) {
+/** Áudio: papel verde-menta com cápsula de reprodução e forma de onda. */
+export function AudioSlip({ text, duration }: { text: string; duration: string }) {
   const [playing, setPlaying] = useState(false);
   return (
     <article
       aria-label="Áudio"
-      className="paper-grain shadow-paper relative w-[16em] bg-[#e6cfa1] px-[1em] pt-[1.5em] pb-[0.9em]"
+      className="paper-grain shadow-paper relative w-[14em] bg-[#cfe6cf] px-[1em] pt-[2em] pb-[1em]"
       style={{
         borderRadius: "0.2em",
-        backgroundImage:
-          "linear-gradient(180deg, rgba(255,255,255,.22), transparent 30%), repeating-linear-gradient(90deg, rgba(120,80,30,.05) 0 2px, transparent 2px 5px)",
+        backgroundImage: "linear-gradient(160deg, rgba(255,255,255,.35), transparent 40%, rgba(0,0,0,.06))",
       }}
     >
-      <Pin color="#2f6fb5" className="top-[0.4em] left-[0.7em]" />
-      <Pin color="#2f6fb5" className="top-[0.4em] right-[0.7em]" />
-      <div className="flex items-center gap-[0.8em]">
+      <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={2} tone="rgba(246, 238, 190, .75)" />
+      <div className="flex items-center gap-[0.55em] rounded-full bg-[#9fcba5]/70 p-[0.4em] pr-[0.8em]">
         <PlayButton
           playing={playing}
           onClick={() => setPlaying((p) => !p)}
           label="áudio"
-          className="size-[3em] bg-[#3b2616] text-[#f6e8c8] hover:bg-[#51361f]"
+          className="size-[2.5em] bg-[#1f5f3f] text-white hover:bg-[#276f49]"
         />
-        <div className="flex h-[3.2em] flex-1 items-center gap-[0.18em]" aria-hidden>
+        <div className="flex h-[2.2em] flex-1 items-center gap-[0.14em]" aria-hidden>
           {bars.map((h, i) => (
             <span
               key={i}
-              className="block w-[0.28em] origin-center rounded-full bg-[#3b2616]/80"
+              className="block w-[0.2em] origin-center rounded-full bg-[#1f5f3f]"
               style={{
                 height: `${h}%`,
                 animation: playing ? `bar ${0.7 + (i % 5) * 0.12}s ease-in-out ${i * 0.04}s infinite` : undefined,
@@ -39,11 +37,9 @@ export function AudioSlip({ caption, duration }: { caption: string; duration: st
             />
           ))}
         </div>
+        <span className="font-mono text-[0.7em] text-[#1f3d2c]">{duration}</span>
       </div>
-      <div className="mt-[0.45em] flex items-baseline justify-between">
-        <p className="font-hand text-[1.4em] leading-none text-[#3b2616]">{caption}</p>
-        <span className="font-mono text-[0.75em] text-[#3b2616]/70">{duration}</span>
-      </div>
+      <p className="font-hand mt-[0.5em] text-[1.4em] leading-[1.1] text-[#1f3d2c]">{text}</p>
     </article>
   );
 }

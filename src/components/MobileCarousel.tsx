@@ -1,22 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { typeLabel, type Message } from "@/lib/types";
-import { BoardHeader } from "./BoardHeader";
+import { typeLabel } from "@/lib/types";
+import { BoardTitle } from "./BoardTitle";
 import { MessageView } from "./messages/MessageView";
+import { ShareButton } from "./ShareButton";
 import { UnlockPanel } from "./UnlockPanel";
+import type { ViewProps } from "./viewProps";
 
-type Props = {
-  messages: Message[];
-  owner: string;
-  tagline: string;
-  question: string;
-  unlocked: boolean;
-  onUnlock: () => void;
-};
+const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. */
-export function MobileCarousel({ messages, owner, tagline, question, unlocked, onUnlock }: Props) {
+export function MobileCarousel({ messages, owner, tagline, question, unlocked, onUnlock, onNotify }: ViewProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -56,41 +51,55 @@ export function MobileCarousel({ messages, owner, tagline, question, unlocked, o
     if (e.key === "ArrowLeft") goTo(Math.max(index - 1, 0));
   }
 
-  const current = messages[index];
   const arrow =
-    "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full bg-[#f7f0dd] text-[#2f2218] shadow-[0_0.2rem_0.6rem_rgba(40,20,5,.4)] transition active:scale-95 disabled:cursor-default disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
+    "absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-white/15 bg-[#17110c]/80 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 disabled:pointer-events-none disabled:opacity-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   return (
     <div
-      className="relative min-h-dvh overflow-x-hidden bg-[#b9763a]"
+      className="relative min-h-dvh overflow-x-hidden bg-[#2a1a0e]"
       style={{
-        backgroundImage: `linear-gradient(rgba(60,30,8,.18), rgba(60,30,8,.38)), url(/img/quadro-desktop.webp)`,
-        backgroundSize: "auto, 380%",
-        backgroundPosition: "center, 52% 48%",
+        backgroundImage:
+          "radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(/img/quadro-desktop.webp)",
+        backgroundSize: "auto, auto, 380%",
+        backgroundPosition: "center, center, 52% 48%",
       }}
     >
-      <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-5 pt-6 pb-10 [font-size:16px] md:gap-7 md:pt-10">
-        <div className="rise mx-auto w-[min(88vw,26rem)] md:text-[17px]">
-          <BoardHeader owner={owner} tagline={tagline} />
+      <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
+        <div className="mx-auto flex w-[min(90vw,30rem)] items-start justify-between gap-4">
+          <div className="rise text-[16px] md:text-[18px]">
+            <BoardTitle owner={owner} tagline={tagline} tone="dark" />
+          </div>
+          <ShareButton title="Mural do Jeferson" onNotify={onNotify} className="shrink-0 border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
         </div>
 
-        <section aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown}>
+        <section aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
+          <button type="button" aria-label="Mensagem anterior" disabled={index === 0} onClick={() => goTo(index - 1)} className={`${arrow} left-2`}>
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m15 5-7 7 7 7" />
+            </svg>
+          </button>
+          <button type="button" aria-label="Próxima mensagem" disabled={index === messages.length - 1} onClick={() => goTo(index + 1)} className={`${arrow} right-2`}>
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </button>
+
           <div
             ref={trackRef}
             tabIndex={0}
-            className="no-scrollbar relative flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-[calc(50vw-min(43vw,11rem))] py-8 outline-none focus-visible:ring-2 focus-visible:ring-[#f7f0dd]/70 md:px-[calc(50%-12rem)]"
+            className="no-scrollbar relative flex snap-x snap-mandatory items-center gap-0 overflow-x-auto px-[calc(50%-min(45vw,11rem))] py-8 outline-none focus-visible:ring-2 focus-visible:ring-[#f7f0dd]/60 md:px-[calc(50%-11rem)]"
           >
             {messages.map((m, i) => (
               <div
                 key={m.id}
                 role="group"
                 aria-roledescription="mensagem"
-                aria-label={`${i + 1} de ${messages.length}`}
-                className="flex w-[min(86vw,22rem)] shrink-0 snap-center justify-center md:w-[24rem]"
+                aria-label={`${typeLabel[m.type]}, ${i + 1} de ${messages.length}`}
+                className="flex w-[min(90vw,22rem)] shrink-0 snap-center items-center justify-center md:w-[22rem]"
               >
                 <div
-                  className="pinned text-[17px] md:text-[19px]"
-                  style={{ "--rot": `${m.pos.rot * 0.5}deg`, animationDelay: `${0.1 + Math.min(i, 3) * 0.1}s` } as CSSProperties}
+                  className="pinned text-[clamp(16px,5.6vw,22px)] md:text-[22px]"
+                  style={{ "--rot": `${ROTATIONS[i % ROTATIONS.length]}deg`, animationDelay: `${0.1 + Math.min(i, 3) * 0.1}s` } as CSSProperties}
                 >
                   <MessageView message={m} />
                 </div>
@@ -98,30 +107,14 @@ export function MobileCarousel({ messages, owner, tagline, question, unlocked, o
             ))}
           </div>
 
-          <div className="mx-auto flex w-[min(88vw,26rem)] items-center justify-between gap-3">
-            <button type="button" aria-label="Mensagem anterior" disabled={index === 0} onClick={() => goTo(index - 1)} className={arrow}>
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="m15 5-7 7 7 7" />
-              </svg>
-            </button>
-            <div className="text-center" aria-live="polite">
-              <p className="mx-auto w-fit rounded-full bg-[#f7f0dd] px-4 py-1 text-xs font-semibold tracking-[0.18em] text-[#2f2218] uppercase shadow-[0_0.15rem_0.5rem_rgba(40,20,5,.35)]">
-                {typeLabel[current.type]}
-              </p>
-              <p className="mt-1.5 text-sm font-medium text-[#fff6e0] [text-shadow:0_1px_3px_rgba(40,20,5,.7)]">
-                {index + 1} / {messages.length}
-              </p>
-            </div>
-            <button type="button" aria-label="Próxima mensagem" disabled={index === messages.length - 1} onClick={() => goTo(index + 1)} className={arrow}>
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="m9 5 7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+          <p aria-live="polite" className="mx-auto w-fit rounded-full bg-[#1c1510]/75 px-4 py-1.5 text-sm font-medium text-[#fff6e0] backdrop-blur">
+            <span className="sr-only">{typeLabel[messages[index].type]}, </span>
+            {index + 1} / {messages.length}
+          </p>
         </section>
 
-        <div className="mx-auto mt-auto w-[min(88vw,26rem)] pt-4 text-[16px] md:text-[17px]">
-          <UnlockPanel question={question} unlocked={unlocked} onUnlock={onUnlock} />
+        <div className="mx-auto mt-auto w-[min(90vw,30rem)] pt-3 text-[15px] md:text-[16px]">
+          <UnlockPanel question={question} unlocked={unlocked} onUnlock={onUnlock} inputId="unlock-answer-mobile" tone="dark" />
         </div>
       </main>
     </div>

@@ -1,22 +1,30 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
-import { Pin } from "./messages/fasteners";
+import { useState, type FormEvent } from "react";
 
 type Props = {
   question: string;
   unlocked: boolean;
   onUnlock: () => void;
+  /** id do campo de resposta (usado para focar a partir de outros botões). */
+  inputId: string;
+  tone?: "light" | "dark";
 };
+
+const LockIcon = () => (
+  <svg viewBox="0 0 24 24" className="size-[1.05em]" fill="currentColor" aria-hidden>
+    <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
+  </svg>
+);
 
 /**
  * Pergunta de desbloqueio. ETAPA 1: simulação apenas no frontend —
  * qualquer resposta preenchida desbloqueia. A validação real virá com o backend.
  */
-export function UnlockPanel({ question, unlocked, onUnlock }: Props) {
+export function UnlockPanel({ question, unlocked, onUnlock, inputId, tone = "light" }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState(false);
-  const inputId = useId();
+  const dark = tone === "dark";
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -31,29 +39,29 @@ export function UnlockPanel({ question, unlocked, onUnlock }: Props) {
   return (
     <section
       aria-label="Acesso ao mural"
-      className="paper-grain shadow-paper relative bg-[#f7f0dd] px-[1.6em] pt-[1.5em] pb-[1.3em] text-[#2f2218]"
-      style={{ borderRadius: "0.25em" }}
+      className={
+        dark
+          ? "rounded-[1.1em] border border-white/15 bg-[#1c1510]/70 p-[1.2em] text-[#f6efe2] shadow-[0_0.6em_2em_rgba(0,0,0,.45)] backdrop-blur-md"
+          : "rounded-[1.1em] border border-[#d9c9ad] bg-[#fbf6ea]/90 p-[1.2em] text-[#2f2218] shadow-[0_0.3em_1em_rgba(80,50,20,.15)]"
+      }
     >
-      <Pin color="#2f6fb5" className="top-[0.45em] right-[0.6em]" />
-
       {unlocked ? (
         <div className="rise" role="status">
-          <p className="font-title text-[1.35em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
-          <p className="mt-[0.4em] text-[0.95em] leading-snug text-[#6b5440]">
-            Você é de casa. Em breve, aqui você poderá deixar o seu recado anônimo.
+          <p className="text-[1.15em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
+          <p className={`mt-[0.4em] text-[0.9em] leading-snug ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
+            Você é de casa! Agora é só deixar o seu recado anônimo.
           </p>
-          <button
-            type="button"
-            disabled
-            className="mt-[0.9em] w-full cursor-not-allowed rounded-[0.4em] border border-dashed border-[#6b5440]/50 px-[1em] py-[0.65em] text-[0.95em] font-medium text-[#6b5440]/80"
-          >
-            + Deixar uma mensagem (em breve)
-          </button>
         </div>
       ) : (
         <form onSubmit={submit} noValidate>
-          <p className="text-[0.95em] font-semibold tracking-wide text-[#2f2218]">🔒 Só quem me conhece entra</p>
-          <label htmlFor={inputId} className="font-title mt-[0.6em] block text-[1.2em] leading-snug">
+          <p
+            className={`inline-flex items-center gap-[0.5em] rounded-full px-[0.8em] py-[0.35em] text-[0.82em] font-medium ${
+              dark ? "bg-white/10 text-white/90" : "bg-[#efe4cf] text-[#4a3826]"
+            }`}
+          >
+            <LockIcon /> Só quem me conhece entra
+          </p>
+          <label htmlFor={inputId} className="mt-[0.9em] block text-[1.25em] leading-snug font-bold">
             {question}
           </label>
           <input
@@ -64,21 +72,26 @@ export function UnlockPanel({ question, unlocked, onUnlock }: Props) {
               if (hint) setHint(false);
             }}
             autoComplete="off"
-            placeholder="Sua resposta"
+            placeholder="Digite sua resposta..."
             aria-invalid={hint}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
-            className="mt-[0.6em] w-full rounded-[0.4em] border border-[#6b5440]/40 bg-white/70 px-[0.8em] py-[0.65em] text-[1em] text-[#2f2218] shadow-[inset_0_0.1em_0.2em_rgba(60,30,0,.12)] outline-none placeholder:text-[#6b5440]/55 focus:border-[#2f2218] focus:bg-white focus-visible:ring-2 focus-visible:ring-[#c9822f]/60"
+            className={`mt-[0.8em] w-full rounded-[0.6em] border px-[0.9em] py-[0.7em] text-[1em] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#d98a2b]/70 ${
+              dark ? "border-transparent bg-[#e9e5df] text-[#2f2218]" : "border-[#e1d3ba] bg-white/80 text-[#2f2218] focus:bg-white"
+            }`}
           />
           {hint && (
-            <p id={`${inputId}-hint`} className="mt-[0.4em] text-[0.85em] text-[#a23b2a]">
+            <p id={`${inputId}-hint`} className={`mt-[0.4em] text-[0.85em] ${dark ? "text-[#ffb4a2]" : "text-[#a23b2a]"}`}>
               Escreva uma resposta para entrar.
             </p>
           )}
           <button
             type="submit"
-            className="mt-[0.8em] w-full cursor-pointer rounded-[0.4em] bg-[#3b2616] px-[1em] py-[0.7em] text-[1em] font-semibold text-[#f7f0dd] transition-colors hover:bg-[#51361f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c9822f] active:translate-y-px"
+            className="mt-[0.8em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.6em] border border-white/10 bg-[#1f232b] px-[1em] py-[0.8em] text-[1em] font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px"
           >
             Desbloquear
+            <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </button>
         </form>
       )}
