@@ -63,15 +63,15 @@ body {
 @keyframes drop-in {
   from {
     opacity: 0;
-    transform: translateY(-1.2em) scale(1.04) rotate(var(--rot, 0deg));
+    transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 1.2em)) scale(1.04) rotate(var(--rot, 0deg));
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(var(--rot, 0deg));
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(1) rotate(var(--rot, 0deg));
   }
 }
 .pinned {
-  transform: rotate(var(--rot, 0deg));
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--rot, 0deg));
   transform-origin: 50% 8%;
   transition:
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -81,7 +81,7 @@ body {
 }
 @media (hover: hover) {
   .pinned:hover {
-    transform: rotate(calc(var(--rot, 0deg) * 0.4)) translateY(-0.35em) scale(1.025);
+    transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 0.35em)) rotate(calc(var(--rot, 0deg) * 0.4)) scale(1.025);
     z-index: 40 !important;
   }
   .pinned:hover .shadow-paper {

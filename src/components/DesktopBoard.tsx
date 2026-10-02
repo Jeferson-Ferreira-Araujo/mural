@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { EmptyNote } from "./EmptyNote";
 import { EmptySlot, LockedSlot } from "./board/SlotMarker";
@@ -18,15 +18,48 @@ export const BOARD_IMAGE = "/img/quadro-desktop.webp";
 const CORK = { left: 11.2, top: 8, width: 79.4, height: 76.2 };
 
 /**
- * Os 15 espaços fixos da lousa (5 colunas × 3 linhas), com leve "bagunça" de mural real.
- * x/y em % da cortiça; rot em graus. A lousa NUNCA cresce: 15 é o limite do produto.
+ * Os 15 espaços fixos da lousa: grade de 5 colunas × 3 linhas, com inclinações de mural real.
+ * A altura de cada linha é a do maior bloco dela (nada passa por cima do texto do vizinho) e a lousa NUNCA cresce:
+ * se os blocos não couberem, tudo encolhe junto (veja `useFitScale`). 15 é o limite do produto.
  * No PINZ FREE só a primeira linha (5 espaços) está liberada.
  */
-const SLOTS = [
-  { x: 0.8, y: 1.5, rot: -3 }, { x: 20.8, y: 0.5, rot: 2 }, { x: 40.8, y: 2, rot: -2 }, { x: 60.8, y: 0.8, rot: 3 }, { x: 80.5, y: 1.8, rot: -2 },
-  { x: 1.6, y: 34, rot: 2 }, { x: 20.6, y: 33, rot: -1.5 }, { x: 41, y: 34.5, rot: 2.5 }, { x: 61, y: 33.2, rot: -2 }, { x: 80.2, y: 34, rot: 1.5 },
-  { x: 0.8, y: 66, rot: -2 }, { x: 21.2, y: 66.8, rot: 2.5 }, { x: 40.6, y: 65.6, rot: -3 }, { x: 61.2, y: 66.4, rot: 2 }, { x: 80.6, y: 65.8, rot: -2.5 },
-] as const;
+const TILT = [-3, 2, -2, 3, -2, 2, -1.5, 2.5, -2, 1.5, -2, 2.5, -3, 2, -2.5] as const;
+/** Pequeno deslocamento por espaço (em em), só para não parecer uma tabela. */
+const jitter = (i: number) => ({ dx: (((i * 37) % 7) - 3) * 0.14, dy: (((i * 53) % 5) - 2) * 0.1 });
+
+/** Escala base do tamanho dos blocos (em cqw da lousa). */
+const BASE_EM_CQW = 0.98;
+
+/**
+ * Descobre o quanto encolher os blocos para a grade caber na cortiça sem sobrepor.
+ * Mede com a escala cheia; se a altura natural passar da cortiça, reduz proporcionalmente.
+ */
+function useFitScale(deps: unknown[]) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const g = ref.current;
+    if (!g) return;
+    const measure = () => {
+      const prev = g.style.fontSize;
+      g.style.fontSize = `max(5px, ${BASE_EM_CQW}cqw)`; // escala cheia
+      const need = g.scrollHeight;
+      const have = g.clientHeight;
+      g.style.fontSize = prev; // devolve o valor que o React aplicou
+      const next = need > have + 1 ? Math.max(0.55, (have / need) * 0.985) : 1;
+      setScale((prev) => (Math.abs(prev - next) > 0.004 ? next : prev));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(g);
+    void document.fonts?.ready.then(measure);
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return { ref, scale };
+}
 
 /** Foca o primeiro campo de busca/resposta visível (usado pelo botão "Deixar uma mensagem"). */
 function focusFirstField() {
@@ -42,6 +75,7 @@ function focusFirstField() {
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, stats, share, panel, panelTitle, notice, onCompose, onNotify } = props;
   const available = slotsFor(plan);
+  const fit = useFitScale([items]);
 
   function addMessage() {
     if (!unlocked) {
@@ -96,46 +130,46 @@ export function DesktopBoard(props: ViewProps) {
 
             <div
               className="absolute"
-              style={{
-                left: `${CORK.left}%`,
-                top: `${CORK.top}%`,
-                width: `${CORK.width}%`,
-                height: `${CORK.height}%`,
-                fontSize: "max(5px, 0.98cqw)",
-              }}
+              style={{ left: `${CORK.left}%`, top: `${CORK.top + 2}%`, width: `${CORK.width}%`, height: `${CORK.height - 2.5}%`, fontSize: `max(5px, ${BASE_EM_CQW}cqw)` }}
             >
-              {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
-                const slot = SLOTS[i];
-                const item = items[i];
-                // a lousa agora vai até a borda: desce um pouco as linhas para a de cima não ficar sob a barra do topo
-                const pos: CSSProperties = { left: `${slot.x}%`, top: `${3 + slot.y * 0.955}%` };
+              <div
+                ref={fit.ref}
+                className="grid h-full grid-cols-5 content-evenly items-start justify-items-center"
+                style={{ fontSize: `max(5px, ${(BASE_EM_CQW * fit.scale).toFixed(4)}cqw)`, gridTemplateRows: "repeat(3, auto)", rowGap: "1.5em", columnGap: "0.4em" }}
+              >
+                {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
+                  const item = items[i];
+                  const tilt = TILT[i];
+                  const { dx, dy } = jitter(i);
 
-                // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera)
-                if (!item) {
+                  // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera)
+                  if (!item) {
+                    return (
+                      <div key={`slot-${i}`} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
+                        {i < available ? <EmptySlot /> : <LockedSlot />}
+                      </div>
+                    );
+                  }
+
                   return (
-                    <div key={`slot-${i}`} className="absolute" style={{ ...pos, transform: `rotate(${slot.rot * 0.5}deg)` }}>
-                      {i < available ? <EmptySlot /> : <LockedSlot />}
+                    <div
+                      key={item.id}
+                      className="pinned relative"
+                      style={
+                        {
+                          zIndex: 2 + ((i * 7) % 5),
+                          "--rot": `${tilt}deg`,
+                          "--dx": `${dx}em`,
+                          "--dy": `${dy}em`,
+                          animationDelay: `${0.05 + i * 0.06}s`,
+                        } as CSSProperties
+                      }
+                    >
+                      <MessageView message={item} />
                     </div>
                   );
-                }
-
-                return (
-                  <div
-                    key={item.id}
-                    className="pinned absolute"
-                    style={
-                      {
-                        ...pos,
-                        zIndex: 2 + ((i * 7) % 5),
-                        "--rot": `${slot.rot}deg`,
-                        animationDelay: `${0.05 + i * 0.06}s`,
-                      } as CSSProperties
-                    }
-                  >
-                    <MessageView message={item} />
-                  </div>
-                );
-              })}
+                })}
+              </div>
 
               {items.length === 0 && unlocked && (
                 <div className="absolute inset-x-0 top-[45%] z-10">
