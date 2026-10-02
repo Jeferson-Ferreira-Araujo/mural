@@ -15,17 +15,19 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
       <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-xl" />
       <span aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_30%,rgba(60,30,8,.2),rgba(14,7,2,.8))]" />
       <div className={`rise relative w-full min-w-0 ${wide ? "max-w-2xl" : "max-w-md"}`}>
-        <div className="mb-1 flex items-end justify-between gap-3">
-          <Brand className="h-20 sm:h-24" />
+        <div className="relative mb-2 flex justify-center">
           <Link
             href="/"
-            className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#1c1510]/70 px-4 py-2 text-sm font-semibold whitespace-nowrap text-[#fbf3e2] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+            aria-label="Voltar ao início"
+            title="Voltar ao início"
+            className="absolute top-1/2 left-0 inline-flex h-10 -translate-y-1/2 items-center gap-0.5 rounded-full pr-2 pl-1 text-sm font-medium text-[#fbf3e2]/75 transition hover:text-[#fbf3e2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
           >
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
-            Voltar ao início
+            Voltar
           </Link>
+          <Brand className="h-24 sm:h-28" />
         </div>
         <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
           {children}
