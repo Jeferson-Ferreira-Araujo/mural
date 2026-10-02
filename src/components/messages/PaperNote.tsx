@@ -29,8 +29,8 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
       style={{
         borderRadius: "0.15em 0.15em 0.3em 0.15em",
         backgroundImage:
-          "linear-gradient(90deg, transparent 2.3em, rgba(205,70,70,.5) 2.3em, rgba(205,70,70,.5) calc(2.3em + 1px), transparent calc(2.3em + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent 1.55em, rgba(90,140,200,.36) 1.55em, rgba(90,140,200,.36) calc(1.55em + 1px))",
-        backgroundPosition: "0 0, 0 2.03em",
+          "linear-gradient(90deg, transparent 2.3em, rgba(205,70,70,.5) 2.3em, rgba(205,70,70,.5) calc(2.3em + 1px), transparent calc(2.3em + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent calc(1.55em - 1px), rgba(90,140,200,.36) calc(1.55em - 1px), rgba(90,140,200,.36) 1.55em)",
+        backgroundPosition: "0 0, 0 calc(1.73em + 1px)",
       }}
     >
       {[18, 48, 78].map((top) => (
