@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
-import { muralPath, muralUrl, uniqueSlug } from "@/lib/mural";
+import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
 
@@ -22,7 +21,6 @@ export default function CriarMural() {
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<{ nick: string; slug: string } | null>(null);
   const [taken, setTaken] = useState<string[]>([]);
 
 
@@ -51,52 +49,23 @@ export default function CriarMural() {
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    const { data, error: err } = await sb.rpc("create_mural", {
+    const { error: err } = await sb.rpc("create_mural", {
       p_title: title.trim(),
       p_question: question.trim(),
       p_answer: answer.trim(),
     });
-    setBusy(false);
     if (err) {
-      if (err.message.includes("mural_limit")) return setError("Você chegou ao limite de 10 murais.");
-      setError("Não foi possível publicar agora. Tente de novo.");
+      setBusy(false);
+      setError(err.message.includes("mural_limit") ? "Você chegou ao limite de 10 murais." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
-    const r = data as { slug: string; nickname: string };
-    setCreated({ nick: r.nickname, slug: r.slug });
+    router.replace("/painel"); // segue "Criando…" até a navegação terminar
   }
 
   if (loading || !ready) {
     return (
       <AuthShell>
         <Spinner />
-      </AuthShell>
-    );
-  }
-
-  if (created) {
-    const url = muralUrl(created);
-    return (
-      <AuthShell>
-        <div role="status">
-          <p className="text-4xl" aria-hidden>
-            🎉
-          </p>
-          <h1 className="font-title mt-2 text-2xl font-semibold">Seu mural está no ar!</h1>
-          <p className="mt-3 text-[#4a3826]">Compartilhe este link com as pessoas que te conhecem:</p>
-          <p className="mt-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3 font-semibold break-all">{url}</p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <button type="button" className={`${primaryButton} sm:flex-1`} onClick={() => navigator.clipboard?.writeText(`https://${url}`)}>
-              Copiar link
-            </button>
-            <Link href={muralPath(created)} className={`${ghostButton} sm:flex-1`}>
-              Ver meu mural
-            </Link>
-          </div>
-          <Link href="/painel" className="mt-5 block text-center text-sm font-semibold text-[#6b5440] underline">
-            Ir para o painel
-          </Link>
-        </div>
       </AuthShell>
     );
   }
