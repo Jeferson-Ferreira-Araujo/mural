@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { PlayerColor } from "@/lib/types";
+import { embedFor } from "@/lib/embed";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
 
@@ -16,7 +17,8 @@ const parse = (d?: string) => {
 /**
  * Música: um mini MP3 player horizontal (visto de frente): tela à esquerda, roda de controle à direita.
  * A mensagem/dedicatória, se houver, vai num papelzinho colado embaixo; sem ela, aparece só o aparelho.
- * Com `link`, o botão central abre a música em outra aba; sem link, é só o aparelho (o tempo corre de enfeite).
+ * Com `link` do Spotify ou do YouTube, o botão central toca ali mesmo (player oficial embutido, sem sair da página);
+ * outros links abrem em outra aba; sem link, é só o aparelho (o tempo corre de enfeite).
  */
 export function MusicCard({
   title,
@@ -35,12 +37,13 @@ export function MusicCard({
 }) {
   const look = PLAYER_PALETTE[color];
   const dur = parse(duration);
+  const embed = embedFor(link);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
 
   // sem link: simula a reprodução (tempo e vinil)
   useEffect(() => {
-    if (link || !playing) return;
+    if (link || !playing) return; // com link, quem toca é o player embutido (ou a outra aba)
     const t = setInterval(() => {
       setCur((c) => {
         if (dur > 0 && c + 1 >= dur) {
@@ -54,7 +57,8 @@ export function MusicCard({
   }, [link, playing, dur]);
 
   function onPlay() {
-    if (link) window.open(link, "_blank", "noopener,noreferrer");
+    if (embed) setPlaying((p) => !p); // abre/fecha o player embutido (fechar para a música)
+    else if (link) window.open(link, "_blank", "noopener,noreferrer");
     else setPlaying((p) => !p);
   }
 
@@ -149,11 +153,11 @@ export function MusicCard({
           <button
             type="button"
             onClick={onPlay}
-            aria-label={link ? "Ouvir a música (abre o link)" : playing ? "Pausar" : "Reproduzir"}
+            aria-label={embed ? (playing ? "Parar a música" : "Ouvir a música aqui") : link ? "Ouvir a música (abre o link)" : playing ? "Pausar" : "Reproduzir"}
             className="absolute top-1/2 left-1/2 grid size-[2.3em] -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full transition active:scale-95 active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f4c542]"
             style={{ color: look.icon, background: keyBg, boxShadow: `${key}, 0 0 0 0.1em rgba(0,0,0,.28)` }}
           >
-            {playing && !link ? (
+            {playing && (embed || !link) ? (
               <svg viewBox="0 0 24 24" className="size-[1em]" fill="currentColor" aria-hidden>
                 <rect x="6" y="5" width="4" height="14" rx="1" />
                 <rect x="14" y="5" width="4" height="14" rx="1" />
@@ -166,6 +170,19 @@ export function MusicCard({
           </button>
         </div>
       </div>
+
+      {embed && playing && (
+        <div className={`relative z-10 mx-auto mt-[0.6em] w-full overflow-hidden rounded-[0.7em] bg-black shadow-[0_0.3em_0.8em_rgba(0,0,0,.45)] ${embed.kind === "video" ? "aspect-video" : "h-[6.4em]"}`}>
+          <iframe
+            src={embed.src}
+            title={`Tocando: ${title}`}
+            allow="autoplay; encrypted-media; fullscreen"
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+            className="absolute inset-0 size-full border-0"
+          />
+        </div>
+      )}
 
       {caption && <CaptionNote>{caption}</CaptionNote>}
     </article>

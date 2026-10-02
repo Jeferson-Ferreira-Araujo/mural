@@ -218,7 +218,7 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
       <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
       </Field>
-      <Field label="Link da música (opcional)" error={linkOk ? null : "Use um link que comece com http:// ou https://"} hint="Spotify, YouTube… O play abre esse link.">
+      <Field label="Link da música (opcional)" error={linkOk ? null : "Use um link que comece com http:// ou https://"} hint="Spotify e YouTube tocam aqui mesmo no mural; outros links abrem em outra aba.">
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
       </Field>
     </div>
