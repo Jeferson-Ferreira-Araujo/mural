@@ -234,8 +234,8 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
-      <Field label="Legenda (opcional)" hint={<Counter value={caption} max={64} />}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Olha isso aqui 😂" className={inputClass} />}
+      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o player.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Um dos lugares que mais me fez bem" className={inputClass} />}
       </Field>
     </div>
   );

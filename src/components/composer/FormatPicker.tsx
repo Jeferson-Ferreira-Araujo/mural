@@ -34,8 +34,13 @@ const THUMBS: Record<MessageType, ReactNode> = {
     </span>
   ),
   video: (
-    <span className="relative block w-10 rotate-[3deg] bg-[#f8f4e8] p-[3px] pb-[6px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]">
-      <span className="grid aspect-[4/3] place-items-center bg-black text-[9px] text-white">▶</span>
+    <span className="block w-10 rounded-[6px] bg-gradient-to-br from-[#3b3b40] to-[#19191b] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#d6a062]/60">
+      <span className="grid aspect-[16/10] place-items-center rounded-[3px] bg-black text-[9px] text-white">▶</span>
+      <span className="mt-[3px] flex justify-center gap-[2px]">
+        <span className="h-[4px] w-[6px] rounded-full bg-[#55555a]" />
+        <span className="h-[4px] w-[8px] rounded-full bg-[#55555a]" />
+        <span className="h-[4px] w-[6px] rounded-full bg-[#55555a]" />
+      </span>
     </span>
   ),
 };

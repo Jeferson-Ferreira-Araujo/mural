@@ -36,7 +36,7 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   list: { label: "Lista", hint: "Uma listinha escrita à mão", tier: "free" },
   photo: { label: "Foto", hint: "Uma foto em Polaroid", tier: "free" },
   music: { label: "Música", hint: "Um cartão musical", tier: "full" },
-  video: { label: "Vídeo", hint: "Um vídeo com play", tier: "full" },
+  video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
 };
 
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(
