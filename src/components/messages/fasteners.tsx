@@ -1,6 +1,6 @@
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
 
-/** Alfinete (tachinha) visto de cima, com brilho e sombra no papel. */
+/** Tachinha realista: cabeça esférica brilhante, base, ponta e sombra projetada. */
 export function Pin({
   color = "#c43b2f",
   className = "",
@@ -10,17 +10,44 @@ export function Pin({
   className?: string;
   style?: CSSProperties;
 }) {
+  const uid = useId().replace(/:/g, "");
+  const light = `color-mix(in srgb, ${color} 55%, white)`;
+  const dark = `color-mix(in srgb, ${color} 50%, black)`;
   return (
-    <span
+    <svg
       aria-hidden
-      className={`absolute z-20 block size-[1.45em] rounded-full ${className}`}
-      style={{
-        background: `radial-gradient(circle at 35% 30%, #fff9 0 12%, transparent 30%), radial-gradient(circle at 40% 35%, ${color}, color-mix(in srgb, ${color} 55%, #000) 95%)`,
-        boxShadow:
-          "0.18em 0.32em 0.28em rgba(30,12,0,.5), inset -0.1em -0.12em 0.18em rgba(0,0,0,.35)",
-        ...style,
-      }}
-    />
+      viewBox="0 0 48 48"
+      className={`pointer-events-none absolute z-20 -mt-[0.5em] -mr-[0.65em] -ml-[0.65em] block size-[2.9em] overflow-visible ${className}`}
+      style={style}
+    >
+      <defs>
+        <radialGradient id={`${uid}-h`} cx="36%" cy="30%" r="75%">
+          <stop offset="0" stopColor={light} />
+          <stop offset="0.45" stopColor={color} />
+          <stop offset="1" stopColor={dark} />
+        </radialGradient>
+        <radialGradient id={`${uid}-b`} cx="50%" cy="40%" r="70%">
+          <stop offset="0" stopColor={color} />
+          <stop offset="1" stopColor={dark} />
+        </radialGradient>
+        <filter id={`${uid}-s`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.6" />
+        </filter>
+      </defs>
+      {/* sombra projetada no papel + ponta */}
+      <ellipse cx="29" cy="33" rx="10" ry="5.5" fill="#1e0c00" opacity=".45" filter={`url(#${uid}-s)`} />
+      <path d="M24 28 30 38" stroke="#1e0c00" strokeOpacity=".35" strokeWidth="1.6" strokeLinecap="round" filter={`url(#${uid}-s)`} />
+      {/* base achatada */}
+      <ellipse cx="24" cy="27" rx="10.5" ry="6" fill={`url(#${uid}-b)`} />
+      <ellipse cx="24" cy="25.5" rx="10.5" ry="5.2" fill={dark} opacity=".35" />
+      {/* cabeça */}
+      <circle cx="24" cy="20" r="11.5" fill={`url(#${uid}-h)`} />
+      <circle cx="24" cy="20" r="11.5" fill="none" stroke={dark} strokeOpacity=".35" strokeWidth=".8" />
+      {/* reflexos */}
+      <ellipse cx="19.5" cy="14.5" rx="4.6" ry="3" fill="white" opacity=".85" transform="rotate(-30 19.5 14.5)" />
+      <circle cx="17" cy="17.2" r="1" fill="white" opacity=".5" />
+      <path d="M31 27q4-4 3.5-9" stroke={light} strokeOpacity=".45" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+    </svg>
   );
 }
 
