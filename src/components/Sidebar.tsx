@@ -25,7 +25,7 @@ export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitl
     >
       <h1 className="sr-only">Pinz</h1>
       <div className="flex justify-center">
-        <Brand className="h-28" />
+        <Brand className="h-[6.4rem]" />
       </div>
 
       <CreateMuralLink big className="w-full" />

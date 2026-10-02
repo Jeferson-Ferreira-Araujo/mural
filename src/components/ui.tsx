@@ -20,14 +20,14 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
             href="/"
             aria-label="Voltar ao início"
             title="Voltar ao início"
-            className="absolute top-1/2 left-0 inline-flex h-10 -translate-y-1/2 items-center gap-0.5 rounded-full pr-2 pl-1 text-sm font-medium text-[#fbf3e2]/75 transition hover:text-[#fbf3e2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+            className="absolute top-0 left-0 inline-flex h-10 items-center gap-0.5 rounded-full pr-2 pl-1 text-sm font-medium text-[#fbf3e2]/75 transition hover:text-[#fbf3e2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
           >
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
             Voltar
           </Link>
-          <Brand className="h-24 sm:h-28" />
+          <Brand className="h-[5.5rem] sm:h-[6.5rem]" />
         </div>
         <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
           {children}

@@ -74,7 +74,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
       <main className={`mx-auto flex min-h-dvh max-w-4xl flex-col pt-4 pb-8 transition-[gap] duration-500 [font-size:16px] ${landing ? "justify-center gap-6 pb-[8vh]" : "gap-4"}`}>
         <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
           <h1 className="sr-only">Pinz</h1>
-          <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(10rem,30vh,14rem)]" : "h-20"}`} />
+          <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
           <div className={`grid w-full max-w-[21rem] gap-2 ${share ? "grid-cols-2" : "grid-cols-1"}`}>
             {share ? (
               <>
