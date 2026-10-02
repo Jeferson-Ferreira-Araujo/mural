@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { MuralStats } from "@/lib/mural";
+import type { MuralStats, SiteStats } from "@/lib/mural";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 
@@ -20,6 +20,8 @@ export type ViewProps = {
   unlocked: boolean;
   /** Números do mural escolhido (null = nenhum escolhido). */
   stats: { visited: number; tried: number; correct: number; messages: number } | null;
+  /** Números do site inteiro, mostrados no rodapé da barra quando nenhum mural está escolhido. */
+  siteStats?: SiteStats | null;
   /** Para o botão Compartilhar (null = nada para compartilhar). */
   share: { title: string; path: string } | null;
   /** Busca, escolha do mural e pergunta de desbloqueio; cada visualização escolhe o tom. */

@@ -5,6 +5,7 @@ import { buildPool, randomMural } from "@/data/mock";
 import {
   checkGrantClient,
   getProfileMurals,
+  getSiteStats,
   getPublicMural,
   getVisitorId,
   loadGrant,
@@ -13,6 +14,7 @@ import {
   tryUnlock,
   type ProfileMurals,
   type PublicMural,
+  type SiteStats,
   type UnlockResult,
 } from "@/lib/mural";
 import { getAccount } from "@/lib/account";
@@ -36,6 +38,10 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   const [loading, setLoading] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const { message: toast, notify } = useToast();
+  const [siteStats, setSiteStats] = useState<SiteStats | null>(null);
+  useEffect(() => {
+    void getSiteStats(getBrowserSupabase()).then(setSiteStats);
+  }, []);
 
   const nick = selected?.nickname;
   const slug = selected?.slug;
@@ -189,6 +195,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         landing={!selected && !choices}
         unlocked={unlocked}
         stats={selected?.stats ?? null}
+        siteStats={siteStats}
         share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}
         panel={panel}
         onNotify={notify}

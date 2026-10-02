@@ -17,7 +17,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 }
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
-export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "stats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
+export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "stats" | "siteStats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
@@ -42,6 +42,51 @@ export function Sidebar({ stats, panel, plan, used, showMeter, notice, panelTitl
 
       {showMeter && <SlotMeter plan={plan} used={used} />}
       {notice?.("light")}
+
+      {!stats && siteStats && (
+        <ul className="grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
+          <Stat
+            value={siteStats.murals}
+            label="murais"
+            icon={
+              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="M12 8.5v.01M8 8.5v.01M16 8.5v.01M7 14h10" />
+              </svg>
+            }
+          />
+          <Stat
+            value={siteStats.cards}
+            label="cards deixados"
+            icon={
+              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
+                <path d="M5 4h14v12l-4 4H5V4Z" />
+                <path d="M15 20v-4h4M8.5 9h7M8.5 12.5h4" />
+              </svg>
+            }
+          />
+          <Stat
+            value={siteStats.people}
+            label="pessoas"
+            icon={
+              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
+                <circle cx="12" cy="8" r="3.5" />
+                <path d="M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5" />
+              </svg>
+            }
+          />
+          <Stat
+            value={siteStats.visits}
+            label="visitas"
+            icon={
+              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            }
+          />
+        </ul>
+      )}
 
       {stats && (
         <ul className="grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Números do mural">

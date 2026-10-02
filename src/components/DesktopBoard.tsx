@@ -73,7 +73,7 @@ function focusFirstField() {
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
-  const { items, plan, showMeter, locked, hasSelection, unlocked, stats, share, panel, panelTitle, notice, onCompose, onNotify } = props;
+  const { items, plan, showMeter, locked, hasSelection, unlocked, stats, siteStats, share, panel, panelTitle, notice, onCompose, onNotify } = props;
   const available = slotsFor(plan);
   const fit = useFitScale([items]);
 
@@ -88,7 +88,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar stats={stats} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
+      <Sidebar stats={stats} siteStats={siteStats} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className="relative min-w-0 flex-1 overflow-hidden">
