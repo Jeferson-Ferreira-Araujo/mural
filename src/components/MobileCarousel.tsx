@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { boardById } from "@/lib/boards";
+import { LandscapeViewer } from "./board/LandscapeViewer";
 import { isSealed, typeLabel, type BoardItem } from "@/lib/types";
 import { SlotMeter } from "./board/SlotMeter";
 import { Brand } from "./Brand";
@@ -23,6 +24,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
   const bgY = look.cork.top + look.cork.height / 2;
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const [viewing, setViewing] = useState(false); // mural em tela cheia, na horizontal
 
   const updateIndex = useCallback(() => {
     const track = trackRef.current;
@@ -89,6 +91,19 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
               <CreateMuralLink big />
             )}
           </div>
+          {!landing && hasSelection && !locked && (
+            <button
+              type="button"
+              onClick={() => setViewing(true)}
+              className="inline-flex w-full max-w-[21rem] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/15 bg-[#1c1510]/70 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+            >
+              <svg viewBox="0 0 24 24" className="size-[1.15em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="6" width="18" height="12" rx="2" />
+                <path d="M7 10h3M13 10h4M7 14h5" />
+              </svg>
+              Ver mural
+            </button>
+          )}
         </header>
 
         {landing && (
@@ -179,6 +194,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           </div>
         )}
       </main>
+      <LandscapeViewer open={viewing} onClose={() => setViewing(false)} items={messages} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} />
     </div>
   );
 }
