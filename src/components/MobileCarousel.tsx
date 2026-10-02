@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { typeLabel } from "@/lib/types";
-import { BoardTitle } from "./BoardTitle";
 import { Brand } from "./Brand";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
@@ -68,16 +67,14 @@ export function MobileCarousel({ messages, title, question, unlocked, onSubmitAn
       }}
     >
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
-        <div className="mx-auto flex w-[min(90vw,30rem)] items-start justify-between gap-4">
-          <div className="rise text-[16px] md:text-[18px]">
-            <Brand className="-mt-2 -mb-1 h-16" />
-            <BoardTitle title={title} tone="dark" />
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-2">
-            <ShareButton title={title} onNotify={onNotify} className="border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
+        <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
+          <h1 className="sr-only">{title}</h1>
+          <Brand className="h-20" />
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <CreateMuralLink className="border border-white/15 bg-[#fbf6ea] text-[#2a1c12]" />
+            <ShareButton title={title} onNotify={onNotify} className="border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
           </div>
-        </div>
+        </header>
 
         {messages.length === 0 ? (
           <div className="py-6 text-[16px] md:text-[20px]">
