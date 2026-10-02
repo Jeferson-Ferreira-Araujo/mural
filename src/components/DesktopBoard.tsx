@@ -32,7 +32,7 @@ const BASE_EM_CQW = 0.98;
  * Descobre o quanto encolher os blocos para a grade caber na cortiça sem sobrepor.
  * Mede com a escala cheia; se a altura natural passar da cortiça, reduz proporcionalmente.
  */
-function useFitScale(deps: unknown[]) {
+function useFitScale(base: number, deps: unknown[]) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -41,7 +41,7 @@ function useFitScale(deps: unknown[]) {
     if (!g) return;
     const measure = () => {
       const prev = g.style.fontSize;
-      g.style.fontSize = `max(5px, ${BASE_EM_CQW}cqw)`; // escala cheia
+      g.style.fontSize = `max(5px, ${base}cqw)`; // escala cheia
       const need = g.scrollHeight;
       const have = g.clientHeight;
       g.style.fontSize = prev; // devolve o valor que o React aplicou
@@ -75,7 +75,8 @@ export function DesktopBoard(props: ViewProps) {
   const available = slotsFor(plan);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
-  const fit = useFitScale([items]);
+  const baseEm = BASE_EM_CQW * look.size;
+  const fit = useFitScale(baseEm, [items, baseEm]);
 
   function addMessage() {
     if (!unlocked) {
@@ -130,12 +131,12 @@ export function DesktopBoard(props: ViewProps) {
 
             <div
               className="absolute"
-              style={{ left: `${CORK.left}%`, top: `${CORK.top + 2}%`, width: `${CORK.width}%`, height: `${CORK.height - 2.5}%`, fontSize: `max(5px, ${BASE_EM_CQW}cqw)` }}
+              style={{ left: `${CORK.left}%`, top: `${CORK.top + 2}%`, width: `${CORK.width}%`, height: `${CORK.height - 2.5}%`, fontSize: `max(5px, ${baseEm}cqw)` }}
             >
               <div
                 ref={fit.ref}
                 className="grid h-full grid-cols-5 content-evenly items-start justify-items-center"
-                style={{ fontSize: `max(5px, ${(BASE_EM_CQW * fit.scale).toFixed(4)}cqw)`, gridTemplateRows: "repeat(3, auto)", rowGap: "1.5em", columnGap: "0.4em" }}
+                style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateRows: "repeat(3, auto)", rowGap: "1.5em", columnGap: "0.4em" }}
               >
                 {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
                   const item = items[i];
