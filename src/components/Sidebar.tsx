@@ -19,13 +19,13 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 export const UNLOCK_INPUT_DESKTOP = "unlock-answer-desktop";
 
 /** Coluna esquerda do desktop: título, pergunta de desbloqueio e números do mural. */
-export function Sidebar({ owner, prefix, tagline, question, stats, unlocked, onSubmitAnswer }: ViewProps) {
+export function Sidebar({ title, tagline, question, stats, unlocked, onSubmitAnswer }: ViewProps) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(280px,22vw,350px)] shrink-0 flex-col gap-[1.4em] overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
-      <BoardTitle owner={owner} prefix={prefix} tagline={tagline} />
+      <BoardTitle title={title} tagline={tagline} />
 
       <UnlockPanel question={question} unlocked={unlocked} onSubmit={onSubmitAnswer} inputId={UNLOCK_INPUT_DESKTOP} />
 

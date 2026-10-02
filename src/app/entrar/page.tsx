@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { callbackUrl, getOwnMural, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
+import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
 const MIN_PASSWORD = 8;
@@ -15,12 +15,14 @@ export default function Entrar() {
   const router = useRouter();
   const { session, loading } = useSession();
   const [mode, setMode] = useState<Mode>("signup");
+  const [nick, setNick] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
+  const nickState = useNicknameStatus(mode === "signup" ? nick : "");
 
   // já logado: vai para o painel (ou para a criação do mural)
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function Entrar() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     const mail = email.trim();
+    if (mode === "signup" && nickState !== "ok") return setError(nickState === "taken" ? "Esse nickname já está em uso." : "Escolha um nickname válido.");
     if (!/^\S+@\S+\.\S+$/.test(mail)) return setError("Digite um e-mail válido.");
     if (password.length < MIN_PASSWORD) return setError(`A senha precisa ter pelo menos ${MIN_PASSWORD} caracteres.`);
     setBusy(true);
@@ -44,11 +47,12 @@ export default function Entrar() {
       return; // sucesso: o useSession dispara o redirecionamento
     }
 
-    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl() } });
+    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick } } });
     setBusy(false);
     if (err) {
       if (/registered|already/i.test(err.message)) setError("Esse e-mail já tem conta. Entre com a sua senha.");
       else if (/password/i.test(err.message)) setError("Senha muito fraca. Use letras, números e mais caracteres.");
+      else if (/database error/i.test(err.message)) setError("Esse nickname acabou de ser usado. Escolha outro.");
       else if (err.status === 429) setError("Muitas tentativas. Aguarde um pouco e tente de novo.");
       else setError("Não foi possível criar a conta agora. Tente de novo.");
       return;
@@ -141,6 +145,7 @@ export default function Entrar() {
       )}
 
       <form onSubmit={submit} noValidate className={`space-y-4 ${GOOGLE_ENABLED ? "" : "mt-5"}`}>
+        {signup && <NicknameField value={nick} onChange={(v) => { setNick(v); setError(null); }} state={nickState} />}
         <Field label="E-mail">
           {(id) => (
             <input

@@ -63,7 +63,7 @@ export const messages: Message[] = [
 ];
 
 export const boardInfo = {
-  owner: "Jeferson",
+  title: "Mural do Jeferson",
   tagline: "Mensagens de pessoas que me conhecem",
   question: "Qual era meu apelido na escola?",
   // Demonstração: números e validação são apenas simulados no frontend.

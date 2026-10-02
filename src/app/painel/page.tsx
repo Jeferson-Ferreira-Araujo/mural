@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { getOwnMural, useSession, type OwnMural } from "@/lib/auth";
 import { getPublicMural, SITE_HOST, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, PrefixPicker, primaryButton, Spinner, type Prefix } from "@/components/ui";
+import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
 export default function Painel() {
   const router = useRouter();
@@ -14,8 +14,7 @@ export default function Painel() {
   const [mural, setMural] = useState<OwnMural | null>(null);
   const [stats, setStats] = useState<MuralStats | null>(null);
 
-  const [prefix, setPrefix] = useState<Prefix>("do");
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [tagline, setTagline] = useState("");
   const [question, setQuestion] = useState("");
   const [changeAnswers, setChangeAnswers] = useState(false);
@@ -34,8 +33,7 @@ export default function Painel() {
     getOwnMural(sb).then(async (m) => {
       if (!m) return router.replace("/criar");
       setMural(m);
-      setName(m.owner_name);
-      setPrefix(m.title_prefix);
+      setTitle(m.title);
       setTagline(m.tagline);
       setQuestion(m.question);
       setStats((await getPublicMural(sb, m.slug))?.stats ?? null);
@@ -51,11 +49,10 @@ export default function Painel() {
     }
     setBusy(true);
     const { error } = await getBrowserSupabase().rpc("update_mural", {
-      p_owner_name: name.trim(),
+      p_title: title.trim(),
       p_tagline: tagline.trim(),
       p_question: question.trim(),
       p_answers: changeAnswers ? answers : null,
-      p_prefix: prefix,
     });
     setBusy(false);
     if (error) {
@@ -130,8 +127,7 @@ export default function Painel() {
 
       <form onSubmit={save} className="mt-8 space-y-5" noValidate>
         <h2 className="font-title text-xl font-semibold">Editar mural</h2>
-        <PrefixPicker value={prefix} onChange={setPrefix} />
-        <Field label="Nome">{(id) => <input id={id} value={name} onChange={(e) => setName(e.target.value)} maxLength={40} className={inputClass} />}</Field>
+        <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
         <Field label="Apresentação">{(id) => <input id={id} value={tagline} onChange={(e) => setTagline(e.target.value)} maxLength={120} className={inputClass} />}</Field>
         <Field label="Pergunta de desbloqueio">{(id) => <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />}</Field>
 

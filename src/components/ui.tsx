@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
+import { cleanNickname, NICK_RE, nicknameAvailable, SITE_HOST } from "@/lib/mural";
+import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARD_IMAGE } from "./DesktopBoard";
 
 /** Fundo e cartão centralizado usados nas telas de conta (entrar, criar, painel). */
@@ -128,26 +130,70 @@ export function Spinner({ label = "Carregando…" }: { label?: string }) {
   );
 }
 
-export type Prefix = "do" | "da" | "de";
+export type NickState = "idle" | "checking" | "ok" | "taken" | "invalid";
 
-/** Escolha de "Mural do / da / de …". */
-export function PrefixPicker({ value, onChange }: { value: Prefix; onChange: (p: Prefix) => void }) {
+/** Verifica (com pequena espera) se o nickname é válido e está livre. */
+export function useNicknameStatus(nick: string): NickState {
+  const [state, setState] = useState<NickState>("idle");
+  useEffect(() => {
+    if (!nick) return setState("idle");
+    if (!NICK_RE.test(nick)) return setState("invalid");
+    setState("checking");
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const ok = await nicknameAvailable(getBrowserSupabase(), nick);
+      if (!cancelled) setState(ok ? "ok" : "taken");
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [nick]);
+  return state;
+}
+
+const nickMessage: Record<NickState, string | null> = {
+  idle: null,
+  checking: "Verificando…",
+  ok: "Disponível ✓",
+  taken: "Esse nickname já está em uso.",
+  invalid: "Use de 3 a 30 letras minúsculas, números ou hífen.",
+};
+
+/** Campo de nickname: ele vira o endereço do mural (SITE_HOST/nickname). */
+export function NicknameField({
+  value,
+  onChange,
+  state,
+  autoFocus,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  state: NickState;
+  autoFocus?: boolean;
+}) {
+  const bad = state === "taken" || state === "invalid";
   return (
-    <div role="radiogroup" aria-label="Como chamar o mural" className="flex w-full rounded-xl sm:inline-flex sm:w-auto border border-[#e1d3ba] bg-white/60 p-1">
-      {(["do", "da", "de"] as const).map((p) => (
-        <button
-          key={p}
-          type="button"
-          role="radio"
-          aria-checked={value === p}
-          onClick={() => onChange(p)}
-          className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap transition-colors sm:flex-none sm:px-4 sm:py-1.5 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${
-            value === p ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"
-          }`}
-        >
-          Mural {p}
-        </button>
-      ))}
-    </div>
+    <Field
+      label="Nickname"
+      error={bad ? nickMessage[state] : null}
+      hint={nickMessage[state] ?? `Seu endereço será ${SITE_HOST}/${value || "seu-nickname"}`}
+    >
+      {(id) => (
+        <input
+          id={id}
+          value={value}
+          onChange={(e) => onChange(cleanNickname(e.target.value))}
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+          maxLength={30}
+          placeholder="seu-nickname"
+          autoFocus={autoFocus}
+          aria-invalid={bad}
+          className={inputClass}
+        />
+      )}
+    </Field>
   );
 }

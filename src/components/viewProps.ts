@@ -3,8 +3,7 @@ import type { Message } from "@/lib/types";
 
 export type ViewProps = {
   messages: Message[];
-  owner: string;
-  prefix: "do" | "da" | "de";
+  title: string;
   tagline: string;
   question: string;
   stats: { visited: number; tried: number; correct: number; messages: number };

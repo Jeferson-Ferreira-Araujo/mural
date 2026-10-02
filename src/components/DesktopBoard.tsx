@@ -80,7 +80,7 @@ export function DesktopBoard(props: ViewProps) {
           </div>
           <div className="flex items-center gap-2">
             <CreateMuralLink className="bg-[#2a1c12]/70 text-[#f7f0dd] backdrop-blur-md hover:bg-[#2a1c12]/90" />
-            <ShareButton title={`Mural ${props.prefix} ${props.owner}`} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+            <ShareButton title={props.title} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
           </div>
         </nav>
 

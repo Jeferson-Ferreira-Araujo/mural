@@ -17,8 +17,7 @@ import { MobileCarousel } from "./MobileCarousel";
 import { Toast } from "./Toast";
 
 type Props = {
-  owner: string;
-  prefix?: "do" | "da" | "de";
+  title: string;
   tagline: string;
   question: string;
   stats: MuralStats;
@@ -31,7 +30,7 @@ type Props = {
  * Desktop (lg+): mural físico completo. Mobile/tablet: carrossel, uma mensagem por vez.
  * Os dois são renderizados e alternados por CSS (sem flash de layout no carregamento).
  */
-export function Mural({ slug, prefix = "do", ...info }: Props) {
+export function Mural({ slug, ...info }: Props) {
   const demo = !slug;
   const [unlocked, setUnlocked] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -69,7 +68,7 @@ export function Mural({ slug, prefix = "do", ...info }: Props) {
     [slug],
   );
 
-  const shared = { ...info, prefix, unlocked, onSubmitAnswer: submitAnswer, onNotify: notify, demo };
+  const shared = { ...info, unlocked, onSubmitAnswer: submitAnswer, onNotify: notify, demo };
 
   return (
     <>

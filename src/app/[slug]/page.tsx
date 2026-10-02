@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const mural = await getPublicMural(getServerSupabase(), slug);
   return mural
-    ? { title: { absolute: `Mural ${mural.title_prefix} ${mural.owner_name}` }, description: mural.tagline }
+    ? { title: { absolute: mural.title }, description: mural.tagline }
     : { title: "Mural não encontrado" };
 }
 
@@ -23,8 +23,7 @@ export default async function PublicMural({ params }: Params) {
   return (
     <Mural
       slug={mural.slug}
-      owner={mural.owner_name}
-      prefix={mural.title_prefix}
+      title={mural.title}
       tagline={mural.tagline}
       question={mural.question}
       stats={mural.stats}

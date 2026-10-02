@@ -4,8 +4,7 @@ export type MuralStats = { visited: number; tried: number; correct: number; mess
 
 export type PublicMural = {
   slug: string;
-  owner_name: string;
-  title_prefix: "do" | "da" | "de";
+  title: string;
   tagline: string;
   question: string;
   stats: MuralStats;
@@ -21,8 +20,8 @@ export async function getPublicMural(sb: SupabaseClient, slug: string): Promise<
   return data as PublicMural;
 }
 
-export async function slugAvailable(sb: SupabaseClient, slug: string): Promise<boolean> {
-  const { data, error } = await sb.rpc("slug_available", { p_slug: slug });
+export async function nicknameAvailable(sb: SupabaseClient, nick: string): Promise<boolean> {
+  const { data, error } = await sb.rpc("nickname_available", { p_nick: nick });
   return !error && data === true;
 }
 
@@ -71,19 +70,17 @@ export const clearGrant = (slug: string) => {
   }
 };
 
-/** Transforma um nome em endereço: "Jeferson Araújo" -> "jeferson-araujo". */
-export function slugify(name: string): string {
-  return name
+/** Normaliza o nickname digitado: minúsculas, só letras, números e hífen. */
+export function cleanNickname(v: string): string {
+  return v
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 30)
-    .replace(/-+$/g, "");
+    .replace(/[^a-z0-9-]/g, "")
+    .slice(0, 30);
 }
 
-export const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
+export const NICK_RE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
 
 export const SITE_HOST = "mural.jefersonaraujo.com.br";
 
