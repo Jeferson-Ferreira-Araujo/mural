@@ -51,10 +51,10 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
       type: "music",
       title: "Aquela Música",
       artist: "Charlie Brown Jr.",
-      caption: "Essa música me lembra muito a nossa amizade!",
+      caption: "Essa música é a nossa!",
       duration: "3:45",
     },
-    { id: "m7", type: "video", caption: "Esse dia foi inesquecível! Obrigado por fazer parte dessa história.", duration: "0:24" },
+    { id: "m7", type: "video", caption: "Esse dia foi inesquecível!", duration: "0:24" },
     { id: "cap1", sealed: true, opensAt: new Date(nowMs + 18 * DAY + 4 * HOUR + 37 * MIN + 20_000).toISOString() },
     // --- de volta aos formatos FREE ---
     { id: "m8", type: "text", variant: "notebook", text: "Lembro de tantas resenhas boas… que privilégio ter vivido isso com você." },

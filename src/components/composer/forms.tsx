@@ -6,6 +6,9 @@ import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import type { DraftChange } from "./types";
 
+/** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
+const PLAYER_NOTE_MAX = 32;
+
 const area = `${inputClass} min-h-[7rem] resize-y`;
 
 function Counter({ value, max }: { value: string; max: number }) {
@@ -212,8 +215,8 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
       <PlayerColorPicker value={color} onChange={setColor} />
       <Field label="Nome da música">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={48} placeholder="Ex: Aquela Música" className={inputClass} />}</Field>
       <Field label="Artista">{(id) => <input id={id} value={artist} onChange={(e) => setArtist(e.target.value)} maxLength={40} placeholder="Ex: Charlie Brown Jr." className={inputClass} />}</Field>
-      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o aparelho.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
+      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
       </Field>
       <Field label="Link da música (opcional)" error={linkOk ? null : "Use um link que comece com http:// ou https://"} hint="Spotify, YouTube… O play abre esse link.">
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
@@ -263,8 +266,8 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o player.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Um dos lugares que mais me fez bem" className={inputClass} />}
+      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o player.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que me fez bem" className={inputClass} />}
       </Field>
     </div>
   );
@@ -400,8 +403,8 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o aparelho.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Sua voz sempre me faz sorrir!" className={inputClass} />}
+      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Sua voz sempre me faz sorrir!" className={inputClass} />}
       </Field>
     </div>
   );
