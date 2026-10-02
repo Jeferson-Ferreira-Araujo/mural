@@ -7,6 +7,7 @@ import { isSealed, typeLabel, type BoardItem } from "@/lib/types";
 import { SlotMeter } from "./board/SlotMeter";
 import { Brand } from "./Brand";
 import { CreateMuralLink } from "./CreateMuralLink";
+import { MyMuralLink } from "./MyMuralLink";
 import { EmptyNote } from "./EmptyNote";
 import { LockedNotice } from "./LockedNotice";
 import { MessageView } from "./messages/MessageView";
@@ -91,6 +92,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
               <CreateMuralLink big />
             )}
           </div>
+          <MyMuralLink tone="dark" className="w-full max-w-[21rem]" />
           {!landing && hasSelection && !locked && (
             <button
               type="button"

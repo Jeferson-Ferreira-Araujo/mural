@@ -24,6 +24,11 @@ export default function Entrar() {
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const nickState = useNicknameStatus(mode === "signup" ? nick : "");
 
+  // veio de "Entrar no meu mural": abre direto na aba Entrar
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("modo") === "entrar") setMode("login");
+  }, []);
+
   // já logado: vai para o painel (ou para a criação do mural)
   useEffect(() => {
     if (!session) return;

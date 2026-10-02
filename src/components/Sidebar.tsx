@@ -1,5 +1,6 @@
 import { Brand } from "./Brand";
 import { CreateMuralLink } from "./CreateMuralLink";
+import { MyMuralLink } from "./MyMuralLink";
 import { SlotMeter } from "./board/SlotMeter";
 import type { ViewProps } from "./viewProps";
 
@@ -30,7 +31,10 @@ export function Sidebar({ siteStats, capacity, panel, plan, used, showMeter, not
         <Brand className="h-[6.4rem]" />
       </div>
 
-      <CreateMuralLink big className="w-full" />
+      <div className="flex flex-col gap-[0.6em]">
+        <CreateMuralLink big className="w-full" />
+        <MyMuralLink tone="light" className="w-full" />
+      </div>
 
       <div className="flex items-center gap-[0.8em] text-[0.8em] text-[#8a7b69]" aria-hidden>
         <span className="h-px flex-1 bg-[#d9c9ad]" />
