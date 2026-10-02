@@ -1,40 +1,56 @@
 export type PostItColor = "yellow" | "pink" | "green" | "orange" | "blue";
 
-type Base = { id: string };
+type Base = {
+  id: string;
+  /** Veio de uma Cápsula PINZ que já abriu. */
+  fromCapsule?: boolean;
+};
 
+/** Os 6 formatos do MVP. FREE: postit, text, list, photo. FULL: + music, video. */
 export type Message =
   | (Base & { type: "postit"; color: PostItColor; text: string })
   | (Base & { type: "text"; variant: "letter" | "notebook"; text: string })
-  | (Base & { type: "photo"; caption: string; scene: "hills" | "group" | "sunset" })
-  | (Base & { type: "video"; caption: string; duration: string })
-  | (Base & { type: "audio"; text: string; duration: string })
-  | (Base & { type: "music"; title: string; artist: string; caption: string; duration: string })
   | (Base & { type: "list"; title: string; items: { text: string; done: boolean }[] })
-  | (Base & { type: "draw"; caption: string });
+  | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
+  | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string })
+  | (Base & { type: "video"; caption: string; duration?: string; src?: string });
 
 export type MessageType = Message["type"];
 
-export const typeLabel: Record<MessageType, string> = {
-  postit: "Post-it",
-  text: "Texto",
-  photo: "Foto",
-  video: "Vídeo",
-  audio: "Áudio",
-  music: "Música",
-  list: "Lista",
-  draw: "Desenho",
+/**
+ * Cápsula ainda fechada. De propósito NÃO tem nenhum campo de conteúdo (nem o formato):
+ * o frontend nunca recebe o que está dentro antes da data de abertura.
+ */
+export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string };
+
+/** O que ocupa um espaço do mural. */
+export type BoardItem = Message | ClosedCapsuleItem;
+
+export const isSealed = (item: BoardItem): item is ClosedCapsuleItem => "sealed" in item;
+
+type FormatInfo = { label: string; hint: string; tier: "free" | "full" };
+
+export const formatInfo: Record<MessageType, FormatInfo> = {
+  postit: { label: "Post-it", hint: "Um recado rápido", tier: "free" },
+  text: { label: "Texto", hint: "Uma folha de papel", tier: "free" },
+  list: { label: "Lista", hint: "Uma listinha escrita à mão", tier: "free" },
+  photo: { label: "Foto", hint: "Uma foto em Polaroid", tier: "free" },
+  music: { label: "Música", hint: "Um cartão musical", tier: "full" },
+  video: { label: "Vídeo", hint: "Um vídeo com play", tier: "full" },
 };
 
-/** Filtros da barra superior (desktop). */
+export const typeLabel: Record<MessageType, string> = Object.fromEntries(
+  Object.entries(formatInfo).map(([k, v]) => [k, v.label]),
+) as Record<MessageType, string>;
+
+/** Filtros do quadro (desktop). Só aparecem os formatos permitidos no mural. */
 export const filters = [
   { id: "all", label: "Todas", types: null },
   { id: "text", label: "Textos", types: ["postit", "text"] },
-  { id: "photo", label: "Fotos", types: ["photo"] },
-  { id: "video", label: "Vídeos", types: ["video"] },
-  { id: "audio", label: "Áudios", types: ["audio"] },
-  { id: "music", label: "Músicas", types: ["music"] },
-  { id: "draw", label: "Desenhos", types: ["draw"] },
   { id: "list", label: "Listas", types: ["list"] },
+  { id: "photo", label: "Fotos", types: ["photo"] },
+  { id: "music", label: "Músicas", types: ["music"] },
+  { id: "video", label: "Vídeos", types: ["video"] },
 ] as const satisfies readonly { id: string; label: string; types: readonly MessageType[] | null }[];
 
 export type FilterId = (typeof filters)[number]["id"];

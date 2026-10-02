@@ -3,19 +3,30 @@
 import { useState } from "react";
 import { PlayButton, Tape } from "./fasteners";
 
-/** Música: cartão físico (papel) com um "cartão de player" roxo colado e a dedicatória. */
+/**
+ * Música: cartão físico (papel) com um "cartão de player" roxo colado e a dedicatória.
+ * Com `link`, o play abre a música em outra aba; sem link é só o cartão (o vinil gira de enfeite).
+ */
 export function MusicCard({
   title,
   artist,
   caption,
   duration,
+  link,
 }: {
   title: string;
   artist: string;
   caption: string;
-  duration: string;
+  duration?: string;
+  link?: string;
 }) {
   const [playing, setPlaying] = useState(false);
+
+  function onPlay() {
+    if (link) window.open(link, "_blank", "noopener,noreferrer");
+    else setPlaying((p) => !p);
+  }
+
   return (
     <article
       aria-label="Música"
@@ -47,25 +58,27 @@ export function MusicCard({
           />
           <PlayButton
             playing={playing}
-            onClick={() => setPlaying((p) => !p)}
-            label="música"
+            onClick={onPlay}
+            label={link ? "música (abre o link)" : "música"}
             className="absolute top-1/2 left-1/2 size-[2.8em] -translate-x-1/2 -translate-y-1/2 bg-white/90 text-[#3a1a78] shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)] hover:bg-white"
           />
         </div>
-        <p className="mt-[0.6em] text-[1em] leading-tight font-semibold">{title}</p>
-        <p className="text-[0.8em] leading-tight text-white/75">{artist}</p>
-        <div className="mt-[0.5em] flex items-center gap-[0.5em] font-mono text-[0.68em] text-white/85">
-          <span>0:00</span>
-          <span aria-hidden className="relative h-[0.2em] flex-1 overflow-hidden rounded-full bg-white/30">
-            <span
-              className="absolute inset-y-0 left-0 rounded-full bg-white transition-[width] ease-linear"
-              style={{ width: playing ? "96%" : "0%", transitionDuration: playing ? "45s" : "0.3s" }}
-            />
-          </span>
-          <span>{duration}</span>
-        </div>
+        <p className="mt-[0.6em] text-[1em] leading-tight font-semibold break-words">{title}</p>
+        <p className="text-[0.8em] leading-tight break-words text-white/75">{artist}</p>
+        {duration && (
+          <div className="mt-[0.5em] flex items-center gap-[0.5em] font-mono text-[0.68em] text-white/85">
+            <span>0:00</span>
+            <span aria-hidden className="relative h-[0.2em] flex-1 overflow-hidden rounded-full bg-white/30">
+              <span
+                className="absolute inset-y-0 left-0 rounded-full bg-white transition-[width] ease-linear"
+                style={{ width: playing ? "96%" : "0%", transitionDuration: playing ? "45s" : "0.3s" }}
+              />
+            </span>
+            <span>{duration}</span>
+          </div>
+        )}
       </div>
-      <p className="font-hand mt-[0.5em] px-[0.3em] text-[1.4em] leading-[1.08] text-[#2f2a24]">{caption}</p>
+      {caption && <p className="font-hand mt-[0.5em] px-[0.3em] text-[1.4em] leading-[1.08] break-words text-[#2f2a24]">{caption}</p>}
     </article>
   );
 }

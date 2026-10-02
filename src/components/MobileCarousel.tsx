@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { typeLabel } from "@/lib/types";
+import { isSealed, typeLabel, type BoardItem } from "@/lib/types";
+import { SlotMeter } from "./board/SlotMeter";
 import { Brand } from "./Brand";
 import { CreateMuralLink } from "./CreateMuralLink";
 import { EmptyNote } from "./EmptyNote";
@@ -10,10 +11,12 @@ import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
 import type { ViewProps } from "./viewProps";
 
+const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : typeLabel[i.type]);
+
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. Desfocada até desbloquear. */
-export function MobileCarousel({ messages, locked, hasSelection, unlocked, share, panel, onNotify }: ViewProps) {
+export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify }: ViewProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -87,6 +90,13 @@ export function MobileCarousel({ messages, locked, hasSelection, unlocked, share
         {/* busca, escolha do mural e pergunta de desbloqueio */}
         <div className="mx-auto w-[min(90vw,30rem)] text-[15px] md:text-[16px]">{panel("dark")}</div>
 
+        {(showMeter || notice) && (
+          <div className="mx-auto w-[min(90vw,30rem)] space-y-3 text-[15px] md:text-[16px]">
+            {showMeter && !locked && <SlotMeter plan={plan} used={messages.length} tone="dark" />}
+            {!locked && notice?.("dark")}
+          </div>
+        )}
+
         <section aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
           <div
             className="transition-[filter] duration-700 ease-out"
@@ -121,7 +131,7 @@ export function MobileCarousel({ messages, locked, hasSelection, unlocked, share
                       key={m.id}
                       role="group"
                       aria-roledescription="mensagem"
-                      aria-label={`${typeLabel[m.type]}, ${i + 1} de ${messages.length}`}
+                      aria-label={`${labelOf(m)}, ${i + 1} de ${messages.length}`}
                       className="flex w-[min(90vw,22rem)] shrink-0 snap-center items-center justify-center md:w-[22rem]"
                     >
                       <div
@@ -135,7 +145,7 @@ export function MobileCarousel({ messages, locked, hasSelection, unlocked, share
                 </div>
 
                 <p aria-live="polite" className="mx-auto w-fit rounded-full bg-[#1c1510]/75 px-4 py-1.5 text-sm font-medium text-[#fff6e0] backdrop-blur">
-                  <span className="sr-only">{typeLabel[messages[safeIndex].type]}, </span>
+                  <span className="sr-only">{labelOf(messages[safeIndex])}, </span>
                   {safeIndex + 1} / {messages.length}
                 </p>
               </>
@@ -143,6 +153,19 @@ export function MobileCarousel({ messages, locked, hasSelection, unlocked, share
           </div>
           {locked && <LockedNotice hasSelection={hasSelection} dark />}
         </section>
+
+        {onCompose && unlocked && (
+          <div className="mx-auto w-[min(90vw,30rem)]">
+            <button
+              type="button"
+              onClick={onCompose}
+              className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-[#fbf6ea] py-3 text-base font-semibold text-[#2a1c12] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.4)] transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+            >
+              <span className="grid size-8 place-items-center rounded-full bg-[#1f232b] text-lg leading-none text-white">+</span>
+              Deixar uma mensagem anônima
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

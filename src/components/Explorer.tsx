@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { messages as demoMessages } from "@/data/mock";
+import { buildPool } from "@/data/mock";
 import {
   checkGrantClient,
   getProfileMurals,
@@ -15,17 +15,15 @@ import {
   type PublicMural,
   type UnlockResult,
 } from "@/lib/mural";
+import { getAccount } from "@/lib/account";
 import { getBrowserSupabase } from "@/lib/supabase";
-import type { Message } from "@/lib/types";
-import { DesktopBoard } from "./DesktopBoard";
-import { MobileCarousel } from "./MobileCarousel";
+import { MuralScreen } from "./MuralScreen";
+import { useToast } from "./useToast";
 import { SearchBox } from "./SearchBox";
 import { Toast } from "./Toast";
 import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 
-/** Mensagens reais do mural. Ainda não existem (Etapa 3): o quadro revelado mostra o mural vazio. */
-const REAL_MESSAGES: Message[] = [];
 
 /**
  * Tela principal: busca uma pessoa pelo nickname, mostra a pergunta do mural e, ao acertar,
@@ -36,15 +34,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   const [choices, setChoices] = useState<ProfileMurals | null>(null);
   const [loading, setLoading] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const notify = useCallback((msg: string) => {
-    setToast(msg);
-    clearTimeout(timer.current);
-    timer.current = setTimeout(() => setToast(null), 2800);
-  }, []);
-  useEffect(() => () => clearTimeout(timer.current), []);
+  const { message: toast, notify } = useToast();
 
   const nick = selected?.nickname;
   const slug = selected?.slug;
@@ -179,28 +169,26 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     [choices, loading, openMural, pickPerson, selected, submitAnswer, unlocked],
   );
 
-  const shared = useMemo(
-    () => ({
-      messages: unlocked && selected ? REAL_MESSAGES : demoMessages,
-      locked: !unlocked,
-      hasSelection: !!selected,
-      unlocked,
-      stats: selected?.stats ?? null,
-      share: selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null,
-      panel,
-      onNotify: notify,
-    }),
-    [unlocked, selected, panel, notify],
-  );
+  // quadro desfocado: só decoração (mural de exemplo com 15 espaços). Revelado: o mural real,
+  // que ainda não tem mensagens (o envio real chega na próxima etapa) e usa o plano FREE por padrão.
+  const decor = useMemo(() => buildPool(Date.now()).items, []);
+  const revealed = unlocked && !!selected;
 
   return (
     <>
-      <div className="hidden lg:block">
-        <DesktopBoard {...shared} />
-      </div>
-      <div className="lg:hidden">
-        <MobileCarousel {...shared} />
-      </div>
+      <MuralScreen
+        items={revealed ? [] : decor}
+        plan={revealed ? getAccount().plan : "full"}
+        showMeter={revealed}
+        locked={!unlocked}
+        hasSelection={!!selected}
+        unlocked={unlocked}
+        stats={selected?.stats ?? null}
+        share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}
+        panel={panel}
+        onNotify={notify}
+        composer={{ mode: "soon" }}
+      />
       <Toast message={toast} />
     </>
   );

@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getAccount } from "@/lib/account";
 import { getOwnMurals, getOwnNickname, useSession, type OwnMural } from "@/lib/auth";
 import { getPublicMural, muralPath, muralUrl, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { PlanBadge } from "@/components/board/PlanBadge";
+import { SlotMeter } from "@/components/board/SlotMeter";
+import { PlansOverview } from "@/components/PlansOverview";
 import { AuthShell, ghostButton, primaryButton, Spinner } from "@/components/ui";
 
 type Item = OwnMural & { stats: MuralStats | null };
@@ -16,6 +20,7 @@ export default function Painel() {
   const [nick, setNick] = useState<string | null>(null);
   const [items, setItems] = useState<Item[] | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const account = getAccount();
 
   useEffect(() => {
     if (loading) return;
@@ -76,7 +81,10 @@ export default function Painel() {
       <ul className="mt-6 space-y-4">
         {items.map((m) => (
           <li key={m.id} className="rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 sm:p-5">
-            <h2 className="font-title text-xl leading-tight font-semibold break-words">{m.title}</h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-title min-w-0 text-xl leading-tight font-semibold break-words">{m.title}</h2>
+              <PlanBadge plan={account.plan} />
+            </div>
             <p className="mt-1 text-sm break-all text-[#6b5440]">{muralUrl({ nick, slug: m.slug })}</p>
 
             <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
@@ -94,6 +102,8 @@ export default function Painel() {
                 </div>
               ))}
             </dl>
+
+            <SlotMeter plan={account.plan} used={m.stats?.messages ?? 0} className="mt-3 text-[14px]" />
 
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Link href={muralPath({ nick, slug: m.slug })} className={`${primaryButton} sm:flex-1`}>
@@ -113,6 +123,8 @@ export default function Painel() {
       <Link href="/criar" className={`${primaryButton} mt-6`}>
         + Criar outro mural
       </Link>
+
+      <PlansOverview account={account} />
     </AuthShell>
   );
 }
