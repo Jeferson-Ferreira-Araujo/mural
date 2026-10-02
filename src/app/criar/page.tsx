@@ -8,7 +8,7 @@ import { muralPath, muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
-const STEPS = ["Nome", "Pergunta", "Publicar"] as const;
+const STEPS = ["Nome", "Pergunta", "Mural"] as const;
 
 export default function CriarMural() {
   const router = useRouter();
@@ -128,7 +128,6 @@ export default function CriarMural() {
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
-            <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: title.trim() ? uniqueSlug(title, taken) : "nome-do-mural" })} />
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {error}
@@ -136,7 +135,6 @@ export default function CriarMural() {
             )}
           </>
         )}
-
 
         {step === 1 && (
           <>
