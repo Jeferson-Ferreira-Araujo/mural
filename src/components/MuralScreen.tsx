@@ -16,7 +16,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; onSend: (p: SendPayload) => void; onTried: () => void; triedAlready: boolean };
+  | { mode: "demo"; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -28,6 +28,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   const [open, setOpen] = useState(false);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
+  const [sending, setSending] = useState(false);
   const { onNotify } = view;
 
   const onCompose =
@@ -63,10 +64,21 @@ export function MuralScreen({ composer, ...view }: Props) {
           used={view.items.length}
           triedAlready={composer.triedAlready}
           onTried={composer.onTried}
-          onSend={(p) => {
-            composer.onSend(p);
-            setOpen(false);
-            onNotify(p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌");
+          sending={sending}
+          onSend={async (p) => {
+            if (sending) return;
+            setSending(true);
+            try {
+              const err = await composer.onSend(p);
+              if (err) {
+                onNotify(err);
+                return;
+              }
+              setOpen(false);
+              onNotify(p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌");
+            } finally {
+              setSending(false);
+            }
           }}
         />
       )}

@@ -22,6 +22,8 @@ export type PublicMural = {
   question: string;
   /** Fundo escolhido pelo dono (padrão: cortiça). */
   board?: string;
+  /** Plano do mural: define o limite de pins e os formatos (validado no servidor). */
+  plan?: "free" | "full";
   stats: MuralStats;
 };
 

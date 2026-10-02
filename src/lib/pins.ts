@@ -1,0 +1,68 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SendPayload } from "@/components/composer/types";
+import type { MuralRef } from "./mural";
+import type { BoardItem } from "./types";
+
+/** Lê o quadro do mural (precisa do token de desbloqueio). Cápsula fechada chega sem conteúdo. null = sem acesso. */
+export async function fetchBoard(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<BoardItem[] | null> {
+  const { data, error } = await sb.rpc("get_board", { p_nick: ref.nick, p_slug: ref.slug, p_token: token });
+  if (error || !Array.isArray(data)) return null;
+  return data as BoardItem[];
+}
+
+export type SendFailure = "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
+export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
+
+const EXT: Record<string, string> = {
+  "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "image/heic": "heic",
+  "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov",
+  "audio/webm": "webm", "audio/mp4": "m4a", "audio/mpeg": "mp3", "audio/ogg": "ogg", "audio/wav": "wav", "audio/x-m4a": "m4a", "audio/aac": "aac",
+};
+
+/** Sobe o arquivo (foto, vídeo ou voz) para o armazenamento e devolve o endereço público. O caminho começa com o token de desbloqueio. */
+async function uploadMedia(sb: SupabaseClient, token: string, blobUrl: string): Promise<string> {
+  const blob = await (await fetch(blobUrl)).blob();
+  const type = blob.type.split(";")[0].trim().toLowerCase();
+  const ext = EXT[type];
+  if (!ext) throw new Error("tipo de arquivo não aceito");
+  const path = `${token}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await sb.storage.from("pin-media").upload(path, blob, { contentType: type, cacheControl: "31536000" });
+  if (error) throw error;
+  return sb.storage.from("pin-media").getPublicUrl(path).data.publicUrl;
+}
+
+/** Cola um pin no espaço escolhido. O servidor valida tudo de novo (token, plano, limite, espaço livre, formatos). */
+export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, visitorId: string, payload: SendPayload): Promise<SendResult> {
+  const { type, ...content } = payload.message as Record<string, unknown> & { type: string };
+  try {
+    if (typeof content.src === "string" && content.src.startsWith("blob:")) content.src = await uploadMedia(sb, token, content.src);
+  } catch {
+    return { ok: false, reason: "upload_failed" };
+  }
+  const { error } = await sb.rpc("send_message", {
+    p_nick: ref.nick,
+    p_slug: ref.slug,
+    p_token: token,
+    p_visitor_id: visitorId,
+    p_slot: payload.slot,
+    p_type: type,
+    p_content: content,
+    p_opens_at: payload.capsuleAt ?? null,
+  });
+  if (!error) return { ok: true };
+  const m = error.message;
+  const known: SendFailure[] = ["plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
+  const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") ? "format_not_allowed" : "error");
+  return { ok: false, reason: hit };
+}
+
+/** Texto para o visitante, por motivo de falha. */
+export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
+  plan_limit: "Este mural chegou ao limite de pins do plano.",
+  slot_taken: "Alguém acabou de colar um pin nesse espaço. Escolha outro.",
+  rate_limited: "Você colou muitos pins agora há pouco. Tente de novo daqui a pouco.",
+  not_unlocked: "Responda a pergunta de novo para continuar.",
+  format_not_allowed: "Esse formato não está liberado neste mural.",
+  upload_failed: "Não foi possível enviar o arquivo. Tente de novo.",
+  error: "Não foi possível colar o pin agora. Tente de novo.",
+};

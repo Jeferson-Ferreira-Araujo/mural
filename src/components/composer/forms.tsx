@@ -186,7 +186,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Foto" hint={`Até ${MAX_PHOTO_MB} MB. Nesta etapa a foto fica só neste navegador (ainda não é enviada).`}>
+      <Field label="Foto" hint={`Até ${MAX_PHOTO_MB} MB.`}>
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
@@ -261,7 +261,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Vídeo" hint={`Até ${MAX_VIDEO_MB} MB. Nesta etapa o vídeo fica só neste navegador (ainda não é enviado).`}>
+      <Field label="Vídeo" hint={`Até ${MAX_VIDEO_MB} MB.`}>
         {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
@@ -281,7 +281,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
 
 /**
  * Mensagem de voz: grava pelo microfone (até 60 s) ou escolhe um arquivo de áudio.
- * Nesta etapa o áudio fica só neste navegador (ainda não é enviado).
+ *
  */
 export function VoiceForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
@@ -397,7 +397,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
             </label>
           </div>
         )}
-        <p className="mt-1.5 text-sm text-[#6b5440]">Até {MAX_VOICE_SEC} segundos. Nesta etapa o áudio fica só neste navegador (ainda não é enviado).</p>
+        <p className="mt-1.5 text-sm text-[#6b5440]">Até {MAX_VOICE_SEC} segundos.</p>
         {error && <ErrorText>{error}</ErrorText>}
       </div>
 

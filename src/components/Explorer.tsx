@@ -18,7 +18,8 @@ import {
   type UnlockResult,
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
-import { getAccount } from "@/lib/account";
+import type { SendPayload } from "./composer/types";
+import { fetchBoard, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { MuralScreen } from "./MuralScreen";
@@ -38,6 +39,9 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   const [choices, setChoices] = useState<ProfileMurals | null>(null);
   const [loading, setLoading] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
+  const [token, setToken] = useState<string | null>(null); // token de desbloqueio (dá acesso ao quadro e ao envio)
+  const [items, setItems] = useState<BoardItem[]>([]); // pins reais do mural aberto
+  const [tried, setTried] = useState(false);
   const { message: toast, notify } = useToast();
   const [siteStats, setSiteStats] = useState<SiteStats | null>(null);
   useEffect(() => {
@@ -54,8 +58,41 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     const sb = getBrowserSupabase();
     sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
     const token = loadGrant(ref);
-    if (token) void checkGrantClient(sb, ref, token).then((ok) => ok && setUnlocked(true));
+    if (token) {
+      void checkGrantClient(sb, ref, token).then((ok) => {
+        if (!ok) return;
+        setToken(token);
+        setUnlocked(true);
+      });
+    }
   }, [nick, slug]);
+
+  // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
+  const loadBoard = useCallback(async () => {
+    if (!nick || !slug) return;
+    const list = await fetchBoard(getBrowserSupabase(), { nick, slug }, token);
+    if (list) setItems(list);
+  }, [nick, slug, token]);
+  useEffect(() => {
+    if (!unlocked || !token) {
+      setItems([]);
+      return;
+    }
+    void loadBoard();
+    const t = setInterval(() => void loadBoard(), 60_000);
+    return () => clearInterval(t);
+  }, [unlocked, token, loadBoard]);
+
+  async function onSendPin(p: SendPayload): Promise<string | void> {
+    if (!nick || !slug || !token) return SEND_ERROR_TEXT.not_unlocked;
+    const res = await sendPin(getBrowserSupabase(), { nick, slug }, token, getVisitorId(), p);
+    if (res.ok) {
+      await loadBoard();
+      return;
+    }
+    if (res.reason === "slot_taken" || res.reason === "plan_limit") await loadBoard();
+    return SEND_ERROR_TEXT[res.reason];
+  }
 
   const openMural = useCallback(
     async (n: string, s: string) => {
@@ -67,6 +104,8 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         return;
       }
       setUnlocked(false);
+      setToken(null);
+      setTried(false);
       setChoices(null);
       setSelected(m);
     },
@@ -105,7 +144,10 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
       const ref = { nick, slug };
       const res = await tryUnlock(getBrowserSupabase(), ref, answer, getVisitorId());
       if (res.ok) {
-        if (res.token) saveGrant(ref, res.token);
+        if (res.token) {
+          saveGrant(ref, res.token);
+          setToken(res.token);
+        }
         setUnlocked(true);
       }
       return res;
@@ -178,8 +220,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
-  // Revelado: o mural real,
-  // que ainda não tem mensagens (o envio real chega na próxima etapa) e usa o plano FREE por padrão.
+  // Revelado: o mural real, com os pins gravados no banco e o plano do próprio mural.
   // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
   const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
   useEffect(() => setDecor(randomMural(Date.now())), []);
@@ -188,8 +229,8 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   return (
     <>
       <MuralScreen
-        items={revealed ? [] : decor}
-        plan={revealed ? getAccount().plan : "full"}
+        items={revealed ? items : decor}
+        plan={revealed ? (selected?.plan ?? "free") : "full"}
         showMeter={revealed}
         locked={!!selected && !unlocked}
         hasSelection={!!selected}
@@ -201,7 +242,19 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}
         panel={panel}
         onNotify={notify}
-        composer={{ mode: "soon" }}
+        composer={
+          revealed
+            ? {
+                mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
+                onSend: onSendPin,
+                onTried: () => {
+                  setTried(true);
+                  if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
+                },
+                triedAlready: tried,
+              }
+            : { mode: "soon" }
+        }
       />
       <Toast message={toast} />
     </>

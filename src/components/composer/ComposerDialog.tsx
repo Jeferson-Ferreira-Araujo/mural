@@ -24,7 +24,8 @@ type Props = {
   fixedSlot?: number | null;
   /** Quantas mensagens o mural já tem. */
   used: number;
-  onSend: (payload: SendPayload) => void;
+  onSend: (payload: SendPayload) => void | Promise<void>;
+  sending?: boolean;
   onTried: () => void;
   triedAlready: boolean;
 };
@@ -55,7 +56,7 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve → (FULL) opcionalmente Cápsula → cola no mural.
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -76,7 +77,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, 
 
   if (!format) return <FormatPicker formats={formats} onPick={setFormat} />;
 
-  const canSend = !!draft && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
+  const canSend = !sending && !!draft && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
 
   return (
     <form
@@ -130,7 +131,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, 
       )}
 
       <button type="submit" disabled={!canSend} className={primaryButton}>
-        {capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
+        {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
       <p className="text-center text-xs text-[#8a7b69]">Sua mensagem é anônima.</p>
     </form>
