@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { PostItColor } from "@/lib/types";
+import type { PlayerColor, PostItColor } from "@/lib/types";
+import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import type { DraftChange } from "./types";
 
@@ -207,6 +208,7 @@ function formatDuration(sec: number) {
 export function VideoForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | undefined>();
+  const [color, setColor] = useState<PlayerColor>("black");
   const [caption, setCaption] = useState("");
   const [error, setError] = useState<string | null>(null);
   const prev = useRef<string | null>(null);
@@ -226,7 +228,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
     probe.onloadedmetadata = () => setDuration(Number.isFinite(probe.duration) ? formatDuration(probe.duration) : undefined);
     probe.src = url;
   }
-  useEffect(() => onChange(src ? { type: "video", caption: caption.trim(), src, duration } : null), [src, caption, duration, onChange]);
+  useEffect(() => onChange(src ? { type: "video", caption: caption.trim(), src, duration, playerColor: color } : null), [src, caption, duration, color, onChange]);
 
   return (
     <div className="space-y-4">
@@ -234,6 +236,24 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
+      <fieldset>
+        <legend className="mb-1.5 text-sm font-semibold">Cor do player</legend>
+        <div className="flex gap-2" role="radiogroup" aria-label="Cor do player">
+          {PLAYER_COLOR_IDS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={color === id}
+              aria-label={PLAYER_PALETTE[id].label}
+              title={PLAYER_PALETTE[id].label}
+              onClick={() => setColor(id)}
+              className={`size-9 cursor-pointer rounded-full border-2 shadow-[inset_0_0.15rem_0.2rem_rgba(255,255,255,.45),0_0.1rem_0.25rem_rgba(0,0,0,.3)] transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${color === id ? "scale-110 border-[#2f2218]" : "border-transparent"}`}
+              style={{ background: PLAYER_PALETTE[id].swatch }}
+            />
+          ))}
+        </div>
+      </fieldset>
       <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o player.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Um dos lugares que mais me fez bem" className={inputClass} />}
       </Field>

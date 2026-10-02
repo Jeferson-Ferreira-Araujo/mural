@@ -1,5 +1,8 @@
 export type PostItColor = "yellow" | "pink" | "green" | "orange" | "blue";
 
+/** Cor do mini player de vídeo. */
+export type PlayerColor = "black" | "silver" | "red" | "blue" | "pink" | "green";
+
 type Base = {
   id: string;
   /** Veio de uma Cápsula PINZ que já abriu. */
@@ -13,7 +16,7 @@ export type Message =
   | (Base & { type: "list"; title: string; items: { text: string; done: boolean }[] })
   | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string })
-  | (Base & { type: "video"; caption: string; duration?: string; src?: string });
+  | (Base & { type: "video"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor });
 
 export type MessageType = Message["type"];
 

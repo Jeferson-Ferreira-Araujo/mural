@@ -20,7 +20,7 @@ function Content({ m }: { m: Message }) {
     case "music":
       return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} />;
     case "video":
-      return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} />;
+      return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
   }
 }
 
