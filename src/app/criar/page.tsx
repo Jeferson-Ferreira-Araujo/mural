@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
-import { muralPath, muralUrl, SITE_HOST, slugFromTitle } from "@/lib/mural";
+import { muralPath, muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
+import { AddressBox, AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
 const STEPS = ["Nome", "Apresentação", "Pergunta", "Publicar"] as const;
 const DEFAULT_TAGLINE = "Mensagens de pessoas que me conhecem";
@@ -25,7 +25,7 @@ export default function CriarMural() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<{ nick: string; slug: string } | null>(null);
-  const [count, setCount] = useState(0);
+  const [taken, setTaken] = useState<string[]>([]);
 
 
   // exige login; quem já tem mural vai para o painel
@@ -37,7 +37,7 @@ export default function CriarMural() {
     }
     const sb = getBrowserSupabase();
     Promise.all([getOwnMurals(sb), getOwnNickname(sb)]).then(([murals, n]) => {
-      setCount(murals.length);
+      setTaken(murals.map((m) => m.slug));
       setSavedNick(n);
       setReady(true);
     });
@@ -128,13 +128,12 @@ export default function CriarMural() {
       >
         {step === 0 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">{count > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
+            <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
-            <p className="rounded-xl border border-[#e1d3ba] bg-white/60 px-4 py-3 text-sm text-[#4a3826]">
-              Seu nickname: <strong>{savedNick}</strong>. O endereço do mural é criado a partir do nome.
-            </p>
+            <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: title.trim() ? uniqueSlug(title, taken) : "nome-do-mural" })} />
+            <p className="-mt-2 text-sm text-[#6b5440]">Esse é o link que você vai compartilhar. Ele acompanha o nome do mural e fica guardado no seu painel.</p>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {error}
@@ -175,17 +174,12 @@ export default function CriarMural() {
                 <dd className="text-[#4a3826] italic">{tagline.trim()}</dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Endereço</dt>
-                <dd className="break-all">
-                  {SITE_HOST}/{savedNick}/{slugFromTitle(title)}
-                </dd>
-              </div>
-              <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Pergunta</dt>
                 <dd>{question.trim()}</dd>
                 <dd className="text-[#6b5440]">Respostas aceitas: {answers.join(", ")}</dd>
               </div>
             </dl>
+            <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: uniqueSlug(title, taken) })} />
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {error}

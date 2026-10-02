@@ -111,3 +111,15 @@ export function slugFromTitle(title: string): string {
     .replace(/-+$/g, "");
   return base.length >= 2 ? base : "mural";
 }
+
+/** Mesma regra do banco: base do título, com -2, -3… se a pessoa já tiver um mural com esse endereço. */
+export function uniqueSlug(title: string, existing: string[]): string {
+  const base = slugFromTitle(title);
+  let cand = base;
+  let n = 1;
+  while (existing.includes(cand)) {
+    n += 1;
+    cand = `${base.slice(0, 36)}-${n}`;
+  }
+  return cand;
+}

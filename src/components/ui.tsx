@@ -197,3 +197,28 @@ export function NicknameField({
     </Field>
   );
 }
+
+/** Mostra uma URL em destaque, com botão para copiar (para a pessoa guardar ou enviar). */
+export function AddressBox({ url, label = "Endereço do seu mural" }: { url: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(`https://${url}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* sem permissão de área de transferência */
+    }
+  }
+  return (
+    <div className="rounded-xl border border-[#e1d3ba] bg-white/60 p-3 sm:p-4">
+      <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{label}</p>
+      <div className="mt-1.5 flex items-center gap-3">
+        <p className="min-w-0 flex-1 text-[15px] font-semibold break-all text-[#2f2218]">{url}</p>
+        <button type="button" onClick={copy} className={`${ghostButton} shrink-0 !px-3.5 !py-2 text-sm`}>
+          {copied ? "Copiado ✓" : "Copiar"}
+        </button>
+      </div>
+    </div>
+  );
+}
