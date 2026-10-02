@@ -72,7 +72,7 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
       ],
     },
     { id: "m12", type: "postit", color: "green", text: "Valeu por tudo, parceiro. Conta comigo sempre!" },
-    { id: "m13", type: "text", variant: "letter", text: "Saudade da sua risada. Aparece mais! Um abraço enorme." },
+    { id: "m13", type: "voice", caption: "Sua voz sempre me faz sorrir! ♡", duration: "0:27" },
     { id: "m14", type: "postit", color: "orange", text: "Saudade da sua risada!" },
   ];
   return { items, vault: { ...SEED_VAULT } };

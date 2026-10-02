@@ -33,6 +33,18 @@ const THUMBS: Record<MessageType, ReactNode> = {
       <span className="mx-auto mt-[4px] block size-[16px] rounded-full bg-white/70 ring-1 ring-black/20" />
     </span>
   ),
+  voice: (
+    <span className="flex h-7 w-11 gap-[3px] rounded-[7px] bg-gradient-to-b from-[#f1e6d3] to-[#b5a07a] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-white/60">
+      <span className="grid w-[10px] place-items-center rounded-[3px] bg-black/10">
+        <span className="size-[2px] rounded-full bg-[#6b5a3c] shadow-[0_3px_0_#6b5a3c,0_-3px_0_#6b5a3c]" />
+      </span>
+      <span className="flex flex-1 items-center justify-center gap-[1px] rounded-[3px] bg-[#111]">
+        {[4, 9, 6, 11, 5, 8].map((h, i) => (
+          <span key={i} className="w-[1.5px] rounded-full bg-white/85" style={{ height: h }} />
+        ))}
+      </span>
+    </span>
+  ),
   video: (
     <span className="block w-10 rounded-[6px] bg-gradient-to-br from-[#3b3b40] to-[#19191b] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#d6a062]/60">
       <span className="grid aspect-[16/10] place-items-center rounded-[3px] bg-black text-[9px] text-white">▶</span>

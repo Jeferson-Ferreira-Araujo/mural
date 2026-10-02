@@ -269,3 +269,140 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
     </div>
   );
 }
+
+// ---------- Voz (FULL) ----------
+const MAX_VOICE_SEC = 60;
+const MAX_AUDIO_MB = 10;
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+/**
+ * Mensagem de voz: grava pelo microfone (até 60 s) ou escolhe um arquivo de áudio.
+ * Nesta etapa o áudio fica só neste navegador (ainda não é enviado).
+ */
+export function VoiceForm({ onChange }: { onChange: DraftChange }) {
+  const [src, setSrc] = useState<string | null>(null);
+  const [duration, setDuration] = useState<string | undefined>();
+  const [caption, setCaption] = useState("");
+  const [color, setColor] = useState<PlayerColor>("cream");
+  const [recording, setRecording] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  const prevUrl = useRef<string | null>(null);
+  const recorder = useRef<MediaRecorder | null>(null);
+  const stream = useRef<MediaStream | null>(null);
+  const timer = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const seconds = useRef(0);
+
+  const canRecord = typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== "undefined";
+
+  function replaceAudio(url: string, dur?: string) {
+    if (prevUrl.current) URL.revokeObjectURL(prevUrl.current);
+    prevUrl.current = url;
+    setSrc(url);
+    setDuration(dur);
+  }
+
+  function stop() {
+    if (recorder.current?.state === "recording") recorder.current.stop();
+  }
+
+  async function start() {
+    setError(null);
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.current = s;
+      const mr = new MediaRecorder(s);
+      const chunks: Blob[] = [];
+      mr.ondataavailable = (e) => {
+        if (e.data.size) chunks.push(e.data);
+      };
+      mr.onstop = () => {
+        s.getTracks().forEach((t) => t.stop());
+        clearInterval(timer.current);
+        setRecording(false);
+        const blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
+        if (blob.size > 0) replaceAudio(URL.createObjectURL(blob), mmss(Math.max(seconds.current, 1)));
+      };
+      recorder.current = mr;
+      seconds.current = 0;
+      setElapsed(0);
+      mr.start();
+      setRecording(true);
+      timer.current = setInterval(() => {
+        seconds.current += 1;
+        setElapsed(seconds.current);
+        if (seconds.current >= MAX_VOICE_SEC) stop();
+      }, 1000);
+    } catch (e) {
+      const denied = e instanceof DOMException && (e.name === "NotAllowedError" || e.name === "SecurityError");
+      setError(denied ? "Permita o uso do microfone para gravar." : "Não foi possível usar o microfone. Você pode escolher um arquivo de áudio.");
+    }
+  }
+
+  function pickFile(file: File | undefined) {
+    if (!file) return;
+    if (!file.type.startsWith("audio/")) return setError("Escolha um arquivo de áudio.");
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) return setError(`O áudio pode ter até ${MAX_AUDIO_MB} MB.`);
+    setError(null);
+    const url = URL.createObjectURL(file);
+    replaceAudio(url);
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.onloadedmetadata = () => setDuration(Number.isFinite(probe.duration) ? mmss(probe.duration) : undefined);
+    probe.src = url;
+  }
+
+  useEffect(() => onChange(src ? { type: "voice", caption: caption.trim(), src, duration, playerColor: color } : null), [src, caption, duration, color, onChange]);
+
+  // ao fechar: solta o microfone e a URL do áudio
+  useEffect(
+    () => () => {
+      clearInterval(timer.current);
+      stream.current?.getTracks().forEach((t) => t.stop());
+      if (prevUrl.current) URL.revokeObjectURL(prevUrl.current);
+    },
+    [],
+  );
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <p className="mb-1.5 text-sm font-semibold">Sua voz</p>
+        {recording ? (
+          <div className="flex items-center gap-3 rounded-2xl border border-[#e0a8a0] bg-[#fdecea] px-4 py-3">
+            <span aria-hidden className="size-3 animate-pulse rounded-full bg-[#d6281d]" />
+            <span role="timer" className="font-mono text-sm font-semibold">
+              {mmss(elapsed)} / {mmss(MAX_VOICE_SEC)}
+            </span>
+            <button type="button" onClick={stop} className="ml-auto cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2c313b]">
+              Parar
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            {canRecord && (
+              <button type="button" onClick={start} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b]">
+                <span aria-hidden className="size-2.5 rounded-full bg-[#ff5a4d]" />
+                {src ? "Gravar de novo" : "Gravar"}
+              </button>
+            )}
+            <label className="cursor-pointer rounded-xl border border-[#d9c9ad] px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf] focus-within:outline-2 focus-within:outline-[#d98a2b]">
+              {canRecord ? "ou escolher um arquivo" : "Escolher um arquivo de áudio"}
+              <input type="file" accept="audio/*" onChange={(e) => pickFile(e.target.files?.[0])} className="sr-only" />
+            </label>
+          </div>
+        )}
+        <p className="mt-1.5 text-sm text-[#6b5440]">Até {MAX_VOICE_SEC} segundos. Nesta etapa o áudio fica só neste navegador (ainda não é enviado).</p>
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
+
+      <PlayerColorPicker value={color} onChange={setColor} />
+
+      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Sua voz sempre me faz sorrir!" className={inputClass} />}
+      </Field>
+    </div>
+  );
+}

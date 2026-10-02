@@ -6,6 +6,7 @@ import { PaperNote } from "./PaperNote";
 import { PolaroidPhoto } from "./PolaroidPhoto";
 import { PostIt } from "./PostIt";
 import { VideoPrint } from "./VideoPrint";
+import { VoiceNote } from "./VoiceNote";
 
 function Content({ m }: { m: Message }) {
   switch (m.type) {
@@ -21,6 +22,8 @@ function Content({ m }: { m: Message }) {
       return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} color={m.playerColor} />;
     case "video":
       return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
+    case "voice":
+      return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
   }
 }
 
