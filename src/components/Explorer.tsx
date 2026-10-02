@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildPool, randomMural } from "@/data/mock";
 import {
   checkGrantClient,
+  clearGrant,
   getProfileMurals,
   getSiteStats,
   getPublicMural,
@@ -67,12 +68,43 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     }
   }, [nick, slug]);
 
+  // tranca o mural de novo (desbloqueio vencido, apagado pelo dono ou inválido): precisa responder a pergunta outra vez
+  const relock = useCallback(
+    (why: string) => {
+      if (nick && slug) clearGrant({ nick, slug });
+      setToken(null);
+      setUnlocked(false);
+      setItems([]);
+      notify(why);
+      // a pergunta pode ter mudado: mostra a atual
+      if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
+    },
+    [nick, slug, notify],
+  );
+
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
   const loadBoard = useCallback(async () => {
     if (!nick || !slug) return;
     const list = await fetchBoard(getBrowserSupabase(), { nick, slug }, token);
     if (list) setItems(list);
-  }, [nick, slug, token]);
+    else relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
+  }, [nick, slug, token, relock]);
+
+  // de tempos em tempos (e ao voltar para a aba) confere se o desbloqueio continua valendo
+  useEffect(() => {
+    if (!unlocked || !token || !nick || !slug) return;
+    const check = async () => {
+      const ok = await checkGrantClient(getBrowserSupabase(), { nick, slug }, token);
+      if (!ok) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
+    };
+    const t = setInterval(() => void check(), 30_000);
+    const onVisible = () => document.visibilityState === "visible" && void check();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [unlocked, token, nick, slug, relock]);
   useEffect(() => {
     if (!unlocked || !token) {
       setItems([]);
@@ -89,6 +121,11 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     if (res.ok) {
       await loadBoard();
       return;
+    }
+    if (res.reason === "not_unlocked") {
+      const msg = "Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.";
+      relock(msg);
+      return msg;
     }
     if (res.reason === "slot_taken" || res.reason === "plan_limit") await loadBoard();
     return SEND_ERROR_TEXT[res.reason];

@@ -84,19 +84,46 @@ export function getVisitorId(): string {
   }
 }
 
+/**
+ * O desbloqueio fica só na ABA (sessionStorage): fechar a aba ou o navegador tranca o mural de novo.
+ * No servidor ele também vence sozinho (2 horas) e é apagado quando o dono troca a pergunta ou a resposta.
+ */
 const grantKey = (r: MuralRef) => `mural:grant:${r.nick}/${r.slug}`;
-export const loadGrant = (r: MuralRef) => {
+
+/** Desbloqueios antigos eram guardados no navegador por 30 dias: apaga todos (uma vez por carregamento). */
+let legacyCleaned = false;
+function cleanLegacyGrants() {
+  if (legacyCleaned) return;
+  legacyCleaned = true;
   try {
-    return localStorage.getItem(grantKey(r));
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("mural:grant:"))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch {
+    /* sem armazenamento */
+  }
+}
+
+export const loadGrant = (r: MuralRef) => {
+  cleanLegacyGrants();
+  try {
+    return sessionStorage.getItem(grantKey(r));
   } catch {
     return null;
   }
 };
 export const saveGrant = (r: MuralRef, token: string) => {
   try {
-    localStorage.setItem(grantKey(r), token);
+    sessionStorage.setItem(grantKey(r), token);
   } catch {
-    /* sem armazenamento: o desbloqueio vale só nesta visita */
+    /* sem armazenamento: o desbloqueio vale só enquanto a página estiver aberta */
+  }
+};
+export const clearGrant = (r: MuralRef) => {
+  try {
+    sessionStorage.removeItem(grantKey(r));
+  } catch {
+    /* nada a apagar */
   }
 };
 
