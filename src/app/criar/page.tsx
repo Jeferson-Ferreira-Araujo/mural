@@ -184,7 +184,7 @@ export default function CriarMural() {
             </button>
           )}
           <button type="submit" disabled={!canNext || busy} className={`${primaryButton} flex-1`}>
-            {step < 2 ? "Continuar" : busy ? "Publicando…" : "Publicar meu mural"}
+            {step < 2 ? "Continuar" : busy ? "Criando…" : "Criar meu mural"}
           </button>
         </div>
       </form>
