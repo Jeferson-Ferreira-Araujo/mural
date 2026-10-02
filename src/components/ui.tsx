@@ -163,3 +163,55 @@ export function AddressBox({ url, label = "Endereço do seu mural" }: { url: str
     </div>
   );
 }
+
+const QUESTION_SUGGESTIONS = [
+  "Qual era meu apelido na escola?",
+  "Qual é a minha comida favorita?",
+  "Em que cidade eu nasci?",
+  "Qual é o meu time do coração?",
+  "Qual foi o nome do meu primeiro animal de estimação?",
+  "Qual é a minha cor favorita?",
+  "Qual era meu desenho animado favorito na infância?",
+  "Qual foi o meu primeiro emprego?",
+  "Qual é a minha música favorita?",
+  "Qual é o meu filme favorito?",
+  "Qual era o nome da minha escola?",
+  "Qual foi o primeiro lugar que viajamos juntos?",
+];
+
+/** Botão que abre uma lista de sugestões de pergunta; ao escolher, preenche o campo. */
+export function QuestionSuggestions({ onPick }: { onPick: (q: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const listId = useId();
+  return (
+    <div className="mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls={listId}
+        className="cursor-pointer text-sm font-semibold text-[#6b5440] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
+      >
+        💡 {open ? "Esconder sugestões" : "Ver sugestões de perguntas"}
+      </button>
+      {open && (
+        <ul id={listId} className="rise mt-2 flex flex-col gap-1.5">
+          {QUESTION_SUGGESTIONS.map((q) => (
+            <li key={q}>
+              <button
+                type="button"
+                onClick={() => {
+                  onPick(q);
+                  setOpen(false);
+                }}
+                className="w-full cursor-pointer rounded-xl border border-[#e1d3ba] bg-white/60 px-3.5 py-2.5 text-left text-sm text-[#2f2218] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
+              >
+                {q}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

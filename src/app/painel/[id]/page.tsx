@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { getOwnMurals, getOwnNickname, useSession, type OwnMural } from "@/lib/auth";
 import { muralPath, muralUrl } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
+import { AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
 
 export default function EditarMural() {
   const router = useRouter();
@@ -100,7 +100,12 @@ export default function EditarMural() {
 
       <form onSubmit={save} className="mt-6 space-y-5" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Pergunta de desbloqueio">{(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />}</Field>
+        <Field label="Pergunta de desbloqueio">{(fid) => (
+            <>
+              <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />
+              <QuestionSuggestions onPick={setQuestion} />
+            </>
+          )}</Field>
 
         {changeAnswer ? (
           <Field label="Nova resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam). Quem já tinha desbloqueado precisará responder de novo.">
