@@ -1,12 +1,12 @@
 import type { PostItColor } from "@/lib/types";
 import { Pin } from "./fasteners";
 
-const palette: Record<PostItColor, { bg: string; edge: string; pin: string }> = {
-  yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "#e0160e" },
-  pink: { bg: "#f7a8c0", edge: "#e38aa7", pin: "#e0160e" },
-  green: { bg: "#b9e08a", edge: "#9cc86a", pin: "#e0160e" },
-  orange: { bg: "#fbbd78", edge: "#eba15a", pin: "#1f6fd0" },
-  blue: { bg: "#a9d8f0", edge: "#84bde0", pin: "#1f6fd0" },
+const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blue" }> = {
+  yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "red" },
+  pink: { bg: "#f7a8c0", edge: "#e38aa7", pin: "red" },
+  green: { bg: "#b9e08a", edge: "#9cc86a", pin: "red" },
+  orange: { bg: "#fbbd78", edge: "#eba15a", pin: "blue" },
+  blue: { bg: "#a9d8f0", edge: "#84bde0", pin: "blue" },
 };
 
 export function PostIt({ color, text }: { color: PostItColor; text: string }) {
@@ -20,7 +20,7 @@ export function PostIt({ color, text }: { color: PostItColor; text: string }) {
         borderRadius: "0.1em 0.1em 0.5em 0.1em / 0.1em 0.1em 1.2em 0.1em",
       }}
     >
-      <Pin color={c.pin} className="top-[0.55em] left-[1.1em]" />
+      <Pin tone={c.pin} className="top-[0.55em] left-[1.1em]" />
       <p className="font-hand text-[1.7em] leading-[1.08] text-[#34281a]">{text}</p>
     </article>
   );
