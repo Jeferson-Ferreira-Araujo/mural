@@ -17,7 +17,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 }
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
-export function Sidebar({ siteStats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "siteStats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
+export function Sidebar({ siteStats, capacity, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "siteStats" | "capacity" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
@@ -40,7 +40,7 @@ export function Sidebar({ siteStats, panel, plan, used, showMeter, notice, panel
 
       {panel("light")}
 
-      {showMeter && <SlotMeter plan={plan} used={used} />}
+      {showMeter && <SlotMeter plan={plan} used={used} capacity={capacity} />}
       {notice?.("light")}
 
       </div>

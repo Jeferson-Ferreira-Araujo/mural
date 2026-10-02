@@ -1,6 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { PinDetail } from "./board/PinDetail";
+import { typeLabel, isSealed } from "@/lib/types";
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { EmptyNote } from "./EmptyNote";
@@ -32,7 +34,7 @@ const BASE_EM_CQW = 0.98;
  * Descobre o quanto encolher os blocos para a grade caber na cortiça sem sobrepor.
  * Mede com a escala cheia; se a altura natural passar da cortiça, reduz proporcionalmente.
  */
-function useFitScale(base: number, deps: unknown[]) {
+function useFitScale(base: number, min: number, deps: unknown[]) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -45,7 +47,7 @@ function useFitScale(base: number, deps: unknown[]) {
       const need = g.scrollHeight;
       const have = g.clientHeight;
       g.style.fontSize = prev; // devolve o valor que o React aplicou
-      const next = need > have + 1 ? Math.max(0.55, (have / need) * 0.985) : 1;
+      const next = need > have + 1 ? Math.max(min, (have / need) * 0.985) : 1;
       setScale((prev) => (Math.abs(prev - next) > 0.004 ? next : prev));
     };
     measure();
@@ -71,12 +73,16 @@ function focusFirstField() {
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
-  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, share, panel, panelTitle, notice, onCompose, onNotify } = props;
-  const available = slotsFor(plan);
+  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify } = props;
+  const dense = capacity > BOARD_CAPACITY; // quadro denso (teste): cards pequenos, clique no pin para ler
+  const cols = dense ? 6 : 5;
+  const rows = Math.ceil(capacity / cols);
+  const [detail, setDetail] = useState<number | null>(null);
+  const available = slotsFor(plan, capacity);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
-  const baseEm = BASE_EM_CQW * look.size;
-  const fit = useFitScale(baseEm, [items, baseEm]);
+  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.62 : 1);
+  const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity]);
 
   function addMessage() {
     if (!unlocked) {
@@ -89,7 +95,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar siteStats={siteStats} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
+      <Sidebar siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className="relative min-w-0 flex-1 overflow-hidden">
@@ -135,12 +141,12 @@ export function DesktopBoard(props: ViewProps) {
             >
               <div
                 ref={fit.ref}
-                className="grid h-full grid-cols-5 content-evenly items-start justify-items-center"
-                style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateRows: "repeat(3, auto)", rowGap: "1.5em", columnGap: "0.4em" }}
+                className="grid h-full content-evenly items-start justify-items-center"
+                style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.2em" : "1.5em", columnGap: "0.4em" }}
               >
-                {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
+                {Array.from({ length: capacity }, (_, i) => {
                   const item = items[i];
-                  const tilt = TILT[i];
+                  const tilt = TILT[i % TILT.length];
                   const { dx, dy } = jitter(i);
 
                   // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera).
@@ -168,7 +174,27 @@ export function DesktopBoard(props: ViewProps) {
                         } as CSSProperties
                       }
                     >
-                      <MessageView message={item} />
+                      {dense ? (
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setDetail(i)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setDetail(i);
+                            }
+                          }}
+                          aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : typeLabel[item.type]}`}
+                          className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
+                        >
+                          <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.18]">
+                            <MessageView message={item} />
+                          </div>
+                        </div>
+                      ) : (
+                        <MessageView message={item} />
+                      )}
                     </div>
                   );
                 })}
@@ -183,6 +209,7 @@ export function DesktopBoard(props: ViewProps) {
           </div>
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </main>
+        {dense && <PinDetail items={items} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} />}
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 pb-5">
           {onCompose && (

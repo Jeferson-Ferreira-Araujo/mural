@@ -6,8 +6,8 @@ import { PlanBadge } from "./PlanBadge";
  * Contador de espaços do mural: "3 de 5 espaços" + 15 pontinhos
  * (preenchido = ocupado, vazado = livre, apagado = bloqueado no plano atual).
  */
-export function SlotMeter({ plan, used, tone = "light", className = "" }: { plan: PlanId; used: number; tone?: Tone; className?: string }) {
-  const available = slotsFor(plan);
+export function SlotMeter({ plan, used, tone = "light", className = "", capacity = BOARD_CAPACITY }: { plan: PlanId; used: number; tone?: Tone; className?: string; capacity?: number }) {
+  const available = slotsFor(plan, capacity);
   const dark = tone === "dark";
   const full = used >= available;
   const free = Math.max(available - used, 0);
@@ -16,7 +16,7 @@ export function SlotMeter({ plan, used, tone = "light", className = "" }: { plan
     <div
       className={`rounded-[1em] border px-[1em] py-[0.8em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2] backdrop-blur" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"} ${className}`}
       role="group"
-      aria-label={`Espaços do mural: ${used} de ${available} ocupados, de ${BOARD_CAPACITY} possíveis`}
+      aria-label={`Espaços do mural: ${used} de ${available} ocupados, de ${capacity} possíveis`}
     >
       <div className="flex items-center justify-between gap-[0.6em]">
         <p className="text-[0.95em] leading-tight">
@@ -26,8 +26,8 @@ export function SlotMeter({ plan, used, tone = "light", className = "" }: { plan
         <PlanBadge plan={plan} />
       </div>
 
-      <div className="mt-[0.7em] flex items-center gap-[0.28em]" aria-hidden>
-        {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
+      <div className="mt-[0.7em] flex flex-wrap items-center gap-[0.28em]" aria-hidden>
+        {Array.from({ length: capacity }, (_, i) => {
           const state = i < used ? "used" : i < available ? "free" : "locked";
           return (
             <span
@@ -52,7 +52,7 @@ export function SlotMeter({ plan, used, tone = "light", className = "" }: { plan
 
       <p className={`mt-[0.6em] text-[0.78em] leading-snug ${dark ? "text-white/65" : "text-[#6b5440]"}`}>
         {full ? "Mural lotado." : `${free} ${free === 1 ? "espaço livre" : "espaços livres"}.`}{" "}
-        {plan === "free" ? `Este PINZ libera ${available} dos ${BOARD_CAPACITY} espaços.` : `Todos os ${BOARD_CAPACITY} espaços liberados.`}
+        {plan === "free" ? `Este PINZ libera ${available} dos ${capacity} espaços.` : `Todos os ${capacity} espaços liberados.`}
       </p>
     </div>
   );

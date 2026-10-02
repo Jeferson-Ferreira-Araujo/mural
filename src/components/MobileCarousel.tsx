@@ -17,7 +17,7 @@ const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : typeLabel[
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. Desfocada até desbloquear. */
-export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify, landing = false, board }: ViewProps) {
+export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify, landing = false, board, capacity }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
@@ -104,7 +104,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
 
         {!landing && (showMeter || notice) && (
           <div className="mx-auto w-[min(90vw,30rem)] space-y-3 text-[15px] md:text-[16px]">
-            {showMeter && !locked && <SlotMeter plan={plan} used={messages.length} tone="dark" />}
+            {showMeter && !locked && <SlotMeter plan={plan} used={messages.length} tone="dark" capacity={capacity} />}
             {!locked && notice?.("dark")}
           </div>
         )}

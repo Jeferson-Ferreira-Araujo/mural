@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { itemsFor } from "@/data/mock";
 import { canChangeBoard, DEFAULT_BOARD, type BoardId } from "@/lib/boards";
-import { slotsFor, type PlanId } from "@/lib/plans";
+import { BOARD_CAPACITY, slotsFor, type PlanId } from "@/lib/plans";
 import { isSealed, type BoardItem, type Message } from "@/lib/types";
 import { OwnerAlert } from "../board/OwnerAlert";
 import type { SendPayload } from "../composer/types";
@@ -27,16 +27,17 @@ let uid = 0;
 export function DemoMural() {
   const { message: toast, notify } = useToast();
   const [plan, setPlan] = useState<PlanId>(START_PLAN);
-  const [board, setBoard] = useState<Board>(() => itemsFor(START_PLAN, START_COUNT, Date.now()));
+  const [board, setBoard] = useState<Board>(() => itemsFor(START_PLAN, START_COUNT, Date.now(), BOARD_CAPACITY));
   const [view, setView] = useState<DemoView>("visitor");
   const [tries, setTries] = useState(START_TRIES);
   const [triedAlready, setTriedAlready] = useState(false);
+  const [capacity, setCapacity] = useState<number>(BOARD_CAPACITY);
   const [credits, setCredits] = useState(false);
   const [boardId, setBoardId] = useState<BoardId>(DEFAULT_BOARD);
 
-  const available = slotsFor(plan);
+  const available = slotsFor(plan, capacity);
 
-  const fill = useCallback((p: PlanId, n: number) => setBoard(itemsFor(p, Math.max(0, Math.min(n, slotsFor(p))), Date.now())), []);
+  const fill = useCallback((p: PlanId, n: number, cap: number = capacity) => setBoard(itemsFor(p, Math.max(0, Math.min(n, slotsFor(p, cap))), Date.now(), cap)), [capacity]);
 
   /** Abre as cápsulas cuja data já chegou (`force` abre todas). O conteúdo só passa a existir no quadro agora. */
   const openCapsules = useCallback((force: boolean) => {
@@ -83,7 +84,8 @@ export function DemoMural() {
 
   function reset() {
     setPlan(START_PLAN);
-    setBoard(itemsFor(START_PLAN, START_COUNT, Date.now()));
+    setCapacity(BOARD_CAPACITY);
+    setBoard(itemsFor(START_PLAN, START_COUNT, Date.now(), BOARD_CAPACITY));
     setView("visitor");
     setTries(START_TRIES);
     setTriedAlready(false);
@@ -108,6 +110,11 @@ export function DemoMural() {
         hasSealed={hasSealed}
         onOpenCapsules={() => openCapsules(true)}
         onReset={reset}
+        capacity={capacity}
+        onCapacity={(n) => {
+          setCapacity(n);
+          fill(plan, board.items.length, n);
+        }}
         credits={credits}
         onCredits={(v) => {
           setCredits(v);
@@ -119,7 +126,7 @@ export function DemoMural() {
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [plan, board.items.length, view, hasSealed, credits, boardId],
+    [plan, board.items.length, view, hasSealed, credits, boardId, capacity],
   );
 
   const notice = useMemo(
@@ -133,6 +140,7 @@ export function DemoMural() {
         items={board.items}
         plan={plan}
         board={boardId}
+        capacity={capacity}
         showMeter
         locked={false}
         hasSelection

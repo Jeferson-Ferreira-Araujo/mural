@@ -15,6 +15,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   plan: PlanId;
+  capacity?: number;
   /** Quantas mensagens o mural já tem. */
   used: number;
   onSend: (payload: SendPayload) => void;
@@ -48,8 +49,8 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve → (FULL) opcionalmente Cápsula → cola no mural.
  */
-function Body({ plan, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
-  const available = slotsFor(plan);
+function Body({ plan, capacity, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
+  const available = slotsFor(plan, capacity);
   const full = used >= available;
   const formats = formatsFor(plan);
   const [format, setFormat] = useState<MessageType | null>(null);

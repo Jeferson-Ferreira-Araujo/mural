@@ -79,8 +79,15 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
 }
 
 /** Os primeiros `count` itens do pool que o plano permite (formatos e cápsula). */
-export function itemsFor(plan: PlanId, count: number, nowMs: number): { items: BoardItem[]; vault: Record<string, Message> } {
-  const { items, vault } = buildPool(nowMs);
+export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 15): { items: BoardItem[]; vault: Record<string, Message> } {
+  const { items: base, vault } = buildPool(nowMs);
+  let items = base;
+  if (capacity > base.length) {
+    // quadro de teste com mais espaços: repete os cartões de exemplo, em outra ordem, com ids novos
+    const extra = base.map((_, i) => base[(i + 7) % base.length]).map((it) => ({ ...it, id: `${it.id}-b` }) as BoardItem);
+    for (const it of extra) if (isSealed(it) && vault[it.id.replace(/-b$/, "")]) vault[it.id] = { ...vault[it.id.replace(/-b$/, "")], id: it.id };
+    items = [...base, ...extra].slice(0, capacity);
+  }
   const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : formatsFor(plan).includes(i.type)));
   return { items: allowed.slice(0, count), vault };
 }

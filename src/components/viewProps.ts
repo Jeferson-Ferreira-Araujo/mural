@@ -23,6 +23,8 @@ export type ViewProps = {
   stats: { visited: number; tried: number; correct: number; messages: number } | null;
   /** Números do site inteiro, mostrados no rodapé da barra quando nenhum mural está escolhido. */
   siteStats?: SiteStats | null;
+  /** Quantos espaços o quadro tem (padrão 15; 30 = teste do quadro denso). */
+  capacity?: number;
   /** Fundo do mural (padrão: cortiça). */
   board?: BoardId;
   /** Para o botão Compartilhar (null = nada para compartilhar). */

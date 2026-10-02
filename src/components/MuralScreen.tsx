@@ -49,6 +49,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           open={open}
           onClose={() => setOpen(false)}
           plan={view.plan}
+          capacity={view.capacity}
           used={view.items.length}
           triedAlready={composer.triedAlready}
           onTried={composer.onTried}

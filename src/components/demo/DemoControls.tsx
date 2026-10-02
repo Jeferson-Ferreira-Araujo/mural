@@ -1,7 +1,7 @@
 "use client";
 
 import { BOARDS, canChangeBoard, type BoardId } from "@/lib/boards";
-import { BOARD_CAPACITY, PLANS, slotsFor, type PlanId } from "@/lib/plans";
+import { BOARD_CAPACITY, DENSE_CAPACITY, PLANS, slotsFor, type PlanId } from "@/lib/plans";
 import type { Tone } from "../viewProps";
 
 export type DemoView = "visitor" | "owner";
@@ -17,6 +17,8 @@ type Props = {
   hasSealed: boolean;
   onOpenCapsules: () => void;
   onReset: () => void;
+  capacity: number;
+  onCapacity: (n: number) => void;
   credits: boolean;
   onCredits: (v: boolean) => void;
   board: BoardId;
@@ -49,10 +51,10 @@ function Segmented<T extends string>({ label, value, options, onChange, dark }: 
 }
 
 /** Controles da página de demonstração: simulam planos e estados do mural (nada disso é salvo). */
-export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
+export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, capacity, onCapacity, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
   const canBoard = canChangeBoard(plan, credits ? 1 : 0);
   const dark = tone === "dark";
-  const max = slotsFor(plan);
+  const max = slotsFor(plan, capacity);
   const btn = `cursor-pointer rounded-[0.6em] border px-[0.8em] py-[0.5em] text-[0.85em] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-[#d98a2b] disabled:cursor-not-allowed disabled:opacity-40 ${dark ? "border-white/20 text-white hover:bg-white/10" : "border-[#d9c9ad] text-[#4a3826] hover:bg-[#efe4cf]"}`;
 
   return (
@@ -75,7 +77,7 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
 
       <div>
         <p className={`mb-[0.4em] text-[0.8em] font-semibold ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-          Mensagens no mural: {count} de {max} <span className="font-normal">(limite do produto: {BOARD_CAPACITY})</span>
+          Mensagens no mural: {count} de {max} <span className="font-normal">(quadro de {capacity} espaços)</span>
         </p>
         <div className="flex flex-wrap gap-[0.4em]">
           <button type="button" className={btn} onClick={() => onCount(count - 1)} disabled={count <= 0} aria-label="Uma mensagem a menos">
@@ -95,6 +97,17 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
           </button>
         </div>
       </div>
+
+      <Segmented
+        dark={dark}
+        label="Espaços do quadro (teste)"
+        value={String(capacity)}
+        onChange={(v) => onCapacity(Number(v))}
+        options={[
+          { id: String(BOARD_CAPACITY), label: `${BOARD_CAPACITY} espaços` },
+          { id: String(DENSE_CAPACITY), label: `${DENSE_CAPACITY} espaços` },
+        ]}
+      />
 
       <Segmented
         dark={dark}
