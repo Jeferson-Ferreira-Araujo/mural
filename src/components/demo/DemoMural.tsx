@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { itemsFor } from "@/data/mock";
+import { canChangeBoard, DEFAULT_BOARD, type BoardId } from "@/lib/boards";
 import { slotsFor, type PlanId } from "@/lib/plans";
 import { isSealed, type BoardItem, type Message } from "@/lib/types";
 import { OwnerAlert } from "../board/OwnerAlert";
@@ -30,6 +31,8 @@ export function DemoMural() {
   const [view, setView] = useState<DemoView>("visitor");
   const [tries, setTries] = useState(START_TRIES);
   const [triedAlready, setTriedAlready] = useState(false);
+  const [credits, setCredits] = useState(false);
+  const [boardId, setBoardId] = useState<BoardId>(DEFAULT_BOARD);
 
   const available = slotsFor(plan);
 
@@ -59,6 +62,7 @@ export function DemoMural() {
 
   function changePlan(p: PlanId) {
     setPlan(p);
+    if (!canChangeBoard(p, credits ? 1 : 0)) setBoardId(DEFAULT_BOARD);
     fill(p, board.items.length);
   }
 
@@ -83,6 +87,8 @@ export function DemoMural() {
     setView("visitor");
     setTries(START_TRIES);
     setTriedAlready(false);
+    setCredits(false);
+    setBoardId(DEFAULT_BOARD);
     notify("Demonstração reiniciada.");
   }
 
@@ -102,10 +108,18 @@ export function DemoMural() {
         hasSealed={hasSealed}
         onOpenCapsules={() => openCapsules(true)}
         onReset={reset}
+        credits={credits}
+        onCredits={(v) => {
+          setCredits(v);
+          if (!v && plan === "free") setBoardId(DEFAULT_BOARD);
+        }}
+        board={boardId}
+        onBoard={setBoardId}
+        onBoardLocked={() => notify("Trocar o fundo é do PINZ FULL ou de quem comprou créditos.")}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [plan, board.items.length, view, hasSealed],
+    [plan, board.items.length, view, hasSealed, credits, boardId],
   );
 
   const notice = useMemo(
@@ -118,6 +132,7 @@ export function DemoMural() {
       <MuralScreen
         items={board.items}
         plan={plan}
+        board={boardId}
         showMeter
         locked={false}
         hasSelection

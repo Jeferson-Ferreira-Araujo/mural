@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { boardById, DEFAULT_BOARD } from "@/lib/boards";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { EmptyNote } from "./EmptyNote";
 import { EmptySlot, LockedSlot } from "./board/SlotMarker";
@@ -12,10 +13,7 @@ import { Sidebar } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
-export const BOARD_IMAGE = "/img/quadro-desktop.webp";
-
-/** Área útil de cortiça dentro da imagem (em % da imagem 3:2). */
-const CORK = { left: 11.2, top: 8, width: 79.4, height: 76.2 };
+export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
 
 /**
  * Os 15 espaços fixos da lousa: grade de 5 colunas × 3 linhas, com inclinações de mural real.
@@ -73,8 +71,10 @@ function focusFirstField() {
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
-  const { items, plan, showMeter, locked, hasSelection, unlocked, stats, siteStats, share, panel, panelTitle, notice, onCompose, onNotify } = props;
+  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, share, panel, panelTitle, notice, onCompose, onNotify } = props;
   const available = slotsFor(plan);
+  const look = boardById(board);
+  const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
   const fit = useFitScale([items]);
 
   function addMessage() {
@@ -94,7 +94,7 @@ export function DesktopBoard(props: ViewProps) {
       <div className="relative min-w-0 flex-1 overflow-hidden">
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
+        <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
         <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="flex min-h-10 items-center">
@@ -126,7 +126,7 @@ export function DesktopBoard(props: ViewProps) {
             inert={locked}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={BOARD_IMAGE} alt="Mural de cortiça com moldura de madeira" className="absolute inset-0 size-full select-none" draggable={false} />
+            <img src={look.image} alt={`Mural: quadro ${look.name}`} className="absolute inset-0 size-full select-none" draggable={false} />
 
             <div
               className="absolute"

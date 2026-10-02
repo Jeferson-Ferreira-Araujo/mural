@@ -1,5 +1,6 @@
 "use client";
 
+import { BOARDS, canChangeBoard, type BoardId } from "@/lib/boards";
 import { BOARD_CAPACITY, PLANS, slotsFor, type PlanId } from "@/lib/plans";
 import type { Tone } from "../viewProps";
 
@@ -16,6 +17,11 @@ type Props = {
   hasSealed: boolean;
   onOpenCapsules: () => void;
   onReset: () => void;
+  credits: boolean;
+  onCredits: (v: boolean) => void;
+  board: BoardId;
+  onBoard: (b: BoardId) => void;
+  onBoardLocked: () => void;
 };
 
 function Segmented<T extends string>({ label, value, options, onChange, dark }: { label: string; value: T; options: { id: T; label: string }[]; onChange: (v: T) => void; dark: boolean }) {
@@ -43,7 +49,8 @@ function Segmented<T extends string>({ label, value, options, onChange, dark }: 
 }
 
 /** Controles da página de demonstração: simulam planos e estados do mural (nada disso é salvo). */
-export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset }: Props) {
+export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
+  const canBoard = canChangeBoard(plan, credits ? 1 : 0);
   const dark = tone === "dark";
   const max = slotsFor(plan);
   const btn = `cursor-pointer rounded-[0.6em] border px-[0.8em] py-[0.5em] text-[0.85em] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-[#d98a2b] disabled:cursor-not-allowed disabled:opacity-40 ${dark ? "border-white/20 text-white hover:bg-white/10" : "border-[#d9c9ad] text-[#4a3826] hover:bg-[#efe4cf]"}`;
@@ -87,6 +94,49 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
             Lotado
           </button>
         </div>
+      </div>
+
+      <Segmented
+        dark={dark}
+        label="Créditos do dono"
+        value={credits ? "yes" : "no"}
+        onChange={(v) => onCredits(v === "yes")}
+        options={[
+          { id: "no", label: "Sem créditos" },
+          { id: "yes", label: "Com créditos" },
+        ]}
+      />
+
+      <div>
+        <p className={`mb-[0.4em] text-[0.8em] font-semibold ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
+          Fundo do mural {!canBoard && <span className="font-normal">🔒 PINZ FULL ou créditos</span>}
+        </p>
+        <div role="radiogroup" aria-label="Fundo do mural" className="grid grid-cols-5 gap-[0.35em]">
+          {BOARDS.map((b) => {
+            const active = board === b.id;
+            const locked = !canBoard && b.id !== board;
+            return (
+              <button
+                key={b.id}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                aria-label={`Fundo ${b.name}${locked ? " (bloqueado)" : ""}`}
+                title={b.name}
+                onClick={() => (locked ? onBoardLocked() : onBoard(b.id))}
+                className={`relative aspect-[3/2] cursor-pointer overflow-hidden rounded-[0.5em] border-2 bg-cover bg-center transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#d98a2b] ${active ? "border-[#d98a2b] ring-1 ring-[#d98a2b]" : dark ? "border-white/20" : "border-[#d9c9ad]"}`}
+                style={{ backgroundImage: `url(${b.image})` }}
+              >
+                {locked && (
+                  <span className="absolute inset-0 grid place-items-center bg-black/55 text-[0.8em] text-white" aria-hidden>
+                    🔒
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <p className={`mt-[0.3em] text-[0.75em] ${dark ? "text-white/60" : "text-[#6b5440]"}`}>{BOARDS.find((b) => b.id === board)?.name}</p>
       </div>
 
       <Segmented

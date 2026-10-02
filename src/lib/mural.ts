@@ -20,6 +20,8 @@ export type PublicMural = {
   slug: string;
   title: string;
   question: string;
+  /** Fundo escolhido pelo dono (padrão: cortiça). */
+  board?: string;
   stats: MuralStats;
 };
 

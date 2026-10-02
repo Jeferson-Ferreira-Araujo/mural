@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { boardById } from "@/lib/boards";
 import { isSealed, typeLabel, type BoardItem } from "@/lib/types";
 import { SlotMeter } from "./board/SlotMeter";
 import { Brand } from "./Brand";
@@ -16,7 +17,10 @@ const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : typeLabel[
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. Desfocada até desbloquear. */
-export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify, landing = false }: ViewProps) {
+export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify, landing = false, board }: ViewProps) {
+  const look = boardById(board);
+  const bgX = look.cork.left + look.cork.width / 2;
+  const bgY = look.cork.top + look.cork.height / 2;
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -66,9 +70,9 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
       className="relative min-h-dvh overflow-x-hidden bg-[#2a1a0e]"
       style={{
         backgroundImage:
-          "radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(/img/quadro-desktop.webp)",
+          `radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(${look.image})`,
         backgroundSize: "auto, auto, 380%",
-        backgroundPosition: "center, center, 52% 48%",
+        backgroundPosition: `center, center, ${bgX.toFixed(1)}% ${bgY.toFixed(1)}%`,
       }}
     >
       <main className={`mx-auto flex min-h-dvh max-w-4xl flex-col pt-4 pb-8 transition-[gap] duration-500 [font-size:16px] ${landing ? "justify-center gap-6 pb-[8vh]" : "gap-4"}`}>

@@ -17,6 +17,7 @@ import {
   type SiteStats,
   type UnlockResult,
 } from "@/lib/mural";
+import { boardById } from "@/lib/boards";
 import { getAccount } from "@/lib/account";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
@@ -196,6 +197,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         unlocked={unlocked}
         stats={selected?.stats ?? null}
         siteStats={siteStats}
+        board={boardById(selected?.board).id}
         share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}
         panel={panel}
         onNotify={notify}
