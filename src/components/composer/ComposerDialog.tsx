@@ -8,7 +8,6 @@ import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
-import { gridFor } from "@/lib/slots";
 import { SlotPicker } from "./SlotPicker";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
@@ -106,15 +105,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
-      {fixedSlot === null || fixedSlot === undefined ? (
-        <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />
-      ) : (
-        slot !== null && (
-          <p className="rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-2 text-sm text-[#6b5440]">
-            📌 Colando na linha {Math.floor(slot / gridFor(capacity).cols) + 1}, coluna {(slot % gridFor(capacity).cols) + 1} do mural.
-          </p>
-        )
-      )}
+      {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
       {draft && (
         <section aria-label="Prévia" className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-6">

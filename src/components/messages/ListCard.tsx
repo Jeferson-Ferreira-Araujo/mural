@@ -13,7 +13,7 @@ export function ListCard({ title, items }: { title: string; items: { text: strin
     >
       <Tape className="top-[-0.5em] right-[1.5em]" rotate={6} />
       <div className="flex items-start justify-between">
-        <h3 className="font-hand text-[1.9em] leading-none font-semibold text-[#2a2a33] underline decoration-[#2a2a33]/40 decoration-1 underline-offset-[0.12em]">
+        <h3 className="font-hand min-w-0 [overflow-wrap:anywhere] text-[1.9em] leading-none font-semibold text-[#2a2a33] underline decoration-[#2a2a33]/40 decoration-1 underline-offset-[0.12em]">
           {title}
         </h3>
         <svg viewBox="0 0 40 40" className="size-[2.4em] text-[#2a2a33]/80" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
@@ -34,7 +34,7 @@ export function ListCard({ title, items }: { title: string; items: { text: strin
                 </svg>
               )}
             </span>
-            {it.text}
+            <span className="min-w-0 [overflow-wrap:anywhere]">{it.text}</span>
           </li>
         ))}
       </ul>

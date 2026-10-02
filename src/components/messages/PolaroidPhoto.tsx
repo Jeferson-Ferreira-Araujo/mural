@@ -23,7 +23,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src }: { caption: stri
         )}
         <span aria-hidden className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_40%)]" />
       </div>
-      {caption && <p className="font-hand mt-[0.4em] text-[1.5em] leading-[1.05] text-[#2b2b3a]">{caption}</p>}
+      {caption && <p className="font-hand mt-[0.4em] text-[1.5em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]">{caption}</p>}
     </article>
   );
 }

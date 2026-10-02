@@ -21,7 +21,7 @@ export function PostIt({ color, text }: { color: PostItColor; text: string }) {
       }}
     >
       <Pin tone={c.pin} className="top-[0.55em] left-[1.1em]" />
-      <p className="font-hand text-[1.7em] leading-[1.08] text-[#34281a]">{text}</p>
+      <p className="font-hand text-[1.7em] leading-[1.08] text-[#34281a] [overflow-wrap:anywhere]">{text}</p>
     </article>
   );
 }

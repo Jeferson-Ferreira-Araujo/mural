@@ -17,7 +17,7 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
         }}
       >
         <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={-3} />
-        <p className="font-hand text-[1.55em] leading-[1.18] text-[#243a7a]">{text}</p>
+        <p className="font-hand text-[1.55em] leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]">{text}</p>
       </article>
     );
   }
@@ -42,7 +42,7 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
         />
       ))}
       <Tape className="-top-[0.8em] right-[1.2em]" rotate={5} />
-      <p className="font-hand text-[1.6em] leading-[0.96875] text-[#232838]">{text}</p>
+      <p className="font-hand text-[1.6em] leading-[0.96875] text-[#232838] [overflow-wrap:anywhere]">{text}</p>
       <span aria-hidden className="font-hand absolute right-[0.8em] bottom-[0.4em] text-[1.6em] text-[#232838]/70">☆</span>
     </article>
   );
