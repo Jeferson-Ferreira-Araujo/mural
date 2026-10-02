@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-ui: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-title: var(--font-fraunces), Georgia, serif;
+  --font-hand: var(--font-caveat), cursive;
+  --font-hand-alt: var(--font-kalam), cursive;
+  --font-marker: var(--font-reenie), cursive;
+}
+
+:root {
+  --ink: #2f2218;
+  --ink-soft: #6b5440;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #3b2616;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- textura de papel (ruído sutil) ---------- */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.2  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- sombras físicas ---------- */
+.shadow-paper {
+  box-shadow:
+    0 0.06em 0.1em rgba(40, 20, 5, 0.25),
+    0.12em 0.5em 0.7em -0.1em rgba(40, 20, 5, 0.38),
+    0.3em 1em 1.2em -0.3em rgba(40, 20, 5, 0.28);
+  transition: box-shadow 0.35s;
+}
+
+/* ---------- papel levemente ondulado ---------- */
+.curl {
+  background-image: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(0, 0, 0, 0.07) 100%
+  );
+}
+
+/* ---------- itens presos ao mural ---------- */
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.2em) scale(1.04) rotate(var(--rot, 0deg));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(var(--rot, 0deg));
+  }
+}
+.pinned {
+  transform: rotate(var(--rot, 0deg));
+  transform-origin: 50% 8%;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+@media (hover: hover) {
+  .pinned:hover {
+    transform: rotate(calc(var(--rot, 0deg) * 0.4)) translateY(-0.35em) scale(1.025);
+    z-index: 40 !important;
+  }
+  .pinned:hover .shadow-paper {
+    box-shadow:
+      0 0.08em 0.12em rgba(40, 20, 5, 0.25),
+      0.2em 0.9em 1em -0.1em rgba(40, 20, 5, 0.42),
+      0.5em 1.6em 1.8em -0.3em rgba(40, 20, 5, 0.3);
+  }
+}
+
+@keyframes bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.6s ease backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* carrossel sem barra de rolagem */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
