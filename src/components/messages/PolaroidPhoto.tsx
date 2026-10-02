@@ -11,7 +11,7 @@ export function PolaroidPhoto({ caption, scene }: { caption: string; scene: Scen
       {scene === "group" ? (
         <Tape className="-top-[0.8em] left-1/2 -translate-x-1/2" rotate={-3} />
       ) : (
-        <Pin color="#c43b2f" className="top-[-0.6em] left-[1.1em]" />
+        <Pin color="#e0160e" className="top-[-0.6em] left-[1.1em]" />
       )}
       <div className="relative aspect-square w-full overflow-hidden bg-[#222] shadow-[inset_0_0_0.6em_rgba(0,0,0,.55)]">
         <Scene variant={scene} />

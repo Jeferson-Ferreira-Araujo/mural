@@ -2,11 +2,11 @@ import type { PostItColor } from "@/lib/types";
 import { Pin } from "./fasteners";
 
 const palette: Record<PostItColor, { bg: string; edge: string; pin: string }> = {
-  yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "#c43b2f" },
-  pink: { bg: "#f7a8c0", edge: "#e38aa7", pin: "#c43b2f" },
-  green: { bg: "#b9e08a", edge: "#9cc86a", pin: "#c43b2f" },
-  orange: { bg: "#fbbd78", edge: "#eba15a", pin: "#2f6fb5" },
-  blue: { bg: "#a9d8f0", edge: "#84bde0", pin: "#2f6fb5" },
+  yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "#e0160e" },
+  pink: { bg: "#f7a8c0", edge: "#e38aa7", pin: "#e0160e" },
+  green: { bg: "#b9e08a", edge: "#9cc86a", pin: "#e0160e" },
+  orange: { bg: "#fbbd78", edge: "#eba15a", pin: "#1f6fd0" },
+  blue: { bg: "#a9d8f0", edge: "#84bde0", pin: "#1f6fd0" },
 };
 
 export function PostIt({ color, text }: { color: PostItColor; text: string }) {

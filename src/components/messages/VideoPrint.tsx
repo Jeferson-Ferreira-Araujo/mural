@@ -13,7 +13,7 @@ export function VideoPrint({ caption, duration }: { caption: string; duration: s
       className="paper-grain shadow-paper relative w-[14em] bg-[#f8f4e8] px-[0.8em] pt-[0.8em] pb-[0.9em]"
       style={{ borderRadius: "0.2em" }}
     >
-      <Pin color="#c43b2f" className="top-[-0.6em] left-[1.1em]" />
+      <Pin color="#e0160e" className="top-[-0.6em] left-[1.1em]" />
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-black">
         <Scene variant="sunset" />
         <span aria-hidden className="absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,.05)_0_1px,transparent_1px_3px)]" />
