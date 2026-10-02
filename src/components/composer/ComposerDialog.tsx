@@ -8,6 +8,7 @@ import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
+import { gridFor } from "@/lib/slots";
 import { SlotPicker } from "./SlotPicker";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
@@ -19,6 +20,8 @@ type Props = {
   capacity?: number;
   /** Espaços do quadro que já têm pin. */
   taken: number[];
+  /** Espaço já escolhido no mural (desktop). Sem isso, o visitante escolhe aqui. */
+  fixedSlot?: number | null;
   /** Quantas mensagens o mural já tem. */
   used: number;
   onSend: (payload: SendPayload) => void;
@@ -52,7 +55,7 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve → (FULL) opcionalmente Cápsula → cola no mural.
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   const firstFree = Array.from({ length: available }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
@@ -62,7 +65,8 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, used, onSend, onTried, t
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
   const [picked, setPicked] = useState<number | null>(null);
-  const slot = picked !== null && picked < available && !taken.includes(picked) ? picked : firstFree;
+  const choice = fixedSlot ?? picked;
+  const slot = choice !== null && choice < available && !taken.includes(choice) ? choice : firstFree;
 
   const onDraft = useCallback((d: DraftMessage | null) => setDraft(d), []);
 
@@ -93,7 +97,15 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, used, onSend, onTried, t
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
-      <SlotPicker capacity={capacity} available={available} taken={taken} value={slot} onChange={setPicked} />
+      {fixedSlot === null || fixedSlot === undefined ? (
+        <SlotPicker capacity={capacity} available={available} taken={taken} value={slot} onChange={setPicked} />
+      ) : (
+        slot !== null && (
+          <p className="rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-2 text-sm text-[#6b5440]">
+            📌 Colando na linha {Math.floor(slot / gridFor(capacity).cols) + 1}, coluna {(slot % gridFor(capacity).cols) + 1} do mural.
+          </p>
+        )
+      )}
 
       {draft && (
         <section aria-label="Prévia" className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-6">

@@ -170,7 +170,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           <div className="mx-auto w-[min(90vw,30rem)]">
             <button
               type="button"
-              onClick={onCompose}
+              onClick={() => onCompose()}
               className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-[#fbf6ea] py-3 text-base font-semibold text-[#2a1c12] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.4)] transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
             >
               <span className="grid size-8 place-items-center rounded-full bg-[#1f232b] text-lg leading-none text-white">+</span>

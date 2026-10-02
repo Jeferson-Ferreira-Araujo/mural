@@ -80,6 +80,7 @@ export function DesktopBoard(props: ViewProps) {
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
   const placed = layout.filter((x): x is BoardItem => !!x);
   const [detail, setDetail] = useState<number | null>(null);
+  const [hint, setHint] = useState(false); // destaca os espaços livres depois de tocar em "Deixar uma mensagem"
   const available = slotsFor(plan, capacity);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
@@ -92,7 +93,15 @@ export function DesktopBoard(props: ViewProps) {
       onNotify(hasSelection ? "Responda a pergunta para desbloquear o mural." : "Procure alguém pelo nickname primeiro.");
       return;
     }
-    onCompose?.();
+    if (!onCompose) return;
+    // com espaços livres à vista: o visitante clica no espaço onde quer o pin; sem nenhum livre, o compositor explica
+    if (hasSelection && layout.some((it, i) => !it && i < available)) {
+      setHint(true);
+      window.setTimeout(() => setHint(false), 4500);
+      onNotify("Clique num espaço livre do mural para colar o seu pin.");
+      return;
+    }
+    onCompose();
   }
 
   return (
@@ -157,7 +166,20 @@ export function DesktopBoard(props: ViewProps) {
                     if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
                     return (
                       <div key={`slot-${i}`} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
-                        {i < available ? <EmptySlot /> : <LockedSlot />}
+                        {i >= available ? (
+                          <LockedSlot />
+                        ) : onCompose && unlocked ? (
+                          <button
+                            type="button"
+                            onClick={() => onCompose(i)}
+                            aria-label={`Colar um pin na linha ${Math.floor(i / cols) + 1}, coluna ${(i % cols) + 1}`}
+                            className={`block cursor-pointer rounded-[0.6em] transition hover:scale-105 hover:[&>div]:border-[#fff3d6] hover:[&>div]:bg-[#fff3d6]/25 focus-visible:outline-2 focus-visible:outline-offset-[0.2em] focus-visible:outline-[#f7f0dd] ${hint ? "animate-pulse" : ""}`}
+                          >
+                            <EmptySlot />
+                          </button>
+                        ) : (
+                          <EmptySlot />
+                        )}
                       </div>
                     );
                   }

@@ -38,6 +38,6 @@ export type ViewProps = {
   /** Avisos do proprietário, etc. (opcional). */
   notice?: (tone: Tone) => ReactNode;
   /** Botão "Deixar uma mensagem anônima"; null = escondido (ex.: visão do dono). */
-  onCompose: (() => void) | null;
+  onCompose: ((slot?: number) => void) | null;
   onNotify: (msg: string) => void;
 };

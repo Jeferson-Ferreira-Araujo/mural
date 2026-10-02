@@ -26,6 +26,8 @@ type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
  */
 export function MuralScreen({ composer, ...view }: Props) {
   const [open, setOpen] = useState(false);
+  // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
+  const [slot, setSlot] = useState<number | null>(null);
   const { onNotify } = view;
 
   const onCompose =
@@ -33,7 +35,10 @@ export function MuralScreen({ composer, ...view }: Props) {
       ? null
       : composer.mode === "soon"
         ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
-        : () => setOpen(true);
+        : (s?: number) => {
+            setSlot(typeof s === "number" ? s : null);
+            setOpen(true);
+          };
 
   const capacity = view.capacity ?? BOARD_CAPACITY;
   const props: ViewProps = { ...view, capacity, onCompose };
@@ -54,6 +59,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           plan={view.plan}
           capacity={capacity}
           taken={takenSlots(view.items, capacity)}
+          fixedSlot={slot}
           used={view.items.length}
           triedAlready={composer.triedAlready}
           onTried={composer.onTried}
