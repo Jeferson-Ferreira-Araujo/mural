@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { itemsFor } from "@/data/mock";
 import { canChangeBoard, DEFAULT_BOARD, type BoardId } from "@/lib/boards";
 import { BOARD_CAPACITY, slotsFor, type PlanId } from "@/lib/plans";
-import { isSealed, type BoardItem, type Message } from "@/lib/types";
+import { isMessage, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
 import { OwnerAlert } from "../board/OwnerAlert";
+import { PinsManager, type OwnerPin } from "../board/PinsManager";
 import type { SendPayload } from "../composer/types";
 import { MuralScreen } from "../MuralScreen";
 import { Toast } from "../Toast";
@@ -34,6 +35,9 @@ export function DemoMural() {
   const capacity = BOARD_CAPACITY;
   const [credits, setCredits] = useState(false);
   const [boardId, setBoardId] = useState<BoardId>(DEFAULT_BOARD);
+  // moderação (simulada): pins novos ficam pendentes até o dono aprovar; no FULL o dono deixa pins em blur
+  const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
 
   const available = slotsFor(plan, capacity);
 
@@ -71,6 +75,7 @@ export function DemoMural() {
     setBoard((b) => {
       if (b.items.length >= available || b.items.some((it) => it.slot === slot)) return b;
       const id = `u${++uid}`;
+      setPendingIds((s) => new Set(s).add(id));
       if (capsuleAt) {
         // o conteúdo fica "guardado" e o quadro recebe só a cápsula fechada (sem conteúdo)
         return {
@@ -90,10 +95,63 @@ export function DemoMural() {
     setTriedAlready(false);
     setCredits(false);
     setBoardId(DEFAULT_BOARD);
+    setPendingIds(new Set());
+    setHiddenIds(new Set());
     notify("Demonstração reiniciada.");
   }
 
   const full = board.items.length >= available;
+
+  // o que cada visão recebe (igual ao servidor): visitante vê os próprios pins pendentes e os ocultos viram blur com o mesmo tipo;
+  // o dono vê os pendentes como espaço ocupado (ele decide no gerenciador) e os ocultos marcados.
+  const shownItems = useMemo<BoardItem[]>(() => {
+    const blur = (m: Message): HiddenItem => ({
+      id: m.id,
+      slot: m.slot,
+      hidden: true,
+      type: m.type,
+      color: m.type === "postit" ? m.color : undefined,
+      variant: m.type === "text" ? m.variant : undefined,
+      playerColor: "playerColor" in m ? m.playerColor : undefined,
+      font: m.font,
+      pin: m.pin,
+      tape: m.tape,
+    });
+    return board.items.map((it) => {
+      if (!isMessage(it)) return it;
+      const pending = pendingIds.has(it.id);
+      const hidden = plan === "full" && hiddenIds.has(it.id);
+      if (view === "owner") return pending ? { ...blur(it), pending: true } : hidden ? { ...it, ownerHidden: true } : it;
+      if (pending) return { ...it, pending: true }; // na demo, todo pin novo é "meu"
+      return hidden ? blur(it) : it;
+    });
+  }, [board.items, pendingIds, hiddenIds, plan, view]);
+
+  const ownerPins: OwnerPin[] = board.items.filter(isMessage).map((m) => ({ ...m, status: pendingIds.has(m.id) ? "pending" : "approved", hiddenFromVisitors: hiddenIds.has(m.id) }));
+  const without = (s: Set<string>, id: string) => {
+    const n = new Set(s);
+    n.delete(id);
+    return n;
+  };
+  const manager = (tone: "light" | "dark") => (
+    <PinsManager
+      pins={ownerPins}
+      plan={plan}
+      tone={tone}
+      onApprove={(id, hidden) => {
+        setPendingIds((s) => without(s, id));
+        if (hidden) setHiddenIds((s) => new Set(s).add(id));
+        notify(hidden ? "Pin aprovado e deixado em blur para os visitantes." : "Pin aprovado: agora aparece no mural.");
+      }}
+      onReject={(id) => {
+        setBoard((b) => ({ ...b, items: b.items.filter((it) => it.id !== id) }));
+        setPendingIds((s) => without(s, id));
+        setHiddenIds((s) => without(s, id));
+        notify("Pin removido. O espaço ficou livre.");
+      }}
+      onSetHidden={(id, hidden) => setHiddenIds((s) => (hidden ? new Set(s).add(id) : without(s, id)))}
+    />
+  );
   const hasSealed = board.items.some(isSealed);
 
   const panel = useCallback(
@@ -107,6 +165,7 @@ export function DemoMural() {
         view={view}
         onView={setView}
         hasSealed={hasSealed}
+        manager={view === "owner" ? manager : null}
         onOpenCapsules={() => openCapsules(true)}
         onReset={reset}
         capacity={capacity}
@@ -121,7 +180,7 @@ export function DemoMural() {
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [plan, board.items.length, view, hasSealed, credits, boardId, capacity],
+    [plan, board.items.length, view, hasSealed, credits, boardId, capacity, pendingIds, hiddenIds, board.items],
   );
 
   const notice = useMemo(
@@ -132,7 +191,7 @@ export function DemoMural() {
   return (
     <>
       <MuralScreen
-        items={board.items}
+        items={shownItems}
         plan={plan}
         board={boardId}
         capacity={capacity}
@@ -151,6 +210,7 @@ export function DemoMural() {
             ? { mode: "hidden" }
             : {
                 mode: "demo",
+                sentNote: "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳ (veja em \"Dono do mural\")",
                 onSend,
                 onTried: () => {
                   setTries((t) => t + 1);

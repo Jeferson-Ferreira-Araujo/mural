@@ -7,6 +7,7 @@ import { getAccount } from "@/lib/account";
 import { getOwnMurals, getOwnNickname, useSession, type OwnMural } from "@/lib/auth";
 import { getPublicMural, muralPath, muralUrl, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { OwnerPins } from "@/components/board/OwnerPins";
 import { PlanBadge } from "@/components/board/PlanBadge";
 import { SlotMeter } from "@/components/board/SlotMeter";
 import { PLANS } from "@/lib/plans";
@@ -21,6 +22,7 @@ export default function Painel() {
   const [nick, setNick] = useState<string | null>(null);
   const [items, setItems] = useState<Item[] | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [pending, setPending] = useState<Record<string, number>>({}); // pins aguardando aprovação, por mural
   const account = getAccount();
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function Painel() {
           <li key={m.id} className="rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-title min-w-0 text-xl leading-tight font-semibold break-words">{m.title}</h2>
-              <PlanBadge plan={account.plan} />
+              <PlanBadge plan={m.plan} />
             </div>
             <p className="mt-1 text-sm break-all text-[#6b5440]">{muralUrl({ nick, slug: m.slug })}</p>
 
@@ -104,7 +106,16 @@ export default function Painel() {
               ))}
             </dl>
 
-            <SlotMeter plan={account.plan} used={m.stats?.messages ?? 0} className="mt-3 text-[14px]" />
+            <SlotMeter plan={m.plan} used={m.stats?.messages ?? 0} className="mt-3 text-[14px]" />
+
+            <details className="mt-4 rounded-xl border border-[#e1d3ba] bg-[#fbf6ea]/70 p-3" open={(pending[m.id] ?? 0) > 0}>
+              <summary className="cursor-pointer text-sm font-bold">
+                Pins do mural {(pending[m.id] ?? 0) > 0 && <span className="ml-1 rounded-full bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{pending[m.id]} para aprovar</span>}
+              </summary>
+              <div className="mt-3">
+                <OwnerPins muralId={m.id} plan={m.plan} onCount={(n) => setPending((s) => (s[m.id] === n ? s : { ...s, [m.id]: n }))} />
+              </div>
+            </details>
 
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Link href={muralPath({ nick, slug: m.slug })} className={`${primaryButton} sm:flex-1`}>

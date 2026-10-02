@@ -2,6 +2,7 @@
 
 import { BOARDS, canChangeBoard, type BoardId } from "@/lib/boards";
 import { PLANS, slotsFor, type PlanId } from "@/lib/plans";
+import type { ReactNode } from "react";
 import type { Tone } from "../viewProps";
 
 export type DemoView = "visitor" | "owner";
@@ -15,6 +16,8 @@ type Props = {
   view: DemoView;
   onView: (v: DemoView) => void;
   hasSealed: boolean;
+  /** gerenciador de pins (visão do dono) */
+  manager?: ((tone: Tone) => ReactNode) | null;
   onOpenCapsules: () => void;
   onReset: () => void;
   capacity: number;
@@ -50,7 +53,7 @@ function Segmented<T extends string>({ label, value, options, onChange, dark }: 
 }
 
 /** Controles da página de demonstração: simulam planos e estados do mural (nada disso é salvo). */
-export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, capacity, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
+export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, manager, onOpenCapsules, onReset, capacity, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
   const canBoard = canChangeBoard(plan, credits ? 1 : 0);
   const dark = tone === "dark";
   const max = slotsFor(plan, capacity);
@@ -150,6 +153,13 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
           { id: "owner", label: "Dono do mural" },
         ]}
       />
+
+      {manager && (
+        <div className={`border-t pt-[1em] ${dark ? "border-white/15" : "border-[#e1d3ba]"}`}>
+          <p className="mb-[0.6em] text-[0.95em] font-bold">📌 Pins do mural (você é o dono)</p>
+          <div className="text-[14px]">{manager(tone)}</div>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-[0.4em]">
         {hasSealed && (

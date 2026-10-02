@@ -1,5 +1,5 @@
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
-import { isSealed, type BoardItem, type Message } from "@/lib/types";
+import { isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
 
 /**
  * Dados MOCKADOS — apenas para demonstração do frontend (sem banco, sem envio real).
@@ -88,7 +88,7 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
     for (const it of extra) if (isSealed(it) && vault[it.id.replace(/-b$/, "")]) vault[it.id] = { ...vault[it.id.replace(/-b$/, "")], id: it.id };
     items = [...base, ...extra].slice(0, capacity);
   }
-  const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : formatsFor(plan).includes(i.type)));
+  const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : isMessage(i) && formatsFor(plan).includes(i.type)));
   // cada exemplo já nasce no seu espaço, para colar um novo em outro lugar não empurrar os demais
   return { items: allowed.slice(0, count).map((it, i) => ({ ...it, slot: i }) as BoardItem), vault };
 }

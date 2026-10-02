@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { boardById } from "@/lib/boards";
 import { LandscapeViewer } from "./board/LandscapeViewer";
-import { isSealed, typeLabel, type BoardItem } from "@/lib/types";
+import { isHidden, isSealed, typeLabel, type BoardItem } from "@/lib/types";
 import { SlotMeter } from "./board/SlotMeter";
 import { Brand } from "./Brand";
 import { CreateMuralLink } from "./CreateMuralLink";
@@ -14,7 +14,7 @@ import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
 import type { ViewProps } from "./viewProps";
 
-const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : typeLabel[i.type]);
+const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : isHidden(i) ? "Pin em blur" : typeLabel[i.type]);
 
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 

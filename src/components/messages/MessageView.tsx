@@ -1,4 +1,5 @@
-import { isSealed, type BoardItem, type Message } from "@/lib/types";
+import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { HiddenPin } from "./HiddenPin";
 import { ClosedCapsule } from "./ClosedCapsule";
 import { ListCard } from "./ListCard";
 import { MusicCard } from "./MusicCard";
@@ -26,16 +27,32 @@ function Content({ m }: { m: Message }) {
     case "voice":
       return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
     case "place":
-      return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} />;
+      return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} blank={(m as { blank?: boolean }).blank} />;
   }
 }
 
+/** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
+function Marked({ m }: { m: Message }) {
+  const label = m.pending ? "Aguardando aprovação do dono" : "Em blur para os visitantes";
+  return (
+    <div className="relative">
+      <Content m={m} />
+      <span className="absolute -bottom-[0.9em] left-1/2 z-30 -translate-x-1/2 rounded-full bg-[#2a1c12]/90 px-[0.9em] py-[0.3em] text-[0.7em] leading-none font-semibold whitespace-nowrap text-[#fff3d6] shadow-[0_0.2em_0.5em_rgba(0,0,0,.4)]">
+        {m.pending ? "⏳ " : "🔒 "}
+        {label}
+      </span>
+    </div>
+  );
+}
+
 /**
- * Ponto único de renderização de um item do mural: mensagem aberta ou Cápsula fechada.
+ * Ponto único de renderização de um item do mural: mensagem aberta, Cápsula fechada ou espaço em blur.
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
 export function MessageView({ message: m }: { message: BoardItem }) {
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
+  if (isHidden(m)) return <HiddenPin item={m} />;
+  if (m.pending || m.ownerHidden) return <Marked m={m} />;
   if (!m.fromCapsule) return <Content m={m} />;
   // mensagem que veio de uma Cápsula já aberta: ganha um pequeno lacre no canto
   return (

@@ -247,6 +247,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
             ? {
                 mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                 onSend: onSendPin,
+                sentNote: "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
                 onTried: () => {
                   setTried(true);
                   if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);

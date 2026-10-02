@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { typeLabel, isSealed, type BoardItem } from "@/lib/types";
+import { typeLabel, isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { boardById } from "@/lib/boards";
 import { gridFor, layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, type PlanId } from "@/lib/plans";
@@ -90,7 +90,8 @@ export function BoardCanvas({
   const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
   const { cols, rows } = gridFor(capacity);
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
-  const placed = layout.filter((x): x is BoardItem => !!x);
+  // o detalhe (clique no pin) só existe para pins com conteúdo; espaços em blur não abrem nada
+  const placed = layout.filter((x): x is BoardItem => !!x && !isHidden(x));
   const [detail, setDetail] = useState<number | null>(null);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
@@ -160,7 +161,7 @@ export function BoardCanvas({
                             } as CSSProperties
                           }
                         >
-                          {dense ? (
+                          {dense && !isHidden(item) ? (
                             <div
                               role="button"
                               tabIndex={0}
@@ -171,7 +172,7 @@ export function BoardCanvas({
                                   setDetail(placed.indexOf(item));
                                 }
                               }}
-                              aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : typeLabel[item.type]}`}
+                              aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em blur" : typeLabel[item.type]}`}
                               className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
                             >
                               <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.18]">

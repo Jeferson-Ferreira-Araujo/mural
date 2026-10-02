@@ -15,6 +15,10 @@ type Base = {
   font?: HandId;
   pin?: PinColor;
   tape?: TapeColor;
+  /** Pin ainda não aprovado pelo dono: só quem enviou o vê, até a aprovação. */
+  pending?: boolean;
+  /** Visão do dono: este pin está em blur para quem visita (recurso FULL). */
+  ownerHidden?: boolean;
 };
 
 /** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */
@@ -36,10 +40,32 @@ export type MessageType = Message["type"];
  */
 export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number };
 
+/**
+ * Espaço ocupado cujo conteúdo o servidor NÃO enviou: pin aguardando aprovação de outra pessoa ou pin que o dono (FULL)
+ * deixou em blur. Aparece como um cartão do mesmo tipo, borrado e com texto de enchimento.
+ */
+export type HiddenItem = {
+  id: string;
+  slot?: number;
+  hidden: true;
+  pending?: boolean;
+  /** Só o tipo e o estilo visual: o conteúdo nunca vem. */
+  type?: MessageType;
+  color?: PostItColor;
+  variant?: "letter" | "notebook";
+  playerColor?: PlayerColor;
+  font?: HandId;
+  pin?: PinColor;
+  tape?: TapeColor;
+};
+
 /** O que ocupa um espaço do mural. */
-export type BoardItem = Message | ClosedCapsuleItem;
+export type BoardItem = Message | ClosedCapsuleItem | HiddenItem;
 
 export const isSealed = (item: BoardItem): item is ClosedCapsuleItem => "sealed" in item;
+export const isHidden = (item: BoardItem): item is HiddenItem => "hidden" in item;
+/** Pin com conteúdo de verdade (nem cápsula fechada, nem espaço em blur). */
+export const isMessage = (item: BoardItem): item is Message => !isSealed(item) && !isHidden(item);
 
 type FormatInfo = { label: string; hint: string; tier: "free" | "full" };
 

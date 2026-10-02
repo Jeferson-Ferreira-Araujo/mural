@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { formatInfo, isSealed, type BoardItem } from "@/lib/types";
+import { formatInfo, isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { MessageView } from "../messages/MessageView";
 
 /**
@@ -32,7 +32,7 @@ export function PinDetail({ items, index, onIndex, onClose, inline = false }: { 
   }, [open, index, items.length, onIndex, onClose, inline]);
 
   const item = index !== null ? items[index] : null;
-  const label = item ? (isSealed(item) ? "Cápsula PINZ" : formatInfo[item.type].label) : "";
+  const label = item ? (isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em blur" : formatInfo[item.type].label) : "";
   const arrow =
     "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 

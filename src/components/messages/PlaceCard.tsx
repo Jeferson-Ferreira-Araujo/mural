@@ -38,6 +38,7 @@ export function PlaceCard({
   lon,
   caption,
   color = "silver",
+  blank = false,
 }: {
   name: string;
   address: string;
@@ -45,6 +46,8 @@ export function PlaceCard({
   lon: number;
   caption: string;
   color?: PlayerColor;
+  /** só o desenho (pin em blur): não carrega o mapa */
+  blank?: boolean;
 }) {
   const look = PLAYER_PALETTE[color];
   const [zoom, setZoom] = useState(14);
@@ -53,7 +56,7 @@ export function PlaceCard({
   const y0 = Math.floor(yf);
 
   const tiles: { key: string; src: string; col: number; row: number }[] = [];
-  for (let dy = -1; dy <= 1; dy++) {
+  for (let dy = -1; dy <= 1 && !blank; dy++) {
     for (let dx = -1; dx <= 1; dx++) {
       const ty = y0 + dy;
       if (ty < 0 || ty >= n) continue;
