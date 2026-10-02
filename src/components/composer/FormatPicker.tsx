@@ -28,9 +28,9 @@ const THUMBS: Record<MessageType, ReactNode> = {
     </span>
   ),
   music: (
-    <span className="block w-10 rotate-[-3deg] rounded-[5px] bg-gradient-to-br from-[#b455e0] to-[#5a2fb8] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]">
-      <span className="block aspect-[16/10] rounded-[3px] bg-[#241038]" />
-      <span className="mt-[3px] block h-[2px] bg-white/70" />
+    <span className="block h-11 w-7 rounded-[9px] bg-gradient-to-b from-[#b455e0] to-[#5a2fb8] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-white/40">
+      <span className="block h-[14px] rounded-[3px] bg-[#0f2a4d]" />
+      <span className="mx-auto mt-[4px] block size-[16px] rounded-full bg-white/70 ring-1 ring-black/20" />
     </span>
   ),
   video: (

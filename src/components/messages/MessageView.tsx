@@ -18,7 +18,7 @@ function Content({ m }: { m: Message }) {
     case "photo":
       return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} />;
     case "music":
-      return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} />;
+      return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} color={m.playerColor} />;
     case "video":
       return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
   }

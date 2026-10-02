@@ -136,6 +136,30 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
+/** Cor do aparelho (vídeo e música). */
+function PlayerColorPicker({ value, onChange }: { value: PlayerColor; onChange: (c: PlayerColor) => void }) {
+  return (
+    <fieldset>
+      <legend className="mb-1.5 text-sm font-semibold">Cor do player</legend>
+      <div className="flex gap-2" role="radiogroup" aria-label="Cor do player">
+        {PLAYER_COLOR_IDS.map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="radio"
+            aria-checked={value === id}
+            aria-label={PLAYER_PALETTE[id].label}
+            title={PLAYER_PALETTE[id].label}
+            onClick={() => onChange(id)}
+            className={`size-9 cursor-pointer rounded-full border-2 shadow-[inset_0_0.15rem_0.2rem_rgba(255,255,255,.45),0_0.1rem_0.25rem_rgba(0,0,0,.3)] transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${value === id ? "scale-110 border-[#2f2218]" : "border-transparent"}`}
+            style={{ background: PLAYER_PALETTE[id].swatch }}
+          />
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 // ---------- Foto ----------
 const MAX_PHOTO_MB = 8;
 
@@ -176,18 +200,20 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   const [artist, setArtist] = useState("");
   const [caption, setCaption] = useState("");
   const [link, setLink] = useState("");
+  const [color, setColor] = useState<PlayerColor>("black");
 
   const linkOk = !link.trim() || /^https?:\/\/\S+$/i.test(link.trim());
   useEffect(
-    () => onChange(title.trim() && artist.trim() && linkOk ? { type: "music", title: title.trim(), artist: artist.trim(), caption: caption.trim(), link: link.trim() || undefined } : null),
-    [title, artist, caption, link, linkOk, onChange],
+    () => onChange(title.trim() && artist.trim() && linkOk ? { type: "music", title: title.trim(), artist: artist.trim(), caption: caption.trim(), link: link.trim() || undefined, playerColor: color } : null),
+    [title, artist, caption, link, linkOk, color, onChange],
   );
   return (
     <div className="space-y-4">
+      <PlayerColorPicker value={color} onChange={setColor} />
       <Field label="Nome da música">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={48} placeholder="Ex: Aquela Música" className={inputClass} />}</Field>
       <Field label="Artista">{(id) => <input id={id} value={artist} onChange={(e) => setArtist(e.target.value)} maxLength={40} placeholder="Ex: Charlie Brown Jr." className={inputClass} />}</Field>
-      <Field label="Dedicatória (opcional)" hint={<Counter value={caption} max={80} />}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={80} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
+      <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
       </Field>
       <Field label="Link da música (opcional)" error={linkOk ? null : "Use um link que comece com http:// ou https://"} hint="Spotify, YouTube… O play abre esse link.">
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
@@ -236,24 +262,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
-      <fieldset>
-        <legend className="mb-1.5 text-sm font-semibold">Cor do player</legend>
-        <div className="flex gap-2" role="radiogroup" aria-label="Cor do player">
-          {PLAYER_COLOR_IDS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="radio"
-              aria-checked={color === id}
-              aria-label={PLAYER_PALETTE[id].label}
-              title={PLAYER_PALETTE[id].label}
-              onClick={() => setColor(id)}
-              className={`size-9 cursor-pointer rounded-full border-2 shadow-[inset_0_0.15rem_0.2rem_rgba(255,255,255,.45),0_0.1rem_0.25rem_rgba(0,0,0,.3)] transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${color === id ? "scale-110 border-[#2f2218]" : "border-transparent"}`}
-              style={{ background: PLAYER_PALETTE[id].swatch }}
-            />
-          ))}
-        </div>
-      </fieldset>
+      <PlayerColorPicker value={color} onChange={setColor} />
       <Field label="Mensagem no papelzinho (opcional)" hint={<><Counter value={caption} max={64} /> · Sem mensagem, aparece só o player.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={64} placeholder="Ex: Um dos lugares que mais me fez bem" className={inputClass} />}
       </Field>
