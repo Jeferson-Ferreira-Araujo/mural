@@ -56,12 +56,13 @@ export function DesktopBoard(props: ViewProps) {
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
       <Sidebar stats={stats} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
 
-      <div className="relative grid min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
+      {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
+      <div className="relative min-w-0 flex-1 overflow-hidden">
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
-        <nav aria-label="Informações do mural" className="relative z-10 flex items-center justify-between gap-4 px-[3vw] pt-5">
+        <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="flex min-h-10 items-center">
             {!hasSelection ? (
               <span className="rounded-2xl bg-[#2a1c12]/70 px-4 py-2 text-sm font-semibold text-[#f7f0dd] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md">Exemplo de mural</span>
@@ -82,10 +83,11 @@ export function DesktopBoard(props: ViewProps) {
           )}
         </nav>
 
-        <main className="relative [container-type:size]">
+        <main className="absolute inset-0 [container-type:size]">
           <div
             className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 transition-[filter] duration-700 ease-out [container-type:inline-size]"
-            style={{ width: "min(100cqw, 150cqh)", filter: locked ? "blur(11px) saturate(0.85)" : "none" }}
+            style={{ // cobre o bloco inteiro (corta só o excedente da imagem), mas nunca a ponto de cortar a área de cortiça com os recados
+              width: "min(max(100cqw, 150cqh), 123cqw, 192cqh)", filter: locked ? "blur(11px) saturate(0.85)" : "none" }}
             aria-hidden={locked}
             inert={locked}
           >
@@ -105,7 +107,8 @@ export function DesktopBoard(props: ViewProps) {
               {Array.from({ length: BOARD_CAPACITY }, (_, i) => {
                 const slot = SLOTS[i];
                 const item = items[i];
-                const pos: CSSProperties = { left: `${slot.x}%`, top: `${slot.y}%` };
+                // a lousa agora vai até a borda: desce um pouco as linhas para a de cima não ficar sob a barra do topo
+                const pos: CSSProperties = { left: `${slot.x}%`, top: `${3 + slot.y * 0.955}%` };
 
                 // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera)
                 if (!item) {
@@ -144,7 +147,7 @@ export function DesktopBoard(props: ViewProps) {
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </main>
 
-        <div className="relative z-10 flex flex-col items-center gap-2 pt-1 pb-5">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 pb-5">
           {onCompose && (
             <button
               type="button"
