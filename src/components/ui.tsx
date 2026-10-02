@@ -63,65 +63,6 @@ export function Field({
   );
 }
 
-/** Lista de respostas aceitas (até 5), em "etiquetas". */
-export function AnswersEditor({ answers, onChange }: { answers: string[]; onChange: (a: string[]) => void }) {
-  const [draft, setDraft] = useState("");
-  const max = 5;
-
-  function add() {
-    const v = draft.trim();
-    if (!v || answers.length >= max) return;
-    if (answers.some((a) => a.toLowerCase() === v.toLowerCase())) {
-      setDraft("");
-      return;
-    }
-    onChange([...answers, v]);
-    setDraft("");
-  }
-
-  return (
-    <div>
-      <div className="flex gap-2">
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              add();
-            }
-          }}
-          placeholder={answers.length ? "Outra resposta aceita" : "Ex.: Jef"}
-          disabled={answers.length >= max}
-          className={inputClass}
-          maxLength={60}
-          aria-label="Resposta aceita"
-        />
-        <button type="button" onClick={add} disabled={!draft.trim() || answers.length >= max} className={`${ghostButton} shrink-0 disabled:opacity-50`}>
-          Adicionar
-        </button>
-      </div>
-      {answers.length > 0 && (
-        <ul className="mt-3 flex flex-wrap gap-2">
-          {answers.map((a) => (
-            <li key={a} className="flex items-center gap-1.5 rounded-full bg-[#efe4cf] py-1 pr-1.5 pl-3.5 text-sm font-medium">
-              {a}
-              <button
-                type="button"
-                aria-label={`Remover ${a}`}
-                onClick={() => onChange(answers.filter((x) => x !== a))}
-                className="grid size-6 cursor-pointer place-items-center rounded-full text-[#6b5440] hover:bg-[#e0d0b3]"
-              >
-                ×
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
 export function Spinner({ label = "Carregando…" }: { label?: string }) {
   return (
     <p role="status" className="py-8 text-center text-[#6b5440]">

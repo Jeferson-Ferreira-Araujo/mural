@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
 import { muralPath, muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AddressBox, AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
+import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
 const STEPS = ["Nome", "Pergunta", "Publicar"] as const;
 
@@ -19,7 +19,7 @@ export default function CriarMural() {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<{ nick: string; slug: string } | null>(null);
@@ -43,7 +43,7 @@ export default function CriarMural() {
 
   const canNext = [
     title.trim().length >= 1,
-    question.trim().length >= 3 && answers.length >= 1,
+    question.trim().length >= 3 && answer.trim().length >= 1,
     true,
   ][step];
 
@@ -54,7 +54,7 @@ export default function CriarMural() {
     const { data, error: err } = await sb.rpc("create_mural", {
       p_title: title.trim(),
       p_question: question.trim(),
-      p_answers: answers,
+      p_answer: answer.trim(),
     });
     setBusy(false);
     if (err) {
@@ -145,8 +145,8 @@ export default function CriarMural() {
             <Field label="Pergunta">
               {(id) => <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Qual era meu apelido na escola?" className={inputClass} autoFocus />}
             </Field>
-            <Field label="Respostas aceitas" hint="Até 5. Maiúsculas, acentos e pontuação são ignorados (“Jéf” = “jef”). As respostas ficam guardadas de forma protegida.">
-              {() => <AnswersEditor answers={answers} onChange={setAnswers} />}
+            <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam).">
+              {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex.: Jéf" autoComplete="off" className={inputClass} />}
             </Field>
           </>
         )}
@@ -162,7 +162,7 @@ export default function CriarMural() {
               <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Pergunta</dt>
                 <dd>{question.trim()}</dd>
-                <dd className="text-[#6b5440]">Respostas aceitas: {answers.join(", ")}</dd>
+                <dd className="text-[#6b5440]">Resposta: {answer.trim()}</dd>
               </div>
             </dl>
             <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: uniqueSlug(title, taken) })} />

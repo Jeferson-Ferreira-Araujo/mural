@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { getOwnMurals, getOwnNickname, useSession, type OwnMural } from "@/lib/auth";
 import { muralPath, muralUrl } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
+import { AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
 export default function EditarMural() {
   const router = useRouter();
@@ -17,8 +17,8 @@ export default function EditarMural() {
 
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
-  const [changeAnswers, setChangeAnswers] = useState(false);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [changeAnswer, setChangeAnswer] = useState(false);
+  const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -47,8 +47,8 @@ export default function EditarMural() {
       setMsg({ ok: false, text: "Preencha o nome e a pergunta." });
       return;
     }
-    if (changeAnswers && answers.length === 0) {
-      setMsg({ ok: false, text: "Adicione ao menos uma resposta aceita." });
+    if (changeAnswer && !answer.trim()) {
+      setMsg({ ok: false, text: "Digite a nova resposta." });
       return;
     }
     setBusy(true);
@@ -56,16 +56,16 @@ export default function EditarMural() {
       p_id: id,
       p_title: title.trim(),
       p_question: question.trim(),
-      p_answers: changeAnswers ? answers : null,
+      p_answer: changeAnswer ? answer.trim() : null,
     });
     setBusy(false);
     if (error) {
       setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
       return;
     }
-    setMsg({ ok: true, text: changeAnswers ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
-    setChangeAnswers(false);
-    setAnswers([]);
+    setMsg({ ok: true, text: changeAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
+    setChangeAnswer(false);
+    setAnswer("");
   }
 
   async function remove() {
@@ -102,13 +102,13 @@ export default function EditarMural() {
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
         <Field label="Pergunta de desbloqueio">{(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />}</Field>
 
-        {changeAnswers ? (
-          <Field label="Novas respostas aceitas" hint="Substituem as atuais. Quem já tinha desbloqueado precisará responder de novo.">
-            {() => <AnswersEditor answers={answers} onChange={setAnswers} />}
+        {changeAnswer ? (
+          <Field label="Nova resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam). Quem já tinha desbloqueado precisará responder de novo.">
+            {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" autoFocus className={inputClass} />}
           </Field>
         ) : (
-          <button type="button" onClick={() => setChangeAnswers(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            Alterar respostas aceitas
+          <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+            Alterar a resposta
           </button>
         )}
 
@@ -125,7 +125,7 @@ export default function EditarMural() {
       <div className="mt-8 border-t border-[#e1d3ba] pt-5">
         {confirmDelete ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
-            <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também as respostas, os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
+            <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também a resposta, os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
             <div className="mt-3 flex gap-2">
               <button type="button" onClick={remove} disabled={busy} className="cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8a3123] disabled:opacity-60">
                 Sim, excluir
