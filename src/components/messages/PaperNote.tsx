@@ -30,7 +30,7 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
         borderRadius: "0.15em 0.15em 0.3em 0.15em",
         backgroundImage:
           "linear-gradient(90deg, transparent 2.3em, rgba(205,70,70,.5) 2.3em, rgba(205,70,70,.5) calc(2.3em + 1px), transparent calc(2.3em + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent 1.55em, rgba(90,140,200,.36) 1.55em, rgba(90,140,200,.36) calc(1.55em + 1px))",
-        backgroundPosition: "0 0, 0 1.1em",
+        backgroundPosition: "0 0, 0 2.03em",
       }}
     >
       {[18, 48, 78].map((top) => (
@@ -42,7 +42,7 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
         />
       ))}
       <Tape className="-top-[0.8em] right-[1.2em]" rotate={5} />
-      <p className="font-hand text-[1.6em] leading-[0.97] text-[#232838]">{text}</p>
+      <p className="font-hand text-[1.6em] leading-[0.96875] text-[#232838]">{text}</p>
       <span aria-hidden className="font-hand absolute right-[0.8em] bottom-[0.4em] text-[1.6em] text-[#232838]/70">☆</span>
     </article>
   );
