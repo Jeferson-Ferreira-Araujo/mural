@@ -17,7 +17,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 }
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
-export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "stats" | "siteStats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
+export function Sidebar({ siteStats, panel, plan, used, showMeter, notice, panelTitle = "ou encontre um mural" }: Pick<ViewProps, "siteStats" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
@@ -43,8 +43,10 @@ export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice
       {showMeter && <SlotMeter plan={plan} used={used} />}
       {notice?.("light")}
 
-      {!stats && siteStats && (
-        <ul className="grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
+      </div>
+
+      {siteStats && (
+        <ul className="mt-[1.4em] grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
           <Stat
             value={siteStats.murals}
             label="murais"
@@ -57,7 +59,7 @@ export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice
           />
           <Stat
             value={siteStats.cards}
-            label="cards deixados"
+            label="mensagens enviadas"
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <path d="M5 4h14v12l-4 4H5V4Z" />
@@ -76,8 +78,8 @@ export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice
             }
           />
           <Stat
-            value={siteStats.visits}
-            label="visitas"
+            value={siteStats.unlocks}
+            label="desbloqueios"
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
@@ -88,51 +90,6 @@ export function Sidebar({ stats, siteStats, panel, plan, used, showMeter, notice
         </ul>
       )}
 
-      {stats && (
-        <ul className="grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Números do mural">
-          <Stat
-            value={stats.visited}
-            label="visitaram"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            }
-          />
-          <Stat
-            value={stats.tried}
-            label="tentaram entrar"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <rect x="5" y="10" width="14" height="10" rx="1.5" />
-                <path d="M8 10V8a4 4 0 0 1 8 0v2" />
-              </svg>
-            }
-          />
-          <Stat
-            value={stats.correct}
-            label="acertaram"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <rect x="4" y="4" width="16" height="16" rx="2" />
-                <path d="m8.5 12 2.5 2.5 4.5-5" />
-              </svg>
-            }
-          />
-          <Stat
-            value={stats.messages}
-            label="mensagens"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <path d="M4 5h16v11H9l-5 4V5Z" />
-                <path d="M9 10h6" />
-              </svg>
-            }
-          />
-        </ul>
-      )}
-      </div>
     </aside>
   );
 }

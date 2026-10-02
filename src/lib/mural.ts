@@ -1,13 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** Números do site inteiro (tela inicial). */
-export type SiteStats = { murals: number; cards: number; people: number; visits: number };
+export type SiteStats = { murals: number; cards: number; people: number; unlocks: number };
 
 export async function getSiteStats(sb: SupabaseClient): Promise<SiteStats | null> {
   const { data, error } = await sb.rpc("site_stats");
   if (error || !data) return null;
   const d = data as Partial<SiteStats>;
-  return { murals: Number(d.murals) || 0, cards: Number(d.cards) || 0, people: Number(d.people) || 0, visits: Number(d.visits) || 0 };
+  return { murals: Number(d.murals) || 0, cards: Number(d.cards) || 0, people: Number(d.people) || 0, unlocks: Number(d.unlocks) || 0 };
 }
 
 export type MuralStats = { visited: number; tried: number; correct: number; messages: number };
