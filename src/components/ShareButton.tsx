@@ -1,10 +1,10 @@
 "use client";
 
-type Props = { title: string; onNotify: (msg: string) => void; className?: string };
+type Props = { title: string; /** caminho a compartilhar (padrão: a página atual) */ path?: string; onNotify: (msg: string) => void; className?: string };
 
-export function ShareButton({ title, onNotify, className = "" }: Props) {
+export function ShareButton({ title, path, onNotify, className = "" }: Props) {
   async function share() {
-    const url = window.location.href;
+    const url = path ? `${window.location.origin}${path}` : window.location.href;
     try {
       if (navigator.share) {
         await navigator.share({ title, url });

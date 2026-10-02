@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Mural } from "@/components/Mural";
+import { Explorer } from "@/components/Explorer";
 import { getPublicMural } from "@/lib/mural";
 import { getServerSupabase } from "@/lib/supabase";
 
@@ -18,13 +18,5 @@ export default async function PublicMural({ params }: Params) {
   const { nick, slug } = await params;
   const mural = await getPublicMural(getServerSupabase(), { nick, slug });
   if (!mural) notFound();
-  return (
-    <Mural
-      muralRef={{ nick: mural.nickname, slug: mural.slug }}
-      title={mural.title}
-      question={mural.question}
-      stats={mural.stats}
-      messages={[]}
-    />
-  );
+  return <Explorer initial={mural} />;
 }

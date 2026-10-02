@@ -62,9 +62,3 @@ export const messages: Message[] = [
   { id: "m12", type: "draw", caption: "Amizade de verdade!" },
 ];
 
-export const boardInfo = {
-  title: "Mural do Jeferson",
-  question: "Qual era meu apelido na escola?",
-  // Demonstração: números e validação são apenas simulados no frontend.
-  stats: { visited: 127, tried: 83, correct: 31, messages: messages.length },
-};

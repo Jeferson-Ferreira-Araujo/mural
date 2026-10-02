@@ -76,6 +76,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           </label>
           <input
             id={inputId}
+            data-focus-target
             value={answer}
             onChange={(e) => {
               setAnswer(e.target.value);

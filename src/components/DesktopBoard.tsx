@@ -2,11 +2,11 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { filters, type FilterId, type Message } from "@/lib/types";
+import { EmptyNote } from "./EmptyNote";
+import { LockedNotice } from "./LockedNotice";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
-import { CreateMuralLink } from "./CreateMuralLink";
-import { EmptyNote } from "./EmptyNote";
-import { Sidebar, UNLOCK_INPUT_DESKTOP } from "./Sidebar";
+import { Sidebar } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
@@ -29,12 +29,18 @@ function layout(items: Message[]) {
   return items.map((m, i) => ({ m, slot: SLOTS[order[i % order.length]], z: 2 + ((i * 7) % 5) }));
 }
 
+/** Foca o primeiro campo de busca/resposta visível (usado pelo botão "Deixar uma mensagem"). */
+function focusFirstField() {
+  const fields = Array.from(document.querySelectorAll<HTMLElement>("[data-focus-target]"));
+  fields.find((el) => el.offsetParent !== null)?.focus();
+}
+
 /**
  * Mural físico completo. O container usa `container-type: inline-size`
  * e todos os tamanhos derivam de `cqw`, então o mural escala por inteiro.
+ * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
-export function DesktopBoard(props: ViewProps) {
-  const { messages, unlocked, onNotify } = props;
+export function DesktopBoard({ messages, locked, hasSelection, unlocked, stats, share, panel, onNotify }: ViewProps) {
   const [filter, setFilter] = useState<FilterId>("all");
 
   const placed = useMemo(() => {
@@ -44,18 +50,17 @@ export function DesktopBoard(props: ViewProps) {
   }, [messages, filter]);
 
   function addMessage() {
-    if (unlocked) {
-      onNotify("Em breve: aqui você poderá deixar sua mensagem anônima.");
+    if (!unlocked) {
+      focusFirstField();
+      onNotify(hasSelection ? "Responda a pergunta para desbloquear o mural." : "Procure alguém pelo nickname primeiro.");
       return;
     }
-    const input = document.getElementById(UNLOCK_INPUT_DESKTOP);
-    input?.focus();
-    onNotify("Responda a pergunta para desbloquear o mural.");
+    onNotify("Em breve: aqui você poderá deixar sua mensagem anônima.");
   }
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar {...props} />
+      <Sidebar stats={stats} panel={panel} />
 
       <div className="relative grid min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
@@ -63,7 +68,11 @@ export function DesktopBoard(props: ViewProps) {
         <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
         <nav aria-label="Filtrar mensagens" className="relative z-10 flex items-center justify-between gap-4 px-[3vw] pt-5">
-          <div role="tablist" className="flex max-w-full gap-1 overflow-x-auto rounded-2xl bg-[#2a1c12]/70 p-1.5 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md no-scrollbar">
+          <div
+            role="tablist"
+            inert={locked}
+            className="no-scrollbar flex max-w-full gap-1 overflow-x-auto rounded-2xl bg-[#2a1c12]/70 p-1.5 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md"
+          >
             {filters.map((f) => (
               <button
                 key={f.id}
@@ -78,16 +87,17 @@ export function DesktopBoard(props: ViewProps) {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <CreateMuralLink className="bg-[#2a1c12]/70 text-[#f7f0dd] backdrop-blur-md hover:bg-[#2a1c12]/90" />
-            <ShareButton title={props.title} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
-          </div>
+          {share && (
+            <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+          )}
         </nav>
 
         <main className="relative [container-type:size]">
           <div
-            className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 [container-type:inline-size]"
-            style={{ width: "min(100cqw, 150cqh)" }}
+            className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 transition-[filter] duration-700 ease-out [container-type:inline-size]"
+            style={{ width: "min(100cqw, 150cqh)", filter: locked ? "blur(11px) saturate(0.85)" : "none" }}
+            aria-hidden={locked}
+            inert={locked}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={BOARD_IMAGE} alt="Mural de cortiça com moldura de madeira" className="absolute inset-0 size-full select-none" draggable={false} />
@@ -126,6 +136,7 @@ export function DesktopBoard(props: ViewProps) {
               ))}
             </div>
           </div>
+          {locked && <LockedNotice hasSelection={hasSelection} />}
         </main>
 
         <div className="relative z-10 flex justify-center pt-1 pb-5">

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Mural } from "@/components/Mural";
-import { boardInfo, messages } from "@/data/mock";
+import { Explorer } from "@/components/Explorer";
 
-export const metadata: Metadata = { title: "Mural do Jeferson (demonstração)" };
+export const metadata: Metadata = { title: "Pinz — murais de recados anônimos" };
 
-/** Página inicial: mural de demonstração (dados fictícios). */
+/** Página inicial: busca uma pessoa pelo nickname e desbloqueia o mural respondendo a pergunta. */
 export default function Home() {
-  return <Mural {...boardInfo} messages={messages} />;
+  return <Explorer />;
 }

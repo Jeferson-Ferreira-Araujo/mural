@@ -122,3 +122,12 @@ export function uniqueSlug(title: string, existing: string[]): string {
   }
   return cand;
 }
+
+export type ProfileHit = { nickname: string; murals: number };
+
+/** Busca pessoas pelo nickname (só quem tem mural). */
+export async function searchProfiles(sb: SupabaseClient, query: string): Promise<ProfileHit[]> {
+  const { data, error } = await sb.rpc("search_profiles", { p_query: query });
+  if (error || !Array.isArray(data)) return [];
+  return data as ProfileHit[];
+}
