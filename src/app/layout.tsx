@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Caveat, DM_Sans, Fraunces, Kalam, Reenie_Beanie } from "next/font/google";
+import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
@@ -9,8 +10,11 @@ const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--f
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
 
 export const metadata: Metadata = {
-  title: { default: "Mural", template: "%s | Mural" },
-  description: "Crie o seu mural de recados anônimos e compartilhe com quem realmente te conhece.",
+  metadataBase: new URL(`https://${SITE_HOST}`),
+  title: { default: "Pinz", template: "%s | Pinz" },
+  description: "Crie o seu mural no Pinz e receba recados anônimos de quem realmente te conhece.",
+  openGraph: { siteName: "Pinz", type: "website", locale: "pt_BR", images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Pinz" }] },
+  twitter: { card: "summary_large_image", images: ["/og.jpg"] },
   robots: { index: false, follow: false },
 };
 

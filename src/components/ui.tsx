@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { cleanNickname, NICK_RE, nicknameAvailable, SITE_HOST } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { Brand } from "./Brand";
 import { BOARD_IMAGE } from "./DesktopBoard";
 
 /** Fundo e cartão centralizado usados nas telas de conta (entrar, criar, painel). */
@@ -14,9 +15,7 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
       <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-xl" />
       <span aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_30%,rgba(60,30,8,.2),rgba(14,7,2,.8))]" />
       <div className={`rise relative w-full min-w-0 ${wide ? "max-w-2xl" : "max-w-md"}`}>
-        <Link href="/" className="font-hand mb-3 block w-fit text-[1.9rem] leading-none text-[#fbf3e2] [text-shadow:0_2px_8px_rgba(0,0,0,.5)] hover:opacity-90">
-          Mural
-        </Link>
+        <Brand className="-mb-1 h-20 sm:h-24" />
         <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
           {children}
         </main>

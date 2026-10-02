@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { typeLabel } from "@/lib/types";
 import { BoardTitle } from "./BoardTitle";
+import { Brand } from "./Brand";
 import { MessageView } from "./messages/MessageView";
 import { ShareButton } from "./ShareButton";
 import { UnlockPanel } from "./UnlockPanel";
@@ -69,6 +70,7 @@ export function MobileCarousel({ messages, title, question, unlocked, onSubmitAn
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
         <div className="mx-auto flex w-[min(90vw,30rem)] items-start justify-between gap-4">
           <div className="rise text-[16px] md:text-[18px]">
+            <Brand className="-mt-2 -mb-1 h-16" />
             <BoardTitle title={title} tone="dark" />
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
