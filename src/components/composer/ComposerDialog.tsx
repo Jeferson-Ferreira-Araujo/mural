@@ -8,7 +8,7 @@ import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
-import { ListForm, MusicForm, PhotoForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
+import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 
 type Props = {
@@ -38,6 +38,8 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
       return <VideoForm onChange={onChange} />;
     case "voice":
       return <VoiceForm onChange={onChange} />;
+    case "place":
+      return <PlaceForm onChange={onChange} />;
   }
 }
 

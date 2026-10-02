@@ -409,3 +409,121 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
     </div>
   );
 }
+
+// ---------- Local / Maps (FULL) ----------
+type PlaceHit = { name: string; address: string; lat: number; lon: number };
+
+/** Busca de lugares pelo nome (Nominatim/OpenStreetMap). Só roda quando a pessoa pede. */
+async function searchPlaces(q: string): Promise<PlaceHit[]> {
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=pt-BR&q=${encodeURIComponent(q)}`);
+  if (!res.ok) throw new Error("search failed");
+  const list = (await res.json()) as { name?: string; display_name: string; lat: string; lon: string }[];
+  return list
+    .map((r) => {
+      const parts = r.display_name.split(",").map((p) => p.trim());
+      return { name: (r.name || parts[0] || "Lugar").slice(0, 60), address: parts.slice(1, 4).join(", ").slice(0, 80), lat: Number(r.lat), lon: Number(r.lon) };
+    })
+    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+}
+
+/** Escolhe um lugar buscando pelo nome; o resultado vira um mini aparelho de mapa. */
+export function PlaceForm({ onChange }: { onChange: DraftChange }) {
+  const [query, setQuery] = useState("");
+  const [hits, setHits] = useState<PlaceHit[]>([]);
+  const [place, setPlace] = useState<PlaceHit | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [caption, setCaption] = useState("");
+  const [color, setColor] = useState<PlayerColor>("silver");
+
+  async function search() {
+    const q = query.trim();
+    if (q.length < 3) return setError("Digite pelo menos 3 letras do nome do lugar.");
+    setError(null);
+    setSearching(true);
+    try {
+      setHits(await searchPlaces(q));
+      setSearched(true);
+    } catch {
+      setError("Não foi possível buscar agora. Tente de novo em instantes.");
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  useEffect(
+    () => onChange(place ? { type: "place", name: place.name, address: place.address, lat: place.lat, lon: place.lon, caption: caption.trim(), playerColor: color } : null),
+    [place, caption, color, onChange],
+  );
+
+  return (
+    <div className="space-y-4">
+      {place ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
+          <div className="min-w-0">
+            <p className="truncate font-semibold">{place.name}</p>
+            {place.address && <p className="truncate text-sm text-[#6b5440]">{place.address}</p>}
+          </div>
+          <button type="button" onClick={() => setPlace(null)} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+            Trocar
+          </button>
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="place-q" className="mb-1.5 block text-sm font-semibold">
+            Qual lugar?
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="place-q"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void search();
+                }
+              }}
+              placeholder="Ex: Cristo Redentor, Rio de Janeiro"
+              className={inputClass}
+              maxLength={100}
+              autoComplete="off"
+            />
+            <button type="button" onClick={() => void search()} disabled={searching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
+              {searching ? "Buscando…" : "Buscar"}
+            </button>
+          </div>
+          {error && <ErrorText>{error}</ErrorText>}
+          {searched && hits.length === 0 && !error && <p className="mt-2 text-sm text-[#6b5440]">Nenhum lugar encontrado. Tente incluir a cidade.</p>}
+          {hits.length > 0 && (
+            <ul className="mt-2 flex flex-col gap-1.5" aria-label="Resultados">
+              {hits.map((h, i) => (
+                <li key={`${h.lat},${h.lon},${i}`}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlace(h);
+                      setHits([]);
+                    }}
+                    className="w-full cursor-pointer rounded-xl border border-[#e1d3ba] bg-white/60 px-3.5 py-2.5 text-left transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
+                  >
+                    <span className="block truncate text-sm font-semibold">{h.name}</span>
+                    <span className="block truncate text-xs text-[#6b5440]">{h.address}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-2 text-xs text-[#8a7b69]">Mapas © colaboradores do OpenStreetMap.</p>
+        </div>
+      )}
+
+      <PlayerColorPicker value={color} onChange={setColor} />
+
+      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o mapa.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que mais amo!" className={inputClass} />}
+      </Field>
+    </div>
+  );
+}

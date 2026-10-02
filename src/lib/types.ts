@@ -9,7 +9,7 @@ type Base = {
   fromCapsule?: boolean;
 };
 
-/** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice. */
+/** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */
 export type Message =
   | (Base & { type: "postit"; color: PostItColor; text: string })
   | (Base & { type: "text"; variant: "letter" | "notebook"; text: string })
@@ -17,7 +17,8 @@ export type Message =
   | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
-  | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor });
+  | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
+  | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor });
 
 export type MessageType = Message["type"];
 
@@ -42,6 +43,7 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   music: { label: "Música", hint: "Um mini MP3 player", tier: "full" },
   video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
   voice: { label: "Voz", hint: "Uma mensagem de voz", tier: "full" },
+  place: { label: "Local", hint: "Um lugar no mapa", tier: "full" },
 };
 
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(

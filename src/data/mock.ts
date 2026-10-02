@@ -73,7 +73,7 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
     },
     { id: "m12", type: "postit", color: "green", text: "Valeu por tudo, parceiro. Conta comigo sempre!" },
     { id: "m13", type: "voice", caption: "Sua voz sempre me faz sorrir! ♡", duration: "0:27" },
-    { id: "m14", type: "postit", color: "orange", text: "Saudade da sua risada!" },
+    { id: "m14", type: "place", name: "Cristo Redentor", address: "Rio de Janeiro - RJ", lat: -22.951916, lon: -43.210487, caption: "Um dos lugares que mais amo!" },
   ];
   return { items, vault: { ...SEED_VAULT } };
 }

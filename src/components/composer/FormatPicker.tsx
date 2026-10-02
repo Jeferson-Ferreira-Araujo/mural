@@ -33,6 +33,15 @@ const THUMBS: Record<MessageType, ReactNode> = {
       <span className="size-[18px] shrink-0 rounded-full bg-white/75 ring-1 ring-black/20" />
     </span>
   ),
+  place: (
+    <span className="block h-8 w-12 rounded-[8px] bg-gradient-to-b from-[#f1f1f5] to-[#8e8f99] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-white/60">
+      <span className="relative block h-full overflow-hidden rounded-[4px] bg-[#dfe9d5]">
+        <span className="absolute top-[8px] -left-1 h-[3px] w-[60px] rotate-[-18deg] bg-white" />
+        <span className="absolute -top-1 left-[10px] h-[40px] w-[3px] rotate-[12deg] bg-[#f4d58a]" />
+        <span className="absolute top-[3px] left-[18px] size-[8px] rotate-[45deg] rounded-full rounded-br-none bg-[#e53935]" />
+      </span>
+    </span>
+  ),
   voice: (
     <span className="flex h-7 w-11 gap-[3px] rounded-[7px] bg-gradient-to-b from-[#f1e6d3] to-[#b5a07a] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-white/60">
       <span className="grid w-[10px] place-items-center rounded-[3px] bg-black/10">

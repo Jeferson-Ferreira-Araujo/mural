@@ -3,6 +3,7 @@ import { ClosedCapsule } from "./ClosedCapsule";
 import { ListCard } from "./ListCard";
 import { MusicCard } from "./MusicCard";
 import { PaperNote } from "./PaperNote";
+import { PlaceCard } from "./PlaceCard";
 import { PolaroidPhoto } from "./PolaroidPhoto";
 import { PostIt } from "./PostIt";
 import { VideoPrint } from "./VideoPrint";
@@ -24,6 +25,8 @@ function Content({ m }: { m: Message }) {
       return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
     case "voice":
       return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
+    case "place":
+      return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} />;
   }
 }
 
