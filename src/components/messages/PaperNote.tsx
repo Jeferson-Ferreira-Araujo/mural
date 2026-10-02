@@ -1,10 +1,13 @@
+import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
 
 /**
  * Texto em folha. `letter`: papel liso rasgado com tinta azul.
  * `notebook`: folha de caderno pautada, com margem e furos.
  */
-export function PaperNote({ text, variant }: { text: string; variant: "letter" | "notebook" }) {
+export function PaperNote({ text, variant, font, tape }: { text: string; variant: "letter" | "notebook"; font?: HandId; tape?: TapeColor }) {
+  const hand = handOf(font);
+  const tone = tape ? tapeOf(tape).tone : undefined;
   if (variant === "letter") {
     return (
       <article
@@ -16,8 +19,10 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
           backgroundImage: "linear-gradient(120deg, rgba(0,0,0,.05), transparent 30%, rgba(255,255,255,.4) 60%, rgba(0,0,0,.04))",
         }}
       >
-        <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={-3} />
-        <p className="font-hand text-[1.55em] leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]">{text}</p>
+        <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={-3} tone={tone} />
+        <p className="leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.55 * hand.scale}em` }}>
+          {text}
+        </p>
       </article>
     );
   }
@@ -30,7 +35,7 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
         borderRadius: "0.15em 0.15em 0.3em 0.15em",
         backgroundImage:
           "linear-gradient(90deg, transparent 2.3em, rgba(205,70,70,.5) 2.3em, rgba(205,70,70,.5) calc(2.3em + 1px), transparent calc(2.3em + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent calc(1.55em - 1px), rgba(90,140,200,.36) calc(1.55em - 1px), rgba(90,140,200,.36) 1.55em)",
-        backgroundPosition: "0 0, 0 calc(1.73em + 1px)",
+        backgroundPosition: `0 0, 0 calc(${(1.73 + hand.rule).toFixed(3)}em + 1px)`,
       }}
     >
       {[18, 48, 78].map((top) => (
@@ -41,8 +46,11 @@ export function PaperNote({ text, variant }: { text: string; variant: "letter" |
           style={{ top: `${top}%` }}
         />
       ))}
-      <Tape className="-top-[0.8em] right-[1.2em]" rotate={5} />
-      <p className="font-hand text-[1.6em] leading-[0.96875] text-[#232838] [overflow-wrap:anywhere]">{text}</p>
+      <Tape className="-top-[0.8em] right-[1.2em]" rotate={5} tone={tone} />
+      {/* a pauta tem 1,55em por linha; a altura de linha do texto é igual, qualquer que seja a letra */}
+      <p className="text-[#232838] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.6 * hand.scale}em`, lineHeight: `${1.55 / (1.6 * hand.scale)}` }}>
+        {text}
+      </p>
       <span aria-hidden className="font-hand absolute right-[0.8em] bottom-[0.4em] text-[1.6em] text-[#232838]/70">☆</span>
     </article>
   );

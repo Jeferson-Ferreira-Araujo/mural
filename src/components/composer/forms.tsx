@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { PlayerColor, PostItColor } from "@/lib/types";
+import type { HandId, PinColor, TapeColor } from "@/lib/style";
 import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
+import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange } from "./types";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
@@ -39,7 +41,10 @@ const POSTIT_COLORS: { id: PostItColor; label: string; bg: string }[] = [
 export function PostItForm({ onChange }: { onChange: DraftChange }) {
   const [color, setColor] = useState<PostItColor>("yellow");
   const [text, setText] = useState("");
-  useEffect(() => onChange(text.trim() ? { type: "postit", color, text: text.trim() } : null), [color, text, onChange]);
+  const [font, setFont] = useState<HandId>("caveat");
+  const [pin, setPin] = useState<PinColor | null>(null); // null = a tachinha padrão da cor do post-it
+  const defaultPin: PinColor = color === "orange" || color === "blue" ? "blue" : "red";
+  useEffect(() => onChange(text.trim() ? { type: "postit", color, text: text.trim(), font, ...(pin ? { pin } : {}) } : null), [color, text, font, pin, onChange]);
   return (
     <div className="space-y-4">
       <fieldset>
@@ -59,6 +64,8 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
           ))}
         </div>
       </fieldset>
+      <PinColorPicker value={pin ?? defaultPin} onChange={setPin} />
+      <FontPicker value={font} onChange={setFont} />
       <Field label="Seu recado" hint={<Counter value={text} max={90} />}>
         {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={90} rows={3} placeholder="Escreva um recado curtinho…" className={area} />}
       </Field>
@@ -70,7 +77,9 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
 export function TextForm({ onChange }: { onChange: DraftChange }) {
   const [variant, setVariant] = useState<"letter" | "notebook">("letter");
   const [text, setText] = useState("");
-  useEffect(() => onChange(text.trim() ? { type: "text", variant, text: text.trim() } : null), [variant, text, onChange]);
+  const [font, setFont] = useState<HandId>("caveat");
+  const [tape, setTape] = useState<TapeColor>("yellow");
+  useEffect(() => onChange(text.trim() ? { type: "text", variant, text: text.trim(), font, tape } : null), [variant, text, font, tape, onChange]);
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label="Tipo de papel" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
@@ -87,6 +96,8 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
           </button>
         ))}
       </div>
+      <TapeColorPicker value={tape} onChange={setTape} />
+      <FontPicker value={font} onChange={setFont} />
       <Field label="Sua mensagem" hint={<Counter value={text} max={320} />}>
         {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={320} rows={6} placeholder="Escreva com calma, é uma folha inteira…" className={area} />}
       </Field>
@@ -98,13 +109,17 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
 export function ListForm({ onChange }: { onChange: DraftChange }) {
   const [title, setTitle] = useState("");
   const [items, setItems] = useState(["", "", ""]);
+  const [font, setFont] = useState<HandId>("caveat");
+  const [tape, setTape] = useState<TapeColor>("yellow");
   const max = 6;
   useEffect(() => {
     const filled = items.map((t) => t.trim()).filter(Boolean);
-    onChange(title.trim() && filled.length ? { type: "list", title: title.trim(), items: filled.map((text) => ({ text, done: false })) } : null);
-  }, [title, items, onChange]);
+    onChange(title.trim() && filled.length ? { type: "list", title: title.trim(), items: filled.map((text) => ({ text, done: false })), font, tape } : null);
+  }, [title, items, font, tape, onChange]);
   return (
     <div className="space-y-4">
+      <TapeColorPicker value={tape} onChange={setTape} />
+      <FontPicker value={font} onChange={setFont} />
       <Field label="Título da lista">
         {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} placeholder="Ex: Pra gente fazer:" className={inputClass} />}
       </Field>
@@ -169,6 +184,8 @@ const MAX_PHOTO_MB = 8;
 export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
+  const [font, setFont] = useState<HandId>("caveat");
+  const [tape, setTape] = useState<TapeColor>("yellow");
   const [error, setError] = useState<string | null>(null);
   const prev = useRef<string | null>(null);
 
@@ -182,7 +199,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
     prev.current = url;
     setSrc(url);
   }
-  useEffect(() => onChange(src ? { type: "photo", caption: caption.trim(), src } : null), [src, caption, onChange]);
+  useEffect(() => onChange(src ? { type: "photo", caption: caption.trim(), src, font, tape } : null), [src, caption, font, tape, onChange]);
 
   return (
     <div className="space-y-4">
@@ -190,6 +207,8 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
+      <TapeColorPicker value={tape} onChange={setTape} />
+      <FontPicker value={font} onChange={setFont} />
       <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder="Ex: Churrasco de 2019" className={inputClass} />}
       </Field>

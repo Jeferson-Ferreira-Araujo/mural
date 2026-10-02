@@ -1,3 +1,5 @@
+import type { HandId, PinColor, TapeColor } from "./style";
+
 export type PostItColor = "yellow" | "pink" | "green" | "orange" | "blue";
 
 /** Cor do mini player de vídeo. */
@@ -9,6 +11,10 @@ type Base = {
   fromCapsule?: boolean;
   /** Espaço do quadro em que o pin foi colado (escolhido por quem deixou). Sem isso, ocupa o primeiro livre. */
   slot?: number;
+  /** Personalização dos cards de texto (escolhida por quem colou o pin). */
+  font?: HandId;
+  pin?: PinColor;
+  tape?: TapeColor;
 };
 
 /** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */

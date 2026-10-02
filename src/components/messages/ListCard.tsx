@@ -1,7 +1,12 @@
+import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
 
 /** Lista: papel creme com checklist escrito à mão. */
-export function ListCard({ title, items }: { title: string; items: { text: string; done: boolean }[] }) {
+export function ListCard({ title, items, font, tape }: { title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor }) {
+  const hand = handOf(font);
+  // sem letra escolhida: o visual de sempre (título Caveat, itens Kalam); com letra escolhida, tudo na mesma
+  const itemFont = font ? hand.family : "var(--font-kalam), cursive";
+  const itemSize = font ? 1.18 * hand.scale : 0.88;
   return (
     <article
       aria-label="Lista"
@@ -11,9 +16,9 @@ export function ListCard({ title, items }: { title: string; items: { text: strin
         clipPath: "polygon(0 0, 100% 0, 100% 96%, 94% 100%, 86% 97%, 76% 100%, 64% 97.5%, 52% 100%, 40% 97%, 28% 100%, 16% 97.5%, 6% 100%, 0 97%)",
       }}
     >
-      <Tape className="top-[-0.5em] right-[1.5em]" rotate={6} />
+      <Tape className="top-[-0.5em] right-[1.5em]" rotate={6} tone={tape ? tapeOf(tape).tone : undefined} />
       <div className="flex items-start justify-between">
-        <h3 className="font-hand min-w-0 [overflow-wrap:anywhere] text-[1.9em] leading-none font-semibold text-[#2a2a33] underline decoration-[#2a2a33]/40 decoration-1 underline-offset-[0.12em]">
+        <h3 className="min-w-0 [overflow-wrap:anywhere] leading-none font-semibold text-[#2a2a33] underline decoration-[#2a2a33]/40 decoration-1 underline-offset-[0.12em]" style={{ fontFamily: hand.family, fontSize: `${1.9 * hand.scale}em` }}>
           {title}
         </h3>
         <svg viewBox="0 0 40 40" className="size-[2.4em] text-[#2a2a33]/80" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
@@ -24,7 +29,7 @@ export function ListCard({ title, items }: { title: string; items: { text: strin
           })}
         </svg>
       </div>
-      <ul className="font-hand-alt mt-[0.5em] space-y-[0.28em] text-[0.88em] leading-tight text-[#2a2a33]">
+      <ul className="mt-[0.5em] space-y-[0.28em] leading-tight text-[#2a2a33]" style={{ fontFamily: itemFont, fontSize: `${itemSize}em` }}>
         {items.map((it) => (
           <li key={it.text} className="flex items-start gap-[0.55em]">
             <span className="mt-[0.1em] grid size-[1.05em] shrink-0 place-items-center rounded-[0.15em] border border-[#2a2a33]/70">

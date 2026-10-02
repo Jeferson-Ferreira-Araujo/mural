@@ -1,4 +1,5 @@
 import type { PostItColor } from "@/lib/types";
+import { handOf, type HandId, type PinColor } from "@/lib/style";
 import { Pin } from "./fasteners";
 
 const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blue" }> = {
@@ -9,8 +10,9 @@ const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blu
   blue: { bg: "#a9d8f0", edge: "#84bde0", pin: "blue" },
 };
 
-export function PostIt({ color, text }: { color: PostItColor; text: string }) {
+export function PostIt({ color, text, font, pin }: { color: PostItColor; text: string; font?: HandId; pin?: PinColor }) {
   const c = palette[color];
+  const hand = handOf(font);
   return (
     <article
       aria-label="Post-it"
@@ -20,8 +22,10 @@ export function PostIt({ color, text }: { color: PostItColor; text: string }) {
         borderRadius: "0.1em 0.1em 0.5em 0.1em / 0.1em 0.1em 1.2em 0.1em",
       }}
     >
-      <Pin tone={c.pin} className="top-[0.55em] left-[1.1em]" />
-      <p className="font-hand text-[1.7em] leading-[1.08] text-[#34281a] [overflow-wrap:anywhere]">{text}</p>
+      <Pin tone={pin ?? c.pin} className="top-[0.55em] left-[1.1em]" />
+      <p className="leading-[1.08] text-[#34281a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.7 * hand.scale}em` }}>
+        {text}
+      </p>
     </article>
   );
 }

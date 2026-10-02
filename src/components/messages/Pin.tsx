@@ -1,20 +1,21 @@
 import type { CSSProperties } from "react";
+import { pinOf, type PinColor } from "@/lib/style";
 
 /**
  * Tachinha: imagem real (public/img/tachinha.webp, original em imagens/tachinha.png).
  * O centro da base (57% / 59% da imagem) é o ponto de fixação no papel.
- * `tone="blue"` recolore a mesma imagem via hue-rotate.
+ * As outras cores recolorem a mesma imagem por filtro (veja `PIN_COLORS`).
  */
 export function Pin({
   tone = "red",
   className = "",
   style,
 }: {
-  tone?: "red" | "blue";
+  tone?: PinColor;
   className?: string;
   style?: CSSProperties;
 }) {
-  const recolor = tone === "blue" ? "hue-rotate(215deg) saturate(1.1) " : "";
+  const recolor = pinOf(tone).filter;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img

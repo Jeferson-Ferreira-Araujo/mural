@@ -1,8 +1,10 @@
+import { handOf, pinOf, tapeOf, type HandId, type PinColor, type TapeColor } from "@/lib/style";
 import { Pin, Tape } from "./fasteners";
 import { Scene, type SceneVariant } from "./Scene";
 
 /** Foto em Polaroid. `src` = foto escolhida pela pessoa; sem `src`, usa uma cena ilustrada de exemplo. */
-export function PolaroidPhoto({ caption, scene = "hills", src }: { caption: string; scene?: SceneVariant; src?: string }) {
+export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor }) {
+  const hand = handOf(font);
   return (
     <article
       aria-label="Foto"
@@ -10,9 +12,9 @@ export function PolaroidPhoto({ caption, scene = "hills", src }: { caption: stri
       style={{ borderRadius: "0.15em" }}
     >
       {scene === "group" || src ? (
-        <Tape className="-top-[0.8em] left-1/2 -translate-x-1/2" rotate={-3} />
+        <Tape className="-top-[0.8em] left-1/2 -translate-x-1/2" rotate={-3} tone={tape ? tapeOf(tape).tone : undefined} />
       ) : (
-        <Pin tone="red" className="top-[-0.6em] left-[1.1em]" />
+        <Pin tone={pin ? pinOf(pin).id : "red"} className="top-[-0.6em] left-[1.1em]" />
       )}
       <div className="relative aspect-square w-full overflow-hidden bg-[#222] shadow-[inset_0_0_0.6em_rgba(0,0,0,.55)]">
         {src ? (
@@ -23,7 +25,9 @@ export function PolaroidPhoto({ caption, scene = "hills", src }: { caption: stri
         )}
         <span aria-hidden className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_40%)]" />
       </div>
-      {caption && <p className="font-hand mt-[0.4em] text-[1.5em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]">{caption}</p>}
+      {caption && <p className="mt-[0.4em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.5 * hand.scale}em` }}>
+          {caption}
+        </p>}
     </article>
   );
 }

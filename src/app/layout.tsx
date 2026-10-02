@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, DM_Sans, Fraunces, Kalam, Reenie_Beanie } from "next/font/google";
+import { Caveat, DM_Sans, Fraunces, Indie_Flower, Kalam, Patrick_Hand, Reenie_Beanie } from "next/font/google";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
@@ -7,6 +7,8 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
 const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
 const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--font-kalam" });
+const patrick = Patrick_Hand({ subsets: ["latin"], weight: "400", variable: "--font-patrick" });
+const indie = Indie_Flower({ subsets: ["latin"], weight: "400", variable: "--font-indie" });
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
 
 export const metadata: Metadata = {
@@ -28,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="pt-BR"
-      className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${reenie.variable}`}
+      className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable}`}
     >
       <body>{children}</body>
     </html>

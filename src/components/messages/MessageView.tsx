@@ -12,13 +12,13 @@ import { VoiceNote } from "./VoiceNote";
 function Content({ m }: { m: Message }) {
   switch (m.type) {
     case "postit":
-      return <PostIt color={m.color} text={m.text} />;
+      return <PostIt color={m.color} text={m.text} font={m.font} pin={m.pin} />;
     case "text":
-      return <PaperNote text={m.text} variant={m.variant} />;
+      return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} />;
     case "list":
-      return <ListCard title={m.title} items={m.items} />;
+      return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} />;
     case "photo":
-      return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} />;
+      return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} />;
     case "music":
       return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} color={m.playerColor} />;
     case "video":
