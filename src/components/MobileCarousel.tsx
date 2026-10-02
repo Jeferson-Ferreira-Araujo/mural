@@ -69,10 +69,10 @@ export function MobileCarousel({ messages, title, question, unlocked, onSubmitAn
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
         <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
           <h1 className="sr-only">{title}</h1>
-          <Brand className="h-20" />
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <CreateMuralLink className="border border-white/15 bg-[#fbf6ea] text-[#2a1c12]" />
-            <ShareButton title={title} onNotify={onNotify} className="border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
+          <Brand className="h-28" />
+          <div className="grid w-full max-w-[21rem] grid-cols-2 gap-2">
+            <CreateMuralLink className="w-full justify-center border border-white/15 bg-[#fbf6ea] text-[#2a1c12]" />
+            <ShareButton title={title} onNotify={onNotify} className="w-full justify-center border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />
           </div>
         </header>
 
