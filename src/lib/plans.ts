@@ -45,8 +45,8 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   },
 };
 
-/** Capacidade em teste (só na demonstração): 30 espaços, com cards pequenos e clique no pin para ler. */
-export const DENSE_CAPACITY = 30;
+/** Capacidade em teste (só na demonstração): 28 espaços (7 × 4), com cards pequenos e clique no pin para ler. */
+export const DENSE_CAPACITY = 28;
 
 /** Espaços liberados: no FREE são sempre os 5 do plano; no FULL, todos os do quadro (padrão 15). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));

@@ -75,13 +75,13 @@ function focusFirstField() {
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify } = props;
   const dense = capacity > BOARD_CAPACITY; // quadro denso (teste): cards pequenos, clique no pin para ler
-  const cols = dense ? 6 : 5;
+  const cols = dense ? 7 : 5;
   const rows = Math.ceil(capacity / cols);
   const [detail, setDetail] = useState<number | null>(null);
   const available = slotsFor(plan, capacity);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
-  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.62 : 1);
+  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.78 : 1);
   const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity]);
 
   function addMessage() {
