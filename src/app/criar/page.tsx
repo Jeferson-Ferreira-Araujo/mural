@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getOwnMural, getOwnNickname, useSession } from "@/lib/auth";
 import { SITE_HOST } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
+import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
 const STEPS = ["Nome", "Apresentação", "Pergunta", "Publicar"] as const;
 const DEFAULT_TAGLINE = "Mensagens de pessoas que me conhecem";
@@ -18,7 +18,6 @@ export default function CriarMural() {
   const [savedNick, setSavedNick] = useState<string | null>(null);
 
   const [step, setStep] = useState(0);
-  const [nick, setNick] = useState("");
   const [title, setTitle] = useState("");
   const [tagline, setTagline] = useState(DEFAULT_TAGLINE);
   const [question, setQuestion] = useState("");
@@ -27,9 +26,6 @@ export default function CriarMural() {
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<string | null>(null);
 
-  const needsNick = savedNick === null;
-  const nickState = useNicknameStatus(needsNick ? nick : "");
-  const address = savedNick ?? nick;
 
   // exige login; quem já tem mural vai para o painel
   useEffect(() => {
@@ -47,7 +43,7 @@ export default function CriarMural() {
   }, [loading, session, router]);
 
   const canNext = [
-    title.trim().length >= 1 && (!needsNick || nickState === "ok"),
+    title.trim().length >= 1,
     tagline.trim().length >= 1,
     question.trim().length >= 3 && answers.length >= 1,
     true,
@@ -57,18 +53,6 @@ export default function CriarMural() {
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    if (needsNick) {
-      const { error: nickErr } = await sb.rpc("set_nickname", { p_nick: nick });
-      if (nickErr) {
-        setBusy(false);
-        if (nickErr.message.includes("nickname_unavailable")) {
-          setStep(0);
-          setError("Esse nickname acabou de ser usado por outra pessoa. Escolha outro.");
-        } else setError("Não foi possível salvar o nickname. Tente de novo.");
-        return;
-      }
-      setSavedNick(nick);
-    }
     const { data, error: err } = await sb.rpc("create_mural", {
       p_title: title.trim(),
       p_tagline: tagline.trim(),
@@ -146,19 +130,12 @@ export default function CriarMural() {
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
-            {needsNick ? (
-              <>
-                <NicknameField value={nick} onChange={setNick} state={nickState} />
-                <p className="-mt-2 text-sm text-[#6b5440]">O nickname é único e não pode ser trocado depois.</p>
-              </>
-            ) : (
-              <p className="rounded-xl border border-[#e1d3ba] bg-white/60 px-4 py-3 text-sm text-[#4a3826]">
-                Endereço do seu mural:{" "}
-                <strong className="break-all">
-                  {SITE_HOST}/{savedNick}
-                </strong>
-              </p>
-            )}
+            <p className="rounded-xl border border-[#e1d3ba] bg-white/60 px-4 py-3 text-sm text-[#4a3826]">
+              Endereço do seu mural:{" "}
+              <strong className="break-all">
+                {SITE_HOST}/{savedNick}
+              </strong>
+            </p>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {error}
@@ -201,7 +178,7 @@ export default function CriarMural() {
               <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Endereço</dt>
                 <dd className="break-all">
-                  {SITE_HOST}/{address}
+                  {SITE_HOST}/{savedNick}
                 </dd>
               </div>
               <div>
