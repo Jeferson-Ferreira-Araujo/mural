@@ -182,6 +182,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         showMeter={revealed}
         locked={!unlocked}
         hasSelection={!!selected}
+        landing={!selected && !choices}
         unlocked={unlocked}
         stats={selected?.stats ?? null}
         share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}

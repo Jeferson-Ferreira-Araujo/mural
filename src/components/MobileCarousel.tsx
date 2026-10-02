@@ -16,7 +16,7 @@ const labelOf = (i: BoardItem) => (isSealed(i) ? "Cápsula fechada" : typeLabel[
 const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 2, -1, 1.5, -2, 1];
 
 /** Experiência mobile/tablet: uma mensagem por vez, em carrossel com swipe. Desfocada até desbloquear. */
-export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify }: ViewProps) {
+export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSelection, unlocked, share, panel, notice, onCompose, onNotify, landing = false }: ViewProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -71,10 +71,10 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
         backgroundPosition: "center, center, 52% 48%",
       }}
     >
-      <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-4 pt-4 pb-8 [font-size:16px]">
+      <main className={`mx-auto flex min-h-dvh max-w-4xl flex-col pt-4 pb-8 transition-[gap] duration-500 [font-size:16px] ${landing ? "justify-center gap-6 pb-[8vh]" : "gap-4"}`}>
         <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
           <h1 className="sr-only">Pinz</h1>
-          <Brand className="h-28" />
+          <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(10rem,30vh,14rem)]" : "h-20"}`} />
           <div className={`grid w-full max-w-[21rem] gap-2 ${share ? "grid-cols-2" : "grid-cols-1"}`}>
             {share ? (
               <>
@@ -87,17 +87,25 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           </div>
         </header>
 
+        {landing && (
+          <div className="mx-auto flex w-[min(90vw,30rem)] items-center gap-3 text-sm text-white/60" aria-hidden>
+            <span className="h-px flex-1 bg-white/20" />
+            ou encontre um mural
+            <span className="h-px flex-1 bg-white/20" />
+          </div>
+        )}
+
         {/* busca, escolha do mural e pergunta de desbloqueio */}
         <div className="mx-auto w-[min(90vw,30rem)] text-[15px] md:text-[16px]">{panel("dark")}</div>
 
-        {(showMeter || notice) && (
+        {!landing && (showMeter || notice) && (
           <div className="mx-auto w-[min(90vw,30rem)] space-y-3 text-[15px] md:text-[16px]">
             {showMeter && !locked && <SlotMeter plan={plan} used={messages.length} tone="dark" />}
             {!locked && notice?.("dark")}
           </div>
         )}
 
-        <section aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
+        <section hidden={landing} aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
           <div
             className="transition-[filter] duration-700 ease-out"
             style={{ filter: locked ? "blur(9px) saturate(0.85)" : "none" }}
@@ -154,7 +162,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           {locked && <LockedNotice hasSelection={hasSelection} dark />}
         </section>
 
-        {onCompose && unlocked && (
+        {!landing && onCompose && unlocked && (
           <div className="mx-auto w-[min(90vw,30rem)]">
             <button
               type="button"
