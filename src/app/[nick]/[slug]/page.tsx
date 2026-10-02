@@ -6,23 +6,21 @@ import { getServerSupabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-type Params = { params: Promise<{ slug: string }> };
+type Params = { params: Promise<{ nick: string; slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { slug } = await params;
-  const mural = await getPublicMural(getServerSupabase(), slug);
-  return mural
-    ? { title: { absolute: mural.title }, description: mural.tagline }
-    : { title: "Mural não encontrado" };
+  const { nick, slug } = await params;
+  const mural = await getPublicMural(getServerSupabase(), { nick, slug });
+  return mural ? { title: { absolute: mural.title }, description: mural.tagline } : { title: "Mural não encontrado" };
 }
 
 export default async function PublicMural({ params }: Params) {
-  const { slug } = await params;
-  const mural = await getPublicMural(getServerSupabase(), slug);
+  const { nick, slug } = await params;
+  const mural = await getPublicMural(getServerSupabase(), { nick, slug });
   if (!mural) notFound();
   return (
     <Mural
-      slug={mural.slug}
+      muralRef={{ nick: mural.nickname, slug: mural.slug }}
       title={mural.title}
       tagline={mural.tagline}
       question={mural.question}

@@ -7,6 +7,7 @@ import {
   loadGrant,
   saveGrant,
   tryUnlock,
+  type MuralRef,
   type MuralStats,
   type UnlockResult,
 } from "@/lib/mural";
@@ -22,16 +23,18 @@ type Props = {
   question: string;
   stats: MuralStats;
   messages: Message[];
-  /** Mural real (com slug) ou demonstração (dados fictícios, desbloqueio simulado). */
-  slug?: string;
+  /** Mural real (nickname + endereço) ou demonstração (dados fictícios, desbloqueio simulado). */
+  muralRef?: MuralRef;
 };
 
 /**
  * Desktop (lg+): mural físico completo. Mobile/tablet: carrossel, uma mensagem por vez.
  * Os dois são renderizados e alternados por CSS (sem flash de layout no carregamento).
  */
-export function Mural({ slug, ...info }: Props) {
-  const demo = !slug;
+export function Mural({ muralRef, ...info }: Props) {
+  const demo = !muralRef;
+  const nick = muralRef?.nick;
+  const slug = muralRef?.slug;
   const [unlocked, setUnlocked] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -45,27 +48,29 @@ export function Mural({ slug, ...info }: Props) {
 
   // mural real: registra a visita e restaura um desbloqueio anterior (validado no servidor)
   useEffect(() => {
-    if (!slug) return;
+    if (!nick || !slug) return;
+    const ref = { nick, slug };
     const sb = getBrowserSupabase();
-    sb.rpc("record_visit", { p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
-    const token = loadGrant(slug);
-    if (token) void checkGrantClient(sb, slug, token).then((ok) => ok && setUnlocked(true));
-  }, [slug]);
+    sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
+    const token = loadGrant(ref);
+    if (token) void checkGrantClient(sb, ref, token).then((ok) => ok && setUnlocked(true));
+  }, [nick, slug]);
 
   const submitAnswer = useCallback(
     async (answer: string): Promise<UnlockResult> => {
-      if (!slug) {
+      if (!nick || !slug) {
         setUnlocked(true); // demonstração: qualquer resposta desbloqueia
         return { ok: true };
       }
-      const res = await tryUnlock(getBrowserSupabase(), slug, answer, getVisitorId());
+      const ref = { nick, slug };
+      const res = await tryUnlock(getBrowserSupabase(), ref, answer, getVisitorId());
       if (res.ok) {
-        if (res.token) saveGrant(slug, res.token);
+        if (res.token) saveGrant(ref, res.token);
         setUnlocked(true);
       }
       return res;
     },
-    [slug],
+    [nick, slug],
   );
 
   const shared = { ...info, unlocked, onSubmitAnswer: submitAnswer, onNotify: notify, demo };

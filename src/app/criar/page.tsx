@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getOwnMural, getOwnNickname, useSession } from "@/lib/auth";
-import { SITE_HOST } from "@/lib/mural";
+import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
+import { muralPath, muralUrl, SITE_HOST, slugFromTitle } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AnswersEditor, AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } from "@/components/ui";
 
@@ -24,7 +24,8 @@ export default function CriarMural() {
   const [answers, setAnswers] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<string | null>(null);
+  const [created, setCreated] = useState<{ nick: string; slug: string } | null>(null);
+  const [count, setCount] = useState(0);
 
 
   // exige login; quem já tem mural vai para o painel
@@ -35,8 +36,8 @@ export default function CriarMural() {
       return;
     }
     const sb = getBrowserSupabase();
-    Promise.all([getOwnMural(sb), getOwnNickname(sb)]).then(([m, n]) => {
-      if (m) return router.replace("/painel");
+    Promise.all([getOwnMurals(sb), getOwnNickname(sb)]).then(([murals, n]) => {
+      setCount(murals.length);
       setSavedNick(n);
       setReady(true);
     });
@@ -61,11 +62,12 @@ export default function CriarMural() {
     });
     setBusy(false);
     if (err) {
-      if (err.message.includes("already_has_mural")) return router.replace("/painel");
+      if (err.message.includes("mural_limit")) return setError("Você chegou ao limite de 10 murais.");
       setError("Não foi possível publicar agora. Tente de novo.");
       return;
     }
-    setCreated((data as { slug: string }).slug);
+    const r = data as { slug: string; nickname: string };
+    setCreated({ nick: r.nickname, slug: r.slug });
   }
 
   if (loading || !ready) {
@@ -77,7 +79,7 @@ export default function CriarMural() {
   }
 
   if (created) {
-    const url = `${SITE_HOST}/${created}`;
+    const url = muralUrl(created);
     return (
       <AuthShell>
         <div role="status">
@@ -91,7 +93,7 @@ export default function CriarMural() {
             <button type="button" className={`${primaryButton} sm:flex-1`} onClick={() => navigator.clipboard?.writeText(`https://${url}`)}>
               Copiar link
             </button>
-            <Link href={`/${created}`} className={`${ghostButton} sm:flex-1`}>
+            <Link href={muralPath(created)} className={`${ghostButton} sm:flex-1`}>
               Ver meu mural
             </Link>
           </div>
@@ -126,15 +128,12 @@ export default function CriarMural() {
       >
         {step === 0 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">Como o seu mural vai se chamar?</h1>
+            <h1 className="font-title text-2xl font-semibold">{count > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
             <p className="rounded-xl border border-[#e1d3ba] bg-white/60 px-4 py-3 text-sm text-[#4a3826]">
-              Endereço do seu mural:{" "}
-              <strong className="break-all">
-                {SITE_HOST}/{savedNick}
-              </strong>
+              Seu nickname: <strong>{savedNick}</strong>. O endereço do mural é criado a partir do nome.
             </p>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
@@ -178,7 +177,7 @@ export default function CriarMural() {
               <div>
                 <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Endereço</dt>
                 <dd className="break-all">
-                  {SITE_HOST}/{savedNick}
+                  {SITE_HOST}/{savedNick}/{slugFromTitle(title)}
                 </dd>
               </div>
               <div>

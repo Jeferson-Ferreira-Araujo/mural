@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { callbackUrl, getOwnMural, useSession } from "@/lib/auth";
+import { callbackUrl, homeRouteFor, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
@@ -27,7 +27,7 @@ export default function Entrar() {
   // já logado: vai para o painel (ou para a criação do mural)
   useEffect(() => {
     if (!session) return;
-    getOwnMural(getBrowserSupabase()).then((m) => router.replace(m ? "/painel" : "/criar"));
+    homeRouteFor(getBrowserSupabase()).then((to) => router.replace(to));
   }, [session, router]);
 
   async function submit(e: FormEvent) {

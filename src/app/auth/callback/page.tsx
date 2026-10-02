@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { getOwnMural } from "@/lib/auth";
+import { homeRouteFor } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, ghostButton, Spinner } from "@/components/ui";
 
@@ -34,8 +34,7 @@ export default function AuthCallback() {
           return;
         }
       }
-      const mural = await getOwnMural(sb);
-      router.replace(mural ? "/painel" : "/criar");
+      router.replace(await homeRouteFor(sb));
     })();
   }, [router]);
 
