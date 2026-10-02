@@ -133,7 +133,6 @@ export default function CriarMural() {
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Mural do Jeferson" className={inputClass} autoFocus />}
             </Field>
             <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: title.trim() ? uniqueSlug(title, taken) : "nome-do-mural" })} />
-            <p className="-mt-2 text-sm text-[#6b5440]">Esse é o link que você vai compartilhar. Ele acompanha o nome do mural e fica guardado no seu painel.</p>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {error}
