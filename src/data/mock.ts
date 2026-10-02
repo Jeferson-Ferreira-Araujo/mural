@@ -1,10 +1,10 @@
-import { canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
+import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
 import { isSealed, type BoardItem, type Message } from "@/lib/types";
 
 /**
  * Dados MOCKADOS — apenas para demonstração do frontend (sem banco, sem envio real).
  * A ordem do pool é a ordem dos espaços no mural: os 5 primeiros só usam formatos FREE,
- * então um PINZ FREE (5 espaços) e um PINZ FULL (15 espaços) ficam coerentes.
+ * então um PINZ FREE (15 espaços) e um PINZ FULL (28 espaços) ficam coerentes.
  */
 
 const MIN = 60_000;
@@ -79,7 +79,7 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
 }
 
 /** Os primeiros `count` itens do pool que o plano permite (formatos e cápsula). */
-export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 15): { items: BoardItem[]; vault: Record<string, Message> } {
+export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = BOARD_CAPACITY): { items: BoardItem[]; vault: Record<string, Message> } {
   const { items: base, vault } = buildPool(nowMs);
   let items = base;
   if (capacity > base.length) {
@@ -89,12 +89,14 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
     items = [...base, ...extra].slice(0, capacity);
   }
   const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : formatsFor(plan).includes(i.type)));
-  return { items: allowed.slice(0, count), vault };
+  // cada exemplo já nasce no seu espaço, para colar um novo em outro lugar não empurrar os demais
+  return { items: allowed.slice(0, count).map((it, i) => ({ ...it, slot: i }) as BoardItem), vault };
 }
 
-/** Mural de exemplo aleatório (os 15 cartões, em ordem embaralhada) para a página inicial: sem espaços vazios. */
+/** Mural de exemplo aleatório (todos os espaços, em ordem embaralhada) para a página inicial: sem espaços vazios. */
 export function randomMural(nowMs: number): BoardItem[] {
-  const { items } = buildPool(nowMs);
+  const { items } = itemsFor("full", BOARD_CAPACITY, nowMs);
+  items.forEach((it) => delete (it as { slot?: number }).slot);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];

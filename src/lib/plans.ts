@@ -5,15 +5,15 @@ import type { MessageType } from "./types";
  * Quem VISITA um mural nunca paga: os limites abaixo valem para o PROPRIETÁRIO do mural.
  */
 
-/** Cada mural comporta, no máximo, 15 mensagens (limite físico do produto: a lousa não cresce). */
-export const BOARD_CAPACITY = 15;
+/** Cada mural comporta, no máximo, 28 mensagens (7 × 4; limite físico do produto: a lousa não cresce). */
+export const BOARD_CAPACITY = 28;
 
 export type PlanId = "free" | "full";
 
 export type PlanInfo = {
   id: PlanId;
   name: string;
-  /** Espaços liberados dos 15 do mural. */
+  /** Espaços liberados dos 28 do mural. */
   slots: number;
   /** Formatos que os visitantes podem usar neste mural. */
   formats: readonly MessageType[];
@@ -28,7 +28,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   free: {
     id: "free",
     name: "PINZ FREE",
-    slots: 5,
+    slots: 15,
     formats: ["postit", "text", "list", "photo"],
     capsule: false,
     murals: 1,
@@ -37,7 +37,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   full: {
     id: "full",
     name: "PINZ FULL",
-    slots: 15,
+    slots: 28,
     formats: ["postit", "text", "list", "photo", "music", "video", "voice", "place"],
     capsule: true,
     murals: 1,
@@ -45,10 +45,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   },
 };
 
-/** Capacidade em teste (só na demonstração): 28 espaços (7 × 4), com cards pequenos e clique no pin para ler. */
-export const DENSE_CAPACITY = 28;
-
-/** Espaços liberados: no FREE são sempre os 5 do plano; no FULL, todos os do quadro (padrão 15). */
+/** Espaços liberados: no FREE são os 15 do plano; no FULL, todos os do quadro (28). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));
 export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
 export const canUseCapsule = (plan: PlanId) => PLANS[plan].capsule;

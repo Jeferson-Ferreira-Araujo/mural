@@ -3,7 +3,7 @@ import type { Tone } from "../viewProps";
 import { PlanBadge } from "./PlanBadge";
 
 /**
- * Contador de espaços do mural: "3 de 5 espaços" + 15 pontinhos
+ * Contador de espaços do mural: "3 de 15 espaços" + 28 pontinhos
  * (preenchido = ocupado, vazado = livre, apagado = bloqueado no plano atual).
  */
 export function SlotMeter({ plan, used, tone = "light", className = "", capacity = BOARD_CAPACITY }: { plan: PlanId; used: number; tone?: Tone; className?: string; capacity?: number }) {

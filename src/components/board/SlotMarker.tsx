@@ -13,7 +13,7 @@ export function EmptySlot() {
   );
 }
 
-/** Espaço dos 15 que o plano atual (FREE) ainda não libera. */
+/** Espaço dos 28 que o plano atual (FREE) ainda não libera. */
 export function LockedSlot() {
   return (
     <div

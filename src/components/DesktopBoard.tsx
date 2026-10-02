@@ -2,8 +2,9 @@
 
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { PinDetail } from "./board/PinDetail";
-import { typeLabel, isSealed } from "@/lib/types";
+import { typeLabel, isSealed, type BoardItem } from "@/lib/types";
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
+import { gridFor, layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { EmptyNote } from "./EmptyNote";
 import { EmptySlot, LockedSlot } from "./board/SlotMarker";
@@ -18,10 +19,10 @@ import type { ViewProps } from "./viewProps";
 export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
 
 /**
- * Os 15 espaços fixos da lousa: grade de 5 colunas × 3 linhas, com inclinações de mural real.
+ * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
  * A altura de cada linha é a do maior bloco dela (nada passa por cima do texto do vizinho) e a lousa NUNCA cresce:
- * se os blocos não couberem, tudo encolhe junto (veja `useFitScale`). 15 é o limite do produto.
- * No PINZ FREE só a primeira linha (5 espaços) está liberada.
+ * se os blocos não couberem, tudo encolhe junto (veja `useFitScale`). 28 é o limite do produto.
+ * No PINZ FREE os 15 primeiros espaços estão liberados; quem cola o pin escolhe o espaço.
  */
 const TILT = [-3, 2, -2, 3, -2, 2, -1.5, 2.5, -2, 1.5, -2, 2.5, -3, 2, -2.5] as const;
 /** Pequeno deslocamento por espaço (em em), só para não parecer uma tabela. */
@@ -68,15 +69,16 @@ function focusFirstField() {
 }
 
 /**
- * Mural físico completo: 15 espaços fixos numa lousa que não cresce.
+ * Mural físico completo: 28 espaços fixos numa lousa que não cresce.
  * O container usa `container-type: inline-size` e todos os tamanhos derivam de `cqw`.
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify } = props;
-  const dense = capacity > BOARD_CAPACITY; // quadro denso (teste): cards pequenos, clique no pin para ler
-  const cols = dense ? 7 : 5;
-  const rows = Math.ceil(capacity / cols);
+  const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
+  const { cols, rows } = gridFor(capacity);
+  const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
+  const placed = layout.filter((x): x is BoardItem => !!x);
   const [detail, setDetail] = useState<number | null>(null);
   const available = slotsFor(plan, capacity);
   const look = boardById(board);
@@ -145,7 +147,7 @@ export function DesktopBoard(props: ViewProps) {
                 style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.2em" : "1.5em", columnGap: "0.4em" }}
               >
                 {Array.from({ length: capacity }, (_, i) => {
-                  const item = items[i];
+                  const item = layout[i];
                   const tilt = TILT[i % TILT.length];
                   const { dx, dy } = jitter(i);
 
@@ -178,11 +180,11 @@ export function DesktopBoard(props: ViewProps) {
                         <div
                           role="button"
                           tabIndex={0}
-                          onClick={() => setDetail(i)}
+                          onClick={() => setDetail(placed.indexOf(item))}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              setDetail(i);
+                              setDetail(placed.indexOf(item));
                             }
                           }}
                           aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : typeLabel[item.type]}`}
@@ -209,7 +211,7 @@ export function DesktopBoard(props: ViewProps) {
           </div>
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </main>
-        {dense && <PinDetail items={items} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} />}
+        {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} />}
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 pb-5">
           {onCompose && (

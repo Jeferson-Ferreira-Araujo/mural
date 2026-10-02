@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { BOARD_CAPACITY } from "@/lib/plans";
+import { inBoardOrder, takenSlots } from "@/lib/slots";
 import { ComposerDialog } from "./composer/ComposerDialog";
 import type { SendPayload } from "./composer/types";
 import { DesktopBoard } from "./DesktopBoard";
@@ -19,7 +21,7 @@ export type ComposerMode =
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
 /**
- * Desktop (lg+): mural físico de 15 espaços. Mobile/tablet: carrossel, uma mensagem por vez.
+ * Desktop (lg+): mural físico de 28 espaços. Mobile/tablet: carrossel, uma mensagem por vez.
  * As duas versões são renderizadas e alternadas por CSS (sem flash de layout no carregamento).
  */
 export function MuralScreen({ composer, ...view }: Props) {
@@ -33,7 +35,8 @@ export function MuralScreen({ composer, ...view }: Props) {
         ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
         : () => setOpen(true);
 
-  const props: ViewProps = { ...view, onCompose };
+  const capacity = view.capacity ?? BOARD_CAPACITY;
+  const props: ViewProps = { ...view, capacity, onCompose };
 
   return (
     <>
@@ -41,7 +44,7 @@ export function MuralScreen({ composer, ...view }: Props) {
         <DesktopBoard {...props} />
       </div>
       <div className="lg:hidden">
-        <MobileCarousel {...props} />
+        <MobileCarousel {...props} items={inBoardOrder(view.items, capacity)} />
       </div>
 
       {composer.mode === "demo" && (
@@ -49,7 +52,8 @@ export function MuralScreen({ composer, ...view }: Props) {
           open={open}
           onClose={() => setOpen(false)}
           plan={view.plan}
-          capacity={view.capacity}
+          capacity={capacity}
+          taken={takenSlots(view.items, capacity)}
           used={view.items.length}
           triedAlready={composer.triedAlready}
           onTried={composer.onTried}

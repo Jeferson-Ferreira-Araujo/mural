@@ -7,6 +7,8 @@ type Base = {
   id: string;
   /** Veio de uma Cápsula PINZ que já abriu. */
   fromCapsule?: boolean;
+  /** Espaço do quadro em que o pin foi colado (escolhido por quem deixou). Sem isso, ocupa o primeiro livre. */
+  slot?: number;
 };
 
 /** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */
@@ -26,7 +28,7 @@ export type MessageType = Message["type"];
  * Cápsula ainda fechada. De propósito NÃO tem nenhum campo de conteúdo (nem o formato):
  * o frontend nunca recebe o que está dentro antes da data de abertura.
  */
-export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string };
+export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number };
 
 /** O que ocupa um espaço do mural. */
 export type BoardItem = Message | ClosedCapsuleItem;

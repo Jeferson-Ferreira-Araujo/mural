@@ -1,13 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
+import { BOARD_CAPACITY, canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
 import { formatInfo, type Message, type MessageType } from "@/lib/types";
 import { MessageView } from "../messages/MessageView";
 import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
+import { SlotPicker } from "./SlotPicker";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 
@@ -16,6 +17,8 @@ type Props = {
   onClose: () => void;
   plan: PlanId;
   capacity?: number;
+  /** Espaços do quadro que já têm pin. */
+  taken: number[];
   /** Quantas mensagens o mural já tem. */
   used: number;
   onSend: (payload: SendPayload) => void;
@@ -49,13 +52,17 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve → (FULL) opcionalmente Cápsula → cola no mural.
  */
-function Body({ plan, capacity, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
   const available = slotsFor(plan, capacity);
-  const full = used >= available;
+  // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
+  const firstFree = Array.from({ length: available }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
+  const full = firstFree === null;
   const formats = formatsFor(plan);
   const [format, setFormat] = useState<MessageType | null>(null);
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
+  const [picked, setPicked] = useState<number | null>(null);
+  const slot = picked !== null && picked < available && !taken.includes(picked) ? picked : firstFree;
 
   const onDraft = useCallback((d: DraftMessage | null) => setDraft(d), []);
 
@@ -63,15 +70,15 @@ function Body({ plan, capacity, used, onSend, onTried, triedAlready, onClose }: 
 
   if (!format) return <FormatPicker formats={formats} onPick={setFormat} />;
 
-  const canSend = !!draft && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
+  const canSend = !!draft && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
 
   return (
     <form
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
-        if (!draft || !canSend) return;
-        onSend({ message: draft, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        if (!draft || !canSend || slot === null) return;
+        onSend({ message: draft, slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className="space-y-5"
     >
@@ -85,6 +92,8 @@ function Body({ plan, capacity, used, onSend, onTried, triedAlready, onClose }: 
       <FormFor format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
+
+      <SlotPicker capacity={capacity} available={available} taken={taken} value={slot} onChange={setPicked} />
 
       {draft && (
         <section aria-label="Prévia" className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-6">

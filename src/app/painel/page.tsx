@@ -9,6 +9,7 @@ import { getPublicMural, muralPath, muralUrl, type MuralStats } from "@/lib/mura
 import { getBrowserSupabase } from "@/lib/supabase";
 import { PlanBadge } from "@/components/board/PlanBadge";
 import { SlotMeter } from "@/components/board/SlotMeter";
+import { PLANS } from "@/lib/plans";
 import { PlansOverview } from "@/components/PlansOverview";
 import { AuthShell, ghostButton, primaryButton, Spinner } from "@/components/ui";
 
@@ -120,9 +121,13 @@ export default function Painel() {
         ))}
       </ul>
 
-      <Link href="/criar" className={`${primaryButton} mt-6`}>
-        + Criar outro mural
-      </Link>
+      {items.length < PLANS[account.plan].murals ? (
+        <Link href="/criar" className={`${primaryButton} mt-6`}>
+          + Criar outro mural
+        </Link>
+      ) : (
+        <p className="mt-6 rounded-xl border border-[#e1d3ba] bg-white/50 px-4 py-3 text-sm text-[#6b5440]">O plano gratuito inclui {PLANS.free.murals} mural. Mais murais chegam com créditos, em breve.</p>
+      )}
 
       <PlansOverview account={account} />
     </AuthShell>

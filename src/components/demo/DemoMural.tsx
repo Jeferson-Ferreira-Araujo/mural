@@ -21,7 +21,7 @@ const START_TRIES = 8;
 let uid = 0;
 
 /**
- * Demonstração do modelo do Pinz com dados locais: planos FREE/FULL, 5/15 e 15/15,
+ * Demonstração do modelo do Pinz com dados locais: planos FREE/FULL, 15/28 e 28/28,
  * mural lotado, "Eu tentei deixar um PINZ" e Cápsula. Nada é salvo nem enviado.
  */
 export function DemoMural() {
@@ -31,7 +31,7 @@ export function DemoMural() {
   const [view, setView] = useState<DemoView>("visitor");
   const [tries, setTries] = useState(START_TRIES);
   const [triedAlready, setTriedAlready] = useState(false);
-  const [capacity, setCapacity] = useState<number>(BOARD_CAPACITY);
+  const capacity = BOARD_CAPACITY;
   const [credits, setCredits] = useState(false);
   const [boardId, setBoardId] = useState<BoardId>(DEFAULT_BOARD);
 
@@ -67,24 +67,23 @@ export function DemoMural() {
     fill(p, board.items.length);
   }
 
-  function onSend({ message, capsuleAt }: SendPayload) {
+  function onSend({ message, capsuleAt, slot }: SendPayload) {
     setBoard((b) => {
-      if (b.items.length >= available) return b;
+      if (b.items.length >= available || b.items.some((it) => it.slot === slot)) return b;
       const id = `u${++uid}`;
       if (capsuleAt) {
         // o conteúdo fica "guardado" e o quadro recebe só a cápsula fechada (sem conteúdo)
         return {
-          items: [...b.items, { id, sealed: true, opensAt: capsuleAt }],
+          items: [...b.items, { id, slot, sealed: true, opensAt: capsuleAt }],
           vault: { ...b.vault, [id]: { ...message, id, fromCapsule: true } as Message },
         };
       }
-      return { ...b, items: [...b.items, { ...message, id } as Message] };
+      return { ...b, items: [...b.items, { ...message, id, slot } as Message] };
     });
   }
 
   function reset() {
     setPlan(START_PLAN);
-    setCapacity(BOARD_CAPACITY);
     setBoard(itemsFor(START_PLAN, START_COUNT, Date.now(), BOARD_CAPACITY));
     setView("visitor");
     setTries(START_TRIES);
@@ -111,10 +110,6 @@ export function DemoMural() {
         onOpenCapsules={() => openCapsules(true)}
         onReset={reset}
         capacity={capacity}
-        onCapacity={(n) => {
-          setCapacity(n);
-          fill(plan, board.items.length, n);
-        }}
         credits={credits}
         onCredits={(v) => {
           setCredits(v);

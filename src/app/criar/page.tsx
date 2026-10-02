@@ -2,6 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getAccount } from "@/lib/account";
+import { PLANS, NEW_MURAL_COST } from "@/lib/plans";
 import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
 import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -56,7 +59,7 @@ export default function CriarMural() {
     });
     if (err) {
       setBusy(false);
-      setError(err.message.includes("mural_limit") ? "Você chegou ao limite de 10 murais." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err.message.includes("mural_limit") ? "Seu plano gratuito inclui 1 mural." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     router.replace("/painel"); // segue "Criando…" até a navegação terminar
@@ -66,6 +69,21 @@ export default function CriarMural() {
     return (
       <AuthShell>
         <Spinner />
+      </AuthShell>
+    );
+  }
+
+  // plano gratuito: 1 mural por usuário (novos murais virão com créditos)
+  if (taken.length >= PLANS[getAccount().plan].murals) {
+    return (
+      <AuthShell>
+        <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
+          <h1 className="font-title text-2xl font-semibold">Seu mural já está no ar</h1>
+          <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito inclui {PLANS.free.murals} mural por pessoa. Um novo mural custará {NEW_MURAL_COST} créditos (em breve).</p>
+          <Link href="/painel" className={`${primaryButton} mt-5`}>
+            Ir para o meu painel
+          </Link>
+        </div>
       </AuthShell>
     );
   }

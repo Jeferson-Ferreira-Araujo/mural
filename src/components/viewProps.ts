@@ -10,7 +10,7 @@ export type Tone = "light" | "dark";
 export type ViewProps = {
   /** Mensagens e cápsulas fechadas do quadro, na ordem dos espaços. Bloqueado = só decoração desfocada. */
   items: BoardItem[];
-  /** Plano do mural: define quantos dos 15 espaços estão liberados e quais formatos existem. */
+  /** Plano do mural: define quantos dos 28 espaços estão liberados e quais formatos existem. */
   plan: PlanId;
   /** Mostra o contador de espaços e o selo do plano. */
   showMeter: boolean;

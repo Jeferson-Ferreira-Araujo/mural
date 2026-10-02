@@ -8,7 +8,7 @@ export type BoardInfo = {
   name: string;
   /** Imagem otimizada (3:2) servida de /public/img. */
   image: string;
-  /** Área útil do quadro dentro da imagem (em % da imagem): é onde os 15 espaços ficam. */
+  /** Área útil do quadro dentro da imagem (em % da imagem): é onde os 28 espaços ficam. */
   cork: { left: number; top: number; width: number; height: number };
   /** Tamanho dos cards neste quadro (1 = normal). Quadros com área menor usam cards menores para não ficarem grudados. */
   size: number;

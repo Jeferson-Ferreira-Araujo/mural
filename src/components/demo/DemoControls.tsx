@@ -1,7 +1,7 @@
 "use client";
 
 import { BOARDS, canChangeBoard, type BoardId } from "@/lib/boards";
-import { BOARD_CAPACITY, DENSE_CAPACITY, PLANS, slotsFor, type PlanId } from "@/lib/plans";
+import { PLANS, slotsFor, type PlanId } from "@/lib/plans";
 import type { Tone } from "../viewProps";
 
 export type DemoView = "visitor" | "owner";
@@ -18,7 +18,6 @@ type Props = {
   onOpenCapsules: () => void;
   onReset: () => void;
   capacity: number;
-  onCapacity: (n: number) => void;
   credits: boolean;
   onCredits: (v: boolean) => void;
   board: BoardId;
@@ -51,7 +50,7 @@ function Segmented<T extends string>({ label, value, options, onChange, dark }: 
 }
 
 /** Controles da página de demonstração: simulam planos e estados do mural (nada disso é salvo). */
-export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, capacity, onCapacity, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
+export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView, hasSealed, onOpenCapsules, onReset, capacity, credits, onCredits, board, onBoard, onBoardLocked }: Props) {
   const canBoard = canChangeBoard(plan, credits ? 1 : 0);
   const dark = tone === "dark";
   const max = slotsFor(plan, capacity);
@@ -97,17 +96,6 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
           </button>
         </div>
       </div>
-
-      <Segmented
-        dark={dark}
-        label="Espaços do quadro (teste)"
-        value={String(capacity)}
-        onChange={(v) => onCapacity(Number(v))}
-        options={[
-          { id: String(BOARD_CAPACITY), label: `${BOARD_CAPACITY} espaços` },
-          { id: String(DENSE_CAPACITY), label: `${DENSE_CAPACITY} espaços` },
-        ]}
-      />
 
       <Segmented
         dark={dark}
