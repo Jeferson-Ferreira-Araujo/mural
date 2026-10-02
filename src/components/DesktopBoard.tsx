@@ -38,8 +38,8 @@ export function DesktopBoard(props: ViewProps) {
       return;
     }
     if (!onCompose) return;
-    // com espaços livres à vista: o visitante clica no espaço onde quer o pin; sem nenhum livre, o compositor explica
-    if (hasSelection && layout.some((it, i) => !it && i < available)) {
+    // dentro do limite do plano e com espaço livre: o visitante clica no espaço onde quer o pin; no limite, o compositor explica
+    if (hasSelection && items.length < available && layout.some((it) => !it)) {
       setHint(true);
       window.setTimeout(() => setHint(false), 4500);
       onNotify("Clique num espaço livre do mural para colar o seu pin.");

@@ -58,19 +58,21 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
 function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
-  const firstFree = Array.from({ length: available }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
-  const full = firstFree === null;
+  // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
+  const firstFree = Array.from({ length: capacity }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
+  const planLimit = used >= available && firstFree !== null;
+  const full = firstFree === null || used >= available;
   const formats = formatsFor(plan);
   const [format, setFormat] = useState<MessageType | null>(null);
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
   const [picked, setPicked] = useState<number | null>(null);
   const choice = fixedSlot ?? picked;
-  const slot = choice !== null && choice < available && !taken.includes(choice) ? choice : firstFree;
+  const slot = choice !== null && choice < capacity && !taken.includes(choice) ? choice : firstFree;
 
   const onDraft = useCallback((d: DraftMessage | null) => setDraft(d), []);
 
-  if (full) return <FullNotice used={used} available={available} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
+  if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
   if (!format) return <FormatPicker formats={formats} onPick={setFormat} />;
 
@@ -93,12 +95,18 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, used, 
         <h3 className="font-title mt-1 text-xl font-semibold">{formatInfo[format].label}</h3>
       </div>
 
+      {plan === "free" && (
+        <p className="rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-2 text-xs text-[#6b5440]">
+          Este mural tem <strong>{used}</strong> de <strong>{available}</strong> pins do plano gratuito{available - used <= 3 ? ` — ${available - used === 1 ? "resta só 1" : `restam ${available - used}`}` : ""}.
+        </p>
+      )}
+
       <FormFor format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
       {fixedSlot === null || fixedSlot === undefined ? (
-        <SlotPicker capacity={capacity} available={available} taken={taken} value={slot} onChange={setPicked} />
+        <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />
       ) : (
         slot !== null && (
           <p className="rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-2 text-sm text-[#6b5440]">

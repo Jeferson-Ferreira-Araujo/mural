@@ -4,10 +4,10 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode }
 import { typeLabel, isSealed, type BoardItem } from "@/lib/types";
 import { boardById } from "@/lib/boards";
 import { gridFor, layoutSlots } from "@/lib/slots";
-import { BOARD_CAPACITY, slotsFor, type PlanId } from "@/lib/plans";
+import { BOARD_CAPACITY, type PlanId } from "@/lib/plans";
 import { EmptyNote } from "../EmptyNote";
 import { MessageView } from "../messages/MessageView";
-import { EmptySlot, LockedSlot } from "./SlotMarker";
+import { EmptySlot } from "./SlotMarker";
 import { PinDetail } from "./PinDetail";
 
 /**
@@ -92,7 +92,6 @@ export function BoardCanvas({
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
   const placed = layout.filter((x): x is BoardItem => !!x);
   const [detail, setDetail] = useState<number | null>(null);
-  const available = slotsFor(plan, capacity);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
   const baseEm = BASE_EM_CQW * look.size * (dense ? 0.78 : 1);
@@ -125,15 +124,13 @@ export function BoardCanvas({
                       const tilt = TILT[i % TILT.length];
                       const { dx, dy } = jitter(i);
 
-                      // espaço sem mensagem: livre (plano libera) ou bloqueado (plano não libera).
+                      // espaço sem mensagem: todos aparecem livres, em qualquer plano (o limite do plano é de QUANTOS pins, não de quais espaços).
                       // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                       if (!item) {
                         if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
                         return (
                           <div key={`slot-${i}`} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
-                            {i >= available ? (
-                              <LockedSlot />
-                            ) : onCompose && unlocked ? (
+                            {onCompose && unlocked ? (
                               <button
                                 type="button"
                                 onClick={() => onCompose(i)}
