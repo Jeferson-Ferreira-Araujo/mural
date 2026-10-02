@@ -150,6 +150,12 @@ export function DemoMural() {
         notify("Pin removido. O espaço ficou livre.");
       }}
       onSetHidden={(id, hidden) => setHiddenIds((s) => (hidden ? new Set(s).add(id) : without(s, id)))}
+      onReport={(id, r) => {
+        setBoard((b) => ({ ...b, items: b.items.filter((it) => it.id !== id) }));
+        setPendingIds((s) => without(s, id));
+        setHiddenIds((s) => without(s, id));
+        notify(r.block ? "Relato registrado (simulação). O pin saiu do mural e quem enviou foi bloqueado." : "Relato registrado (simulação). O pin saiu do mural.");
+      }}
     />
   );
   const hasSealed = board.items.some(isSealed);

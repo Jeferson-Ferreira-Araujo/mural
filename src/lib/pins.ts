@@ -11,7 +11,7 @@ export async function fetchBoard(sb: SupabaseClient, ref: MuralRef, token: strin
   return data as BoardItem[];
 }
 
-export type SendFailure = "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
+export type SendFailure = "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
 export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
 
 const EXT: Record<string, string> = {
@@ -52,13 +52,14 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, 
   });
   if (!error) return { ok: true };
   const m = error.message;
-  const known: SendFailure[] = ["too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
+  const known: SendFailure[] = ["blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
   const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") ? "format_not_allowed" : "error");
   return { ok: false, reason: hit };
 }
 
 /** Texto para o visitante, por motivo de falha. */
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
+  blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
   too_many_pending: "Você já tem pins aguardando aprovação neste mural. Espere o dono aprovar para enviar mais.",
   slot_taken: "Alguém acabou de colar um pin nesse espaço. Escolha outro.",
@@ -87,5 +88,11 @@ export async function moderatePin(sb: SupabaseClient, id: string, approve: boole
 /** FULL: deixa um pin visível ou em blur para quem visita. */
 export async function setPinHidden(sb: SupabaseClient, id: string, hidden: boolean): Promise<boolean> {
   const { error } = await sb.rpc("set_pin_hidden", { p_id: id, p_hidden: hidden });
+  return !error;
+}
+
+/** Relata um pin como abuso/assédio: guarda a prova, remove do mural e (opcional) bloqueia quem enviou. */
+export async function reportPin(sb: SupabaseClient, id: string, reason: string, details: string, block: boolean): Promise<boolean> {
+  const { error } = await sb.rpc("report_pin", { p_id: id, p_reason: reason, p_details: details || null, p_block: block });
   return !error;
 }

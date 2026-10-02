@@ -1,11 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import type { PlanId } from "@/lib/plans";
 import { formatInfo, type Message } from "@/lib/types";
 import { MessageView } from "../messages/MessageView";
 
 /** Pin como o dono o vê: com conteúdo, estado de aprovação e se está em blur para os visitantes. */
 export type OwnerPin = Message & { status: "pending" | "approved"; hiddenFromVisitors: boolean };
+
+export type ReportReason = "ofensa" | "assedio" | "sexual" | "outro";
+export const REPORT_REASONS: { id: ReportReason; label: string }[] = [
+  { id: "ofensa", label: "Ofensa ou baixo calão" },
+  { id: "assedio", label: "Assédio ou ameaça" },
+  { id: "sexual", label: "Conteúdo sexual" },
+  { id: "outro", label: "Outro abuso" },
+];
 
 type Props = {
   pins: OwnerPin[];
@@ -15,6 +24,8 @@ type Props = {
   onApprove: (id: string, hidden: boolean) => void;
   onReject: (id: string) => void;
   onSetHidden: (id: string, hidden: boolean) => void;
+  /** relata o pin (guarda a prova, remove do mural e, se marcado, bloqueia quem enviou) */
+  onReport: (id: string, report: { reason: ReportReason; details: string; block: boolean }) => void;
   tone?: "light" | "dark";
 };
 
@@ -22,7 +33,11 @@ type Props = {
  * Moderação do dono: aprova ou recusa os pins novos (nada aparece no mural antes disso) e, no FULL,
  * escolhe pin por pin o que fica visível e o que fica em blur para quem visita.
  */
-export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, onSetHidden, tone = "light" }: Props) {
+export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, onSetHidden, onReport, tone = "light" }: Props) {
+  const [reporting, setReporting] = useState<string | null>(null);
+  const [reason, setReason] = useState<ReportReason>("ofensa");
+  const [details, setDetails] = useState("");
+  const [block, setBlock] = useState(true);
   const dark = tone === "dark";
   const pending = pins.filter((p) => p.status === "pending");
   const approved = pins.filter((p) => p.status === "approved");
@@ -43,7 +58,62 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
         <p className="text-sm font-semibold">
           {formatInfo[p.type].label} <span className={`font-normal ${muted}`}>· espaço {(p.slot ?? 0) + 1}</span>
         </p>
-        <div className="mt-2 flex flex-wrap gap-2">{children}</div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {children}
+          <button
+            type="button"
+            className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a] ${dark ? "!text-[#ff9b8f]" : ""}`}
+            disabled={busyId === p.id}
+            aria-expanded={reporting === p.id}
+            onClick={() => {
+              setReporting(reporting === p.id ? null : p.id);
+              setReason("ofensa");
+              setDetails("");
+              setBlock(true);
+            }}
+          >
+            🚩 Relatar abuso
+          </button>
+        </div>
+        {reporting === p.id && (
+          <form
+            className={`mt-3 space-y-2 rounded-xl border p-3 ${dark ? "border-[#ff9b8f]/40 bg-black/20" : "border-[#e0b0a8] bg-[#fff4f1]"}`}
+            onSubmit={(e) => {
+              e.preventDefault();
+              onReport(p.id, { reason, details: details.trim(), block });
+              setReporting(null);
+            }}
+          >
+            <p className="text-sm font-semibold">Relatar abuso ou assédio</p>
+            <p className={`text-xs ${muted}`}>O pin é guardado como prova, sai do mural e o espaço fica livre.</p>
+            <label className="block text-sm">
+              Motivo
+              <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} className="mt-1 w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm text-[#2f2218]">
+                {REPORT_REASONS.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block text-sm">
+              O que aconteceu? (opcional)
+              <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={2} className="mt-1 w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm text-[#2f2218]" />
+            </label>
+            <label className="flex items-start gap-2 text-sm">
+              <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="mt-1 size-4" />
+              <span>Bloquear quem enviou (não poderá mais colar pins neste mural)</span>
+            </label>
+            <div className="flex gap-2">
+              <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
+                Relatar e remover
+              </button>
+              <button type="button" className={btn} onClick={() => setReporting(null)}>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </li>
   );

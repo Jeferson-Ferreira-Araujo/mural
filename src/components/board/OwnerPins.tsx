@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { listOwnerPins, moderatePin, setPinHidden } from "@/lib/pins";
+import { listOwnerPins, moderatePin, reportPin, setPinHidden } from "@/lib/pins";
 import type { PlanId } from "@/lib/plans";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { PinsManager, type OwnerPin } from "./PinsManager";
@@ -50,6 +50,7 @@ export function OwnerPins({ muralId, plan, onCount }: { muralId: string; plan: P
         onApprove={(id, hidden) => run(id, () => moderatePin(sb, id, true, hidden))}
         onReject={(id) => run(id, () => moderatePin(sb, id, false))}
         onSetHidden={(id, hidden) => run(id, () => setPinHidden(sb, id, hidden))}
+        onReport={(id, r) => run(id, () => reportPin(sb, id, r.reason, r.details, r.block))}
       />
     </div>
   );
