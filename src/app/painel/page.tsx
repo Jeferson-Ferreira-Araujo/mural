@@ -121,7 +121,7 @@ export default function Painel() {
         </button>
       </div>
 
-      <ul className="mt-6 grid grid-cols-4 gap-2" aria-label="Números do mural">
+      <ul className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Números do mural">
         {stat("visitaram", stats?.visited)}
         {stat("tentaram", stats?.tried)}
         {stat("acertaram", stats?.correct)}

@@ -7,15 +7,15 @@ import { BOARD_IMAGE } from "./DesktopBoard";
 /** Fundo e cartão centralizado usados nas telas de conta (entrar, criar, painel). */
 export function AuthShell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
-    <div className="relative grid min-h-dvh place-items-center overflow-hidden bg-[#2a1a0e] px-4 py-8">
+    <div className="relative grid min-h-dvh grid-cols-[minmax(0,1fr)] place-items-center overflow-x-hidden bg-[#2a1a0e] px-3 py-6 sm:px-4 sm:py-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-xl" />
       <span aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_30%,rgba(60,30,8,.2),rgba(14,7,2,.8))]" />
-      <div className={`rise relative w-full ${wide ? "max-w-2xl" : "max-w-md"}`}>
+      <div className={`rise relative w-full min-w-0 ${wide ? "max-w-2xl" : "max-w-md"}`}>
         <Link href="/" className="font-hand mb-3 block w-fit text-[1.9rem] leading-none text-[#fbf3e2] [text-shadow:0_2px_8px_rgba(0,0,0,.5)] hover:opacity-90">
           Mural
         </Link>
-        <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
+        <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
           {children}
         </main>
       </div>
@@ -133,7 +133,7 @@ export type Prefix = "do" | "da" | "de";
 /** Escolha de "Mural do / da / de …". */
 export function PrefixPicker({ value, onChange }: { value: Prefix; onChange: (p: Prefix) => void }) {
   return (
-    <div role="radiogroup" aria-label="Como chamar o mural" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+    <div role="radiogroup" aria-label="Como chamar o mural" className="flex w-full rounded-xl sm:inline-flex sm:w-auto border border-[#e1d3ba] bg-white/60 p-1">
       {(["do", "da", "de"] as const).map((p) => (
         <button
           key={p}
@@ -141,7 +141,7 @@ export function PrefixPicker({ value, onChange }: { value: Prefix; onChange: (p:
           role="radio"
           aria-checked={value === p}
           onClick={() => onChange(p)}
-          className={`cursor-pointer rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${
+          className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap transition-colors sm:flex-none sm:px-4 sm:py-1.5 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${
             value === p ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"
           }`}
         >

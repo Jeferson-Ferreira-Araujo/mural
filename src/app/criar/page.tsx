@@ -146,11 +146,11 @@ export default function CriarMural() {
 
   return (
     <AuthShell wide>
-      <ol className="mb-6 flex gap-2" aria-label="Etapas">
+      <ol className="mb-6 flex gap-1.5 sm:gap-2" aria-label="Etapas">
         {STEPS.map((label, i) => (
           <li key={label} className="flex-1" aria-current={i === step ? "step" : undefined}>
             <span className={`block h-1.5 rounded-full ${i <= step ? "bg-[#1f232b]" : "bg-[#e1d3ba]"}`} />
-            <span className={`mt-1.5 block text-xs font-semibold ${i === step ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>{label}</span>
+            <span className={`mt-1.5 block truncate text-[11px] font-semibold sm:text-xs ${i === step ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>{label}</span>
           </li>
         ))}
       </ol>
@@ -175,7 +175,7 @@ export default function CriarMural() {
             <Field label="Endereço do mural" error={slugState === "taken" || slugState === "invalid" ? slugMessage[slugState] : null} hint={slugMessage[slugState] ?? `${SITE_HOST}/${slug || "seu-nome"}`}>
               {(id) => (
                 <div className="flex items-center rounded-xl border border-[#e1d3ba] bg-white/80 focus-within:border-[#b8873b] focus-within:ring-2 focus-within:ring-[#d98a2b]/50">
-                  <span className="pl-4 text-sm whitespace-nowrap text-[#8a7b69]">{SITE_HOST}/</span>
+                  <span className="hidden pl-4 text-sm whitespace-nowrap text-[#8a7b69] sm:inline">{SITE_HOST}/</span>
                   <input
                     id={id}
                     value={slug}
@@ -184,7 +184,9 @@ export default function CriarMural() {
                       setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
                     }}
                     maxLength={30}
-                    className="min-w-0 flex-1 bg-transparent py-3 pr-4 pl-1 text-base outline-none"
+                    placeholder="seu-nome"
+                    aria-label="Endereço do mural"
+                    className="min-w-0 flex-1 bg-transparent py-3 pr-4 pl-4 text-base outline-none sm:pl-1"
                   />
                 </div>
               )}
@@ -243,7 +245,7 @@ export default function CriarMural() {
           </>
         )}
 
-        <div className="flex gap-3 pt-1">
+        <div className="flex flex-wrap gap-3 pt-1">
           {step > 0 && (
             <button type="button" onClick={() => setStep(step - 1)} className={ghostButton}>
               Voltar
