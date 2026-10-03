@@ -83,15 +83,8 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
         <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
           <h1 className="sr-only">Pinz</h1>
           <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
-          {hasSelection ? (
-            // mural escolhido: botões pequenos lado a lado; o foco é a pergunta
-            <div className={`grid w-full max-w-[21rem] gap-2 ${share ? "grid-cols-2" : "grid-cols-1"}`}>
-              <MyMuralLink tone="dark" label="Acessar meu mural" className="w-full !py-[0.6em] !text-[0.85em]" />
-              {share && <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="w-full justify-center border border-white/15 bg-[#1c1510]/70 !py-[0.6em] text-white backdrop-blur" />}
-            </div>
-          ) : (
-            <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full max-w-[21rem]" />
-          )}
+          {/* mural escolhido: só o Compartilhar fica no topo; os botões de conta ficam no rodapé */}
+          {share && <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="w-full max-w-[21rem] justify-center border border-white/15 bg-[#1c1510]/70 !py-[0.6em] text-white backdrop-blur" />}
           {!landing && hasSelection && !locked && (
             <button
               type="button"
@@ -188,8 +181,9 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
         )}
         </div>
 
-        {/* rodapé: criar um novo mural */}
-        <footer className="mx-auto mt-6 w-[min(90vw,30rem)]">
+        {/* rodapé: os dois botões de conta, um abaixo do outro */}
+        <footer className="mx-auto mt-6 flex w-[min(90vw,30rem)] flex-col gap-2">
+          <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full" />
           <CreateMuralLink className="w-full justify-center border border-white/15 bg-[#fbf6ea] py-3 text-[#2a1c12]" />
         </footer>
       </main>
