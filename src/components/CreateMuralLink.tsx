@@ -10,7 +10,7 @@ export function CreateMuralLink({ className = "", big = false }: { className?: s
       href="/entrar"
       className={`inline-flex items-center gap-1.5 whitespace-nowrap transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2a1c12] ${look} ${className}`}
     >
-      <span aria-hidden className="text-[1.15em] leading-none">+</span> Criar meu mural
+      <span aria-hidden className="text-[1.15em] leading-none">+</span> Criar novo mural
     </Link>
   );
 }
