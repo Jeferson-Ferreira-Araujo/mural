@@ -1,0 +1,37 @@
+# Cópia do compose usado no VPS (/opt/mural/docker-compose.yml). O repositório fica em /opt/mural/src.
+# O arquivo /opt/mural/.env (fora do git) guarda o AVATAR_SIGNING_SECRET e NÃO deve ser versionado.
+services:
+  site-mural:
+    build: ./src
+    container_name: site-mural
+    restart: unless-stopped
+    networks: [coolify]
+    env_file: [.env]
+    environment:
+      NSFW_URL: http://nsfw-check:8080
+    depends_on: [nsfw-check]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: coolify
+      traefik.http.middlewares.site-mural-redir.redirectscheme.scheme: https
+      traefik.http.routers.site-mural-http.entryPoints: http
+      traefik.http.routers.site-mural-http.middlewares: site-mural-redir
+      traefik.http.routers.site-mural-http.rule: Host(`mural.jefersonaraujo.com.br`)
+      traefik.http.routers.site-mural.entryPoints: https
+      traefik.http.routers.site-mural.rule: Host(`mural.jefersonaraujo.com.br`)
+      traefik.http.routers.site-mural.tls: "true"
+      traefik.http.routers.site-mural.tls.certresolver: letsencrypt
+      traefik.http.services.site-mural.loadbalancer.server.port: "3000"
+
+  # verificador de nudez (gratuito, roda aqui, sem chave). Só a rede interna enxerga: não tem label do Traefik nem porta publicada.
+  nsfw-check:
+    build: ./src/nsfw-service
+    container_name: nsfw-check
+    restart: unless-stopped
+    networks: [coolify]
+    mem_limit: 640m
+    cpus: 1.0
+
+networks:
+  coolify:
+    external: true

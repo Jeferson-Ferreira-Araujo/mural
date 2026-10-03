@@ -60,7 +60,22 @@ export async function uploadAvatar(sb: SupabaseClient, blob: Blob): Promise<stri
   const path = `${uid}/${Date.now()}.${ext}`;
   const { error } = await sb.storage.from("avatars").upload(path, blob, { contentType: blob.type, cacheControl: "31536000" });
   if (error) throw new Error("Não foi possível enviar a foto agora. Tente de novo.");
-  const { error: e2 } = await sb.rpc("set_avatar", { p_path: path });
+  // verificação de nudez no servidor: só com a aprovação assinada o banco aceita a foto no perfil
+  const { data: s } = await sb.auth.getSession();
+  let res: Response;
+  try {
+    res = await fetch("/api/avatar/verify", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.session?.access_token ?? ""}` }, body: JSON.stringify({ path }) });
+  } catch {
+    await sb.storage.from("avatars").remove([path]);
+    throw new Error("Não foi possível verificar a foto agora. Tente de novo em instantes.");
+  }
+  if (res.status === 422) throw new Error("Essa foto não pôde ser aceita. Escolha outra.");
+  if (!res.ok) {
+    await sb.storage.from("avatars").remove([path]);
+    throw new Error("Não foi possível verificar a foto agora. Tente de novo em instantes.");
+  }
+  const ok = (await res.json()) as { path: string; exp: number; sig: string };
+  const { error: e2 } = await sb.rpc("set_avatar", { p_path: ok.path, p_exp: ok.exp, p_sig: ok.sig });
   if (e2) throw new Error("Não foi possível salvar a foto no seu perfil.");
   void cleanOld(sb, uid, path).catch(() => undefined);
   return publicUrl(sb, path);
@@ -71,6 +86,6 @@ export async function removeAvatar(sb: SupabaseClient): Promise<void> {
   const { data: u } = await sb.auth.getUser();
   const uid = u.user?.id;
   if (!uid) return;
-  await sb.rpc("set_avatar", { p_path: null });
+  await sb.rpc("remove_avatar");
   await cleanOld(sb, uid, null).catch(() => undefined);
 }
