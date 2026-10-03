@@ -231,6 +231,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
               key={`${selected.nickname}/${selected.slug}`}
               title={selected.title}
               owner={selected.nickname}
+              avatar={selected.avatar}
               onSwap={clear}
               question={selected.question}
               unlocked={unlocked}

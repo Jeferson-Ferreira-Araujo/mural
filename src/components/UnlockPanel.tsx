@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import type { UnlockResult } from "@/lib/mural";
+import { Avatar } from "./Avatar";
 
 type Props = {
   question: string;
@@ -13,6 +14,8 @@ type Props = {
   /** cabeçalho do cartão: o mural escolhido, de quem é e como trocar */
   title?: string;
   owner?: string;
+  /** foto do dono */
+  avatar?: string | null;
   onSwap?: () => void;
 };
 
@@ -26,7 +29,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, onSwap }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,10 +64,13 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     >
       {title && (
         <header className={`mb-[0.9em] flex items-start justify-between gap-[0.8em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}>
-          <p className="min-w-0">
-            <span className="block text-[0.95em] leading-tight font-bold break-words">{title}</span>
-            {owner && <span className={`block text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>de {owner}</span>}
-          </p>
+          <div className="flex min-w-0 items-center gap-[0.7em]">
+            {owner && <Avatar src={avatar} name={owner} className="size-[2.6em]" />}
+            <p className="min-w-0">
+              <span className="block text-[0.95em] leading-tight font-bold break-words">{title}</span>
+              {owner && <span className={`block text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>de {owner}</span>}
+            </p>
+          </div>
           {onSwap && (
             <button type="button" onClick={onSwap} className={`shrink-0 cursor-pointer text-[0.8em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
               Trocar

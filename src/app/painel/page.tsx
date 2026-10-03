@@ -7,6 +7,7 @@ import { getAccount } from "@/lib/account";
 import { getOwnMurals, getOwnNickname, useSession, type OwnMural } from "@/lib/auth";
 import { getPublicMural, muralPath, muralUrl, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { AvatarUploader } from "@/components/AvatarUploader";
 import { OwnerPins } from "@/components/board/OwnerPins";
 import { PlanBadge } from "@/components/board/PlanBadge";
 import { SlotMeter } from "@/components/board/SlotMeter";
@@ -80,6 +81,8 @@ export default function Painel() {
           Sair
         </button>
       </div>
+
+      <AvatarUploader nickname={nick} />
 
       <ul className="mt-6 space-y-4">
         {items.map((m) => (

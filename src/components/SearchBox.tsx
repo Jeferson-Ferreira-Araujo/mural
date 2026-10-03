@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState, type KeyboardEvent } from "react";
+import { Avatar } from "./Avatar";
 import { cleanNickname, searchProfiles, type ProfileHit } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { Tone } from "./viewProps";
@@ -122,7 +123,10 @@ export function SearchBox({ onSelect, tone = "light" }: { onSelect: (nickname: s
                   onClick={() => pick(h.nickname)}
                   className={`flex w-full cursor-pointer items-center justify-between gap-[0.8em] rounded-[0.6em] px-[0.8em] py-[0.65em] text-left transition-colors ${i === active ? "bg-[#efe4cf]" : "hover:bg-[#f3ead8]"}`}
                 >
-                  <span className="font-semibold break-all">{h.nickname}</span>
+                  <span className="flex min-w-0 items-center gap-[0.6em]">
+                    <Avatar src={h.avatar} name={h.nickname} className="size-[1.9em]" />
+                    <span className="font-semibold break-all">{h.nickname}</span>
+                  </span>
                   <span className="shrink-0 text-[0.8em] text-[#6b5440]">
                     {h.murals} {h.murals === 1 ? "mural" : "murais"}
                   </span>

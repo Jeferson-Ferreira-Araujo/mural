@@ -17,6 +17,8 @@ export type MuralRef = { nick: string; slug: string };
 
 export type PublicMural = {
   nickname: string;
+  /** Foto de perfil do dono (endereço público), se ele enviou. */
+  avatar?: string | null;
   slug: string;
   title: string;
   question: string;
@@ -29,6 +31,7 @@ export type PublicMural = {
 
 export type ProfileMurals = {
   nickname: string;
+  avatar?: string | null;
   murals: { slug: string; title: string }[];
 };
 
@@ -164,7 +167,7 @@ export function uniqueSlug(title: string, existing: string[]): string {
   return cand;
 }
 
-export type ProfileHit = { nickname: string; murals: number };
+export type ProfileHit = { nickname: string; murals: number; avatar?: string | null };
 
 /** Busca pessoas pelo nickname (só quem tem mural). */
 export async function searchProfiles(sb: SupabaseClient, query: string): Promise<ProfileHit[]> {
