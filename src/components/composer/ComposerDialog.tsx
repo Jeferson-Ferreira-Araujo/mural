@@ -27,7 +27,34 @@ type Props = {
   sending?: boolean;
   onTried: () => void;
   triedAlready: boolean;
+  /** Nickname de quem está logado: é o que aparece no pin se a pessoa escolher assinar. */
+  signAs?: string | null;
 };
+
+/** Anônimo ou assinado: quem vê o mural só enxerga o nickname se a pessoa escolher assinar. */
+function SignChoice({ nick, signed, onChange }: { nick: string; signed: boolean; onChange: (v: boolean) => void }) {
+  const opt = (on: boolean, label: string, sub: string) => (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={signed === on}
+      onClick={() => onChange(on)}
+      className={`flex-1 cursor-pointer rounded-xl border-2 px-3 py-2 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${signed === on ? "border-[#1f232b] bg-[#fff6dd]" : "border-[#d9c9ad] bg-white/60 hover:bg-white"}`}
+    >
+      <span className="block text-sm font-bold text-[#2f2218]">{label}</span>
+      <span className="block truncate text-xs text-[#6b5440]">{sub}</span>
+    </button>
+  );
+  return (
+    <fieldset>
+      <legend className="text-sm font-semibold text-[#4a3826]">Como você quer deixar o pin?</legend>
+      <div role="radiogroup" aria-label="Anônimo ou assinado" className="mt-2 flex gap-2">
+        {opt(false, "Anônimo", "Ninguém vê quem deixou")}
+        {opt(true, "Assinar", `Aparece @${nick}`)}
+      </div>
+    </fieldset>
+  );
+}
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
   switch (format) {
@@ -70,7 +97,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  *    (FULL) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -82,6 +109,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
   const [picked, setPicked] = useState<number | null>(null);
+  const [signed, setSigned] = useState(false);
   const choice = fixedSlot ?? picked;
   const slot = choice !== null && choice < capacity && !taken.includes(choice) ? choice : firstFree;
 
@@ -111,7 +139,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       onSubmit={(e) => {
         e.preventDefault();
         if (!draft || !canSend || slot === null) return;
-        onSend({ message: draft, slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        onSend({ message: draft, slot, signed: !!signAs && signed, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className="space-y-5"
     >
@@ -125,7 +153,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
                 <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
-                <MessageView message={{ ...shown, id: "preview" } as Message} />
+                <MessageView message={{ ...shown, id: "preview", signedBy: signAs && signed ? signAs : undefined } as Message} />
               </div>
             </div>
           </div>
@@ -138,10 +166,12 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
+      {signAs && <SignChoice nick={signAs} signed={signed} onChange={setSigned} />}
+
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
-      <p className="text-center text-xs text-[#8a7b69]">Sua mensagem é anônima, mas o dono revisa antes de aparecer. Ofensas, ameaças e assédio podem ser relatados e levar ao bloqueio.</p>
+      <p className="text-center text-xs text-[#8a7b69]">O dono revisa antes de aparecer. Ofensas, ameaças e assédio podem ser relatados e levar ao bloqueio.</p>
     </form>
   );
 }

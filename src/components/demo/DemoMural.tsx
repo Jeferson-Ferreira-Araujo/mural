@@ -8,6 +8,9 @@ import { isMessage, isSealed, type BoardItem, type HiddenItem, type Message } fr
 import { OwnerAlert } from "../board/OwnerAlert";
 import { PinsManager, type OwnerPin } from "../board/PinsManager";
 import type { SendPayload } from "../composer/types";
+
+/** Nickname fictício de quem "está logado" na demonstração (para testar a opção de assinar). */
+const DEMO_NICK = "voce";
 import { MuralScreen } from "../MuralScreen";
 import { Toast } from "../Toast";
 import { useToast } from "../useToast";
@@ -71,7 +74,8 @@ export function DemoMural() {
     fill(p, board.items.length);
   }
 
-  function onSend({ message, capsuleAt, slot }: SendPayload) {
+  function onSend({ message: draft, capsuleAt, slot, signed }: SendPayload) {
+    const message = (signed ? { ...draft, signedBy: DEMO_NICK } : draft) as typeof draft;
     setBoard((b) => {
       if (b.items.length >= available || b.items.some((it) => it.slot === slot)) return b;
       const id = `u${++uid}`;
@@ -223,6 +227,7 @@ export function DemoMural() {
                   setTriedAlready(true);
                 },
                 triedAlready,
+                signAs: DEMO_NICK,
               }
         }
       />

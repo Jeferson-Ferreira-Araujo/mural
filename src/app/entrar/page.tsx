@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { callbackUrl, homeRouteFor, useSession } from "@/lib/auth";
+import { callbackUrl, homeRouteFor, rememberNext, safeNext, takeNext, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
@@ -24,14 +24,19 @@ export default function Entrar() {
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const nickState = useNicknameStatus(mode === "signup" ? nick : "");
 
-  // veio de "Entrar no meu mural": abre direto na aba Entrar
+  // veio de "Entrar no meu mural": abre direto na aba Entrar. `next` = mural que a pessoa queria abrir
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("modo") === "entrar") setMode("login");
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("modo") === "entrar") setMode("login");
+    const next = safeNext(q.get("next"));
+    if (next) rememberNext(next);
   }, []);
 
-  // já logado: vai para o painel (ou para a criação do mural)
+  // já logado: volta para onde estava (um mural) ou vai para o painel / criação do mural
   useEffect(() => {
     if (!session) return;
+    const next = takeNext();
+    if (next) return router.replace(next);
     homeRouteFor(getBrowserSupabase()).then((to) => router.replace(to));
   }, [session, router]);
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildPool, randomMural } from "@/data/mock";
 import {
@@ -20,6 +21,7 @@ import {
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { getOwnNickname, loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { MuralScreen } from "./MuralScreen";
@@ -30,12 +32,33 @@ import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 
 
+/** Sem conta não dá para procurar nem abrir murais: convida a entrar (e volta para o mural depois). */
+function LoginGate({ tone, next }: { tone: Tone; next: string }) {
+  const dark = tone === "dark";
+  return (
+    <section aria-label="Entrar para procurar murais" className={`rounded-[1.1em] border p-[1.1em] text-center ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
+      <p className="text-[1em] font-semibold">Entre na sua conta para procurar murais</p>
+      <div className="mt-[0.9em] grid gap-[0.5em]">
+        <Link href={loginUrl(next)} className="rounded-[0.8em] bg-[#d9a21b] px-[1em] py-[0.8em] font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
+          Entrar
+        </Link>
+        <Link href={loginUrl(next, true)} className={`rounded-[0.8em] border px-[1em] py-[0.8em] font-semibold transition ${dark ? "border-white/20 hover:bg-white/10" : "border-[#d9c9ad] bg-white/60 hover:bg-white"}`}>
+          Criar conta
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 /**
  * Tela principal: busca uma pessoa pelo nickname, mostra a pergunta do mural e, ao acertar,
  * revela o quadro (que fica desfocado até lá). Também abre direto em um mural (`/nickname/mural`).
  */
-export function Explorer({ initial }: { initial?: PublicMural }) {
-  const [selected, setSelected] = useState<PublicMural | null>(initial ?? null);
+export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: string } }) {
+  const { session, loading: sessionLoading } = useSession();
+  const logged = !!session;
+  const [myNick, setMyNick] = useState<string | null>(null); // nickname de quem está logado (assinatura do pin)
+  const [selected, setSelected] = useState<PublicMural | null>(null);
   const [choices, setChoices] = useState<ProfileMurals | null>(null);
   const [loading, setLoading] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
@@ -47,6 +70,14 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
   useEffect(() => {
     void getSiteStats(getBrowserSupabase()).then(setSiteStats);
   }, []);
+
+  useEffect(() => {
+    if (!session) {
+      setMyNick(null);
+      return;
+    }
+    void getOwnNickname(getBrowserSupabase()).then(setMyNick);
+  }, [session]);
 
   const nick = selected?.nickname;
   const slug = selected?.slug;
@@ -116,11 +147,12 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
     if (!nick || !slug || !token) return SEND_ERROR_TEXT.not_unlocked;
-    const res = await sendPin(getBrowserSupabase(), { nick, slug }, token, getVisitorId(), p);
+    const res = await sendPin(getBrowserSupabase(), { nick, slug }, token, p);
     if (res.ok) {
       await loadBoard();
       return;
     }
+    if (res.reason === "not_authenticated") return SEND_ERROR_TEXT.not_authenticated;
     if (res.reason === "not_unlocked") {
       const msg = "Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.";
       relock(msg);
@@ -147,6 +179,24 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
     },
     [notify],
   );
+
+  // link direto (/nickname/mural): abre assim que a pessoa estiver logada
+  const opened = useRef(false);
+  useEffect(() => {
+    if (!initialRef || !logged || opened.current) return;
+    opened.current = true;
+    void openMural(initialRef.nick, initialRef.slug);
+  }, [initialRef, logged, openMural]);
+
+  // saiu da conta: fecha o mural
+  useEffect(() => {
+    if (sessionLoading || logged) return;
+    setSelected(null);
+    setChoices(null);
+    setUnlocked(false);
+    setToken(null);
+    opened.current = false;
+  }, [sessionLoading, logged]);
 
   const pickPerson = useCallback(
     async (n: string) => {
@@ -197,7 +247,8 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
       return (
         <div className="space-y-[1.2em]">
           {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
-          {!selected && <SearchBox onSelect={pickPerson} tone={tone} />}
+          {!selected && logged && <SearchBox onSelect={pickPerson} tone={tone} />}
+          {!logged && !sessionLoading && <LoginGate tone={tone} next={initialRef ? `/${initialRef.nick}/${initialRef.slug}` : "/"} />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
               Buscando…
@@ -242,7 +293,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         </div>
       );
     },
-    [choices, loading, openMural, pickPerson, selected, submitAnswer, unlocked],
+    [choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
@@ -283,6 +334,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
                   if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
                 },
                 triedAlready: tried,
+                signAs: myNick,
               }
             : { mode: "soon" }
         }

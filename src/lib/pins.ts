@@ -11,7 +11,7 @@ export async function fetchBoard(sb: SupabaseClient, ref: MuralRef, token: strin
   return data as BoardItem[];
 }
 
-export type SendFailure = "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
+export type SendFailure = "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
 export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
 
 const EXT: Record<string, string> = {
@@ -33,7 +33,7 @@ async function uploadMedia(sb: SupabaseClient, token: string, blobUrl: string): 
 }
 
 /** Cola um pin no espaço escolhido. O servidor valida tudo de novo (token, plano, limite, espaço livre, formatos). */
-export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, visitorId: string, payload: SendPayload): Promise<SendResult> {
+export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, payload: SendPayload): Promise<SendResult> {
   const { type, ...content } = payload.message as Record<string, unknown> & { type: string };
   try {
     if (typeof content.src === "string" && content.src.startsWith("blob:")) content.src = await uploadMedia(sb, token, content.src);
@@ -44,21 +44,22 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, 
     p_nick: ref.nick,
     p_slug: ref.slug,
     p_token: token,
-    p_visitor_id: visitorId,
     p_slot: payload.slot,
     p_type: type,
     p_content: content,
     p_opens_at: payload.capsuleAt ?? null,
+    p_signed: payload.signed === true,
   });
   if (!error) return { ok: true };
   const m = error.message;
-  const known: SendFailure[] = ["blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
+  const known: SendFailure[] = ["not_authenticated", "blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
   const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") ? "format_not_allowed" : "error");
   return { ok: false, reason: hit };
 }
 
 /** Texto para o visitante, por motivo de falha. */
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
+  not_authenticated: "Entre na sua conta para deixar um pin.",
   blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
   too_many_pending: "Você já tem pins aguardando aprovação neste mural. Espere o dono aprovar para enviar mais.",

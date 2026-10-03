@@ -45,7 +45,7 @@ export function FullNotice({ used, available, planLimit = false, onTried, triedA
           >
             Eu tentei deixar um PINZ
           </button>
-          <p className="mt-3 text-xs text-[#8a7b69]">É anônimo e não custa nada.</p>
+          <p className="mt-3 text-xs text-[#8a7b69]">Não custa nada.</p>
         </>
       )}
     </div>

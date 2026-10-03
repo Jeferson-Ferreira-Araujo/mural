@@ -31,6 +31,16 @@ function Content({ m }: { m: Message }) {
   }
 }
 
+/** Assinatura de quem deixou o pin (só aparece se a pessoa escolheu assinar). */
+function Signature({ name }: { name?: string }) {
+  if (!name) return null;
+  return (
+    <span className="absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-full bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
+      — {name}
+    </span>
+  );
+}
+
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
   if (m.pending) {
@@ -49,12 +59,14 @@ function Marked({ m }: { m: Message }) {
             <span className="max-w-[11em] rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Aguardando liberação do dono do mural</span>
           </span>
         </span>
+        <Signature name={m.signedBy} />
       </div>
     );
   }
   return (
     <div className="relative">
       <Content m={m} />
+      <Signature name={m.signedBy} />
       <span className="absolute -bottom-[0.9em] left-1/2 z-30 -translate-x-1/2 rounded-full bg-[#2a1c12]/90 px-[0.9em] py-[0.3em] text-[0.7em] leading-none font-semibold whitespace-nowrap text-[#fff3d6] shadow-[0_0.2em_0.5em_rgba(0,0,0,.4)]">
         🔒 Em blur para os visitantes
       </span>
@@ -70,11 +82,13 @@ export function MessageView({ message: m }: { message: BoardItem }) {
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
   if (isHidden(m)) return <HiddenPin item={m} />;
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
-  if (!m.fromCapsule) return <Content m={m} />;
-  // mensagem que veio de uma Cápsula já aberta: ganha um pequeno lacre no canto
+  if (!m.fromCapsule && !m.signedBy) return <Content m={m} />;
+  // mensagem assinada e/ou vinda de uma Cápsula já aberta (ganha um pequeno lacre no canto)
   return (
     <div className="relative">
       <Content m={m} />
+      <Signature name={m.signedBy} />
+      {m.fromCapsule && (
       <span
         title="Aberta de uma Cápsula PINZ"
         className="absolute -top-[0.7em] -right-[0.6em] z-30 grid size-[2em] place-items-center rounded-full text-white shadow-[0_0.15em_0.4em_rgba(60,10,5,.5)]"
@@ -85,6 +99,7 @@ export function MessageView({ message: m }: { message: BoardItem }) {
           <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 8V7a3 3 0 0 1 6 0v3H9Zm6.5 3.5-4 4-2-2 1.1-1.1 0.9 0.9 2.9-2.9 1.1 1.1Z" />
         </svg>
       </span>
+      )}
     </div>
   );
 }

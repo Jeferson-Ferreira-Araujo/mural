@@ -19,6 +19,8 @@ type Base = {
   pending?: boolean;
   /** Visão do dono: este pin está em blur para quem visita (recurso FULL). */
   ownerHidden?: boolean;
+  /** Nickname de quem assinou o pin. Sem isso o pin é anônimo (o autor só existe no banco). */
+  signedBy?: string;
 };
 
 /** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */
