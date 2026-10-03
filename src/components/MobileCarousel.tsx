@@ -15,13 +15,13 @@ import type { ViewProps } from "./viewProps";
  * - Tela inicial e mural trancado: logo, busca/pergunta no centro; "Acessar meu mural" e "Criar novo mural" no rodapé.
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
 
   if (!landing && hasSelection && unlocked && !locked && muralInfo) {
-    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} />;
+    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} />;
   }
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração

@@ -269,6 +269,7 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         share={null}
         muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
         onChangeMural={clear}
+        welcome={selected?.welcome}
         panel={panel}
         onNotify={notify}
         composer={

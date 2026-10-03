@@ -69,6 +69,7 @@ export function BoardCanvas({
   onCompose,
   hint = false,
   contain = false,
+  emptyMessage,
   children,
 }: {
   items: BoardItem[];
@@ -80,6 +81,8 @@ export function BoardCanvas({
   locked?: boolean;
   onCompose: ((slot?: number) => void) | null;
   hint?: boolean;
+  /** Texto do bilhete do mural vazio (personalizado pelo dono FULL). */
+  emptyMessage?: string | null;
   /** Quadro inteiro visível (celular deitado), em vez de preencher o espaço cortando as bordas. */
   contain?: boolean;
   children?: ReactNode;
@@ -186,7 +189,7 @@ export function BoardCanvas({
 
                   {items.length === 0 && unlocked && (
                     <div className="absolute inset-x-0 top-[45%] z-10">
-                      <EmptyNote unlocked={unlocked} />
+                      <EmptyNote unlocked={unlocked} message={emptyMessage} />
                     </div>
                   )}
                 </div>

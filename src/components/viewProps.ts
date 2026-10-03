@@ -25,6 +25,8 @@ export type ViewProps = {
   siteStats?: SiteStats | null;
   /** Quem é o dono do mural aberto (cabeçalho da tela do mural no celular). */
   muralInfo?: { title: string; owner: string; avatar?: string | null };
+  /** Texto do bilhete do mural vazio (personalizado pelo dono FULL). */
+  welcome?: string | null;
   /** Celular: "Procurar outro mural" (volta à busca). */
   onChangeMural?: () => void;
   /** Quantos espaços o quadro tem (padrão 15; 30 = teste do quadro denso). */

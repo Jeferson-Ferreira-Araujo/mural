@@ -17,6 +17,7 @@ export default function EditarMural() {
 
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
+  const [welcome, setWelcome] = useState("");
   const [changeAnswer, setChangeAnswer] = useState(false);
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
@@ -37,6 +38,7 @@ export default function EditarMural() {
       setNick(n);
       setTitle(m.title);
       setQuestion(m.question);
+      setWelcome(m.welcome_message ?? "");
     });
   }, [loading, session, id, router]);
 
@@ -58,11 +60,22 @@ export default function EditarMural() {
       p_question: question.trim(),
       p_answer: changeAnswer ? answer.trim() : null,
     });
-    setBusy(false);
     if (error) {
+      setBusy(false);
       setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
       return;
     }
+    // mensagem do mural vazio (só no FULL; o servidor confere)
+    if (mural && mural.plan === "full" && welcome.trim() !== (mural.welcome_message ?? "")) {
+      const { error: e2 } = await getBrowserSupabase().rpc("set_welcome_message", { p_mural_id: id, p_text: welcome.trim() });
+      if (e2) {
+        setBusy(false);
+        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a mensagem do mural vazio." });
+        return;
+      }
+      setMural({ ...mural, welcome_message: welcome.trim() || null });
+    }
+    setBusy(false);
     setMsg({ ok: true, text: changeAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
     setChangeAnswer(false);
     setAnswer("");
@@ -106,6 +119,20 @@ export default function EditarMural() {
               <QuestionSuggestions onPick={setQuestion} />
             </>
           )}</Field>
+
+        <Field label="Mensagem para quem desbloquear (quando ainda não há pins)" hint={mural.plan === "full" ? `${welcome.length}/100 · Se deixar em branco, aparece: "Você descobriu a resposta. Deixe uma mensagem para mim!"` : "🔒 Personalizar essa mensagem é do PINZ FULL. Hoje aparece: \"Você descobriu a resposta. Deixe uma mensagem para mim!\""}>
+          {(fid) => (
+            <input
+              id={fid}
+              value={mural.plan === "full" ? welcome : ""}
+              onChange={(e) => setWelcome(e.target.value)}
+              maxLength={100}
+              disabled={mural.plan !== "full"}
+              placeholder="Você descobriu a resposta. Deixe uma mensagem para mim!"
+              className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
+            />
+          )}
+        </Field>
 
         {changeAnswer ? (
           <Field label="Nova resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam). Quem já tinha desbloqueado precisará responder de novo.">

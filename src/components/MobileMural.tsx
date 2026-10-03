@@ -22,6 +22,8 @@ type Props = {
   info: { title: string; owner: string; avatar?: string | null };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
+  /** texto do mural vazio (FULL) */
+  welcome?: string | null;
 };
 
 /** Botão principal de rodapé: deixar um pin. */
@@ -41,7 +43,7 @@ export function LeavePinButton({ onClick }: { onClick: () => void }) {
  * Mural no celular (retrato), como no mockup: topo com o logo e o menu; cabeçalho com a foto e o nome de quem é o mural;
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Ver tudo" afasta); "Deixar um PIN" no rodapé.
  */
-export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural }: Props) {
+export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome }: Props) {
   const look = boardById(board);
   const limit = slotsFor(plan, capacity);
   const [menu, setMenu] = useState(false);
@@ -113,7 +115,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
         <PannableBoard ambient={look.image}>
-          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain />
+          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain emptyMessage={welcome} />
         </PannableBoard>
       </div>
 

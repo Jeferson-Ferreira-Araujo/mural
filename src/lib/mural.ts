@@ -26,6 +26,8 @@ export type PublicMural = {
   board?: string;
   /** Plano do mural: define o limite de pins e os formatos (validado no servidor). */
   plan?: "free" | "full";
+  /** Mensagem do mural vazio, personalizada pelo dono (só chega se o mural é FULL). */
+  welcome?: string | null;
   stats: MuralStats;
 };
 

@@ -20,11 +20,11 @@ export function useSession() {
   return { session, loading };
 }
 
-export type OwnMural = { id: string; slug: string; title: string; question: string; created_at: string; plan: "free" | "full" };
+export type OwnMural = { id: string; slug: string; title: string; question: string; created_at: string; plan: "free" | "full"; welcome_message?: string | null };
 
 /** Murais do usuário logado, do mais antigo ao mais novo (a RLS só deixa ele ver os próprios). */
 export async function getOwnMurals(sb: SupabaseClient): Promise<OwnMural[]> {
-  const { data } = await sb.from("murals").select("id, slug, title, question, created_at, plan").order("created_at");
+  const { data } = await sb.from("murals").select("id, slug, title, question, created_at, plan, welcome_message").order("created_at");
   return (data as OwnMural[] | null) ?? [];
 }
 
