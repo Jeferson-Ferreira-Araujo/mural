@@ -44,7 +44,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
   const [font, setFont] = useState<HandId>("caveat");
   const [pin, setPin] = useState<PinColor | null>(null); // null = a tachinha padrão da cor do post-it
   const defaultPin: PinColor = color === "orange" || color === "blue" ? "blue" : "red";
-  useEffect(() => onChange(text.trim() ? { type: "postit", color, text: text.trim(), font, ...(pin ? { pin } : {}) } : null), [color, text, font, pin, onChange]);
+  useEffect(() => onChange({ type: "postit", color, text: text.trim() || "Seu recado aparece aqui", font, ...(pin ? { pin } : {}) }, { empty: !text.trim() }), [color, text, font, pin, onChange]);
   return (
     <div className="space-y-4">
       <fieldset>
@@ -79,7 +79,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
   const [text, setText] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
   const [tape, setTape] = useState<TapeColor>("yellow");
-  useEffect(() => onChange(text.trim() ? { type: "text", variant, text: text.trim(), font, tape } : null), [variant, text, font, tape, onChange]);
+  useEffect(() => onChange({ type: "text", variant, text: text.trim() || "Sua mensagem aparece aqui.", font, tape }, { empty: !text.trim() }), [variant, text, font, tape, onChange]);
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label="Tipo de papel" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
@@ -114,7 +114,16 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
   const max = 6;
   useEffect(() => {
     const filled = items.map((t) => t.trim()).filter(Boolean);
-    onChange(title.trim() && filled.length ? { type: "list", title: title.trim(), items: filled.map((text) => ({ text, done: false })), font, tape } : null);
+    onChange(
+      {
+        type: "list",
+        title: title.trim() || "Sua lista",
+        items: (filled.length ? filled : ["Primeiro item", "Segundo item"]).map((text) => ({ text, done: false })),
+        font,
+        tape,
+      },
+      { empty: !(title.trim() && filled.length) },
+    );
   }, [title, items, font, tape, onChange]);
   return (
     <div className="space-y-4">
@@ -199,7 +208,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
     prev.current = url;
     setSrc(url);
   }
-  useEffect(() => onChange(src ? { type: "photo", caption: caption.trim(), src, font, tape } : null), [src, caption, font, tape, onChange]);
+  useEffect(() => onChange({ type: "photo", caption: caption.trim(), ...(src ? { src } : { scene: "hills" as const }), font, tape }, { empty: !src }), [src, caption, font, tape, onChange]);
 
   return (
     <div className="space-y-4">
