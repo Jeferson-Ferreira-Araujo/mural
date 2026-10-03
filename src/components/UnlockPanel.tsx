@@ -10,6 +10,10 @@ type Props = {
   /** id do campo de resposta (usado para focar a partir de outros botões). */
   inputId: string;
   tone?: "light" | "dark";
+  /** cabeçalho do cartão: o mural escolhido, de quem é e como trocar */
+  title?: string;
+  owner?: string;
+  onSwap?: () => void;
 };
 
 const LockIcon = () => (
@@ -22,7 +26,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light" }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, onSwap }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -55,24 +59,31 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           : "rounded-[1.1em] border border-[#d9c9ad] bg-[#fbf6ea]/90 p-[1.2em] text-[#2f2218] shadow-[0_0.3em_1em_rgba(80,50,20,.15)]"
       }
     >
+      {title && (
+        <header className={`mb-[0.9em] flex items-start justify-between gap-[0.8em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}>
+          <p className="min-w-0">
+            <span className="block text-[0.95em] leading-tight font-bold break-words">{title}</span>
+            {owner && <span className={`block text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>de {owner}</span>}
+          </p>
+          {onSwap && (
+            <button type="button" onClick={onSwap} className={`shrink-0 cursor-pointer text-[0.8em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
+              Trocar
+            </button>
+          )}
+        </header>
+      )}
       {unlocked ? (
         <div className="rise" role="status">
-          <p className="text-[1.15em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
-          <p className={`mt-[0.4em] text-[0.9em] leading-snug ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-            Você é de casa! Agora é só deixar o seu recado anônimo.
-          </p>
+          <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
+          <p className={`mt-[0.3em] text-[0.85em] leading-snug ${dark ? "text-white/70" : "text-[#6b5440]"}`}>Clique num espaço livre para deixar seu recado.</p>
         </div>
       ) : (
         <form onSubmit={submit} noValidate>
-          <p
-            className={`inline-flex items-center gap-[0.5em] rounded-full px-[0.8em] py-[0.35em] text-[0.82em] font-medium ${
-              dark ? "bg-white/10 text-white/90" : "bg-[#efe4cf] text-[#4a3826]"
-            }`}
-          >
-            <LockIcon /> Só quem me conhece entra
-          </p>
-          <label htmlFor={inputId} className="mt-[0.9em] block text-[1.25em] leading-snug font-bold">
-            {question}
+          <label htmlFor={inputId} className="flex items-start gap-[0.5em] text-[1.15em] leading-snug font-bold">
+            <span className={dark ? "mt-[0.2em] text-white/60" : "mt-[0.2em] text-[#8a7b69]"}>
+              <LockIcon />
+            </span>
+            <span>{question}</span>
           </label>
           <input
             id={inputId}

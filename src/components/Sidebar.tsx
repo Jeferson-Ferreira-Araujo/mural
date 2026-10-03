@@ -18,7 +18,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 }
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
-export function Sidebar({ siteStats, capacity, panel, plan, used, showMeter, notice, panelTitle }: Pick<ViewProps, "siteStats" | "capacity" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number }) {
+export function Sidebar({ compact = false, siteStats, capacity, panel, plan, used, showMeter, notice, panelTitle }: Pick<ViewProps, "siteStats" | "capacity" | "panel" | "plan" | "showMeter" | "notice" | "panelTitle"> & { used: number; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
@@ -31,10 +31,17 @@ export function Sidebar({ siteStats, capacity, panel, plan, used, showMeter, not
         <Brand className="h-[6.4rem]" />
       </div>
 
-      <div className="flex flex-col gap-[0.6em]">
-        <CreateMuralLink big className="w-full" />
-        <MyMuralLink tone="light" className="w-full" />
-      </div>
+      {compact ? (
+        <div className="grid grid-cols-2 gap-[0.5em]">
+          <CreateMuralLink label="Criar mural" className="w-full justify-center rounded-[0.8em] border border-[#d9c9ad] bg-white/60 px-[0.6em] py-[0.6em] !text-[0.85em] font-semibold text-[#2f2218] hover:bg-white" />
+          <MyMuralLink tone="light" short className="w-full !py-[0.6em] !text-[0.85em]" />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-[0.6em]">
+          <CreateMuralLink big className="w-full" />
+          <MyMuralLink tone="light" className="w-full" />
+        </div>
+      )}
 
       {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar mural" já se explica */}
       {panelTitle && (

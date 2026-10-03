@@ -197,7 +197,8 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
       const dark = tone === "dark";
       return (
         <div className="space-y-[1.2em]">
-          <SearchBox onSelect={pickPerson} tone={tone} />
+          {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
+          {!selected && <SearchBox onSelect={pickPerson} tone={tone} />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
               Buscando…
@@ -226,29 +227,17 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
           )}
 
           {selected && (
-            <div className="space-y-[0.8em]">
-              <div className="flex items-start justify-between gap-[0.8em]">
-                <p className={`min-w-0 text-[0.95em] ${dark ? "text-white/85" : "text-[#4a3826]"}`}>
-                  <span className="font-semibold break-words">{selected.title}</span>
-                  <span className={`block text-[0.85em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>de {selected.nickname}</span>
-                </p>
-                <button
-                  type="button"
-                  onClick={clear}
-                  className={`shrink-0 cursor-pointer text-[0.85em] font-semibold underline ${dark ? "text-white/80" : "text-[#6b5440]"}`}
-                >
-                  Trocar
-                </button>
-              </div>
-              <UnlockPanel
-                key={`${selected.nickname}/${selected.slug}`}
-                question={selected.question}
-                unlocked={unlocked}
-                onSubmit={submitAnswer}
-                inputId={`unlock-${tone}`}
-                tone={tone}
-              />
-            </div>
+            <UnlockPanel
+              key={`${selected.nickname}/${selected.slug}`}
+              title={selected.title}
+              owner={selected.nickname}
+              onSwap={clear}
+              question={selected.question}
+              unlocked={unlocked}
+              onSubmit={submitAnswer}
+              inputId={`unlock-${tone}`}
+              tone={tone}
+            />
           )}
         </div>
       );

@@ -83,8 +83,15 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
         <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
           <h1 className="sr-only">Pinz</h1>
           <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
-          <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full max-w-[21rem]" />
-          {share && <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="w-full max-w-[21rem] justify-center border border-white/15 bg-[#1c1510]/70 text-white backdrop-blur" />}
+          {hasSelection ? (
+            // mural escolhido: botões pequenos lado a lado; o foco é a pergunta
+            <div className={`grid w-full max-w-[21rem] gap-2 ${share ? "grid-cols-2" : "grid-cols-1"}`}>
+              <MyMuralLink tone="dark" label="Acessar meu mural" className="w-full !py-[0.6em] !text-[0.85em]" />
+              {share && <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="w-full justify-center border border-white/15 bg-[#1c1510]/70 !py-[0.6em] text-white backdrop-blur" />}
+            </div>
+          ) : (
+            <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full max-w-[21rem]" />
+          )}
           {!landing && hasSelection && !locked && (
             <button
               type="button"
@@ -110,7 +117,7 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           </div>
         )}
 
-        <section hidden={landing} aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
+        <section hidden={landing || locked} aria-roledescription="carrossel" aria-label="Mensagens do mural" onKeyDown={onKeyDown} className="relative">
           <div
             className="transition-[filter] duration-700 ease-out"
             style={{ filter: locked ? "blur(9px) saturate(0.85)" : "none" }}

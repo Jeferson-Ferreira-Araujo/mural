@@ -50,7 +50,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
+      <Sidebar compact={hasSelection} siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className="relative min-w-0 flex-1 overflow-hidden">
@@ -85,7 +85,7 @@ export function DesktopBoard(props: ViewProps) {
         </BoardCanvas>
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 pb-5">
-          {onCompose && (
+          {onCompose && !locked && (
             <button
               type="button"
               onClick={addMessage}
