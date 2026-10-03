@@ -10,7 +10,6 @@ import {
   getPublicMural,
   getVisitorId,
   loadGrant,
-  muralPath,
   saveGrant,
   tryUnlock,
   type ProfileMurals,
@@ -266,7 +265,10 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         stats={selected?.stats ?? null}
         siteStats={siteStats}
         board={boardById(selected?.board).id}
-        share={selected ? { title: selected.title, path: muralPath({ nick: selected.nickname, slug: selected.slug }) } : null}
+        // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no painel)
+        share={null}
+        autoOpenBoard
+        muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
         panel={panel}
         onNotify={notify}
         composer={

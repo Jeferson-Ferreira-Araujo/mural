@@ -42,7 +42,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           };
 
   const capacity = view.capacity ?? BOARD_CAPACITY;
-  const props: ViewProps = { ...view, capacity, onCompose };
+  const props: ViewProps = { ...view, capacity, onCompose, composing: open };
 
   return (
     <>

@@ -23,6 +23,12 @@ export type ViewProps = {
   stats: { visited: number; tried: number; correct: number; messages: number } | null;
   /** Números do site inteiro, mostrados no rodapé da barra quando nenhum mural está escolhido. */
   siteStats?: SiteStats | null;
+  /** O compositor de pins está aberto (o mural em tela cheia do celular volta quando ele fecha). */
+  composing?: boolean;
+  /** Celular: abrir o mural em tela cheia assim que for desbloqueado. */
+  autoOpenBoard?: boolean;
+  /** Quem é o dono do mural aberto (mostrado nas laterais do mural em tela cheia). */
+  muralInfo?: { title: string; owner: string; avatar?: string | null };
   /** Quantos espaços o quadro tem (padrão 15; 30 = teste do quadro denso). */
   capacity?: number;
   /** Fundo do mural (padrão: cortiça). */
