@@ -11,13 +11,15 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from nudenet import NudeDetector
 
 # partes do corpo EXPOSTAS que reprovam a foto (rostos, braços, pés etc. são liberados)
-BLOCKED = {
-    "FEMALE_BREAST_EXPOSED",
-    "FEMALE_GENITALIA_EXPOSED",
-    "MALE_GENITALIA_EXPOSED",
-    "BUTTOCKS_EXPOSED",
-    "ANUS_EXPOSED",
-}
+BLOCKED = set(
+    filter(
+        None,
+        os.environ.get(
+            "NSFW_BLOCKED",
+            "FEMALE_BREAST_EXPOSED,FEMALE_GENITALIA_EXPOSED,MALE_GENITALIA_EXPOSED,BUTTOCKS_EXPOSED,ANUS_EXPOSED",
+        ).split(","),
+    )
+)
 THRESHOLD = float(os.environ.get("NSFW_THRESHOLD", "0.45"))
 MAX_BYTES = 3 * 1024 * 1024
 
