@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
 import { formatInfo, type Message, type MessageType } from "@/lib/types";
 import { MessageView } from "../messages/MessageView";
@@ -27,6 +28,8 @@ type Props = {
   sending?: boolean;
   onTried: () => void;
   triedAlready: boolean;
+  /** Mural em tela cheia do celular: o compositor abre DENTRO dele (girado junto, com o quadro ao fundo), em duas colunas. */
+  portalTarget?: HTMLElement | null;
 };
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
@@ -55,7 +58,7 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve → (FULL) opcionalmente Cápsula → cola no mural.
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose }: Omit<Props, "open">) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, landscape = false }: Omit<Props, "open" | "portalTarget"> & { landscape?: boolean }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -74,7 +77,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
   if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
-  if (!format) return <FormatPicker formats={formats} onPick={setFormat} />;
+  if (!format) return <FormatPicker formats={formats} onPick={setFormat} landscape={landscape} />;
 
   const canSend = !sending && !!draft && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
 
@@ -86,8 +89,9 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         if (!draft || !canSend || slot === null) return;
         onSend({ message: draft, slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
-      className="space-y-5"
+      className={landscape ? "grid grid-cols-2 items-start gap-4" : "space-y-5"}
     >
+      <div className="space-y-5">
       <div>
         <button type="button" onClick={() => { setFormat(null); setDraft(null); }} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
           ← Trocar formato
@@ -106,12 +110,14 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
+      </div>
 
+      <div className="space-y-5">
       {draft && (
-        <section aria-label="Prévia" className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-6">
+        <section aria-label="Prévia" className={`rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 ${landscape ? "py-3" : "py-6"}`}>
           <p className="mb-4 text-center text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Prévia no mural</p>
           <div className="flex justify-center">
-            <div className="text-[15px]">
+            <div className={landscape ? "text-[10px]" : "text-[15px]"}>
               {capsule.enabled ? (
                 <p className="mb-3 max-w-[14em] text-center text-sm text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida. O conteúdo só aparece aqui na prévia.</p>
               ) : null}
@@ -125,24 +131,61 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
       <p className="text-center text-xs text-[#8a7b69]">Sua mensagem é anônima, mas o dono revisa antes de aparecer. Ofensas, ameaças e assédio podem ser relatados e levar ao bloqueio.</p>
+      </div>
     </form>
   );
 }
 
-export function ComposerDialog({ open, onClose, ...rest }: Props) {
+export function ComposerDialog({ open, onClose, portalTarget = null, ...rest }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
+  const inline = !!portalTarget && open;
 
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (open && !d.open) d.showModal();
-    if (!open && d.open) d.close();
-  }, [open]);
+    if (open && !portalTarget && !d.open) d.showModal();
+    if ((!open || portalTarget) && d.open) d.close();
+  }, [open, portalTarget]);
+
+  // Esc fecha o compositor dentro do mural
+  useEffect(() => {
+    if (!inline) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [inline, onClose]);
+
+  if (inline && portalTarget) {
+    return createPortal(
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Deixar uma mensagem"
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+        className="absolute inset-0 z-50 grid place-items-center bg-black/55 p-2 backdrop-blur-[2px]"
+      >
+        <div className="flex max-h-full w-[min(100%,50rem)] flex-col overflow-hidden rounded-2xl border border-[#e6d8bd] bg-[#fbf6ea] text-[#2f2218] shadow-[0_1.2rem_3rem_rgba(0,0,0,.55)]">
+          <div className="flex items-center justify-between border-b border-[#e6d8bd] px-4 py-1.5">
+            <p className="text-xs font-semibold text-[#6b5440]">Deixar uma mensagem anônima</p>
+            <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-8 !rounded-full !p-0`}>
+              ×
+            </button>
+          </div>
+          <div className="overflow-y-auto px-4 py-3 text-[14px]">
+            <Body {...rest} onClose={onClose} landscape />
+          </div>
+        </div>
+      </div>,
+      portalTarget,
+    );
+  }
 
   return (
     <dialog
       ref={ref}
-      onClose={onClose}
+      onClose={() => {
+        if (!portalTarget) onClose();
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose(); // clique no fundo escuro
       }}

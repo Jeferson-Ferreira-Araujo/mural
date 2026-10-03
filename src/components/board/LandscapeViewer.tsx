@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Avatar } from "../Avatar";
 import { boardById } from "@/lib/boards";
 import { slotsFor, type PlanId } from "@/lib/plans";
@@ -28,10 +28,12 @@ export function LandscapeViewer({
   hasSelection,
   unlocked,
   info,
+  composing = false,
+  onStage,
 }: {
   open: boolean;
   onClose: () => void;
-  /** tocar num espaço livre (ou em "Novo pin"): o compositor abre em retrato e o mural volta quando ele fecha */
+  /** tocar num espaço livre: o compositor abre DENTRO do mural (que continua ao fundo) */
   onCompose: ((slot?: number) => void) | null;
   items: BoardItem[];
   plan: PlanId;
@@ -40,9 +42,15 @@ export function LandscapeViewer({
   hasSelection: boolean;
   unlocked: boolean;
   info?: MuralInfo;
+  /** o compositor está aberto dentro do mural */
+  composing?: boolean;
+  /** entrega o elemento do palco (para o compositor abrir dentro dele) */
+  onStage?: (el: HTMLDivElement | null) => void;
 }) {
   const [hint, setHint] = useState(false); // destaca os espaços livres depois de tocar em "Novo pin"
   const [turnHint, setTurnHint] = useState(false); // "vire o celular" (só quando ele está em pé)
+  const composingRef = useRef(composing);
+  composingRef.current = composing;
 
   useEffect(() => {
     // no desktop (lg+) este visualizador fica escondido por CSS: nada de travar a rolagem nem pedir tela cheia
@@ -55,7 +63,8 @@ export function LandscapeViewer({
       .requestFullscreen?.()
       .then(() => orientation.lock?.("landscape"))
       .catch(() => undefined);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    // com o compositor aberto, Esc fecha só o compositor (ele mesmo escuta)
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !composingRef.current && onClose();
     window.addEventListener("keydown", onKey);
     // aviso rápido para virar o celular, se ele está em pé
     let t: number | undefined;
@@ -92,7 +101,7 @@ export function LandscapeViewer({
 
   return (
     <div role="dialog" aria-modal="true" aria-label="Mural em tela cheia" className="fixed inset-0 z-50 overflow-hidden bg-black">
-      <div className="landscape-stage overflow-hidden bg-[#3b2616]">
+      <div ref={onStage} className="landscape-stage overflow-hidden bg-[#3b2616]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} hint={hint} inlineDetail contain />

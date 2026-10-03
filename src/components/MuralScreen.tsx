@@ -29,6 +29,8 @@ export function MuralScreen({ composer, ...view }: Props) {
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
+  // palco do mural em tela cheia (celular): o compositor abre dentro dele, girado junto, em vez de fechar o mural
+  const [stage, setStage] = useState<HTMLElement | null>(null);
   const { onNotify } = view;
 
   const onCompose =
@@ -50,7 +52,7 @@ export function MuralScreen({ composer, ...view }: Props) {
         <DesktopBoard {...props} />
       </div>
       <div className="lg:hidden">
-        <MobileCarousel {...props} items={inBoardOrder(view.items, capacity)} />
+        <MobileCarousel {...props} items={inBoardOrder(view.items, capacity)} onViewerStage={setStage} />
       </div>
 
       {composer.mode === "demo" && (
@@ -65,6 +67,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           triedAlready={composer.triedAlready}
           onTried={composer.onTried}
           sending={sending}
+          portalTarget={stage}
           onSend={async (p) => {
             if (sending) return;
             setSending(true);

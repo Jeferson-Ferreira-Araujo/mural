@@ -11,9 +11,9 @@ import type { ViewProps } from "./viewProps";
 /**
  * Experiência mobile/tablet: logo, busca e pergunta no centro; os dois botões de conta no rodapé.
  * Depois de desbloquear, o mural abre sozinho em tela cheia e na horizontal (`LandscapeViewer`): é por ele que a pessoa
- * vê os pins e cola o seu. Fechando, sobra um botão de destaque para abrir o mural de novo.
+ * vê os pins e cola o seu (o compositor abre dentro dele, sem fechar o mural). Fechando, sobra um botão de destaque para abrir o mural de novo.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, composing = false, autoOpenBoard = false, muralInfo }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, composing = false, autoOpenBoard = false, muralInfo, onViewerStage }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
@@ -32,20 +32,6 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
       setViewing(true);
     }
   }, [autoOpenBoard, unlocked, hasSelection, landing, key]);
-
-  // tocar num espaço livre abre o compositor (em retrato); quando ele fecha, o mural volta
-  const resume = useRef(false);
-  useEffect(() => {
-    if (!composing && resume.current) {
-      resume.current = false;
-      setViewing(true);
-    }
-  }, [composing]);
-  function composeFromViewer(slot?: number) {
-    resume.current = true;
-    setViewing(false);
-    onCompose?.(slot);
-  }
 
   const canOpen = !landing && hasSelection && unlocked && !locked;
 
@@ -97,7 +83,9 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
       <LandscapeViewer
         open={viewing}
         onClose={() => setViewing(false)}
-        onCompose={onCompose ? composeFromViewer : null}
+        onCompose={onCompose}
+        composing={composing}
+        onStage={onViewerStage}
         items={items}
         plan={plan}
         board={board}

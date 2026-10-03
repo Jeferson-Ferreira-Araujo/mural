@@ -25,6 +25,8 @@ export type ViewProps = {
   siteStats?: SiteStats | null;
   /** O compositor de pins está aberto (o mural em tela cheia do celular volta quando ele fecha). */
   composing?: boolean;
+  /** Celular: recebe o elemento do mural em tela cheia (ou null ao fechar), para o compositor abrir dentro dele. */
+  onViewerStage?: (el: HTMLElement | null) => void;
   /** Celular: abrir o mural em tela cheia assim que for desbloqueado. */
   autoOpenBoard?: boolean;
   /** Quem é o dono do mural aberto (mostrado nas laterais do mural em tela cheia). */
