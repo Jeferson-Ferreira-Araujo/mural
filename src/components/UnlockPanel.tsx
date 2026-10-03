@@ -81,7 +81,6 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       {unlocked ? (
         <div className="rise" role="status">
           <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
-          <p className={`mt-[0.3em] text-[0.85em] leading-snug ${dark ? "text-white/70" : "text-[#6b5440]"}`}>Clique num espaço livre para deixar seu recado.</p>
         </div>
       ) : (
         <form onSubmit={submit} noValidate>

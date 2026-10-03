@@ -23,7 +23,6 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
   const ready = useRef(false);
   const zoomedOutRef = useRef(false);
   const [zoomedOut, setZoomedOut] = useState(false);
-  const [hint, setHint] = useState(true);
 
   // gesto em andamento
   const pointers = useRef(new Map<number, { x: number; y: number }>());
@@ -107,12 +106,6 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
     ro.observe(b);
     return () => ro.disconnect();
   }, [apply, clampView, limits]);
-
-  // dica de uso some sozinha
-  useEffect(() => {
-    const t = window.setTimeout(() => setHint(false), 5000);
-    return () => window.clearTimeout(t);
-  }, []);
 
   // roda do mouse amplia (útil em tablets e testes no computador)
   useEffect(() => {
@@ -216,7 +209,6 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
     const p = rel(e);
     pointers.current.set(e.pointerId, p);
     if (world.current) world.current.style.transition = "none";
-    setHint(false);
     if (pointers.current.size === 1) {
       pan.current = { px: p.x, py: p.y, vx: view.current.x, vy: view.current.y };
       dragged.current = false;
@@ -282,12 +274,6 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
       <div ref={world} className="absolute top-0 left-0 origin-top-left [container-type:size]" style={{ width: WORLD_W, height: WORLD_H }}>
         {children}
       </div>
-
-      {hint && (
-        <p role="status" className="pointer-events-none absolute top-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#17110c]/80 px-4 py-1.5 text-xs font-semibold whitespace-nowrap text-white backdrop-blur">
-          Arraste para navegar · toque duas vezes para ampliar
-        </p>
-      )}
 
       <button
         type="button"

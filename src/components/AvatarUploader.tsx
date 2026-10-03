@@ -60,8 +60,7 @@ export function AvatarUploader({ nickname }: { nickname: string }) {
       <Avatar src={url} name={nickname} className="size-[4.5rem]" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold">{url ? "Sua foto" : "Adicione uma foto"}</p>
-        <p className="mt-0.5 text-xs text-[#6b5440]">{url ? "Aparece no seu mural e na busca." : "Quem abrir o seu mural vai ver você. Fica redonda e é recortada no centro."}</p>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-1.5 flex flex-wrap gap-2">
           <button type="button" className={btn} disabled={busy || !ready} onClick={() => input.current?.click()}>
             {busy ? "Enviando…" : url ? "Alterar foto" : "Escolher foto"}
           </button>

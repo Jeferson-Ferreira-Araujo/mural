@@ -50,10 +50,6 @@ export function SlotMeter({ plan, used, tone = "light", className = "", capacity
         })}
       </div>
 
-      <p className={`mt-[0.6em] text-[0.78em] leading-snug ${dark ? "text-white/65" : "text-[#6b5440]"}`}>
-        {full ? "Mural lotado." : `${free} ${free === 1 ? "espaço livre" : "espaços livres"}.`}{" "}
-        {plan === "free" ? `Plano gratuito: até ${available} pins, em qualquer espaço dos ${capacity}.` : `Todos os ${capacity} espaços liberados.`}
-      </p>
     </div>
   );
 }

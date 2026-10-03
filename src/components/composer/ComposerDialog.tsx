@@ -95,12 +95,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         <h3 className="font-title mt-1 text-xl font-semibold">{formatInfo[format].label}</h3>
       </div>
 
-      {plan === "free" && (
-        <p className="rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/50 px-3 py-2 text-xs text-[#6b5440]">
-          Este mural tem <strong>{used}</strong> de <strong>{available}</strong> pins do plano gratuito{available - used <= 3 ? ` — ${available - used === 1 ? "resta só 1" : `restam ${available - used}`}` : ""}.
-        </p>
-      )}
-
       <FormFor format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
