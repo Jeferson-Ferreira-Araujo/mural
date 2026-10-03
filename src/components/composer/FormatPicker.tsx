@@ -67,21 +67,21 @@ const THUMBS: Record<MessageType, ReactNode> = {
 };
 
 /** Escolha do formato. Mostra SÓ os formatos liberados neste mural (o visitante nunca vê o que não está disponível). */
-export function FormatPicker({ formats, onPick, landscape = false }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void; /** dentro do mural horizontal: mais colunas, cartões baixos */ landscape?: boolean }) {
+export function FormatPicker({ formats, onPick }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void }) {
   return (
     <div>
-      <h3 className={`font-title font-semibold ${landscape ? "text-base" : "text-lg"}`}>Como você quer deixar o seu PINZ?</h3>
-      <ul className={`grid gap-2.5 ${landscape ? "mt-2 grid-cols-4" : "mt-3 grid-cols-2 sm:grid-cols-3"}`}>
+      <h3 className="font-title text-lg font-semibold">Como você quer deixar o seu PINZ?</h3>
+      <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {formats.map((f) => (
           <li key={f}>
             <button
               type="button"
               onClick={() => onPick(f)}
-              className={`flex h-full w-full cursor-pointer flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/60 text-center ${landscape ? "gap-1 px-2 py-2" : "gap-2 px-3 py-4"} transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]`}
+              className="flex h-full w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-4 text-center transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
             >
               <span className="grid h-12 place-items-center">{THUMBS[f]}</span>
               <span className="text-sm font-bold">{formatInfo[f].label}</span>
-              {!landscape && <span className="text-xs leading-tight text-[#6b5440]">{formatInfo[f].hint}</span>}
+              <span className="text-xs leading-tight text-[#6b5440]">{formatInfo[f].hint}</span>
             </button>
           </li>
         ))}

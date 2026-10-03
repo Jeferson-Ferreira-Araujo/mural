@@ -68,7 +68,6 @@ export function BoardCanvas({
   locked = false,
   onCompose,
   hint = false,
-  inlineDetail = false,
   contain = false,
   children,
 }: {
@@ -81,8 +80,6 @@ export function BoardCanvas({
   locked?: boolean;
   onCompose: ((slot?: number) => void) | null;
   hint?: boolean;
-  /** Detalhe do pin dentro do próprio quadro (necessário quando ele está girado no celular). */
-  inlineDetail?: boolean;
   /** Quadro inteiro visível (celular deitado), em vez de preencher o espaço cortando as bordas. */
   contain?: boolean;
   children?: ReactNode;
@@ -196,7 +193,7 @@ export function BoardCanvas({
               </div>
               {children}
             </main>
-      {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} inline={inlineDetail} />}
+      {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} />}
     </>
   );
 }

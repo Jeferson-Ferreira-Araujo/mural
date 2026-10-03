@@ -1,39 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { boardById } from "@/lib/boards";
-import { LandscapeViewer } from "./board/LandscapeViewer";
+import { BoardCanvas } from "./board/BoardCanvas";
+import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { CreateMuralLink } from "./CreateMuralLink";
+import { LeavePinButton, MobileMural } from "./MobileMural";
 import { MyMuralLink } from "./MyMuralLink";
 import type { ViewProps } from "./viewProps";
 
 /**
- * Experiência mobile/tablet: logo, busca e pergunta no centro; os dois botões de conta no rodapé.
- * Depois de desbloquear, o mural abre sozinho em tela cheia e na horizontal (`LandscapeViewer`): é por ele que a pessoa
- * vê os pins e cola o seu (o compositor abre dentro dele, sem fechar o mural). Fechando, sobra um botão de destaque para abrir o mural de novo.
+ * Celular/tablet (retrato).
+ * - Mural desbloqueado: tela do mural (`MobileMural`), como no mockup.
+ * - Tela inicial e mural trancado: logo, busca/pergunta no centro; "Acessar meu mural" e "Criar novo mural" no rodapé.
+ * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, composing = false, autoOpenBoard = false, muralInfo, onViewerStage }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
-  const [viewing, setViewing] = useState(false); // mural em tela cheia, na horizontal
 
-  // ao desbloquear, abre o mural sozinho (uma vez por mural); trancou de novo, esquece
-  const opened = useRef<string | null>(null);
-  const key = muralInfo ? `${muralInfo.owner}/${muralInfo.title}` : "mural";
-  useEffect(() => {
-    if (!autoOpenBoard || !unlocked || !hasSelection || landing) {
-      opened.current = null;
-      return;
-    }
-    if (opened.current !== key) {
-      opened.current = key;
-      setViewing(true);
-    }
-  }, [autoOpenBoard, unlocked, hasSelection, landing, key]);
+  if (!landing && hasSelection && unlocked && !locked && muralInfo) {
+    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} />;
+  }
 
-  const canOpen = !landing && hasSelection && unlocked && !locked;
+  const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração
 
   return (
     <div
@@ -52,24 +43,17 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
             <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
           </header>
 
-          {/* busca, escolha do mural e pergunta de desbloqueio */}
+          {/* busca, escolha do mural e pergunta de desbloqueio (e os controles da demonstração) */}
           <div className="mx-auto w-[min(90vw,30rem)] text-[15px] md:text-[16px]">{panel("dark")}</div>
 
-          {/* destaque: abrir o mural (a interação acontece por ele) */}
-          {canOpen && (
-            <div className="mx-auto w-[min(90vw,30rem)]">
-              <button
-                type="button"
-                onClick={() => setViewing(true)}
-                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[1em] bg-[#d9a21b] px-5 py-[1.05em] text-[1.15em] font-bold text-[#2a1c12] shadow-[0_0.5em_1.4em_rgba(120,70,0,.45)] transition hover:bg-[#e6ae22] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
-              >
-                <svg viewBox="0 0 24 24" className="size-[1.3em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <rect x="3" y="6" width="18" height="12" rx="2" />
-                  <path d="M7 10h3M13 10h4M7 14h5" />
-                </svg>
-                Abrir o mural
-              </button>
-              <p className="mt-2 text-center text-[0.8em] text-white/65">Toque nos espaços livres para deixar o seu recado.</p>
+          {demoBoard && (
+            <div className="mx-auto w-[min(94vw,36rem)] space-y-3">
+              <div className="h-[68dvh] overflow-hidden rounded-2xl border border-white/15 shadow-[0_0.8rem_2rem_rgba(0,0,0,.45)]">
+                <PannableBoard ambient={look.image}>
+                  <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain />
+                </PannableBoard>
+              </div>
+              {onCompose && <LeavePinButton onClick={() => onCompose()} />}
             </div>
           )}
         </div>
@@ -80,20 +64,6 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
           <CreateMuralLink className="w-full justify-center border border-white/15 bg-[#fbf6ea] py-3 text-[#2a1c12]" />
         </footer>
       </main>
-      <LandscapeViewer
-        open={viewing}
-        onClose={() => setViewing(false)}
-        onCompose={onCompose}
-        composing={composing}
-        onStage={onViewerStage}
-        items={items}
-        plan={plan}
-        board={board}
-        capacity={capacity}
-        hasSelection={hasSelection}
-        unlocked={unlocked}
-        info={muralInfo}
-      />
     </div>
   );
 }

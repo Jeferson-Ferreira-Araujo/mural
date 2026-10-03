@@ -137,20 +137,3 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-/* Visualizador do mural no celular: sempre na horizontal. Em pé, o palco é girado 90° para ocupar a tela inteira. */
-.landscape-stage {
-  position: absolute;
-  inset: 0;
-}
-@media (orientation: portrait) {
-  .landscape-stage {
-    inset: auto;
-    top: 0;
-    left: 100%;
-    width: 100dvh;
-    height: 100dvw;
-    transform-origin: top left;
-    transform: rotate(90deg);
-  }
-}

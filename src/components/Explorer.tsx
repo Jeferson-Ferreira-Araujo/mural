@@ -267,8 +267,8 @@ export function Explorer({ initial }: { initial?: PublicMural }) {
         board={boardById(selected?.board).id}
         // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no painel)
         share={null}
-        autoOpenBoard
         muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
+        onChangeMural={clear}
         panel={panel}
         onNotify={notify}
         composer={
