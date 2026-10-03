@@ -33,13 +33,27 @@ function Content({ m }: { m: Message }) {
 
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
-  const label = m.pending ? "Aguardando aprovação do dono" : "Em blur para os visitantes";
+  if (m.pending) {
+    // aguardando aprovação: selo redondo com um olho, no centro do pin (mesmo estilo do cadeado do pin em blur)
+    return (
+      <div className="relative">
+        <Content m={m} />
+        <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+          <span role="img" aria-label="Aguardando aprovação do dono" title="Aguardando aprovação do dono" className="pointer-events-auto grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
+            <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </span>
+        </span>
+      </div>
+    );
+  }
   return (
     <div className="relative">
       <Content m={m} />
       <span className="absolute -bottom-[0.9em] left-1/2 z-30 -translate-x-1/2 rounded-full bg-[#2a1c12]/90 px-[0.9em] py-[0.3em] text-[0.7em] leading-none font-semibold whitespace-nowrap text-[#fff3d6] shadow-[0_0.2em_0.5em_rgba(0,0,0,.4)]">
-        {m.pending ? "⏳ " : "🔒 "}
-        {label}
+        🔒 Em blur para os visitantes
       </span>
     </div>
   );
