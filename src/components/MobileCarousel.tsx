@@ -100,14 +100,6 @@ export function MobileCarousel({ items: messages, plan, showMeter, locked, hasSe
           )}
         </header>
 
-        {landing && (
-          <div className="mx-auto flex w-[min(90vw,30rem)] items-center gap-3 text-sm text-white/60" aria-hidden>
-            <span className="h-px flex-1 bg-white/20" />
-            ou encontre um mural
-            <span className="h-px flex-1 bg-white/20" />
-          </div>
-        )}
-
         {/* busca, escolha do mural e pergunta de desbloqueio */}
         <div className="mx-auto w-[min(90vw,30rem)] text-[15px] md:text-[16px]">{panel("dark")}</div>
 

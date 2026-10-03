@@ -33,7 +33,7 @@ export type ViewProps = {
   panel: (tone: Tone) => ReactNode;
   /** Celular: nenhuma pessoa/mural escolhido ainda → tela inicial com logo grande e busca no meio. */
   landing?: boolean;
-  /** Texto do divisor acima do painel na barra lateral (padrão: "ou encontre um mural"). */
+  /** Texto do divisor acima do painel na barra lateral (sem título, não mostra o divisor). */
   panelTitle?: string;
   /** Avisos do proprietário, etc. (opcional). */
   notice?: (tone: Tone) => ReactNode;
