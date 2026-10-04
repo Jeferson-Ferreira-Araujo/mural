@@ -37,7 +37,7 @@ export const badgeDef = (key: number) => BADGES.find((b) => b.key === key);
 export const badgeSrc = (key: number) => `/img/badges/b${String(key).padStart(2, "0")}.webp`;
 
 /** Largura de um botom no mural, em em (1em ≈ 1% da largura do quadro). */
-export const BADGE_EM = 5.4;
+export const BADGE_EM = 4.3;
 export const MAX_BADGES = 40;
 
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
