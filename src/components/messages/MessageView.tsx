@@ -49,14 +49,14 @@ function Marked({ m }: { m: Message }) {
       <div className="relative">
         <Content m={m} />
         <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
-          <span role="img" aria-label="Aguardando liberação do dono do mural" title="Aguardando liberação do dono do mural" className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
+          <span role="img" aria-label={m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"} title={m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"} className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
             <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
               <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </span>
-            <span className="max-w-[11em] rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Aguardando liberação do dono do mural</span>
+            <span className="max-w-[11em] rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
           </span>
         </span>
         <Signature name={m.signedBy} />

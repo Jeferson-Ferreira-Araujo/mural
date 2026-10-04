@@ -21,6 +21,8 @@ type Base = {
   ownerHidden?: boolean;
   /** Nickname de quem assinou o pin. Sem isso o pin é anônimo (o autor só existe no banco). */
   signedBy?: string;
+  /** Visão do dono: este pin pendente está esperando a aprovação dele. */
+  ownerReview?: boolean;
 };
 
 /** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */

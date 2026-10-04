@@ -19,10 +19,11 @@ import {
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, listOwnerPins, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, listOwnerPins, moderatePin, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { AccountDrawer, type DrawerSection } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
+import { ModerationProvider } from "./board/ModerationContext";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -165,6 +166,23 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const t = setInterval(() => void loadBoard(), 60_000);
     return () => clearInterval(t);
   }, [unlocked, token, isOwner, loadBoard]);
+
+  // dono: aprova ou recusa um pin pendente direto no destaque
+  const moderate = useCallback(
+    async (id: string, approve: boolean) => {
+      const ok = await moderatePin(getBrowserSupabase(), id, approve);
+      if (!ok) {
+        notify("Não foi possível concluir agora. Tente de novo.");
+        return false;
+      }
+      notify(approve ? "Pin aprovado! Já aparece para todos." : "Pin recusado.");
+      await loadBoard();
+      if (firstOwnId) void listOwnerPins(getBrowserSupabase(), firstOwnId).then((l) => l && setPendingCount(l.filter((p) => p.status === "pending").length));
+      return true;
+    },
+    [notify, loadBoard, firstOwnId],
+  );
+  const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
     if (!nick || !slug || !token) return SEND_ERROR_TEXT.not_unlocked;
@@ -350,47 +368,49 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
-      <MuralScreen
-        items={revealed ? items : decor}
-        plan={revealed ? (selected?.plan ?? "free") : "full"}
-        showMeter={revealed}
-        locked={!!selected && !unlocked}
-        hasSelection={!!selected}
-        landing={!selected && !choices}
-        unlocked={unlocked}
-        stats={selected?.stats ?? null}
-        siteStats={siteStats}
-        board={boardById(selected?.board).id}
-        // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
-        share={null}
-        muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
-        onChangeMural={clear}
-        welcome={selected?.welcome}
-        panel={panel}
-        onNotify={notify}
-        account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true, section: pendingCount > 0 ? "pins" : undefined }), badge: pendingCount } : undefined}
-        guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
-        composer={
-          isOwner
-            ? { mode: "hidden" }
-            : revealed
-            ? {
-                mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
-                onSend: onSendPin,
-                sentNote: "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
-                onTried: () => {
-                  setTried(true);
-                  if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
-                },
-                triedAlready: tried,
-                signAs: myNick,
-                // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
-                inviteHref: !logged ? "/entrar" : undefined,
-                loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
-              }
-            : { mode: "soon" }
-        }
-      />
+      <ModerationProvider value={isOwner ? { moderate } : null}>
+        <MuralScreen
+          items={revealed ? shownItems : decor}
+          plan={revealed ? (selected?.plan ?? "free") : "full"}
+          showMeter={revealed}
+          locked={!!selected && !unlocked}
+          hasSelection={!!selected}
+          landing={!selected && !choices}
+          unlocked={unlocked}
+          stats={selected?.stats ?? null}
+          siteStats={siteStats}
+          board={boardById(selected?.board).id}
+          // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
+          share={null}
+          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
+          onChangeMural={clear}
+          welcome={selected?.welcome}
+          panel={panel}
+          onNotify={notify}
+          account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true, section: pendingCount > 0 ? "pins" : undefined }), badge: pendingCount } : undefined}
+          guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
+          composer={
+            isOwner
+              ? { mode: "hidden" }
+              : revealed
+              ? {
+                  mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
+                  onSend: onSendPin,
+                  sentNote: "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
+                  onTried: () => {
+                    setTried(true);
+                    if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
+                  },
+                  triedAlready: tried,
+                  signAs: myNick,
+                  // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
+                  inviteHref: !logged ? "/entrar" : undefined,
+                  loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
+                }
+              : { mode: "soon" }
+          }
+        />
+      </ModerationProvider>
       {logged && myNick && (
         <>
           <AccountDrawer
