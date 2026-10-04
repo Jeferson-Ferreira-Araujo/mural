@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { callbackUrl } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { callbackUrl, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -14,6 +15,7 @@ type Mode = "login" | "signup";
  * Ao entrar, a sessão muda e a tela se atualiza sozinha (quem usa observa `useSession`).
  */
 export function AuthForm() {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
   const [nick, setNick] = useState("");
   const [email, setEmail] = useState("");
@@ -42,7 +44,11 @@ export function AuthForm() {
     if (!signup) {
       const { error: err } = await sb.auth.signInWithPassword({ email: mail, password });
       setBusy(false);
-      if (err) setError(err.status === 400 ? "E-mail ou senha incorretos." : "Não foi possível entrar agora. Tente de novo.");
+      if (err) {
+        setError(err.status === 400 ? "E-mail ou senha incorretos." : "Não foi possível entrar agora. Tente de novo.");
+        return;
+      }
+      router.push(takeNext() ?? "/painel"); // entrou: já mostra o mural dela
       return;
     }
 
@@ -58,6 +64,7 @@ export function AuthForm() {
     }
     if (data.user && data.user.identities?.length === 0) return setError("Esse e-mail já tem conta. Entre com a sua senha.");
     if (!data.session) setNeedsConfirm(true);
+    else router.push(takeNext() ?? "/painel"); // conta criada (o primeiro mural já nasce junto)
   }
 
   if (needsConfirm) {

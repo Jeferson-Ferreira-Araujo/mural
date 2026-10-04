@@ -38,6 +38,7 @@ export default function EditarMural() {
       setNick(n);
       setTitle(m.title);
       setQuestion(m.question);
+      if (!m.question) setChangeAnswer(true); // mural novo: a resposta é obrigatória
       setWelcome(m.welcome_message ?? "");
     });
   }, [loading, session, id, router]);
@@ -76,7 +77,8 @@ export default function EditarMural() {
       setMural({ ...mural, welcome_message: welcome.trim() || null });
     }
     setBusy(false);
-    setMsg({ ok: true, text: changeAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
+    setMsg({ ok: true, text: !mural?.question ? "Pronto! Seu mural já está aberto para quem souber a resposta." : changeAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
+    if (mural && !mural.question) setMural({ ...mural, question: question.trim() });
     setChangeAnswer(false);
     setAnswer("");
   }
@@ -105,7 +107,7 @@ export default function EditarMural() {
       <Link href="/painel" className="text-sm font-semibold text-[#6b5440] underline">
         ← Meus murais
       </Link>
-      <h1 className="font-title mt-3 text-2xl font-semibold">Editar mural</h1>
+      <h1 className="font-title mt-3 text-2xl font-semibold">{mural.question ? "Editar mural" : "Configure o seu mural"}</h1>
       <p className="mt-1 text-sm break-all text-[#6b5440]">{muralUrl({ nick, slug: mural.slug })}</p>
       <Link href={muralPath({ nick, slug: mural.slug })} className={`${ghostButton} mt-4 w-full sm:w-auto`}>
         Ver mural
@@ -139,7 +141,7 @@ export default function EditarMural() {
             {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" autoFocus className={inputClass} />}
           </Field>
         ) : (
-          <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+          !mural.question ? null : <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
             Alterar a resposta
           </button>
         )}

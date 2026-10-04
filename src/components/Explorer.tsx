@@ -259,7 +259,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             </section>
           )}
 
-          {selected && (
+          {selected && selected.ready === false && (
+            <section className={`rounded-[1.1em] border p-[1.1em] text-center ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
+              <p className="font-semibold">{selected.title}</p>
+              <p className="mt-[0.4em] text-[0.9em] opacity-80">Este mural ainda está sendo preparado por {selected.nickname}. Volte em breve!</p>
+            </section>
+          )}
+
+          {selected && selected.ready !== false && (
             <UnlockPanel
               key={`${selected.nickname}/${selected.slug}`}
               title={selected.title}
@@ -330,7 +337,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                 triedAlready: tried,
                 signAs: myNick,
                 // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
-                inviteHref: !logged ? loginUrl("/criar", true) : undefined,
+                inviteHref: !logged ? loginUrl("/painel", true) : undefined,
                 loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
               }
             : { mode: "soon" }
