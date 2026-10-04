@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "@/components/account/Modal";
+import { BadgeProvider } from "@/components/badges/BadgeContext";
+import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
-import type { Message } from "@/lib/types";
+import type { BoardItem, Message } from "@/lib/types";
+import type { PlacedBadge } from "@/lib/badges";
 
 type MuralLite = { id: string; slug: string; title: string; plan: "free" | "full"; private: boolean };
 type UserRow = { id: string; email: string; nickname: string; createdAt: string; lastSignIn: string | null; credits: number; banned: boolean; isAdmin: boolean; murals: MuralLite[]; pinsReceived: number; pinsSent: number };
 type UserDetail = Omit<UserRow, "murals" | "pinsReceived"> & { banReason: string | null; bannedAt: string | null; reportsAgainst: number; murals: (MuralLite & { pins: number; pending: number; badges: number })[]; ledger: { delta: number; reason: string; at: string }[] };
 type PinRow = { id: string; slot: number; type: string; content: Record<string, unknown>; status: "pending" | "approved"; signed: boolean; hidden: boolean; createdAt: string; opensAt: string | null; authorId: string | null; author: string | null; authorEmail: string | null; visitor: string | null };
-type MuralPins = { mural: MuralLite & { question: string; owner: string; ownerId: string }; pins: PinRow[] };
+type MuralPins = { mural: MuralLite & { question: string; owner: string; ownerId: string; board: string; welcome: string | null }; badges: PlacedBadge[]; pins: PinRow[] };
 type Report = { id: string; createdAt: string; reason: string; details: string | null; blocked: boolean; type: string; content: Record<string, unknown>; mural: string | null; owner: string | null; senderId: string | null; sender: string | null; senderBanned: boolean };
 
 const fmt = (iso?: string | null) => (iso ? new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—");
@@ -33,9 +36,11 @@ function Tag({ children, tone = "plain" }: { children: React.ReactNode; tone?: "
   return <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase ${cls}`}>{children}</span>;
 }
 
-/** Os pins de um mural, com quem enviou (inclusive os anônimos), para excluir ou bloquear o autor. */
-function MuralPinsModal({ muralId, onClose, onBan }: { muralId: string | null; onClose: () => void; onBan: (userId: string, label: string) => void }) {
+/** O mural completo do usuário, como ele aparece no site (com todos os pins, inclusive os pendentes, e os botons). A outra aba lista os pins com o autor. */
+function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onClose: () => void; onBan: (userId: string, label: string) => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
   const [data, setData] = useState<MuralPins | null>(null);
+  const [view, setView] = useState<"board" | "list">("board");
   const [err, setErr] = useState<string | null>(null);
   const load = useCallback(async (id: string) => {
     const r = await rpc<MuralPins>("admin_mural_pins", { p_mural_id: id });
@@ -45,8 +50,15 @@ function MuralPinsModal({ muralId, onClose, onBan }: { muralId: string | null; o
   useEffect(() => {
     setData(null);
     setErr(null);
+    setView("board");
     if (muralId) void load(muralId);
   }, [muralId, load]);
+  useEffect(() => {
+    const d = ref.current;
+    if (!d) return;
+    if (muralId && !d.open) d.showModal();
+    if (!muralId && d.open) d.close();
+  }, [muralId]);
 
   async function del(id: string) {
     if (!window.confirm("Excluir este pin? Não dá para desfazer.")) return;
@@ -55,58 +67,109 @@ function MuralPinsModal({ muralId, onClose, onBan }: { muralId: string | null; o
     else if (!r.ok) setErr("Não foi possível excluir.");
   }
 
+  const items: BoardItem[] = (data?.pins ?? []).map(
+    (p) =>
+      ({
+        ...p.content,
+        id: p.id,
+        slot: p.slot,
+        type: p.type,
+        pending: p.status === "pending",
+        ownerHidden: p.hidden,
+        fromCapsule: !!p.opensAt,
+        signedBy: p.signed ? (p.author ?? undefined) : undefined,
+      }) as unknown as BoardItem,
+  );
+
   return (
-    <Modal open={!!muralId} onClose={onClose} title={data ? `Mural: ${data.mural.title}` : "Mural"} wide>
-      {err && <p className="mb-3 text-sm text-[#a23b2a]">{err}</p>}
-      {!data ? (
-        <Spinner />
-      ) : (
-        <>
-          <p className="mb-3 text-sm text-[#6b5440]">
-            de <strong>{data.mural.owner}</strong> · {data.mural.plan.toUpperCase()} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} ·{" "}
-            <Link href={`/${data.mural.owner}/${data.mural.slug}`} target="_blank" className="underline">
-              abrir o mural
-            </Link>
-          </p>
-          {data.pins.length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum pin neste mural.</p>
+    <dialog ref={ref} onClose={onClose} aria-label="Mural do usuário" className="fixed inset-0 m-0 h-dvh max-h-none w-dvw max-w-none overflow-hidden bg-[#2a1a0e] p-0 text-[#2f2218] backdrop:bg-black/70">
+      {muralId && (
+        <div className="flex h-dvh flex-col">
+          <header className="flex flex-wrap items-center justify-between gap-3 bg-[#f2e8d3] px-4 py-2.5 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.25)]">
+            <div className="min-w-0">
+              <p className="font-title truncate text-lg font-semibold">{data ? data.mural.title : "Mural"}</p>
+              {data && (
+                <p className="truncate text-xs text-[#6b5440]">
+                  de <strong>{data.mural.owner}</strong> · {data.mural.plan.toUpperCase()} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} · {data.pins.length} pins · {data.badges.length} botons ·{" "}
+                  <Link href={`/${data.mural.owner}/${data.mural.slug}`} target="_blank" className="underline">
+                    abrir no site
+                  </Link>
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <div role="tablist" aria-label="Visualização" className="grid grid-cols-2 rounded-xl border border-[#d9c9ad] bg-white/60 p-0.5">
+                {(
+                  [
+                    ["board", "Mural"],
+                    ["list", "Pins e autores"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button key={id} role="tab" type="button" aria-selected={view === id} onClick={() => setView(id)} className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-semibold ${view === id ? "bg-[#1f232b] text-white" : "text-[#4a3826]"}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
+                ×
+              </button>
+            </div>
+          </header>
+          {err && <p className="bg-[#fbeae5] px-4 py-2 text-sm text-[#a23b2a]">{err}</p>}
+
+          {!data ? (
+            <div className="grid flex-1 place-items-center">
+              <Spinner />
+            </div>
+          ) : view === "board" ? (
+            <div className="relative min-h-0 flex-1">
+              <BadgeProvider editable={false} badges={data.badges} setBadges={() => undefined} notify={() => undefined}>
+                <BoardCanvas items={items} plan={data.mural.plan} board={data.mural.board} hasSelection unlocked onCompose={null} emptyMessage={data.mural.welcome} />
+              </BadgeProvider>
+            </div>
           ) : (
-            <ul className="space-y-2">
-              {data.pins.map((p) => (
-                <li key={p.id} className="flex gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-3">
-                  <div className="w-[7.6rem] shrink-0 overflow-hidden pt-2 text-[7px]" aria-hidden>
-                    <div inert className="pointer-events-none origin-top-left" style={{ width: "14em" }}>
-                      <MessageView message={{ ...p.content, id: p.id, type: p.type, pending: false } as unknown as Message} />
-                    </div>
-                  </div>
-                  <div className="min-w-0 flex-1 text-sm">
-                    <p className="font-semibold">
-                      {p.type} · espaço {p.slot + 1} <Tag tone={p.status === "pending" ? "gold" : "plain"}>{p.status === "pending" ? "pendente" : "aprovado"}</Tag> {p.signed && <Tag>assinado</Tag>}
-                    </p>
-                    <p className="mt-0.5 text-xs text-[#6b5440]">{fmt(p.createdAt)}</p>
-                    <p className="mt-1 text-xs break-all text-[#4a3826]">
-                      Autor: {p.author ? <strong>{p.author}</strong> : <em>visitante sem conta</em>}
-                      {p.authorEmail ? ` (${p.authorEmail})` : ""}
-                      {p.visitor ? ` · aparelho ${p.visitor.slice(0, 10)}…` : ""}
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <button type="button" className={btn} onClick={() => del(p.id)}>
-                        Excluir pin
-                      </button>
-                      {p.authorId && (
-                        <button type="button" className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a]`} onClick={() => onBan(p.authorId!, p.author ?? "autor")}>
-                          Bloquear autor
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="flex-1 overflow-y-auto bg-[#f2e8d3] px-4 py-4">
+              {data.pins.length === 0 ? (
+                <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum pin neste mural.</p>
+              ) : (
+                <ul className="mx-auto max-w-3xl space-y-2">
+                  {data.pins.map((p) => (
+                    <li key={p.id} className="flex gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-3">
+                      <div className="w-[7.6rem] shrink-0 overflow-hidden pt-2 text-[7px]" aria-hidden>
+                        <div inert className="pointer-events-none origin-top-left" style={{ width: "14em" }}>
+                          <MessageView message={{ ...p.content, id: p.id, type: p.type, pending: false } as unknown as Message} />
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1 text-sm">
+                        <p className="font-semibold">
+                          {p.type} · espaço {p.slot + 1} <Tag tone={p.status === "pending" ? "gold" : "plain"}>{p.status === "pending" ? "pendente" : "aprovado"}</Tag> {p.signed && <Tag>assinado</Tag>}
+                        </p>
+                        <p className="mt-0.5 text-xs text-[#6b5440]">{fmt(p.createdAt)}</p>
+                        <p className="mt-1 text-xs break-all text-[#4a3826]">
+                          Autor: {p.author ? <strong>{p.author}</strong> : <em>visitante sem conta</em>}
+                          {p.authorEmail ? ` (${p.authorEmail})` : ""}
+                          {p.visitor ? ` · aparelho ${p.visitor.slice(0, 10)}…` : ""}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <button type="button" className={btn} onClick={() => del(p.id)}>
+                            Excluir pin
+                          </button>
+                          {p.authorId && (
+                            <button type="button" className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a]`} onClick={() => onBan(p.authorId!, p.author ?? "autor")}>
+                              Bloquear autor
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
-        </>
+        </div>
       )}
-    </Modal>
+    </dialog>
   );
 }
 
@@ -223,7 +286,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <button type="button" className={btn} onClick={() => onOpenMural(m.id)}>
-                        Ver pins
+                        Ver mural
                       </button>
                       <button type="button" className={btn} disabled={busy} onClick={() => run(`Plano do mural: ${m.plan === "full" ? "FREE" : "FULL"}.`, () => rpc("admin_set_plan", { p_mural_id: m.id, p_plan: m.plan === "full" ? "free" : "full" }))}>
                         {m.plan === "full" ? "Mudar para FREE" : "Mudar para FULL"}
@@ -447,7 +510,7 @@ export default function Admin() {
       </div>
 
       <UserModal userId={userId} onClose={() => setUserId(null)} onChanged={() => void loadUsers(q)} onOpenMural={(id) => setMuralId(id)} />
-      <MuralPinsModal muralId={muralId} onClose={() => setMuralId(null)} onBan={(id, label) => setBanTarget({ id, label })} />
+      <MuralViewer muralId={muralId} onClose={() => setMuralId(null)} onBan={(id, label) => setBanTarget({ id, label })} />
       <Modal open={!!banTarget} onClose={() => setBanTarget(null)} title={`Bloquear ${banTarget?.label ?? ""}`}>
         <p className="text-sm text-[#6b5440]">Impede o login, esconde o mural e impede que envie pins. Dá para desbloquear depois.</p>
         <input className={`${input} mt-3`} placeholder="Motivo (fica registrado)" value={banReason} maxLength={300} onChange={(e) => setBanReason(e.target.value)} aria-label="Motivo do bloqueio" />
