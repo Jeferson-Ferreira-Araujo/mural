@@ -8,6 +8,7 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
 import { AccountActions } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
+import { MuralSwitcher } from "./MuralSwitcher";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { Sidebar } from "./Sidebar";
@@ -27,7 +28,7 @@ function focusFirstField() {
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
-  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext } = props;
+  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const layout = layoutSlots(items, capacity);
   const [hint, setHint] = useState(false); // destaca os espaços livres depois de tocar em "Deixar uma mensagem"
   const available = slotsFor(plan, capacity);
@@ -90,6 +91,7 @@ export function DesktopBoard(props: ViewProps) {
         </BoardCanvas>
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-[2.2vw] pb-5">
+          <MuralSwitcher sw={muralSwitch} />
           <BadgeBar className="w-[min(46rem,100%)]" />
           {onCompose && !locked && (
             <button

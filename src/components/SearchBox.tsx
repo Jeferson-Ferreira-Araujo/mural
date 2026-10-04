@@ -127,9 +127,6 @@ export function SearchBox({ onSelect, tone = "light" }: { onSelect: (nickname: s
                     <Avatar src={h.avatar} name={h.nickname} className="size-[1.9em]" />
                     <span className="font-semibold break-all">{h.nickname}</span>
                   </span>
-                  <span className="shrink-0 text-[0.8em] text-[#6b5440]">
-                    {h.murals} {h.murals === 1 ? "mural" : "murais"}
-                  </span>
                 </button>
               </li>
             ))

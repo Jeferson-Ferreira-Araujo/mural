@@ -5,6 +5,7 @@ import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 
 import type { AccountApi } from "./account/AccountActions";
+import type { MuralSwitch } from "./MuralSwitcher";
 
 export type Tone = "light" | "dark";
 
@@ -52,4 +53,6 @@ export type ViewProps = {
   account?: AccountApi;
   /** Sem conta (chegou por link): caminho deste mural, para os links Entrar / Criar conta voltarem para ele. */
   guestNext?: string;
+  /** Os murais da pessoa dona deste mural (rodapé, com setas para trocar). */
+  muralSwitch?: MuralSwitch;
 };

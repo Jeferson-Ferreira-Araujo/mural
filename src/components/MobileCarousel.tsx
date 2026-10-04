@@ -5,6 +5,7 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { AccountActions } from "./account/AccountActions";
+import { MuralSwitcher } from "./MuralSwitcher";
 import { LeavePinButton, MobileMural } from "./MobileMural";
 import type { ViewProps } from "./viewProps";
 
@@ -14,13 +15,13 @@ import type { ViewProps } from "./viewProps";
  * - Tela inicial e mural trancado: logo, busca/pergunta no centro; "Acessar meu mural" e "Criar novo mural" no rodapé.
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
 
   if (!landing && hasSelection && unlocked && !locked && muralInfo) {
-    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} />;
+    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} muralSwitch={muralSwitch} />;
   }
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração
@@ -46,6 +47,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
 
           {/* busca, escolha do mural e pergunta de desbloqueio (e os controles da demonstração) */}
           <div className="mx-auto w-[min(90vw,30rem)] text-[15px] md:text-[16px]">{panel("dark")}</div>
+          <MuralSwitcher sw={muralSwitch} className="mx-auto" />
 
           {demoBoard && (
             <div className="mx-auto w-[min(94vw,36rem)] space-y-3">

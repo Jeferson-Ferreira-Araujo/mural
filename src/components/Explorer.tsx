@@ -72,6 +72,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   const nick = selected?.nickname;
   const slug = selected?.slug;
+
+  // os murais da pessoa dona do mural aberto (rodapé: setas para trocar)
+  const [siblings, setSiblings] = useState<{ slug: string; title: string }[]>([]);
+  useEffect(() => {
+    if (!nick) {
+      setSiblings([]);
+      return;
+    }
+    let cancelled = false;
+    void getProfileMurals(getBrowserSupabase(), nick).then((p) => !cancelled && setSiblings(p?.murals ?? []));
+    return () => {
+      cancelled = true;
+    };
+  }, [nick, selected?.title]);
   const isOwner = !!myNick && !!selected && selected.nickname === myNick; // vendo o próprio mural
 
   // murais da própria conta (menu: editar, pins para aprovar, planos...)
@@ -305,13 +319,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         notify("Essa pessoa ainda não tem murais.");
         return;
       }
-      if (profile.murals.length === 1) {
-        await openMural(profile.nickname, profile.murals[0].slug);
-        return;
-      }
-      setSelected(null);
-      setUnlocked(false);
-      setChoices(profile);
+      // abre o primeiro mural; os outros ficam no rodapé (setas)
+      await openMural(profile.nickname, profile.murals[0].slug);
     },
     [notify, openMural],
   );
@@ -459,7 +468,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           panel={panel}
           onNotify={notify}
           account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true }), badge: pendingCount } : undefined}
-          guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
+          muralSwitch={nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
+        guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
             isOwner
               ? { mode: "hidden" }
