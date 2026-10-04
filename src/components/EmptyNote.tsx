@@ -1,7 +1,7 @@
 import { Pin, Tape } from "./messages/fasteners";
 
 /** Mensagem padrão do mural vazio (o dono do plano FULL pode trocá-la). */
-export const DEFAULT_WELCOME = "Você descobriu a resposta. Deixe uma mensagem para mim!";
+export const DEFAULT_WELCOME = "Nenhuma mensagem neste mural. Seja o primeiro a deixar!";
 
 /** Estado de mural sem mensagens: um bilhete preso na cortiça. Tamanho via font-size do pai (em). */
 export function EmptyNote({ unlocked, message }: { unlocked: boolean; /** texto personalizado do dono (FULL) */ message?: string | null }) {

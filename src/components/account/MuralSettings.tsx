@@ -97,7 +97,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
         )}
         <Field
           label="Mensagem do mural vazio"
-          hint={mural.plan === "full" ? `${welcome.length}/100 · Em branco aparece: "Você descobriu a resposta. Deixe uma mensagem para mim!"` : '🔒 Personalizar essa mensagem é do PINZ FULL. Hoje aparece: "Você descobriu a resposta. Deixe uma mensagem para mim!"'}
+          hint={mural.plan === "full" ? `${welcome.length}/100 · Em branco aparece: "Nenhuma mensagem neste mural. Seja o primeiro a deixar!"` : '🔒 Personalizar essa mensagem é do PINZ FULL. Hoje aparece: "Você descobriu a resposta. Deixe uma mensagem para mim!"'}
         >
           {(fid) => (
             <input
@@ -106,7 +106,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
               onChange={(e) => setWelcome(e.target.value)}
               maxLength={100}
               disabled={mural.plan !== "full"}
-              placeholder="Você descobriu a resposta. Deixe uma mensagem para mim!"
+              placeholder="Nenhuma mensagem neste mural. Seja o primeiro a deixar!"
               className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
             />
           )}
