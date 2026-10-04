@@ -6,7 +6,7 @@ import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { AccountActions } from "./account/AccountActions";
 import { MuralSwitcher } from "./MuralSwitcher";
-import { LeavePinButton, MobileMural } from "./MobileMural";
+import { MobileMural } from "./MobileMural";
 import type { ViewProps } from "./viewProps";
 
 /**
@@ -56,7 +56,6 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
                   <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain />
                 </PannableBoard>
               </div>
-              {onCompose && <LeavePinButton onClick={() => onCompose()} />}
             </div>
           )}
         </div>

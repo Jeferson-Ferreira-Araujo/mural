@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
-import { layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
@@ -17,39 +15,14 @@ import type { ViewProps } from "./viewProps";
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
 export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
 
-/** Foca o primeiro campo de busca/resposta visível (usado pelo botão "Deixar uma mensagem"). */
-function focusFirstField() {
-  const fields = Array.from(document.querySelectorAll<HTMLElement>("[data-focus-target]"));
-  fields.find((el) => el.offsetParent !== null)?.focus();
-}
-
 /**
  * Mural físico completo: 28 espaços fixos numa lousa que não cresce (veja `BoardCanvas`).
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
-  const layout = layoutSlots(items, capacity);
-  const [hint, setHint] = useState(false); // destaca os espaços livres depois de tocar em "Deixar uma mensagem"
   const available = slotsFor(plan, capacity);
   const look = boardById(board);
-
-  function addMessage() {
-    if (!unlocked) {
-      focusFirstField();
-      onNotify(hasSelection ? "Responda a pergunta para desbloquear o mural." : "Procure alguém pelo nome de usuário primeiro.");
-      return;
-    }
-    if (!onCompose) return;
-    // dentro do limite do plano e com espaço livre: o visitante clica no espaço onde quer o pin; no limite, o compositor explica
-    if (hasSelection && items.length < available && layout.some((it) => !it)) {
-      setHint(true);
-      window.setTimeout(() => setHint(false), 4500);
-      onNotify("Clique num espaço livre do mural para colar o seu pin.");
-      return;
-    }
-    onCompose();
-  }
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
@@ -86,23 +59,13 @@ export function DesktopBoard(props: ViewProps) {
         </nav>
 
 
-        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} hint={hint} emptyMessage={props.welcome}>
+        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} emptyMessage={props.welcome}>
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </BoardCanvas>
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-[2.2vw] pb-5">
           <MuralSwitcher sw={muralSwitch} />
           <BadgeBar className="w-[min(46rem,100%)]" />
-          {onCompose && !locked && (
-            <button
-              type="button"
-              onClick={addMessage}
-              className="inline-flex cursor-pointer items-center gap-3 rounded-full bg-[#fbf6ea] py-2.5 pr-7 pl-2.5 text-base font-semibold text-[#2a1c12] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.4)] transition hover:-translate-y-0.5 hover:bg-white active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
-            >
-              <span className="grid size-9 place-items-center rounded-full bg-[#1f232b] text-xl leading-none text-white">+</span>
-              Deixar um PIN
-            </button>
-          )}
         </div>
       </div>
     </div>

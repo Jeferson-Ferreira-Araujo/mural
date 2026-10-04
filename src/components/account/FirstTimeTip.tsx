@@ -37,7 +37,7 @@ export function FirstTimeTip({ uid, createdAt, ready }: { uid?: string; createdA
             📌
           </span>
           <p>
-            <strong>Colar um pin:</strong> toque (ou clique) num espaço vazio do mural para escolher o formato e escrever. Também dá para usar o botão "Deixar um PIN".
+            <strong>Colar um pin:</strong> toque (ou clique) num espaço vazio do mural para escolher o formato e escrever.
           </p>
         </li>
         <li className="flex gap-3">
