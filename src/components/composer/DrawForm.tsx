@@ -1,11 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { HandId, TapeColor } from "@/lib/style";
-import { tapeOf } from "@/lib/style";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { TAPE_COLORS, tapeOf, type TapeColor } from "@/lib/style";
 import { Tape } from "../messages/fasteners";
-import { Field, inputClass } from "../ui";
-import { FontPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange } from "./types";
 
 // ---------- Desenho (PLUS) ----------
@@ -25,6 +22,7 @@ const PAPERS = [
 ] as const;
 
 type Stroke = { color: string; size: number; erase: boolean; pts: [number, number][] };
+type Panel = "color" | "size" | "paper" | "tape" | null;
 
 function paintStroke(ctx: CanvasRenderingContext2D, s: Stroke, paper: string) {
   ctx.lineCap = "round";
@@ -50,15 +48,22 @@ function paintStroke(ctx: CanvasRenderingContext2D, s: Stroke, paper: string) {
   ctx.stroke();
 }
 
-function Counter({ value, max }: { value: string; max: number }) {
+const chip = (on: boolean) =>
+  `flex cursor-pointer items-center gap-2 rounded-lg border-2 px-2.5 py-1.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${on ? "border-[#2f2218] bg-white" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`;
+
+/** Botão que mostra a opção aplicada e abre a lista para trocar. */
+function OptionButton({ label, open, onClick, children }: { label: string; open: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <span className={`text-xs ${value.length >= max ? "text-[#a23b2a]" : "text-[#8a7b69]"}`}>
-      {value.length}/{max}
-    </span>
+    <button type="button" onClick={onClick} aria-expanded={open} aria-label={label} title={label} className={chip(open)}>
+      {children}
+      <svg viewBox="0 0 24 24" className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
   );
 }
 
-/** Desenho na hora: traço livre com cores, espessuras, borracha, desfazer e cor do papel. Vira uma imagem PNG no envio. */
+/** Desenho na hora: traço livre com cor, espessura, borracha, desfazer, papel e fita. Vira uma imagem PNG no envio. Sem texto. */
 export function DrawForm({ onChange }: { onChange: DraftChange }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<Stroke[]>([]);
@@ -70,9 +75,8 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
   const [paper, setPaper] = useState<string>(PAPERS[0].id);
   const [count, setCount] = useState(0);
   const [src, setSrc] = useState<string | null>(null);
-  const [caption, setCaption] = useState("");
-  const [font, setFont] = useState<HandId>("caveat");
   const [tape, setTape] = useState<TapeColor>("yellow");
+  const [panel, setPanel] = useState<Panel>(null);
 
   const redraw = useCallback(() => {
     const ctx = canvasRef.current?.getContext("2d");
@@ -82,7 +86,7 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
     for (const s of strokes.current) paintStroke(ctx, s, paper);
   }, [paper]);
 
-  // guarda o desenho como imagem (para a prévia e para o envio)
+  // guarda o desenho como imagem (para o envio)
   const snapshot = useCallback(() => {
     canvasRef.current?.toBlob((blob) => {
       if (!blob) return;
@@ -105,7 +109,7 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
     [],
   );
 
-  useEffect(() => onChange({ type: "draw", caption: caption.trim(), ...(src ? { src } : {}), font, tape }, { empty: count === 0 || !src }), [src, caption, font, tape, count, onChange]);
+  useEffect(() => onChange({ type: "draw", caption: "", ...(src ? { src } : {}), tape }, { empty: count === 0 || !src }), [src, tape, count, onChange]);
 
   function point(e: React.PointerEvent<HTMLCanvasElement>): [number, number] {
     const r = e.currentTarget.getBoundingClientRect();
@@ -113,6 +117,7 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
   }
   function down(e: React.PointerEvent<HTMLCanvasElement>) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    setPanel(null);
     e.currentTarget.setPointerCapture(e.pointerId);
     const s: Stroke = { color, size, erase, pts: [point(e)] };
     current.current = s;
@@ -149,13 +154,19 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
     snapshot();
   }
 
-  const tool = (on: boolean) => `cursor-pointer rounded-lg border-2 px-3 py-1.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${on ? "border-[#2f2218] bg-white" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`;
+  const toggle = (p: Exclude<Panel, null>) => setPanel((cur) => (cur === p ? null : p));
+  const sizeNow = DRAW_SIZES.find((s) => s.id === size) ?? DRAW_SIZES[1];
+  const dot = (px: number, bg: string) => <span className="block rounded-full border border-black/20" style={{ width: px, height: px, background: bg }} />;
+  const pick = (p: Exclude<Panel, null>, fn: () => void) => () => {
+    fn();
+    setPanel(null);
+    void p;
+  };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="relative pt-3 text-[14px]">
-          <Tape className="pointer-events-none -top-[0.1em] left-1/2 -translate-x-1/2" rotate={2} tone={tapeOf(tape).tone} />
+    <div className="space-y-3">
+      <div className="relative pt-3 text-[14px]">
+        <Tape className="pointer-events-none -top-[0.1em] left-1/2 -translate-x-1/2" rotate={2} tone={tapeOf(tape).tone} />
         <canvas
           ref={canvasRef}
           width={DRAW_W}
@@ -167,77 +178,68 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
           onPointerCancel={up}
           className="block aspect-[4/3] w-full cursor-crosshair touch-none rounded-xl border border-[#d9c9ad] shadow-sm"
         />
-        </div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <button type="button" onClick={undo} disabled={count === 0} className={tool(false)}>
-            ↶ Desfazer
-          </button>
-          <button type="button" onClick={clear} disabled={count === 0} className={tool(false)}>
-            Limpar
-          </button>
-          <button type="button" onClick={() => setErase((v) => !v)} aria-pressed={erase} className={tool(erase)}>
-            Borracha
-          </button>
-        </div>
       </div>
 
-      <fieldset>
-        <legend className="mb-1.5 text-sm font-semibold">Cor do traço</legend>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Cor do traço">
-          {DRAW_COLORS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              role="radio"
-              aria-checked={!erase && color === c}
-              aria-label={`Cor ${c}`}
-              onClick={() => {
-                setColor(c);
-                setErase(false);
-              }}
-              className={`size-9 cursor-pointer rounded-full border-2 shadow-[0_0.1rem_0.25rem_rgba(0,0,0,.3)] transition-transform ${!erase && color === c ? "scale-110 border-[#2f2218]" : "border-transparent"}`}
-              style={{ background: c }}
-            />
-          ))}
-        </div>
-      </fieldset>
+      {/* uma linha só: cada botão mostra o que está aplicado e abre as opções logo abaixo */}
+      <div className="flex flex-wrap gap-2">
+        <OptionButton label="Cor do traço" open={panel === "color"} onClick={() => toggle("color")}>
+          {dot(18, erase ? "#ffffff" : color)}
+          <span className="hidden sm:inline">Cor</span>
+        </OptionButton>
+        <OptionButton label="Espessura do traço" open={panel === "size"} onClick={() => toggle("size")}>
+          {dot(Math.max(6, sizeNow.id / 1.6), "#2f2218")}
+          <span className="hidden sm:inline">{sizeNow.label}</span>
+        </OptionButton>
+        <OptionButton label="Cor do papel" open={panel === "paper"} onClick={() => toggle("paper")}>
+          {dot(18, paper)}
+          <span className="hidden sm:inline">Papel</span>
+        </OptionButton>
+        <OptionButton label="Cor da fita" open={panel === "tape"} onClick={() => toggle("tape")}>
+          {dot(18, tapeOf(tape).swatch)}
+          <span className="hidden sm:inline">Fita</span>
+        </OptionButton>
+      </div>
 
-      <fieldset>
-        <legend className="mb-1.5 text-sm font-semibold">Espessura</legend>
-        <div className="flex gap-2" role="radiogroup" aria-label="Espessura">
-          {DRAW_SIZES.map((s) => (
-            <button key={s.id} type="button" role="radio" aria-checked={size === s.id} onClick={() => setSize(s.id)} className={`${tool(size === s.id)} flex items-center gap-2`}>
-              <span className="block rounded-full bg-[#2f2218]" style={{ width: Math.max(4, s.id / 2), height: Math.max(4, s.id / 2) }} />
-              {s.label}
-            </button>
-          ))}
+      {panel && (
+        <div className="rounded-xl border border-[#e1d3ba] bg-white/70 p-2.5" role="radiogroup" aria-label="Opções">
+          <div className="flex flex-wrap gap-2">
+            {panel === "color" &&
+              DRAW_COLORS.map((c) => (
+                <button key={c} type="button" role="radio" aria-checked={!erase && color === c} aria-label={`Cor ${c}`} onClick={pick("color", () => { setColor(c); setErase(false); })} className={`size-9 cursor-pointer rounded-full border-2 shadow-[0_0.1rem_0.25rem_rgba(0,0,0,.3)] ${!erase && color === c ? "border-[#2f2218]" : "border-transparent"}`} style={{ background: c }} />
+              ))}
+            {panel === "size" &&
+              DRAW_SIZES.map((s) => (
+                <button key={s.id} type="button" role="radio" aria-checked={size === s.id} onClick={pick("size", () => setSize(s.id))} className={chip(size === s.id)}>
+                  {dot(Math.max(6, s.id / 1.6), "#2f2218")}
+                  {s.label}
+                </button>
+              ))}
+            {panel === "paper" &&
+              PAPERS.map((p) => (
+                <button key={p.id} type="button" role="radio" aria-checked={paper === p.id} onClick={pick("paper", () => setPaper(p.id))} className={chip(paper === p.id)}>
+                  {dot(18, p.id)}
+                  {p.label}
+                </button>
+              ))}
+            {panel === "tape" &&
+              TAPE_COLORS.map((t) => (
+                <button key={t.id} type="button" role="radio" aria-checked={tape === t.id} aria-label={t.label} title={t.label} onClick={pick("tape", () => setTape(t.id))} className={`size-9 cursor-pointer rounded-full border-2 shadow-[0_0.1rem_0.25rem_rgba(0,0,0,.3)] ${tape === t.id ? "border-[#2f2218]" : "border-transparent"}`} style={{ background: t.swatch }} />
+              ))}
+          </div>
         </div>
-      </fieldset>
+      )}
 
-      <fieldset>
-        <legend className="mb-1.5 text-sm font-semibold">Papel</legend>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Papel">
-          {PAPERS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              role="radio"
-              aria-checked={paper === p.id}
-              onClick={() => setPaper(p.id)}
-              className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-1.5 text-sm font-semibold transition ${paper === p.id ? "border-[#2f2218] bg-white" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`}
-            >
-              <span className="size-4 rounded-full border border-black/30" style={{ background: p.id }} />
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <TapeColorPicker value={tape} onChange={setTape} />
-      <FontPicker value={font} onChange={setFont} />
-      <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder="Ex: Eu e você, versão palito" className={inputClass} />}
-      </Field>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={() => setErase((v) => !v)} aria-pressed={erase} className={chip(erase)}>
+          Borracha
+        </button>
+        <button type="button" onClick={undo} disabled={count === 0} className={chip(false)}>
+          ↶ Desfazer
+        </button>
+        <button type="button" onClick={clear} disabled={count === 0} className={chip(false)}>
+          Limpar
+        </button>
+      </div>
     </div>
   );
 }
