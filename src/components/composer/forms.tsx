@@ -7,6 +7,7 @@ import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
+import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
 const PLAYER_NOTE_MAX = 32;
@@ -198,11 +199,12 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   const [error, setError] = useState<string | null>(null);
   const prev = useRef<string | null>(null);
 
-  function pick(file: File | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return setError("Escolha um arquivo de imagem.");
-    if (file.size > MAX_PHOTO_MB * 1024 * 1024) return setError(`A foto pode ter até ${MAX_PHOTO_MB} MB.`);
+  async function pick(original: File | undefined) {
+    if (!original) return;
+    if (!original.type.startsWith("image/")) return setError("Escolha um arquivo de imagem.");
     setError(null);
+    const file = await downscalePhoto(original); // foto da câmera: reduz sozinha, sem o usuário precisar saber o tamanho
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) return setError(`Esta foto ficou grande demais (${(file.size / 1048576).toFixed(0)} MB). Tente outra.`);
     if (prev.current) URL.revokeObjectURL(prev.current);
     const url = URL.createObjectURL(file);
     prev.current = url;
@@ -212,7 +214,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Foto" hint={`Até ${MAX_PHOTO_MB} MB.`}>
+      <Field label="Foto" hint="Fotos grandes são reduzidas automaticamente.">
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
@@ -255,7 +257,9 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
 }
 
 // ---------- Vídeo (PLUS) ----------
-const MAX_VIDEO_MB = 50;
+const MAX_VIDEO_MB = 40; // depois de otimizado (o armazenamento aceita até 50 MB)
+
+const mb = (bytes: number) => `${(bytes / 1048576).toFixed(bytes < 10485760 ? 1 : 0)} MB`;
 
 function formatDuration(sec: number) {
   const m = Math.floor(sec / 60);
@@ -269,30 +273,62 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
   const [color, setColor] = useState<PlayerColor>("black");
   const [caption, setCaption] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number | null>(null); // 0..1 enquanto o vídeo é otimizado
+  const [note, setNote] = useState<string | null>(null);
   const prev = useRef<string | null>(null);
 
-  function pick(file: File | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("video/")) return setError("Escolha um arquivo de vídeo.");
-    if (file.size > MAX_VIDEO_MB * 1024 * 1024) return setError(`O vídeo pode ter até ${MAX_VIDEO_MB} MB.`);
+  async function pick(original: File | undefined) {
+    if (!original) return;
+    if (!original.type.startsWith("video/")) return setError("Escolha um arquivo de vídeo.");
     setError(null);
+    setNote(null);
+    setSrc(null);
+    let file = original;
+    let secs: number | undefined;
+    try {
+      const info = await probeVideo(original);
+      secs = Number.isFinite(info.duration) ? info.duration : undefined;
+      if (secs && secs > MAX_VIDEO_SEC) return setError(`O vídeo pode ter até ${MAX_VIDEO_SEC} segundos (este tem ${formatDuration(secs)}). Corte um trecho e tente de novo.`);
+      if (needsCompression(original, info)) {
+        if (canCompressVideo()) {
+          // vídeos de celular são enormes: reduz aqui mesmo (resolução menor, qualidade boa) antes de enviar
+          setProgress(0);
+          file = await compressVideo(original, setProgress);
+          setProgress(null);
+          if (file !== original) setNote(`Vídeo otimizado: de ${mb(original.size)} para ${mb(file.size)}.`);
+        } else if (original.size > MAX_VIDEO_MB * 1024 * 1024) {
+          return setError(`Este vídeo tem ${mb(original.size)} e seu navegador não consegue reduzi-lo. Use o Chrome, ou grave um vídeo mais curto (até ${MAX_VIDEO_MB} MB).`);
+        }
+      }
+    } catch {
+      setProgress(null);
+      if (original.size > MAX_VIDEO_MB * 1024 * 1024) return setError("Não foi possível reduzir este vídeo. Tente um mais curto ou em outra resolução.");
+    }
+    setProgress(null);
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) return setError(`Mesmo reduzido, o vídeo ficou com ${mb(file.size)} (o limite é ${MAX_VIDEO_MB} MB). Tente um vídeo mais curto.`);
     if (prev.current) URL.revokeObjectURL(prev.current);
     const url = URL.createObjectURL(file);
     prev.current = url;
-    setDuration(undefined);
+    setDuration(secs ? formatDuration(secs) : undefined);
     setSrc(url);
-    const probe = document.createElement("video");
-    probe.preload = "metadata";
-    probe.onloadedmetadata = () => setDuration(Number.isFinite(probe.duration) ? formatDuration(probe.duration) : undefined);
-    probe.src = url;
   }
   useEffect(() => onChange({ type: "video", caption: caption.trim(), ...(src ? { src, duration } : {}), playerColor: color }, { empty: !src }), [src, caption, duration, color, onChange]);
 
   return (
     <div className="space-y-4">
-      <Field label="Vídeo" hint={`Até ${MAX_VIDEO_MB} MB.`}>
+      <Field label="Vídeo" hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
         {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
+      {progress !== null && (
+        <div role="status" aria-live="polite" className="rounded-xl border border-[#d9c9ad] bg-white/70 p-3 text-sm">
+          <p className="font-semibold">Otimizando o vídeo… {Math.round(progress * 100)}%</p>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#e1d3ba]">
+            <div className="h-full rounded-full bg-[#d98a2b] transition-[width]" style={{ width: `${Math.round(progress * 100)}%` }} />
+          </div>
+          <p className="mt-1.5 text-xs text-[#6b5440]">Fique nesta tela: leva mais ou menos o tempo do vídeo.</p>
+        </div>
+      )}
+      {note && <p role="status" className="text-sm text-[#2f6a3c]">{note}</p>}
       {error && <ErrorText>{error}</ErrorText>}
       <PlayerColorPicker value={color} onChange={setColor} />
       <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o player.</>}>
