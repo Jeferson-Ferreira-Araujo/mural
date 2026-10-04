@@ -26,108 +26,6 @@ const done = () => {
   } catch {}
 };
 
-/** Sons da abertura, sintetizados (sem arquivo de áudio): canetinha escrevendo cada letra e o "ploc" da tachinha. Só tocam se o navegador já liberou o som. */
-function makeSound() {
-  let ctx: AudioContext | null = null;
-  try {
-    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (AC) {
-      ctx = new AC();
-      void ctx.resume().catch(() => undefined);
-    }
-  } catch {
-    ctx = null;
-  }
-  const running = () => (ctx && ctx.state === "running" ? ctx : null);
-  const noise = (c: AudioContext, secs: number) => {
-    const len = Math.max(1, Math.floor(c.sampleRate * secs));
-    const buf = c.createBuffer(1, len, c.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    const n = c.createBufferSource();
-    n.buffer = buf;
-    return n;
-  };
-  return {
-    /** Canetinha riscando: ruído filtrado que sobe e desce de tom, com um leve tremor, começando daqui a `afterMs`. */
-    write(afterMs: number, durMs: number) {
-      const c = running();
-      if (!c) return;
-      const t = c.currentTime + afterMs / 1000;
-      const dur = Math.max(0.05, durMs / 1000);
-      const n = noise(c, dur + 0.05);
-      const bp = c.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.Q.value = 3.2;
-      bp.frequency.setValueAtTime(1900, t);
-      bp.frequency.linearRampToValueAtTime(3000, t + dur * 0.5);
-      bp.frequency.linearRampToValueAtTime(2200, t + dur);
-      const g = c.createGain();
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(0.6, t + 0.012);
-      g.gain.setValueAtTime(0.6, t + dur - 0.02);
-      g.gain.linearRampToValueAtTime(0.0001, t + dur);
-      // tremor do traço
-      const lfo = c.createOscillator();
-      const lg = c.createGain();
-      lfo.frequency.value = 38;
-      lg.gain.value = 0.15;
-      lfo.connect(lg).connect(g.gain);
-      n.connect(bp).connect(g).connect(c.destination);
-      n.start(t);
-      n.stop(t + dur + 0.05);
-      lfo.start(t);
-      lfo.stop(t + dur + 0.05);
-    },
-    /** "Ploc" da tachinha entrando no papel. */
-    ploc() {
-      const c = running();
-      if (!c) return;
-      const t = c.currentTime;
-      const master = c.createGain();
-      master.gain.value = 0.6;
-      master.connect(c.destination);
-      // corpo do "ploc": tom que cai rápido
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = "sine";
-      o.frequency.setValueAtTime(980, t);
-      o.frequency.exponentialRampToValueAtTime(240, t + 0.07);
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(0.9, t + 0.004);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      o.connect(g).connect(master);
-      o.start(t);
-      o.stop(t + 0.14);
-      // batida grave do impacto
-      const b = c.createOscillator();
-      const bg = c.createGain();
-      b.type = "sine";
-      b.frequency.setValueAtTime(150, t);
-      b.frequency.exponentialRampToValueAtTime(55, t + 0.12);
-      bg.gain.setValueAtTime(0.7, t);
-      bg.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      b.connect(bg).connect(master);
-      b.start(t);
-      b.stop(t + 0.17);
-      // estalinho do papel
-      const n = noise(c, 0.03);
-      const hp = c.createBiquadFilter();
-      hp.type = "highpass";
-      hp.frequency.value = 2200;
-      const ng = c.createGain();
-      ng.gain.setValueAtTime(0.35, t);
-      ng.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
-      n.connect(hp).connect(ng).connect(master);
-      n.start(t);
-      window.setTimeout(() => void c.close().catch(() => undefined), 700);
-    },
-    close() {
-      void ctx?.close().catch(() => undefined);
-    },
-  };
-}
-
 /** Varredura com borda suave (a tinta "vai sendo escrita"): anima a posição da máscara. */
 function maskStyle(axis: "x" | "y"): React.CSSProperties {
   const grad = axis === "x" ? "linear-gradient(90deg, #000 0%, #000 44%, transparent 56%, transparent 100%)" : "linear-gradient(180deg, #000 0%, #000 44%, transparent 56%, transparent 100%)";
@@ -138,7 +36,7 @@ function maskStyle(axis: "x" | "y"): React.CSSProperties {
 
 /**
  * Abertura do site (só movimento, sem mãos): o bloco amarelo aparece no meio da tela, "pinz" é escrito letra por letra,
- * a tachinha cai e prende (com um "toc"), o bloco sobe até o lugar do logo e o formulário aparece.
+ * a tachinha cai e prende, o bloco sobe até o lugar do logo e o formulário aparece.
  * Tudo com a Web Animations API; qualquer falha pula direto para o fim.
  * Enquanto toca, `data-intro="play"` no <html> esconde o logo e o formulário reais (ver globals.css).
  */
@@ -167,7 +65,6 @@ export function IntroAnimation() {
     const dx = vw / 2 - (r.left + r.width / 2);
     const dy = vh / 2 - (r.top + r.height / 2);
     const center = `translate(${dx}px, ${dy}px) scale(${big})`;
-    const sound = makeSound();
 
     let cancelled = false;
     const anims: Animation[] = [];
@@ -204,7 +101,6 @@ export function IntroAnimation() {
             const to = g.axis === "x" ? "0% 0%" : "0% 0%";
             const a = add(layer.animate([{ maskPosition: from, webkitMaskPosition: from }, { maskPosition: to, webkitMaskPosition: to }] as Keyframe[], { duration: g.ms, delay: at, easing: "linear", fill: "both" }));
             writes.push(a.finished);
-            sound.write(at, g.ms);
           }
           at += g.ms * 0.85;
         }
@@ -212,7 +108,7 @@ export function IntroAnimation() {
         await Promise.all(writes);
         if (cancelled) return;
 
-        // 3) a tachinha cai e prende; o papel cede um instante e toca o "toc"
+        // 3) a tachinha cai e prende; o papel cede um instante
         const DROP = 300;
         const drop = add(
           tack.current!.animate(
@@ -237,7 +133,6 @@ export function IntroAnimation() {
             { duration: DROP, fill: "forwards" },
           ),
         );
-        window.setTimeout(() => sound.ploc(), DROP * 0.72);
         await drop.finished;
         if (cancelled) return;
         await wait(140);
@@ -265,7 +160,6 @@ export function IntroAnimation() {
     return () => {
       cancelled = true;
       anims.forEach((a) => a.cancel());
-      sound.close();
       done();
     };
   }, []);
