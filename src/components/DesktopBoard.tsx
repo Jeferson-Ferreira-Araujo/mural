@@ -34,7 +34,7 @@ export function DesktopBoard(props: ViewProps) {
   function addMessage() {
     if (!unlocked) {
       focusFirstField();
-      onNotify(hasSelection ? "Responda a pergunta para desbloquear o mural." : "Procure alguém pelo username primeiro.");
+      onNotify(hasSelection ? "Responda a pergunta para desbloquear o mural." : "Procure alguém pelo nome de usuário primeiro.");
       return;
     }
     if (!onCompose) return;

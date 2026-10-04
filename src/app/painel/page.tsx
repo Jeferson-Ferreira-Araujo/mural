@@ -74,7 +74,7 @@ export default function Painel() {
         <div className="min-w-0">
           <h1 className="font-title text-2xl font-semibold">Meus murais</h1>
           <p className="mt-1 text-sm text-[#6b5440]">
-            Seu username: <strong className="break-all">{nick}</strong>
+            Seu nome de usuário: <strong className="break-all">{nick}</strong>
           </p>
         </div>
         <button type="button" onClick={signOut} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
