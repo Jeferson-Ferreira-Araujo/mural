@@ -100,8 +100,9 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                 disabled={busy}
                 onClick={async () => {
                   setBusy(true);
-                  await mod.moderate(item.id, true);
+                  const ok = await mod.moderate(item.id, true);
                   setBusy(false);
+                  if (ok) onClose(); // aprovado: fecha o destaque e o pin já aparece no mural sem o aviso
                 }}
                 className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60"
               >
