@@ -84,12 +84,12 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {(onCompose || editBadges || (muralSwitch && muralSwitch.items.length > 1)) && (
         <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 bg-[#f2e8d3] px-4 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] shadow-[0_-0.2rem_0.8rem_rgba(0,0,0,.25)]">
           <MuralSwitcher sw={muralSwitch} className="!bg-[#2a1c12]" />
+          {editBadges && <BadgeBar className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
           {onCompose && (
             <div className="w-full">
               <LeavePinButton onClick={() => onCompose()} />
             </div>
           )}
-          {editBadges && <BadgeBar className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
         </footer>
       )}
     </div>
