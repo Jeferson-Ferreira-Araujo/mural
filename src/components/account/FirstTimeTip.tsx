@@ -61,7 +61,7 @@ export function FirstTimeTip({ uid, createdAt, ready }: { uid?: string; createdA
             🎨
           </span>
           <p>
-            <strong>Enfeitar com botons:</strong> os botons da barra de baixo podem ser arrastados e soltos onde você quiser no mural. Para tirar, arraste de volta para a barra.
+            <strong>Enfeitar com Bottons:</strong> os Bottons da barra de baixo podem ser arrastados e soltos onde você quiser no mural. Para tirar, arraste de volta para a barra.
           </p>
         </li>
       </ul>

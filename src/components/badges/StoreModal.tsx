@@ -46,13 +46,13 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <p className="text-xs text-[#6b5440]">Comprar créditos: em breve</p>
       </div>
       <p className="mb-3 text-sm text-[#4a3826]">
-        {plus ? "No PINZ PLUS você tem os 25 pins iniciais, quantas unidades quiser. Pins novos, temas e murais extras se compram com créditos." : "No PINZ FREE você tem 10 pins decorativos, 1 unidade de cada. Compre mais pins, unidades extras e temas com créditos. O PINZ PLUS libera os 25 pins iniciais, unidades ilimitadas e murais extras."}
+        {plus ? "No PINZ PLUS você tem os 25 Bottons iniciais, quantas unidades quiser. Bottons novos, temas e murais extras se compram com créditos." : "No PINZ FREE você tem 10 Bottons, 1 unidade de cada. Compre mais Bottons, unidades extras e temas com créditos. O PINZ PLUS libera os 25 Bottons iniciais, unidades ilimitadas e murais extras."}
       </p>
 
       <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
-            ["pins", "Pins"],
+            ["pins", "Bottons"],
             ["themes", "Temas"],
             ["murals", "Murais"],
             ["credits", "Créditos"],
@@ -68,11 +68,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
       ) : tab === "pins" ? (
         <>
-          <div role="tablist" aria-label="Pins" className="mb-3 grid max-w-xs grid-cols-2 rounded-lg border border-[#e1d3ba] bg-white/60 p-0.5 text-xs">
+          <div role="tablist" aria-label="Bottons" className="mb-3 grid max-w-xs grid-cols-2 rounded-lg border border-[#e1d3ba] bg-white/60 p-0.5 text-xs">
             {(
               [
                 ["new", `Novos (${pinsToBuy.length})`],
-                ["mine", `Meus pins (${myPins.length})`],
+                ["mine", `Meus Bottons (${myPins.length})`],
               ] as const
             ).map(([id, text]) => (
               <button key={id} role="tab" type="button" aria-selected={pinView === id} onClick={() => setPinView(id)} className={`cursor-pointer rounded-md py-1.5 font-semibold ${pinView === id ? "bg-[#1f232b] text-white" : "text-[#4a3826]"}`}>
@@ -81,7 +81,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             ))}
           </div>
           {(pinView === "new" ? pinsToBuy : myPins).length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#6b5440]">{pinView === "new" ? "Você já liberou todos os pins. Novos chegam em breve!" : "Você ainda não tem pins."}</p>
+            <p className="py-6 text-center text-sm text-[#6b5440]">{pinView === "new" ? "Você já liberou todos os Bottons. Novos chegam em breve!" : "Você ainda não tem Bottons."}</p>
           ) : (
             <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
               {(pinView === "new" ? pinsToBuy : myPins).map((b) => {
@@ -92,7 +92,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
                     </div>
-                    <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Pin ${b.key}`}</p>
+                    <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Botton ${b.key}`}</p>
                     {pinView === "new" ? (
                       <button type="button" disabled={busy === `b${b.key}` || !can(c.price)} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key })} className={buyBtn}>
                         {label(c.price)}
@@ -167,7 +167,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-center text-xs text-[#6b5440]">Os créditos servem para comprar pins, temas e murais extras. Quanto maior o pacote, mais créditos de bônus.</p>
+          <p className="mt-3 text-center text-xs text-[#6b5440]">Os créditos servem para comprar Bottons, temas e murais extras. Quanto maior o pacote, mais créditos de bônus.</p>
         </div>
       )}
     </Modal>

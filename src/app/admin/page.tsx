@@ -279,7 +279,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                       {m.title} <Tag tone={m.plan === "full" ? "gold" : "plain"}>{m.plan === "full" ? "plus" : "free"}</Tag> <Tag>{m.private ? "privado" : "público"}</Tag>
                     </p>
                     <p className="text-xs text-[#6b5440]">
-                      {m.pins} pins ({m.pending} pendentes) · {m.badges} botons ·{" "}
+                      {m.pins} pins ({m.pending} pendentes) · {m.badges} Bottons ·{" "}
                       <Link href={`/${u.nickname}/${m.slug}`} target="_blank" className="underline">
                         abrir
                       </Link>

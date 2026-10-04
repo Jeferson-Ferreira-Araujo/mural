@@ -13,9 +13,8 @@ export function BadgeBar({ className = "" }: { className?: string }) {
   if (!editable) return null;
   const mine = BADGES.filter((b) => stock(b.key).owned);
   return (
-    <section data-badge-bar aria-label="Seus pins decorativos" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 pt-2 pb-2.5 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
-      <div className="flex items-center justify-between gap-2 px-1 pb-1.5">
-        <p className="text-[11px] font-semibold tracking-wide text-white/70 uppercase">Seus pins · arraste para o mural</p>
+    <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 pt-2 pb-2.5 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+      <div className="flex items-center justify-end gap-2 px-1 pb-1.5">
         <button type="button" onClick={openStore} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#d9a21b] px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] active:scale-95">
           <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
@@ -32,7 +31,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
             <li key={b.key} className="relative shrink-0">
               <button
                 type="button"
-                aria-label={out ? `Pin decorativo ${b.name ?? b.key}: esgotado` : `Pin decorativo ${b.name ?? b.key}: arraste para o mural`}
+                aria-label={out ? `Botton ${b.name ?? b.key}: esgotado` : `Botton ${b.name ?? b.key}: arraste para o mural`}
                 onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                 onDragStart={(e) => e.preventDefault()}
                 className={`grid h-14 w-14 touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}

@@ -128,7 +128,7 @@ export function BadgeProvider({
       if (src.kind === "new") {
         const st = live.current.stock(src.key);
         if (!st.owned || st.left === 0) {
-          live.current.notify(st.owned ? "Esgotado: você já colocou a unidade deste pin. Compre mais na loja." : "Este pin é da loja. Libere com créditos para usar.");
+          live.current.notify(st.owned ? "Esgotado: você já colocou a unidade deste botton. Compre mais na loja." : "Este botton é da loja. Libere com créditos para usar.");
           return;
         }
       }
@@ -218,7 +218,7 @@ export function BadgeProvider({
             void removeBadge(getBrowserSupabase(), src.id).then((ok) => {
               if (!ok) {
                 setBadges(() => prev);
-                notify("Não foi possível tirar o pin agora.");
+                notify("Não foi possível tirar o botton agora.");
               }
             });
           } else sendBack(at);
@@ -229,24 +229,24 @@ export function BadgeProvider({
           return sendBack(at);
         }
         if (drop.kind === "badge") {
-          notify("Não dá para colocar um pin sobre outro pin.");
+          notify("Não dá para colocar um botton sobre outro botton.");
           return sendBack(at);
         }
         if (drop.kind === "out") {
-          notify("Solte o pin sobre o mural.");
+          notify("Solte o botton sobre o mural.");
           return sendBack(at);
         }
         setGhost(null);
         if (src.kind === "placed") {
           setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y } : b)));
           void moveBadge(getBrowserSupabase(), src.id, drop.x, drop.y).then((ok) => {
-            if (!ok) notify("Não foi possível mover o pin agora.");
+            if (!ok) notify("Não foi possível mover o botton agora.");
           });
           return;
         }
         if (!mid) return;
         if (cur.length >= MAX_BADGES) {
-          notify(`O mural aceita até ${MAX_BADGES} pins decorativos.`);
+          notify(`O mural aceita até ${MAX_BADGES} Bottons.`);
           return sendBack(at);
         }
         const tmp = `tmp-${Date.now()}`;
@@ -254,7 +254,7 @@ export function BadgeProvider({
         void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((res) => {
           if ("error" in res) {
             setBadges((l) => l.filter((b) => b.id !== tmp));
-            notify(res.error === "sold_out" ? "Esgotado: compre mais unidades deste pin na loja." : res.error === "not_owned" ? "Este pin é da loja. Libere com créditos para usar." : "Não foi possível colocar o pin agora.");
+            notify(res.error === "sold_out" ? "Esgotado: compre mais unidades deste botton na loja." : res.error === "not_owned" ? "Este botton é da loja. Libere com créditos para usar." : "Não foi possível colocar o botton agora.");
           } else setBadges((l) => l.map((b) => (b.id === tmp ? { ...b, id: res.id } : b)));
         });
       }

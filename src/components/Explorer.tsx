@@ -258,7 +258,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       const sb = getBrowserSupabase();
       const res = item.kind === "badge" ? await buyBadge(sb, item.key, "unlock") : item.kind === "unit" ? await buyBadge(sb, item.key, "unit") : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? "+1 unidade adicionada." : item.kind === "badge" ? "Pin liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? "+1 unidade adicionada." : item.kind === "badge" ? "Botton liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
       } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
     },
