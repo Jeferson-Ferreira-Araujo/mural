@@ -2,7 +2,7 @@
 export const LOGO_RATIO = 1180 / 885;
 
 /** Tachinha sobre o papel (em % do tamanho do logo). */
-export const TACK = { left: "46.8%", top: "12.4%", width: "15%" } as const;
+export const TACK = { left: "44.4%", top: "2.8%", width: "22.9%" } as const;
 
 /** Ordem em que as letras são "escritas": ms de duração, eixo da varredura. */
 export const INK_ORDER = [

@@ -30,9 +30,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="pt-BR"
+      suppressHydrationWarning
       className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1")document.documentElement.dataset.intro="play"}catch(e){}` }} />
+        {children}
+      </body>
     </html>
   );
 }

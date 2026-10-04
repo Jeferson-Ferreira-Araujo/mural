@@ -24,7 +24,7 @@ import { getOwnNickname, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
-import { IntroAnimation, introSeen } from "./IntroAnimation";
+import { IntroAnimation, introSeen, introSkip } from "./IntroAnimation";
 import { MuralScreen } from "./MuralScreen";
 import { useToast } from "./useToast";
 import { SearchBox } from "./SearchBox";
@@ -293,10 +293,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     if (introChecked.current || sessionLoading) return;
     introChecked.current = true;
     if (!logged && !introSeen()) setPlayIntro(true);
+    else introSkip();
   }, [sessionLoading, logged]);
 
   return (
-    <>
+    <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
       <MuralScreen
         items={revealed ? items : decor}
@@ -333,6 +334,6 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         }
       />
       <Toast message={toast} />
-    </>
+    </div>
   );
 }

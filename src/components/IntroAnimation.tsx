@@ -14,6 +14,11 @@ export function introSeen(): boolean {
   }
 }
 
+/** Não vai tocar (já viu, ou já está logado): libera o logo e o formulário. */
+export const introSkip = () => {
+  delete document.documentElement.dataset.intro;
+};
+
 const done = () => {
   delete document.documentElement.dataset.intro;
   try {

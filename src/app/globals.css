@@ -139,13 +139,19 @@ body {
 }
 
 /* abertura animada (IntroAnimation): enquanto toca, o logo e o formulário reais esperam */
-[data-intro="play"] .brand-real {
+[data-intro="play"] [data-explorer] .brand-real {
   visibility: hidden;
+  animation: intro-reveal 0s linear 8s forwards; /* segurança: se a animação não rodar, o logo aparece */
+}
+@keyframes intro-reveal {
+  to {
+    visibility: visible;
+  }
 }
 .intro-form {
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-[data-intro="play"] .intro-form {
+[data-intro="play"] [data-explorer] .intro-form {
   opacity: 0;
   transform: translateY(14px);
   pointer-events: none;
