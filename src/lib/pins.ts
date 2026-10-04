@@ -21,22 +21,23 @@ const EXT: Record<string, string> = {
 };
 
 /** Sobe o arquivo (foto, vídeo ou voz) para o armazenamento e devolve o endereço público. O caminho começa com o token de desbloqueio. */
-async function uploadMedia(sb: SupabaseClient, token: string, blobUrl: string): Promise<string> {
+async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string): Promise<string> {
   const blob = await (await fetch(blobUrl)).blob();
   const type = blob.type.split(";")[0].trim().toLowerCase();
   const ext = EXT[type];
   if (!ext) throw new Error("tipo de arquivo não aceito");
-  const path = `${token}/${crypto.randomUUID()}.${ext}`;
+  const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from("pin-media").upload(path, blob, { contentType: type, cacheControl: "31536000" });
   if (error) throw error;
   return sb.storage.from("pin-media").getPublicUrl(path).data.publicUrl;
 }
 
 /** Cola um pin no espaço escolhido. O servidor valida tudo de novo (token, plano, limite, espaço livre, formatos). */
-export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, payload: SendPayload): Promise<SendResult> {
+/** `token` = desbloqueio do visitante; o DONO (token null) envia pela própria conta e a mídia vai para a pasta com o id dele (`ownerFolder`). */
+export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string | null, payload: SendPayload, ownerFolder?: string): Promise<SendResult> {
   const { type, ...content } = payload.message as Record<string, unknown> & { type: string };
   try {
-    if (typeof content.src === "string" && content.src.startsWith("blob:")) content.src = await uploadMedia(sb, token, content.src);
+    if (typeof content.src === "string" && content.src.startsWith("blob:")) content.src = await uploadMedia(sb, token ?? ownerFolder ?? "", content.src);
   } catch {
     return { ok: false, reason: "upload_failed" };
   }

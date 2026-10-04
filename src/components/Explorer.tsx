@@ -266,8 +266,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
-    if (!nick || !slug || !token) return SEND_ERROR_TEXT.not_unlocked;
-    const res = await sendPin(getBrowserSupabase(), { nick, slug }, token, p);
+    if (!nick || !slug || (!token && !isOwner)) return SEND_ERROR_TEXT.not_unlocked;
+    const res = await sendPin(getBrowserSupabase(), { nick, slug }, isOwner ? null : token, p, session?.user.id);
     if (res.ok) {
       await loadBoard();
       return;
@@ -484,7 +484,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
             isOwner
-              ? { mode: "hidden" }
+              ? {
+                  mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
+                  onSend: onSendPin,
+                  sentNote: "Pin colado no seu mural! 📌",
+                  onTried: () => undefined,
+                  triedAlready: false,
+                  signAs: myNick,
+                }
               : revealed
               ? {
                   mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
