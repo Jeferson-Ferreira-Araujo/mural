@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildPool, randomMural } from "@/data/mock";
 import {
@@ -21,9 +20,10 @@ import {
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnNickname, loginUrl, useSession } from "@/lib/auth";
+import { getOwnNickname, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
+import { AuthForm } from "./AuthForm";
 import { MuralScreen } from "./MuralScreen";
 import { useToast } from "./useToast";
 import { SearchBox } from "./SearchBox";
@@ -31,24 +31,6 @@ import { Toast } from "./Toast";
 import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 
-
-/** Sem conta não dá para procurar nem abrir murais: convida a entrar (e volta para o mural depois). */
-function LoginGate({ tone, next }: { tone: Tone; next: string }) {
-  const dark = tone === "dark";
-  return (
-    <section aria-label="Entrar para procurar murais" className={`rounded-[1.1em] border p-[1.1em] text-center ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
-      <p className="text-[1em] font-semibold">Entre na sua conta para procurar murais</p>
-      <div className="mt-[0.9em] grid gap-[0.5em]">
-        <Link href={loginUrl(next)} className="rounded-[0.8em] bg-[#d9a21b] px-[1em] py-[0.8em] font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
-          Entrar
-        </Link>
-        <Link href={loginUrl(next, true)} className={`rounded-[0.8em] border px-[1em] py-[0.8em] font-semibold transition ${dark ? "border-white/20 hover:bg-white/10" : "border-[#d9c9ad] bg-white/60 hover:bg-white"}`}>
-          Criar conta
-        </Link>
-      </div>
-    </section>
-  );
-}
 
 /**
  * Tela principal: busca uma pessoa pelo nickname, mostra a pergunta do mural e, ao acertar,
@@ -248,7 +230,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <div className="space-y-[1.2em]">
           {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
           {!selected && logged && <SearchBox onSelect={pickPerson} tone={tone} />}
-          {!logged && !sessionLoading && <LoginGate tone={tone} next={initialRef ? `/${initialRef.nick}/${initialRef.slug}` : "/"} />}
+          {!logged && !sessionLoading && <AuthForm />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
               Buscando…

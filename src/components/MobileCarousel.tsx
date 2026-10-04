@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "@/lib/auth";
 import { boardById } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
@@ -16,6 +17,8 @@ import type { ViewProps } from "./viewProps";
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
 export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome }: ViewProps) {
+  const { session } = useSession();
+  const logged = !!session;
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
@@ -59,10 +62,12 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
         </div>
 
         {/* rodapé: os dois botões de conta, um abaixo do outro */}
-        <footer className="mx-auto mt-6 flex w-[min(90vw,30rem)] flex-col gap-2">
-          <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full" />
-          <CreateMuralLink className="w-full justify-center border border-white/15 bg-[#fbf6ea] py-3 text-[#2a1c12]" />
-        </footer>
+        {logged && (
+          <footer className="mx-auto mt-6 flex w-[min(90vw,30rem)] flex-col gap-2">
+            <MyMuralLink tone="dark" big label="Acessar meu mural" className="w-full" />
+            <CreateMuralLink className="w-full justify-center border border-white/15 bg-[#fbf6ea] py-3 text-[#2a1c12]" />
+          </footer>
+        )}
       </main>
     </div>
   );
