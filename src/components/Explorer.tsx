@@ -24,6 +24,7 @@ import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type 
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
+import { FirstTimeTip } from "./account/FirstTimeTip";
 import { ModerationProvider } from "./board/ModerationContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
@@ -544,6 +545,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}
+      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} />
       <Toast message={toast} />
     </div>
   );

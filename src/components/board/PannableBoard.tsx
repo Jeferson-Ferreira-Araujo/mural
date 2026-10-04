@@ -84,7 +84,7 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
     [apply, clampView],
   );
 
-  // mede a área e, na primeira vez, centraliza com a ampliação padrão
+  // mede a área e, na primeira vez, mostra o mural inteiro
   useLayoutEffect(() => {
     const b = box.current;
     if (!b) return;
@@ -93,8 +93,9 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
       size.current = { w: r.width, h: r.height };
       if (!ready.current && r.width > 0) {
         ready.current = true;
-        const { defS } = limits();
-        view.current = clampView((r.width - WORLD_W * defS) / 2, (r.height - WORLD_H * defS) / 2, defS);
+        // começa mostrando o mural inteiro (o botão "Aproximar", a pinça e o toque duplo ampliam)
+        const { minS } = limits();
+        view.current = clampView((r.width - WORLD_W * minS) / 2, (r.height - WORLD_H * minS) / 2, minS);
       } else {
         const { x, y, s } = view.current;
         view.current = clampView(x, y, s);
