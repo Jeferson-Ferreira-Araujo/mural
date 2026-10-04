@@ -56,6 +56,14 @@ export function FirstTimeTip({ uid, createdAt, ready }: { uid?: string; createdA
             <strong>Andar pelo mural:</strong> com o mural aproximado, arraste com o dedo para ver as outras partes.
           </p>
         </li>
+        <li className="flex gap-3">
+          <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-xl">
+            🎨
+          </span>
+          <p>
+            <strong>Enfeitar com botons:</strong> os botons da barra de baixo podem ser arrastados e soltos onde você quiser no mural. Para tirar, arraste de volta para a barra.
+          </p>
+        </li>
       </ul>
       <button type="button" onClick={close} className="mt-6 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
         Entendi
