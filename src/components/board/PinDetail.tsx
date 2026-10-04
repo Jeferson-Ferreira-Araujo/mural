@@ -64,12 +64,22 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               ‹
             </button>
             <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,5.2vw)]" key={item.id}>
-              <MessageView message={item} />
+              {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
+              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} />
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
               ›
             </button>
           </div>
+          {item && !isSealed(item) && !isHidden(item) && item.pending && (
+            <p role="status" className="flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+              <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
+            </p>
+          )}
           {mod && item && !isSealed(item) && !isHidden(item) && item.pending && (
             <div className="flex w-full gap-3" role="group" aria-label="Moderar este pin">
               <button
