@@ -13,13 +13,13 @@ import { Modal } from "./Modal";
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
 
-function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportReason; details: string; block: boolean }) => void; onCancel: () => void }) {
+export function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportReason; details: string; block: boolean }) => void; onCancel: () => void }) {
   const [reason, setReason] = useState<ReportReason>("ofensa");
   const [details, setDetails] = useState("");
   const [block, setBlock] = useState(true);
   return (
     <form
-      className="mt-3 space-y-2 rounded-xl border border-[#e0b0a8] bg-[#fff4f1] p-3 text-left"
+      className="mt-3 space-y-2 rounded-xl border border-[#e0b0a8] bg-[#fff4f1] p-3 text-left text-[#2f2218]"
       onSubmit={(e) => {
         e.preventDefault();
         onSend({ reason, details: details.trim(), block });

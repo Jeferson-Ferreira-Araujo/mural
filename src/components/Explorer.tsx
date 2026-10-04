@@ -19,12 +19,13 @@ import {
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, sendBlockedText, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
+import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadge, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal } from "./badges/StoreModal";
@@ -214,19 +215,28 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   }, [unlocked, token, isOwner, loadBoard]);
 
   // dono: aprova ou recusa um pin pendente direto no destaque
-  const moderate = useCallback(
-    async (id: string, approve: boolean) => {
-      const ok = await moderatePin(getBrowserSupabase(), id, approve);
+  const afterModeration = useCallback(
+    async (ok: boolean, done: string) => {
       if (!ok) {
         notify("Não foi possível concluir agora. Tente de novo.");
         return false;
       }
-      notify(approve ? "Pin aprovado! Já aparece para todos." : "Pin recusado.");
+      notify(done);
       await loadBoard();
       if (firstOwnId) void listOwnerPins(getBrowserSupabase(), firstOwnId).then((l) => l && setPendingCount(l.filter((p) => p.status === "pending").length));
       return true;
     },
     [notify, loadBoard, firstOwnId],
+  );
+  const moderation = useMemo(
+    () => ({
+      plan: (own.find((m) => m.slug === slug)?.plan ?? "free") as "free" | "full",
+      moderate: async (id: string, approve: boolean, secret = false) =>
+        afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
+      setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
+      report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Pin relatado e removido."),
+    }),
+    [afterModeration, own, slug],
   );
   // estoque de pins decorativos (FREE: 1 por pin + extras compradas; FULL: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
   const ownPlan = own.find((m) => m.slug === slug)?.plan ?? own[0]?.plan ?? "free";
@@ -447,7 +457,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
-      <ModerationProvider value={isOwner ? { moderate } : null}>
+      <ModerationProvider value={isOwner ? moderation : null}>
         <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           items={revealed ? shownItems : decor}

@@ -5,6 +5,7 @@ import { formatInfo, isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { useState } from "react";
 import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
+import { ReportBox } from "../account/PinsModal";
 
 /**
  * Detalhe de um Pinz: no mural com muitos espaços os cards ficam pequenos (só dá para "bater o olho"),
@@ -15,6 +16,16 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   const open = index !== null && !!items[index];
   const mod = useModeration();
   const [busy, setBusy] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
+  // executa a ação e, se for o caso, fecha o destaque (o pin já saiu do mural ou mudou)
+  async function run(action: () => Promise<boolean>, closeAfter: boolean) {
+    setBusy(true);
+    const ok = await action();
+    setBusy(false);
+    setReporting(false);
+    if (ok && closeAfter) onClose();
+  }
 
   useEffect(() => {
     const d = ref.current;
@@ -88,34 +99,36 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               Segredo: os visitantes veem este pin borrado
             </p>
           )}
-          {mod && item && !isSealed(item) && !isHidden(item) && item.pending && (
-            <div className="flex w-full gap-3" role="group" aria-label="Moderar este pin">
-              <button
-                type="button"
-                disabled={busy}
-                onClick={async () => {
-                  setBusy(true);
-                  const ok = await mod.moderate(item.id, false);
-                  setBusy(false);
-                  if (ok) onClose();
-                }}
-                className="flex-1 cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:opacity-60"
-              >
-                Recusar
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={async () => {
-                  setBusy(true);
-                  const ok = await mod.moderate(item.id, true);
-                  setBusy(false);
-                  if (ok) onClose(); // aprovado: fecha o destaque e o pin já aparece no mural sem o aviso
-                }}
-                className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60"
-              >
-                Aprovar
-              </button>
+          {mod && item && !isSealed(item) && !isHidden(item) && (
+            <div className="flex w-full flex-col gap-2" role="group" aria-label="Moderar este pin">
+              <div className="flex w-full flex-wrap gap-2">
+                {item.pending ? (
+                  <>
+                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
+                      Recusar
+                    </button>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ FULL"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost} flex-1`}>
+                      {mod.plan === "full" ? "🔒 Aprovar como segredo" : "🔒 Segredo (FULL)"}
+                    </button>
+                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="min-w-[8rem] flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
+                      Aprovar
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
+                      Remover
+                    </button>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ FULL"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
+                      {mod.plan !== "full" ? "🔒 Segredo (FULL)" : item.ownerHidden ? "🔒 Segredo — mostrar" : "🔒 Deixar em segredo"}
+                    </button>
+                  </>
+                )}
+                <button type="button" disabled={busy} aria-expanded={reporting} onClick={() => setReporting((v) => !v)} className={`${ghost} flex-1 !border-[#ff9b8f]/50 !text-[#ffb4a8]`}>
+                  🚩 Relatar abuso
+                </button>
+              </div>
+              {reporting && <ReportBox onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />}
             </div>
           )}
         </div>
