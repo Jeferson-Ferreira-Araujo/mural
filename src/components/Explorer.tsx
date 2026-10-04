@@ -20,7 +20,7 @@ import {
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnNickname, useSession } from "@/lib/auth";
+import { getOwnNickname, loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -166,20 +166,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // link direto (/nickname/mural): abre assim que a pessoa estiver logada
   const opened = useRef(false);
   useEffect(() => {
-    if (!initialRef || !logged || opened.current) return;
+    if (!initialRef || opened.current) return; // por link, qualquer pessoa abre o mural (sem conta)
     opened.current = true;
     void openMural(initialRef.nick, initialRef.slug);
-  }, [initialRef, logged, openMural]);
+  }, [initialRef, openMural]);
 
   // saiu da conta: fecha o mural
   useEffect(() => {
-    if (sessionLoading || logged) return;
+    if (sessionLoading || logged || initialRef) return;
     setSelected(null);
     setChoices(null);
     setUnlocked(false);
     setToken(null);
     opened.current = false;
-  }, [sessionLoading, logged]);
+  }, [sessionLoading, logged, initialRef]);
 
   const pickPerson = useCallback(
     async (n: string) => {
@@ -231,7 +231,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <div className="space-y-[1.2em]">
           {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
           {!selected && logged && <SearchBox onSelect={pickPerson} tone={tone} />}
-          {!logged && !sessionLoading && <AuthForm />}
+          {!logged && !sessionLoading && !initialRef && <AuthForm />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
               Buscando…
@@ -329,6 +329,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                 },
                 triedAlready: tried,
                 signAs: myNick,
+                // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
+                loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
               }
             : { mode: "soon" }
         }

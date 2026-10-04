@@ -59,7 +59,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, 
 
 /** Texto para o visitante, por motivo de falha. */
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
-  not_authenticated: "Entre na sua conta para deixar um pin.",
+  not_authenticated: "Entre na sua conta para assinar o pin.",
   blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
   too_many_pending: "Você já tem pins aguardando aprovação neste mural. Espere o dono aprovar para enviar mais.",

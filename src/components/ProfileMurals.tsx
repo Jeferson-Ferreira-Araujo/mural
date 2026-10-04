@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { loginUrl, useSession } from "@/lib/auth";
 import { getProfileMurals, type ProfileMurals as Profile } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, ghostButton, Spinner } from "@/components/ui";
@@ -11,37 +10,19 @@ import { AuthShell, ghostButton, Spinner } from "@/components/ui";
 /** Página da pessoa (só para quem entrou na conta): com um único mural abre direto nele; com vários, lista todos. */
 export function ProfileMurals({ nick }: { nick: string }) {
   const router = useRouter();
-  const { session, loading } = useSession();
   const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
 
   useEffect(() => {
-    if (!session) return;
     void getProfileMurals(getBrowserSupabase(), nick).then((p) => {
       if (p && p.murals.length === 1) router.replace(`/${p.nickname}/${p.murals[0].slug}`);
       else setProfile(p);
     });
-  }, [session, nick, router]);
+  }, [nick, router]);
 
-  if (loading || (session && profile === undefined)) {
+  if (profile === undefined) {
     return (
       <AuthShell>
         <Spinner />
-      </AuthShell>
-    );
-  }
-
-  if (!session) {
-    return (
-      <AuthShell>
-        <h1 className="font-title text-2xl font-semibold">Entre para ver os murais de {nick}</h1>
-        <div className="mt-5 grid gap-2">
-          <Link href={loginUrl(`/${nick}`)} className={ghostButton}>
-            Entrar
-          </Link>
-          <Link href={loginUrl(`/${nick}`, true)} className={ghostButton}>
-            Criar conta
-          </Link>
-        </div>
       </AuthShell>
     );
   }

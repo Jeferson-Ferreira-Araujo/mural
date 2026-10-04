@@ -16,7 +16,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -64,6 +64,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           used={view.items.length}
           triedAlready={composer.triedAlready}
           signAs={composer.signAs}
+          loginHref={composer.loginHref}
           onTried={composer.onTried}
           sending={sending}
           onSend={async (p) => {

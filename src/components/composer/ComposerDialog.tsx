@@ -29,6 +29,8 @@ type Props = {
   triedAlready: boolean;
   /** Nickname de quem está logado: é o que aparece no pin se a pessoa escolher assinar. */
   signAs?: string | null;
+  /** Sem conta: o pin só pode ser anônimo; este endereço leva ao login para quem quiser assinar. */
+  loginHref?: string;
 };
 
 /** Anônimo ou assinado: quem vê o mural só enxerga o nickname se a pessoa escolher assinar. */
@@ -97,7 +99,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  *    (FULL) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, loginHref }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -167,6 +169,14 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
       {signAs && <SignChoice nick={signAs} signed={signed} onChange={setSigned} />}
+      {!signAs && loginHref && (
+        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
+          Seu pin será anônimo.{" "}
+          <a href={loginHref} className="font-bold underline decoration-[#d98a2b] underline-offset-2">
+            Entre ou crie uma conta para assinar
+          </a>
+        </p>
+      )}
 
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
