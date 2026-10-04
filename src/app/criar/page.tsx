@@ -44,7 +44,7 @@ export default function CriarMural() {
 
   const canNext = [
     title.trim().length >= 1,
-    question.trim().length >= 3 && answer.trim().length >= 1,
+    question.trim() === "" || (question.trim().length >= 3 && answer.trim().length >= 1), // pergunta é opcional: em branco = mural público
     true,
   ][step];
 
@@ -125,9 +125,9 @@ export default function CriarMural() {
 
         {step === 1 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">Quem realmente te conhece?</h1>
-            <p className="text-[#4a3826]">Crie uma pergunta que só quem é próximo de você saiba responder.</p>
-            <Field label="Pergunta">
+            <h1 className="font-title text-2xl font-semibold">Quer deixar o mural privado?</h1>
+            <p className="text-[#4a3826]">Opcional. Crie uma pergunta que só quem é próximo de você saiba responder. Se deixar em branco, qualquer pessoa com o link abre o mural.</p>
+            <Field label="Pergunta (opcional)">
               {(id) => (
                 <>
                   <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual era meu apelido na escola?" className={inputClass} autoFocus />
@@ -135,9 +135,11 @@ export default function CriarMural() {
                 </>
               )}
             </Field>
-            <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam).">
-              {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex: Jéf" autoComplete="off" className={inputClass} />}
-            </Field>
+            {question.trim() !== "" && (
+              <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam).">
+                {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex: Jéf" autoComplete="off" className={inputClass} />}
+              </Field>
+            )}
           </>
         )}
 
@@ -150,9 +152,15 @@ export default function CriarMural() {
                 <dd className="font-title text-xl font-semibold">{title.trim()}</dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Pergunta</dt>
-                <dd>{question.trim()}</dd>
-                <dd className="text-[#6b5440]">Resposta: {answer.trim()}</dd>
+                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Acesso</dt>
+                {question.trim() ? (
+                  <>
+                    <dd>{question.trim()}</dd>
+                    <dd className="text-[#6b5440]">Resposta: {answer.trim()}</dd>
+                  </>
+                ) : (
+                  <dd>Público: qualquer pessoa com o link abre</dd>
+                )}
               </div>
             </dl>
             <AddressBox url={muralUrl({ nick: savedNick ?? "", slug: uniqueSlug(title, taken) })} />

@@ -28,8 +28,8 @@ export type PublicMural = {
   plan?: "free" | "full";
   /** Mensagem do mural vazio, personalizada pelo dono (só chega se o mural é FULL). */
   welcome?: string | null;
-  /** false = o dono ainda não definiu a pergunta e a resposta (ninguém consegue abrir) */
-  ready?: boolean;
+  /** true = mural público (sem pergunta): abre direto; com pergunta é privado */
+  open?: boolean;
   stats: MuralStats;
 };
 

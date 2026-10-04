@@ -81,18 +81,22 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
   }, [nick, slug]);
 
+  const autoKey = useRef<string | null>(null); // mural público já entrou sozinho?
+
   // tranca o mural de novo (desbloqueio vencido, apagado pelo dono ou inválido): precisa responder a pergunta outra vez
+  const openMural_ = selected?.open === true;
   const relock = useCallback(
     (why: string) => {
       if (nick && slug) clearGrant({ nick, slug });
       setToken(null);
       setUnlocked(false);
       setItems([]);
-      notify(why);
+      autoKey.current = null;
+      if (!openMural_) notify(why); // mural público volta a entrar sozinho, sem aviso
       // a pergunta pode ter mudado: mostra a atual
       if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
     },
-    [nick, slug, notify],
+    [nick, slug, notify, openMural_],
   );
 
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
@@ -224,6 +228,15 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     [nick, slug],
   );
 
+  // mural público (sem pergunta): entra direto, sem digitar nada
+  useEffect(() => {
+    if (!selected?.open || unlocked || !nick || !slug) return;
+    const key = `${nick}/${slug}`;
+    if (autoKey.current === key) return;
+    autoKey.current = key;
+    void submitAnswer("");
+  }, [selected?.open, unlocked, nick, slug, submitAnswer]);
+
   const panel = useCallback(
     (tone: Tone) => {
       const dark = tone === "dark";
@@ -259,14 +272,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             </section>
           )}
 
-          {selected && selected.ready === false && (
-            <section className={`rounded-[1.1em] border p-[1.1em] text-center ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
-              <p className="font-semibold">{selected.title}</p>
-              <p className="mt-[0.4em] text-[0.9em] opacity-80">Este mural ainda está sendo preparado por {selected.nickname}. Volte em breve!</p>
-            </section>
-          )}
-
-          {selected && selected.ready !== false && (
+          {selected && (
             <UnlockPanel
               key={`${selected.nickname}/${selected.slug}`}
               title={selected.title}
@@ -274,6 +280,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               avatar={selected.avatar}
               onSwap={clear}
               question={selected.question}
+              open={selected.open}
               unlocked={unlocked}
               onSubmit={submitAnswer}
               inputId={`unlock-${tone}`}

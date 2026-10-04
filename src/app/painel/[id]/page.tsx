@@ -38,28 +38,31 @@ export default function EditarMural() {
       setNick(n);
       setTitle(m.title);
       setQuestion(m.question);
-      if (!m.question) setChangeAnswer(true); // mural novo: a resposta é obrigatória
       setWelcome(m.welcome_message ?? "");
     });
   }, [loading, session, id, router]);
 
+  // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
+  const askAnswer = changeAnswer || (question.trim() !== "" && !mural?.question);
+
   async function save(e: FormEvent) {
     e.preventDefault();
     setMsg(null);
-    if (!title.trim() || question.trim().length < 3) {
-      setMsg({ ok: false, text: "Preencha o nome e a pergunta." });
+    const q = question.trim();
+    if (!title.trim() || (q !== "" && q.length < 3)) {
+      setMsg({ ok: false, text: q === "" ? "Preencha o nome do mural." : "A pergunta precisa ter pelo menos 3 letras." });
       return;
     }
-    if (changeAnswer && !answer.trim()) {
-      setMsg({ ok: false, text: "Digite a nova resposta." });
+    if (q !== "" && askAnswer && !answer.trim()) {
+      setMsg({ ok: false, text: "Digite a resposta." });
       return;
     }
     setBusy(true);
     const { error } = await getBrowserSupabase().rpc("update_mural", {
       p_id: id,
       p_title: title.trim(),
-      p_question: question.trim(),
-      p_answer: changeAnswer ? answer.trim() : null,
+      p_question: q,
+      p_answer: q !== "" && askAnswer ? answer.trim() : null,
     });
     if (error) {
       setBusy(false);
@@ -77,8 +80,8 @@ export default function EditarMural() {
       setMural({ ...mural, welcome_message: welcome.trim() || null });
     }
     setBusy(false);
-    setMsg({ ok: true, text: !mural?.question ? "Pronto! Seu mural já está aberto para quem souber a resposta." : changeAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
-    if (mural && !mural.question) setMural({ ...mural, question: question.trim() });
+    setMsg({ ok: true, text: q === "" ? "Salvo! Seu mural está público." : askAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
+    if (mural) setMural({ ...mural, question: q });
     setChangeAnswer(false);
     setAnswer("");
   }
@@ -107,7 +110,7 @@ export default function EditarMural() {
       <Link href="/painel" className="text-sm font-semibold text-[#6b5440] underline">
         ← Meus murais
       </Link>
-      <h1 className="font-title mt-3 text-2xl font-semibold">{mural.question ? "Editar mural" : "Configure o seu mural"}</h1>
+      <h1 className="font-title mt-3 text-2xl font-semibold">Editar mural</h1>
       <p className="mt-1 text-sm break-all text-[#6b5440]">{muralUrl({ nick, slug: mural.slug })}</p>
       <Link href={muralPath({ nick, slug: mural.slug })} className={`${ghostButton} mt-4 w-full sm:w-auto`}>
         Ver mural
@@ -115,7 +118,7 @@ export default function EditarMural() {
 
       <form onSubmit={save} className="mt-6 space-y-5" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Pergunta de desbloqueio">{(fid) => (
+        <Field label="Pergunta de desbloqueio (opcional)" hint="Em branco, o mural fica público: qualquer pessoa com o link abre. Com pergunta e resposta, só entra quem souber.">{(fid) => (
             <>
               <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />
               <QuestionSuggestions onPick={setQuestion} />
@@ -136,12 +139,12 @@ export default function EditarMural() {
           )}
         </Field>
 
-        {changeAnswer ? (
-          <Field label="Nova resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam). Quem já tinha desbloqueado precisará responder de novo.">
+        {question.trim() === "" ? null : askAnswer ? (
+          <Field label={mural.question ? "Nova resposta" : "Resposta"} hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam). Quem já tinha desbloqueado precisará responder de novo.">
             {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" autoFocus className={inputClass} />}
           </Field>
         ) : (
-          !mural.question ? null : <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+          <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
             Alterar a resposta
           </button>
         )}

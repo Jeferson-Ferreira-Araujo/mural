@@ -17,6 +17,8 @@ type Props = {
   /** foto do dono */
   avatar?: string | null;
   onSwap?: () => void;
+  /** mural público (sem pergunta): só o cabeçalho */
+  open?: boolean;
 };
 
 const LockIcon = () => (
@@ -29,7 +31,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap, open = false }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -63,7 +65,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       }
     >
       {title && (
-        <header className={`mb-[0.9em] flex items-start justify-between gap-[0.8em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}>
+        <header className={`flex items-start justify-between gap-[0.8em] ${open ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
           <div className="flex min-w-0 items-center gap-[0.7em]">
             {owner && <Avatar src={avatar} name={owner} className="size-[2.6em]" />}
             <p className="min-w-0">
@@ -78,7 +80,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           )}
         </header>
       )}
-      {unlocked ? (
+      {open ? null : unlocked ? (
         <div className="rise" role="status">
           <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
         </div>

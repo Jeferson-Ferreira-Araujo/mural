@@ -92,16 +92,8 @@ export default function Painel() {
               <PlanBadge plan={m.plan} />
             </div>
             <p className="mt-1 text-sm break-all text-[#6b5440]">{muralUrl({ nick, slug: m.slug })}</p>
+            <p className="mt-1 text-xs font-semibold text-[#6b5440]">{m.question ? "🔒 Privado: só entra quem souber a resposta" : "🌐 Público: qualquer pessoa com o link abre"}</p>
 
-            {!m.question && (
-              <div role="status" className="mt-4 rounded-xl border border-[#e0b04a] bg-[#fff6dd] p-4">
-                <p className="text-sm font-bold">Falta um passo para o seu mural abrir</p>
-                <p className="mt-1 text-sm text-[#4a3826]">Defina a pergunta e a resposta que só quem te conhece sabe. Enquanto isso, ninguém consegue abrir o mural.</p>
-                <Link href={`/painel/${m.id}`} className={`${primaryButton} mt-3`}>
-                  Definir pergunta e resposta
-                </Link>
-              </div>
-            )}
 
             <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
               {(
