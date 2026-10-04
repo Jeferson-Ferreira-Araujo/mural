@@ -107,8 +107,8 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
                       Recusar
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ FULL"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost} flex-1`}>
-                      {mod.plan === "full" ? "🔒 Aprovar como segredo" : "🔒 Segredo (FULL)"}
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost} flex-1`}>
+                      {mod.plan === "full" ? "🔒 Aprovar como segredo" : "🔒 Segredo (PLUS)"}
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="min-w-[8rem] flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
                       Aprovar
@@ -119,8 +119,8 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
                       Remover
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ FULL"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
-                      {mod.plan !== "full" ? "🔒 Segredo (FULL)" : item.ownerHidden ? "🔒 Segredo — mostrar" : "🔒 Deixar em segredo"}
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
+                      {mod.plan !== "full" ? "🔒 Segredo (PLUS)" : item.ownerHidden ? "🔒 Segredo — mostrar" : "🔒 Deixar em segredo"}
                     </button>
                   </>
                 )}

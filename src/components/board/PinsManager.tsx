@@ -30,7 +30,7 @@ type Props = {
 };
 
 /**
- * Moderação do dono: aprova ou recusa os pins novos (nada aparece no mural antes disso) e, no FULL,
+ * Moderação do dono: aprova ou recusa os pins novos (nada aparece no mural antes disso) e, no PLUS,
  * escolhe pin por pin o que fica visível e o que fica em blur para quem visita.
  */
 export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, onSetHidden, onReport, tone = "light" }: Props) {
@@ -134,8 +134,8 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
                 <button type="button" className={primary} disabled={busyId === p.id} onClick={() => onApprove(p.id, false)}>
                   Aprovar
                 </button>
-                <button type="button" className={btn} disabled={busyId === p.id || !full} title={full ? "Aprova e deixa em blur para quem visita" : "Disponível no PINZ FULL"} onClick={() => onApprove(p.id, true)}>
-                  {full ? "Aprovar em blur" : "🔒 Aprovar em blur (FULL)"}
+                <button type="button" className={btn} disabled={busyId === p.id || !full} title={full ? "Aprova e deixa em blur para quem visita" : "Disponível no PINZ PLUS"} onClick={() => onApprove(p.id, true)}>
+                  {full ? "Aprovar em blur" : "🔒 Aprovar em blur (PLUS)"}
                 </button>
                 <button type="button" className={btn} disabled={busyId === p.id} onClick={() => onReject(p.id)}>
                   Recusar
@@ -149,7 +149,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       {approved.length > 0 && (
         <section aria-label="Pins no mural">
           <h3 className="text-sm font-bold">No mural ({approved.length})</h3>
-          <p className={`mt-1 text-xs ${muted}`}>{full ? "Escolha quais ficam visíveis e quais ficam em blur para quem visita. Os em blur continuam ocupando o espaço, e o conteúdo não é enviado." : "No PINZ FULL você escolhe quais pins ficam em blur para os visitantes."}</p>
+          <p className={`mt-1 text-xs ${muted}`}>{full ? "Escolha quais ficam visíveis e quais ficam em blur para quem visita. Os em blur continuam ocupando o espaço, e o conteúdo não é enviado." : "No PINZ PLUS você escolhe quais pins ficam em blur para os visitantes."}</p>
           <ul className="mt-3 space-y-2">
             {approved.map((p) => (
               <Row key={p.id} p={p}>

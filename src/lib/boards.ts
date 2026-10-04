@@ -26,5 +26,5 @@ export const DEFAULT_BOARD: BoardId = "cortica";
 
 export const boardById = (id?: string | null): BoardInfo => BOARDS.find((b) => b.id === id) ?? BOARDS[0];
 
-/** Trocar o fundo é do PINZ FULL ou de quem já comprou créditos. (Cobrança real ainda não existe.) */
+/** Trocar o fundo é do PINZ PLUS ou de quem já comprou créditos. (Cobrança real ainda não existe.) */
 export const canChangeBoard = (plan: PlanId, credits: number) => plan === "full" || credits > 0;

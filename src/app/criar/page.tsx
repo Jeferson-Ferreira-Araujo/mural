@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAccount } from "@/lib/account";
-import { PLANS, NEW_MURAL_COST } from "@/lib/plans";
+import { NEW_MURAL_COST } from "@/lib/plans";
+import { fetchInventory } from "@/lib/badges";
 import { getOwnMurals, getOwnNickname, homeRouteFor, useSession } from "@/lib/auth";
 import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -25,6 +25,8 @@ export default function CriarMural() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [taken, setTaken] = useState<string[]>([]);
+  const [slots, setSlots] = useState(1); // murais permitidos: 1 + os comprados na loja
+  const [plus, setPlus] = useState(false);
 
 
   // exige login
@@ -35,9 +37,11 @@ export default function CriarMural() {
       return;
     }
     const sb = getBrowserSupabase();
-    Promise.all([getOwnMurals(sb), getOwnNickname(sb)]).then(([murals, n]) => {
+    Promise.all([getOwnMurals(sb), getOwnNickname(sb), fetchInventory(sb)]).then(([murals, n, inv]) => {
       setTaken(murals.map((m) => m.slug));
       setSavedNick(n);
+      setSlots(1 + (inv?.extraMurals ?? 0));
+      setPlus(inv?.plus === true);
       setReady(true);
     });
   }, [loading, session, router]);
@@ -59,7 +63,7 @@ export default function CriarMural() {
     });
     if (err) {
       setBusy(false);
-      setError(err.message.includes("mural_limit") ? "Seu plano gratuito inclui 1 mural." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err.message.includes("mural_limit") ? "Você já usou todos os murais que tem. Compre um mural extra na loja." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     router.replace(await homeRouteFor(sb)); // vai para o mural novo; segue "Criando…" até a navegação terminar
@@ -73,13 +77,15 @@ export default function CriarMural() {
     );
   }
 
-  // plano gratuito: 1 mural por usuário (novos murais virão com créditos)
-  if (taken.length >= PLANS[getAccount().plan].murals) {
+  // 1 mural por conta; mais murais, só no PLUS (comprando na loja com créditos)
+  if (taken.length >= slots) {
     return (
       <AuthShell>
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
-          <h1 className="font-title text-2xl font-semibold">Seu mural já está no ar</h1>
-          <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito inclui {PLANS.free.murals} mural por pessoa. Um novo mural custará {NEW_MURAL_COST} créditos (em breve).</p>
+          <h1 className="font-title text-2xl font-semibold">{plus ? "Todos os seus murais estão no ar" : "Seu mural já está no ar"}</h1>
+          <p className="mt-2 text-sm text-[#6b5440]">
+            {plus ? `Para ter mais um mural, compre um mural extra na Loja (${NEW_MURAL_COST} créditos) pelo menu da conta.` : "O plano gratuito inclui 1 mural. O PINZ PLUS permite ter mais murais, comprados na loja com créditos."}
+          </p>
           <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
             Ir para o meu mural
           </Link>

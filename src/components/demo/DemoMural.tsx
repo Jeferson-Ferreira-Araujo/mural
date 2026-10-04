@@ -25,7 +25,7 @@ const START_TRIES = 8;
 let uid = 0;
 
 /**
- * Demonstração do modelo do Pinz com dados locais: planos FREE/FULL, 15/28 e 28/28,
+ * Demonstração do modelo do Pinz com dados locais: planos FREE/PLUS, 15/28 e 28/28,
  * mural lotado, "Eu tentei deixar um PINZ" e Cápsula. Nada é salvo nem enviado.
  */
 export function DemoMural() {
@@ -38,7 +38,7 @@ export function DemoMural() {
   const capacity = BOARD_CAPACITY;
   const [credits, setCredits] = useState(false);
   const [boardId, setBoardId] = useState<BoardId>(DEFAULT_BOARD);
-  // moderação (simulada): pins novos ficam pendentes até o dono aprovar; no FULL o dono deixa pins em blur
+  // moderação (simulada): pins novos ficam pendentes até o dono aprovar; no PLUS o dono deixa pins em blur
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
 
@@ -186,7 +186,7 @@ export function DemoMural() {
         }}
         board={boardId}
         onBoard={setBoardId}
-        onBoardLocked={() => notify("Trocar o fundo é do PINZ FULL ou de quem comprou créditos.")}
+        onBoardLocked={() => notify("Trocar o fundo é do PINZ PLUS ou de quem comprou créditos.")}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -5,7 +5,7 @@ type DistOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never
 /** Mensagem ainda sem id (o id nasce quando ela é colada no mural). */
 export type DraftMessage = DistOmit<Message, "id" | "fromCapsule">;
 
-/** O que o visitante envia: a mensagem e, no FULL, uma data de abertura (Cápsula PINZ). */
+/** O que o visitante envia: a mensagem e, no PLUS, uma data de abertura (Cápsula PINZ). */
 export type SendPayload = { message: DraftMessage; capsuleAt?: string; /** espaço do quadro escolhido */ slot: number; /** true = o nickname de quem enviou aparece no pin; false = anônimo */ signed?: boolean };
 
 /**

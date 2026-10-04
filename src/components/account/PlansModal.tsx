@@ -8,23 +8,25 @@ import { Modal } from "./Modal";
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
     { text: "1 mural", on: true },
-    { text: "Até 15 pins no mural", on: true },
+    { text: "15 espaços no mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "Pins decorativos: 1 unidade de cada", on: true },
     { text: "Música, vídeo, voz e local", on: false },
     { text: "Cápsulas PINZ (abrem numa data)", on: false },
     { text: "Deixar pins específicos em segredo", on: false },
-    { text: "Trocar o fundo do mural", on: false },
+    { text: "Trocar o tema do mural", on: false },
+    { text: "Comprar na loja (pins, temas e murais)", on: false },
   ],
   full: [
-    { text: "1 mural", on: true },
-    { text: "Até 28 pins no mural", on: true },
+    { text: "Mais de um mural (comprando com créditos)", on: true },
+    { text: "28 espaços em cada mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "Pins decorativos: quantas unidades quiser", on: true },
     { text: "Música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
     { text: "Deixar pins específicos em segredo", on: true },
-    { text: "Trocar o fundo do mural", on: true },
+    { text: "Temas do mural (comprando com créditos)", on: true },
+    { text: "Loja liberada: compre quanto quiser", on: true },
   ],
 };
 

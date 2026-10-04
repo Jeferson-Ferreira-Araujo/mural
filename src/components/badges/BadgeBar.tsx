@@ -6,7 +6,7 @@ import { useBadges } from "./BadgeContext";
 /**
  * Barra de baixo (só para o dono, no próprio mural): os pins decorativos que ele tem, numa faixa que rola na horizontal.
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
- * No FREE cada pin tem 1 unidade (esgota ao colocar); no FULL é ilimitado. Mais pins e unidades: botão "Loja".
+ * No FREE cada pin tem 1 unidade (esgota ao colocar); no PLUS é ilimitado. Mais pins e unidades: botão "Loja".
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
   const { editable, begin, stock, openStore } = useBadges();

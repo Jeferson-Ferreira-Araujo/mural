@@ -113,7 +113,7 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
 
       <div>
         <p className={`mb-[0.4em] text-[0.8em] font-semibold ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-          Fundo do mural {!canBoard && <span className="font-normal">🔒 PINZ FULL ou créditos</span>}
+          Fundo do mural {!canBoard && <span className="font-normal">🔒 PINZ PLUS ou créditos</span>}
         </p>
         <div role="radiogroup" aria-label="Fundo do mural" className="grid grid-cols-5 gap-[0.35em]">
           {BOARDS.map((b) => {

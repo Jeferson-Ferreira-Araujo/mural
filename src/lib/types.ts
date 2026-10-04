@@ -17,7 +17,7 @@ type Base = {
   tape?: TapeColor;
   /** Pin ainda não aprovado pelo dono: só quem enviou o vê, até a aprovação. */
   pending?: boolean;
-  /** Visão do dono: este pin está em blur para quem visita (recurso FULL). */
+  /** Visão do dono: este pin está em blur para quem visita (recurso PLUS). */
   ownerHidden?: boolean;
   /** Nickname de quem assinou o pin. Sem isso o pin é anônimo (o autor só existe no banco). */
   signedBy?: string;
@@ -25,7 +25,7 @@ type Base = {
   ownerReview?: boolean;
 };
 
-/** Os formatos. FREE: postit, text, list, photo. FULL: + music, video, voice, place. */
+/** Os formatos. FREE: postit, text, list, photo. PLUS: + music, video, voice, place. */
 export type Message =
   | (Base & { type: "postit"; color: PostItColor; text: string })
   | (Base & { type: "text"; variant: "letter" | "notebook"; text: string })
@@ -45,7 +45,7 @@ export type MessageType = Message["type"];
 export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number };
 
 /**
- * Espaço ocupado cujo conteúdo o servidor NÃO enviou: pin aguardando aprovação de outra pessoa ou pin que o dono (FULL)
+ * Espaço ocupado cujo conteúdo o servidor NÃO enviou: pin aguardando aprovação de outra pessoa ou pin que o dono (PLUS)
  * deixou em blur. Aparece como um cartão do mesmo tipo, borrado e com texto de enchimento.
  */
 export type HiddenItem = {

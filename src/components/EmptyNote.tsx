@@ -1,10 +1,10 @@
 import { Pin, Tape } from "./messages/fasteners";
 
-/** Mensagem padrão do mural vazio (o dono do plano FULL pode trocá-la). */
+/** Mensagem padrão do mural vazio (o dono do plano PLUS pode trocá-la). */
 export const DEFAULT_WELCOME = "Nenhuma mensagem neste mural. Seja o primeiro a deixar!";
 
 /** Estado de mural sem mensagens: um bilhete preso na cortiça. Tamanho via font-size do pai (em). */
-export function EmptyNote({ unlocked, message }: { unlocked: boolean; /** texto personalizado do dono (FULL) */ message?: string | null }) {
+export function EmptyNote({ unlocked, message }: { unlocked: boolean; /** texto personalizado do dono (PLUS) */ message?: string | null }) {
   const text = unlocked ? message?.trim() || DEFAULT_WELCOME : "Responda a pergunta para deixar uma mensagem!";
   return (
     <article

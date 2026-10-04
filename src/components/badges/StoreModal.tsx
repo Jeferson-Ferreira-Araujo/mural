@@ -1,107 +1,149 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { BADGES, badgeSrc, stockFor, type BadgeInventory } from "@/lib/badges";
-import type { PlanId } from "@/lib/plans";
+import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
+import { BOARDS } from "@/lib/boards";
+import { CREDIT_PACKS } from "@/lib/plans";
 import { Modal } from "../account/Modal";
 
-type Tab = "store" | "mine";
+export type BuyItem = { kind: "badge"; key: number } | { kind: "board"; id: string } | { kind: "mural" };
+type Tab = "pins" | "themes" | "murals" | "credits";
+
+const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 
 /**
- * Loja de pins decorativos: os novos se liberam com créditos; no FREE cada pin tem 1 unidade e dá para comprar unidades extras.
- * No FULL a quantidade de cada pin é ilimitada. (A compra de créditos em dinheiro ainda não existe.)
+ * Loja do Pinz. Todo mundo pode ver; quem tem o plano PLUS compra com créditos: pins decorativos, temas (fundos) e murais extras.
+ * Os pacotes de créditos aparecem aqui (a cobrança em dinheiro ainda não existe).
  */
-export function StoreModal({
-  open,
-  onClose,
-  plan,
-  inventory,
-  placed,
-  onBuy,
-}: {
-  open: boolean;
-  onClose: () => void;
-  plan: PlanId;
-  inventory: BadgeInventory | null;
-  /** quantas unidades de cada pin já estão no mural */
-  placed: Record<number, number>;
-  onBuy: (key: number, mode: "unlock" | "unit") => Promise<void>;
-}) {
-  const [tab, setTab] = useState<Tab>("store");
-  const [busy, setBusy] = useState<number | null>(null);
+export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<void> }) {
+  const [tab, setTab] = useState<Tab>("pins");
+  const [busy, setBusy] = useState<string | null>(null);
   const credits = inventory?.credits ?? 0;
+  const plus = inventory?.plus === true;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
-  const items = BADGES.filter((b) => byKey.has(b.key));
-  const shop = items.filter((b) => !byKey.get(b.key)!.owned);
-  const mine = items.filter((b) => byKey.get(b.key)!.owned);
-  const list = tab === "store" ? shop : mine;
+  const pinsToBuy = BADGES.filter((b) => byKey.has(b.key) && !byKey.get(b.key)!.owned);
+  const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
+  const slots = 1 + (inventory?.extraMurals ?? 0);
+  const used = inventory?.muralCount ?? 0;
 
-  async function buy(key: number, mode: "unlock" | "unit") {
-    setBusy(key);
-    await onBuy(key, mode);
+  async function buy(id: string, item: BuyItem) {
+    setBusy(id);
+    await onBuy(item);
     setBusy(null);
   }
+  const can = (cost: number) => plus && credits >= cost;
+  const label = (cost: number) => (!plus ? "Só no PLUS" : credits >= cost ? `Comprar · ${cost} cr.` : `${cost} cr. (faltam)`);
 
   return (
-    <Modal open={open} onClose={onClose} title="Loja de pins" wide>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
+    <Modal open={open} onClose={onClose} title="Loja" wide>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
         <p className="text-sm">
           Seus créditos: <strong className="text-lg">{credits}</strong>
         </p>
         <p className="text-xs text-[#6b5440]">Comprar créditos: em breve</p>
       </div>
-      <p className="mb-3 text-sm text-[#4a3826]">{plan === "full" ? "No PINZ FULL você coloca quantas unidades quiser de cada pin que tem. Os novos se liberam com créditos." : "No PINZ FREE cada pin tem 1 unidade: ao colocar no mural ele esgota na barra. Compre unidades extras ou libere novos pins com créditos."}</p>
+      {!plus && (
+        <p role="status" className="mb-3 rounded-xl border border-[#e0b04a] bg-[#fff6dd] px-4 py-3 text-sm text-[#4a3000]">
+          🔒 Você pode conhecer a loja, mas só quem tem o <strong>PINZ PLUS</strong> consegue comprar.
+        </p>
+      )}
 
-      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
-            ["store", `Novos pins (${shop.length})`],
-            ["mine", `Meus pins (${mine.length})`],
+            ["pins", "Pins"],
+            ["themes", "Temas"],
+            ["murals", "Murais"],
+            ["credits", "Créditos"],
           ] as const
-        ).map(([id, label]) => (
+        ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
-            {label}
+            {text}
           </button>
         ))}
       </div>
 
       {!inventory ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
-      ) : list.length === 0 ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">{tab === "store" ? "Você já liberou todos os pins. Novos chegam em breve!" : "Você ainda não tem pins."}</p>
-      ) : (
-        <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-          {list.map((b) => {
-            const c = byKey.get(b.key)!;
-            const st = stockFor(c, plan, placed[b.key] ?? 0);
-            const can = (cost: number) => credits >= cost;
-            return (
-              <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
-                <div className="grid h-16 w-full place-items-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
-                </div>
-                <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Pin ${b.key}`}</p>
-                {!c.owned ? (
-                  <button type="button" disabled={busy === b.key || !can(c.price)} onClick={() => buy(b.key, "unlock")} className="mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50">
-                    {can(c.price) ? `Liberar · ${c.price} cr.` : `${c.price} cr. (faltam)`}
+      ) : tab === "pins" ? (
+        pinsToBuy.length === 0 ? (
+          <p className="py-6 text-center text-sm text-[#6b5440]">Você já liberou todos os pins. Novos chegam em breve!</p>
+        ) : (
+          <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+            {pinsToBuy.map((b) => {
+              const c = byKey.get(b.key)!;
+              return (
+                <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
+                  <div className="grid h-16 w-full place-items-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
+                  </div>
+                  <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Pin ${b.key}`}</p>
+                  <button type="button" disabled={busy === `b${b.key}` || !can(c.price)} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key })} className={buyBtn}>
+                    {label(c.price)}
                   </button>
-                ) : plan === "full" ? (
-                  <p className="mt-2 text-[11px] font-semibold text-[#2f6a3c]">Ilimitado ✓</p>
-                ) : (
-                  <>
-                    <p className="mt-1 text-[11px] text-[#6b5440]">
-                      {st.left} de {st.total} disponível
-                    </p>
-                    <button type="button" disabled={busy === b.key || !can(c.unitPrice)} onClick={() => buy(b.key, "unit")} className="mt-1.5 w-full cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-2 py-1.5 text-xs font-semibold transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-50">
-                      {can(c.unitPrice) ? `+1 unidade · ${c.unitPrice} cr.` : "Sem créditos"}
+                </li>
+              );
+            })}
+          </ul>
+        )
+      ) : tab === "themes" ? (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {BOARDS.map((b) => {
+            const info = boards.get(b.id);
+            const owned = info?.owned ?? b.id === "cortica";
+            return (
+              <li key={b.id} className="overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={b.image} alt={`Tema ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                <div className="p-3">
+                  <p className="font-title text-base font-semibold">{b.name}</p>
+                  {owned ? (
+                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{b.id === "cortica" ? "Tema padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
+                  ) : (
+                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id })} className={buyBtn}>
+                      {label(info?.price ?? 3)}
                     </button>
-                  </>
-                )}
+                  )}
+                </div>
               </li>
             );
           })}
         </ul>
+      ) : tab === "murals" ? (
+        <div className="rounded-2xl border border-[#e1d3ba] bg-white/70 p-5">
+          <h3 className="font-title text-lg font-semibold">Mural extra</h3>
+          <p className="mt-1 text-sm text-[#4a3826]">Tenha mais de um mural: um para cada ocasião ou grupo de amigos. Cada mural tem 28 espaços.</p>
+          <p className="mt-3 text-sm">
+            Seus murais: <strong>{used}</strong> de <strong>{slots}</strong> permitidos
+          </p>
+          <button type="button" disabled={busy === "mural" || !can(inventory.muralPrice)} onClick={() => buy("mural", { kind: "mural" })} className={`${buyBtn} sm:max-w-xs`}>
+            {plus ? (credits >= inventory.muralPrice ? `Comprar um mural · ${inventory.muralPrice} cr.` : `${inventory.muralPrice} cr. (faltam)`) : "Só no PLUS"}
+          </button>
+          {plus && used < slots && (
+            <Link href="/criar" className="mt-3 inline-block rounded-lg border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold hover:bg-[#efe4cf]">
+              Criar o novo mural agora
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {CREDIT_PACKS.map((p) => (
+              <li key={p.credits} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-center">
+                <p className="font-title text-3xl font-semibold">{p.credits}</p>
+                <p className="text-xs text-[#6b5440]">créditos</p>
+                <p className="mt-2 text-lg font-bold">{p.price}</p>
+                {p.note && <p className="text-[11px] font-semibold text-[#2f6a3c]">{p.note}</p>}
+                <button type="button" disabled className={buyBtn}>
+                  Em breve
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-center text-xs text-[#6b5440]">Os créditos servem para comprar pins, temas e murais extras. Quanto maior o pacote, mais créditos de bônus.</p>
+        </div>
       )}
     </Modal>
   );

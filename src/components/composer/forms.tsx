@@ -225,7 +225,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Música (FULL) ----------
+// ---------- Música (PLUS) ----------
 export function MusicForm({ onChange }: { onChange: DraftChange }) {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
@@ -254,7 +254,7 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Vídeo (FULL) ----------
+// ---------- Vídeo (PLUS) ----------
 const MAX_VIDEO_MB = 50;
 
 function formatDuration(sec: number) {
@@ -302,7 +302,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Voz (FULL) ----------
+// ---------- Voz (PLUS) ----------
 const MAX_VOICE_SEC = 60;
 const MAX_AUDIO_MB = 10;
 
@@ -439,7 +439,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Local / Maps (FULL) ----------
+// ---------- Local / Maps (PLUS) ----------
 type PlaceHit = { name: string; address: string; lat: number; lon: number };
 
 /** Busca de lugares pelo nome (Nominatim/OpenStreetMap). Só roda quando a pessoa pede. */

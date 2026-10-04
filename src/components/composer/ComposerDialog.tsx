@@ -96,7 +96,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  * Compositor do visitante (quem visita NUNCA paga nem se cadastra).
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve (com a prévia no topo, já com um exemplo) →
- *    (FULL) opcionalmente Cápsula → cola no mural.
+ *    (PLUS) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
 function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, loginHref }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {

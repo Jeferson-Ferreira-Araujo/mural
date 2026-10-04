@@ -90,7 +90,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
               <p className="font-title truncate text-lg font-semibold">{data ? data.mural.title : "Mural"}</p>
               {data && (
                 <p className="truncate text-xs text-[#6b5440]">
-                  de <strong>{data.mural.owner}</strong> · {data.mural.plan.toUpperCase()} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} · {data.pins.length} pins · {data.badges.length} botons ·{" "}
+                  de <strong>{data.mural.owner}</strong> · {data.mural.plan === "full" ? "PLUS" : "FREE"} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} · {data.pins.length} pins · {data.badges.length} botons ·{" "}
                   <Link href={`/${data.mural.owner}/${data.mural.slug}`} target="_blank" className="underline">
                     abrir no site
                   </Link>
@@ -276,7 +276,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                 {u.murals.map((m) => (
                   <li key={m.id} className="rounded-2xl border border-[#e1d3ba] bg-white/60 p-3">
                     <p className="font-semibold">
-                      {m.title} <Tag tone={m.plan === "full" ? "gold" : "plain"}>{m.plan}</Tag> <Tag>{m.private ? "privado" : "público"}</Tag>
+                      {m.title} <Tag tone={m.plan === "full" ? "gold" : "plain"}>{m.plan === "full" ? "plus" : "free"}</Tag> <Tag>{m.private ? "privado" : "público"}</Tag>
                     </p>
                     <p className="text-xs text-[#6b5440]">
                       {m.pins} pins ({m.pending} pendentes) · {m.badges} botons ·{" "}
@@ -288,8 +288,8 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                       <button type="button" className={btn} onClick={() => onOpenMural(m.id)}>
                         Ver mural
                       </button>
-                      <button type="button" className={btn} disabled={busy} onClick={() => run(`Plano do mural: ${m.plan === "full" ? "FREE" : "FULL"}.`, () => rpc("admin_set_plan", { p_mural_id: m.id, p_plan: m.plan === "full" ? "free" : "full" }))}>
-                        {m.plan === "full" ? "Mudar para FREE" : "Mudar para FULL"}
+                      <button type="button" className={btn} disabled={busy} onClick={() => run(`Plano do mural: ${m.plan === "full" ? "FREE" : "PLUS"}.`, () => rpc("admin_set_plan", { p_mural_id: m.id, p_plan: m.plan === "full" ? "free" : "full" }))}>
+                        {m.plan === "full" ? "Mudar para FREE" : "Mudar para PLUS"}
                       </button>
                     </div>
                   </li>
@@ -449,7 +449,7 @@ export default function Admin() {
                         <strong className="font-title text-lg">{u.nickname}</strong>
                         {u.banned && <Tag tone="red">bloqueado</Tag>}
                         {u.isAdmin && <Tag tone="dark">admin</Tag>}
-                        {u.murals.some((m) => m.plan === "full") && <Tag tone="gold">full</Tag>}
+                        {u.murals.some((m) => m.plan === "full") && <Tag tone="gold">plus</Tag>}
                       </p>
                       <p className="truncate text-sm text-[#6b5440]">{u.email}</p>
                       <p className="mt-1 text-xs text-[#6b5440]">

@@ -185,8 +185,8 @@ export function AccountDrawer({
               )}
               <Row
                 onClick={onOpenStore}
-                label="Loja de pins"
-                hint={`Seus créditos: ${credits}`}
+                label="Loja"
+                hint={`Pins, temas e murais · ${credits} créditos`}
                 icon={
                   <svg {...ic}>
                     <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
@@ -197,7 +197,7 @@ export function AccountDrawer({
               <Row
                 onClick={() => setModal("plans")}
                 label="Planos"
-                hint={`Seu plano: ${account.plan === "full" ? "FULL" : "FREE"}`}
+                hint={`Seu plano: ${account.plan === "full" ? "PLUS" : "FREE"}`}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />

@@ -3,9 +3,11 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { fetchInventory, type BoardOffer } from "@/lib/badges";
+import { BOARDS } from "@/lib/boards";
 import { Field, ghostButton, inputClass, primaryButton, QuestionSuggestions } from "../ui";
 
-/** Editar o mural: nome, pergunta (opcional: em branco = público), mensagem do mural vazio (FULL) e excluir. */
+/** Editar o mural: nome, pergunta (opcional: em branco = público), mensagem do mural vazio (PLUS) e excluir. */
 export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void }) {
   const [title, setTitle] = useState(mural.title);
   const [question, setQuestion] = useState(mural.question);
@@ -14,6 +16,9 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [offers, setOffers] = useState<BoardOffer[]>([]);
+  const [board, setBoard] = useState("");
+  const [currentBoard, setCurrentBoard] = useState("");
   const [had, setHad] = useState(mural.question); // pergunta já salva (define se a resposta é nova)
 
   useEffect(() => {
@@ -21,6 +26,16 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
     setQuestion(mural.question);
     setHad(mural.question);
   }, [mural.id, mural.title, mural.question]);
+
+  useEffect(() => {
+    const sb = getBrowserSupabase();
+    void fetchInventory(sb).then((inv) => setOffers(inv?.boards ?? []));
+    void sb.from("murals").select("board").eq("id", mural.id).maybeSingle().then(({ data }) => {
+      const b = (data as { board: string } | null)?.board ?? "cortica";
+      setBoard(b);
+      setCurrentBoard(b);
+    });
+  }, [mural.id]);
 
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
   const askAnswer = changeAnswer || (question.trim() !== "" && !had);
@@ -44,6 +59,15 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
       setBusy(false);
       setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
       return;
+    }
+    if (board && board !== currentBoard) {
+      const { error: eb } = await sb.rpc("set_mural_board", { p_mural_id: mural.id, p_board: board });
+      if (eb) {
+        setBusy(false);
+        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível trocar o tema (compre-o na loja)." });
+        return;
+      }
+      setCurrentBoard(board);
     }
     setBusy(false);
     setMsg({ ok: true, text: q === "" ? "Salvo! Seu mural está público." : askAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
@@ -85,6 +109,21 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
             Alterar a resposta
           </button>
         )}
+        <Field label="Tema do mural" hint="Os temas se compram na loja com créditos (PINZ PLUS).">
+          {(fid) => (
+            <select id={fid} value={board} onChange={(e) => setBoard(e.target.value)} className={inputClass}>
+              {BOARDS.map((b) => {
+                const owned = b.id === "cortica" || offers.find((o) => o.id === b.id)?.owned === true;
+                return (
+                  <option key={b.id} value={b.id} disabled={!owned}>
+                    {b.name}
+                    {owned ? "" : " (na loja)"}
+                  </option>
+                );
+              })}
+            </select>
+          )}
+        </Field>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
             {msg.text}

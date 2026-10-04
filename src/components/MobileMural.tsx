@@ -23,7 +23,7 @@ type Props = {
   info: { title: string; owner: string; avatar?: string | null };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
-  /** texto do mural vazio (FULL) */
+  /** texto do mural vazio (PLUS) */
   welcome?: string | null;
   /** logado: ícones de pesquisar e menu; sem conta: links de entrar */
   account?: AccountApi;

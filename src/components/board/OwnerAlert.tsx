@@ -24,7 +24,7 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
           "Ninguém tentou deixar um PINZ ainda."
         )}
       </p>
-      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{planLimit > 0 ? "Libere mais espaços com o PINZ FULL ou comprando créditos (em breve)." : "Em breve: use créditos para abrir outro mural."}</p>
+      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{planLimit > 0 ? "Libere mais espaços com o PINZ PLUS ou comprando créditos (em breve)." : "Em breve: use créditos para abrir outro mural."}</p>
     </section>
   );
 }

@@ -27,8 +27,8 @@ import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadge, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
-import { StoreModal } from "./badges/StoreModal";
+import { buyBadge, buyBoard, buyMuralSlot, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -238,7 +238,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }),
     [afterModeration, own, slug],
   );
-  // estoque de pins decorativos (FREE: 1 por pin + extras compradas; FULL: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
+  // estoque de pins decorativos (FREE: 1 por pin + extras compradas; PLUS: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
   const ownPlan = own.find((m) => m.slug === slug)?.plan ?? own[0]?.plan ?? "free";
   const placedCount = useMemo(() => {
     const c: Record<number, number> = {};
@@ -253,12 +253,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     [inventory, ownPlan, placedCount],
   );
   const buy = useCallback(
-    async (key: number, mode: "unlock" | "unit") => {
-      const res = await buyBadge(getBrowserSupabase(), key, mode);
+    async (item: BuyItem) => {
+      const sb = getBrowserSupabase();
+      const res = item.kind === "badge" ? await buyBadge(sb, item.key, "unlock") : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(mode === "unlock" ? "Pin liberado! Já está na sua barra." : "+1 unidade adicionada.");
+        notify(item.kind === "badge" ? "Pin liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
-      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : "Não foi possível concluir a compra agora.");
+      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "As compras da loja são do PINZ PLUS." : "Não foi possível concluir a compra agora.");
     },
     [notify, reloadInventory],
   );
@@ -530,7 +531,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
             }}
           />
-          <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} plan={ownPlan} inventory={inventory} placed={placedCount} onBuy={buy} />
+          <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}

@@ -82,7 +82,7 @@ export function BoardCanvas({
   locked?: boolean;
   onCompose: ((slot?: number) => void) | null;
   hint?: boolean;
-  /** Texto do bilhete do mural vazio (personalizado pelo dono FULL). */
+  /** Texto do bilhete do mural vazio (personalizado pelo dono PLUS). */
   emptyMessage?: string | null;
   /** Quadro inteiro visível (celular deitado), em vez de preencher o espaço cortando as bordas. */
   contain?: boolean;

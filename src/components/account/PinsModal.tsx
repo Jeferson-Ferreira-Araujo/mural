@@ -51,7 +51,7 @@ export function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportRe
   );
 }
 
-/** Pins do mural em carrossel: "Para aprovar" (um por vez, com aprovar/recusar) e "No mural" (segredo no FULL, remover). */
+/** Pins do mural em carrossel: "Para aprovar" (um por vez, com aprovar/recusar) e "No mural" (segredo no PLUS, remover). */
 export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void }) {
   const [pins, setPins] = useState<OwnerPin[] | null>(null);
   const [tab, setTab] = useState<"pending" | "approved">("pending");

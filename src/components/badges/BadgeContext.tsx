@@ -12,7 +12,7 @@ type Ctx = {
   editable: boolean;
   /** botom que está sendo arrastado (some do lugar de origem até soltar) */
   draggingId: string | null;
-  /** unidades que a pessoa ainda pode colocar de cada pin (FREE: 1 por pin; FULL: ilimitado) */
+  /** unidades que a pessoa ainda pode colocar de cada pin (FREE: 1 por pin; PLUS: ilimitado) */
   stock: (key: number) => Stock;
   openStore: () => void;
   begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;

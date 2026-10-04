@@ -95,7 +95,7 @@ export const badgeSrc = (key: number) => `/img/badges/b${String(key).padStart(2,
 
 /** Largura de um botom no mural, em em (1em ≈ 1% da largura do quadro). */
 export const BADGE_EM = 3;
-export const MAX_BADGES = 200; // teto técnico (o FULL é "quantos quiser")
+export const MAX_BADGES = 200; // teto técnico (o PLUS é "quantos quiser")
 
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
@@ -132,7 +132,18 @@ export async function removeBadge(sb: SupabaseClient, id: string): Promise<boole
 
 /** Um pin do catálogo, do ponto de vista de quem está logado. */
 export type CatalogItem = { key: number; /** todo mundo tem (1 unidade no FREE) */ starter: boolean; /** preço, em créditos, para liberar (pins da loja) */ price: number; /** preço de +1 unidade (FREE) */ unitPrice: number; owned: boolean; /** unidades extras compradas */ extra: number };
-export type BadgeInventory = { credits: number; catalog: CatalogItem[] };
+export type BoardOffer = { id: string; price: number; owned: boolean };
+export type BadgeInventory = {
+  credits: number;
+  /** a conta tem o plano PLUS (só ele compra na loja) */
+  plus: boolean;
+  extraMurals: number;
+  muralCount: number;
+  /** preço de um mural extra, em créditos */
+  muralPrice: number;
+  boards: BoardOffer[];
+  catalog: CatalogItem[];
+};
 
 export async function fetchInventory(sb: SupabaseClient): Promise<BadgeInventory | null> {
   const { data, error } = await sb.rpc("get_badge_inventory");
@@ -140,14 +151,18 @@ export async function fetchInventory(sb: SupabaseClient): Promise<BadgeInventory
   return data as BadgeInventory;
 }
 
-export type BuyResult = { ok: true; credits: number } | { ok: false; reason: "no_credits" | "error" };
-export async function buyBadge(sb: SupabaseClient, key: number, mode: "unlock" | "unit"): Promise<BuyResult> {
-  const { data, error } = await sb.rpc("buy_badge", { p_key: key, p_mode: mode });
+export type BuyResult = { ok: true; credits: number } | { ok: false; reason: "no_credits" | "plus_required" | "error" };
+async function buy(sb: SupabaseClient, fn: string, args: Record<string, unknown>): Promise<BuyResult> {
+  const { data, error } = await sb.rpc(fn, args);
   if (!error && data) return { ok: true, credits: (data as { credits: number }).credits };
-  return { ok: false, reason: (error?.message ?? "").includes("no_credits") ? "no_credits" : "error" };
+  const m = error?.message ?? "";
+  return { ok: false, reason: m.includes("no_credits") ? "no_credits" : m.includes("plus_required") ? "plus_required" : "error" };
 }
+export const buyBadge = (sb: SupabaseClient, key: number, mode: "unlock" | "unit") => buy(sb, "buy_badge", { p_key: key, p_mode: mode });
+export const buyBoard = (sb: SupabaseClient, id: string) => buy(sb, "buy_board", { p_board: id });
+export const buyMuralSlot = (sb: SupabaseClient) => buy(sb, "buy_mural_slot", {});
 
-/** Quantas unidades de um pin a pessoa ainda pode colocar. left = null: ilimitado (FULL). owned = false: ainda não liberou (loja). */
+/** Quantas unidades de um pin a pessoa ainda pode colocar. left = null: ilimitado (PLUS). owned = false: ainda não liberou (loja). */
 export type Stock = { owned: boolean; left: number | null; total: number | null };
 export function stockFor(item: CatalogItem | undefined, plan: "free" | "full", placedOfKey: number): Stock {
   if (!item || !item.owned) return { owned: false, left: 0, total: 0 };

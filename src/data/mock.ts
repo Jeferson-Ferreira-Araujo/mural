@@ -4,7 +4,7 @@ import { isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
 /**
  * Dados MOCKADOS — apenas para demonstração do frontend (sem banco, sem envio real).
  * A ordem do pool é a ordem dos espaços no mural: os 5 primeiros só usam formatos FREE,
- * então um PINZ FREE (15 espaços) e um PINZ FULL (28 espaços) ficam coerentes.
+ * então um PINZ FREE (15 espaços) e um PINZ PLUS (28 espaços) ficam coerentes.
  */
 
 const MIN = 60_000;
@@ -45,7 +45,7 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
     },
     { id: "m4", type: "photo", scene: "hills", caption: "Parceiro de sempre! 🐾" },
     { id: "m5", type: "postit", color: "pink", text: "♡ Você tem um coração gigante e isso faz o mundo ser mais leve. Nunca mude!" },
-    // --- a partir daqui, formatos FULL ---
+    // --- a partir daqui, formatos PLUS ---
     {
       id: "m6",
       type: "music",
