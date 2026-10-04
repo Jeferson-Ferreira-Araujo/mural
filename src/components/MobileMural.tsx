@@ -37,7 +37,7 @@ export function LeavePinButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#d9a21b] text-lg font-bold text-[#2a1c12] shadow-[0_0.5rem_1.4rem_rgba(120,70,0,.45)] transition hover:bg-[#e6ae22] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+      className="flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#ffc400] text-lg font-bold text-[#2a1c12] shadow-[0_0.5rem_1.4rem_rgba(120,70,0,.45)] transition hover:bg-[#ffd21f] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
     >
       <span aria-hidden className="text-2xl leading-none">+</span> Deixar um PIN
     </button>
