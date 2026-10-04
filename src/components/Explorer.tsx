@@ -24,6 +24,7 @@ import { getOwnNickname, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
+import { IntroAnimation, introSeen } from "./IntroAnimation";
 import { MuralScreen } from "./MuralScreen";
 import { useToast } from "./useToast";
 import { SearchBox } from "./SearchBox";
@@ -285,8 +286,18 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   useEffect(() => setDecor(randomMural(Date.now())), []);
   const revealed = unlocked && !!selected;
 
+  // abertura animada: só na tela inicial, para quem ainda não entrou, uma vez por visita
+  const [playIntro, setPlayIntro] = useState(false);
+  const introChecked = useRef(false);
+  useEffect(() => {
+    if (introChecked.current || sessionLoading) return;
+    introChecked.current = true;
+    if (!logged && !introSeen()) setPlayIntro(true);
+  }, [sessionLoading, logged]);
+
   return (
     <>
+      {playIntro && <IntroAnimation />}
       <MuralScreen
         items={revealed ? items : decor}
         plan={revealed ? (selected?.plan ?? "free") : "full"}

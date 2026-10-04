@@ -82,7 +82,7 @@ export function AuthForm() {
   }
 
   return (
-    <section aria-label="Entrar ou criar conta" className="rounded-2xl bg-[#fbf6ea] p-4 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
+    <section aria-label="Entrar ou criar conta" className="intro-form rounded-2xl bg-[#fbf6ea] p-4 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
       <div role="tablist" aria-label="Entrar ou criar conta" className="grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(["login", "signup"] as const).map((m) => (
           <button
