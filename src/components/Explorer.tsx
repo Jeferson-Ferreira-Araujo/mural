@@ -20,7 +20,8 @@ import {
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, listOwnerPins, moderatePin, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnMurals, getOwnNickname, loginUrl, useSession, type OwnMural } from "@/lib/auth";
+import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
+import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
@@ -388,7 +389,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               title={selected.title}
               owner={selected.nickname}
               avatar={selected.avatar}
-              onSwap={clear}
+              onSwap={logged ? () => setSearchOpen(true) : clear}
               question={selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}
@@ -419,6 +420,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     if (!logged && !introSeen()) setPlayIntro(true);
     else introSkip();
   }, [sessionLoading, logged]);
+
+  // quem está logado não tem tela inicial: vai direto para o próprio mural (a busca fica no cabeçalho)
+  const goHome = logged && !initialRef && !selected && !choices && !loading;
+  useEffect(() => {
+    if (!goHome) return;
+    void homeRouteFor(getBrowserSupabase()).then((to) => window.location.replace(to));
+  }, [goHome]);
+  if (goHome) {
+    return (
+      <main className="grid min-h-dvh place-items-center bg-[#2a1a0e]">
+        <Spinner />
+      </main>
+    );
+  }
 
   return (
     <div data-explorer className="contents">
