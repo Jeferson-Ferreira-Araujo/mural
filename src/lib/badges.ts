@@ -95,6 +95,8 @@ export const badgeSrc = (key: number) => `/img/badges/b${String(key).padStart(2,
 
 /** Largura de um botom no mural, em em (1em ≈ 1% da largura do quadro). */
 export const BADGE_EM = 3;
+/** Pins decorativos do plano gratuito (1 unidade de cada). O PLUS libera os 25 iniciais; os outros se compram. */
+export const FREE_BADGES: readonly number[] = [1, 2, 4, 5, 9, 12, 13, 17, 22, 25];
 export const MAX_BADGES = 200; // teto técnico (o PLUS é "quantos quiser")
 
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */

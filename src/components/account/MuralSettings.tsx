@@ -109,7 +109,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
             Alterar a resposta
           </button>
         )}
-        <Field label="Tema do mural" hint="Os temas se compram na loja com créditos (PINZ PLUS).">
+        <Field label="Tema do mural" hint="Os temas se compram na loja com créditos.">
           {(fid) => (
             <select id={fid} value={board} onChange={(e) => setBoard(e.target.value)} className={inputClass}>
               {BOARDS.map((b) => {

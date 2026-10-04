@@ -27,7 +27,7 @@ import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadge, buyBoard, buyMuralSlot, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { buyBadge, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
@@ -247,7 +247,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   }, [badges]);
   const badgeStock = useCallback(
     (key: number): Stock => {
-      if (!inventory) return key <= 25 ? { owned: true, left: null, total: null } : { owned: false, left: 0, total: 0 };
+      if (!inventory) return FREE_BADGES.includes(key) ? { owned: true, left: null, total: null } : { owned: false, left: 0, total: 0 };
       return stockFor(inventory.catalog.find((c) => c.key === key), ownPlan, placedCount[key] ?? 0);
     },
     [inventory, ownPlan, placedCount],
@@ -255,11 +255,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
-      const res = item.kind === "badge" ? await buyBadge(sb, item.key, "unlock") : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
+      const res = item.kind === "badge" ? await buyBadge(sb, item.key, "unlock") : item.kind === "unit" ? await buyBadge(sb, item.key, "unit") : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "badge" ? "Pin liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? "+1 unidade adicionada." : item.kind === "badge" ? "Pin liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
-      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "As compras da loja são do PINZ PLUS." : "Não foi possível concluir a compra agora.");
+      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
     },
     [notify, reloadInventory],
   );

@@ -7,22 +7,24 @@ import { BOARDS } from "@/lib/boards";
 import { CREDIT_PACKS } from "@/lib/plans";
 import { Modal } from "../account/Modal";
 
-export type BuyItem = { kind: "badge"; key: number } | { kind: "board"; id: string } | { kind: "mural" };
+export type BuyItem = { kind: "badge"; key: number } | { kind: "unit"; key: number } | { kind: "board"; id: string } | { kind: "mural" };
 type Tab = "pins" | "themes" | "murals" | "credits";
 
 const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 
 /**
- * Loja do Pinz. Todo mundo pode ver; quem tem o plano PLUS compra com créditos: pins decorativos, temas (fundos) e murais extras.
+ * Loja do Pinz. Qualquer conta compra com créditos: pins decorativos (e unidades extras no grátis) e temas (fundos). Mural extra é do PLUS.
  * Os pacotes de créditos aparecem aqui (a cobrança em dinheiro ainda não existe).
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<void> }) {
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
+  const [pinView, setPinView] = useState<"new" | "mine">("new");
   const credits = inventory?.credits ?? 0;
   const plus = inventory?.plus === true;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
   const pinsToBuy = BADGES.filter((b) => byKey.has(b.key) && !byKey.get(b.key)!.owned);
+  const myPins = BADGES.filter((b) => byKey.has(b.key) && byKey.get(b.key)!.owned);
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const slots = 1 + (inventory?.extraMurals ?? 0);
   const used = inventory?.muralCount ?? 0;
@@ -32,8 +34,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     await onBuy(item);
     setBusy(null);
   }
-  const can = (cost: number) => plus && credits >= cost;
-  const label = (cost: number) => (!plus ? "Só no PLUS" : credits >= cost ? `Comprar · ${cost} cr.` : `${cost} cr. (faltam)`);
+  const can = (cost: number) => credits >= cost;
+  const label = (cost: number) => (credits >= cost ? `Comprar · ${cost} cr.` : `${cost} cr. (faltam)`);
 
   return (
     <Modal open={open} onClose={onClose} title="Loja" wide>
@@ -43,11 +45,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </p>
         <p className="text-xs text-[#6b5440]">Comprar créditos: em breve</p>
       </div>
-      {!plus && (
-        <p role="status" className="mb-3 rounded-xl border border-[#e0b04a] bg-[#fff6dd] px-4 py-3 text-sm text-[#4a3000]">
-          🔒 Você pode conhecer a loja, mas só quem tem o <strong>PINZ PLUS</strong> consegue comprar.
-        </p>
-      )}
+      <p className="mb-3 text-sm text-[#4a3826]">
+        {plus ? "No PINZ PLUS você tem os 25 pins iniciais, quantas unidades quiser. Pins novos, temas e murais extras se compram com créditos." : "No PINZ FREE você tem 10 pins decorativos, 1 unidade de cada. Compre mais pins, unidades extras e temas com créditos. O PINZ PLUS libera os 25 pins iniciais, unidades ilimitadas e murais extras."}
+      </p>
 
       <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
@@ -67,27 +67,52 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       {!inventory ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
       ) : tab === "pins" ? (
-        pinsToBuy.length === 0 ? (
-          <p className="py-6 text-center text-sm text-[#6b5440]">Você já liberou todos os pins. Novos chegam em breve!</p>
-        ) : (
-          <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-            {pinsToBuy.map((b) => {
-              const c = byKey.get(b.key)!;
-              return (
-                <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
-                  <div className="grid h-16 w-full place-items-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
-                  </div>
-                  <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Pin ${b.key}`}</p>
-                  <button type="button" disabled={busy === `b${b.key}` || !can(c.price)} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key })} className={buyBtn}>
-                    {label(c.price)}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )
+        <>
+          <div role="tablist" aria-label="Pins" className="mb-3 grid max-w-xs grid-cols-2 rounded-lg border border-[#e1d3ba] bg-white/60 p-0.5 text-xs">
+            {(
+              [
+                ["new", `Novos (${pinsToBuy.length})`],
+                ["mine", `Meus pins (${myPins.length})`],
+              ] as const
+            ).map(([id, text]) => (
+              <button key={id} role="tab" type="button" aria-selected={pinView === id} onClick={() => setPinView(id)} className={`cursor-pointer rounded-md py-1.5 font-semibold ${pinView === id ? "bg-[#1f232b] text-white" : "text-[#4a3826]"}`}>
+                {text}
+              </button>
+            ))}
+          </div>
+          {(pinView === "new" ? pinsToBuy : myPins).length === 0 ? (
+            <p className="py-6 text-center text-sm text-[#6b5440]">{pinView === "new" ? "Você já liberou todos os pins. Novos chegam em breve!" : "Você ainda não tem pins."}</p>
+          ) : (
+            <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+              {(pinView === "new" ? pinsToBuy : myPins).map((b) => {
+                const c = byKey.get(b.key)!;
+                return (
+                  <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
+                    <div className="grid h-16 w-full place-items-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
+                    </div>
+                    <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Pin ${b.key}`}</p>
+                    {pinView === "new" ? (
+                      <button type="button" disabled={busy === `b${b.key}` || !can(c.price)} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key })} className={buyBtn}>
+                        {label(c.price)}
+                      </button>
+                    ) : plus ? (
+                      <p className="mt-2 text-[11px] font-semibold text-[#2f6a3c]">Ilimitado ✓</p>
+                    ) : (
+                      <>
+                        <p className="mt-1 text-[11px] text-[#6b5440]">{1 + c.extra} unidade(s)</p>
+                        <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice)} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key })} className={buyBtn}>
+                          {can(c.unitPrice) ? `+1 unidade · ${c.unitPrice} cr.` : "Sem créditos"}
+                        </button>
+                      </>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </>
       ) : tab === "themes" ? (
         <ul className="grid gap-3 sm:grid-cols-2">
           {BOARDS.map((b) => {
