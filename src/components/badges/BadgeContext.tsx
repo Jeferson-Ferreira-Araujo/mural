@@ -41,7 +41,16 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element):
       const pin = el.closest<HTMLElement>("[data-pin-type]");
       return !!pin && (PHYSICAL_TYPES as readonly string[]).includes(pin.dataset.pinType ?? "");
     });
-  if (onPhysical(px, py)) return { kind: "physical" };
+  // pinz físicos (aparelhos): vale o ponto onde o botom foi solto E o botom inteiro (não pode cobrir nem um pedaço do aparelho)
+  const physical = [...document.querySelectorAll<HTMLElement>("[data-pin-type]")]
+    .filter((p) => visible(p) && (PHYSICAL_TYPES as readonly string[]).includes(p.dataset.pinType ?? ""))
+    .map((p) => p.getBoundingClientRect());
+  const coversPhysical = (x: number, y: number) => {
+    const hw = (w * 0.85) / 2;
+    const hh = (h * 0.85) / 2;
+    return physical.some((r) => x + hw > r.left && x - hw < r.right && y + hh > r.top && y - hh < r.bottom);
+  };
+  if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
 
   let cx = clamp(px, lr.left + w / 2, lr.right - w / 2);
   const cy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
@@ -61,7 +70,7 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element):
     cx = preferRight ? (roomR ? right : roomL ? left : right) : roomL ? left : roomR ? right : left;
     cx = clamp(cx, lr.left + w / 2, lr.right - w / 2);
   }
-  if (cx !== px && onPhysical(cx, cy)) return { kind: "physical" };
+  if (cx !== px && (onPhysical(cx, cy) || coversPhysical(cx, cy))) return { kind: "physical" };
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
 
