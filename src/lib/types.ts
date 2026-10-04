@@ -31,6 +31,7 @@ export type Message =
   | (Base & { type: "text"; variant: "letter" | "notebook"; text: string })
   | (Base & { type: "list"; title: string; items: { text: string; done: boolean }[] })
   | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
+  | (Base & { type: "draw"; caption: string; src?: string })
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
   | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
@@ -78,6 +79,7 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   text: { label: "Texto", hint: "Uma folha de papel", tier: "free" },
   list: { label: "Lista", hint: "Uma listinha escrita à mão", tier: "free" },
   photo: { label: "Foto", hint: "Uma foto em Polaroid", tier: "free" },
+  draw: { label: "Desenho", hint: "Um desenho feito na hora", tier: "full" },
   music: { label: "Música", hint: "Um mini MP3 player", tier: "full" },
   video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
   voice: { label: "Voz", hint: "Uma mensagem de voz", tier: "full" },

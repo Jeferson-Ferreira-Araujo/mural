@@ -27,6 +27,14 @@ const THUMBS: Record<MessageType, ReactNode> = {
       <span className="block aspect-square bg-gradient-to-b from-[#3b4a7a] via-[#d9766b] to-[#f5b46a]" />
     </span>
   ),
+  draw: (
+    <span className="block h-9 w-11 rotate-[-3deg] bg-[#fdfcf7] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]">
+      <svg viewBox="0 0 40 28" className="size-full" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <path d="M3 21c5-14 9 6 14-6s8 5 12-5" stroke="#e0443a" strokeWidth="2.4" />
+        <circle cx="31" cy="20" r="3" stroke="#2b6fd6" strokeWidth="2" />
+      </svg>
+    </span>
+  ),
   music: (
     <span className="flex h-8 w-12 items-center gap-[3px] rounded-[8px] bg-gradient-to-b from-[#7a3ee0] to-[#4a1fb0] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-white/40">
       <span className="h-full flex-1 rounded-[3px] bg-[#0f2a4d]" />

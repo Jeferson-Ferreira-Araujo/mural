@@ -1,4 +1,5 @@
 import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { DrawingCard } from "./DrawingCard";
 import { HiddenPin } from "./HiddenPin";
 import { ClosedCapsule } from "./ClosedCapsule";
 import { ListCard } from "./ListCard";
@@ -20,6 +21,8 @@ function Content({ m }: { m: Message }) {
       return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} />;
     case "photo":
       return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} />;
+    case "draw":
+      return <DrawingCard caption={m.caption} src={m.src} font={m.font} tape={m.tape} />;
     case "music":
       return <MusicCard title={m.title} artist={m.artist} caption={m.caption} duration={m.duration} link={m.link} color={m.playerColor} />;
     case "video":

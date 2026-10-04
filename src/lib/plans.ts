@@ -38,7 +38,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
     id: "full",
     name: "PINZ PLUS",
     slots: 28,
-    formats: ["postit", "text", "list", "photo", "music", "video", "voice", "place"],
+    formats: ["postit", "text", "list", "photo", "draw", "music", "video", "voice", "place"],
     capsule: true,
     murals: 1, // mais murais se compram com créditos (loja)
     price: "R$ 9,90/mês",

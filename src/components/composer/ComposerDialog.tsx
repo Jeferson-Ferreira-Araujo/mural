@@ -9,6 +9,7 @@ import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
 import { SlotPicker } from "./SlotPicker";
+import { DrawForm } from "./DrawForm";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 
@@ -68,6 +69,8 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
       return <ListForm onChange={onChange} />;
     case "photo":
       return <PhotoForm onChange={onChange} />;
+    case "draw":
+      return <DrawForm onChange={onChange} />;
     case "music":
       return <MusicForm onChange={onChange} />;
     case "video":
@@ -85,6 +88,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
   text: { type: "text", variant: "letter", text: "Sua mensagem aparece aqui." },
   list: { type: "list", title: "Sua lista", items: [{ text: "Primeiro item", done: false }, { text: "Segundo item", done: false }] },
   photo: { type: "photo", caption: "", scene: "hills" },
+  draw: { type: "draw", caption: "" },
   music: { type: "music", title: "Nome da música", artist: "Artista", caption: "", playerColor: "black" },
   video: { type: "video", caption: "", playerColor: "black" },
   voice: { type: "voice", caption: "", playerColor: "cream" },
