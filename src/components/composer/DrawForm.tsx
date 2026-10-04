@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { HandId, TapeColor } from "@/lib/style";
+import { tapeOf } from "@/lib/style";
+import { Tape } from "../messages/fasteners";
 import { Field, inputClass } from "../ui";
 import { FontPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange } from "./types";
@@ -152,6 +154,8 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <div>
+        <div className="relative pt-3 text-[14px]">
+          <Tape className="pointer-events-none -top-[0.1em] left-1/2 -translate-x-1/2" rotate={2} tone={tapeOf(tape).tone} />
         <canvas
           ref={canvasRef}
           width={DRAW_W}
@@ -163,6 +167,7 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
           onPointerCancel={up}
           className="block aspect-[4/3] w-full cursor-crosshair touch-none rounded-xl border border-[#d9c9ad] shadow-sm"
         />
+        </div>
         <div className="mt-2 flex flex-wrap gap-2">
           <button type="button" onClick={undo} disabled={count === 0} className={tool(false)}>
             ↶ Desfazer
