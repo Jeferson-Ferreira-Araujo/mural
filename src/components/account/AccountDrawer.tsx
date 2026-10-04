@@ -61,8 +61,8 @@ export function AccountDrawer({
   onNotify: (msg: string) => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const account = getAccount();
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
+  const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
   const [sections, setSections] = useState<Record<string, boolean>>({});
   const [pending, setPending] = useState(0);
   const [stats, setStats] = useState<MuralStats | null>(null);
