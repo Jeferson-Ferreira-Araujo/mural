@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAccount } from "@/lib/account";
 import { PLANS, NEW_MURAL_COST } from "@/lib/plans";
-import { getOwnMurals, getOwnNickname, useSession } from "@/lib/auth";
+import { getOwnMurals, getOwnNickname, homeRouteFor, useSession } from "@/lib/auth";
 import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
@@ -27,7 +27,7 @@ export default function CriarMural() {
   const [taken, setTaken] = useState<string[]>([]);
 
 
-  // exige login; quem já tem mural vai para o painel
+  // exige login
   useEffect(() => {
     if (loading) return;
     if (!session) {
@@ -62,7 +62,7 @@ export default function CriarMural() {
       setError(err.message.includes("mural_limit") ? "Seu plano gratuito inclui 1 mural." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
-    router.replace("/painel"); // segue "Criando…" até a navegação terminar
+    router.replace(await homeRouteFor(sb)); // vai para o mural novo; segue "Criando…" até a navegação terminar
   }
 
   if (loading || !ready) {
@@ -80,8 +80,8 @@ export default function CriarMural() {
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
           <h1 className="font-title text-2xl font-semibold">Seu mural já está no ar</h1>
           <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito inclui {PLANS.free.murals} mural por pessoa. Um novo mural custará {NEW_MURAL_COST} créditos (em breve).</p>
-          <Link href="/painel" className={`${primaryButton} mt-5`}>
-            Ir para o meu painel
+          <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
+            Ir para o meu mural
           </Link>
         </div>
       </AuthShell>

@@ -33,7 +33,7 @@ export default function Entrar() {
     if (next) rememberNext(next);
   }, []);
 
-  // já logado: volta para onde estava (um mural) ou vai para o painel / criação do mural
+  // já logado: volta para onde estava (um mural) ou vai para o próprio mural
   useEffect(() => {
     if (!session) return;
     const next = takeNext();

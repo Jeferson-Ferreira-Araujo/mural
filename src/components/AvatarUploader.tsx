@@ -6,7 +6,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "./Avatar";
 
 /**
- * Foto de perfil do dono (aparece no mural, na busca e no painel). Quem acabou de criar o mural é convidado a enviar a primeira.
+ * Foto de perfil do dono (aparece no mural e na busca). Quem acabou de criar o mural é convidado a enviar a primeira.
  * A foto é recortada em quadrado e reduzida no próprio navegador antes de ir para o servidor.
  */
 export function AvatarUploader({ nickname }: { nickname: string }) {

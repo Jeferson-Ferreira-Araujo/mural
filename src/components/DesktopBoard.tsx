@@ -6,6 +6,7 @@ import { layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
+import { AccountActions } from "./account/AccountActions";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { Sidebar } from "./Sidebar";
@@ -25,7 +26,7 @@ function focusFirstField() {
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
-  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify } = props;
+  const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext } = props;
   const layout = layoutSlots(items, capacity);
   const [hint, setHint] = useState(false); // destaca os espaços livres depois de tocar em "Deixar uma mensagem"
   const available = slotsFor(plan, capacity);
@@ -50,7 +51,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar compact={hasSelection} siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
+      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className="relative min-w-0 flex-1 overflow-hidden">
@@ -74,9 +75,12 @@ export function DesktopBoard(props: ViewProps) {
               )
             )}
           </div>
-          {share && (
-            <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
-          )}
+          <div className="flex items-center gap-2">
+            {share && (
+              <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+            )}
+            {account && <AccountActions account={account} tone="dark" />}
+          </div>
         </nav>
 
 

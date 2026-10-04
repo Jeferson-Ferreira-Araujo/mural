@@ -34,9 +34,10 @@ export async function getOwnNickname(sb: SupabaseClient): Promise<string | null>
   return (data as { nickname: string } | null)?.nickname ?? null;
 }
 
-/** Depois de entrar: quem já tem mural vai para o painel; quem não tem, para a criação. */
+/** Depois de entrar: o próprio mural da pessoa (ou a criação, se ainda não tiver). */
 export async function homeRouteFor(sb: SupabaseClient): Promise<string> {
-  return (await getOwnMurals(sb)).length > 0 ? "/painel" : "/criar";
+  const [murals, nick] = await Promise.all([getOwnMurals(sb), getOwnNickname(sb)]);
+  return nick && murals.length > 0 ? `/${nick}/${murals[0].slug}` : "/criar";
 }
 
 /** Só aceita caminhos internos ("/maria/meu-mural"), nunca endereços de outros sites. */

@@ -4,6 +4,8 @@ import type { BoardId } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 
+import type { AccountApi } from "./account/AccountActions";
+
 export type Tone = "light" | "dark";
 
 /** O que o Explorer / a demonstração entregam às duas visualizações (desktop e mobile). */
@@ -46,4 +48,8 @@ export type ViewProps = {
   /** Botão "Deixar uma mensagem anônima"; null = escondido (ex.: visão do dono). */
   onCompose: ((slot?: number) => void) | null;
   onNotify: (msg: string) => void;
+  /** Logado: ícones do cabeçalho (pesquisar murais e menu da conta). */
+  account?: AccountApi;
+  /** Sem conta (chegou por link): caminho deste mural, para os links Entrar / Criar conta voltarem para ele. */
+  guestNext?: string;
 };

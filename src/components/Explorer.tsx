@@ -19,8 +19,10 @@ import {
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnNickname, loginUrl, useSession } from "@/lib/auth";
+import { fetchBoard, listOwnerPins, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { getOwnMurals, getOwnNickname, loginUrl, useSession, type OwnMural } from "@/lib/auth";
+import { AccountDrawer, type DrawerSection } from "./account/AccountDrawer";
+import { SearchDialog } from "./account/SearchDialog";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -64,6 +66,38 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   const nick = selected?.nickname;
   const slug = selected?.slug;
+  const isOwner = !!myNick && !!selected && selected.nickname === myNick; // vendo o próprio mural
+
+  // murais da própria conta (menu: editar, pins para aprovar, planos...)
+  const [own, setOwn] = useState<OwnMural[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [drawer, setDrawer] = useState<{ open: boolean; section?: DrawerSection }>({ open: false });
+  const [searchOpen, setSearchOpen] = useState(false);
+  const reloadOwn = useCallback(async () => {
+    const list = await getOwnMurals(getBrowserSupabase());
+    setOwn(list);
+    return list;
+  }, []);
+  useEffect(() => {
+    if (!session) {
+      setOwn([]);
+      return;
+    }
+    void reloadOwn();
+  }, [session, reloadOwn]);
+  const firstOwnId = own[0]?.id;
+  useEffect(() => {
+    if (!firstOwnId) return;
+    const load = () => void listOwnerPins(getBrowserSupabase(), firstOwnId).then((l) => l && setPendingCount(l.filter((p) => p.status === "pending").length));
+    load();
+    const t = setInterval(load, 60_000);
+    return () => clearInterval(t);
+  }, [firstOwnId]);
+
+  // o dono vendo o próprio mural entra direto (sem pergunta nem token)
+  useEffect(() => {
+    if (isOwner && !unlocked) setUnlocked(true);
+  }, [isOwner, unlocked]);
 
   // mural escolhido: registra a visita e restaura um desbloqueio anterior (validado no servidor)
   useEffect(() => {
@@ -123,14 +157,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     };
   }, [unlocked, token, nick, slug, relock]);
   useEffect(() => {
-    if (!unlocked || !token) {
+    if (!unlocked || (!token && !isOwner)) {
       setItems([]);
       return;
     }
     void loadBoard();
     const t = setInterval(() => void loadBoard(), 60_000);
     return () => clearInterval(t);
-  }, [unlocked, token, loadBoard]);
+  }, [unlocked, token, isOwner, loadBoard]);
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
     if (!nick || !slug || !token) return SEND_ERROR_TEXT.not_unlocked;
@@ -163,6 +197,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       setTried(false);
       setChoices(null);
       setSelected(m);
+      try {
+        window.history.replaceState(null, "", `/${m.nickname}/${m.slug}`);
+      } catch {}
     },
     [notify],
   );
@@ -280,7 +317,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               avatar={selected.avatar}
               onSwap={clear}
               question={selected.question}
-              open={selected.open}
+              open={selected.open || isOwner}
               unlocked={unlocked}
               onSubmit={submitAnswer}
               inputId={`unlock-${tone}`}
@@ -324,15 +361,19 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         stats={selected?.stats ?? null}
         siteStats={siteStats}
         board={boardById(selected?.board).id}
-        // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no painel)
+        // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
         share={null}
         muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
         onChangeMural={clear}
         welcome={selected?.welcome}
         panel={panel}
         onNotify={notify}
+        account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true, section: pendingCount > 0 ? "pins" : undefined }), badge: pendingCount } : undefined}
+        guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
         composer={
-          revealed
+          isOwner
+            ? { mode: "hidden" }
+            : revealed
             ? {
                 mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                 onSend: onSendPin,
@@ -344,12 +385,35 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                 triedAlready: tried,
                 signAs: myNick,
                 // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
-                inviteHref: !logged ? loginUrl("/painel", true) : undefined,
+                inviteHref: !logged ? "/entrar" : undefined,
                 loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
               }
             : { mode: "soon" }
         }
       />
+      {logged && myNick && (
+        <>
+          <AccountDrawer
+            open={drawer.open}
+            onClose={() => setDrawer((d) => ({ ...d, open: false }))}
+            nick={myNick}
+            murals={own}
+            currentSlug={isOwner ? slug : undefined}
+            initial={drawer.section}
+            onPending={setPendingCount}
+            onNotify={notify}
+            onChanged={() => {
+              void reloadOwn();
+              if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
+            }}
+            onDeleted={() => window.location.assign("/criar")}
+            onSignOut={() => {
+              void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
+            }}
+          />
+          <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
+        </>
+      )}
       <Toast message={toast} />
     </div>
   );

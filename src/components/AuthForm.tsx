@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { callbackUrl, takeNext } from "@/lib/auth";
+import { callbackUrl, homeRouteFor, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -48,7 +48,7 @@ export function AuthForm() {
         setError(err.status === 400 ? "E-mail ou senha incorretos." : "Não foi possível entrar agora. Tente de novo.");
         return;
       }
-      router.push(takeNext() ?? "/painel"); // entrou: já mostra o mural dela
+      router.push(takeNext() ?? (await homeRouteFor(getBrowserSupabase()))); // entrou: já mostra o mural dela
       return;
     }
 
@@ -64,7 +64,7 @@ export function AuthForm() {
     }
     if (data.user && data.user.identities?.length === 0) return setError("Esse e-mail já tem conta. Entre com a sua senha.");
     if (!data.session) setNeedsConfirm(true);
-    else router.push(takeNext() ?? "/painel"); // conta criada (o primeiro mural já nasce junto)
+    else router.push(takeNext() ?? (await homeRouteFor(getBrowserSupabase()))); // conta criada (o primeiro mural já nasce junto)
   }
 
   if (needsConfirm) {
