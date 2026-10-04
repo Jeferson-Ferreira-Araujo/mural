@@ -44,7 +44,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
           <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
             <h1 className="sr-only">Pinz</h1>
             <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
-            {landing && <p className="intro-form text-center font-title text-lg leading-snug text-[#f6efe2] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.6)]">Seu mural de momentos compartilhados.</p>}
+            {landing && <p className="intro-form text-center font-[family-name:var(--font-caveat)] text-[1.7rem] leading-[1.05] font-semibold text-[#f6efe2] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.6)]">Seu mural de momentos compartilhados.</p>}
           </header>
 
           {/* busca, escolha do mural e pergunta de desbloqueio (e os controles da demonstração) */}
