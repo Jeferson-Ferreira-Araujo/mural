@@ -14,7 +14,6 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Música, vídeo, voz e local", on: false },
     { text: "Cápsulas PINZ (abrem numa data)", on: false },
     { text: "Deixar pins específicos em blur", on: false },
-    { text: "Mensagem personalizada do mural vazio", on: false },
     { text: "Trocar o fundo do mural", on: false },
   ],
   full: [
@@ -25,7 +24,6 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
     { text: "Deixar pins específicos em blur", on: true },
-    { text: "Mensagem personalizada do mural vazio", on: true },
     { text: "Trocar o fundo do mural", on: true },
   ],
 };

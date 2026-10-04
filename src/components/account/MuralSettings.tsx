@@ -9,7 +9,6 @@ import { Field, ghostButton, inputClass, primaryButton, QuestionSuggestions } fr
 export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void }) {
   const [title, setTitle] = useState(mural.title);
   const [question, setQuestion] = useState(mural.question);
-  const [welcome, setWelcome] = useState(mural.welcome_message ?? "");
   const [changeAnswer, setChangeAnswer] = useState(false);
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
@@ -21,8 +20,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
     setTitle(mural.title);
     setQuestion(mural.question);
     setHad(mural.question);
-    setWelcome(mural.welcome_message ?? "");
-  }, [mural.id, mural.title, mural.question, mural.welcome_message]);
+  }, [mural.id, mural.title, mural.question]);
 
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
   const askAnswer = changeAnswer || (question.trim() !== "" && !had);
@@ -46,14 +44,6 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
       setBusy(false);
       setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
       return;
-    }
-    if (mural.plan === "full" && welcome.trim() !== (mural.welcome_message ?? "")) {
-      const { error: e2 } = await sb.rpc("set_welcome_message", { p_mural_id: mural.id, p_text: welcome.trim() });
-      if (e2) {
-        setBusy(false);
-        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a mensagem do mural vazio." });
-        return;
-      }
     }
     setBusy(false);
     setMsg({ ok: true, text: q === "" ? "Salvo! Seu mural está público." : askAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
@@ -95,22 +85,6 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
             Alterar a resposta
           </button>
         )}
-        <Field
-          label="Mensagem do mural vazio"
-          hint={mural.plan === "full" ? `${welcome.length}/100 · Em branco aparece: "Nenhuma mensagem neste mural. Seja o primeiro a deixar!"` : '🔒 Personalizar essa mensagem é do PINZ FULL. Hoje aparece: "Nenhuma mensagem neste mural. Seja o primeiro a deixar!"'}
-        >
-          {(fid) => (
-            <input
-              id={fid}
-              value={mural.plan === "full" ? welcome : ""}
-              onChange={(e) => setWelcome(e.target.value)}
-              maxLength={100}
-              disabled={mural.plan !== "full"}
-              placeholder="Nenhuma mensagem neste mural. Seja o primeiro a deixar!"
-              className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
-            />
-          )}
-        </Field>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
             {msg.text}

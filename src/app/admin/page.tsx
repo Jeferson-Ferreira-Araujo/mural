@@ -124,7 +124,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
           ) : view === "board" ? (
             <div className="relative min-h-0 flex-1">
               <BadgeProvider editable={false} badges={data.badges} setBadges={() => undefined} notify={() => undefined}>
-                <BoardCanvas items={items} plan={data.mural.plan} board={data.mural.board} hasSelection unlocked onCompose={null} emptyMessage={data.mural.welcome} />
+                <BoardCanvas items={items} plan={data.mural.plan} board={data.mural.board} hasSelection unlocked onCompose={null} />
               </BadgeProvider>
             </div>
           ) : (
