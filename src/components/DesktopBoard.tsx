@@ -7,6 +7,7 @@ import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
 import { AccountActions } from "./account/AccountActions";
+import { BadgeBar } from "./badges/BadgeBar";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { Sidebar } from "./Sidebar";
@@ -88,7 +89,8 @@ export function DesktopBoard(props: ViewProps) {
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </BoardCanvas>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 pb-5">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-[2.2vw] pb-5">
+          <BadgeBar className="w-[min(46rem,100%)]" />
           {onCompose && !locked && (
             <button
               type="button"

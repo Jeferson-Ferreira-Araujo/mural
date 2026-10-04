@@ -9,6 +9,7 @@ import { EmptyNote } from "../EmptyNote";
 import { MessageView } from "../messages/MessageView";
 import { EmptySlot } from "./SlotMarker";
 import { PinDetail } from "./PinDetail";
+import { BadgeLayer } from "../badges/BadgeLayer";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -151,6 +152,7 @@ export function BoardCanvas({
                         <div
                           key={item.id}
                           className="pinned relative"
+                          data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}
                           style={
                             {
                               zIndex: 2 + ((i * 7) % 5),
@@ -186,6 +188,8 @@ export function BoardCanvas({
                       );
                     })}
                   </div>
+
+                  <BadgeLayer />
 
                   {items.length === 0 && unlocked && (
                     <div className="absolute inset-x-0 top-[45%] z-10">

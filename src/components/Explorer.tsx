@@ -24,6 +24,8 @@ import { getOwnMurals, getOwnNickname, loginUrl, useSession, type OwnMural } fro
 import { AccountDrawer, type DrawerSection } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
+import { BadgeProvider } from "./badges/BadgeContext";
+import { fetchBadges, type PlacedBadge } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -51,6 +53,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [token, setToken] = useState<string | null>(null); // token de desbloqueio (dá acesso ao quadro e ao envio)
   const [items, setItems] = useState<BoardItem[]>([]); // pins reais do mural aberto
   const [tried, setTried] = useState(false);
+  const [badges, setBadges] = useState<PlacedBadge[]>([]); // pins decorativos do mural aberto
   const { message: toast, notify } = useToast();
   const [siteStats, setSiteStats] = useState<SiteStats | null>(null);
   useEffect(() => {
@@ -137,8 +140,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
   const loadBoard = useCallback(async () => {
     if (!nick || !slug) return;
-    const list = await fetchBoard(getBrowserSupabase(), { nick, slug }, token);
-    if (list) setItems(list);
+    const sb = getBrowserSupabase();
+    const list = await fetchBoard(sb, { nick, slug }, token);
+    if (list) {
+      setItems(list);
+      void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges(b));
+    }
     else relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
   }, [nick, slug, token, relock]);
 
@@ -160,6 +167,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   useEffect(() => {
     if (!unlocked || (!token && !isOwner)) {
       setItems([]);
+      setBadges([]);
       return;
     }
     void loadBoard();
@@ -369,6 +377,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
       <ModerationProvider value={isOwner ? { moderate } : null}>
+        <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify}>
         <MuralScreen
           items={revealed ? shownItems : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
@@ -410,6 +419,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               : { mode: "soon" }
           }
         />
+        </BadgeProvider>
       </ModerationProvider>
       {logged && myNick && (
         <>

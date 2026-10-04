@@ -138,6 +138,14 @@ body {
   display: none;
 }
 
+/* arrastando um pin decorativo (BadgeProvider) */
+body.badge-dragging,
+body.badge-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
 /* abertura animada (IntroAnimation): enquanto toca, o logo e o formulário reais esperam */
 [data-intro="play"] [data-explorer] .brand-real {
   visibility: hidden;

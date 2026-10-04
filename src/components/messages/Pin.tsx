@@ -22,6 +22,7 @@ export function Pin({
       src="/img/tachinha.webp"
       alt=""
       aria-hidden
+      data-tack
       draggable={false}
       className={`pointer-events-none absolute z-20 -mt-[0.85em] -mr-[0.55em] -ml-[0.95em] block w-[3em] select-none ${className}`}
       style={{

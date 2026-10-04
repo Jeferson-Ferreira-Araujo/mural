@@ -8,6 +8,8 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { AccountActions, GuestLinks, type AccountApi } from "./account/AccountActions";
+import { BadgeBar } from "./badges/BadgeBar";
+import { useBadges } from "./badges/BadgeContext";
 
 type Props = {
   items: BoardItem[];
@@ -46,6 +48,7 @@ export function LeavePinButton({ onClick }: { onClick: () => void }) {
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext }: Props) {
   const look = boardById(board);
+  const { editable: editBadges } = useBadges();
   const limit = slotsFor(plan, capacity);
 
   return (
@@ -75,10 +78,10 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         </PannableBoard>
       </div>
 
-      {/* rodapé: deixar um pin */}
-      {onCompose && (
+      {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
+      {(onCompose || editBadges) && (
         <footer className="relative z-20 shrink-0 bg-[#f2e8d3] px-4 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] shadow-[0_-0.2rem_0.8rem_rgba(0,0,0,.25)]">
-          <LeavePinButton onClick={() => onCompose()} />
+          {editBadges ? <BadgeBar className="!border-[#d9c9ad] !bg-[#2a1c12]" /> : onCompose && <LeavePinButton onClick={() => onCompose()} />}
         </footer>
       )}
     </div>
