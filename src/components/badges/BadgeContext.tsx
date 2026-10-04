@@ -18,7 +18,7 @@ type Ctx = {
 const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, begin: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
-type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "out" } | { kind: "bar" };
+type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
 type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; back?: { x: number; y: number } };
 
 const visible = (el: Element | null) => !!el && el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
@@ -26,7 +26,7 @@ const visibleOne = (sel: string) => [...document.querySelectorAll(sel)].find(vis
 const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), Math.max(a, b));
 
 /** Onde o botom cai se for solto em (px, py)? Respeita o quadro, os pinz físicos e as tachinhas. */
-function evaluate(px: number, py: number, w: number, h: number, layer: Element): Drop {
+function evaluate(px: number, py: number, w: number, h: number, layer: Element, ignore?: Element): Drop {
   const bar = visibleOne("[data-badge-bar]");
   if (bar) {
     const b = bar.getBoundingClientRect();
@@ -50,6 +50,19 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element):
     const hh = (h * 0.85) / 2;
     return physical.some((r) => x + hw > r.left && x - hw < r.right && y + hh > r.top && y - hh < r.bottom);
   };
+  // outros botons já colocados (o que está sendo arrastado não conta): não pode ficar um sobre o outro
+  const others = [...layer.children].filter((c) => c !== ignore).map((c) => c.getBoundingClientRect());
+  const coversBadge = (x: number, y: number) => {
+    const hw = (w * 0.8) / 2;
+    const hh = (h * 0.8) / 2;
+    return others.some((o) => {
+      const ow = (o.width * 0.8) / 2;
+      const oh = (o.height * 0.8) / 2;
+      const ox = o.left + o.width / 2;
+      const oy = o.top + o.height / 2;
+      return x + hw > ox - ow && x - hw < ox + ow && y + hh > oy - oh && y - hh < oy + oh;
+    });
+  };
   if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
 
   let cx = clamp(px, lr.left + w / 2, lr.right - w / 2);
@@ -71,6 +84,7 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element):
     cx = clamp(cx, lr.left + w / 2, lr.right - w / 2);
   }
   if (cx !== px && (onPhysical(cx, cy) || coversPhysical(cx, cy))) return { kind: "physical" };
+  if (coversBadge(cx, cy)) return { kind: "badge" };
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
 
@@ -132,7 +146,7 @@ export function BadgeProvider({
       };
       const stateAt = (x: number, y: number): "ok" | "bad" => {
         if (!layer) return "bad";
-        const d = evaluate(x, y, size.w, size.h, layer);
+        const d = evaluate(x, y, size.w, size.h, layer, sourceEl);
         return d.kind === "ok" || d.kind === "bar" ? "ok" : "bad";
       };
       const onMove = (ev: PointerEvent) => {
@@ -179,7 +193,7 @@ export function BadgeProvider({
         const { notify, muralId: mid, badges: cur } = live.current;
         const at = ev ? { x: ev.clientX, y: ev.clientY } : (origin ?? { x: 0, y: 0 });
         if (aborted || !layer) return sendBack(at);
-        const drop = evaluate(at.x, at.y, size.w, size.h, layer);
+        const drop = evaluate(at.x, at.y, size.w, size.h, layer, sourceEl);
 
         if (drop.kind === "bar") {
           if (src.kind === "placed") {
@@ -197,6 +211,10 @@ export function BadgeProvider({
         }
         if (drop.kind === "physical") {
           notify('Não dá para colocar sobre pinz "físicos".');
+          return sendBack(at);
+        }
+        if (drop.kind === "badge") {
+          notify("Não dá para colocar um pin sobre outro pin.");
           return sendBack(at);
         }
         if (drop.kind === "out") {
