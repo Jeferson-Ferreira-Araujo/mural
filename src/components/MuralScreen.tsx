@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
+import { Modal } from "./account/Modal";
 import { InviteDialog } from "./composer/InviteDialog";
 import { ComposerDialog } from "./composer/ComposerDialog";
 import type { SendPayload } from "./composer/types";
@@ -17,7 +18,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string; /** sem conta: endereço do convite "criar o meu mural", mostrado depois de enviar o pin (uma vez por visita) */ inviteHref?: string };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string; /** sem conta: endereço do convite "criar o meu mural", mostrado depois de enviar o pin (uma vez por visita) */ inviteHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -31,6 +32,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   const [slot, setSlot] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
   const [invite, setInvite] = useState(false);
+  const [blocked, setBlocked] = useState<string | null>(null);
   const { onNotify } = view;
 
   const onCompose =
@@ -38,7 +40,12 @@ export function MuralScreen({ composer, ...view }: Props) {
       ? null
       : composer.mode === "soon"
         ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
-        : (s?: number) => {
+        : async (s?: number) => {
+            const why = composer.canOpen ? await composer.canOpen() : null;
+            if (why) {
+              setBlocked(why);
+              return;
+            }
             setSlot(typeof s === "number" ? s : null);
             setOpen(true);
           };
@@ -94,6 +101,12 @@ export function MuralScreen({ composer, ...view }: Props) {
           }}
         />
       )}
+      <Modal open={!!blocked} onClose={() => setBlocked(null)} title="Aguarde um pouco">
+        <p className="text-[15px] leading-relaxed">{blocked}</p>
+        <button type="button" onClick={() => setBlocked(null)} className="mt-5 w-full cursor-pointer rounded-xl bg-[#1f232b] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
+          Entendi
+        </button>
+      </Modal>
       {composer.mode === "demo" && composer.inviteHref && <InviteDialog open={invite} onClose={() => setInvite(false)} href={composer.inviteHref} />}
     </>
   );

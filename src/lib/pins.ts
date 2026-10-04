@@ -11,7 +11,7 @@ export async function fetchBoard(sb: SupabaseClient, ref: MuralRef, token: strin
   return data as BoardItem[];
 }
 
-export type SendFailure = "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
+export type SendFailure = "cooldown" | "pending_exists" | "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
 export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
 
 const EXT: Record<string, string> = {
@@ -52,13 +52,15 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, 
   });
   if (!error) return { ok: true };
   const m = error.message;
-  const known: SendFailure[] = ["not_authenticated", "blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
+  const known: SendFailure[] = ["cooldown", "pending_exists", "not_authenticated", "blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
   const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") ? "format_not_allowed" : "error");
   return { ok: false, reason: hit };
 }
 
 /** Texto para o visitante, por motivo de falha. */
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
+  cooldown: "Você já deixou um PIN neste mural há pouco. Dá para deixar outro depois de 1 hora.",
+  pending_exists: "O último PIN que você deixou neste mural ainda está aguardando a aprovação do dono.",
   not_authenticated: "Entre na sua conta para assinar o pin.",
   blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
@@ -96,4 +98,28 @@ export async function setPinHidden(sb: SupabaseClient, id: string, hidden: boole
 export async function reportPin(sb: SupabaseClient, id: string, reason: string, details: string, block: boolean): Promise<boolean> {
   const { error } = await sb.rpc("report_pin", { p_id: id, p_reason: reason, p_details: details || null, p_block: block });
   return !error;
+}
+
+// ---------- 1 pin por hora, por visitante e por mural ----------
+
+export type SendStatus = { can: boolean; reason?: "pending" | "cooldown" | "not_unlocked" | "not_found"; retryAfter?: number };
+
+export async function getSendStatus(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<SendStatus | null> {
+  const { data, error } = await sb.rpc("get_send_status", { p_nick: ref.nick, p_slug: ref.slug, p_token: token });
+  return error || !data ? null : (data as SendStatus);
+}
+
+const wait = (secs: number) => {
+  const min = Math.max(1, Math.ceil(secs / 60));
+  return min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ` ${min % 60} min` : ""}` : `${min} min`;
+};
+
+/** Texto para quem tentou deixar um novo pin antes da hora (ou com o anterior ainda em aprovação). null = pode enviar. */
+export function sendBlockedText(s: SendStatus | null): string | null {
+  if (!s || s.can) return null;
+  if (s.reason === "pending") {
+    return `O último PIN que você deixou neste mural ainda está aguardando a aprovação do dono. Você poderá deixar um novo depois que ele for aprovado, desde que já tenha passado 1 hora do envio anterior.${s.retryAfter ? ` Ainda faltam cerca de ${wait(s.retryAfter)} do envio anterior para completar 1 hora.` : ""}`;
+  }
+  if (s.reason === "cooldown") return `Você já deixou um PIN neste mural há pouco. Dá para deixar outro daqui a ${wait(s.retryAfter ?? 3600)} (1 hora entre um PIN e outro).`;
+  return null;
 }

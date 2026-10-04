@@ -19,7 +19,7 @@ import {
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, listOwnerPins, moderatePin, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, sendBlockedText, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
@@ -482,7 +482,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
                   },
                   triedAlready: tried,
-                  signAs: myNick,
+                  canOpen: async () => (nick && slug ? sendBlockedText(await getSendStatus(getBrowserSupabase(), { nick, slug }, token)) : null),
+                signAs: myNick,
                   // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
                   inviteHref: !logged ? "/entrar" : undefined,
                   loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
