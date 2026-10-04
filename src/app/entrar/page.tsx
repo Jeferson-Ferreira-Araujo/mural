@@ -43,7 +43,7 @@ export default function Entrar() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     const mail = email.trim();
-    if (mode === "signup" && nickState !== "ok") return setError(nickState === "taken" ? "Esse nickname já está em uso." : "Escolha um nickname válido.");
+    if (mode === "signup" && nickState !== "ok") return setError(nickState === "taken" ? "Esse username já está em uso." : "Escolha um username válido.");
     if (!/^\S+@\S+\.\S+$/.test(mail)) return setError("Digite um e-mail válido.");
     if (password.length < MIN_PASSWORD) return setError(`A senha precisa ter pelo menos ${MIN_PASSWORD} caracteres.`);
     setBusy(true);
@@ -62,7 +62,7 @@ export default function Entrar() {
     if (err) {
       if (/registered|already/i.test(err.message)) setError("Esse e-mail já tem conta. Entre com a sua senha.");
       else if (/password/i.test(err.message)) setError("Senha muito fraca. Use letras, números e mais caracteres.");
-      else if (/database error/i.test(err.message)) setError("Esse nickname acabou de ser usado. Escolha outro.");
+      else if (/database error/i.test(err.message)) setError("Esse username acabou de ser usado. Escolha outro.");
       else if (err.status === 429) setError("Muitas tentativas. Aguarde um pouco e tente de novo.");
       else setError("Não foi possível criar a conta agora. Tente de novo.");
       return;

@@ -109,7 +109,7 @@ const nickMessage: Record<NickState, string | null> = {
   idle: null,
   checking: "Verificando…",
   ok: "Disponível ✓",
-  taken: "Esse nickname já está em uso.",
+  taken: "Esse username já está em uso.",
   invalid: "Use de 3 a 30 letras minúsculas, números ou hífen.",
 };
 
@@ -128,7 +128,7 @@ export function NicknameField({
   const bad = state === "taken" || state === "invalid";
   return (
     <Field
-      label="Nickname"
+      label="Username"
       error={bad ? nickMessage[state] : null}
       hint={nickMessage[state]}
     >
@@ -141,7 +141,7 @@ export function NicknameField({
           autoCapitalize="none"
           spellCheck={false}
           maxLength={30}
-          placeholder="seu-nickname"
+          placeholder="seu-username"
           autoFocus={autoFocus}
           aria-invalid={bad}
           className={inputClass}
