@@ -185,7 +185,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
-      <p className="text-center text-xs text-[#8a7b69]">O dono revisa antes de aparecer. Ofensas, ameaças e assédio podem ser relatados e levar ao bloqueio.</p>
     </form>
   );
 }
