@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { callbackUrl, homeRouteFor, rememberNext, safeNext, takeNext, useSession } from "@/lib/auth";
+import { passwordProblem } from "@/lib/password";
+import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
-const MIN_PASSWORD = 8;
 
 type Mode = "login" | "signup";
 
@@ -45,7 +46,11 @@ export default function Entrar() {
     const mail = email.trim();
     if (mode === "signup" && nickState !== "ok") return setError(nickState === "taken" ? "Esse nome de usuário já está em uso." : "Escolha um nome de usuário válido.");
     if (!/^\S+@\S+\.\S+$/.test(mail)) return setError("Digite um e-mail válido.");
-    if (password.length < MIN_PASSWORD) return setError(`A senha precisa ter pelo menos ${MIN_PASSWORD} caracteres.`);
+    if (!password) return setError("Digite a sua senha.");
+    if (mode === "signup") {
+      const problem = passwordProblem(password, { email: mail, username: nick });
+      if (problem) return setError(problem);
+    }
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
@@ -173,7 +178,7 @@ export default function Entrar() {
             />
           )}
         </Field>
-        <Field label="Senha" error={error} hint={signup ? `Mínimo de ${MIN_PASSWORD} caracteres.` : undefined}>
+        <Field label="Senha" error={error}>
           {(id) => (
             <div className="relative">
               <input
@@ -198,6 +203,7 @@ export default function Entrar() {
             </div>
           )}
         </Field>
+        {signup && <PasswordHints password={password} email={email} username={nick} />}
         <button type="submit" disabled={busy} className={primaryButton}>
           {busy ? "Aguarde…" : signup ? "Criar conta" : "Entrar"}
         </button>
