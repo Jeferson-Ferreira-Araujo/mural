@@ -150,7 +150,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       className="space-y-5"
     >
       {/* prévia sempre no topo (e visível ao rolar): já mostra um exemplo antes de digitar */}
-      <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3">
+      {format !== "draw" && <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3">
         <div className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-3">
           <p className="mb-2 text-center text-[10px] font-semibold tracking-wide text-[#8a7b69] uppercase">Prévia no mural</p>
           <div className="flex justify-center">
@@ -164,7 +164,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       <FormFor format={format} onChange={onDraft} />
 
