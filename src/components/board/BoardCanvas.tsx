@@ -118,7 +118,7 @@ export function BoardCanvas({
                 >
                   <div
                     ref={fit.ref}
-                    className="grid h-full content-evenly items-start justify-items-center"
+                    className="grid h-full content-evenly items-center justify-items-center"
                     style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.2em" : "1.5em", columnGap: "0.4em" }}
                   >
                     {Array.from({ length: capacity }, (_, i) => {
