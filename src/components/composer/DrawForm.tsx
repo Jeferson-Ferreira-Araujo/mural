@@ -51,6 +51,23 @@ function paintStroke(ctx: CanvasRenderingContext2D, s: Stroke, paper: string) {
 const chip = (on: boolean) =>
   `flex cursor-pointer items-center gap-2 rounded-lg border-2 px-2.5 py-1.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${on ? "border-[#2f2218] bg-white" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`;
 
+const ic = "size-4 shrink-0";
+const svg = (children: ReactNode) => (
+  <svg viewBox="0 0 24 24" className={ic} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    {children}
+  </svg>
+);
+/** Ícones do que cada opção faz. */
+const ICONS = {
+  color: svg(<><path d="m14.5 4.5 5 5L9 20H4v-5L14.5 4.5Z" /><path d="m12 7 5 5" /></>),
+  size: svg(<><path d="M4 6h16" strokeWidth="1.5" /><path d="M4 12h16" strokeWidth="3" /><path d="M4 19h16" strokeWidth="5" /></>),
+  paper: svg(<><path d="M6 3h8l4 4v14H6V3Z" /><path d="M14 3v4h4" /></>),
+  tape: svg(<><path d="M3 9h18v6H3z" /><path d="M7 9v6M17 9v6" strokeDasharray="1 2" /></>),
+  eraser: svg(<><path d="m7 21-4-4a2 2 0 0 1 0-3l10-10a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3L12 21H7Z" /><path d="m8 10 6 6M12 21h9" /></>),
+  undo: svg(<><path d="M9 14 4 9l5-5" /><path d="M4 9h10a6 6 0 0 1 0 12h-3" /></>),
+  clear: svg(<><path d="M4 7h16M10 11v6M14 11v6" /><path d="M6 7l1 13h10l1-13M9 7V4h6v3" /></>),
+};
+
 /** Botão que mostra a opção aplicada e abre a lista para trocar. */
 function OptionButton({ label, open, onClick, children }: { label: string; open: boolean; onClick: () => void; children: ReactNode }) {
   return (
@@ -183,19 +200,22 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
       {/* uma linha só: cada botão mostra o que está aplicado e abre as opções logo abaixo */}
       <div className="flex flex-wrap gap-2">
         <OptionButton label="Cor do traço" open={panel === "color"} onClick={() => toggle("color")}>
-          {dot(18, erase ? "#ffffff" : color)}
+          {ICONS.color}
+          {dot(16, erase ? "#ffffff" : color)}
           <span className="hidden sm:inline">Cor</span>
         </OptionButton>
         <OptionButton label="Espessura do traço" open={panel === "size"} onClick={() => toggle("size")}>
-          {dot(Math.max(6, sizeNow.id / 1.6), "#2f2218")}
+          {ICONS.size}
           <span className="hidden sm:inline">{sizeNow.label}</span>
         </OptionButton>
         <OptionButton label="Cor do papel" open={panel === "paper"} onClick={() => toggle("paper")}>
-          {dot(18, paper)}
+          {ICONS.paper}
+          {dot(16, paper)}
           <span className="hidden sm:inline">Papel</span>
         </OptionButton>
         <OptionButton label="Cor da fita" open={panel === "tape"} onClick={() => toggle("tape")}>
-          {dot(18, tapeOf(tape).swatch)}
+          {ICONS.tape}
+          {dot(16, tapeOf(tape).swatch)}
           <span className="hidden sm:inline">Fita</span>
         </OptionButton>
       </div>
@@ -231,12 +251,15 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
 
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={() => setErase((v) => !v)} aria-pressed={erase} className={chip(erase)}>
+          {ICONS.eraser}
           Borracha
         </button>
         <button type="button" onClick={undo} disabled={count === 0} className={chip(false)}>
-          ↶ Desfazer
+          {ICONS.undo}
+          Desfazer
         </button>
         <button type="button" onClick={clear} disabled={count === 0} className={chip(false)}>
+          {ICONS.clear}
           Limpar
         </button>
       </div>
