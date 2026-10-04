@@ -36,7 +36,7 @@ function Signature({ name }: { name?: string }) {
   if (!name) return null;
   return (
     <span className="absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-full bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
-      — {name}
+      @{name}
     </span>
   );
 }
