@@ -79,6 +79,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
   const [searchOpen, setSearchOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if (!session) {
+      setIsAdmin(false);
+      return;
+    }
+    void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
+  }, [session]);
   const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
     const list = await getOwnMurals(getBrowserSupabase());
@@ -471,6 +479,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
             credits={inventory?.credits ?? 0}
+            isAdmin={isAdmin}
             onOpenStore={() => {
               setDrawer({ open: false });
               setStoreOpen(true);

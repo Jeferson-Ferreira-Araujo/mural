@@ -47,6 +47,7 @@ export function AccountDrawer({
   currentSlug,
   pendingCount,
   credits,
+  isAdmin = false,
   onOpenStore,
   onChanged,
   onDeleted,
@@ -64,6 +65,8 @@ export function AccountDrawer({
   pendingCount: number;
   /** créditos da conta */
   credits: number;
+  /** conta de administrador: mostra o atalho da página de administração */
+  isAdmin?: boolean;
   onOpenStore: () => void;
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
@@ -201,6 +204,19 @@ export function AccountDrawer({
                   </svg>
                 }
               />
+              {isAdmin && (
+                <Row
+                  onClick={() => window.location.assign("/admin")}
+                  label="Administração"
+                  hint="Usuários, murais, créditos e bloqueios"
+                  icon={
+                    <svg {...ic}>
+                      <path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" />
+                      <path d="m9 12 2 2 4-4" />
+                    </svg>
+                  }
+                />
+              )}
               <Row
                 onClick={() => setModal("profile")}
                 label="Perfil"
