@@ -352,6 +352,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           saveGrant(ref, res.token);
           setToken(res.token);
         }
+        // a resposta vale para todos os murais da pessoa: guarda o desbloqueio dos outros também
+        for (const [sl, tk] of Object.entries(res.tokens ?? {})) if (sl !== slug) saveGrant({ nick, slug: sl }, tk);
         setUnlocked(true);
       }
       return res;

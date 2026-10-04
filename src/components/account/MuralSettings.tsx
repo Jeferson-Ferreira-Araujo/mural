@@ -92,7 +92,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Pergunta de desbloqueio (opcional)" hint="Em branco, o mural fica público: qualquer pessoa com o link abre. Com pergunta e resposta, só entra quem souber.">
+        <Field label="Pergunta de desbloqueio (opcional)" hint="Vale para todos os seus murais: em branco, ficam públicos (qualquer pessoa com o link abre). Com pergunta e resposta, só entra quem souber, e quem acerta abre todos os murais.">
           {(fid) => (
             <>
               <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />

@@ -132,7 +132,7 @@ export default function CriarMural() {
         {step === 1 && (
           <>
             <h1 className="font-title text-2xl font-semibold">Quer deixar o mural privado?</h1>
-            <p className="text-[#4a3826]">Opcional. Crie uma pergunta que só quem é próximo de você saiba responder. Se deixar em branco, qualquer pessoa com o link abre o mural.</p>
+            <p className="text-[#4a3826]">Opcional. Crie uma pergunta que só quem é próximo de você saiba responder. A pergunta vale para todos os seus murais. Se deixar em branco aqui e você já tiver uma pergunta, este mural usa a mesma; sem pergunta nenhuma, qualquer pessoa com o link abre o mural.</p>
             <Field label="Pergunta (opcional)">
               {(id) => (
                 <>

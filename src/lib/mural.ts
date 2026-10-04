@@ -40,7 +40,7 @@ export type ProfileMurals = {
 };
 
 export type UnlockResult =
-  | { ok: true; token?: string }
+  | { ok: true; token?: string; /** desbloqueio de cada mural da pessoa (por endereço): acertar uma vez abre todos */ tokens?: Record<string, string> }
   | { ok: false; reason: "wrong" | "rate_limited" | "error"; retryAfter?: number };
 
 export const SITE_HOST = "mural.jefersonaraujo.com.br";
@@ -67,7 +67,7 @@ export async function nicknameAvailable(sb: SupabaseClient, nick: string): Promi
 export async function tryUnlock(sb: SupabaseClient, ref: MuralRef, answer: string, visitorId: string): Promise<UnlockResult> {
   const { data, error } = await sb.rpc("try_unlock", { p_nick: ref.nick, p_slug: ref.slug, p_answer: answer, p_visitor_id: visitorId });
   if (error || !data) return { ok: false, reason: "error" };
-  if (data.ok) return { ok: true, token: data.token };
+  if (data.ok) return { ok: true, token: data.token, tokens: data.tokens ?? undefined };
   if (data.reason === "rate_limited") return { ok: false, reason: "rate_limited", retryAfter: data.retry_after };
   return { ok: false, reason: data.reason === "wrong" ? "wrong" : "error" };
 }
