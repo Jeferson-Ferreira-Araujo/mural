@@ -46,6 +46,8 @@ export function AccountDrawer({
   murals,
   currentSlug,
   pendingCount,
+  credits,
+  onOpenStore,
   onChanged,
   onDeleted,
   onSignOut,
@@ -60,6 +62,9 @@ export function AccountDrawer({
   currentSlug?: string;
   /** pins aguardando aprovação */
   pendingCount: number;
+  /** créditos da conta */
+  credits: number;
+  onOpenStore: () => void;
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
   onDeleted: () => void;
@@ -176,6 +181,17 @@ export function AccountDrawer({
                 </>
               )}
               <Row
+                onClick={onOpenStore}
+                label="Loja de pins"
+                hint={`Seus créditos: ${credits}`}
+                icon={
+                  <svg {...ic}>
+                    <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
+                    <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8" />
+                  </svg>
+                }
+              />
+              <Row
                 onClick={() => setModal("plans")}
                 label="Planos"
                 hint={`Seu plano: ${account.plan === "full" ? "FULL" : "FREE"}`}
@@ -230,7 +246,7 @@ export function AccountDrawer({
           ))}
         </dl>
       </Modal>
-      <PlansModal open={open && modal === "plans"} onClose={close} plan={account.plan} credits={account.credits} />
+      <PlansModal open={open && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
       <ProfileModal open={open && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} />
     </>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, moveBadge, PHYSICAL_TYPES, removeBadge, type PlacedBadge } from "@/lib/badges";
+import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, moveBadge, PHYSICAL_TYPES, removeBadge, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number };
@@ -12,10 +12,14 @@ type Ctx = {
   editable: boolean;
   /** botom que está sendo arrastado (some do lugar de origem até soltar) */
   draggingId: string | null;
+  /** unidades que a pessoa ainda pode colocar de cada pin (FREE: 1 por pin; FULL: ilimitado) */
+  stock: (key: number) => Stock;
+  openStore: () => void;
   begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;
 };
 
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, begin: () => undefined });
+const unlimited = (): Stock => ({ owned: true, left: null, total: null });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, openStore: () => undefined, begin: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
@@ -99,6 +103,8 @@ export function BadgeProvider({
   badges,
   setBadges,
   notify,
+  stock = unlimited,
+  onOpenStore = () => undefined,
   children,
 }: {
   muralId?: string;
@@ -106,17 +112,26 @@ export function BadgeProvider({
   badges: PlacedBadge[];
   setBadges: (fn: (prev: PlacedBadge[]) => PlacedBadge[]) => void;
   notify: (msg: string) => void;
+  stock?: (key: number) => Stock;
+  onOpenStore?: () => void;
   children: ReactNode;
 }) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  const live = useRef({ muralId, editable, badges, notify });
-  live.current = { muralId, editable, badges, notify };
+  const live = useRef({ muralId, editable, badges, notify, stock });
+  live.current = { muralId, editable, badges, notify, stock };
   const cleanup = useRef<(() => void) | null>(null);
 
   const begin = useCallback(
     (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => {
       if (!live.current.editable || e.button > 0) return;
+      if (src.kind === "new") {
+        const st = live.current.stock(src.key);
+        if (!st.owned || st.left === 0) {
+          live.current.notify(st.owned ? "Esgotado: você já colocou a unidade deste pin. Compre mais na loja." : "Este pin é da loja. Libere com créditos para usar.");
+          return;
+        }
+      }
       cleanup.current?.();
       const start = { x: e.clientX, y: e.clientY };
       const touch = e.pointerType !== "mouse";
@@ -236,11 +251,11 @@ export function BadgeProvider({
         }
         const tmp = `tmp-${Date.now()}`;
         setBadges((l) => [...l, { id: tmp, key: src.key, x: drop.x, y: drop.y }]);
-        void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((id) => {
-          if (!id) {
+        void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((res) => {
+          if ("error" in res) {
             setBadges((l) => l.filter((b) => b.id !== tmp));
-            notify("Não foi possível colocar o pin agora.");
-          } else setBadges((l) => l.map((b) => (b.id === tmp ? { ...b, id } : b)));
+            notify(res.error === "sold_out" ? "Esgotado: compre mais unidades deste pin na loja." : res.error === "not_owned" ? "Este pin é da loja. Libere com créditos para usar." : "Não foi possível colocar o pin agora.");
+          } else setBadges((l) => l.map((b) => (b.id === tmp ? { ...b, id: res.id } : b)));
         });
       }
 
@@ -255,7 +270,9 @@ export function BadgeProvider({
 
   useEffect(() => () => cleanup.current?.(), []);
 
-  const value = useMemo(() => ({ badges, editable, draggingId, begin }), [badges, editable, draggingId, begin]);
+  const openStoreRef = useRef(onOpenStore);
+  openStoreRef.current = onOpenStore;
+  const value = useMemo(() => ({ badges, editable, draggingId, stock, openStore: () => openStoreRef.current(), begin }), [badges, editable, draggingId, stock, begin]);
 
   return (
     <BadgeCtx.Provider value={value}>

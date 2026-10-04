@@ -25,7 +25,8 @@ import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { fetchBadges, type PlacedBadge } from "@/lib/badges";
+import { buyBadge, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { StoreModal } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
@@ -77,6 +78,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [pendingCount, setPendingCount] = useState(0);
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
   const [searchOpen, setSearchOpen] = useState(false);
+  const [storeOpen, setStoreOpen] = useState(false);
+  const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
     const list = await getOwnMurals(getBrowserSupabase());
     setOwn(list);
@@ -89,6 +92,18 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     void reloadOwn();
   }, [session, reloadOwn]);
+  const reloadInventory = useCallback(async () => {
+    const inv = await fetchInventory(getBrowserSupabase());
+    if (inv) setInventory(inv);
+    return inv;
+  }, []);
+  useEffect(() => {
+    if (!session) {
+      setInventory(null);
+      return;
+    }
+    void reloadInventory();
+  }, [session, reloadInventory]);
   const firstOwnId = own[0]?.id;
   useEffect(() => {
     if (!firstOwnId) return;
@@ -189,6 +204,30 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       return true;
     },
     [notify, loadBoard, firstOwnId],
+  );
+  // estoque de pins decorativos (FREE: 1 por pin + extras compradas; FULL: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
+  const ownPlan = own.find((m) => m.slug === slug)?.plan ?? own[0]?.plan ?? "free";
+  const placedCount = useMemo(() => {
+    const c: Record<number, number> = {};
+    badges.forEach((b) => (c[b.key] = (c[b.key] ?? 0) + 1));
+    return c;
+  }, [badges]);
+  const badgeStock = useCallback(
+    (key: number): Stock => {
+      if (!inventory) return key <= 25 ? { owned: true, left: null, total: null } : { owned: false, left: 0, total: 0 };
+      return stockFor(inventory.catalog.find((c) => c.key === key), ownPlan, placedCount[key] ?? 0);
+    },
+    [inventory, ownPlan, placedCount],
+  );
+  const buy = useCallback(
+    async (key: number, mode: "unlock" | "unit") => {
+      const res = await buyBadge(getBrowserSupabase(), key, mode);
+      if (res.ok) {
+        notify(mode === "unlock" ? "Pin liberado! Já está na sua barra." : "+1 unidade adicionada.");
+        await reloadInventory();
+      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : "Não foi possível concluir a compra agora.");
+    },
+    [notify, reloadInventory],
   );
   const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
@@ -377,7 +416,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
       <ModerationProvider value={isOwner ? { moderate } : null}>
-        <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify}>
+        <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           items={revealed ? shownItems : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
@@ -431,6 +470,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             murals={own}
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
+            credits={inventory?.credits ?? 0}
+            onOpenStore={() => {
+              setDrawer({ open: false });
+              setStoreOpen(true);
+            }}
             onPending={setPendingCount}
             onNotify={notify}
             onChanged={() => {
@@ -442,6 +486,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
             }}
           />
+          <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} plan={ownPlan} inventory={inventory} placed={placedCount} onBuy={buy} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}
