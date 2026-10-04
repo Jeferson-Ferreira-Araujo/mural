@@ -1,7 +1,7 @@
 "use client";
 
 import { boardById } from "@/lib/boards";
-import { slotsFor, type PlanId } from "@/lib/plans";
+import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 import { Avatar } from "./Avatar";
 import { BoardCanvas } from "./board/BoardCanvas";
@@ -51,7 +51,6 @@ export function LeavePinButton({ onClick }: { onClick: () => void }) {
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch }: Props) {
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
-  const limit = slotsFor(plan, capacity);
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
@@ -67,9 +66,6 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <Avatar src={info.avatar} name={info.owner} className="size-11" />
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">{info.title}</span>
-          <span className="block text-xs text-[#6b5440]">
-            {items.length} de {limit} PINZ · de {info.owner}
-          </span>
         </p>
       </div>
 
