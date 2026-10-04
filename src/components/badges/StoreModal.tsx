@@ -167,7 +167,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-center text-xs text-[#6b5440]">Os créditos servem para comprar Bottons, temas e murais extras. Quanto maior o pacote, mais créditos de bônus.</p>
         </div>
       )}
     </Modal>

@@ -186,7 +186,7 @@ export function AccountDrawer({
               <Row
                 onClick={onOpenStore}
                 label="Loja"
-                hint={`Pins, temas e murais · ${credits} créditos`}
+                hint={`Bottons, temas e murais · ${credits} créditos`}
                 icon={
                   <svg {...ic}>
                     <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
