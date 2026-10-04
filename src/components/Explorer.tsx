@@ -21,7 +21,7 @@ import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, listOwnerPins, moderatePin, sendPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, loginUrl, useSession, type OwnMural } from "@/lib/auth";
-import { AccountDrawer, type DrawerSection } from "./account/AccountDrawer";
+import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { ModerationProvider } from "./board/ModerationContext";
 import { BadgeProvider } from "./badges/BadgeContext";
@@ -75,7 +75,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // murais da própria conta (menu: editar, pins para aprovar, planos...)
   const [own, setOwn] = useState<OwnMural[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
-  const [drawer, setDrawer] = useState<{ open: boolean; section?: DrawerSection }>({ open: false });
+  const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
   const [searchOpen, setSearchOpen] = useState(false);
   const reloadOwn = useCallback(async () => {
     const list = await getOwnMurals(getBrowserSupabase());
@@ -396,7 +396,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           welcome={selected?.welcome}
           panel={panel}
           onNotify={notify}
-          account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true, section: pendingCount > 0 ? "pins" : undefined }), badge: pendingCount } : undefined}
+          account={logged ? { onSearch: () => setSearchOpen(true), onMenu: () => setDrawer({ open: true }), badge: pendingCount } : undefined}
           guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
             isOwner
@@ -427,9 +427,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             open={drawer.open}
             onClose={() => setDrawer((d) => ({ ...d, open: false }))}
             nick={myNick}
+            email={session?.user.email ?? ""}
             murals={own}
             currentSlug={isOwner ? slug : undefined}
-            initial={drawer.section}
+            pendingCount={pendingCount}
             onPending={setPendingCount}
             onNotify={notify}
             onChanged={() => {
