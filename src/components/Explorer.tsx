@@ -330,6 +330,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                 triedAlready: tried,
                 signAs: myNick,
                 // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
+                inviteHref: !logged ? loginUrl("/criar", true) : undefined,
                 loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
               }
             : { mode: "soon" }

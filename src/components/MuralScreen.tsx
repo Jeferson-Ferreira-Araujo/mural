@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
+import { InviteDialog } from "./composer/InviteDialog";
 import { ComposerDialog } from "./composer/ComposerDialog";
 import type { SendPayload } from "./composer/types";
 import { DesktopBoard } from "./DesktopBoard";
@@ -16,7 +17,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string; /** sem conta: endereço do convite "criar o meu mural", mostrado depois de enviar o pin (uma vez por visita) */ inviteHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -29,6 +30,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
+  const [invite, setInvite] = useState(false);
   const { onNotify } = view;
 
   const onCompose =
@@ -77,6 +79,14 @@ export function MuralScreen({ composer, ...view }: Props) {
                 return;
               }
               setOpen(false);
+              if (composer.inviteHref) {
+                try {
+                  if (sessionStorage.getItem("pinz:invite") !== "1") {
+                    sessionStorage.setItem("pinz:invite", "1");
+                    setInvite(true);
+                  }
+                } catch {}
+              }
               onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌"));
             } finally {
               setSending(false);
@@ -84,6 +94,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           }}
         />
       )}
+      {composer.mode === "demo" && composer.inviteHref && <InviteDialog open={invite} onClose={() => setInvite(false)} href={composer.inviteHref} />}
     </>
   );
 }
