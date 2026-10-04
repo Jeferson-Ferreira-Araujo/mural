@@ -6,7 +6,7 @@ import type { HandId, PinColor, TapeColor } from "@/lib/style";
 import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
-import type { DraftChange } from "./types";
+import type { DraftChange, DraftMessage } from "./types";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
 const PLAYER_NOTE_MAX = 32;
@@ -235,7 +235,8 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
 
   const linkOk = !link.trim() || /^https?:\/\/\S+$/i.test(link.trim());
   useEffect(
-    () => onChange(title.trim() && artist.trim() && linkOk ? { type: "music", title: title.trim(), artist: artist.trim(), caption: caption.trim(), link: link.trim() || undefined, playerColor: color } : null),
+    // sempre manda um rascunho (com a cor escolhida) para a prévia acompanhar; "empty" = ainda falta preencher
+    () => onChange({ type: "music", title: title.trim() || "Nome da música", artist: artist.trim() || "Artista", caption: caption.trim(), link: linkOk ? link.trim() || undefined : undefined, playerColor: color }, { empty: !(title.trim() && artist.trim() && linkOk) }),
     [title, artist, caption, link, linkOk, color, onChange],
   );
   return (
@@ -285,7 +286,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
     probe.onloadedmetadata = () => setDuration(Number.isFinite(probe.duration) ? formatDuration(probe.duration) : undefined);
     probe.src = url;
   }
-  useEffect(() => onChange(src ? { type: "video", caption: caption.trim(), src, duration, playerColor: color } : null), [src, caption, duration, color, onChange]);
+  useEffect(() => onChange({ type: "video", caption: caption.trim(), ...(src ? { src, duration } : {}), playerColor: color }, { empty: !src }), [src, caption, duration, color, onChange]);
 
   return (
     <div className="space-y-4">
@@ -385,7 +386,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
     probe.src = url;
   }
 
-  useEffect(() => onChange(src ? { type: "voice", caption: caption.trim(), src, duration, playerColor: color } : null), [src, caption, duration, color, onChange]);
+  useEffect(() => onChange({ type: "voice", caption: caption.trim(), ...(src ? { src, duration } : {}), playerColor: color }, { empty: !src }), [src, caption, duration, color, onChange]);
 
   // ao fechar: solta o microfone e a URL do áudio
   useEffect(
@@ -481,7 +482,13 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
   }
 
   useEffect(
-    () => onChange(place ? { type: "place", name: place.name, address: place.address, lat: place.lat, lon: place.lon, caption: caption.trim(), playerColor: color } : null),
+    () =>
+      onChange(
+        place
+          ? { type: "place", name: place.name, address: place.address, lat: place.lat, lon: place.lon, caption: caption.trim(), playerColor: color }
+          : ({ type: "place", name: "Nome do lugar", address: "", lat: 0, lon: 0, caption: caption.trim(), playerColor: color, blank: true } as unknown as DraftMessage),
+        { empty: !place },
+      ),
     [place, caption, color, onChange],
   );
 
