@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { INK_BOX, INK_ORDER, LOGO_RATIO, TACK } from "@/lib/pinzLogo";
 
 const SEEN_KEY = "pinz:intro";
 
@@ -20,9 +21,81 @@ const done = () => {
   } catch {}
 };
 
+/** "Toc" da tachinha entrando no papel, sintetizado (sem arquivo de áudio). Só toca se o navegador já liberou o som. */
+function makeThunk() {
+  let ctx: AudioContext | null = null;
+  try {
+    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (AC) {
+      ctx = new AC();
+      void ctx.resume().catch(() => undefined);
+    }
+  } catch {
+    ctx = null;
+  }
+  return {
+    play() {
+      const c = ctx;
+      if (!c || c.state !== "running") return; // navegador bloqueou o som: segue em silêncio
+      const t = c.currentTime;
+      const master = c.createGain();
+      master.gain.value = 0.55;
+      master.connect(c.destination);
+      // batida grave
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(190, t);
+      o.frequency.exponentialRampToValueAtTime(52, t + 0.13);
+      g.gain.setValueAtTime(0.9, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      o.connect(g).connect(master);
+      o.start(t);
+      o.stop(t + 0.18);
+      // estalo curtinho do papel/plástico
+      const len = Math.floor(c.sampleRate * 0.03);
+      const buf = c.createBuffer(1, len, c.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      const n = c.createBufferSource();
+      n.buffer = buf;
+      const hp = c.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = 1800;
+      const ng = c.createGain();
+      ng.gain.value = 0.5;
+      n.connect(hp).connect(ng).connect(master);
+      n.start(t);
+      // "tink" metálico
+      const m = c.createOscillator();
+      const mg = c.createGain();
+      m.type = "triangle";
+      m.frequency.value = 2300;
+      mg.gain.setValueAtTime(0.14, t);
+      mg.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      m.connect(mg).connect(master);
+      m.start(t);
+      m.stop(t + 0.1);
+      window.setTimeout(() => void c.close().catch(() => undefined), 600);
+    },
+    close() {
+      void ctx?.close().catch(() => undefined);
+    },
+  };
+}
+
+/** Varredura com borda suave (a tinta "vai sendo escrita"): anima a posição da máscara. */
+function maskStyle(axis: "x" | "y"): React.CSSProperties {
+  const grad = axis === "x" ? "linear-gradient(90deg, #000 0%, #000 44%, transparent 56%, transparent 100%)" : "linear-gradient(180deg, #000 0%, #000 44%, transparent 56%, transparent 100%)";
+  const size = axis === "x" ? "300% 100%" : "100% 300%";
+  const pos = axis === "x" ? "100% 0%" : "0% 100%";
+  return { maskImage: grad, WebkitMaskImage: grad, maskSize: size, WebkitMaskSize: size, maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: pos, WebkitMaskPosition: pos } as React.CSSProperties;
+}
+
 /**
- * Abertura do site (só movimento, sem mãos): o bloco "pinz" aparece no meio da tela, a tachinha cai e é pressionada,
- * o bloco sobe até o lugar do logo e o formulário aparece. Tudo com a Web Animations API; qualquer falha pula direto para o fim.
+ * Abertura do site (só movimento, sem mãos): o bloco amarelo aparece no meio da tela, "pinz" é escrito letra por letra,
+ * a tachinha cai e prende (com um "toc"), o bloco sobe até o lugar do logo e o formulário aparece.
+ * Tudo com a Web Animations API; qualquer falha pula direto para o fim.
  * Enquanto toca, `data-intro="play"` no <html> esconde o logo e o formulário reais (ver globals.css).
  */
 export function IntroAnimation() {
@@ -40,80 +113,104 @@ export function IntroAnimation() {
       return;
     }
     document.documentElement.dataset.intro = "play";
-    const r = target.getBoundingClientRect();
     const el = note.current;
+    const r = target.getBoundingClientRect();
     Object.assign(el.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
 
-    // posição de partida: bem maior e no meio da tela
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const big = Math.min(vw * 0.72, 460) / r.width;
+    const big = Math.min(vw * 0.78, 520) / r.width;
     const dx = vw / 2 - (r.left + r.width / 2);
     const dy = vh / 2 - (r.top + r.height / 2);
     const center = `translate(${dx}px, ${dy}px) scale(${big})`;
-    const ease = "cubic-bezier(.22,1,.36,1)";
+    const sound = makeThunk();
 
     let cancelled = false;
     const anims: Animation[] = [];
+    const add = <T extends Animation>(a: T) => (anims.push(a), a);
+    const wait = (ms: number) => new Promise<void>((ok) => window.setTimeout(ok, ms));
+
     const run = async () => {
       try {
-        el.style.transform = center;
-        // 1) o bloco aparece no meio (um pouquinho torto, assentando)
-        anims.push(back.current!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, fill: "forwards" }));
-        const appear = el.animate(
-          [
-            { opacity: 0, transform: `translate(${dx}px, ${dy + 24}px) scale(${big * 0.9}) rotate(-5deg)` },
-            { opacity: 1, transform: `${center} rotate(0deg)` },
-          ],
-          { duration: 600, easing: ease, fill: "forwards" },
-        );
-        anims.push(appear);
-        await appear.finished;
+        // espera as imagens (papel + letras) para a escrita não "piscar"
+        const imgs = [...el.querySelectorAll("img")];
+        await Promise.race([Promise.all(imgs.map((i) => i.decode().catch(() => undefined))), wait(1500)]);
         if (cancelled) return;
 
-        // 2) a tachinha cai de cima, bate no papel e é pressionada
-        const t = tack.current!;
-        const drop = t.animate(
-          [
-            { opacity: 0, transform: "translateY(-260%) scale(1.5) rotate(10deg)", offset: 0 },
-            { opacity: 1, transform: "translateY(-120%) scale(1.35) rotate(6deg)", offset: 0.25 },
-            { opacity: 1, transform: "translateY(0) scale(1) rotate(0deg)", offset: 0.7, easing: "ease-in" },
-            { opacity: 1, transform: "translateY(4%) scale(0.9) rotate(0deg)", offset: 0.82 },
-            { opacity: 1, transform: "translateY(0) scale(1) rotate(0deg)", offset: 1 },
-          ],
-          { duration: 760, easing: "cubic-bezier(.4,0,.6,1)", fill: "forwards" },
+        // 1) o bloco entra no meio da tela
+        el.style.transform = center;
+        add(back.current!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, fill: "forwards" }));
+        const appear = add(
+          el.animate(
+            [
+              { opacity: 0, transform: `translate(${dx}px, ${dy + 18}px) scale(${big * 0.92}) rotate(-4deg)` },
+              { opacity: 1, transform: `${center} rotate(0deg)` },
+            ],
+            { duration: 300, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" },
+          ),
         );
-        anims.push(drop);
-        // o papel "cede" um instante quando a tachinha pressiona
-        anims.push(
+
+        // 2) "pinz" é escrito: uma letra por vez, bem rápido
+        let at = 220;
+        const writes: Promise<unknown>[] = [];
+        for (const g of INK_ORDER) {
+          const layer = el.querySelector<HTMLElement>(`[data-ink="${g.k}"]`);
+          if (layer) {
+            const from = g.axis === "x" ? "100% 0%" : "0% 100%";
+            const to = g.axis === "x" ? "0% 0%" : "0% 0%";
+            const a = add(layer.animate([{ maskPosition: from, webkitMaskPosition: from }, { maskPosition: to, webkitMaskPosition: to }] as Keyframe[], { duration: g.ms, delay: at, easing: "linear", fill: "both" }));
+            writes.push(a.finished);
+          }
+          at += g.ms * 0.85;
+        }
+        await appear.finished;
+        await Promise.all(writes);
+        if (cancelled) return;
+
+        // 3) a tachinha cai e prende; o papel cede um instante e toca o "toc"
+        const DROP = 300;
+        const drop = add(
+          tack.current!.animate(
+            [
+              { opacity: 0, transform: "translateY(-230%) scale(1.55) rotate(8deg)", offset: 0 },
+              { opacity: 1, transform: "translateY(-150%) scale(1.4) rotate(5deg)", offset: 0.15 },
+              { opacity: 1, transform: "translateY(0) scale(1) rotate(0deg)", offset: 0.72, easing: "ease-in" },
+              { opacity: 1, transform: "translateY(5%) scale(0.88) rotate(0deg)", offset: 0.86 },
+              { opacity: 1, transform: "translateY(0) scale(1) rotate(0deg)", offset: 1 },
+            ],
+            { duration: DROP, easing: "cubic-bezier(.45,0,.75,.6)", fill: "forwards" },
+          ),
+        );
+        add(
           el.animate(
             [
               { transform: `${center} rotate(0deg)` },
-              { transform: `${center} rotate(0deg)`, offset: 0.68 },
-              { transform: `${center} scale(0.985) rotate(-.6deg)`, offset: 0.8 },
+              { transform: `${center} rotate(0deg)`, offset: 0.7 },
+              { transform: `${center} scale(0.984) rotate(-.7deg)`, offset: 0.84 },
               { transform: `${center} rotate(0deg)` },
             ],
-            { duration: 760, fill: "forwards" },
+            { duration: DROP, fill: "forwards" },
           ),
         );
+        window.setTimeout(() => sound.play(), DROP * 0.72);
         await drop.finished;
         if (cancelled) return;
-        await new Promise((ok) => setTimeout(ok, 450));
+        await wait(140);
         if (cancelled) return;
 
-        // 3) sobe até o lugar do logo, e o formulário aparece
-        const rect = target.getBoundingClientRect(); // (pode ter mudado de lugar nesse meio tempo)
+        // 4) sobe até o lugar do logo, e o formulário aparece
+        const rect = target.getBoundingClientRect();
         const toX = rect.left - r.left;
         const toY = rect.top - r.top;
-        const fly = el.animate([{ transform: center }, { transform: `translate(${toX}px, ${toY}px) scale(${rect.width / r.width})` }], { duration: 850, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" });
-        anims.push(fly, back.current!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 850, fill: "forwards" }));
+        const fly = add(el.animate([{ transform: center }, { transform: `translate(${toX}px, ${toY}px) scale(${rect.width / r.width})` }], { duration: 480, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" }));
+        add(back.current!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 480, fill: "forwards" }));
         await fly.finished;
       } catch {
         /* pula para o fim */
       } finally {
         if (!cancelled) {
           done(); // mostra o logo real e faz o formulário aparecer
-          const fade = root.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: "forwards" });
+          const fade = root.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" });
           await fade?.finished.catch(() => undefined);
           root.current?.remove();
         }
@@ -123,6 +220,7 @@ export function IntroAnimation() {
     return () => {
       cancelled = true;
       anims.forEach((a) => a.cancel());
+      sound.close();
       done();
     };
   }, []);
@@ -130,10 +228,22 @@ export function IntroAnimation() {
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
       <div ref={back} className="absolute inset-0 bg-[#1a0f06]/70 opacity-0 backdrop-blur-[2px]" />
-      <div ref={note} className="absolute origin-center opacity-0 will-change-transform [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" style={{ opacity: 0 }}>
+      <div ref={note} className="absolute origin-center will-change-transform [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/pinz-logo-sempino.webp" alt="" draggable={false} className="block size-full select-none" />
-        <span ref={tack} className="absolute block opacity-0" style={{ left: "37.7%", top: "2.5%", width: "26%" }}>
+        <img src="/img/pinz/papel.webp" alt="" draggable={false} className="block size-full select-none" />
+        {INK_ORDER.map((g) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={g.k}
+            data-ink={g.k}
+            src={`/img/pinz/tinta-${g.k}.webp`}
+            alt=""
+            draggable={false}
+            className="absolute block select-none"
+            style={{ left: `${INK_BOX[g.k].left}%`, top: `${INK_BOX[g.k].top}%`, width: `${INK_BOX[g.k].width}%`, height: `${INK_BOX[g.k].height}%`, ...maskStyle(g.axis) }}
+          />
+        ))}
+        <span ref={tack} className="absolute block opacity-0" style={{ ...TACK }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/tachinha.webp" alt="" draggable={false} className="block w-full select-none [filter:drop-shadow(0_0.25rem_0.3rem_rgba(0,0,0,.45))]" style={{ transform: "scaleX(-1)" }} />
         </span>
