@@ -59,7 +59,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string, 
 
 /** Texto para o visitante, por motivo de falha. */
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
-  cooldown: "Você já deixou um PIN neste mural há pouco. Dá para deixar outro depois de 1 hora.",
+  cooldown: "Você já deixou 3 PINs neste mural nos últimos 30 minutos. Tente de novo daqui a pouco.",
   pending_exists: "O último PIN que você deixou neste mural ainda está aguardando a aprovação do dono.",
   not_authenticated: "Entre na sua conta para assinar o pin.",
   blocked: "Não foi possível enviar um pin para este mural.",
@@ -114,12 +114,9 @@ const wait = (secs: number) => {
   return min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ` ${min % 60} min` : ""}` : `${min} min`;
 };
 
-/** Texto para quem tentou deixar um novo pin antes da hora (ou com o anterior ainda em aprovação). null = pode enviar. */
+/** Texto para quem já usou os 3 envios dos últimos 30 minutos. null = pode enviar. */
 export function sendBlockedText(s: SendStatus | null): string | null {
   if (!s || s.can) return null;
-  if (s.reason === "pending") {
-    return `O último PIN que você deixou neste mural ainda está aguardando a aprovação do dono. Você poderá deixar um novo depois que ele for aprovado, desde que já tenha passado 1 hora do envio anterior.${s.retryAfter ? ` Ainda faltam cerca de ${wait(s.retryAfter)} do envio anterior para completar 1 hora.` : ""}`;
-  }
-  if (s.reason === "cooldown") return `Você já deixou um PIN neste mural há pouco. Dá para deixar outro daqui a ${wait(s.retryAfter ?? 3600)} (1 hora entre um PIN e outro).`;
+  if (s.reason === "cooldown" || s.reason === "pending") return `Você já deixou 3 PINs neste mural nos últimos 30 minutos. Dá para deixar outro daqui a ${wait(s.retryAfter ?? 1800)}.`;
   return null;
 }
