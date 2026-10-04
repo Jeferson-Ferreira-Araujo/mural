@@ -174,7 +174,7 @@ export function BoardCanvas({
                                   setDetail(placed.indexOf(item));
                                 }
                               }}
-                              aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em blur" : typeLabel[item.type]}`}
+                              aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em segredo" : typeLabel[item.type]}`}
                               className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
                             >
                               <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.18]">

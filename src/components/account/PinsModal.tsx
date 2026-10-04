@@ -51,7 +51,7 @@ function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportReason; d
   );
 }
 
-/** Pins do mural em carrossel: "Para aprovar" (um por vez, com aprovar/recusar) e "No mural" (blur no FULL, remover). */
+/** Pins do mural em carrossel: "Para aprovar" (um por vez, com aprovar/recusar) e "No mural" (segredo no FULL, remover). */
 export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void }) {
   const [pins, setPins] = useState<OwnerPin[] | null>(null);
   const [tab, setTab] = useState<"pending" | "approved">("pending");
@@ -110,8 +110,8 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
               Recusar
             </button>
             {full && (
-              <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em blur para quem visita" onClick={() => run(p.id, () => moderatePin(sb, p.id, true, true))}>
-                Aprovar em blur
+              <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em segredo (os visitantes veem o pin borrado)" onClick={() => run(p.id, () => moderatePin(sb, p.id, true, true))}>
+                Aprovar como segredo
               </button>
             )}
             <button type="button" className={primary} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, true, false))}>
@@ -122,7 +122,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
           <>
             {full && (
               <button type="button" role="switch" aria-checked={!p.hiddenFromVisitors} className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => setPinHidden(sb, p.id, !p.hiddenFromVisitors))}>
-                {p.hiddenFromVisitors ? "🔒 Em blur — mostrar" : "👁 Visível — deixar em blur"}
+                {p.hiddenFromVisitors ? "🔒 Segredo — mostrar" : "👁 Visível — deixar em segredo"}
               </button>
             )}
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>

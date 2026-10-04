@@ -35,7 +35,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   }, [open, index, items.length, onIndex]);
 
   const item = index !== null ? items[index] : null;
-  const label = item ? (isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em blur" : formatInfo[item.type].label) : "";
+  const label = item ? (isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em segredo" : formatInfo[item.type].label) : "";
   const arrow =
     "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
@@ -65,7 +65,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
             </button>
             <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,5.2vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
-              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} />
+              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false, ownerHidden: false }} />
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
               ›
@@ -78,6 +78,14 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                 <circle cx="12" cy="12" r="3" />
               </svg>
               {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
+            </p>
+          )}
+          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && (
+            <p role="status" className="flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+              <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" aria-hidden>
+                <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
+              </svg>
+              Segredo: os visitantes veem este pin borrado
             </p>
           )}
           {mod && item && !isSealed(item) && !isHidden(item) && item.pending && (
