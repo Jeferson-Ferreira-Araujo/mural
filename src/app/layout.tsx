@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, DM_Sans, Fraunces, Indie_Flower, Kalam, Patrick_Hand, Reenie_Beanie } from "next/font/google";
+import { Caveat, DM_Sans, Fraunces, Fredoka, Indie_Flower, Kalam, Patrick_Hand, Reenie_Beanie } from "next/font/google";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
@@ -10,6 +10,7 @@ const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--f
 const patrick = Patrick_Hand({ subsets: ["latin"], weight: "400", variable: "--font-patrick" });
 const indie = Indie_Flower({ subsets: ["latin"], weight: "400", variable: "--font-indie" });
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
+const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-fredoka" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${SITE_HOST}`),
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable}`}
+      className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable} ${fredoka.variable}`}
     >
       <body>
         {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}

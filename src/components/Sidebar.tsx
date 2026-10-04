@@ -33,7 +33,7 @@ export function Sidebar({ compact = false, siteStats, capacity, panel, plan, use
       <div className="flex justify-center">
         <Brand className="h-[6.4rem]" />
       </div>
-      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-caveat)] text-[1.7em] leading-[1.05] font-semibold text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
+      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-fredoka)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
 
       {!logged ? null : compact ? (
         <div className="grid grid-cols-2 gap-[0.5em]">
