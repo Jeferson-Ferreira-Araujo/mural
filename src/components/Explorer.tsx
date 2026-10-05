@@ -629,6 +629,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
+          welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
           items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
           showMeter={revealed}
