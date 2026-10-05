@@ -53,3 +53,34 @@ export function isFinalizing(): boolean {
     return false;
   }
 }
+
+// ---- boas-vindas para conta de empresa recém-criada (nome da lista reservada) ----
+const WELCOME_KEY = "pinz:company-welcome";
+const PRETTY: Record<string, string> = {
+  bancodobrasil: "Banco do Brasil", cocacola: "Coca-Cola", mcdonalds: "McDonald's", burgerking: "Burger King", magazineluiza: "Magazine Luiza",
+  casasbahia: "Casas Bahia", mercadolivre: "Mercado Livre", mercadopago: "Mercado Pago", ifood: "iFood", openai: "OpenAI", chatgpt: "ChatGPT",
+  youtube: "YouTube", tiktok: "TikTok", whatsapp: "WhatsApp", linkedin: "LinkedIn", github: "GitHub", gitlab: "GitLab", picpay: "PicPay",
+  ibm: "IBM", bmw: "BMW", sap: "SAP", amd: "AMD", lg: "LG", hm: "H&M", kfc: "KFC", sbt: "SBT", tim: "TIM", nvidia: "NVIDIA", pinz: "Pinz", pinzapp: "Pinz",
+  ambev: "Ambev", itau: "Itaú", boticario: "O Boticário", seguranca: "Segurança", moderacao: "Moderação",
+};
+/** "facebook" → "Facebook", "bancodobrasil" → "Banco do Brasil". */
+export const companyDisplayName = (nick: string) => PRETTY[nick] ?? nick.charAt(0).toUpperCase() + nick.slice(1);
+
+/** Guarda que a conta acabou de ser criada com um nome reservado: o mural mostra a mensagem de boas-vindas uma vez. */
+export function markCompanyWelcome(nick: string) {
+  try {
+    localStorage.setItem(WELCOME_KEY, nick);
+  } catch {}
+}
+/** Lê e apaga o aviso: só devolve se for da conta que está logada. */
+export function takeCompanyWelcome(myNick: string): boolean {
+  try {
+    const v = localStorage.getItem(WELCOME_KEY);
+    if (v === null) return false;
+    if (v !== myNick) return false; // outra conta: deixa guardado
+    localStorage.removeItem(WELCOME_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}

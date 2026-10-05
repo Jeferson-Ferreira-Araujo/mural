@@ -33,7 +33,8 @@ import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { isFinalizing } from "@/lib/reserved";
+import { companyDisplayName, isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
+import { Modal } from "./account/Modal";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -66,7 +67,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [items, setItems] = useState<BoardItem[]>([]); // pins reais do mural aberto
   const [boardLoaded, setBoardLoaded] = useState(false); // os pins do mural aberto já chegaram do servidor?
   const [sharedLayout, setSharedLayout] = useState<BoardItem[]>([]); // mural compartilhado trancado: como ele está montado (sem conteúdo)
-  const [openFailed, setOpenFailed] = useState(false); // o mural do endereço não abriu: mostra a tela inicial
+  const [openFailed, setOpenFailed] = useState(false);
+  const [companyWelcome, setCompanyWelcome] = useState(false); // conta de empresa recém-criada: mensagem de boas-vindas
+  useEffect(() => {
+    if (myNick && takeCompanyWelcome(myNick)) setCompanyWelcome(true);
+  }, [myNick]); // o mural do endereço não abriu: mostra a tela inicial
   const [tried, setTried] = useState(false);
   const [badges, setBadges] = useState<PlacedBadge[]>([]); // pins decorativos do mural aberto
   const { message: toast, notify } = useToast();
@@ -718,6 +723,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}
+      <Modal open={companyWelcome} onClose={() => setCompanyWelcome(false)} title={`Olá ${companyDisplayName(myNick ?? "")}`}>
+        <p className="text-center text-lg leading-relaxed">Que bom ter você por aqui. Esperamos que essa seja uma experiência muito boa para você e seus clientes.</p>
+        <button type="button" onClick={() => setCompanyWelcome(false)} className="mt-5 w-full cursor-pointer rounded-xl bg-[#1f232b] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2c313b]">
+          Começar
+        </button>
+      </Modal>
       <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} />
       <Toast message={toast} />
     </div>

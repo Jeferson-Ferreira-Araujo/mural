@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { confirmEmailCode, sendEmailCode, setFinalizing, type ConfirmFailure } from "@/lib/reserved";
+import { confirmEmailCode, markCompanyWelcome, sendEmailCode, setFinalizing, type ConfirmFailure } from "@/lib/reserved";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "./ui";
 
@@ -43,6 +43,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
       return setError(TEXT[res.reason]);
     }
     setFinalizing(false);
+    markCompanyWelcome(res.nickname); // o mural recebe a empresa com uma mensagem de boas-vindas
     onDone(res.nickname);
   }
 
