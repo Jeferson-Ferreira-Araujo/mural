@@ -22,10 +22,11 @@ export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
+  const hasPager = !!muralSwitch && muralSwitch.items.length >= 2;
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} />
+      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className={`relative min-w-0 flex-1 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
@@ -48,7 +49,6 @@ export function DesktopBoard(props: ViewProps) {
             {share && (
               <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
-            <MuralPager sw={muralSwitch} tone="dark" className="bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />
             {account && <AccountActions account={account} tone="dark" />}
           </div>
         </nav>
@@ -58,8 +58,12 @@ export function DesktopBoard(props: ViewProps) {
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </BoardCanvas>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-[2.2vw] pb-5">
-          <BadgeBar className="w-[min(46rem,100%)]" />
+        <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
+          {hasPager && <div aria-hidden className="w-[9.5rem] shrink-0" />}
+          <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
+            <BadgeBar className="w-[min(46rem,100%)]" />
+          </div>
+          {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="w-[9.5rem] bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
         </div>
       </div>
     </div>

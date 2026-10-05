@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { loginUrl } from "@/lib/auth";
 
-export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; badge?: number };
+export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number };
 
 const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
@@ -12,21 +12,12 @@ export function AccountActions({ account, tone = "light", className = "" }: { ac
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
-      {account.onHome && (
-        <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
-          <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M3 11.5 12 4l9 7.5" />
-            <path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-5.5h4v5.5h3.5a1 1 0 0 0 1-1V10" />
-          </svg>
-          Meu mural
-        </button>
-      )}
-      <button type="button" onClick={account.onSearch} aria-label="Procurar usuário" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
+      <button type="button" onClick={account.onSearch} aria-label="Pesquisar Usuário" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
-        Procurar usuário
+        Pesquisar Usuário
       </button>
       <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
@@ -57,7 +48,7 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
           </svg>
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Procurar usuário" title="Procurar usuário" className={iconBtn}>
+      <button type="button" onClick={account.onSearch} aria-label="Pesquisar Usuário" title="Pesquisar Usuário" className={iconBtn}>
         <svg {...iconSvg} strokeWidth={2.4}>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />

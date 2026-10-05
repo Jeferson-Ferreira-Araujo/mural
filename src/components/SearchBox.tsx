@@ -68,7 +68,7 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
   return (
     <div className="relative">
       <label htmlFor={id} className={`${hideLabel ? "sr-only" : "mb-[0.5em] block"} block text-center text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
-        Procurar usuário
+        Pesquisar Usuário
       </label>
       <div className="relative">
         <svg viewBox="0 0 24 24" className={`pointer-events-none absolute top-1/2 left-[0.9em] size-[1.15em] -translate-y-1/2 ${dark ? "text-[#6b5440]" : "text-[#8a7b69]"}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>

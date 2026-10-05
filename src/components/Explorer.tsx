@@ -578,7 +578,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
-          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites } : undefined}
+          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites } : undefined}
           muralSwitch={nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
