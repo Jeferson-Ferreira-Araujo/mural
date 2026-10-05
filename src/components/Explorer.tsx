@@ -45,6 +45,9 @@ import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 
 
+/** "Salvar imagem do mural" fica desligado por enquanto (a qualidade da imagem ainda está em estudo). Ligue para reabrir no menu da conta. */
+const EXPORT_IMAGE_ENABLED = false;
+
 /**
  * Tela principal: busca uma pessoa pelo nickname, mostra a pergunta do mural e, ao acertar,
  * revela o quadro (que fica desfocado até lá). Também abre direto em um mural (`/nickname/mural`).
@@ -623,7 +626,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             murals={own}
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
-            onExportImage={(isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
+            onExportImage={EXPORT_IMAGE_ENABLED && (isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
             sharedInvites={sharedInvites}
             onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}
