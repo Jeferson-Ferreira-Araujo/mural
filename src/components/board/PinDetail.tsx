@@ -222,11 +222,6 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     {mod && item && !isSealed(item) && !isHidden(item) && (
       <Modal open={reporting} onClose={() => setReporting(false)} title="Relatar abuso">
         <div className="space-y-4">
-          <div className="grid place-items-center rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-4">
-            <div className="text-[11px]">
-              <MessageView message={{ ...item, pending: false }} />
-            </div>
-          </div>
           <p className="text-sm text-[#4a3826]">O pin é guardado como prova, sai do mural e o espaço fica livre. Escolha o motivo e, se quiser, conte o que aconteceu.</p>
           <ReportBox inModal onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />
         </div>
