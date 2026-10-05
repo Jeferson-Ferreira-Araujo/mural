@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { companyDisplayName } from "@/lib/reserved";
 import { Modal } from "./Modal";
 
 const key = (uid: string) => `pinz:tip:${uid}`;
 const RECENT_MS = 7 * 24 * 60 * 60 * 1000;
 
-/** Dica de boas-vindas: aparece uma vez, no primeiro acesso ao próprio mural depois de criar a conta. */
-export function FirstTimeTip({ uid, createdAt, ready }: { uid?: string; createdAt?: string; /** o mural já está na tela */ ready: boolean }) {
+/** Boas-vindas ("Olá <usuário>") com as instruções de uso: aparece uma vez, no primeiro acesso ao próprio mural depois de criar a conta. */
+export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: { uid?: string; createdAt?: string; /** o mural já está na tela */ ready: boolean; /** nome de usuário (aparece em "Olá ...") */ nick: string; /** conta de empresa (nome reservado): boas-vindas própria */ company?: boolean }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -30,39 +31,32 @@ export function FirstTimeTip({ uid, createdAt, ready }: { uid?: string; createdA
   }
 
   return (
-    <Modal open={open} onClose={close} title="Bem-vindo ao seu mural!">
-      <ul className="space-y-4 text-[15px]">
+    <Modal open={open} onClose={close} title={`Olá ${company ? companyDisplayName(nick) : nick}`}>
+      <p className="mb-4 text-[15px] leading-relaxed">{company ? "Que bom ter você por aqui. Esperamos que essa seja uma experiência muito boa para você e seus clientes." : "Que bom ter você por aqui! Veja como usar:"}</p>
+      <ul className="space-y-3 text-[15px]">
         <li className="flex gap-3">
-          <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-xl">
+          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             📌
           </span>
-          <p>
-            <strong>Colar um pin:</strong> toque (ou clique) num espaço vazio do mural para escolher o formato e escrever.
-          </p>
+          <p><strong>Colar um pin:</strong> clique (ou toque) num espaço vazio do mural.</p>
         </li>
         <li className="flex gap-3">
-          <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-xl">
+          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🤏
           </span>
-          <p>
-            <strong>Zoom no celular:</strong> faça o movimento de pinça com dois dedos para aproximar ou afastar. Dar dois toques seguidos também aproxima onde você tocou, e o botão "Ver tudo" mostra o mural inteiro de novo.
-          </p>
+          <p><strong>Zoom:</strong> pinça com dois dedos ou toque duplo. “Ver tudo” volta ao mural inteiro.</p>
         </li>
         <li className="flex gap-3">
-          <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-xl">
+          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             ✋
           </span>
-          <p>
-            <strong>Andar pelo mural:</strong> com o mural aproximado, arraste com o dedo para ver as outras partes.
-          </p>
+          <p><strong>Mover:</strong> com o mural aproximado, arraste para ver o resto.</p>
         </li>
         <li className="flex gap-3">
-          <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-xl">
+          <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🎨
           </span>
-          <p>
-            <strong>Enfeitar com Bottons:</strong> os Bottons da barra de baixo podem ser arrastados e soltos onde você quiser no mural. Para tirar, arraste de volta para a barra.
-          </p>
+          <p><strong>Bottons:</strong> arraste da barra de baixo para o mural. Para tirar, arraste de volta.</p>
         </li>
       </ul>
       <button type="button" onClick={close} className="mt-6 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">

@@ -33,8 +33,7 @@ import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { companyDisplayName, isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
-import { Modal } from "./account/Modal";
+import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -723,13 +722,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}
-      <Modal open={companyWelcome} onClose={() => setCompanyWelcome(false)} title={`Olá ${companyDisplayName(myNick ?? "")}`}>
-        <p className="text-center text-lg leading-relaxed">Que bom ter você por aqui. Esperamos que essa seja uma experiência muito boa para você e seus clientes.</p>
-        <button type="button" onClick={() => setCompanyWelcome(false)} className="mt-5 w-full cursor-pointer rounded-xl bg-[#1f232b] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2c313b]">
-          Começar
-        </button>
-      </Modal>
-      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} />
+      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} nick={myNick ?? ""} company={companyWelcome} />
       <Toast message={toast} />
     </div>
   );
