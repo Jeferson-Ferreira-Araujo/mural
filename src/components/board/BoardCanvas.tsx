@@ -10,6 +10,7 @@ import { MessageView } from "../messages/MessageView";
 import { EmptySlot } from "./SlotMarker";
 import { PinDetail } from "./PinDetail";
 import { BadgeLayer } from "../badges/BadgeLayer";
+import { useBoardLoading } from "./BoardLoadingContext";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -88,6 +89,7 @@ export function BoardCanvas({
   contain?: boolean;
   children?: ReactNode;
 }) {
+  const loadingPins = useBoardLoading();
   const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
   const { cols, rows } = gridFor(capacity);
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
@@ -192,7 +194,7 @@ export function BoardCanvas({
 
                   <BadgeLayer />
 
-                  {items.length === 0 && unlocked && (
+                  {items.length === 0 && unlocked && !loadingPins && (
                     <div data-empty-slot className="absolute inset-x-0 top-[45%] z-10">
                       <EmptyNote unlocked={unlocked} message={emptyMessage} />
                     </div>

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { MuralRef, UnlockResult } from "./mural";
+import type { BoardItem } from "./types";
 
 /** Mural compartilhado entre duas pessoas PLUS (entra por senha + conta de um dos participantes). */
 export type SharedMural = {
@@ -59,6 +60,12 @@ export async function setSharedPassword(sb: SupabaseClient, id: string, password
 export async function deleteSharedMural(sb: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await sb.rpc("delete_mural", { p_id: id });
   return !error;
+}
+
+/** Como o mural compartilhado está montado (espaços, tipos e estilos, SEM conteúdo): só para os participantes, antes de digitar a senha. */
+export async function fetchSharedLayout(sb: SupabaseClient, ref: MuralRef): Promise<BoardItem[]> {
+  const { data, error } = await sb.rpc("get_shared_layout", { p_nick: ref.nick, p_slug: ref.slug });
+  return error || !Array.isArray(data) ? [] : (data as BoardItem[]);
 }
 
 /** Abre o mural compartilhado: o servidor confere a conta (participante), a senha e limita as tentativas. */
