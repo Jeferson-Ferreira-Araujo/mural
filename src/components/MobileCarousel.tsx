@@ -20,8 +20,9 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
 
-  if (!landing && hasSelection && unlocked && !locked && muralInfo) {
-    return <MobileMural items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} muralSwitch={muralSwitch} />;
+  // mural escolhido (aberto ou trancado): sempre a tela do mural; se estiver trancado, o quadro fica borrado e a pergunta aparece por cima
+  if (!landing && hasSelection && muralInfo) {
+    return <MobileMural locked={locked} lockPanel={locked ? panel("dark") : undefined} items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} muralSwitch={muralSwitch} />;
   }
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração

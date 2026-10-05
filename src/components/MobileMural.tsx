@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { boardById } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
@@ -29,13 +30,16 @@ type Props = {
   account?: AccountApi;
   guestNext?: string;
   muralSwitch?: MuralSwitch;
+  /** mural trancado por pergunta: o quadro fica borrado e este cartão (pergunta + resposta) aparece por cima */
+  locked?: boolean;
+  lockPanel?: ReactNode;
 };
 
 /**
  * Mural no celular (retrato), como no mockup: topo com o logo e o menu; cabeçalho com a foto e o nome de quem é o mural;
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Ver tudo" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
-export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch }: Props) {
+export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch, locked = false, lockPanel }: Props) {
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
 
@@ -72,8 +76,13 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
         <PannableBoard ambient={look.image}>
-          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain emptyMessage={welcome} />
+          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain emptyMessage={welcome} />
         </PannableBoard>
+        {locked && lockPanel && (
+          <div className="absolute inset-0 z-30 grid place-items-center overflow-y-auto bg-black/30 p-4">
+            <div className="w-[min(92vw,28rem)] text-[15px]">{lockPanel}</div>
+          </div>
+        )}
       </div>
 
       {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
