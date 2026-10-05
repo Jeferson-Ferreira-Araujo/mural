@@ -6,6 +6,7 @@ import { Modal } from "@/components/account/Modal";
 import { BadgeProvider } from "@/components/badges/BadgeContext";
 import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
+import { AnalyticsPanel } from "./AnalyticsPanel";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
@@ -335,7 +336,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "analytics">("users");
   const [q, setQ] = useState("");
   const [users, setUsers] = useState<{ total: number; rows: UserRow[] } | null>(null);
   const [reports, setReports] = useState<Report[] | null>(null);
@@ -405,18 +406,19 @@ export default function Admin() {
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-title text-2xl font-semibold">Administração</h1>
-            <p className="text-sm text-[#6b5440]">Usuários, murais, créditos e bloqueios.</p>
+            <p className="text-sm text-[#6b5440]">Usuários, murais, créditos, bloqueios e analytics.</p>
           </div>
           <Link href="/" className={btn}>
             ← Voltar ao site
           </Link>
         </header>
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-sm grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-md grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
               ["reports", "Denúncias"],
+              ["analytics", "Analytics"],
             ] as const
           ).map(([id, label]) => (
             <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -431,7 +433,9 @@ export default function Admin() {
           </p>
         )}
 
-        {tab === "users" ? (
+        {tab === "analytics" ? (
+          <AnalyticsPanel />
+        ) : tab === "users" ? (
           <section className="mt-4" aria-label="Usuários">
             <input className={input} placeholder="Buscar por e-mail ou nome de usuário…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar usuário" />
             {!users ? (
