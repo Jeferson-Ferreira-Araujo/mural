@@ -75,7 +75,7 @@ const THUMBS: Record<MessageType, ReactNode> = {
 };
 
 /** Escolha do formato. Mostra SÓ os formatos liberados neste mural (o visitante nunca vê o que não está disponível). */
-export function FormatPicker({ formats, onPick, accountOnly = [], loginHref }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void; /** Formatos que exigem conta: sem conta, levam ao login em vez de abrir. */ accountOnly?: readonly MessageType[]; loginHref?: string }) {
+export function FormatPicker({ formats, onPick }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void }) {
   const card = "flex h-full w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-4 text-center transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
     <div>
@@ -83,14 +83,7 @@ export function FormatPicker({ formats, onPick, accountOnly = [], loginHref }: {
       <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {formats.map((f) => (
           <li key={f}>
-            {accountOnly.includes(f) ? (
-              <a href={loginHref ?? "/entrar"} className={`${card} opacity-80`}>
-                <span className="grid h-12 place-items-center">{THUMBS[f]}</span>
-                <span className="text-sm font-bold">{formatInfo[f].label}</span>
-                <span className="text-xs leading-tight text-[#6b5440]">🔒 Entre na sua conta para criar</span>
-              </a>
-            ) : (
-            <button
+                        <button
               type="button"
               onClick={() => onPick(f)}
               className={card}
@@ -99,7 +92,6 @@ export function FormatPicker({ formats, onPick, accountOnly = [], loginHref }: {
               <span className="text-sm font-bold">{formatInfo[f].label}</span>
               <span className="text-xs leading-tight text-[#6b5440]">{formatInfo[f].hint}</span>
             </button>
-            )}
           </li>
         ))}
       </ul>

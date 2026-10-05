@@ -521,8 +521,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                   triedAlready: tried,
                   canOpen: async () => (nick && slug ? sendBlockedText(await getSendStatus(getBrowserSupabase(), { nick, slug }, token)) : null),
                 signAs: myNick,
-                  // sem conta: o pin só pode ser anônimo; para assinar, entra/cria conta e volta para este mural
-                  inviteHref: !logged ? "/entrar" : undefined,
+                  // sem conta não dá para publicar: avisa, leva a criar a conta (ou entrar) e volta para este mural
+                  signupHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`, true) : undefined,
                   loginHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`) : undefined,
                 }
               : { mode: "soon" }

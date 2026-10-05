@@ -6,7 +6,7 @@ type DistOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never
 export type DraftMessage = DistOmit<Message, "id" | "fromCapsule">;
 
 /** O que o visitante envia: a mensagem e, no PLUS, uma data de abertura (Cápsula PINZ). */
-export type SendPayload = { message: DraftMessage; capsuleAt?: string; /** espaço do quadro escolhido */ slot: number; /** true = o nickname de quem enviou aparece no pin; false = anônimo */ signed?: boolean };
+export type SendPayload = { message: DraftMessage; capsuleAt?: string; /** espaço do quadro escolhido */ slot: number; };
 
 /**
  * O formulário avisa a cada mudança. `meta.empty` = ainda falta preencher (a prévia mostra um exemplo, mas não dá para enviar).

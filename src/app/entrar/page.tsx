@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { callbackUrl, homeRouteFor, rememberNext, safeNext, takeNext, useSession } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
@@ -21,6 +21,9 @@ export default function Entrar() {
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [remember, setRememberState] = useState(true);
+  // criou a conta vindo de um mural: em vez de redirecionar sozinho, pergunta para onde ir
+  const signingUp = useRef(false);
+  const [afterSignup, setAfterSignup] = useState<string | null>(null);
   // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
   useEffect(() => setEmail((cur) => cur || getRememberedEmail()), []);
   const [busy, setBusy] = useState(false);
@@ -38,7 +41,7 @@ export default function Entrar() {
 
   // já logado: volta para onde estava (um mural) ou vai para o próprio mural
   useEffect(() => {
-    if (!session) return;
+    if (!session || signingUp.current) return;
     const next = takeNext();
     if (next) return router.replace(next);
     homeRouteFor(getBrowserSupabase()).then((to) => router.replace(to));
@@ -66,8 +69,10 @@ export default function Entrar() {
       return; // sucesso: o useSession dispara o redirecionamento
     }
 
+    signingUp.current = true;
     const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick } } });
     setBusy(false);
+    if (err || !data.session) signingUp.current = false;
     if (err) {
       if (/registered|already/i.test(err.message)) setError("Esse e-mail já tem conta. Entre com a sua senha.");
       else if (/password/i.test(err.message)) setError("Senha muito fraca. Use letras, números e mais caracteres.");
@@ -78,11 +83,17 @@ export default function Entrar() {
     }
     // e-mail já cadastrado (com confirmação ligada, o Supabase devolve um usuário "vazio")
     if (data.user && data.user.identities?.length === 0) {
+      signingUp.current = false;
       setError("Esse e-mail já tem conta. Entre com a sua senha.");
       return;
     }
     // sem sessão = o projeto ainda exige confirmação por e-mail
     if (!data.session) setNeedsConfirm(true);
+    else {
+      const next = takeNext();
+      if (next) setAfterSignup(next);
+      else router.replace(await homeRouteFor(sb));
+    }
   }
 
   async function google() {
@@ -92,6 +103,24 @@ export default function Entrar() {
       options: { redirectTo: callbackUrl() },
     });
     if (err) setError("Não foi possível entrar com o Google.");
+  }
+
+  if (afterSignup) {
+    const owner = afterSignup.split("/")[1];
+    return (
+      <AuthShell>
+        <h1 className="font-title text-2xl font-semibold">Conta criada! 🎉</h1>
+        <p className="mt-3 text-[#4a3826]">Agora você já pode deixar pins. Para onde você quer ir?</p>
+        <div className="mt-6 flex flex-col gap-3">
+          <button type="button" onClick={() => router.replace(afterSignup)} className={primaryButton}>
+            Continuar vendo o mural de {owner ? `@${owner}` : "quem te convidou"}
+          </button>
+          <button type="button" onClick={async () => router.replace(await homeRouteFor(getBrowserSupabase()))} className={ghostButton}>
+            Vou ver o meu mural
+          </button>
+        </div>
+      </AuthShell>
+    );
   }
 
   if (loading || session) {

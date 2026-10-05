@@ -19,7 +19,7 @@ type Base = {
   pending?: boolean;
   /** Visão do dono: este pin está em blur para quem visita (recurso PLUS). */
   ownerHidden?: boolean;
-  /** Nickname de quem assinou o pin. Sem isso o pin é anônimo (o autor só existe no banco). */
+  /** Nickname de quem deixou o pin. Pins antigos de antes do fim do envio anônimo podem não ter. */
   signedBy?: string;
   /** Lista que quem está vendo pode editar (dono do mural ou autor do pin). Vem do servidor. */
   canEdit?: boolean;

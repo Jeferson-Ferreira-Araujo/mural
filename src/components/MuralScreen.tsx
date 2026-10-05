@@ -4,21 +4,20 @@ import { useState } from "react";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
 import { Modal } from "./account/Modal";
-import { InviteDialog } from "./composer/InviteDialog";
 import { ComposerDialog } from "./composer/ComposerDialog";
 import type { SendPayload } from "./composer/types";
 import { DesktopBoard } from "./DesktopBoard";
 import { MobileCarousel } from "./MobileCarousel";
 import type { ViewProps } from "./viewProps";
 
-/** Como o botão "Deixar uma mensagem anônima" se comporta. */
+/** Como o botão "Deixar uma mensagem" se comporta. */
 export type ComposerMode =
   /** escondido (ex.: visão do dono) */
   | { mode: "hidden" }
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado (opção de assinar o pin) */ signAs?: string | null; /** sem conta: endereço do login para quem quiser assinar o pin */ loginHref?: string; /** sem conta: endereço do convite "criar o meu mural", mostrado depois de enviar o pin (uma vez por visita) */ inviteHref?: string };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado: o pin sai sempre assinado com ele */ signAs?: string | null; /** sem conta: não dá para publicar; a pessoa é avisada e este endereço leva à criação da conta (que volta para este mural) */ signupHref?: string; /** sem conta: endereço do login de quem já tem conta */ loginHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -31,7 +30,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
-  const [invite, setInvite] = useState(false);
+  const [needAccount, setNeedAccount] = useState(false);
   const [blocked, setBlocked] = useState<string | null>(null);
   const { onNotify } = view;
 
@@ -41,6 +40,11 @@ export function MuralScreen({ composer, ...view }: Props) {
       : composer.mode === "soon"
         ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
         : async (s?: number) => {
+            // visitante sem conta: antes de começar, avisa que publicar exige conta
+            if (composer.mode === "demo" && !composer.signAs && composer.signupHref) {
+              setNeedAccount(true);
+              return;
+            }
             const why = composer.canOpen ? await composer.canOpen() : null;
             if (why) {
               setBlocked(why);
@@ -73,7 +77,6 @@ export function MuralScreen({ composer, ...view }: Props) {
           used={view.items.length}
           triedAlready={composer.triedAlready}
           signAs={composer.signAs}
-          loginHref={composer.loginHref}
           onTried={composer.onTried}
           sending={sending}
           onSend={async (p) => {
@@ -86,14 +89,6 @@ export function MuralScreen({ composer, ...view }: Props) {
                 return;
               }
               setOpen(false);
-              if (composer.inviteHref) {
-                try {
-                  if (sessionStorage.getItem("pinz:invite") !== "1") {
-                    sessionStorage.setItem("pinz:invite", "1");
-                    setInvite(true);
-                  }
-                } catch {}
-              }
               onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌"));
             } finally {
               setSending(false);
@@ -107,7 +102,21 @@ export function MuralScreen({ composer, ...view }: Props) {
           Entendi
         </button>
       </Modal>
-      {composer.mode === "demo" && composer.inviteHref && <InviteDialog open={invite} onClose={() => setInvite(false)} href={composer.inviteHref} />}
+      <Modal open={needAccount} onClose={() => setNeedAccount(false)} title="Crie uma conta para publicar">
+        <p className="text-[15px] leading-relaxed">Para deixar um pin neste mural você precisa ter uma conta. É rapidinho, e depois você volta direto para cá.</p>
+        {composer.mode === "demo" && (
+          <div className="mt-5 flex flex-col gap-2">
+            <a href={composer.signupHref} className="block rounded-xl bg-[#d9a21b] px-4 py-3 text-center font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2a1c12]">
+              Criar minha conta
+            </a>
+            {composer.loginHref && (
+              <a href={composer.loginHref} className="block rounded-xl border border-[#d9c9ad] bg-white/60 px-4 py-3 text-center text-sm font-semibold text-[#4a3826] transition hover:bg-white">
+                Já tenho conta
+              </a>
+            )}
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

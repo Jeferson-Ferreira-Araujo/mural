@@ -49,7 +49,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string |
     p_type: type,
     p_content: content,
     p_opens_at: payload.capsuleAt ?? null,
-    p_signed: payload.signed === true,
+    p_signed: true,
   });
   if (!error) return { ok: true };
   const m = error.message;
@@ -62,7 +62,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string |
 export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
   cooldown: "Você já deixou 3 PINs neste mural nos últimos 30 minutos. Tente de novo daqui a pouco.",
   pending_exists: "O último PIN que você deixou neste mural ainda está aguardando a aprovação do dono.",
-  not_authenticated: "Entre na sua conta para assinar o pin.",
+  not_authenticated: "Crie uma conta ou entre para publicar um pin.",
   blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
   too_many_pending: "Você já tem pins aguardando aprovação neste mural. Espere o dono aprovar para enviar mais.",

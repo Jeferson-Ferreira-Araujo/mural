@@ -74,8 +74,8 @@ export function DemoMural() {
     fill(p, board.items.length);
   }
 
-  function onSend({ message: draft, capsuleAt, slot, signed }: SendPayload) {
-    const message = (signed ? { ...draft, signedBy: DEMO_NICK } : draft) as typeof draft;
+  function onSend({ message: draft, capsuleAt, slot }: SendPayload) {
+    const message = { ...draft, signedBy: DEMO_NICK } as typeof draft;
     setBoard((b) => {
       if (b.items.length >= available || b.items.some((it) => it.slot === slot)) return b;
       const id = `u${++uid}`;

@@ -28,39 +28,9 @@ type Props = {
   sending?: boolean;
   onTried: () => void;
   triedAlready: boolean;
-  /** Nickname de quem está logado: é o que aparece no pin se a pessoa escolher assinar. */
+  /** Nickname de quem está logado: todo pin sai assinado com ele (não existe pin anônimo). */
   signAs?: string | null;
-  /** Sem conta: o pin só pode ser anônimo; este endereço leva ao login para quem quiser assinar. */
-  loginHref?: string;
 };
-
-/** Anônimo ou assinado: quem vê o mural só enxerga o nickname se a pessoa escolher assinar. */
-function SignChoice({ nick, signed, onChange }: { nick: string; signed: boolean; onChange: (v: boolean) => void }) {
-  const opt = (on: boolean, label: string, sub: string) => (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={signed === on}
-      onClick={() => onChange(on)}
-      className={`flex-1 cursor-pointer rounded-xl border-2 px-3 py-2 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${signed === on ? "border-[#1f232b] bg-[#fff6dd]" : "border-[#d9c9ad] bg-white/60 hover:bg-white"}`}
-    >
-      <span className="block text-sm font-bold text-[#2f2218]">{label}</span>
-      <span className="block truncate text-xs text-[#6b5440]">{sub}</span>
-    </button>
-  );
-  return (
-    <fieldset>
-      <legend className="text-sm font-semibold text-[#4a3826]">Como você quer deixar o pin?</legend>
-      <div role="radiogroup" aria-label="Anônimo ou assinado" className="mt-2 flex gap-2">
-        {opt(false, "Anônimo", "Ninguém vê quem deixou")}
-        {opt(true, "Assinar", `Aparece @${nick}`)}
-      </div>
-    </fieldset>
-  );
-}
-
-/** Formatos que só quem tem conta cria (o autor precisa poder editar depois). */
-const ACCOUNT_ONLY: MessageType[] = ["list"];
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
   switch (format) {
@@ -100,13 +70,13 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
 };
 
 /**
- * Compositor do visitante (quem visita NUNCA paga nem se cadastra).
+ * Compositor de pins (só com conta: o pin sai sempre assinado; quem visita sem conta é avisado antes de abrir).
  * 1) mural lotado → só "Eu tentei deixar um PINZ", sem composição;
  * 2) senão: escolhe um dos formatos liberados NESTE mural → escreve (com a prévia no topo, já com um exemplo) →
  *    (PLUS) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, loginHref }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -118,7 +88,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
   const [picked, setPicked] = useState<number | null>(null);
-  const [signed, setSigned] = useState(false);
   const choice = fixedSlot ?? picked;
   const slot = choice !== null && choice < capacity && !taken.includes(choice) ? choice : firstFree;
 
@@ -137,11 +106,9 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
   if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
-  if (!format) return <FormatPicker formats={formats} onPick={onFormat} accountOnly={signAs ? [] : ACCOUNT_ONLY} loginHref={loginHref} />;
+  if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
 
-  // lista: só com conta e sempre assinada (o autor edita depois; anônimo não teria como)
-  const forceSigned = format === "list";
-  const canSend = forceSigned && !signAs ? false :!sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
+  const canSend = !!signAs && !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
   const shown = draft ?? SAMPLE[format];
 
   return (
@@ -150,7 +117,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       onSubmit={(e) => {
         e.preventDefault();
         if (!draft || !canSend || slot === null) return;
-        onSend({ message: draft, slot, signed: !!signAs && (signed || forceSigned), capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        onSend({ message: draft, slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className="space-y-5"
     >
@@ -164,7 +131,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
                 <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
-                <MessageView message={{ ...shown, id: "preview", signedBy: signAs && (signed || forceSigned) ? signAs : undefined } as Message} />
+                <MessageView message={{ ...shown, id: "preview", signedBy: signAs ?? undefined } as Message} />
               </div>
             </div>
           </div>
@@ -177,26 +144,9 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
-      {signAs && forceSigned && (
+      {signAs && (
         <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
-          A lista aparece assinada como @{signAs}. Você e o dono do mural podem editá-la depois.
-        </p>
-      )}
-      {signAs && !forceSigned && <SignChoice nick={signAs} signed={signed} onChange={setSigned} />}
-      {!signAs && forceSigned && (
-        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
-          Lista só com conta.{" "}
-          <a href={loginHref ?? "/entrar"} className="font-bold underline decoration-[#d98a2b] underline-offset-2">
-            Entre ou crie uma conta
-          </a>
-        </p>
-      )}
-      {!signAs && !forceSigned && loginHref && (
-        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
-          Seu pin será anônimo.{" "}
-          <a href={loginHref} className="font-bold underline decoration-[#d98a2b] underline-offset-2">
-            Entre ou crie uma conta para assinar
-          </a>
+          Seu pin aparece assinado como <strong>@{signAs}</strong>.
         </p>
       )}
 

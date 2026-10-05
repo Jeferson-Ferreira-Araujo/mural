@@ -48,7 +48,7 @@ export type ViewProps = {
   panelTitle?: string;
   /** Avisos do proprietário, etc. (opcional). */
   notice?: (tone: Tone) => ReactNode;
-  /** Botão "Deixar uma mensagem anônima"; null = escondido (ex.: visão do dono). */
+  /** Botão "Deixar uma mensagem"; null = escondido (ex.: visão do dono). */
   onCompose: ((slot?: number) => void) | null;
   onNotify: (msg: string) => void;
   /** Logado: ícones do cabeçalho (pesquisar murais e menu da conta). */

@@ -15,7 +15,7 @@ const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600"], variable: 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${SITE_HOST}`),
   title: { default: "Pinz", template: "%s | Pinz" },
-  description: "Crie o seu mural no Pinz e receba recados anônimos de quem realmente te conhece.",
+  description: "Crie o seu mural no Pinz e receba recados de quem realmente te conhece.",
   openGraph: { siteName: "Pinz", type: "website", locale: "pt_BR", images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Pinz" }] },
   twitter: { card: "summary_large_image", images: ["/og.jpg"] },
   robots: { index: false, follow: false },
