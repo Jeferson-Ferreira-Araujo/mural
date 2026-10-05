@@ -17,7 +17,7 @@ import {
   type SiteStats,
   type UnlockResult,
 } from "@/lib/mural";
-import { boardById } from "@/lib/boards";
+import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
@@ -440,7 +440,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // Revelado: o mural real, com os pins gravados no banco e o plano do próprio mural.
   // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
   const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
-  useEffect(() => setDecor(randomMural(Date.now())), []);
+  // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
+  const [decorBoard, setDecorBoard] = useState<string>(BOARDS[0].id);
+  useEffect(() => {
+    setDecor(randomMural(Date.now()));
+    setDecorBoard(BOARDS[Math.floor(Math.random() * BOARDS.length)].id);
+  }, []);
   const revealed = unlocked && !!selected;
 
   // abertura animada: só na tela inicial, para quem ainda não entrou, uma vez por visita
@@ -483,7 +488,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           unlocked={unlocked}
           stats={selected?.stats ?? null}
           siteStats={siteStats}
-          board={boardById(selected?.board).id}
+          board={boardById(selected ? selected.board : decorBoard).id}
           // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
           share={null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
