@@ -17,6 +17,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   const mod = useModeration();
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
+  const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
   // executa a ação e, se for o caso, fecha o destaque (o pin já saiu do mural ou mudou)
   async function run(action: () => Promise<boolean>, closeAfter: boolean) {
@@ -26,6 +27,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     setReporting(false);
     if (ok && closeAfter) onClose();
   }
+
+  // trocar de pin ou fechar o detalhe borra o segredo de novo
+  useEffect(() => {
+    setShowSecret(false);
+  }, [index, open]);
 
   useEffect(() => {
     const d = ref.current;
@@ -76,7 +82,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
             </button>
             <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,5.2vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
-              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false, ownerHidden: false }} />
+              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
               ›
@@ -90,6 +96,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               </svg>
               {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
             </p>
+          )}
+          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && (
+            <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} w-full`}>
+              {showSecret ? "🙈 Esconder o conteúdo de novo" : "👁 Ver o conteúdo (só para mim)"}
+            </button>
           )}
           {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && (
             <p role="status" className="flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
@@ -120,7 +131,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                       Remover
                     </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
-                      {mod.plan !== "full" ? "🔒 Segredo (PLUS)" : item.ownerHidden ? "🔒 Segredo — mostrar" : "🔒 Deixar em segredo"}
+                      {mod.plan !== "full" ? "🔒 Segredo (PLUS)" : item.ownerHidden ? "🔓 Tornar visível para todos" : "🔒 Deixar em segredo"}
                     </button>
                   </>
                 )}

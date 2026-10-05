@@ -90,9 +90,17 @@ function Marked({ m }: { m: Message }) {
  * Ponto único de renderização de um item do mural: mensagem aberta, Cápsula fechada ou espaço em blur.
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
-export function MessageView({ message: m }: { message: BoardItem }) {
+export function MessageView({ message: m, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
   if (isHidden(m)) return <HiddenPin item={m} />;
+  // visão do dono: pin em segredo continua em blur (o conteúdo nem é desenhado) até ele pedir para ver, no detalhe do pin
+  if (m.ownerHidden && !m.pending && !revealSecret) {
+    return (
+      <HiddenPin
+        item={{ id: m.id, slot: m.slot, hidden: true, type: m.type, color: (m as { color?: never }).color, variant: (m as { variant?: never }).variant, playerColor: (m as { playerColor?: never }).playerColor, font: m.font, pin: m.pin, tape: m.tape }}
+      />
+    );
+  }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
   if (!m.fromCapsule && !m.signedBy) return <Content m={m} />;
   // mensagem assinada e/ou vinda de uma Cápsula já aberta (ganha um pequeno lacre no canto)
