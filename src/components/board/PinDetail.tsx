@@ -120,8 +120,8 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               <button
                 type="button"
                 disabled={busy}
-                aria-label="Relatar abuso"
-                title="Relatar abuso"
+                aria-label="Denunciar"
+                title="Denunciar"
                 aria-expanded={reporting}
                 onClick={() => setReporting((v) => !v)}
                 className={`${arrow} !border-[#ff9b8f]/50 !text-[#ffb4a8]`}
@@ -220,9 +220,8 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
       </Modal>
     )}
     {mod && item && !isSealed(item) && !isHidden(item) && (
-      <Modal open={reporting} onClose={() => setReporting(false)} title="Relatar abuso">
+      <Modal open={reporting} onClose={() => setReporting(false)} title="Denunciar">
         <div className="space-y-4">
-          <p className="text-sm text-[#4a3826]">O pin é guardado como prova, sai do mural e o espaço fica livre. Escolha o motivo e, se quiser, conte o que aconteceu.</p>
           <ReportBox inModal onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />
         </div>
       </Modal>

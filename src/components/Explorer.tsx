@@ -258,7 +258,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       moderate: async (id: string, approve: boolean, secret = false) =>
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
-      report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Pin relatado e removido."),
+      report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Denúncia enviada e pin removido."),
     }),
     [afterModeration, own, slug, isMember],
   );

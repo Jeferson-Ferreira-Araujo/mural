@@ -158,7 +158,7 @@ export function DemoMural() {
         setBoard((b) => ({ ...b, items: b.items.filter((it) => it.id !== id) }));
         setPendingIds((s) => without(s, id));
         setHiddenIds((s) => without(s, id));
-        notify(r.block ? "Relato registrado (simulação). O pin saiu do mural e quem enviou foi bloqueado." : "Relato registrado (simulação). O pin saiu do mural.");
+        notify(r.block ? "Denúncia registrada (simulação). O pin saiu do mural e quem enviou foi bloqueado." : "Denúncia registrada (simulação). O pin saiu do mural.");
       }}
     />
   );

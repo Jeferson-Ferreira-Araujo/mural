@@ -72,7 +72,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
               setBlock(true);
             }}
           >
-            🚩 Relatar abuso
+            🚩 Denunciar
           </button>
         </div>
         {reporting === p.id && (
@@ -84,8 +84,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
               setReporting(null);
             }}
           >
-            <p className="text-sm font-semibold">Relatar abuso ou assédio</p>
-            <p className={`text-xs ${muted}`}>O pin é guardado como prova, sai do mural e o espaço fica livre.</p>
+            <p className="text-sm font-semibold">Denunciar</p>
             <label className="block text-sm">
               Motivo
               <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} className="mt-1 w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm text-[#2f2218]">
@@ -106,7 +105,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
             </label>
             <div className="flex gap-2">
               <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
-                Relatar e remover
+                Denunciar
               </button>
               <button type="button" className={btn} onClick={() => setReporting(null)}>
                 Cancelar

@@ -25,8 +25,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
         onSend({ reason, details: details.trim(), block });
       }}
     >
-      {!inModal && <p className="text-sm font-semibold">Relatar abuso ou assédio</p>}
-      <p className="text-xs text-[#6b5440]">O pin é guardado como prova, sai do mural e o espaço fica livre.</p>
+      {!inModal && <p className="text-sm font-semibold">Denunciar</p>}
       <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} aria-label="Motivo" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm">
         {REPORT_REASONS.map((r) => (
           <option key={r.id} value={r.id}>
@@ -41,7 +40,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
       </label>
       <div className="flex gap-2">
         <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
-          Relatar e remover
+          Denunciar
         </button>
         <button type="button" onClick={onCancel} className="cursor-pointer rounded-lg border border-[#d9c9ad] px-3 py-1.5 text-sm font-semibold">
           Cancelar
@@ -131,7 +130,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
           </>
         )}
         <button type="button" className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a]`} disabled={busy === p.id} onClick={() => setReporting(reporting === p.id ? null : p.id)}>
-          🚩 Relatar abuso
+          🚩 Denunciar
         </button>
       </div>
       {reporting === p.id && <ReportBox onCancel={() => setReporting(null)} onSend={(r) => run(p.id, () => reportPin(sb, p.id, r.reason, r.details, r.block))} />}
