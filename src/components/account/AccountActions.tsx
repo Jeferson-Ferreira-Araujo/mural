@@ -43,9 +43,8 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
       {account.onHome && (
         <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={iconBtn}>
           <svg {...iconSvg}>
-            <rect x="3" y="4" width="18" height="12" rx="1.5" />
-            <path d="M7 9h6M7 12h3" />
-            <path d="M8 20h8M12 16v4" />
+            <path d="M3 11.5 12 4l9 7.5" />
+            <path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-5.5h4v5.5h3.5a1 1 0 0 0 1-1V10" />
           </svg>
         </button>
       )}
