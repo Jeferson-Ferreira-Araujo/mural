@@ -164,11 +164,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // mural escolhido: registra a visita e restaura um desbloqueio anterior (validado no servidor)
   useEffect(() => {
     if (!nick || !slug) return;
-    // mural compartilhado: sem contagem de visitas e sem restaurar desbloqueio (a senha é pedida sempre)
-    if (selected?.kind === "shared") return;
     const ref = { nick, slug };
     const sb = getBrowserSupabase();
-    sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
+    // mural compartilhado: sem contagem de visitas. O desbloqueio é restaurado só nesta aba (ao atualizar a página não pede a senha de novo),
+    // e o servidor revalida conta + participante + PLUS dos dois a cada uso: fechar a aba/navegador volta a pedir a senha.
+    if (selected?.kind !== "shared") sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
+    // compartilhado: o desbloqueio só vale com a conta (espera a sessão carregar antes de conferir)
+    if (selected?.kind === "shared" && !logged) return;
     const token = loadGrant(ref);
     if (token) {
       void checkGrantClient(sb, ref, token).then((ok) => {
@@ -177,7 +179,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         setUnlocked(true);
       });
     }
-  }, [nick, slug, selected?.kind]);
+  }, [nick, slug, selected?.kind, logged]);
 
   const autoKey = useRef<string | null>(null); // mural público já entrou sozinho?
 
@@ -386,6 +388,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         // mural compartilhado: o servidor confere conta + participante + senha; o token fica só na memória desta página
         const r = await unlockShared(getBrowserSupabase(), ref, answer, getVisitorId());
         if (r.ok && r.token) {
+          saveGrant(ref, r.token);
           setToken(r.token);
           setUnlocked(true);
         } else if (!r.ok && r.reason === "plus_required") {
