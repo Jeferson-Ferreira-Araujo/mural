@@ -96,7 +96,7 @@ export function BoardCanvas({
   const [detail, setDetail] = useState<number | null>(null);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
-  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.78 : 1);
+  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.7 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
   const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity]);
 
   return (
@@ -119,7 +119,7 @@ export function BoardCanvas({
                   <div
                     ref={fit.ref}
                     className="grid h-full content-evenly items-center justify-items-center"
-                    style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.2em" : "1.5em", columnGap: "0.4em" }}
+                    style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.4em" : "1.5em", columnGap: dense ? "1em" : "0.4em" }}
                   >
                     {Array.from({ length: capacity }, (_, i) => {
                       const item = layout[i];
