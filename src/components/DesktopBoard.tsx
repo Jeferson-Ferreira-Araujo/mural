@@ -54,7 +54,7 @@ export function DesktopBoard(props: ViewProps) {
             {share && (
               <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
-            <MuralPager sw={muralSwitch} tone="dark" className="rounded-full bg-[#2a1c12]/70 px-1 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />
+            <MuralPager sw={muralSwitch} tone="dark" className="bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />
             {account && <AccountActions account={account} tone="dark" />}
           </div>
         </nav>

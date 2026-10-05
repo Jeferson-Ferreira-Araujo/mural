@@ -32,24 +32,32 @@ export function MuralSwitcher({ sw, className = "" }: { sw?: MuralSwitch; classN
   );
 }
 
-/** Passador de murais em uma linha só: "‹ 1/2 ›". Só aparece quando a pessoa tem mais de um mural. */
+/** Passador de murais: rótulo "Murais" em cima e, embaixo, setas com o número do mural atual ("1/2"). Só aparece com mais de um mural. */
 export function MuralPager({ sw, className = "", tone = "light" }: { sw?: MuralSwitch; className?: string; tone?: "light" | "dark" }) {
   if (!sw || sw.items.length < 2) return null;
   const i = Math.max(0, sw.items.findIndex((m) => m.slug === sw.current));
   const go = (k: number) => sw.onSelect(sw.items[(k + sw.items.length) % sw.items.length].slug);
-  const color = tone === "dark" ? "text-white hover:bg-white/15" : "text-[#2a1c12] hover:bg-black/10";
-  const arrow = `grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-2xl leading-none transition active:scale-95 ${color}`;
+  const dark = tone === "dark";
+  const arrow = `grid size-7 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-90 ${dark ? "bg-white/15 text-white hover:bg-white/25" : "bg-[#2a1c12] text-[#f7f0dd] hover:bg-[#46301f]"}`;
+  const chevron = (d: string) => (
+    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d={d} />
+    </svg>
+  );
   return (
-    <nav aria-label="Murais desta pessoa" className={`flex shrink-0 items-center ${tone === "dark" ? "text-white" : "text-[#2a1c12]"} ${className}`}>
-      <button type="button" aria-label="Mural anterior" onClick={() => go(i - 1)} className={arrow}>
-        ‹
-      </button>
-      <span className="min-w-[2.6em] text-center text-sm font-bold tabular-nums" aria-label={`Mural ${i + 1} de ${sw.items.length}`}>
-        {i + 1}/{sw.items.length}
-      </span>
-      <button type="button" aria-label="Próximo mural" onClick={() => go(i + 1)} className={arrow}>
-        ›
-      </button>
+    <nav aria-label="Murais desta pessoa" className={`flex shrink-0 flex-col items-center gap-1 rounded-2xl px-2.5 py-1 ${dark ? "text-white" : "bg-white/55 text-[#2a1c12] shadow-[inset_0_0_0_1px_rgba(120,90,50,.25)]"} ${className}`}>
+      <span className={`text-[10px] leading-none font-bold tracking-[0.14em] uppercase ${dark ? "text-white/70" : "text-[#8a6a2a]"}`}>Murais</span>
+      <div className="flex items-center gap-2">
+        <button type="button" aria-label="Mural anterior" onClick={() => go(i - 1)} className={arrow}>
+          {chevron("m15 5-7 7 7 7")}
+        </button>
+        <span className="min-w-[2.4em] text-center text-base leading-none font-bold tabular-nums" aria-label={`Mural ${i + 1} de ${sw.items.length}`}>
+          {i + 1}/{sw.items.length}
+        </span>
+        <button type="button" aria-label="Próximo mural" onClick={() => go(i + 1)} className={arrow}>
+          {chevron("m9 5 7 7-7 7")}
+        </button>
+      </div>
     </nav>
   );
 }
