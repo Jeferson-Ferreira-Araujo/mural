@@ -269,10 +269,17 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const badgeStock = useCallback(
     (key: number): Stock => {
       if (!inventory) return FREE_BADGES.includes(key) ? { owned: true, left: null, total: null } : { owned: false, left: 0, total: 0 };
+      // mural compartilhado: contagem real da conta (1 + unidades extras), somando os botons já colocados em TODOS os murais
+      if (isMember) return stockFor(inventory.catalog.find((c) => c.key === key), "free", inventory.placed?.[String(key)] ?? 0);
       return stockFor(inventory.catalog.find((c) => c.key === key), ownPlan, placedCount[key] ?? 0);
     },
-    [inventory, ownPlan, placedCount],
+    [inventory, ownPlan, placedCount, isMember],
   );
+  // mural compartilhado: o estoque é a contagem real da conta, então recarrega ao abrir e a cada botom colocado ou devolvido
+  const badgeSig = isMember ? badges.map((b) => b.id).join(",") : "";
+  useEffect(() => {
+    if (isMember && unlocked) void reloadInventory();
+  }, [isMember, unlocked, badgeSig, reloadInventory]);
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
@@ -520,7 +527,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {playIntro && <IntroAnimation />}
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
         <ListEditProvider onSave={saveList}>
-        <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           items={revealed ? shownItems : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}

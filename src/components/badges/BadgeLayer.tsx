@@ -5,7 +5,9 @@ import { badgeDef, badgeSrc, BADGE_EM, type PlacedBadge } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
-  const { editable, begin, draggingId } = useBadges();
+  const ctx = useBadges();
+  const { begin, draggingId } = ctx;
+  const editable = ctx.editable && b.mine !== false; // no mural compartilhado, o botom da outra pessoa só ela mexe
   const ref = useRef<HTMLDivElement>(null);
   const beginRef = useRef(begin);
   beginRef.current = begin;

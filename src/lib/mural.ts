@@ -16,6 +16,8 @@ export type MuralStats = { visited: number; tried: number; correct: number; mess
 export type MuralRef = { nick: string; slug: string };
 
 export type PublicMural = {
+  /** só no mural compartilhado de quem participa (usado para colocar botons) */
+  id?: string | null;
   nickname: string;
   /** Foto de perfil do dono (endereço público), se ele enviou. */
   avatar?: string | null;

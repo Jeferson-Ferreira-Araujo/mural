@@ -102,7 +102,7 @@ export const MAX_BADGES = 200; // teto técnico (o PLUS é "quantos quiser")
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** centro, em % da área útil do quadro */ x: number; y: number };
+export type PlacedBadge = { id: string; key: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -145,6 +145,8 @@ export type BadgeInventory = {
   muralPrice: number;
   boards: BoardOffer[];
   catalog: CatalogItem[];
+  /** quantos botons de cada pin a conta já colocou, somando todos os murais (pessoais e compartilhados) */
+  placed?: Record<string, number>;
 };
 
 export async function fetchInventory(sb: SupabaseClient): Promise<BadgeInventory | null> {
