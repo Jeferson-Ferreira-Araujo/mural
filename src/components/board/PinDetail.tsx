@@ -1,11 +1,32 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { formatInfo, isHidden, isSealed, type BoardItem } from "@/lib/types";
+import { isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { useState } from "react";
 import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
 import { ReportBox } from "../account/PinsModal";
+
+const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
+/** Olho aberto: o pin está à vista. */
+const EyeOpen = () => (
+  <svg {...icon}>
+    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+/** Olho fechado (riscado): o pin está em segredo. */
+const EyeClosed = () => (
+  <svg {...icon}>
+    <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1" />
+    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
+  </svg>
+);
+const Trash = () => (
+  <svg {...icon}>
+    <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" />
+  </svg>
+);
 
 /**
  * Detalhe de um Pinz: no mural com muitos espaços os cards ficam pequenos (só dá para "bater o olho"),
@@ -52,7 +73,6 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   }, [open, index, items.length, onIndex]);
 
   const item = index !== null ? items[index] : null;
-  const label = item ? (isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em segredo" : formatInfo[item.type].label) : "";
   const arrow =
     "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
@@ -68,10 +88,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     >
       {open && item && index !== null && (
         <div className="flex flex-col items-center gap-4">
-          <div className="flex w-full items-center justify-between px-1">
-            <p className="text-sm font-semibold text-white/80">
-              {label} · {index + 1} de {items.length}
-            </p>
+          <div className="flex w-full items-center justify-end px-1">
             <button type="button" onClick={onClose} aria-label="Fechar" className={arrow}>
               ×
             </button>
@@ -98,17 +115,10 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
             </p>
           )}
           {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && (
-            <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} w-full`}>
-              {showSecret ? "🙈 Esconder o conteúdo de novo" : "👁 Ver o conteúdo (só para mim)"}
+            <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex w-full items-center justify-center gap-2`}>
+              {showSecret ? <EyeClosed /> : <EyeOpen />}
+              {showSecret ? "Ocultar Pin" : "Exibir Pin"}
             </button>
-          )}
-          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && (
-            <p role="status" className="flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
-              <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" aria-hidden>
-                <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
-              </svg>
-              Segredo: os visitantes veem este pin borrado
-            </p>
           )}
           {mod && item && !isSealed(item) && !isHidden(item) && (
             <div className="flex w-full flex-col gap-2" role="group" aria-label="Moderar este pin">
@@ -119,7 +129,10 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                       Recusar
                     </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost} flex-1`}>
-                      {mod.plan === "full" ? "🔒 Aprovar como segredo" : "🔒 Segredo (PLUS)"}
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <EyeClosed />
+                        {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PLUS)"}
+                      </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="min-w-[8rem] flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
                       Aprovar
@@ -127,11 +140,14 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
-                      Remover
+                    <button type="button" disabled={busy} aria-label="Remover pin" title="Remover pin" onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} grid place-items-center`}>
+                      <Trash />
                     </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
-                      {mod.plan !== "full" ? "🔒 Segredo (PLUS)" : item.ownerHidden ? "🔓 Tornar visível para todos" : "🔒 Deixar em segredo"}
+                      <span className="inline-flex items-center justify-center gap-2">
+                        {mod.plan !== "full" || !item.ownerHidden ? <EyeClosed /> : <EyeOpen />}
+                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Remover Segredo" : "Colocar em Segredo"}
+                      </span>
                     </button>
                   </>
                 )}
