@@ -90,16 +90,33 @@ function Marked({ m }: { m: Message }) {
  * Ponto único de renderização de um item do mural: mensagem aberta, Cápsula fechada ou espaço em blur.
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
-export function MessageView({ message: m, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
+export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
+  let m = message;
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
   if (isHidden(m)) return <HiddenPin item={m} />;
-  // visão do dono: pin em segredo continua em blur (o conteúdo nem é desenhado) até ele pedir para ver, no detalhe do pin
-  if (m.ownerHidden && !m.pending && !revealSecret) {
-    return (
-      <HiddenPin
-        item={{ id: m.id, slot: m.slot, hidden: true, type: m.type, color: (m as { color?: never }).color, variant: (m as { variant?: never }).variant, playerColor: (m as { playerColor?: never }).playerColor, font: m.font, pin: m.pin, tape: m.tape }}
-      />
-    );
+  // visão do dono: pin em segredo mostra o texto e a assinatura, mas borrados, até ele pedir para ver no detalhe do pin
+  if (m.ownerHidden && !m.pending) {
+    if (!revealSecret) {
+      return (
+        <div aria-label="Pin em segredo" role="img" className="relative select-none">
+          <div inert aria-hidden className="pointer-events-none relative" style={{ filter: "blur(0.38em) saturate(0.9)" }}>
+            <Content m={m} />
+            <Signature name={m.signedBy} />
+          </div>
+          <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+            <span className="flex flex-col items-center gap-[0.45em]">
+              <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
+                <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor">
+                  <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
+                </svg>
+              </span>
+              <span className="rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+            </span>
+          </span>
+        </div>
+      );
+    }
+    m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
   }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
   if (!m.fromCapsule && !m.signedBy) return <Content m={m} />;

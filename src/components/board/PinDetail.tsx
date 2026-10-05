@@ -46,10 +46,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   const [reporting, setReporting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
-  const revealBtn = (flex: string) => (
-    <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} ${flex} flex items-center justify-center gap-2`}>
-      {showSecret ? <EyeClosed /> : <EyeOpen />}
-      {showSecret ? "Ocultar Pin" : "Exibir Pin"}
+  const revealBtn = (flex: string) =>
+    showSecret ? null : (
+    <button type="button" onClick={() => setShowSecret(true)} className={`${ghost} ${flex} flex items-center justify-center gap-2`}>
+      <EyeOpen />
+      Exibir Pin
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
