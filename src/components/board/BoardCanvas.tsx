@@ -96,7 +96,7 @@ export function BoardCanvas({
   const [detail, setDetail] = useState<number | null>(null);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
-  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.7 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
+  const baseEm = BASE_EM_CQW * look.size * (dense ? 0.64 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
   const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity]);
 
   return (
