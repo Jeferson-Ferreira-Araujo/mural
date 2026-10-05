@@ -33,7 +33,7 @@ export function Sidebar({ compact = false, siteStats, capacity, panel, plan, use
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
 
-      {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar mural" já se explica */}
+      {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar usuário" já se explica */}
       {panelTitle && (
         <div className="flex items-center gap-[0.8em] text-[0.8em] text-[#8a7b69]" aria-hidden>
           <span className="h-px flex-1 bg-[#d9c9ad]" />

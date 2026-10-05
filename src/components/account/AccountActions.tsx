@@ -12,12 +12,12 @@ export function AccountActions({ account, tone = "light", className = "" }: { ac
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
-      <button type="button" onClick={account.onSearch} aria-label="Procurar mural" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
+      <button type="button" onClick={account.onSearch} aria-label="Procurar usuário" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
-        Procurar mural
+        Procurar usuário
       </button>
       <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
@@ -49,7 +49,7 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
           </svg>
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Procurar mural" title="Procurar mural" className={iconBtn}>
+      <button type="button" onClick={account.onSearch} aria-label="Procurar usuário" title="Procurar usuário" className={iconBtn}>
         <svg {...iconSvg} strokeWidth={2.4}>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
