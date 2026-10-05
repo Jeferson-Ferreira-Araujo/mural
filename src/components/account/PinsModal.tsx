@@ -13,19 +13,19 @@ import { Modal } from "./Modal";
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
 
-export function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportReason; details: string; block: boolean }) => void; onCancel: () => void }) {
+export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: { reason: ReportReason; details: string; block: boolean }) => void; onCancel: () => void; /** dentro de uma janela própria: sem moldura nem título */ inModal?: boolean }) {
   const [reason, setReason] = useState<ReportReason>("ofensa");
   const [details, setDetails] = useState("");
   const [block, setBlock] = useState(true);
   return (
     <form
-      className="mt-3 space-y-2 rounded-xl border border-[#e0b0a8] bg-[#fff4f1] p-3 text-left text-[#2f2218]"
+      className={inModal ? "space-y-3 text-left text-[#2f2218]" : "mt-3 space-y-2 rounded-xl border border-[#e0b0a8] bg-[#fff4f1] p-3 text-left text-[#2f2218]"}
       onSubmit={(e) => {
         e.preventDefault();
         onSend({ reason, details: details.trim(), block });
       }}
     >
-      <p className="text-sm font-semibold">Relatar abuso ou assédio</p>
+      {!inModal && <p className="text-sm font-semibold">Relatar abuso ou assédio</p>}
       <p className="text-xs text-[#6b5440]">O pin é guardado como prova, sai do mural e o espaço fica livre.</p>
       <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} aria-label="Motivo" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm">
         {REPORT_REASONS.map((r) => (
@@ -34,7 +34,7 @@ export function ReportBox({ onSend, onCancel }: { onSend: (r: { reason: ReportRe
           </option>
         ))}
       </select>
-      <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={2} placeholder="O que aconteceu? (opcional)" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm" />
+      <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={inModal ? 4 : 2} placeholder="O que aconteceu? (opcional)" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm" />
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="mt-1 size-4" />
         <span>Bloquear quem enviou</span>

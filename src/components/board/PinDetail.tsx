@@ -6,6 +6,7 @@ import { useState } from "react";
 import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
 import { ReportBox } from "../account/PinsModal";
+import { Modal } from "../account/Modal";
 
 const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 /** Olho aberto: o pin está à vista. */
@@ -82,6 +83,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   return (
+    <>
     <dialog
       ref={ref}
       onClose={onClose}
@@ -170,11 +172,24 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                   </>
                 )}
               </div>
-              {reporting && <ReportBox onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />}
             </div>
           )}
         </div>
       )}
     </dialog>
+    {mod && item && !isSealed(item) && !isHidden(item) && (
+      <Modal open={reporting} onClose={() => setReporting(false)} title="Relatar abuso">
+        <div className="space-y-4">
+          <div className="grid place-items-center rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-4">
+            <div className="text-[11px]">
+              <MessageView message={{ ...item, pending: false }} />
+            </div>
+          </div>
+          <p className="text-sm text-[#4a3826]">O pin é guardado como prova, sai do mural e o espaço fica livre. Escolha o motivo e, se quiser, conte o que aconteceu.</p>
+          <ReportBox inModal onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />
+        </div>
+      </Modal>
+    )}
+    </>
   );
 }
