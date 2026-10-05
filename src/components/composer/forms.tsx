@@ -7,6 +7,7 @@ import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
+import { getBrowserSupabase } from "@/lib/supabase";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
@@ -478,17 +479,15 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 // ---------- Local / Maps (PLUS) ----------
 type PlaceHit = { name: string; address: string; lat: number; lon: number };
 
-/** Busca de lugares pelo nome (Nominatim/OpenStreetMap). Só roda quando a pessoa pede. */
+/** Busca de lugares pelo nome (Google Places, pelo nosso servidor: só para quem está logado). Só roda quando a pessoa pede. */
 async function searchPlaces(q: string): Promise<PlaceHit[]> {
-  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=pt-BR&q=${encodeURIComponent(q)}`);
+  const { data } = await getBrowserSupabase().auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) throw new Error("not_authenticated");
+  const res = await fetch(`/api/places/search?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) throw new Error("search failed");
-  const list = (await res.json()) as { name?: string; display_name: string; lat: string; lon: string }[];
-  return list
-    .map((r) => {
-      const parts = r.display_name.split(",").map((p) => p.trim());
-      return { name: (r.name || parts[0] || "Lugar").slice(0, 60), address: parts.slice(1, 4).join(", ").slice(0, 80), lat: Number(r.lat), lon: Number(r.lon) };
-    })
-    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+  const body = (await res.json()) as { places?: PlaceHit[] };
+  return (body.places ?? []).filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
 }
 
 /** Escolhe um lugar buscando pelo nome; o resultado vira um mini aparelho de mapa. */
@@ -586,7 +585,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
               ))}
             </ul>
           )}
-          <p className="mt-2 text-xs text-[#8a7b69]">Mapas © colaboradores do OpenStreetMap.</p>
+          <p className="mt-2 text-xs text-[#8a7b69]">Busca e mapas do Google.</p>
         </div>
       )}
 

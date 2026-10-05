@@ -5,31 +5,18 @@ import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
 
-/** Tamanho (em) de cada pedaço (tile) do mapa na tela. */
-const TILE_EM = 11;
 const MIN_ZOOM = 4;
 const MAX_ZOOM = 18;
-/** O lugar fica um pouco abaixo do meio, para o pino não ficar escondido atrás do cartão do topo. */
-const FOCUS_Y = 62;
 const clamp = (n: number, lo: number, hi: number) => Math.min(Math.max(n, lo), hi);
-
-/** Coordenadas do centro em "unidades de tile" (projeção Web Mercator, a do OpenStreetMap). */
-function tileCoords(lat: number, lon: number, z: number) {
-  const n = 2 ** z;
-  const latRad = (clamp(lat, -85, 85) * Math.PI) / 180;
-  return {
-    n,
-    xf: ((lon + 180) / 360) * n,
-    yf: ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n,
-  };
-}
+/** O lugar fica um pouco abaixo do meio, para o pino não ficar escondido atrás do cartão do topo (o servidor já centraliza o mapa assim). */
+const FOCUS_Y = 62;
 
 /** Link para abrir o lugar no Google Maps (não precisa de chave). */
 export const mapsUrl = (lat: number, lon: number) => `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 
 /**
  * Local: um mini aparelho de mapa (visto de frente) com cartão do lugar, zoom e botão para abrir no Maps.
- * Os mapas vêm do OpenStreetMap (© colaboradores do OpenStreetMap). A mensagem curta, se houver, vai num papelzinho embaixo.
+ * O mapa é uma imagem do Google Maps, pedida ao nosso servidor (a chave fica lá). A mensagem curta, se houver, vai num papelzinho embaixo.
  */
 export function PlaceCard({
   name,
@@ -51,20 +38,6 @@ export function PlaceCard({
 }) {
   const look = PLAYER_PALETTE[color];
   const [zoom, setZoom] = useState(14);
-  const { n, xf, yf } = tileCoords(lat, lon, zoom);
-  const x0 = Math.floor(xf);
-  const y0 = Math.floor(yf);
-
-  const tiles: { key: string; src: string; col: number; row: number }[] = [];
-  for (let dy = -1; dy <= 1 && !blank; dy++) {
-    for (let dx = -1; dx <= 1; dx++) {
-      const ty = y0 + dy;
-      if (ty < 0 || ty >= n) continue;
-      const tx = (((x0 + dx) % n) + n) % n;
-      tiles.push({ key: `${zoom}/${tx}/${ty}`, src: `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`, col: dx + 1, row: dy + 1 });
-    }
-  }
-
   const zoomBtn = "grid size-[1.7em] cursor-pointer place-items-center text-[1.05em] leading-none font-bold text-[#2f3a4a] transition hover:bg-black/5 active:bg-black/10 disabled:cursor-default disabled:opacity-35 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#2a6fd6]";
 
   return (
@@ -89,26 +62,19 @@ export function PlaceCard({
         {/* tela do mapa */}
         <div className="relative rounded-[0.7em] bg-black p-[0.16em]" style={{ boxShadow: "inset 0 0 0 0.06em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.4), inset 0 0.2em 0.5em rgba(0,0,0,.8)" }}>
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.55em] bg-[#e9e4d8]">
-            {/* pedaços do mapa */}
-            <div
-              aria-hidden
-              className="absolute"
-              style={{ width: `${TILE_EM * 3}em`, height: `${TILE_EM * 3}em`, left: `calc(50% - ${(1 + (xf - x0)) * TILE_EM}em)`, top: `calc(${FOCUS_Y}% - ${(1 + (yf - y0)) * TILE_EM}em)` }}
-            >
-              {tiles.map((t) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={t.key}
-                  src={t.src}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  className="absolute select-none"
-                  style={{ width: `${TILE_EM}em`, height: `${TILE_EM}em`, left: `${t.col * TILE_EM}em`, top: `${t.row * TILE_EM}em` }}
-                />
-              ))}
-            </div>
+            {/* mapa do Google */}
+            {!blank && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/api/places/map?lat=${lat.toFixed(5)}&lon=${lon.toFixed(5)}&z=${zoom}`}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="absolute inset-0 size-full select-none object-cover"
+              />
+            )}
 
             {/* marcador no centro */}
             <svg aria-hidden viewBox="0 0 24 32" className="pointer-events-none absolute left-1/2 h-[2.2em] w-[1.65em] -translate-x-1/2 -translate-y-full drop-shadow-[0_0.15em_0.12em_rgba(0,0,0,.45)]" style={{ top: `${FOCUS_Y}%` }}>
@@ -161,8 +127,6 @@ export function PlaceCard({
               </button>
             </div>
 
-            {/* crédito obrigatório do OpenStreetMap */}
-            <span className="pointer-events-none absolute bottom-0 left-0 rounded-tr-[0.4em] bg-white/80 px-[0.4em] py-[0.1em] text-[0.42em] leading-tight text-[#44505c]">© OpenStreetMap</span>
           </div>
         </div>
       </div>
