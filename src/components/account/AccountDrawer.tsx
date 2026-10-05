@@ -11,8 +11,9 @@ import { MuralSettings } from "./MuralSettings";
 import { PinsModal } from "./PinsModal";
 import { PlansModal } from "./PlansModal";
 import { ProfileModal } from "./ProfileModal";
+import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers" | "shared";
 
 function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: string; hint?: string; badge?: number; onClick: () => void }) {
   return (
@@ -54,6 +55,8 @@ export function AccountDrawer({
   onSignOut,
   onPending,
   onNotify,
+  sharedInvites = 0,
+  onSharedChanged,
 }: {
   open: boolean;
   onClose: () => void;
@@ -74,6 +77,10 @@ export function AccountDrawer({
   onSignOut: () => void;
   onPending: (n: number) => void;
   onNotify: (msg: string) => void;
+  /** convites de mural compartilhado esperando resposta */
+  sharedInvites?: number;
+  /** a lista de murais compartilhados mudou (aceitou, criou, apagou) */
+  onSharedChanged?: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
@@ -184,6 +191,19 @@ export function AccountDrawer({
                 </>
               )}
               <Row
+                onClick={() => setModal("shared")}
+                label="Mural compartilhado"
+                hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PLUS)"}
+                badge={sharedInvites}
+                icon={
+                  <svg {...ic}>
+                    <circle cx="9" cy="8.5" r="3" />
+                    <circle cx="16.5" cy="9.5" r="2.5" />
+                    <path d="M3.5 19c.6-3 2.7-4.6 5.5-4.6s4.9 1.600 5.500 4.600M15 14.800c2.600-.4 4.800.9 5.500 4.200" />
+                  </svg>
+                }
+              />
+              <Row
                 onClick={onOpenStore}
                 label="Loja"
                 hint={`Bottons, temas e murais · ${credits} créditos`}
@@ -261,6 +281,9 @@ export function AccountDrawer({
             </div>
           ))}
         </dl>
+      </Modal>
+      <Modal open={open && modal === "shared"} onClose={close} title="Mural compartilhado">
+        <SharedMurals plus={account.plan === "full"} onChanged={() => onSharedChanged?.()} onNotify={onNotify} />
       </Modal>
       <PlansModal open={open && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
       <ProfileModal open={open && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} />

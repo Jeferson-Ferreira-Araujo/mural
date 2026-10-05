@@ -19,6 +19,8 @@ type Props = {
   onSwap?: () => void;
   /** mural público (sem pergunta): só o cabeçalho */
   open?: boolean;
+  /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
+  password?: boolean;
 };
 
 const LockIcon = () => (
@@ -31,7 +33,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap, open = false }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap, open = false, password = false }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -41,14 +43,14 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     e.preventDefault();
     if (busy) return;
     if (!answer.trim()) {
-      setHint("Escreva uma resposta para entrar.");
+      setHint(password ? "Digite a senha para entrar." : "Escreva uma resposta para entrar.");
       return;
     }
     setBusy(true);
     const res = await onSubmit(answer);
     setBusy(false);
     if (res.ok) return;
-    if (res.reason === "wrong") setHint("Essa não é a resposta. Tente de novo!");
+    if (res.reason === "wrong") setHint(password ? "Senha incorreta." : "Essa não é a resposta. Tente de novo!");
     else if (res.reason === "rate_limited") {
       const min = Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60));
       setHint(`Muitas tentativas. Tente novamente em ${min} min.`);
@@ -100,8 +102,9 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               setAnswer(e.target.value);
               if (hint) setHint(null);
             }}
-            autoComplete="off"
-            placeholder="Digite sua resposta..."
+            type={password ? "password" : "text"}
+            autoComplete={password ? "current-password" : "off"}
+            placeholder={password ? "Digite a senha..." : "Digite sua resposta..."}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
             className={`mt-[0.8em] w-full rounded-[0.6em] border px-[0.9em] py-[0.7em] text-[1em] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#d98a2b]/70 ${

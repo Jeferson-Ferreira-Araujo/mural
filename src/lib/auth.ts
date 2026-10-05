@@ -24,7 +24,7 @@ export type OwnMural = { id: string; slug: string; title: string; question: stri
 
 /** Murais do usuário logado, do mais antigo ao mais novo (a RLS só deixa ele ver os próprios). */
 export async function getOwnMurals(sb: SupabaseClient): Promise<OwnMural[]> {
-  const { data } = await sb.from("murals").select("id, slug, title, question, created_at, plan, welcome_message").order("created_at");
+  const { data } = await sb.from("murals").select("id, slug, title, question, created_at, plan, welcome_message").eq("kind", "personal").order("created_at");
   return (data as OwnMural[] | null) ?? [];
 }
 

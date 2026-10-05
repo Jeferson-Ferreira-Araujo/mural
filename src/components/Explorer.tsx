@@ -32,6 +32,7 @@ import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadge, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { listSharedMurals, unlockShared } from "@/lib/shared";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
 import { IntroAnimation, introSeen, introSkip } from "./IntroAnimation";
@@ -79,7 +80,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // os murais da pessoa dona do mural aberto (rodapé: setas para trocar)
   const [siblings, setSiblings] = useState<{ slug: string; title: string }[]>([]);
   useEffect(() => {
-    if (!nick) {
+    if (!nick || selected?.kind === "shared") {
       setSiblings([]);
       return;
     }
@@ -88,8 +89,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     return () => {
       cancelled = true;
     };
-  }, [nick, selected?.title]);
-  const isOwner = !!myNick && !!selected && selected.nickname === myNick; // vendo o próprio mural
+  }, [nick, selected?.title, selected?.kind]);
+  const isShared = selected?.kind === "shared";
+  const isMember = isShared && selected?.member === true; // participante do mural compartilhado (sempre passa pela senha)
+  const isOwner = !!myNick && !!selected && !isShared && selected.nickname === myNick; // vendo o próprio mural (o compartilhado não conta: exige senha até do criador)
 
   // murais da própria conta (menu: editar, pins para aprovar, planos...)
   const [own, setOwn] = useState<OwnMural[]>([]);
@@ -130,6 +133,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     void reloadInventory();
   }, [session, reloadInventory]);
+  const [sharedInvites, setSharedInvites] = useState(0);
+  const reloadShared = useCallback(async () => {
+    const l = await listSharedMurals(getBrowserSupabase());
+    setSharedInvites(l.filter((m) => !m.mine && m.status === "pending").length);
+  }, []);
+  useEffect(() => {
+    if (!session) {
+      setSharedInvites(0);
+      return;
+    }
+    void reloadShared();
+    const t = setInterval(() => void reloadShared(), 60_000);
+    return () => clearInterval(t);
+  }, [session, reloadShared]);
   const firstOwnId = own[0]?.id;
   useEffect(() => {
     if (!firstOwnId) return;
@@ -147,6 +164,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // mural escolhido: registra a visita e restaura um desbloqueio anterior (validado no servidor)
   useEffect(() => {
     if (!nick || !slug) return;
+    // mural compartilhado: sem contagem de visitas e sem restaurar desbloqueio (a senha é pedida sempre)
+    if (selected?.kind === "shared") return;
     const ref = { nick, slug };
     const sb = getBrowserSupabase();
     sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
@@ -158,7 +177,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         setUnlocked(true);
       });
     }
-  }, [nick, slug]);
+  }, [nick, slug, selected?.kind]);
 
   const autoKey = useRef<string | null>(null); // mural público já entrou sozinho?
 
@@ -171,11 +190,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       setUnlocked(false);
       setItems([]);
       autoKey.current = null;
-      if (!openMural_) notify(why); // mural público volta a entrar sozinho, sem aviso
+      if (!openMural_) notify(selected?.kind === "shared" ? "Por segurança, digite a senha do mural de novo." : why); // mural público volta a entrar sozinho, sem aviso
       // a pergunta pode ter mudado: mostra a atual
       if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
     },
-    [nick, slug, notify, openMural_],
+    [nick, slug, notify, openMural_, selected?.kind],
   );
 
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
@@ -232,13 +251,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   );
   const moderation = useMemo(
     () => ({
-      plan: (own.find((m) => m.slug === slug)?.plan ?? "free") as "free" | "full",
+      plan: (isMember ? "full" : (own.find((m) => m.slug === slug)?.plan ?? "free")) as "free" | "full",
       moderate: async (id: string, approve: boolean, secret = false) =>
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
       report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Pin relatado e removido."),
     }),
-    [afterModeration, own, slug],
+    [afterModeration, own, slug, isMember],
   );
   // estoque de pins decorativos (FREE: 1 por pin + extras compradas; PLUS: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
   const ownPlan = own.find((m) => m.slug === slug)?.plan ?? own[0]?.plan ?? "free";
@@ -356,6 +375,15 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     async (answer: string): Promise<UnlockResult> => {
       if (!nick || !slug) return { ok: false, reason: "error" };
       const ref = { nick, slug };
+      if (selected?.kind === "shared") {
+        // mural compartilhado: o servidor confere conta + participante + senha; o token fica só na memória desta página
+        const r = await unlockShared(getBrowserSupabase(), ref, answer, getVisitorId());
+        if (r.ok && r.token) {
+          setToken(r.token);
+          setUnlocked(true);
+        }
+        return r;
+      }
       const res = await tryUnlock(getBrowserSupabase(), ref, answer, getVisitorId());
       if (res.ok) {
         if (res.token) {
@@ -368,7 +396,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       }
       return res;
     },
-    [nick, slug],
+    [nick, slug, selected?.kind],
   );
 
   // mural público (sem pergunta): entra direto, sem digitar nada
@@ -415,14 +443,29 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             </section>
           )}
 
-          {selected && (
+          {selected && isShared && !isMember && (
+            <section aria-label="Mural compartilhado" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
+              <p className="text-[1.05em] font-bold">🔒 Mural compartilhado</p>
+              <p className={`mt-[0.4em] text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>Este mural é privado: só as duas pessoas que o criaram conseguem abrir.</p>
+              {!logged && !sessionLoading && nick && slug && (
+                <a href={loginUrl(`/${nick}/${slug}`)} className="mt-[0.9em] block rounded-[0.6em] bg-[#d9a21b] px-[1em] py-[0.8em] text-center font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
+                  Entrar na minha conta
+                </a>
+              )}
+              <button type="button" onClick={logged ? () => setSearchOpen(true) : clear} className={`mt-[0.7em] cursor-pointer text-[0.85em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
+                Trocar de mural
+              </button>
+            </section>
+          )}
+          {selected && !(isShared && !isMember) && (
             <UnlockPanel
+              password={isMember}
               key={`${selected.nickname}/${selected.slug}`}
               title={selected.title}
               owner={selected.nickname}
               avatar={selected.avatar}
               onSwap={logged ? () => setSearchOpen(true) : clear}
-              question={selected.question}
+              question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}
               onSubmit={submitAnswer}
@@ -433,7 +476,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </div>
       );
     },
-    [choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked],
+    [choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
@@ -475,7 +518,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
-      <ModerationProvider value={isOwner ? moderation : null}>
+      <ModerationProvider value={isOwner || isMember ? moderation : null}>
         <ListEditProvider onSave={saveList}>
         <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
@@ -496,7 +539,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
-          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), onMenu: () => setDrawer({ open: true }), badge: pendingCount } : undefined}
+          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites } : undefined}
           muralSwitch={nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
@@ -513,7 +556,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               ? {
                   mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                   onSend: onSendPin,
-                  sentNote: "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
+                  sentNote: isMember ? "Pin colado no mural de vocês! 📌" : "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
                   onTried: () => {
                     setTried(true);
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
@@ -541,6 +584,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             murals={own}
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
+            sharedInvites={sharedInvites}
+            onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}
             isAdmin={isAdmin}
             onOpenStore={() => {

@@ -30,6 +30,12 @@ export type PublicMural = {
   welcome?: string | null;
   /** true = mural público (sem pergunta): abre direto; com pergunta é privado */
   open?: boolean;
+  /** shared = mural entre duas pessoas PLUS (abre com a senha, só para os participantes) */
+  kind?: "personal" | "shared";
+  /** compartilhado: quem está vendo é um dos dois participantes */
+  member?: boolean;
+  /** compartilhado: o nickname da outra pessoa */
+  partner?: string | null;
   stats: MuralStats;
 };
 
