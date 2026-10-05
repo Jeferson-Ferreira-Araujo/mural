@@ -441,7 +441,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
   const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
   // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
-  const [decorBoard, setDecorBoard] = useState<string>(BOARDS[0].id);
+  const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
     setDecor(randomMural(Date.now()));
     setDecorBoard(BOARDS[Math.floor(Math.random() * BOARDS.length)].id);
@@ -489,6 +489,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           stats={selected?.stats ?? null}
           siteStats={siteStats}
           board={boardById(selected ? selected.board : decorBoard).id}
+          boardPending={!selected && !decorBoard}
           // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
           share={null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
