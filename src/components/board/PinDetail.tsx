@@ -22,6 +22,11 @@ const EyeClosed = () => (
     <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
   </svg>
 );
+const Flag = () => (
+  <svg {...icon}>
+    <path d="M5 21V4M5 4h11l-1.8 4L16 12H5" />
+  </svg>
+);
 const Trash = () => (
   <svg {...icon}>
     <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" />
@@ -88,7 +93,20 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     >
       {open && item && index !== null && (
         <div className="flex flex-col items-center gap-4">
-          <div className="flex w-full items-center justify-end px-1">
+          <div className="flex w-full items-center justify-end gap-2 px-1">
+            {mod && !isSealed(item) && !isHidden(item) && (
+              <button
+                type="button"
+                disabled={busy}
+                aria-label="Relatar abuso"
+                title="Relatar abuso"
+                aria-expanded={reporting}
+                onClick={() => setReporting((v) => !v)}
+                className={`${arrow} !border-[#ff9b8f]/50 !text-[#ffb4a8]`}
+              >
+                <Flag />
+              </button>
+            )}
             <button type="button" onClick={onClose} aria-label="Fechar" className={arrow}>
               ×
             </button>
@@ -151,9 +169,6 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                     </button>
                   </>
                 )}
-                <button type="button" disabled={busy} aria-expanded={reporting} onClick={() => setReporting((v) => !v)} className={`${ghost} flex-1 !border-[#ff9b8f]/50 !text-[#ffb4a8]`}>
-                  🚩 Relatar abuso
-                </button>
               </div>
               {reporting && <ReportBox onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />}
             </div>
