@@ -44,6 +44,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   const mod = useModeration();
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
   const revealBtn = (flex: string) => (
     <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} ${flex} flex items-center justify-center gap-2`}>
@@ -64,6 +65,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   // trocar de pin ou fechar o detalhe borra o segredo de novo
   useEffect(() => {
     setShowSecret(false);
+    setConfirmDelete(false);
   }, [index, open]);
 
   useEffect(() => {
@@ -162,7 +164,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} aria-label="Remover pin" title="Remover pin" onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} grid place-items-center`}>
+                    <button type="button" disabled={busy} aria-label="Excluir pin" title="Excluir pin" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center`}>
                       <Trash />
                     </button>
                     {item.ownerHidden && revealBtn("flex-1")}
@@ -180,6 +182,34 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
         </div>
       )}
     </dialog>
+    {mod && item && !isSealed(item) && !isHidden(item) && (
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir pin?">
+        <div className="space-y-4">
+          <div className="grid place-items-center rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-4">
+            <div className="text-[11px]">
+              <MessageView message={{ ...item, pending: false }} />
+            </div>
+          </div>
+          <p className="text-sm text-[#4a3826]">Este pin vai sair do mural e o espaço ficará livre. Essa ação não pode ser desfeita.</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setConfirmDelete(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
+              Cancelar
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setConfirmDelete(false);
+                void run(() => mod.moderate(item.id, false), true);
+              }}
+              className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
+            >
+              Excluir
+            </button>
+          </div>
+        </div>
+      </Modal>
+    )}
     {mod && item && !isSealed(item) && !isHidden(item) && (
       <Modal open={reporting} onClose={() => setReporting(false)} title="Relatar abuso">
         <div className="space-y-4">
