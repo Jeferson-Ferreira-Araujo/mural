@@ -6,7 +6,7 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
 import { AccountActions } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
-import { MuralSwitcher } from "./MuralSwitcher";
+import { MuralPager } from "./MuralSwitcher";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { Sidebar } from "./Sidebar";
@@ -54,6 +54,7 @@ export function DesktopBoard(props: ViewProps) {
             {share && (
               <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
+            <MuralPager sw={muralSwitch} tone="dark" className="rounded-full bg-[#2a1c12]/70 px-1 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />
             {account && <AccountActions account={account} tone="dark" />}
           </div>
         </nav>
@@ -64,7 +65,6 @@ export function DesktopBoard(props: ViewProps) {
         </BoardCanvas>
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-[2.2vw] pb-5">
-          <MuralSwitcher sw={muralSwitch} />
           <BadgeBar className="w-[min(46rem,100%)]" />
         </div>
       </div>

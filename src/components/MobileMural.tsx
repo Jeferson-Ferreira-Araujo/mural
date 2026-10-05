@@ -9,7 +9,7 @@ import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { AccountActions, GuestLinks, type AccountApi } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
-import { MuralSwitcher, type MuralSwitch } from "./MuralSwitcher";
+import { MuralPager, type MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
 
 type Props = {
@@ -54,6 +54,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">{info.title}</span>
         </p>
+        <MuralPager sw={muralSwitch} />
       </div>
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
@@ -64,9 +65,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       </div>
 
       {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
-      {(editBadges || (muralSwitch && muralSwitch.items.length > 1)) && (
+      {editBadges && (
         <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 bg-[#f2e8d3] px-4 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] shadow-[0_-0.2rem_0.8rem_rgba(0,0,0,.25)]">
-          <MuralSwitcher sw={muralSwitch} className="!bg-[#2a1c12]" />
           {editBadges && <BadgeBar className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
         </footer>
       )}
