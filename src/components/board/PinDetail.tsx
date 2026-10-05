@@ -186,12 +186,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
     {mod && item && !isSealed(item) && !isHidden(item) && (
       <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir pin?">
         <div className="space-y-4">
-          <div className="grid place-items-center rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-4">
-            <div className="text-[11px]">
-              <MessageView message={{ ...item, pending: false }} />
-            </div>
-          </div>
-          <p className="text-sm text-[#4a3826]">Este pin vai sair do mural e o espaço ficará livre. Essa ação não pode ser desfeita.</p>
+          <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este pin? Essa ação não poderá ser desfeita.</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => setConfirmDelete(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
               Cancelar
