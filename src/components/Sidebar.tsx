@@ -60,7 +60,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       </div>
 
       {siteStats && (
-        <ul className="mt-[1.4em] grid grid-cols-4 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
+        <ul className="mt-[1.4em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
           <Stat
             value={siteStats.murals}
             label="murais"
@@ -73,31 +73,11 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
           />
           <Stat
             value={siteStats.cards}
-            label="mensagens enviadas"
+            label="PINZ colocados"
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <path d="M5 4h14v12l-4 4H5V4Z" />
                 <path d="M15 20v-4h4M8.5 9h7M8.5 12.5h4" />
-              </svg>
-            }
-          />
-          <Stat
-            value={siteStats.people}
-            label="pessoas"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <circle cx="12" cy="8" r="3.5" />
-                <path d="M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5" />
-              </svg>
-            }
-          />
-          <Stat
-            value={siteStats.unlocks}
-            label="desbloqueios"
-            icon={
-              <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
               </svg>
             }
           />
