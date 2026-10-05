@@ -6,6 +6,8 @@ import { callbackUrl, homeRouteFor, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
+import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
+import { CodeStep } from "./CodeStep";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
 
 type Mode = "login" | "signup";
@@ -27,6 +29,7 @@ export function AuthForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [codeStep, setCodeStep] = useState(false); // nome reservado: confirmação por código enviado ao e-mail
   const nickState = useNicknameStatus(mode === "signup" ? nick : "");
   const signup = mode === "signup";
 
@@ -43,6 +46,22 @@ export function AuthForm() {
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
+
+    // nome de empresa (lista reservada): só com e-mail do domínio dela e confirmação por código; qualquer outro é recusado
+    if (signup) {
+      const check = await checkSignup(sb, nick, mail);
+      if (check === "denied") {
+        setBusy(false);
+        return setError(NAME_DENIED_TEXT);
+      }
+      if (check === "verify") {
+        const sent = await sendEmailCode(sb, mail, nick);
+        setBusy(false);
+        if (!sent) return setError("Não foi possível enviar o código agora. Tente de novo em instantes.");
+        setCodeStep(true);
+        return;
+      }
+    }
 
     if (!signup) {
       setRemember(remember, mail);
@@ -69,6 +88,18 @@ export function AuthForm() {
     if (data.user && data.user.identities?.length === 0) return setError("Esse e-mail já tem conta. Entre com a sua senha.");
     if (!data.session) setNeedsConfirm(true);
     else router.push(takeNext() ?? (await homeRouteFor(getBrowserSupabase()))); // conta criada (o primeiro mural já nasce junto)
+  }
+
+  if (codeStep) {
+    return (
+      <CodeStep
+        email={email.trim()}
+        nick={nick}
+        password={password}
+        onBack={() => setCodeStep(false)}
+        onDone={async () => router.push(takeNext() ?? (await homeRouteFor(getBrowserSupabase())))}
+      />
+    );
   }
 
   if (needsConfirm) {

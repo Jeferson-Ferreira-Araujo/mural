@@ -6,6 +6,8 @@ import { callbackUrl, homeRouteFor, rememberNext, safeNext, takeNext, useSession
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
+import { checkSignup, NAME_DENIED_TEXT, sendEmailCode, setFinalizing } from "@/lib/reserved";
+import { CodeStep } from "@/components/CodeStep";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
@@ -24,6 +26,7 @@ export default function Entrar() {
   // criou a conta vindo de um mural: em vez de redirecionar sozinho, pergunta para onde ir
   const signingUp = useRef(false);
   const [afterSignup, setAfterSignup] = useState<string | null>(null);
+  const [codeStep, setCodeStep] = useState(false); // nome reservado: confirmação por código enviado ao e-mail
   // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
   useEffect(() => setEmail((cur) => cur || getRememberedEmail()), []);
   const [busy, setBusy] = useState(false);
@@ -60,6 +63,28 @@ export default function Entrar() {
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
+
+    // nome de empresa (lista reservada): só com e-mail do domínio dela e confirmação por código; qualquer outro é recusado
+    if (mode === "signup") {
+      const check = await checkSignup(sb, nick, mail);
+      if (check === "denied") {
+        setBusy(false);
+        return setError(NAME_DENIED_TEXT);
+      }
+      if (check === "verify") {
+        signingUp.current = true; // quando a sessão chegar, esta página cuida do redirecionamento
+        setFinalizing(true);
+        const sent = await sendEmailCode(sb, mail, nick);
+        setBusy(false);
+        if (!sent) {
+          signingUp.current = false;
+          setFinalizing(false);
+          return setError("Não foi possível enviar o código agora. Tente de novo em instantes.");
+        }
+        setCodeStep(true);
+        return;
+      }
+    }
 
     if (mode === "login") {
       setRemember(remember, mail);
@@ -103,6 +128,27 @@ export default function Entrar() {
       options: { redirectTo: callbackUrl() },
     });
     if (err) setError("Não foi possível entrar com o Google.");
+  }
+
+  if (codeStep) {
+    return (
+      <AuthShell>
+        <CodeStep
+          email={email.trim()}
+          nick={nick}
+          password={password}
+          onBack={() => {
+            signingUp.current = false;
+            setCodeStep(false);
+          }}
+          onDone={async () => {
+            const next = takeNext();
+            if (next) setAfterSignup(next);
+            else router.replace(await homeRouteFor(getBrowserSupabase()));
+          }}
+        />
+      </AuthShell>
+    );
   }
 
   if (afterSignup) {

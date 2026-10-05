@@ -33,6 +33,7 @@ import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { isFinalizing } from "@/lib/reserved";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -573,7 +574,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   }, [sessionLoading, logged]);
 
   // quem está logado não tem tela inicial: vai direto para o próprio mural (a busca fica no cabeçalho)
-  const goHome = logged && !initialRef && !selected && !choices && !loading;
+  const goHome = logged && !initialRef && !selected && !choices && !loading && !isFinalizing();
   useEffect(() => {
     if (!goHome) return;
     void homeRouteFor(getBrowserSupabase()).then((to) => window.location.replace(to));
