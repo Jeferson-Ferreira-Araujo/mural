@@ -33,6 +33,7 @@ import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInv
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { listSharedMurals, unlockShared } from "@/lib/shared";
+import { boardToPng, deliverPng, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
 import { IntroAnimation, introSeen, introSkip } from "./IntroAnimation";
@@ -282,6 +283,24 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   useEffect(() => {
     if (isMember && unlocked) void reloadInventory();
   }, [isMember, unlocked, badgeSig, reloadInventory]);
+  // salvar a imagem do mural (dono ou participante do compartilhado, com o mural aberto)
+  const exporting = useRef(false);
+  const exportImage = useCallback(async () => {
+    if (exporting.current) return;
+    const el = visibleBoardElement();
+    if (!el) return notify("Abra o mural para gerar a imagem.");
+    exporting.current = true;
+    notify("Gerando a imagem do mural…");
+    try {
+      const blob = await boardToPng(el, 3000);
+      const res = await deliverPng(blob, `pinz-${slug ?? "mural"}`);
+      if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸" : "Imagem salva! 📸");
+    } catch {
+      notify("Não foi possível gerar a imagem agora. Tente de novo.");
+    } finally {
+      exporting.current = false;
+    }
+  }, [notify, slug]);
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
@@ -604,6 +623,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             murals={own}
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
+            onExportImage={(isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
             sharedInvites={sharedInvites}
             onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}

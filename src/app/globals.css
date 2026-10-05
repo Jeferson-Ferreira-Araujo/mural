@@ -164,3 +164,8 @@ body.badge-dragging * {
   transform: translateY(14px);
   pointer-events: none;
 }
+
+/* imagem do mural: sem os marcadores de "espaço livre" */
+[data-exporting] [data-empty-slot] {
+  visibility: hidden;
+}

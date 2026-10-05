@@ -103,6 +103,7 @@ export function BoardCanvas({
     <>
             <main className="absolute inset-0 [container-type:size]">
               <div
+                data-board-capture
                 className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 transition-[filter] duration-700 ease-out [container-type:inline-size]"
                 style={{ // cobre o bloco inteiro (corta só o excedente da imagem), mas nunca a ponto de cortar a área de cortiça com os recados
                   width: contain ? "min(100cqw, 150cqh)" : "min(max(100cqw, 150cqh), 123cqw, 192cqh)", filter: locked ? "blur(11px) saturate(0.85)" : "none" }}
@@ -131,7 +132,7 @@ export function BoardCanvas({
                       if (!item) {
                         if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
                         return (
-                          <div key={`slot-${i}`} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
+                          <div key={`slot-${i}`} data-empty-slot style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                             {onCompose && unlocked ? (
                               <button
                                 type="button"
@@ -192,7 +193,7 @@ export function BoardCanvas({
                   <BadgeLayer />
 
                   {items.length === 0 && unlocked && (
-                    <div className="absolute inset-x-0 top-[45%] z-10">
+                    <div data-empty-slot className="absolute inset-x-0 top-[45%] z-10">
                       <EmptyNote unlocked={unlocked} message={emptyMessage} />
                     </div>
                   )}

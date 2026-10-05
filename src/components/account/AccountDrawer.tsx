@@ -57,6 +57,7 @@ export function AccountDrawer({
   onNotify,
   sharedInvites = 0,
   onSharedChanged,
+  onExportImage,
 }: {
   open: boolean;
   onClose: () => void;
@@ -81,6 +82,8 @@ export function AccountDrawer({
   sharedInvites?: number;
   /** a lista de murais compartilhados mudou (aceitou, criou, apagou) */
   onSharedChanged?: () => void;
+  /** gera a imagem do mural aberto (só aparece quando dá para gerar) */
+  onExportImage?: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
@@ -189,6 +192,23 @@ export function AccountDrawer({
                     }
                   />
                 </>
+              )}
+              {onExportImage && (
+                <Row
+                  onClick={() => {
+                    onClose();
+                    onExportImage();
+                  }}
+                  label="Salvar imagem do mural"
+                  hint="Uma imagem em alta qualidade para postar"
+                  icon={
+                    <svg {...ic}>
+                      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+                      <circle cx="9" cy="10" r="1.6" />
+                      <path d="m4 17 5-4.5 3.5 3 3-2.5L20 16" />
+                    </svg>
+                  }
+                />
               )}
               <Row
                 onClick={() => setModal("shared")}
