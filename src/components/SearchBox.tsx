@@ -7,7 +7,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import type { Tone } from "./viewProps";
 
 /** Busca de pessoas pelo nickname, com lista de resultados (combobox acessível). */
-export function SearchBox({ onSelect, tone = "light" }: { onSelect: (nickname: string) => void; tone?: Tone }) {
+export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onSelect: (nickname: string) => void; tone?: Tone; hideLabel?: boolean }) {
   const dark = tone === "dark";
   const id = useId();
   const [q, setQ] = useState("");
@@ -67,7 +67,7 @@ export function SearchBox({ onSelect, tone = "light" }: { onSelect: (nickname: s
 
   return (
     <div className="relative">
-      <label htmlFor={id} className={`mb-[0.5em] block text-center text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
+      <label htmlFor={id} className={`${hideLabel ? "sr-only" : "mb-[0.5em] block"} block text-center text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
         Procurar mural
       </label>
       <div className="relative">

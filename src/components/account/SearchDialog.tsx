@@ -33,6 +33,7 @@ export function SearchDialog({ open, onClose, onSelect }: { open: boolean; onClo
           </div>
           <SearchBox
             tone="light"
+            hideLabel
             onSelect={(n) => {
               onClose();
               onSelect(n);
