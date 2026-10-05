@@ -78,6 +78,26 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
   return { items, vault: { ...SEED_VAULT } };
 }
 
+
+/** Mais exemplos, todos diferentes dos de cima: a página inicial mostra o quadro cheio sem nenhum pin repetido. */
+function extraPool(): BoardItem[] {
+  return [
+    { id: "x1", type: "postit", color: "orange", text: "Seu abraço é o melhor lugar do mundo. Volta logo! 🤗" },
+    { id: "x2", type: "text", variant: "letter", text: "Passou tanto tempo e eu ainda lembro da nossa risada. Que saudade de você, viu?" },
+    { id: "x3", type: "photo", scene: "sunset", caption: "Aquele pôr do sol valeu a viagem 🌅" },
+    { id: "x4", type: "postit", color: "yellow", text: "Se precisar de alguém, eu estou aqui. Sempre." },
+    { id: "x5", type: "list", title: "Obrigado por:", items: [{ text: "Cada conselho", done: true }, { text: "As caronas", done: true }, { text: "O café da manhã", done: true }] },
+    { id: "x6", type: "text", variant: "notebook", text: "Anotei aqui: você é a pessoa mais engraçada que eu conheço. Nunca perca isso." },
+    { id: "x7", type: "postit", color: "pink", text: "Parabéns pelo seu dia! Você merece tudo de bom 🎂" },
+    { id: "x8", type: "music", title: "Trilha do Verão", artist: "Banda do Bairro", caption: "Toca sempre que lembro de você", duration: "4:02" },
+    { id: "x9", type: "postit", color: "green", text: "Saudade das nossas tardes sem pressa." },
+    { id: "x10", type: "voice", caption: "Ouve até o final, tem surpresa!", duration: "0:41" },
+    { id: "x11", type: "video", caption: "Olha como a gente era novo!", duration: "0:18" },
+    { id: "x12", type: "place", name: "Pão de Açúcar", address: "Rio de Janeiro - RJ", lat: -22.948, lon: -43.1566, caption: "Vamos voltar lá um dia?" },
+    { id: "x13", type: "postit", color: "blue", text: "Você faz qualquer segunda-feira ficar melhor. 💙" },
+  ];
+}
+
 /** Os primeiros `count` itens do pool que o plano permite (formatos e cápsula). */
 export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = BOARD_CAPACITY): { items: BoardItem[]; vault: Record<string, Message> } {
   const { items: base, vault } = buildPool(nowMs);
@@ -95,8 +115,8 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
 
 /** Mural de exemplo aleatório (todos os espaços, em ordem embaralhada) para a página inicial: sem espaços vazios. */
 export function randomMural(nowMs: number): BoardItem[] {
-  const { items } = itemsFor("full", BOARD_CAPACITY, nowMs);
-  items.forEach((it) => delete (it as { slot?: number }).slot);
+  // 28 espaços = os 15 exemplos + 13 extras, todos diferentes (nada de cartão repetido na tela)
+  const items = [...buildPool(nowMs).items, ...extraPool()].slice(0, BOARD_CAPACITY);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
