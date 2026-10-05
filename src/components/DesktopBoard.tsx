@@ -1,7 +1,7 @@
 "use client";
 
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
-import { BOARD_CAPACITY, slotsFor } from "@/lib/plans";
+import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PlanBadge } from "./board/PlanBadge";
 import { AccountActions } from "./account/AccountActions";
@@ -21,12 +21,11 @@ export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
  */
 export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
-  const available = slotsFor(plan, capacity);
   const look = boardById(board);
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} capacity={capacity} panel={panel} panelTitle={panelTitle} plan={plan} used={items.length} showMeter={showMeter} notice={notice} />
+      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className={`relative min-w-0 flex-1 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
@@ -39,11 +38,8 @@ export function DesktopBoard(props: ViewProps) {
             {!hasSelection ? null : (
               showMeter &&
               !locked && (
-                <div className="flex items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" aria-label={`${items.length} de ${available} espaços ocupados`}>
+                <div className="flex items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md">
                   <PlanBadge plan={plan} />
-                  <span className="text-sm font-semibold text-[#f7f0dd]">
-                    {items.length}/{available}
-                  </span>
                 </div>
               )
             )}

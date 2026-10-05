@@ -8,7 +8,7 @@ import { ghostButton, primaryButton } from "../ui";
  * Mural lotado. Aparece ANTES da composição: o visitante não escreve nada para descobrir depois
  * que não cabe. Em vez disso, pode avisar o dono que passou por aqui.
  */
-export function FullNotice({ used, available, planLimit = false, onTried, triedAlready, onClose }: { used: number; available: number; /** o mural ainda tem espaços, mas o plano do dono não permite mais pins */ planLimit?: boolean; onTried: () => void; triedAlready: boolean; onClose: () => void }) {
+export function FullNotice({ planLimit = false, onTried, triedAlready, onClose }: { used: number; available: number; /** o mural ainda tem espaços, mas o plano do dono não permite mais pins */ planLimit?: boolean; onTried: () => void; triedAlready: boolean; onClose: () => void }) {
   const [sent, setSent] = useState(triedAlready);
 
   return (
@@ -17,12 +17,11 @@ export function FullNotice({ used, available, planLimit = false, onTried, triedA
         <Pin tone="red" className="left-1/2 -translate-x-1/2" />
         <div className="mx-auto mt-3 w-40 rotate-[-2deg] rounded-sm bg-[#f5f0e2] px-4 py-6 shadow-[0_0.4rem_1rem_rgba(40,20,5,.3)]">
           <p className="font-hand text-[1.5rem] leading-none text-[#243a7a]">{planLimit ? "limite!" : "lotado!"}</p>
-          <p className="font-mono mt-2 text-xs text-[#243a7a]/70">{used} de {available}</p>
         </div>
       </div>
 
       <h3 className="font-title text-2xl font-semibold">{planLimit ? "Este mural chegou ao limite do plano." : "Este PINZ está lotado."}</h3>
-      {planLimit && <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito permite até {available} pins. Para ter mais espaços, o dono precisa do PINZ PLUS ou de créditos.</p>}
+      {planLimit && <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito tem um limite de pins. Para ter mais espaços, o dono precisa do PINZ PLUS ou de créditos.</p>}
       {sent ? (
         <>
           <p role="status" className="mt-3 text-[#4a3826]">
