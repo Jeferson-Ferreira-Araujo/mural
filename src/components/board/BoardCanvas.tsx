@@ -104,6 +104,7 @@ export function BoardCanvas({
             <main className="absolute inset-0 [container-type:size]">
               <div
                 data-board-capture
+                data-board-crop={[Math.max(0, CORK.left - 3), Math.max(0, CORK.top - 4.4), Math.min(100, CORK.width + 6), Math.min(100, CORK.height + 8.6)].map((n) => (n / 100).toFixed(4)).join(",")}
                 className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 transition-[filter] duration-700 ease-out [container-type:inline-size]"
                 style={{ // cobre o bloco inteiro (corta só o excedente da imagem), mas nunca a ponto de cortar a área de cortiça com os recados
                   width: contain ? "min(100cqw, 150cqh)" : "min(max(100cqw, 150cqh), 123cqw, 192cqh)", filter: locked ? "blur(11px) saturate(0.85)" : "none" }}

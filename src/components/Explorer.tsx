@@ -294,7 +294,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     try {
       const blob = await boardToImage(el);
       const res = await deliverImage(blob, `pinz-${slug ?? "mural"}`);
-      if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸" : "Imagem salva! 📸");
+      if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸 Dica: no WhatsApp, envie como Documento para não perder qualidade." : "Imagem salva! 📸 Dica: no WhatsApp, envie como Documento para não perder qualidade.");
     } catch {
       notify("Não foi possível gerar a imagem agora. Tente de novo.");
     } finally {

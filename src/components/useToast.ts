@@ -11,7 +11,7 @@ export function useToast(ms = 2800) {
     (msg: string) => {
       setMessage(msg);
       clearTimeout(timer.current);
-      timer.current = setTimeout(() => setMessage(null), ms);
+      timer.current = setTimeout(() => setMessage(null), Math.max(ms, msg.length * 55)); // avisos longos ficam mais tempo na tela
     },
     [ms],
   );
