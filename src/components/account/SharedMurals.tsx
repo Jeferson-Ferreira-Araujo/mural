@@ -113,7 +113,7 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
               </p>
               {m.locked && (
                 <p role="status" className="mt-2 rounded-xl border border-[#d9a21b]/50 bg-[#fff6dd] px-3 py-2 text-sm font-semibold text-[#6b4a10]">
-                  🔒 Esse mural está bloqueado, necessário conta Plus.
+                  🔒 Esse mural está bloqueado, necessário que todos os participantes estejam com a conta Plus ativa.
                 </p>
               )}
               <div className="mt-3 flex flex-wrap gap-2">

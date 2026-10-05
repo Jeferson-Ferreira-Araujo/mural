@@ -468,8 +468,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           )}
           {selected && isMember && selected.locked && (
             <section aria-label="Mural bloqueado" role="status" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
-              <p className="text-[1.05em] font-bold">🔒 Esse mural está bloqueado, necessário conta Plus.</p>
-              <p className={`mt-[0.4em] text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>As duas pessoas precisam ter o PINZ PLUS ativo para abrir este mural.</p>
+              <p className="text-[1.05em] font-bold">🔒 Esse mural está bloqueado, necessário que todos os participantes estejam com a conta Plus ativa.</p>
               <button type="button" onClick={logged ? () => setSearchOpen(true) : clear} className={`mt-[0.7em] cursor-pointer text-[0.85em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
                 Trocar de mural
               </button>
