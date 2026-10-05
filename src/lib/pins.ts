@@ -83,6 +83,12 @@ export async function listOwnerPins(sb: SupabaseClient, muralId: string): Promis
   return data as OwnerPin[];
 }
 
+/** Edita título e itens de uma lista. O servidor só aceita o dono do mural ou quem criou o pin. */
+export async function updateListPin(sb: SupabaseClient, id: string, title: string, items: { text: string; done: boolean }[]): Promise<boolean> {
+  const { error } = await sb.rpc("update_list_pin", { p_id: id, p_title: title, p_items: items });
+  return !error;
+}
+
 /** Aprova (opcionalmente já em blur, no PLUS) ou recusa/remove (apaga e libera o espaço). */
 export async function moderatePin(sb: SupabaseClient, id: string, approve: boolean, hidden = false): Promise<boolean> {
   const { error } = await sb.rpc("moderate_pin", { p_id: id, p_approve: approve, p_hidden: hidden });

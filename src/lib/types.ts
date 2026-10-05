@@ -21,6 +21,8 @@ type Base = {
   ownerHidden?: boolean;
   /** Nickname de quem assinou o pin. Sem isso o pin é anônimo (o autor só existe no banco). */
   signedBy?: string;
+  /** Lista que quem está vendo pode editar (dono do mural ou autor do pin). Vem do servidor. */
+  canEdit?: boolean;
   /** Visão do dono: este pin pendente está esperando a aprovação dele. */
   ownerReview?: boolean;
 };

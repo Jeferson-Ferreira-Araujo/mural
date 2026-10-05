@@ -2,7 +2,7 @@ import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
 
 /** Lista: papel creme com checklist escrito à mão. */
-export function ListCard({ title, items, font, tape }: { title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor }) {
+export function ListCard({ title, items, font, tape, onEdit }: { title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor; onEdit?: () => void }) {
   const hand = handOf(font);
   // sem letra escolhida: o visual de sempre (título Caveat, itens Kalam); com letra escolhida, tudo na mesma
   const itemFont = font ? hand.family : "var(--font-kalam), cursive";
@@ -17,6 +17,22 @@ export function ListCard({ title, items, font, tape }: { title: string; items: {
       }}
     >
       <Tape className="top-[-0.5em] right-[1.5em]" rotate={6} tone={tape ? tapeOf(tape).tone : undefined} />
+      {onEdit && (
+        <button
+          type="button"
+          aria-label="Editar lista"
+          title="Editar lista"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          className="absolute right-[0.5em] bottom-[1.4em] z-20 grid size-[2em] cursor-pointer place-items-center rounded-full bg-[#2a2a33] text-white shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)] transition hover:bg-[#44444f]"
+        >
+          <svg viewBox="0 0 24 24" className="size-[1.05em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
+          </svg>
+        </button>
+      )}
       <div className="flex items-start justify-between">
         <h3 className="min-w-0 [overflow-wrap:anywhere] leading-none font-semibold text-[#2a2a33] underline decoration-[#2a2a33]/40 decoration-1 underline-offset-[0.12em]" style={{ fontFamily: hand.family, fontSize: `${1.9 * hand.scale}em` }}>
           {title}
@@ -30,8 +46,8 @@ export function ListCard({ title, items, font, tape }: { title: string; items: {
         </svg>
       </div>
       <ul className="mt-[0.5em] space-y-[0.28em] leading-tight text-[#2a2a33]" style={{ fontFamily: itemFont, fontSize: `${itemSize}em` }}>
-        {items.map((it) => (
-          <li key={it.text} className="flex items-start gap-[0.55em]">
+        {items.map((it, i) => (
+          <li key={i}className="flex items-start gap-[0.55em]">
             <span className="mt-[0.1em] grid size-[1.05em] shrink-0 place-items-center rounded-[0.15em] border border-[#2a2a33]/70">
               {it.done && (
                 <svg viewBox="0 0 12 12" className="size-[85%]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

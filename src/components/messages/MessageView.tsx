@@ -1,4 +1,5 @@
 import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { useListEdit } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
 import { HiddenPin } from "./HiddenPin";
 import { ClosedCapsule } from "./ClosedCapsule";
@@ -12,13 +13,14 @@ import { VideoPrint } from "./VideoPrint";
 import { VoiceNote } from "./VoiceNote";
 
 function Content({ m }: { m: Message }) {
+  const editList = useListEdit();
   switch (m.type) {
     case "postit":
       return <PostIt color={m.color} text={m.text} font={m.font} pin={m.pin} />;
     case "text":
       return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} />;
     case "list":
-      return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} />;
+      return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} onEdit={m.canEdit && editList ? () => editList({ id: m.id, title: m.title, items: m.items }) : undefined} />;
     case "photo":
       return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} />;
     case "draw":

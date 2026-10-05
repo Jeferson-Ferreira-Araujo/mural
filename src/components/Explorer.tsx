@@ -19,13 +19,14 @@ import {
 } from "@/lib/mural";
 import { boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { ModerationProvider } from "./board/ModerationContext";
+import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadge, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
@@ -264,6 +265,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     },
     [notify, reloadInventory],
   );
+  const saveList = useCallback(
+    async (l: ListData) => {
+      const ok = await updateListPin(getBrowserSupabase(), l.id, l.title, l.items);
+      if (ok) await loadBoard();
+      return ok;
+    },
+    [loadBoard],
+  );
   const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
@@ -462,6 +471,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
       <ModerationProvider value={isOwner ? moderation : null}>
+        <ListEditProvider onSave={saveList}>
         <BadgeProvider muralId={own.find((m) => m.slug === slug)?.id} editable={isOwner && !!own.find((m) => m.slug === slug)} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           items={revealed ? shownItems : decor}
@@ -513,6 +523,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           }
         />
         </BadgeProvider>
+        </ListEditProvider>
       </ModerationProvider>
       {logged && myNick && (
         <>

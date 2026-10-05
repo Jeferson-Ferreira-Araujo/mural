@@ -36,9 +36,7 @@ export function DesktopBoard(props: ViewProps) {
 
         <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="flex min-h-10 items-center">
-            {!hasSelection ? (
-              <span className="rounded-2xl bg-[#2a1c12]/70 px-4 py-2 text-sm font-semibold text-[#f7f0dd] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md">Exemplo de mural</span>
-            ) : (
+            {!hasSelection ? null : (
               showMeter &&
               !locked && (
                 <div className="flex items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" aria-label={`${items.length} de ${available} espaços ocupados`}>

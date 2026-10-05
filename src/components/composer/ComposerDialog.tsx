@@ -59,6 +59,9 @@ function SignChoice({ nick, signed, onChange }: { nick: string; signed: boolean;
   );
 }
 
+/** Formatos que só quem tem conta cria (o autor precisa poder editar depois). */
+const ACCOUNT_ONLY: MessageType[] = ["list"];
+
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
   switch (format) {
     case "postit":
@@ -134,9 +137,11 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
   if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
-  if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
+  if (!format) return <FormatPicker formats={formats} onPick={onFormat} accountOnly={signAs ? [] : ACCOUNT_ONLY} loginHref={loginHref} />;
 
-  const canSend = !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
+  // lista: só com conta e sempre assinada (o autor edita depois; anônimo não teria como)
+  const forceSigned = format === "list";
+  const canSend = forceSigned && !signAs ? false :!sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
   const shown = draft ?? SAMPLE[format];
 
   return (
@@ -145,7 +150,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       onSubmit={(e) => {
         e.preventDefault();
         if (!draft || !canSend || slot === null) return;
-        onSend({ message: draft, slot, signed: !!signAs && signed, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        onSend({ message: draft, slot, signed: !!signAs && (signed || forceSigned), capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className="space-y-5"
     >
@@ -159,7 +164,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
                 <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
-                <MessageView message={{ ...shown, id: "preview", signedBy: signAs && signed ? signAs : undefined } as Message} />
+                <MessageView message={{ ...shown, id: "preview", signedBy: signAs && (signed || forceSigned) ? signAs : undefined } as Message} />
               </div>
             </div>
           </div>
@@ -172,8 +177,21 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
-      {signAs && <SignChoice nick={signAs} signed={signed} onChange={setSigned} />}
-      {!signAs && loginHref && (
+      {signAs && forceSigned && (
+        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
+          A lista aparece assinada como @{signAs}. Você e o dono do mural podem editá-la depois.
+        </p>
+      )}
+      {signAs && !forceSigned && <SignChoice nick={signAs} signed={signed} onChange={setSigned} />}
+      {!signAs && forceSigned && (
+        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
+          Lista só com conta.{" "}
+          <a href={loginHref ?? "/entrar"} className="font-bold underline decoration-[#d98a2b] underline-offset-2">
+            Entre ou crie uma conta
+          </a>
+        </p>
+      )}
+      {!signAs && !forceSigned && loginHref && (
         <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
           Seu pin será anônimo.{" "}
           <a href={loginHref} className="font-bold underline decoration-[#d98a2b] underline-offset-2">
