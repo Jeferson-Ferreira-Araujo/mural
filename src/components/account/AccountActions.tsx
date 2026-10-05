@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { loginUrl } from "@/lib/auth";
 
-export type AccountApi = { onSearch: () => void; onMenu: () => void; badge?: number };
+export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; badge?: number };
 
 const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
@@ -30,6 +30,47 @@ export function AccountActions({ account, tone = "light", className = "" }: { ac
         )}
       </button>
     </div>
+  );
+}
+
+const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
+
+/** Cabeçalho do mural no celular: à esquerda a lousa (volta ao seu mural) e a lupa (abre a busca), à direita o menu. O logo fica no meio (quem usa). */
+export function MobileHeaderLeft({ account }: { account: AccountApi }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {account.onHome && (
+        <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={iconBtn}>
+          <svg {...iconSvg}>
+            <rect x="3" y="4" width="18" height="12" rx="1.5" />
+            <path d="M7 9h6M7 12h3" />
+            <path d="M8 20h8M12 16v4" />
+          </svg>
+        </button>
+      )}
+      <button type="button" onClick={account.onSearch} aria-label="Procurar mural" title="Procurar mural" className={iconBtn}>
+        <svg {...iconSvg} strokeWidth={2.4}>
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m20 20-4.2-4.2" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+export function MobileHeaderRight({ account }: { account: AccountApi }) {
+  return (
+    <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
+      <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+      {!!account.badge && (
+        <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+          {account.badge}
+        </span>
+      )}
+    </button>
   );
 }
 

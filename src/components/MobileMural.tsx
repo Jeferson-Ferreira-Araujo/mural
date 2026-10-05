@@ -7,7 +7,7 @@ import { Avatar } from "./Avatar";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
-import { AccountActions, GuestLinks, type AccountApi } from "./account/AccountActions";
+import { GuestLinks, MobileHeaderLeft, MobileHeaderRight, type AccountApi } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
 import { MuralPager, type MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
@@ -42,10 +42,22 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
       {/* topo: logo + menu */}
-      <header className="relative z-30 flex h-14 shrink-0 items-center justify-between bg-[#f2e8d3] px-4 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.25)]">
+      <header className={`relative z-30 h-14 shrink-0 items-center bg-[#f2e8d3] px-4 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.25)] ${account ? "grid grid-cols-[1fr_auto_1fr]" : "flex justify-between"}`}>
         <h1 className="sr-only">Pinz</h1>
-        <Brand className="h-10" />
-        {account ? <AccountActions account={account} /> : guestNext ? <GuestLinks next={guestNext} /> : null}
+        {account ? (
+          <>
+            <MobileHeaderLeft account={account} />
+            <Brand className="h-10" />
+            <div className="flex justify-end">
+              <MobileHeaderRight account={account} />
+            </div>
+          </>
+        ) : (
+          <>
+            <Brand className="h-10" />
+            {guestNext ? <GuestLinks next={guestNext} /> : null}
+          </>
+        )}
       </header>
 
       {/* de quem é o mural + quantos PINZ */}
