@@ -506,6 +506,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               title={selected.title}
               owner={selected.nickname}
               avatar={selected.avatar}
+              plus={selected.plan === "full"}
               onSwap={logged ? () => setSearchOpen(true) : clear}
               question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
@@ -557,6 +558,40 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     );
   }
 
+  // desktop: os atalhos da conta ficam na coluna bege (o celular continua com a gaveta do hambúrguer)
+  const sidebarMenu =
+    logged && myNick ? (
+      <AccountDrawer
+        inline
+        open
+        onClose={() => undefined}
+        nick={myNick}
+        email={session?.user.email ?? ""}
+        murals={own}
+        currentSlug={isOwner ? slug : undefined}
+        pendingCount={pendingCount}
+        onExportImage={EXPORT_IMAGE_ENABLED && (isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
+        sharedInvites={sharedInvites}
+        onSharedChanged={() => void reloadShared()}
+        credits={inventory?.credits ?? 0}
+        isAdmin={isAdmin}
+        onOpenStore={() => {
+          setDrawer({ open: false });
+          setStoreOpen(true);
+        }}
+        onPending={setPendingCount}
+        onNotify={notify}
+        onChanged={() => {
+          void reloadOwn();
+          if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
+        }}
+        onDeleted={() => window.location.assign("/criar")}
+        onSignOut={() => {
+          void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
+        }}
+      />
+    ) : undefined;
+
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
@@ -564,6 +599,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <ListEditProvider onSave={saveList}>
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
+          sidebarMenu={sidebarMenu}
           items={revealed ? shownItems : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
           showMeter={revealed}
@@ -577,7 +613,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           boardPending={!selected && !decorBoard}
           // sem "Compartilhar": quem está vendo o mural de outra pessoa não é o dono (o dono copia o link no menu)
           share={null}
-          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar } : undefined}
+          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : undefined}
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}

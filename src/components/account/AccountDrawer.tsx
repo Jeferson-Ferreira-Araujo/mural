@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
 import { getPublicMural, muralUrl, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { PlanBadge } from "../board/PlanBadge";
+import { getOwnAvatar } from "@/lib/avatar";
+import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
 import { PinsModal } from "./PinsModal";
@@ -15,14 +16,18 @@ import { SharedMurals } from "./SharedMurals";
 
 type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers" | "shared";
 
+/** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
+const CompactCtx = createContext(false);
+
 function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: string; hint?: string; badge?: number; onClick: () => void }) {
+  const compact = useContext(CompactCtx);
   return (
-    <button type="button" onClick={onClick} className="flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3.5 text-left transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-[#4a3826]" aria-hidden>
+    <button type="button" onClick={onClick} className={`flex w-full cursor-pointer items-center rounded-2xl border border-[#e1d3ba] bg-white/60 text-left transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3 px-4 py-3.5"}`}>
+      <span className={`grid shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-8" : "size-10"}`} aria-hidden>
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-bold">{label}</span>
+        <span className={`block font-bold ${compact ? "text-[14px]" : "text-[15px]"}`}>{label}</span>
         {hint && <span className="block truncate text-xs text-[#6b5440]">{hint}</span>}
       </span>
       {!!badge && <span className="rounded-full bg-[#d98a2b] px-2.5 py-0.5 text-sm font-bold text-white">{badge}</span>}
@@ -58,6 +63,7 @@ export function AccountDrawer({
   sharedInvites = 0,
   onSharedChanged,
   onExportImage,
+  inline = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -84,12 +90,19 @@ export function AccountDrawer({
   onSharedChanged?: () => void;
   /** gera a imagem do mural aberto (só aparece quando dá para gerar) */
   onExportImage?: () => void;
+  /** desktop: em vez de uma gaveta, desenha os atalhos direto na coluna bege (sempre aberto) */
+  inline?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
   const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
   const [modal, setModal] = useState<ModalId | null>(null);
+  const isOpen = inline || open;
   const [stats, setStats] = useState<MuralStats | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => {
+    if (open && !inline) void getOwnAvatar(getBrowserSupabase()).then((a) => setAvatar(a.url));
+  }, [open, inline]);
 
   useEffect(() => {
     const d = ref.current;
@@ -99,8 +112,8 @@ export function AccountDrawer({
   }, [open]);
 
   useEffect(() => {
-    if (!open) setModal(null);
-  }, [open]);
+    if (!isOpen) setModal(null);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!modal || modal !== "numbers" || !mural) return;
@@ -118,36 +131,8 @@ export function AccountDrawer({
   }
   const close = () => setModal(null);
 
-  return (
+  const rows = (
     <>
-      <dialog
-        ref={ref}
-        onClose={onClose}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) onClose();
-        }}
-        aria-label="Menu da conta"
-        className="fixed inset-y-0 right-0 left-auto m-0 ml-auto h-dvh max-h-none w-[min(26rem,100vw)] max-w-none overflow-hidden rounded-none border-l border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[-1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-l-3xl"
-      >
-        {open && (
-          <div className="flex h-dvh flex-col">
-            <header className="flex items-start justify-between gap-3 border-b border-[#e6d8bd] px-5 py-4">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Sua conta</p>
-                <p className="font-title truncate text-xl font-semibold">{nick}</p>
-                {mural && (
-                  <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#6b5440]">
-                    <PlanBadge plan={mural.plan} />
-                    <span>{mural.question ? "🔒 Privado" : "🌐 Público"}</span>
-                  </p>
-                )}
-              </div>
-              <button type="button" onClick={onClose} aria-label="Fechar menu" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
-                ×
-              </button>
-            </header>
-
-            <nav aria-label="Menu da conta" className="flex-1 space-y-2.5 overflow-y-auto px-5 py-4">
               {mural && (
                 <>
                   <Row
@@ -268,24 +253,17 @@ export function AccountDrawer({
                   </svg>
                 }
               />
-            </nav>
-
-            <footer className="border-t border-[#e6d8bd] px-5 py-3">
-              <button type="button" onClick={onSignOut} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
-                Sair da conta
-              </button>
-            </footer>
-          </div>
-        )}
-      </dialog>
-
-      {mural && <PinsModal open={open && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
+    </>
+  );
+  const modals = (
+    <>
+      {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
       {mural && (
-        <Modal open={open && modal === "edit"} onClose={close} title="Editar mural">
+        <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">
           <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} />
         </Modal>
       )}
-      <Modal open={open && modal === "numbers"} onClose={close} title="Números do mural">
+      <Modal open={isOpen && modal === "numbers"} onClose={close} title="Números do mural">
         <dl className="grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
           {(
             [
@@ -302,11 +280,70 @@ export function AccountDrawer({
           ))}
         </dl>
       </Modal>
-      <Modal open={open && modal === "shared"} onClose={close} title="Mural compartilhado">
+      <Modal open={isOpen && modal === "shared"} onClose={close} title="Mural compartilhado">
         <SharedMurals plus={account.plan === "full"} onChanged={() => onSharedChanged?.()} onNotify={onNotify} />
       </Modal>
-      <PlansModal open={open && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
-      <ProfileModal open={open && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} />
+      <PlansModal open={isOpen && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
+      <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} plus={account.plan === "full"} />
+    </>
+  );
+
+  // desktop: atalhos direto na coluna bege (sem gaveta)
+  if (inline) {
+    return (
+      <CompactCtx.Provider value>
+        <nav aria-label="Menu da conta" className="space-y-1.5">
+          {rows}
+        </nav>
+        <button type="button" onClick={onSignOut} className="mt-2 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
+          Sair da conta
+        </button>
+        {modals}
+      </CompactCtx.Provider>
+    );
+  }
+
+  return (
+    <>
+      <dialog
+        ref={ref}
+        onClose={onClose}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+        aria-label="Menu da conta"
+        className="fixed inset-y-0 right-0 left-auto m-0 ml-auto h-dvh max-h-none w-[min(26rem,100vw)] max-w-none overflow-hidden rounded-none border-l border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[-1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-l-3xl"
+      >
+        {open && (
+          <div className="flex h-dvh flex-col">
+            <header className="flex items-start justify-between gap-3 border-b border-[#e6d8bd] px-5 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <Avatar src={avatar} name={nick} plus={account.plan === "full"} className="size-12" />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Sua conta</p>
+                  <p className="font-title truncate text-xl font-semibold">{nick}</p>
+                  {mural && <p className="mt-0.5 text-sm text-[#6b5440]">{mural.question ? "🔒 Privado" : "🌐 Público"}</p>}
+                </div>
+              </div>
+              <button type="button" onClick={onClose} aria-label="Fechar menu" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
+                ×
+              </button>
+            </header>
+
+            <nav aria-label="Menu da conta" className="flex-1 space-y-2.5 overflow-y-auto px-5 py-4">
+              {rows}
+            </nav>
+
+            <footer className="border-t border-[#e6d8bd] px-5 py-3">
+              <button type="button" onClick={onSignOut} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
+                Sair da conta
+              </button>
+            </footer>
+          </div>
+        )}
+      </dialog>
+
+      {modals}
     </>
   );
 }

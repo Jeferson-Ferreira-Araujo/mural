@@ -3,7 +3,6 @@
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
-import { PlanBadge } from "./board/PlanBadge";
 import { AccountActions } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
 import { MuralPager } from "./MuralSwitcher";
@@ -26,7 +25,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
-      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} />
+      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} menu={props.sidebarMenu} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       <div className={`relative min-w-0 flex-1 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
@@ -36,20 +35,12 @@ export function DesktopBoard(props: ViewProps) {
 
         <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="flex min-h-10 items-center">
-            {!hasSelection ? null : (
-              showMeter &&
-              !locked && (
-                <div className="flex items-center gap-2 rounded-2xl bg-[#2a1c12]/70 px-3 py-2 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md">
-                  <PlanBadge plan={plan} />
-                </div>
-              )
-            )}
           </div>
           <div className="flex items-center gap-2">
             {share && (
               <ShareButton title={share.title} path={share.path} onNotify={onNotify} className="bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
-            {account && <AccountActions account={account} tone="dark" />}
+            {account && <AccountActions account={account} tone="dark" menu={false} />}
           </div>
         </nav>
 

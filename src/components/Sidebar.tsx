@@ -16,7 +16,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 }
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
-export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
+export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account, menu }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** atalhos da conta (desktop) */ menu?: React.ReactNode; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
   return (
     <aside
       className="paper-grain relative z-20 flex h-full w-[clamp(290px,23vw,360px)] shrink-0 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)]"
@@ -36,7 +36,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </button>
       )}
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
-      <div className="my-auto flex flex-col gap-[1.4em]">
+      <div className={`flex flex-col gap-[1.4em] ${menu ? "" : "my-auto"}`}>
       <div className="flex justify-center">
         <Brand className="h-[6.4rem]" />
       </div>
@@ -58,6 +58,9 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {notice?.("light")}
 
       </div>
+
+      {/* atalhos da conta: ocupam o espaço entre o cartão do mural e os números */}
+      {menu && <div className="mt-[1.4em] flex-1">{menu}</div>}
 
       {siteStats && (
         <ul className="mt-[1.4em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">

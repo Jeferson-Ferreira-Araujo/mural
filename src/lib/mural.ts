@@ -181,7 +181,7 @@ export function uniqueSlug(title: string, existing: string[]): string {
   return cand;
 }
 
-export type ProfileHit = { nickname: string; murals: number; avatar?: string | null };
+export type ProfileHit = { nickname: string; murals: number; avatar?: string | null; /** conta PLUS */ plus?: boolean };
 
 /** Busca pessoas pelo nickname (só quem tem mural). */
 export async function searchProfiles(sb: SupabaseClient, query: string): Promise<ProfileHit[]> {

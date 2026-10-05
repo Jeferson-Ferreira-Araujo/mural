@@ -21,7 +21,7 @@ type Props = {
   hasSelection: boolean;
   unlocked: boolean;
   onCompose: ((slot?: number) => void) | null;
-  info: { title: string; owner: string; avatar?: string | null };
+  info: { title: string; owner: string; avatar?: string | null; plus?: boolean };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
   /** texto do mural vazio (PLUS) */
@@ -66,7 +66,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* de quem é o mural + quantos PINZ */}
       <div className="relative z-20 flex shrink-0 items-center gap-3 bg-[#e8dcc2] px-4 py-2 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.2)]">
-        <Avatar src={info.avatar} name={info.owner} className="size-11" />
+        <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11" />
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">{info.title}</span>
         </p>

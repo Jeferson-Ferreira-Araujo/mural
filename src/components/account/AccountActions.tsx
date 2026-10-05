@@ -8,7 +8,7 @@ export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao
 const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
 /** Ícones do cabeçalho de quem está logado: pesquisar murais e abrir o menu da conta. `tone`: light = fundo claro; dark = sobre a imagem do mural. */
-export function AccountActions({ account, tone = "light", className = "" }: { account: AccountApi; tone?: "light" | "dark"; className?: string }) {
+export function AccountActions({ account, tone = "light", className = "", menu = true }: { account: AccountApi; tone?: "light" | "dark"; className?: string; /** false: sem o botão do menu (no desktop os atalhos ficam na coluna bege) */ menu?: boolean }) {
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
@@ -19,7 +19,7 @@ export function AccountActions({ account, tone = "light", className = "" }: { ac
         </svg>
         Pesquisar Usuário
       </button>
-      <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
+      {menu && <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
@@ -28,7 +28,7 @@ export function AccountActions({ account, tone = "light", className = "" }: { ac
             {account.badge}
           </span>
         )}
-      </button>
+      </button>}
     </div>
   );
 }

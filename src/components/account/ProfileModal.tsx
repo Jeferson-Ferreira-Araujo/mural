@@ -9,7 +9,7 @@ import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
 /** Perfil: foto, nome de usuário e e-mail (só leitura) e troca de senha. */
-export function ProfileModal({ open, onClose, nick, email, onSignOut }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void }) {
+export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; plus?: boolean }) {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [show, setShow] = useState(false);
@@ -36,7 +36,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut }: { open: 
 
   return (
     <Modal open={open} onClose={onClose} title="Perfil">
-      <AvatarUploader nickname={nick} />
+      <AvatarUploader nickname={nick} plus={plus} />
       <dl className="mt-4 space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 text-sm">
         <div>
           <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Nome de usuário</dt>

@@ -27,7 +27,7 @@ export type ViewProps = {
   /** Números do site inteiro, mostrados no rodapé da barra quando nenhum mural está escolhido. */
   siteStats?: SiteStats | null;
   /** Quem é o dono do mural aberto (cabeçalho da tela do mural no celular). */
-  muralInfo?: { title: string; owner: string; avatar?: string | null };
+  muralInfo?: { title: string; owner: string; avatar?: string | null; plus?: boolean };
   /** Texto do bilhete do mural vazio (personalizado pelo dono PLUS). */
   welcome?: string | null;
   /** Celular: "Procurar outro mural" (volta à busca). */
@@ -55,6 +55,8 @@ export type ViewProps = {
   account?: AccountApi;
   /** Sem conta (chegou por link): caminho deste mural, para os links Entrar / Criar conta voltarem para ele. */
   guestNext?: string;
+  /** Desktop: atalhos da conta desenhados na coluna bege (no lugar do menu hambúrguer). */
+  sidebarMenu?: ReactNode;
   /** Os murais da pessoa dona deste mural (rodapé, com setas para trocar). */
   muralSwitch?: MuralSwitch;
 };

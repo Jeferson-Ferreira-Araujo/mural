@@ -9,7 +9,7 @@ import { Avatar } from "./Avatar";
  * Foto de perfil do dono (aparece no mural e na busca). Quem acabou de criar o mural é convidado a enviar a primeira.
  * A foto é recortada em quadrado e reduzida no próprio navegador antes de ir para o servidor.
  */
-export function AvatarUploader({ nickname }: { nickname: string }) {
+export function AvatarUploader({ nickname, plus = false }: { nickname: string; plus?: boolean }) {
   const [url, setUrl] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -57,7 +57,7 @@ export function AvatarUploader({ nickname }: { nickname: string }) {
 
   return (
     <section aria-label="Sua foto" className={`mt-5 flex items-center gap-4 rounded-2xl border p-4 ${!ready || url ? "border-[#e1d3ba] bg-white/60" : "border-[#e0b04a] bg-[#fff6dd]"}`}>
-      <Avatar src={url} name={nickname} className="size-[4.5rem]" />
+      <Avatar src={url} name={nickname} plus={plus} className="size-[4.5rem]" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold">{url ? "Sua foto" : "Adicione uma foto"}</p>
         <div className="mt-1.5 flex flex-wrap gap-2">
