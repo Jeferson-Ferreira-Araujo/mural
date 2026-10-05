@@ -23,9 +23,20 @@ const EyeClosed = () => (
     <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
   </svg>
 );
-const Flag = () => (
-  <svg {...icon}>
-    <path d="M5 21V4M5 4h11l-1.8 4L16 12H5" />
+const big = { viewBox: "0 0 24 24", className: "size-7", fill: "none", stroke: "currentColor", strokeWidth: 2.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
+const ChevronLeft = () => (
+  <svg {...big}>
+    <path d="m15 5-7 7 7 7" />
+  </svg>
+);
+const ChevronRight = () => (
+  <svg {...big}>
+    <path d="m9 5 7 7-7 7" />
+  </svg>
+);
+const CloseX = () => (
+  <svg {...big}>
+    <path d="M6 6l12 12M18 6 6 18" />
   </svg>
 );
 const Trash = () => (
@@ -89,7 +100,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
 
   const item = index !== null ? items[index] : null;
   const arrow =
-    "grid size-11 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
+    "grid size-14 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   return (
     <>
@@ -115,23 +126,25 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                 onClick={() => setReporting((v) => !v)}
                 className={`${arrow} !border-[#ff9b8f]/50 !text-[#ffb4a8]`}
               >
-                <Flag />
+                <svg {...big}>
+                  <path d="M5 21V4M5 4h11l-1.8 4L16 12H5" />
+                </svg>
               </button>
             )}
             <button type="button" onClick={onClose} aria-label="Fechar" className={arrow}>
-              ×
+              <CloseX />
             </button>
           </div>
           <div className="flex w-full items-center justify-center gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
-              ‹
+              <ChevronLeft />
             </button>
             <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,5.2vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
-              ›
+              <ChevronRight />
             </button>
           </div>
           {item && !isSealed(item) && !isHidden(item) && item.pending && (
