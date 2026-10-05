@@ -163,7 +163,7 @@ export function AuthForm() {
         {!signup && (
           <label className="flex cursor-pointer items-center gap-2 text-sm text-[#4a3826]">
             <input type="checkbox" checked={remember} onChange={(e) => setRememberState(e.target.checked)} className="size-4 cursor-pointer accent-[#1f232b]" />
-            Lembrar senha
+            Lembre de mim
           </label>
         )}
         {signup && <PasswordHints password={password} email={email} username={nick} />}
