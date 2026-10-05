@@ -185,7 +185,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         {mod.plan !== "full" || !item.ownerHidden ? <EyeClosed /> : <EyeOpen />}
-                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Remover Segredo" : "Colocar em Segredo"}
+                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Remover Segredo" : "Ativar segredo"}
                       </span>
                     </button>
                   </>
