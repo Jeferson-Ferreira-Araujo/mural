@@ -23,7 +23,7 @@ const EyeClosed = () => (
     <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
   </svg>
 );
-const big = { viewBox: "0 0 24 24", className: "size-6", fill: "none", stroke: "currentColor", strokeWidth: 2.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
+const big = { viewBox: "0 0 24 24", className: "size-5 sm:size-6", fill: "none", stroke: "currentColor", strokeWidth: 2.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 const ChevronLeft = () => (
   <svg {...big}>
     <path d="m15 5-7 7 7 7" />
@@ -100,7 +100,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
 
   const item = index !== null ? items[index] : null;
   const arrow =
-    "grid size-12 shrink-0 cursor-pointer place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
+    "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   return (
     <>
@@ -135,11 +135,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               <CloseX />
             </button>
           </div>
-          <div className="flex w-full items-center justify-center gap-3">
+          <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
             </button>
-            <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,5.2vw)]" key={item.id}>
+            <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,4.3vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
             </div>
