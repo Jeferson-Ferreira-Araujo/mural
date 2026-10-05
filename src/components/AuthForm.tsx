@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { callbackUrl, homeRouteFor, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
-import { getBrowserSupabase } from "@/lib/supabase";
+import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
 
 type Mode = "login" | "signup";
@@ -21,6 +21,9 @@ export function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [remember, setRememberState] = useState(true);
+  // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
+  useEffect(() => setEmail((cur) => cur || getRememberedEmail()), []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
@@ -42,6 +45,7 @@ export function AuthForm() {
     const sb = getBrowserSupabase();
 
     if (!signup) {
+      setRemember(remember, mail);
       const { error: err } = await sb.auth.signInWithPassword({ email: mail, password });
       setBusy(false);
       if (err) {
@@ -156,6 +160,12 @@ export function AuthForm() {
             </div>
           )}
         </Field>
+        {!signup && (
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-[#4a3826]">
+            <input type="checkbox" checked={remember} onChange={(e) => setRememberState(e.target.checked)} className="size-4 cursor-pointer accent-[#1f232b]" />
+            Lembrar de mim neste aparelho
+          </label>
+        )}
         {signup && <PasswordHints password={password} email={email} username={nick} />}
         <button type="submit" disabled={busy} className={primaryButton}>
           {busy ? "Aguarde…" : signup ? "Criar conta" : "Entrar"}

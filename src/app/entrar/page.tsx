@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { callbackUrl, homeRouteFor, rememberNext, safeNext, takeNext, useSession } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
-import { getBrowserSupabase } from "@/lib/supabase";
+import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
@@ -20,6 +20,9 @@ export default function Entrar() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [remember, setRememberState] = useState(true);
+  // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
+  useEffect(() => setEmail((cur) => cur || getRememberedEmail()), []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
@@ -56,6 +59,7 @@ export default function Entrar() {
     const sb = getBrowserSupabase();
 
     if (mode === "login") {
+      setRemember(remember, mail);
       const { error: err } = await sb.auth.signInWithPassword({ email: mail, password });
       setBusy(false);
       if (err) setError(err.status === 400 ? "E-mail ou senha incorretos." : "Não foi possível entrar agora. Tente de novo.");
@@ -203,6 +207,12 @@ export default function Entrar() {
             </div>
           )}
         </Field>
+        {!signup && (
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-[#4a3826]">
+            <input type="checkbox" checked={remember} onChange={(e) => setRememberState(e.target.checked)} className="size-4 cursor-pointer accent-[#1f232b]" />
+            Lembrar de mim neste aparelho
+          </label>
+        )}
         {signup && <PasswordHints password={password} email={email} username={nick} />}
         <button type="submit" disabled={busy} className={primaryButton}>
           {busy ? "Aguarde…" : signup ? "Criar conta" : "Entrar"}
