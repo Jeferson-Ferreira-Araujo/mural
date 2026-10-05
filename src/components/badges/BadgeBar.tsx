@@ -6,24 +6,24 @@ import { useBadges } from "./BadgeContext";
 /**
  * Barra de baixo (só para o dono, no próprio mural): os pins decorativos que ele tem, numa faixa que rola na horizontal.
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
- * No FREE cada pin tem 1 unidade (esgota ao colocar); no PLUS é ilimitado. Mais pins e unidades: botão "Loja".
+ * No FREE cada pin tem 1 unidade (esgota ao colocar); no PLUS é ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
   const { editable, begin, stock, openStore } = useBadges();
   if (!editable) return null;
   const mine = BADGES.filter((b) => stock(b.key).owned);
   return (
-    <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 pt-2 pb-2.5 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
-      <div className="flex items-center justify-end gap-2 px-1 pb-1.5">
-        <button type="button" onClick={openStore} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#d9a21b] px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] active:scale-95">
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+      <div className="flex items-center gap-2">
+        {/* a loja é o primeiro item da barra e fica fixa: só os bottons ao lado rolam */}
+        <button type="button" onClick={openStore} aria-label="Loja de Bottons" title="Loja" className="grid h-12 w-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
             <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8" />
           </svg>
-          Loja
         </button>
-      </div>
-      <ul className="flex gap-2.5 overflow-x-auto overscroll-x-contain pb-1 [touch-action:pan-x] [scrollbar-color:rgba(255,255,255,.35)_transparent] [scrollbar-width:thin]">
+        <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+      <ul className="flex min-w-0 flex-1 gap-2.5 overflow-x-auto overscroll-x-contain pb-1 [touch-action:pan-x] [scrollbar-color:rgba(255,255,255,.35)_transparent] [scrollbar-width:thin]">
         {mine.map((b) => {
           const st = stock(b.key);
           const out = st.left === 0;
@@ -45,6 +45,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
           );
         })}
       </ul>
+      </div>
     </section>
   );
 }
