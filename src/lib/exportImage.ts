@@ -6,21 +6,15 @@ export function visibleBoardElement(): HTMLElement | null {
   return all.find((el) => el.offsetWidth > 0 && el.getClientRects().length > 0) ?? null;
 }
 
-/** Larguras (da imagem final, já cortada na moldura) tentadas, da melhor para a mais leve: se o aparelho não aguenta, cai para a próxima. */
+/** Larguras tentadas, da melhor para a mais leve: se o aparelho não aguenta uma imagem tão grande, cai para a próxima. */
 function widthsToTry(): number[] {
   const phone = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
-  return phone ? [4000, 3000, 2400] : [5600, 4400, 3400, 2400];
-}
-
-/** Moldura + cortiça do quadro (frações de 0 a 1 do quadro): a imagem final é cortada aí, sem as laterais e o piso decorativos. */
-function cropOf(el: HTMLElement) {
-  const [l, t, w, h] = (el.dataset.boardCrop ?? "0,0,1,1").split(",").map(Number);
-  return [l, t, w, h].every(Number.isFinite) ? { l, t, w, h } : { l: 0, t: 0, w: 1, h: 1 };
+  return phone ? [4800, 3600, 2400] : [6000, 4800, 3600, 2400];
 }
 
 /**
- * Desenha o quadro (moldura, pins e botons) numa imagem JPEG de alta qualidade (5600 px de largura no computador),
- * cortada na moldura (sem as laterais decorativas, para os pins ocuparem mais da imagem) e sem os marcadores de "espaço livre". Os textos são desenhados direto na resolução final (não é uma foto ampliada),
+ * Desenha o quadro inteiro (fundo, pins e botons) numa imagem JPEG de alta qualidade (6000 × 4000 no computador),
+ * sem os marcadores de "espaço livre". Os textos são desenhados direto na resolução final (não é uma foto ampliada),
  * então dá para dar zoom e ler tudo. JPEG 95% fica com poucos MB e é o formato que as redes sociais aceitam melhor.
  */
 export async function boardToImage(el: HTMLElement): Promise<Blob> {
@@ -46,26 +40,15 @@ export async function boardToImage(el: HTMLElement): Promise<Blob> {
     // nunca fica girando para sempre (ex.: aba em segundo plano ou imagem externa que não responde)
     const deadline = Date.now() + 120_000;
     let lastError: unknown = new Error("sem imagem");
-    const crop = cropOf(el);
     for (const width of widthsToTry()) {
       try {
         const left = deadline - Date.now();
         if (left <= 0) break;
-        // o quadro inteiro é desenhado numa escala em que a parte cortada tenha `width` pixels de largura
-        const full = await Promise.race([
-          toCanvas(el, { pixelRatio: width / (w * crop.w), width: w, height: h, backgroundColor: "#3b2616" }),
+        const canvas = await Promise.race([
+          toCanvas(el, { pixelRatio: width / w, width: w, height: h, backgroundColor: "#3b2616" }),
           new Promise<never>((_, rej) => setTimeout(() => rej(new Error("tempo esgotado")), left)),
         ]);
-        const cw = Math.round(full.width * crop.w);
-        const ch = Math.round(full.height * crop.h);
-        const out = document.createElement("canvas");
-        out.width = cw;
-        out.height = ch;
-        const ctx = out.getContext("2d");
-        if (!ctx) throw new Error("sem canvas");
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(full, Math.round(full.width * crop.l), Math.round(full.height * crop.t), cw, ch, 0, 0, cw, ch);
-        const blob = await new Promise<Blob | null>((res) => out.toBlob(res, "image/jpeg", 0.95));
+        const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.95));
         if (blob && blob.size > 10_000) return blob;
       } catch (e) {
         lastError = e;
