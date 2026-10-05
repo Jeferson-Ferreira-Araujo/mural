@@ -154,7 +154,7 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
           <form onSubmit={create} noValidate className="mt-2 space-y-3">
             <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Nossa viagem" className={inputClass} />}</Field>
             <Field label="Usuário da outra pessoa">
-              {(id) => <input id={id} value={partner} onChange={(e) => setPartner(cleanNickname(e.target.value))} autoComplete="off" placeholder="nome-de-usuario" className={inputClass} />}
+              {(id) => <input id={id} value={partner} onChange={(e) => setPartner(cleanNickname(e.target.value))} autoComplete="off" placeholder="nome_de_usuario" className={inputClass} />}
             </Field>
             <Field label="Senha do mural" hint={<span className="text-xs text-[#8a7b69]">Combine com a outra pessoa</span>}>
               {(id) => (

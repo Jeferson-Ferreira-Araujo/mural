@@ -110,7 +110,7 @@ const nickMessage: Record<NickState, string | null> = {
   checking: "Verificando…",
   ok: "Disponível ✓",
   taken: "Esse nome de usuário já está em uso.",
-  invalid: "Use de 3 a 30 letras minúsculas, números ou hífen.",
+  invalid: "Use de 3 a 30 letras minúsculas, números ou underline (_).",
 };
 
 /** Campo de nickname: ele vira o endereço do mural (SITE_HOST/nickname). */
@@ -141,7 +141,7 @@ export function NicknameField({
           autoCapitalize="none"
           spellCheck={false}
           maxLength={30}
-          placeholder="seu-usuario"
+          placeholder="seu_usuario"
           autoFocus={autoFocus}
           aria-invalid={bad}
           className={inputClass}

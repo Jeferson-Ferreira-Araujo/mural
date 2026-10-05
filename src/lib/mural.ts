@@ -144,17 +144,19 @@ export const clearGrant = (r: MuralRef) => {
   }
 };
 
-/** Normaliza o nickname digitado: minúsculas, só letras, números e hífen. */
+/** Normaliza o nickname digitado: minúsculas, só letras, números e underline (espaço e traço viram "_"). */
 export function cleanNickname(v: string): string {
   return v
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9-]/g, "")
+    .replace(/[\s-]+/g, "_")
+    .replace(/[^a-z0-9_]/g, "")
     .slice(0, 30);
 }
 
-export const NICK_RE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
+/** 3 a 30 caracteres: letras minúsculas, números e underline (pelo menos uma letra ou número). Igual à regra do banco. */
+export const NICK_RE = /^(?=.*[a-z0-9])[a-z0-9_]{3,30}$/;
 
 /** Prévia do endereço do mural a partir do título (o servidor garante a unicidade com -2, -3…). */
 export function slugFromTitle(title: string): string {
