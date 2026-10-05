@@ -111,8 +111,13 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
               <p className="text-sm text-[#6b5440]">
                 com @{m.mine ? m.partner : m.owner} · {m.status === "pending" ? "aguardando a pessoa aceitar" : "ativo"}
               </p>
+              {m.locked && (
+                <p role="status" className="mt-2 rounded-xl border border-[#d9a21b]/50 bg-[#fff6dd] px-3 py-2 text-sm font-semibold text-[#6b4a10]">
+                  🔒 Esse mural está bloqueado, necessário conta Plus.
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
-                {m.status === "accepted" && (
+                {m.status === "accepted" && !m.locked && (
                   <a href={`/${m.owner}/${m.slug}`} className={`${primaryButton} !w-auto flex-1 text-center`}>
                     Abrir
                   </a>

@@ -38,6 +38,8 @@ export type PublicMural = {
   member?: boolean;
   /** compartilhado: o nickname da outra pessoa */
   partner?: string | null;
+  /** compartilhado: alguém dos dois perdeu o PLUS, o mural está bloqueado */
+  locked?: boolean;
   stats: MuralStats;
 };
 
@@ -49,7 +51,7 @@ export type ProfileMurals = {
 
 export type UnlockResult =
   | { ok: true; token?: string; /** desbloqueio de cada mural da pessoa (por endereço): acertar uma vez abre todos */ tokens?: Record<string, string> }
-  | { ok: false; reason: "wrong" | "rate_limited" | "error"; retryAfter?: number };
+  | { ok: false; reason: "wrong" | "rate_limited" | "plus_required" | "error"; retryAfter?: number };
 
 export const SITE_HOST = "mural.jefersonaraujo.com.br";
 export const muralPath = (r: MuralRef) => `/${r.nick}/${r.slug}`;

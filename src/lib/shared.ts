@@ -13,6 +13,8 @@ export type SharedMural = {
   status: "pending" | "accepted";
   /** true = fui eu quem criou */
   mine: boolean;
+  /** uma das duas pessoas perdeu o PLUS: o mural fica bloqueado para as duas */
+  locked?: boolean;
 };
 
 export async function listSharedMurals(sb: SupabaseClient): Promise<SharedMural[]> {
@@ -65,5 +67,6 @@ export async function unlockShared(sb: SupabaseClient, ref: MuralRef, password: 
   if (error || !data) return { ok: false, reason: "error" };
   if (data.ok) return { ok: true, token: data.token };
   if (data.reason === "rate_limited") return { ok: false, reason: "rate_limited", retryAfter: data.retry_after };
+  if (data.reason === "plus_required") return { ok: false, reason: "plus_required" };
   return { ok: false, reason: data.reason === "wrong" ? "wrong" : "error" };
 }
