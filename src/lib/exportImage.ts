@@ -1,4 +1,4 @@
-import { toBlob } from "html-to-image";
+import { toCanvas } from "html-to-image";
 
 /** O quadro (aspecto 3:2) que está visível agora: o desktop e o celular existem juntos no HTML, mas só um deles tem tamanho. */
 export function visibleBoardElement(): HTMLElement | null {
@@ -6,11 +6,18 @@ export function visibleBoardElement(): HTMLElement | null {
   return all.find((el) => el.offsetWidth > 0 && el.getClientRects().length > 0) ?? null;
 }
 
+/** Larguras tentadas, da melhor para a mais leve: se o aparelho não aguenta uma imagem tão grande, cai para a próxima. */
+function widthsToTry(): number[] {
+  const phone = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+  return phone ? [4800, 3600, 2400] : [6000, 4800, 3600, 2400];
+}
+
 /**
- * Desenha o quadro inteiro (fundo, pins e botons) numa imagem PNG, sem os marcadores de "espaço livre".
- * `width` é a largura final em pixels (a altura segue a proporção 3:2): 3000 × 2000 dá uma imagem nítida para redes sociais.
+ * Desenha o quadro inteiro (fundo, pins e botons) numa imagem JPEG de alta qualidade (6000 × 4000 no computador),
+ * sem os marcadores de "espaço livre". Os textos são desenhados direto na resolução final (não é uma foto ampliada),
+ * então dá para dar zoom e ler tudo. JPEG 95% fica com poucos MB e é o formato que as redes sociais aceitam melhor.
  */
-export async function boardToPng(el: HTMLElement, width = 3000): Promise<Blob> {
+export async function boardToImage(el: HTMLElement): Promise<Blob> {
   // cortina por cima da tela durante a captura: o quadro muda de lugar por alguns segundos e a pessoa não precisa ver isso
   const veil = document.createElement("div");
   veil.setAttribute("role", "status");
@@ -30,16 +37,24 @@ export async function boardToPng(el: HTMLElement, width = 3000): Promise<Blob> {
     await new Promise((r) => setTimeout(r, 60));
     const w = el.offsetWidth;
     const h = el.offsetHeight;
-    const capture = toBlob(el, {
-      pixelRatio: width / w,
-      width: w,
-      height: h,
-      backgroundColor: "#3b2616",
-    });
     // nunca fica girando para sempre (ex.: aba em segundo plano ou imagem externa que não responde)
-    const blob = await Promise.race([capture, new Promise<null>((_, rej) => setTimeout(() => rej(new Error("tempo esgotado")), 90_000))]);
-    if (!blob) throw new Error("sem imagem");
-    return blob;
+    const deadline = Date.now() + 120_000;
+    let lastError: unknown = new Error("sem imagem");
+    for (const width of widthsToTry()) {
+      try {
+        const left = deadline - Date.now();
+        if (left <= 0) break;
+        const canvas = await Promise.race([
+          toCanvas(el, { pixelRatio: width / w, width: w, height: h, backgroundColor: "#3b2616" }),
+          new Promise<never>((_, rej) => setTimeout(() => rej(new Error("tempo esgotado")), left)),
+        ]);
+        const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.95));
+        if (blob && blob.size > 10_000) return blob;
+      } catch (e) {
+        lastError = e;
+      }
+    }
+    throw lastError;
   } finally {
     el.style.left = prev.left;
     el.style.top = prev.top;
@@ -54,8 +69,9 @@ export async function boardToPng(el: HTMLElement, width = 3000): Promise<Blob> {
  * Entrega a imagem: no celular/tablet abre o menu de compartilhar (dá para postar direto ou salvar na galeria);
  * no computador baixa o arquivo.
  */
-export async function deliverPng(blob: Blob, name: string): Promise<"shared" | "downloaded" | "canceled"> {
-  const file = new File([blob], `${name}.png`, { type: "image/png" });
+export async function deliverImage(blob: Blob, name: string): Promise<"shared" | "downloaded" | "canceled"> {
+  const ext = blob.type === "image/png" ? "png" : "jpg";
+  const file = new File([blob], `${name}.${ext}`, { type: blob.type || "image/jpeg" });
   const touch = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
   if (touch && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
     try {
@@ -69,7 +85,7 @@ export async function deliverPng(blob: Blob, name: string): Promise<"shared" | "
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${name}.png`;
+  a.download = `${name}.${ext}`;
   document.body.appendChild(a);
   a.click();
   a.remove();

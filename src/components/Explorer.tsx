@@ -33,7 +33,7 @@ import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInv
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { listSharedMurals, unlockShared } from "@/lib/shared";
-import { boardToPng, deliverPng, visibleBoardElement } from "@/lib/exportImage";
+import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
 import { AuthForm } from "./AuthForm";
 import { IntroAnimation, introSeen, introSkip } from "./IntroAnimation";
@@ -292,8 +292,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     exporting.current = true;
     notify("Gerando a imagem do mural…");
     try {
-      const blob = await boardToPng(el, 3000);
-      const res = await deliverPng(blob, `pinz-${slug ?? "mural"}`);
+      const blob = await boardToImage(el);
+      const res = await deliverImage(blob, `pinz-${slug ?? "mural"}`);
       if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸" : "Imagem salva! 📸");
     } catch {
       notify("Não foi possível gerar a imagem agora. Tente de novo.");
