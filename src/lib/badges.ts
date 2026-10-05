@@ -163,6 +163,8 @@ async function buy(sb: SupabaseClient, fn: string, args: Record<string, unknown>
   return { ok: false, reason: m.includes("no_credits") ? "no_credits" : m.includes("plus_required") ? "plus_required" : "error" };
 }
 export const buyBadge = (sb: SupabaseClient, key: number, mode: "unlock" | "unit") => buy(sb, "buy_badge", { p_key: key, p_mode: mode });
+/** Compra `qty` unidades de um pin (se ainda não liberou, a 1ª é o pin e as demais são unidades extras). */
+export const buyBadgeQty = (sb: SupabaseClient, key: number, qty: number) => buy(sb, "buy_badge_qty", { p_key: key, p_qty: qty });
 export const buyBoard = (sb: SupabaseClient, id: string) => buy(sb, "buy_board", { p_board: id });
 export const buyMuralSlot = (sb: SupabaseClient) => buy(sb, "buy_mural_slot", {});
 

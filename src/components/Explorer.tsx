@@ -29,7 +29,7 @@ import { ModerationProvider } from "./board/ModerationContext";
 import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadge, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { listSharedMurals, unlockShared } from "@/lib/shared";
@@ -283,9 +283,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
-      const res = item.kind === "badge" ? await buyBadge(sb, item.key, "unlock") : item.kind === "unit" ? await buyBadge(sb, item.key, "unit") : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
+      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? "+1 unidade adicionada." : item.kind === "badge" ? "Botton liberado! Já está na sua barra." : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Tema liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
       } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
     },

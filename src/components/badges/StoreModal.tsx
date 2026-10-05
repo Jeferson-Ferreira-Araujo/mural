@@ -7,8 +7,28 @@ import { BOARDS } from "@/lib/boards";
 import { CREDIT_PACKS } from "@/lib/plans";
 import { Modal } from "../account/Modal";
 
-export type BuyItem = { kind: "badge"; key: number } | { kind: "unit"; key: number } | { kind: "board"; id: string } | { kind: "mural" };
+export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "mural" };
 type Tab = "pins" | "themes" | "murals" | "credits";
+
+const MAX_QTY = 20;
+
+/** Escolhe quantas unidades comprar (− n +). */
+function Qty({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
+  const b = "grid size-7 cursor-pointer place-items-center rounded-full border border-[#d9c9ad] bg-white text-base font-bold leading-none text-[#4a3826] hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40";
+  return (
+    <div role="group" aria-label={label} className="mt-2 flex items-center justify-center gap-2">
+      <button type="button" aria-label="Menos uma" disabled={value <= 1} onClick={() => onChange(value - 1)} className={b}>
+        −
+      </button>
+      <span aria-live="polite" className="min-w-6 text-center text-sm font-bold tabular-nums">
+        {value}
+      </span>
+      <button type="button" aria-label="Mais uma" disabled={value >= MAX_QTY} onClick={() => onChange(value + 1)} className={b}>
+        +
+      </button>
+    </div>
+  );
+}
 
 const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -20,6 +40,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [pinView, setPinView] = useState<"new" | "mine">("new");
+  const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
+  const qtyOf = (key: number) => qty[key] ?? 1;
   const credits = inventory?.credits ?? 0;
   const plus = inventory?.plus === true;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
@@ -91,16 +113,20 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     </div>
                     <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Botton ${b.key}`}</p>
                     {pinView === "new" ? (
-                      <button type="button" disabled={busy === `b${b.key}` || !can(c.price)} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key })} className={buyBtn}>
-                        {label(c.price)}
-                      </button>
-                    ) : plus ? (
-                      <p className="mt-2 text-[11px] font-semibold text-[#2f6a3c]">Ilimitado ✓</p>
+                      <>
+                        <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
+                        <button type="button" disabled={busy === `b${b.key}` || !can(c.price + c.unitPrice * (qtyOf(b.key) - 1))} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
+                          {label(c.price + c.unitPrice * (qtyOf(b.key) - 1))}
+                        </button>
+                      </>
                     ) : (
                       <>
-                        <p className="mt-1 text-[11px] text-[#6b5440]">{1 + c.extra} unidade(s)</p>
-                        <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice)} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key })} className={buyBtn}>
-                          {can(c.unitPrice) ? `+1 unidade · ${c.unitPrice} cr.` : "Sem créditos"}
+                        <p className="mt-1 text-[11px] text-[#6b5440]">
+                          {1 + c.extra} unidade(s){plus ? " · ilimitado no seu mural" : ""}
+                        </p>
+                        <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
+                        <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice * qtyOf(b.key))} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
+                          {can(c.unitPrice * qtyOf(b.key)) ? `+${qtyOf(b.key)} unidade${qtyOf(b.key) > 1 ? "s" : ""} · ${c.unitPrice * qtyOf(b.key)} cr.` : `${c.unitPrice * qtyOf(b.key)} cr. (faltam)`}
                         </button>
                       </>
                     )}
