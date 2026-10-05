@@ -45,9 +45,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </p>
         <p className="text-xs text-[#6b5440]">Comprar créditos: em breve</p>
       </div>
-      <p className="mb-3 text-sm text-[#4a3826]">
-        {plus ? "No PINZ PLUS você tem os 25 Bottons iniciais, quantas unidades quiser. Bottons novos, temas e murais extras se compram com créditos." : "No PINZ FREE você tem 10 Bottons, 1 unidade de cada. Compre mais Bottons, unidades extras e temas com créditos. O PINZ PLUS libera os 25 Bottons iniciais, unidades ilimitadas e murais extras."}
-      </p>
 
       <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
