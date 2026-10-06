@@ -124,7 +124,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       {pending.length > 0 && (
         <section aria-label="Pins aguardando aprovação">
           <h3 className="text-sm font-bold">
-            Aguardando sua aprovação <span className="rounded-full bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{pending.length}</span>
+            Aguardando sua aprovação <span className="rounded-md bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{pending.length}</span>
           </h3>
           <p className={`mt-1 text-xs ${muted}`}>Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.</p>
           <ul className="mt-3 space-y-2">

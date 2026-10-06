@@ -40,7 +40,7 @@ function Content({ m }: { m: Message }) {
 function Signature({ name }: { name?: string }) {
   if (!name) return null;
   return (
-    <span className="absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-full bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
+    <span className="absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-lg bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
       @{name}
     </span>
   );
@@ -61,7 +61,7 @@ function Marked({ m }: { m: Message }) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </span>
-            <span className="max-w-[11em] rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
+            <span className="max-w-[11em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
           </span>
         </span>
         <Signature name={m.signedBy} />
@@ -79,7 +79,7 @@ function Marked({ m }: { m: Message }) {
               <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
             </svg>
           </span>
-          <span className="rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+          <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
         </span>
       </span>
     </div>
@@ -110,7 +110,7 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
                   <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
                 </svg>
               </span>
-              <span className="rounded-full bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+              <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
             </span>
           </span>
         </div>

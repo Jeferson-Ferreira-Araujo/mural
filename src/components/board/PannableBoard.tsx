@@ -282,7 +282,7 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
         onClick={toggleZoom}
         aria-label={zoomedOut ? "Aproximar o mural" : "Ver o mural inteiro"}
         title={zoomedOut ? "Aproximar" : "Ver tudo"}
-        className="absolute right-3 bottom-3 z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-full bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+        className="absolute right-3 bottom-3 z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
       >
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           {zoomedOut ? <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /> : <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7" />}

@@ -36,7 +36,7 @@ function PlanCard({ id, current }: { id: PlanId; current: boolean }) {
     <article className={`rounded-2xl border-2 p-5 ${full ? "border-[#e0b04a] bg-[#fff8e4]" : "border-[#d9c9ad] bg-white/70"}`}>
       <header className="flex items-center justify-between gap-2">
         <PlanBadge plan={id} />
-        {current && <span className="rounded-full bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">Seu plano</span>}
+        {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">Seu plano</span>}
       </header>
       <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
       <p className="text-sm text-[#6b5440]">{full ? "Cobrança em breve" : "Para sempre"}</p>
@@ -70,7 +70,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
         </h3>
         <ul className="mt-2 flex flex-wrap gap-2">
           {CREDIT_PACKS.map((c) => (
-            <li key={c.credits} className="rounded-full border border-[#d9c9ad] bg-[#f3ead8] px-3 py-1 text-sm">
+            <li key={c.credits} className="rounded-lg border border-[#d9c9ad] bg-[#f3ead8] px-3 py-1 text-sm">
               <strong>{c.credits}</strong> créditos · {c.price}
             </li>
           ))}

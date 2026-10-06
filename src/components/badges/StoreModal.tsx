@@ -14,7 +14,7 @@ const MAX_QTY = 20;
 
 /** Escolhe quantas unidades comprar (− n +). */
 function Qty({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
-  const b = "grid size-7 cursor-pointer place-items-center rounded-full border border-[#d9c9ad] bg-white text-base font-bold leading-none text-[#4a3826] hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40";
+  const b = "grid size-7 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-base font-bold leading-none text-[#4a3826] hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40";
   return (
     <div role="group" aria-label={label} className="mt-2 flex items-center justify-center gap-2">
       <button type="button" aria-label="Menos uma" disabled={value <= 1} onClick={() => onChange(value - 1)} className={b}>

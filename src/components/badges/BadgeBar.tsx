@@ -44,7 +44,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
               {/* quantidade que a pessoa ainda tem para colocar */}
               <span
                 aria-label={`${st.left ?? 0} disponível${st.left === 1 ? "" : "is"}`}
-                className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-full px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)] ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}
+                className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)] ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}
               >
                 {st.left ?? 0}
               </span>

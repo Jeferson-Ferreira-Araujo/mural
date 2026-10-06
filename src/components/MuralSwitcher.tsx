@@ -8,9 +8,9 @@ export function MuralSwitcher({ sw, className = "" }: { sw?: MuralSwitch; classN
   if (!sw || sw.items.length < 2) return null;
   const i = Math.max(0, sw.items.findIndex((m) => m.slug === sw.current));
   const go = (k: number) => sw.onSelect(sw.items[(k + sw.items.length) % sw.items.length].slug);
-  const arrow = "grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-xl text-white transition hover:bg-white/15 active:scale-95";
+  const arrow = "grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-xl text-white transition hover:bg-white/15 active:scale-95";
   return (
-    <nav aria-label="Murais desta pessoa" className={`flex w-[min(24rem,100%)] items-center justify-between gap-1 rounded-full border border-white/15 bg-[#1c1510]/80 px-1.5 py-1 text-white shadow-[0_0.5rem_1.4rem_rgba(0,0,0,.4)] backdrop-blur-md ${className}`}>
+    <nav aria-label="Murais desta pessoa" className={`flex w-[min(24rem,100%)] items-center justify-between gap-1 rounded-xl border border-white/15 bg-[#1c1510]/80 px-1.5 py-1 text-white shadow-[0_0.5rem_1.4rem_rgba(0,0,0,.4)] backdrop-blur-md ${className}`}>
       <button type="button" aria-label="Mural anterior" onClick={() => go(i - 1)} className={arrow}>
         ‹
       </button>
@@ -38,7 +38,7 @@ export function MuralPager({ sw, className = "", tone = "light" }: { sw?: MuralS
   const i = Math.max(0, sw.items.findIndex((m) => m.slug === sw.current));
   const go = (k: number) => sw.onSelect(sw.items[(k + sw.items.length) % sw.items.length].slug);
   const dark = tone === "dark";
-  const arrow = `grid size-7 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-90 ${dark ? "bg-white/15 text-white hover:bg-white/25" : "bg-[#2a1c12] text-[#f7f0dd] hover:bg-[#46301f]"}`;
+  const arrow = `grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg transition active:scale-90 ${dark ? "bg-white/15 text-white hover:bg-white/25" : "bg-[#2a1c12] text-[#f7f0dd] hover:bg-[#46301f]"}`;
   const chevron = (d: string) => (
     <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d={d} />

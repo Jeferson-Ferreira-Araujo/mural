@@ -24,7 +24,7 @@ export function Carousel({ children, label }: { children: ReactNode; label: stri
   }, [n, i, go]);
 
   if (n === 0) return null;
-  const arrow = "grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#d9c9ad] bg-white/80 text-xl text-[#2f2218] transition hover:bg-white active:scale-95 disabled:pointer-events-none disabled:opacity-30";
+  const arrow = "grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/80 text-xl text-[#2f2218] transition hover:bg-white active:scale-95 disabled:pointer-events-none disabled:opacity-30";
 
   return (
     <div role="region" aria-roledescription="carrossel" aria-label={label}>

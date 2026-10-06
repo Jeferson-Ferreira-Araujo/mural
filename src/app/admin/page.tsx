@@ -34,7 +34,7 @@ async function rpc<T>(name: string, args?: Record<string, unknown>): Promise<{ o
 
 function Tag({ children, tone = "plain" }: { children: React.ReactNode; tone?: "plain" | "gold" | "red" | "dark" }) {
   const cls = { plain: "border border-[#d9c9ad] bg-[#f3ead8] text-[#6b5440]", gold: "bg-[#f2c230] text-[#3a2300]", red: "bg-[#a23b2a] text-white", dark: "bg-[#1f232b] text-white" }[tone];
-  return <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase ${cls}`}>{children}</span>;
+  return <span className={`inline-flex rounded-lg px-2 py-0.5 text-[11px] font-bold uppercase ${cls}`}>{children}</span>;
 }
 
 /** O mural completo do usuário, como ele aparece no site (com todos os pins, inclusive os pendentes, e os botons). A outra aba lista os pins com o autor. */
@@ -111,7 +111,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
                   </button>
                 ))}
               </div>
-              <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
+              <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
                 ×
               </button>
             </div>

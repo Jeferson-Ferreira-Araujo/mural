@@ -29,7 +29,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         <button
           type="button"
           onClick={account.onHome}
-          className="mb-[0.8em] inline-flex cursor-pointer items-center gap-[0.5em] self-start rounded-full border border-[#d9c9ad] bg-white/60 px-[1em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+          className="mb-[0.8em] inline-flex cursor-pointer items-center gap-[0.5em] self-start rounded-xl border border-[#d9c9ad] bg-white/60 px-[1em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
         >
           <svg viewBox="0 0 24 24" className="size-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M19 12H5M11 6l-6 6 6 6" />

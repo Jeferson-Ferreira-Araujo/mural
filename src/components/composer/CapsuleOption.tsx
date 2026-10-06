@@ -54,7 +54,7 @@ export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChan
           />
           <div className="flex flex-wrap gap-2">
             {([["Em 1 dia", 1], ["Em 1 semana", 7], ["Em 1 mês", 30]] as const).map(([label, d]) => (
-              <button key={label} type="button" onClick={() => onChange({ ...value, at: quick(d) })} className="cursor-pointer rounded-full border border-[#d9c9ad] bg-white/70 px-3 py-1 text-xs font-semibold hover:bg-white">
+              <button key={label} type="button" onClick={() => onChange({ ...value, at: quick(d) })} className="cursor-pointer rounded-lg border border-[#d9c9ad] bg-white/70 px-3 py-1 text-xs font-semibold hover:bg-white">
                 {label}
               </button>
             ))}

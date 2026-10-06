@@ -77,7 +77,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               {/* selo dourado só para quem é PLUS; FREE fica só com o nome */}
               {plus && (
                 <span className="mt-[0.35em] block">
-                  <span className="inline-block rounded-full bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">★ PLUS</span>
+                  <span className="inline-block rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">★ PLUS</span>
                 </span>
               )}
             </p>

@@ -5,7 +5,7 @@ import { loginUrl } from "@/lib/auth";
 
 export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number };
 
-const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-full transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-xl transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
 /** Ícones do cabeçalho de quem está logado: pesquisar murais e abrir o menu da conta. `tone`: light = fundo claro; dark = sobre a imagem do mural. */
 export function AccountActions({ account, tone = "light", className = "", menu = true }: { account: AccountApi; tone?: "light" | "dark"; className?: string; /** false: sem o botão do menu (no desktop os atalhos ficam na coluna bege) */ menu?: boolean }) {
@@ -24,7 +24,7 @@ export function AccountActions({ account, tone = "light", className = "", menu =
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
         {!!account.badge && (
-          <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+          <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
             {account.badge}
           </span>
         )}
@@ -33,7 +33,7 @@ export function AccountActions({ account, tone = "light", className = "", menu =
   );
 }
 
-const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
 
 /** Cabeçalho do mural no celular: à esquerda a lousa (volta ao seu mural) e a lupa (abre a busca), à direita o menu. O logo fica no meio (quem usa). */
@@ -65,7 +65,7 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
       {!!account.badge && (
-        <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+        <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
           {account.badge}
         </span>
       )}
@@ -77,10 +77,10 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
 export function GuestLinks({ next, className = "" }: { next: string; className?: string }) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <Link href={loginUrl(next)} className="rounded-full border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#2f2218] transition hover:bg-white">
+      <Link href={loginUrl(next)} className="rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#2f2218] transition hover:bg-white">
         Entrar
       </Link>
-      <Link href={loginUrl(next, true)} className="rounded-full bg-[#1f232b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
+      <Link href={loginUrl(next, true)} className="rounded-xl bg-[#1f232b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
         Criar conta
       </Link>
     </div>

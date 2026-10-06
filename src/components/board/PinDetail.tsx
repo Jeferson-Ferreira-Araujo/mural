@@ -131,7 +131,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     }
   }
   const arrow =
-    "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
+    "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-xl border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   return (
     <>
@@ -172,7 +172,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
           </div>
           {shareMsg && (
-            <p role="status" className="rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+            <p role="status" className="rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
               {shareMsg}
             </p>
           )}
@@ -190,7 +190,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
           </div>
           {item && !isSealed(item) && !isHidden(item) && item.pending && (
-            <p role="status" className="flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+            <p role="status" className="flex items-center gap-2 rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
               <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />

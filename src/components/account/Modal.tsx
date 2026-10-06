@@ -26,7 +26,7 @@ export function Modal({ open, onClose, title, children, wide = false }: { open: 
         <div className="flex max-h-[92dvh] flex-col">
           <header className="flex items-center justify-between gap-3 border-b border-[#e6d8bd] px-5 py-3">
             <h2 className="font-title text-lg font-semibold">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
+            <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
               ×
             </button>
           </header>

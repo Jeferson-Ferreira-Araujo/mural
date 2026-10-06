@@ -30,7 +30,7 @@ function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: st
         <span className={`block font-bold ${compact ? "text-[14px]" : "text-[15px]"}`}>{label}</span>
         {hint && <span className="block truncate text-xs text-[#6b5440]">{hint}</span>}
       </span>
-      {!!badge && <span className="rounded-full bg-[#d98a2b] px-2.5 py-0.5 text-sm font-bold text-white">{badge}</span>}
+      {!!badge && <span className="rounded-md bg-[#d98a2b] px-2.5 py-0.5 text-sm font-bold text-white">{badge}</span>}
       <svg viewBox="0 0 24 24" className="size-4 shrink-0 text-[#8a7b69]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="m9 6 6 6-6 6" />
       </svg>
@@ -325,7 +325,7 @@ export function AccountDrawer({
                   {mural && <p className="mt-0.5 text-sm text-[#6b5440]">{mural.question ? "🔒 Privado" : "🌐 Público"}</p>}
                 </div>
               </div>
-              <button type="button" onClick={onClose} aria-label="Fechar menu" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full text-2xl hover:bg-black/5">
+              <button type="button" onClick={onClose} aria-label="Fechar menu" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
                 ×
               </button>
             </header>

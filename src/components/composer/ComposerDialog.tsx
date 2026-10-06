@@ -188,7 +188,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
           {/* cabeçalho: voltar (esquerda) · formato escolhido (centro) · fechar (direita) */}
           <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center border-b border-[#e6d8bd] px-4 py-3">
             {format ? (
-              <button type="button" onClick={() => setFormat(null)} aria-label="Voltar e trocar o formato" className={`${ghostButton} !size-9 !rounded-full !p-0`}>
+              <button type="button" onClick={() => setFormat(null)} aria-label="Voltar e trocar o formato" className={`${ghostButton} !size-9 !rounded-lg !p-0`}>
                 <svg viewBox="0 0 24 24" className="mx-auto size-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="m15 5-7 7 7 7" />
                 </svg>
@@ -197,7 +197,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
               <span />
             )}
             <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Deixar um PIN"}</p>
-            <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-9 !rounded-full !p-0 justify-self-end`}>
+            <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>
           </div>

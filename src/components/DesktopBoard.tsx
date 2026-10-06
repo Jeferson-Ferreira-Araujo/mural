@@ -37,7 +37,7 @@ export function DesktopBoard(props: ViewProps) {
           <div className="flex min-h-11 min-w-0 items-center">
             {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
             {hasSelection && props.muralInfo?.title && (
-              <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-full bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
+              <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
                 <span className="block max-w-full truncate">{props.muralInfo.title}</span>
               </h2>
             )}

@@ -26,7 +26,7 @@ export function ListCard({ title, items, font, tape, onEdit }: { title: string; 
             e.stopPropagation();
             onEdit();
           }}
-          className="absolute right-[0.5em] bottom-[1.4em] z-20 grid size-[2em] cursor-pointer place-items-center rounded-full bg-[#2a2a33] text-white shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)] transition hover:bg-[#44444f]"
+          className="absolute right-[0.5em] bottom-[1.4em] z-20 grid size-[2em] cursor-pointer place-items-center rounded-lg bg-[#2a2a33] text-white shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)] transition hover:bg-[#44444f]"
         >
           <svg viewBox="0 0 24 24" className="size-[1.05em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 20h4L19 9l-4-4L4 16v4Z" />

@@ -3,7 +3,7 @@ export function LockedNotice({ dark = false }: { hasSelection?: boolean; dark?: 
   return (
     <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center px-4">
       <p
-        className={`rise flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.3)] ${
+        className={`rise flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.3)] ${
           dark ? "bg-[#1c1510]/85 text-[#fbf3e2] backdrop-blur" : "bg-[#fbf6ea]/95 text-[#2a1c12]"
         }`}
       >

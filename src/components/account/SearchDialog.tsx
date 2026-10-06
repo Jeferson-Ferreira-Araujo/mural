@@ -27,7 +27,7 @@ export function SearchDialog({ open, onClose, onSelect }: { open: boolean; onClo
         <div className="p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-title text-lg font-semibold">Pesquisar Usuário</h2>
-            <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-full text-xl hover:bg-black/5">
+            <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-lg text-xl hover:bg-black/5">
               ×
             </button>
           </div>
