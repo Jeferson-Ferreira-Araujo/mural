@@ -20,7 +20,7 @@ import {
 import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnMurals, getOwnNickname, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
+import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
@@ -36,6 +36,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
 import { fetchNotifications, markAllRead, unreadCount, type Notification } from "@/lib/notifications";
 import { NotificationsModal } from "./account/NotificationsModal";
+import { NicknameSetup } from "./account/NicknameSetup";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -59,6 +60,7 @@ const EXPORT_IMAGE_ENABLED = false;
 export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: string } }) {
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
+  const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
   const [myNick, setMyNick] = useState<string | null>(null); // nickname de quem está logado (assinatura do pin)
   const [selected, setSelected] = useState<PublicMural | null>(null);
   const [choices, setChoices] = useState<ProfileMurals | null>(null);
@@ -86,7 +88,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       setMyNick(null);
       return;
     }
-    void getOwnNickname(getBrowserSupabase()).then(setMyNick);
+    void getOwnProfile(getBrowserSupabase()).then((p) => {
+      setMyNick(p?.nickname ?? null);
+      setNickPending(p ? !p.confirmed : false);
+    });
   }, [session]);
 
   const nick = selected?.nickname;
@@ -758,6 +763,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </>
       )}
       <NotificationsModal open={notifOpen} onClose={() => setNotifOpen(false)} items={notifs} />
+      <NicknameSetup
+        open={logged && nickPending && !!myNick}
+        suggested={myNick ?? ""}
+        onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
+      />
       <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} nick={myNick ?? ""} company={companyWelcome} />
       <Toast message={toast} />
     </div>

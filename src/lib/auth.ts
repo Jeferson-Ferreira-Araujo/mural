@@ -34,6 +34,13 @@ export async function getOwnNickname(sb: SupabaseClient): Promise<string | null>
   return (data as { nickname: string } | null)?.nickname ?? null;
 }
 
+/** Nome de usuário e se a pessoa já o escolheu (quem entra por login social começa com um nome automático). */
+export async function getOwnProfile(sb: SupabaseClient): Promise<{ nickname: string; confirmed: boolean } | null> {
+  const { data } = await sb.from("profiles").select("nickname, nickname_confirmed").maybeSingle();
+  const p = data as { nickname: string; nickname_confirmed: boolean } | null;
+  return p ? { nickname: p.nickname, confirmed: p.nickname_confirmed } : null;
+}
+
 /** Depois de entrar: o próprio mural da pessoa (ou a criação, se ainda não tiver). */
 export async function homeRouteFor(sb: SupabaseClient): Promise<string> {
   const [murals, nick] = await Promise.all([getOwnMurals(sb), getOwnNickname(sb)]);

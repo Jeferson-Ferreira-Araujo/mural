@@ -8,6 +8,7 @@ import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
 import { CodeStep } from "./CodeStep";
+import { OAuthButtons } from "./OAuthButtons";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
 
 type Mode = "login" | "signup";
@@ -143,7 +144,9 @@ export function AuthForm() {
         ))}
       </div>
 
-      <form onSubmit={submit} noValidate className="mt-4 space-y-3">
+      <OAuthButtons onError={setError} className="mt-4" />
+
+      <form onSubmit={submit} noValidate className="mt-3 space-y-3">
         {signup && (
           <NicknameField
             value={nick}

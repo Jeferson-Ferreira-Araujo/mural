@@ -8,9 +8,9 @@ import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { checkSignup, NAME_DENIED_TEXT, sendEmailCode, setFinalizing } from "@/lib/reserved";
 import { CodeStep } from "@/components/CodeStep";
+import { OAuthButtons } from "@/components/OAuthButtons";
 import { AuthShell, Field, ghostButton, inputClass, NicknameField, primaryButton, Spinner, useNicknameStatus } from "@/components/ui";
 
-const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
 
 type Mode = "login" | "signup";
 
@@ -121,15 +121,6 @@ export default function Entrar() {
     }
   }
 
-  async function google() {
-    setError(null);
-    const { error: err } = await getBrowserSupabase().auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: callbackUrl() },
-    });
-    if (err) setError("Não foi possível entrar com o Google.");
-  }
-
   if (codeStep) {
     return (
       <AuthShell>
@@ -229,16 +220,9 @@ export default function Entrar() {
         ))}
       </div>
 
-      {GOOGLE_ENABLED && (
-        <>
-          <button type="button" onClick={google} className={`${ghostButton} mt-5 w-full bg-white/70`}>
-            Continuar com o Google
-          </button>
-          <p className="my-4 text-center text-sm text-[#6b5440]">ou</p>
-        </>
-      )}
+      <OAuthButtons onError={setError} className="mt-5" />
 
-      <form onSubmit={submit} noValidate className={`space-y-4 ${GOOGLE_ENABLED ? "" : "mt-5"}`}>
+      <form onSubmit={submit} noValidate className="mt-4 space-y-4">
         {signup && <NicknameField value={nick} onChange={(v) => { setNick(v); setError(null); }} state={nickState} />}
         <Field label="E-mail">
           {(id) => (
