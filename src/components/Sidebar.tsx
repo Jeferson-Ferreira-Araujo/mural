@@ -2,15 +2,17 @@ import { Brand } from "./Brand";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import type { ViewProps } from "./viewProps";
 
-const icon = "size-[1.5em]";
+const icon = "size-[2.1em]";
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
 function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
   return (
-    <li className="flex flex-col items-center gap-[0.15em] text-center">
-      <span className="font-title text-[1.6em] leading-none font-semibold">{value}</span>
-      {Icon}
-      <span className="text-[0.72em] leading-tight text-[#6b5440]">{label}</span>
+    <li className="flex items-center justify-center gap-[0.7em]">
+      <span className="shrink-0 text-[#4a3826]">{Icon}</span>
+      <span className="min-w-0">
+        <span className="font-title block text-[1.6em] leading-none font-semibold">{value}</span>
+        <span className="mt-[0.2em] block text-[0.78em] leading-tight text-[#6b5440]">{label}</span>
+      </span>
     </li>
   );
 }
