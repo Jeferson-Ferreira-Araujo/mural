@@ -66,11 +66,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const [shareMsg, setShareMsg] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
-  const revealBtn = (flex: string) =>
-    showSecret ? null : (
-    <button type="button" onClick={() => setShowSecret(true)} className={`${ghost} ${flex} flex items-center justify-center gap-2`}>
-      <EyeOpen />
-      Exibir Pin
+  const revealBtn = (
+    <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
+      {showSecret ? <EyeClosed /> : <EyeOpen />}
+      {showSecret ? "Esconder PIN" : "Revelar PIN"}
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
@@ -172,6 +171,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {shareMsg}
             </p>
           )}
+          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn}
           <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
@@ -193,8 +193,6 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
             </p>
           )}
-          {/* sem moderação (ex.: administração): o botão fica sozinho; com moderação ele vai ao lado do botão de segredo */}
-          {!mod && item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn("w-full")}
           {mod && item && !isSealed(item) && !isHidden(item) && (
             <div className="flex w-full flex-col gap-2" role="group" aria-label="Moderar este pin">
               <div className="flex w-full flex-wrap gap-2">
@@ -215,14 +213,14 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} aria-label="Excluir pin" title="Excluir pin" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center`}>
+                    <button type="button" disabled={busy} aria-label="Excluir PIN" title="Excluir PIN" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:flex-1 sm:items-center sm:justify-center sm:gap-2`}>
                       <Trash />
+                      <span className="hidden sm:inline">Excluir PIN</span>
                     </button>
-                    {item.ownerHidden && revealBtn("flex-1")}
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         {mod.plan !== "full" || !item.ownerHidden ? <EyeClosed /> : <EyeOpen />}
-                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Remover Segredo" : "Ativar segredo"}
+                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
                       </span>
                     </button>
                   </>
