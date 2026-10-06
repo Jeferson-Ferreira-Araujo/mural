@@ -231,19 +231,23 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Música (PLUS) ----------
 export function MusicForm({ onChange }: { onChange: DraftChange }) {
+  const [caption, setCaption] = useState("");
   const [link, setLink] = useState("");
   const [color, setColor] = useState<PlayerColor>("black");
 
-  // só o link e a cor do aparelho: sem nome, artista nem papelzinho
+  // link, cor do aparelho e mensagem opcional: sem nome nem artista
   const linkOk = /^https?:\/\/\S+$/i.test(link.trim());
   useEffect(
     // sempre manda um rascunho (com a cor escolhida) para a prévia acompanhar; "empty" = ainda falta o link
-    () => onChange({ type: "music", title: "", artist: "", caption: "", ...(linkOk ? { link: link.trim() } : {}), playerColor: color }, { empty: !linkOk }),
-    [link, linkOk, color, onChange],
+    () => onChange({ type: "music", title: "", artist: "", caption: caption.trim(), ...(linkOk ? { link: link.trim() } : {}), playerColor: color }, { empty: !linkOk }),
+    [caption, link, linkOk, color, onChange],
   );
   return (
     <div className="space-y-4">
       <PlayerColorPicker value={color} onChange={setColor} />
+      <Field label="Mensagem (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
+      </Field>
       <Field label="Link da música" error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint="Spotify e YouTube tocam aqui mesmo no mural; outros links abrem em outra aba.">
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
       </Field>
