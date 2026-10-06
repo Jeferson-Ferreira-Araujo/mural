@@ -7,6 +7,7 @@ import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
 import { ReportBox } from "../account/PinsModal";
 import { Modal } from "../account/Modal";
+import { cardToPng, deliverImage } from "@/lib/exportImage";
 
 const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 /** Olho aberto: o pin está à vista. */
@@ -39,6 +40,11 @@ const CloseX = () => (
     <path d="M6 6l12 12M18 6 6 18" />
   </svg>
 );
+const ShareIcon = () => (
+  <svg {...big}>
+    <path d="M12 15V4M8 8l4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+  </svg>
+);
 const Trash = () => (
   <svg {...icon}>
     <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" />
@@ -56,6 +62,9 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareMsg, setShareMsg] = useState<string | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
   const revealBtn = (flex: string) =>
     showSecret ? null : (
@@ -78,6 +87,7 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   useEffect(() => {
     setShowSecret(false);
     setConfirmDelete(false);
+    setShareMsg(null);
   }, [index, open]);
 
   useEffect(() => {
@@ -99,6 +109,23 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   }, [open, index, items.length, onIndex]);
 
   const item = index !== null ? items[index] : null;
+  // só compartilha pin à vista: nada de segredo, nada aguardando aprovação, nada fechado
+  const shareable = !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
+
+  async function sharePin() {
+    if (sharing || !cardRef.current) return;
+    setSharing(true);
+    setShareMsg(null);
+    try {
+      const blob = await cardToPng(cardRef.current);
+      const res = await deliverImage(blob, "pinz-pin");
+      if (res === "downloaded") setShareMsg("Imagem salva! Agora é só postar.");
+    } catch {
+      setShareMsg("Não foi possível gerar a imagem agora.");
+    } finally {
+      setSharing(false);
+    }
+  }
   const arrow =
     "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-full border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
@@ -116,6 +143,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
       {open && item && index !== null && (
         <div className="flex flex-col items-center gap-4">
           <div className="flex w-full items-center justify-end gap-2 px-1">
+            {shareable && (
+              <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={arrow}>
+                <ShareIcon />
+              </button>
+            )}
             {mod && !isSealed(item) && !isHidden(item) && (
               <button
                 type="button"
@@ -135,6 +167,11 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
               <CloseX />
             </button>
           </div>
+          {shareMsg && (
+            <p role="status" className="rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+              {shareMsg}
+            </p>
+          )}
           <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
@@ -196,6 +233,22 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
         </div>
       )}
     </dialog>
+    {open && shareable && item && !isSealed(item) && !isHidden(item) && (
+      <div
+        ref={cardRef}
+        aria-hidden
+        inert
+        className="pointer-events-none flex items-center justify-center overflow-hidden text-[24px]"
+        style={{ position: "fixed", left: -100000, top: 0, width: 540, height: 675, background: "linear-gradient(160deg, #f7efdc 0%, #ead9b8 100%)" }}
+      >
+        <div style={{ marginBottom: 36 }}>
+          <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false }} revealSecret />
+        </div>
+        {/* logo num canto que não atrapalha o pin */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ position: "absolute", bottom: 18, left: "50%", height: 46, transform: "translateX(-50%)" }} />
+      </div>
+    )}
     {mod && item && !isSealed(item) && !isHidden(item) && (
       <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir pin?">
         <div className="space-y-4">

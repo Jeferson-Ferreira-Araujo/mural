@@ -6,6 +6,56 @@ export function visibleBoardElement(): HTMLElement | null {
   return all.find((el) => el.offsetWidth > 0 && el.getClientRects().length > 0) ?? null;
 }
 
+/** Cortina por cima da tela enquanto a imagem é gerada (fica por cima até de janelas abertas: usa a camada superior do navegador quando existe). */
+function showVeil(text: string): () => void {
+  const veil = document.createElement("div");
+  veil.setAttribute("role", "status");
+  veil.style.cssText = "position:fixed;inset:0;margin:0;border:0;padding:24px;width:auto;height:auto;max-width:none;max-height:none;z-index:2147483000;display:grid;place-items:center;background:rgba(42,26,14,.94);color:#f7f0dd;font:600 18px system-ui,sans-serif;text-align:center";
+  veil.textContent = text;
+  document.body.appendChild(veil);
+  try {
+    const v = veil as HTMLElement & { showPopover?: () => void };
+    if (typeof v.showPopover === "function") {
+      veil.setAttribute("popover", "manual");
+      v.showPopover();
+    }
+  } catch {
+    /* sem camada superior: segue com a cortina comum */
+  }
+  return () => veil.remove();
+}
+
+/**
+ * Imagem PNG de um cartão pronto para compartilhar (ex.: um pin com o logo). O cartão fica fora da tela e é trazido para o canto
+ * (0, 0) só durante a captura, escondido pela cortina. `pixelRatio` 2 de um cartão 540 × 675 dá 1080 × 1350 (formato do Instagram).
+ */
+export async function cardToPng(el: HTMLElement, pixelRatio = 2): Promise<Blob> {
+  const hideVeil = showVeil("Gerando a imagem…");
+  const prev = { left: el.style.left, top: el.style.top, zIndex: el.style.zIndex };
+  el.style.left = "0px";
+  el.style.top = "0px";
+  el.style.zIndex = "1";
+  el.setAttribute("data-share-card", "");
+  el.setAttribute("data-exporting", "");
+  try {
+    await document.fonts?.ready;
+    await new Promise((r) => setTimeout(r, 80));
+    const canvas = await Promise.race([
+      toCanvas(el, { pixelRatio, width: el.offsetWidth, height: el.offsetHeight, backgroundColor: "#f2e8d3" }),
+      new Promise<never>((_, rej) => setTimeout(() => rej(new Error("tempo esgotado")), 60_000)),
+    ]);
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/png"));
+    if (!blob) throw new Error("sem imagem");
+    return blob;
+  } finally {
+    el.style.left = prev.left;
+    el.style.top = prev.top;
+    el.style.zIndex = prev.zIndex;
+    el.removeAttribute("data-exporting");
+    hideVeil();
+  }
+}
+
 /** Larguras tentadas, da melhor para a mais leve: se o aparelho não aguenta uma imagem tão grande, cai para a próxima. */
 function widthsToTry(): number[] {
   const phone = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
@@ -75,7 +125,7 @@ export async function deliverImage(blob: Blob, name: string): Promise<"shared" |
   const touch = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
   if (touch && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], title: "Meu mural no Pinz" });
+      await navigator.share({ files: [file], title: "Pinz" });
       return "shared";
     } catch (e) {
       if ((e as DOMException).name === "AbortError") return "canceled";

@@ -104,6 +104,7 @@ export function PlaceCard({
 
             {/* abrir no Maps */}
             <a
+              data-share-hide
               href={mapsUrl(lat, lon)}
               target="_blank"
               rel="noopener noreferrer"
@@ -118,7 +119,7 @@ export function PlaceCard({
             </a>
 
             {/* zoom */}
-            <div className="absolute right-[0.45em] bottom-[0.9em] flex flex-col overflow-hidden rounded-[0.5em] bg-white/95 divide-y divide-black/10" style={{ boxShadow: "0 0.15em 0.4em rgba(0,0,0,.3)" }}>
+            <div data-share-hide className="absolute right-[0.45em] bottom-[0.9em] flex flex-col overflow-hidden rounded-[0.5em] bg-white/95 divide-y divide-black/10" style={{ boxShadow: "0 0.15em 0.4em rgba(0,0,0,.3)" }}>
               <button type="button" aria-label="Aproximar o mapa" onClick={() => setZoom((z) => clamp(z + 1, MIN_ZOOM, MAX_ZOOM))} disabled={zoom >= MAX_ZOOM} className={zoomBtn}>
                 +
               </button>

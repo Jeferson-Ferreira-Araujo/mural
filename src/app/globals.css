@@ -169,3 +169,8 @@ body.badge-dragging * {
 [data-exporting] [data-empty-slot] {
   visibility: hidden;
 }
+
+/* imagem de pin para compartilhar: sem os controles do mapa */
+[data-share-card] [data-share-hide] {
+  visibility: hidden;
+}
