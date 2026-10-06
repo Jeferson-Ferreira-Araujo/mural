@@ -20,7 +20,7 @@ function Content({ m }: { m: Message }) {
     case "postit":
       return <PostIt color={m.color} text={m.text} font={m.font} pin={m.pin} pos={m.pos} />;
     case "text":
-      return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} pos={m.pos} />;
+      return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} />;
     case "list":
       return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} onEdit={m.canEdit && editList && inDetail ? () => editList({ id: m.id, title: m.title, items: m.items }) : undefined} onToggle={m.canEdit && toggleList && inDetail ? (i) => toggleList(m.id, i) : undefined} />;
     case "photo":

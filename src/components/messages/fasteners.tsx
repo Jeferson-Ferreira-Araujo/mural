@@ -42,29 +42,10 @@ const TAPE_AT: Record<PinPos, { cls: string; rotate: number }> = {
   right: { cls: "right-[1.2em]", rotate: 5 },
 };
 
-/** Fita na posição escolhida. Sem `pos` (pin de antes da opção existir), usa a posição que o card sempre teve (`fallback`). */
-export function TapeSlot({ tone, pos, fallback, top }: { tone?: string; pos?: PinPos; fallback: PinPos; top: string }) {
-  const pick = useContext(PickCtx);
-  const at = pos === undefined ? fallback : posOf(pos);
-  return (
-    <>
-      <Tape className={`${top} ${TAPE_AT[at].cls}`} rotate={TAPE_AT[at].rotate} tone={tone} />
-      {pick &&
-        PIN_POSITIONS.filter((p) => p !== at).map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => pick.onPick(p)}
-            aria-label={`Prender ${POS_LABEL[p]}`}
-            title={`Prender ${POS_LABEL[p]}`}
-            className={`absolute z-30 block h-[1.9em] w-[6em] cursor-pointer rounded-[0.15em] border-[0.12em] border-dashed border-[#2f2218]/35 bg-[#2f2218]/10 transition-colors hover:bg-[#2f2218]/25 focus-visible:bg-[#2f2218]/25 ${top} ${TAPE_AT[p].cls}`}
-            style={{ transform: `rotate(${TAPE_AT[p].rotate}deg)` }}
-          />
-        ))}
-    </>
-  );
+/** Fita no lugar fixo de cada card (`at`): a posição da fita não é escolhida por quem cola o pin. */
+export function TapeSlot({ tone, at, top }: { tone?: string; at: PinPos; top: string }) {
+  return <Tape className={`${top} ${TAPE_AT[at].cls}`} rotate={TAPE_AT[at].rotate} tone={tone} />;
 }
-
 
 /** Fita adesiva translúcida. */
 export function Tape({

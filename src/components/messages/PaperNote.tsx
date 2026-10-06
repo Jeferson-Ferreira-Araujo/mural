@@ -1,11 +1,11 @@
-import { handOf, tapeOf, type HandId, type PinPos, type TapeColor } from "@/lib/style";
+import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { TapeSlot } from "./fasteners";
 
 /**
  * Texto em folha. `letter`: papel liso rasgado com tinta azul.
  * `notebook`: folha de caderno pautada, com margem e furos.
  */
-export function PaperNote({ text, variant, font, tape, pos }: { text: string; variant: "letter" | "notebook"; font?: HandId; tape?: TapeColor; pos?: PinPos }) {
+export function PaperNote({ text, variant, font, tape }: { text: string; variant: "letter" | "notebook"; font?: HandId; tape?: TapeColor }) {
   const hand = handOf(font);
   const tone = tape ? tapeOf(tape).tone : undefined;
   if (variant === "letter") {
@@ -25,7 +25,7 @@ export function PaperNote({ text, variant, font, tape, pos }: { text: string; va
         </p>
       </article>
       {/* fita fora do papel recortado, para não ser cortada junto com a borda rasgada */}
-      <TapeSlot top="top-[-0.5em]" pos={pos} fallback="center" tone={tone} />
+      <TapeSlot top="top-[-0.5em]" at="center" tone={tone} />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export function PaperNote({ text, variant, font, tape, pos }: { text: string; va
           style={{ top: `${top}%` }}
         />
       ))}
-      <TapeSlot top="-top-[0.8em]" pos={pos} fallback="right" tone={tone} />
+      <TapeSlot top="-top-[0.8em]" at="right" tone={tone} />
       {/* a pauta tem 1,55em por linha; a altura de linha do texto é igual, qualquer que seja a letra */}
       <p className="text-[#232838] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.6 * hand.scale}em`, lineHeight: `${1.55 / (1.6 * hand.scale)}` }}>
         {text}

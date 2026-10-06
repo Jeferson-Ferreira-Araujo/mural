@@ -12,7 +12,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, 
       style={{ borderRadius: "0.15em" }}
     >
       {scene === "group" || src ? (
-        <TapeSlot top="-top-[0.8em]" pos={pos} fallback="center" tone={tape ? tapeOf(tape).tone : undefined} />
+        <TapeSlot top="-top-[0.8em]" at="center" tone={tape ? tapeOf(tape).tone : undefined} />
       ) : (
         <PinSlot tone={pin ? pinOf(pin).id : "red"} pos={pos} top="top-[-0.6em]" />
       )}
