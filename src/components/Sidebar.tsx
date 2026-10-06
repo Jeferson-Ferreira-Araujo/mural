@@ -8,8 +8,8 @@ const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeL
 function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
   return (
     <li className="flex flex-col items-center gap-[0.15em] text-center">
+      <span className="font-title text-[1.6em] leading-none font-semibold">{value}</span>
       {Icon}
-      <span className="text-[1.05em] leading-none font-semibold">{value}</span>
       <span className="text-[0.72em] leading-tight text-[#6b5440]">{label}</span>
     </li>
   );
