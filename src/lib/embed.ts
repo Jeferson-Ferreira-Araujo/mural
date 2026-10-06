@@ -2,7 +2,7 @@
  * Links de música/vídeo que tocam DENTRO da página (iframe oficial do serviço).
  * Só reconhecemos endereços conhecidos e extraímos apenas o ID: nunca usamos o link da pessoa direto no iframe.
  */
-export type Embed = { provider: "youtube" | "spotify"; src: string; /** altura do player em relação à largura do card */ kind: "video" | "audio" };
+export type Embed = { provider: "youtube" | "spotify"; src: string; /** ID do vídeo (só YouTube) */ id?: string; /** altura do player em relação à largura do card */ kind: "video" | "audio" };
 
 const YT_ID = /^[\w-]{11}$/;
 
@@ -26,7 +26,7 @@ export function embedFor(link?: string): Embed | null {
     if (!id && m) id = m[1];
   }
   if (id && YT_ID.test(id)) {
-    return { provider: "youtube", kind: "video", src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0` };
+    return { provider: "youtube", kind: "video", id, src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0` };
   }
 
   // Spotify: open.spotify.com/(intl-xx/)track|album|playlist|episode|show/ID

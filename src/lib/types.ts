@@ -37,7 +37,7 @@ export type Message =
   | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
   | (Base & { type: "draw"; caption: string; src?: string })
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
-  | (Base & { type: "video"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
+  | (Base & { type: "video"; caption: string; duration?: string; src?: string; /** vídeo do YouTube (no lugar do arquivo) */ link?: string; playerColor?: PlayerColor })
   | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
   | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor });
 

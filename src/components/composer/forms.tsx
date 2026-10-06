@@ -7,6 +7,7 @@ import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
 import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
+import { embedFor } from "@/lib/embed";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 
@@ -269,6 +270,9 @@ function formatDuration(sec: number) {
 }
 
 export function VideoForm({ onChange }: { onChange: DraftChange }) {
+  const [mode, setMode] = useState<"file" | "youtube">("file");
+  const [link, setLink] = useState("");
+  const ytOk = embedFor(link)?.provider === "youtube";
   const [src, setSrc] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | undefined>();
   const [color, setColor] = useState<PlayerColor>("black");
@@ -313,13 +317,32 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
     setDuration(secs ? formatDuration(secs) : undefined);
     setSrc(url);
   }
-  useEffect(() => onChange({ type: "video", caption: caption.trim(), ...(src ? { src, duration } : {}), playerColor: color }, { empty: !src }), [src, caption, duration, color, onChange]);
+  useEffect(
+    () =>
+      mode === "youtube"
+        ? onChange({ type: "video", caption: caption.trim(), ...(ytOk ? { link: link.trim() } : {}), playerColor: color }, { empty: !ytOk })
+        : onChange({ type: "video", caption: caption.trim(), ...(src ? { src, duration } : {}), playerColor: color }, { empty: !src }),
+    [mode, link, ytOk, src, caption, duration, color, onChange],
+  );
 
   return (
     <div className="space-y-4">
-      <Field label="Vídeo" hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
-        {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
-      </Field>
+      <div role="radiogroup" aria-label="Origem do vídeo" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        {([["file", "Enviar arquivo"], ["youtube", "Link do YouTube"]] as const).map(([v, label]) => (
+          <button key={v} type="button" role="radio" aria-checked={mode === v} onClick={() => setMode(v)} className={`cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${mode === v ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {mode === "youtube" ? (
+        <Field label="Link do vídeo no YouTube" error={link.trim() && !ytOk ? "Use um link do YouTube, como https://youtu.be/… ou https://www.youtube.com/watch?v=…" : null} hint="O vídeo toca aqui mesmo, no player do mural.">
+          {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={200} placeholder="https://www.youtube.com/watch?v=…" className={inputClass} />}
+        </Field>
+      ) : (
+        <Field label="Vídeo" hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
+          {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
+        </Field>
+      )}
       {progress !== null && (
         <div role="status" aria-live="polite" className="rounded-xl border border-[#d9c9ad] bg-white/70 p-3 text-sm">
           <p className="font-semibold">Otimizando o vídeo… {Math.round(progress * 100)}%</p>

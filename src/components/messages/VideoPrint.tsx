@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { embedFor } from "@/lib/embed";
 import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE, type PlayerLook } from "./playerPalette";
@@ -51,8 +52,11 @@ const icon = "size-[1em]";
  * sem mensagem, aparece só o player. `color` = cor do aparelho (escolhida por quem envia).
  * `src` = vídeo escolhido pela pessoa (toca de verdade); sem `src`, é uma cena de exemplo com tempo simulado.
  */
-export function VideoPrint({ caption, duration, src, color = "black" }: { caption: string; duration?: string; src?: string; color?: PlayerColor }) {
+export function VideoPrint({ caption, duration, src, link, color = "black" }: { caption: string; duration?: string; src?: string; link?: string; color?: PlayerColor }) {
   const look = PLAYER_PALETTE[color];
+  // vídeo do YouTube: miniatura no aparelho e, ao tocar, o player oficial (só reconhecemos o endereço e extraímos o ID)
+  const yt = !src ? embedFor(link) : null;
+  const embed = yt?.provider === "youtube" ? yt : null;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
@@ -61,7 +65,7 @@ export function VideoPrint({ caption, duration, src, color = "black" }: { captio
 
   // exemplo (sem arquivo): o tempo corre sozinho enquanto "toca"
   useEffect(() => {
-    if (src || !playing || dur <= 0) return;
+    if (src || embed || !playing || dur <= 0) return;
     const t = setInterval(() => {
       setCur((c) => {
         if (c + 1 >= dur) {
@@ -72,9 +76,10 @@ export function VideoPrint({ caption, duration, src, color = "black" }: { captio
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [src, playing, dur]);
+  }, [src, embed, playing, dur]);
 
   function toggle() {
+    if (embed) return setPlaying((p) => !p); // abre/fecha o player do YouTube
     const v = videoRef.current;
     if (v) {
       if (v.paused) void v.play();
@@ -134,7 +139,22 @@ export function VideoPrint({ caption, duration, src, color = "black" }: { captio
         {/* moldura da tela (vidro) */}
         <div className="relative rounded-[0.75em] bg-black p-[0.2em]" style={{ boxShadow: "inset 0 0 0 0.07em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.35), inset 0 0.2em 0.5em rgba(0,0,0,.9)" }}>
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.55em] bg-black">
-            {src ? (
+            {embed ? (
+              playing ? (
+                <iframe
+                  src={embed.src}
+                  title="Vídeo do YouTube"
+                  allow="autoplay; encrypted-media; fullscreen"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+                  className="absolute inset-0 size-full border-0"
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`https://i.ytimg.com/vi/${embed.id}/hqdefault.jpg`} alt="" draggable={false} className="size-full object-cover" />
+              )
+            ) : src ? (
               <video
                 ref={videoRef}
                 src={`${src}#t=0.1`}
@@ -167,7 +187,7 @@ export function VideoPrint({ caption, duration, src, color = "black" }: { captio
             )}
 
             {/* barra de progresso dentro da tela */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-[0.55em] pt-[1.2em] pb-[0.4em] text-white">
+            <div hidden={!!embed} className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-[0.55em] pt-[1.2em] pb-[0.4em] text-white">
               <div className="relative h-[0.22em] rounded-full bg-white/35" role="progressbar" aria-label="Progresso do vídeo" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
                 <span className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${ratio * 100}%` }} />
                 <span className="absolute top-1/2 size-[0.6em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow" style={{ left: `${ratio * 100}%` }} />
