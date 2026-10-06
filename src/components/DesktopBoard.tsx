@@ -34,7 +34,13 @@ export function DesktopBoard(props: ViewProps) {
         <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
         <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
-          <div className="flex min-h-10 items-center">
+          <div className="flex min-h-11 min-w-0 items-center">
+            {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
+            {hasSelection && props.muralInfo?.title && (
+              <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-full bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
+                <span className="block max-w-full truncate">{props.muralInfo.title}</span>
+              </h2>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {share && (

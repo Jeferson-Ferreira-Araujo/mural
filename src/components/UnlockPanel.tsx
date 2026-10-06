@@ -72,9 +72,8 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           <div className="flex min-w-0 items-center gap-[0.7em]">
             {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em]" />}
             <p className="min-w-0">
-              {/* em cima o @ de quem é; embaixo o nome do mural */}
+              {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words">{owner ? `@${owner}` : title}</span>
-              {owner && <span className={`block text-[0.8em] break-words ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>{title}</span>}
             </p>
           </div>
           {plus && (
