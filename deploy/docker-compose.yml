@@ -16,9 +16,9 @@ services:
       traefik.http.middlewares.site-mural-redir.redirectscheme.scheme: https
       traefik.http.routers.site-mural-http.entryPoints: http
       traefik.http.routers.site-mural-http.middlewares: site-mural-redir
-      traefik.http.routers.site-mural-http.rule: Host(`mural.jefersonaraujo.com.br`)
+      traefik.http.routers.site-mural-http.rule: Host(`pinz.digital`) || Host(`www.pinz.digital`) || Host(`mural.jefersonaraujo.com.br`)
       traefik.http.routers.site-mural.entryPoints: https
-      traefik.http.routers.site-mural.rule: Host(`mural.jefersonaraujo.com.br`)
+      traefik.http.routers.site-mural.rule: Host(`pinz.digital`) || Host(`www.pinz.digital`) || Host(`mural.jefersonaraujo.com.br`)
       traefik.http.routers.site-mural.tls: "true"
       traefik.http.routers.site-mural.tls.certresolver: letsencrypt
       traefik.http.services.site-mural.loadbalancer.server.port: "3000"

@@ -53,7 +53,7 @@ export type UnlockResult =
   | { ok: true; token?: string; /** desbloqueio de cada mural da pessoa (por endereço): acertar uma vez abre todos */ tokens?: Record<string, string> }
   | { ok: false; reason: "wrong" | "rate_limited" | "plus_required" | "error"; retryAfter?: number };
 
-export const SITE_HOST = "mural.jefersonaraujo.com.br";
+export const SITE_HOST = "pinz.digital";
 export const muralPath = (r: MuralRef) => `/${r.nick}/${r.slug}`;
 export const muralUrl = (r: MuralRef) => `${SITE_HOST}${muralPath(r)}`;
 
