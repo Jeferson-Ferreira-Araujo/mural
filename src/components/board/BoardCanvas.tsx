@@ -203,7 +203,7 @@ export function BoardCanvas({
               </div>
               {children}
             </main>
-      {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} />}
+      {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} board={look.id} />}
     </>
   );
 }

@@ -55,7 +55,7 @@ const Trash = () => (
  * Detalhe de um Pinz: no mural com muitos espaços os cards ficam pequenos (só dá para "bater o olho"),
  * então um clique no pin abre o mesmo card em tamanho de leitura, com setas para passar para o vizinho.
  */
-export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem[]; index: number | null; onIndex: (i: number) => void; onClose: () => void }) {
+export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: BoardItem[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
   const mod = useModeration();
@@ -239,13 +239,16 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
         aria-hidden
         inert
         className="pointer-events-none flex items-center justify-center overflow-hidden text-[24px]"
-        style={{ position: "fixed", left: -100000, top: 0, width: 540, height: 675, background: "linear-gradient(160deg, #f7efdc 0%, #ead9b8 100%)" }}
+        style={{ position: "fixed", left: -100000, top: 0, width: 540, height: 675, background: "#3b2616" }}
       >
-        <div style={{ marginBottom: 96 }}>
+        {/* fundo: o quadro do mural (imagem já desfocada), como se o pin estivesse preso nele */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`/img/blur/${board}.webp`} alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "relative", marginBottom: 118 }}>
           <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false }} revealSecret />
         </div>
-        {/* rodapé: logo e convite, num canto que não atrapalha o pin */}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
+        <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "12px 16px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64 }} />
           <p style={{ margin: 0, fontFamily: "var(--font-fredoka), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "center" }}>Crie seu mural também e compartilhe momentos.</p>
