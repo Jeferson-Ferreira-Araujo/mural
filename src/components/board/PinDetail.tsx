@@ -241,12 +241,15 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
         className="pointer-events-none flex items-center justify-center overflow-hidden text-[24px]"
         style={{ position: "fixed", left: -100000, top: 0, width: 540, height: 675, background: "linear-gradient(160deg, #f7efdc 0%, #ead9b8 100%)" }}
       >
-        <div style={{ marginBottom: 36 }}>
+        <div style={{ marginBottom: 96 }}>
           <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false }} revealSecret />
         </div>
-        {/* logo num canto que não atrapalha o pin */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ position: "absolute", bottom: 18, left: "50%", height: 46, transform: "translateX(-50%)" }} />
+        {/* rodapé: logo e convite, num canto que não atrapalha o pin */}
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64 }} />
+          <p style={{ margin: 0, fontFamily: "var(--font-fredoka), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "center" }}>Crie seu mural também e compartilhe momentos.</p>
+        </div>
       </div>
     )}
     {mod && item && !isSealed(item) && !isHidden(item) && (
