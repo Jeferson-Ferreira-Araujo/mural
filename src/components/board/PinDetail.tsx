@@ -42,7 +42,10 @@ const CloseX = () => (
 );
 const ShareIcon = () => (
   <svg {...big}>
-    <path d="M12 15V4M8 8l4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+    <circle cx="18" cy="5" r="2.6" />
+    <circle cx="6" cy="12" r="2.6" />
+    <circle cx="18" cy="19" r="2.6" />
+    <path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3" />
   </svg>
 );
 const Trash = () => (
