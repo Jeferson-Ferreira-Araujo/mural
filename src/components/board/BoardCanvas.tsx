@@ -195,7 +195,7 @@ export function BoardCanvas({
                   <BadgeLayer />
 
                   {items.length === 0 && unlocked && !loadingPins && (
-                    <div data-empty-slot className="absolute inset-x-0 top-[45%] z-10">
+                    <div data-empty-slot className="absolute inset-x-0 top-[38%] z-10">
                       <EmptyNote unlocked={unlocked} message={emptyMessage} />
                     </div>
                   )}
