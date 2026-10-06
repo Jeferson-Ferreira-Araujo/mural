@@ -37,7 +37,7 @@ type Props = {
 
 /**
  * Mural no celular (retrato), como no mockup: topo com o logo e o menu; cabeçalho com a foto e o nome de quem é o mural;
- * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Ver tudo" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
+ * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch, locked = false, lockPanel }: Props) {
   const look = boardById(board);

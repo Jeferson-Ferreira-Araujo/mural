@@ -44,7 +44,7 @@ export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: {
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🤏
           </span>
-          <p><strong>Zoom:</strong> pinça com dois dedos ou toque duplo. “Ver tudo” volta ao mural inteiro.</p>
+          <p><strong>Zoom:</strong> pinça com dois dedos ou toque duplo. “Afastar” volta ao mural inteiro.</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
