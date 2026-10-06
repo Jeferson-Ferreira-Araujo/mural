@@ -34,6 +34,8 @@ import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInv
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
+import { fetchNotifications, markAllRead, unreadCount, type Notification } from "@/lib/notifications";
+import { NotificationsModal } from "./account/NotificationsModal";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -160,6 +162,28 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const t = setInterval(() => void reloadShared(), 60_000);
     return () => clearInterval(t);
   }, [session, reloadShared]);
+  // sino: avisos novos (confere de minuto em minuto) e a janela com a lista
+  const [unread, setUnread] = useState(0);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifs, setNotifs] = useState<Notification[] | null>(null);
+  const reloadUnread = useCallback(async () => setUnread(await unreadCount(getBrowserSupabase())), []);
+  useEffect(() => {
+    if (!session) {
+      setUnread(0);
+      return;
+    }
+    void reloadUnread();
+    const t = setInterval(() => void reloadUnread(), 60_000);
+    return () => clearInterval(t);
+  }, [session, reloadUnread]);
+  const openNotifications = useCallback(async () => {
+    setNotifOpen(true);
+    setNotifs(null);
+    const sb = getBrowserSupabase();
+    setNotifs(await fetchNotifications(sb));
+    await markAllRead(sb); // ao abrir, tudo vira lido (a lista continua mostrando o que era novo)
+    setUnread(0);
+  }, []);
   const firstOwnId = own[0]?.id;
   useEffect(() => {
     if (!firstOwnId) return;
@@ -613,6 +637,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         currentSlug={isOwner ? slug : undefined}
         pendingCount={pendingCount}
         onExportImage={EXPORT_IMAGE_ENABLED && (isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
+        notifications={{ count: unread, onOpen: () => void openNotifications() }}
         sharedInvites={sharedInvites}
         onSharedChanged={() => void reloadShared()}
         credits={inventory?.credits ?? 0}
@@ -661,7 +686,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
-          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites } : undefined}
+          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites, notifications: { count: unread, onOpen: () => void openNotifications() } } : undefined}
           muralSwitch={nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
@@ -708,6 +733,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             currentSlug={isOwner ? slug : undefined}
             pendingCount={pendingCount}
             onExportImage={EXPORT_IMAGE_ENABLED && (isOwner || isMember) && unlocked ? () => void exportImage() : undefined}
+            notifications={{ count: unread, onOpen: () => void openNotifications() }}
             sharedInvites={sharedInvites}
             onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}
@@ -731,6 +757,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}
+      <NotificationsModal open={notifOpen} onClose={() => setNotifOpen(false)} items={notifs} />
       <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} nick={myNick ?? ""} company={companyWelcome} />
       <Toast message={toast} />
     </div>

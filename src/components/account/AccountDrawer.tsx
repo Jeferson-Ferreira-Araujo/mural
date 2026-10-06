@@ -64,6 +64,7 @@ export function AccountDrawer({
   onSharedChanged,
   onExportImage,
   inline = false,
+  notifications,
 }: {
   open: boolean;
   onClose: () => void;
@@ -92,6 +93,8 @@ export function AccountDrawer({
   onExportImage?: () => void;
   /** desktop: em vez de uma gaveta, desenha os atalhos direto na coluna bege (sempre aberto) */
   inline?: boolean;
+  /** sino: quantas notificações novas e como abrir a lista */
+  notifications?: { count: number; onOpen: () => void };
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
@@ -191,6 +194,23 @@ export function AccountDrawer({
                       <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
                       <circle cx="9" cy="10" r="1.6" />
                       <path d="m4 17 5-4.5 3.5 3 3-2.5L20 16" />
+                    </svg>
+                  }
+                />
+              )}
+              {notifications && (
+                <Row
+                  onClick={() => {
+                    onClose();
+                    notifications.onOpen();
+                  }}
+                  label="Notificações"
+                  hint={notifications.count > 0 ? `${notifications.count} nova${notifications.count > 1 ? "s" : ""}` : "Avisos sobre os seus pins"}
+                  badge={notifications.count}
+                  icon={
+                    <svg {...ic}>
+                      <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
+                      <path d="M10 20a2.2 2.2 0 0 0 4 0" />
                     </svg>
                   }
                 />

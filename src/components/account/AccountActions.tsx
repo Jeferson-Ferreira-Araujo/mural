@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { loginUrl } from "@/lib/auth";
 
-export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number };
+export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number; /** sino de notificações */ notifications?: { count: number; onOpen: () => void } };
 
 const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-xl transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
@@ -59,7 +59,22 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
 }
 
 export function MobileHeaderRight({ account }: { account: AccountApi }) {
+  const bell = account.notifications;
   return (
+    <div className="flex items-center gap-1.5">
+      {bell && (
+        <button type="button" onClick={bell.onOpen} aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title="Notificações" className={iconBtn}>
+          <svg {...iconSvg} className="size-5.5">
+            <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
+            <path d="M10 20a2.2 2.2 0 0 0 4 0" />
+          </svg>
+          {!!bell.count && (
+            <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+              {bell.count}
+            </span>
+          )}
+        </button>
+      )}
     <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
       <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
         <path d="M4 7h16M4 12h16M4 17h16" />
@@ -70,6 +85,7 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
         </span>
       )}
     </button>
+    </div>
   );
 }
 
