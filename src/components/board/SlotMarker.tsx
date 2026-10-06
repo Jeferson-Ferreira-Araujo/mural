@@ -3,11 +3,16 @@ export function EmptySlot() {
   return (
     <div
       aria-hidden
-      className="grid h-[13em] w-[14em] place-items-center rounded-[0.6em] border-[0.16em] border-dashed border-[#fff3d6]/55 bg-[#fff3d6]/[0.08] text-[#fff3d6]/75"
+      className="grid h-[13em] w-[14em] place-items-center rounded-[0.6em] border-[0.2em] border-dashed border-[#fff3d6]/90 bg-[#fff3d6]/[0.22] text-[#fff3d6] shadow-[0_0_1em_rgba(255,243,214,.3),inset_0_0_1.4em_rgba(255,243,214,.22)] [text-shadow:0_0.06em_0.25em_rgba(0,0,0,.55)]"
     >
       <span className="text-center">
-        <span className="mx-auto mb-[0.3em] block size-[0.9em] rounded-full border-[0.14em] border-current" />
-        <span className="font-hand text-[1.4em] leading-none">espaço livre</span>
+        {/* botão "+" bem visível: convida a colar um pin aqui */}
+        <span className="mx-auto mb-[0.4em] grid size-[2.3em] place-items-center rounded-[0.5em] bg-[#fff3d6] text-[#3b2616] shadow-[0_0.1em_0.4em_rgba(0,0,0,.35)] [text-shadow:none]">
+          <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </span>
+        <span className="font-hand text-[1.5em] leading-none font-semibold">espaço livre</span>
       </span>
     </div>
   );
