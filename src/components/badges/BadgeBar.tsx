@@ -9,9 +9,10 @@ import { useBadges } from "./BadgeContext";
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
-  const { editable, begin, stock, openStore } = useBadges();
+  const { editable, begin, stock, openStore, acquiredAt } = useBadges();
   if (!editable) return null;
-  const mine = BADGES.filter((b) => stock(b.key).owned);
+  // os bottons comprados ficam no início da lista (o mais novo primeiro); o resto segue a ordem de sempre
+  const mine = BADGES.filter((b) => stock(b.key).owned).sort((a, b) => (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0));
   return (
     <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       <div className="flex items-center gap-2">
@@ -32,7 +33,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
             <li key={b.key} className="relative shrink-0">
               <button
                 type="button"
-                aria-label={out ? `Botton ${b.name ?? b.key}: esgotado` : `Botton ${b.name ?? b.key}: arraste para o mural`}
+                aria-label={out ? `Botton ${b.name ?? b.key}: sem unidades disponíveis` : `Botton ${b.name ?? b.key}: arraste para o mural`}
                 onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                 onDragStart={(e) => e.preventDefault()}
                 className={`grid h-14 w-14 touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
@@ -40,7 +41,6 @@ export function BadgeBar({ className = "" }: { className?: string }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
               </button>
-              {out && <span className="pointer-events-none absolute inset-x-0 bottom-0 text-center text-[9px] leading-none font-bold text-white/80 uppercase">Esgotado</span>}
               {/* quantidade que a pessoa ainda tem para colocar */}
               <span
                 aria-label={`${st.left ?? 0} disponível${st.left === 1 ? "" : "is"}`}

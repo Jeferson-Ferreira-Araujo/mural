@@ -133,7 +133,7 @@ export async function removeBadge(sb: SupabaseClient, id: string): Promise<boole
 // ---------- estoque e loja ----------
 
 /** Um pin do catálogo, do ponto de vista de quem está logado. */
-export type CatalogItem = { key: number; /** todo mundo tem (1 unidade no FREE) */ starter: boolean; /** preço, em créditos, para liberar (pins da loja) */ price: number; /** preço de +1 unidade (FREE) */ unitPrice: number; owned: boolean; /** unidades extras compradas */ extra: number };
+export type CatalogItem = { key: number; /** todo mundo tem (1 unidade no FREE) */ starter: boolean; /** preço, em créditos, para liberar (pins da loja) */ price: number; /** preço de +1 unidade (FREE) */ unitPrice: number; owned: boolean; /** unidades extras compradas */ extra: number; /** quando foi comprado (segundos); sem valor = já era da conta */ acquired?: number | null };
 export type BoardOffer = { id: string; price: number; owned: boolean };
 export type BadgeInventory = {
   credits: number;

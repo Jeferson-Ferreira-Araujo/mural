@@ -14,12 +14,14 @@ type Ctx = {
   draggingId: string | null;
   /** unidades que a pessoa ainda pode colocar de cada pin (1 por pin + extras compradas; ninguém tem ilimitado) */
   stock: (key: number) => Stock;
+  /** quando o botton foi comprado (segundos), para ordenar a barra; undefined = já era da conta */
+  acquiredAt: (key: number) => number | undefined;
   openStore: () => void;
   begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, openStore: () => undefined, begin: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
@@ -104,6 +106,7 @@ export function BadgeProvider({
   setBadges,
   notify,
   stock = unlimited,
+  acquiredAt = () => undefined,
   onOpenStore = () => undefined,
   children,
 }: {
@@ -113,6 +116,7 @@ export function BadgeProvider({
   setBadges: (fn: (prev: PlacedBadge[]) => PlacedBadge[]) => void;
   notify: (msg: string) => void;
   stock?: (key: number) => Stock;
+  acquiredAt?: (key: number) => number | undefined;
   onOpenStore?: () => void;
   children: ReactNode;
 }) {
@@ -272,7 +276,7 @@ export function BadgeProvider({
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
-  const value = useMemo(() => ({ badges, editable, draggingId, stock, openStore: () => openStoreRef.current(), begin }), [badges, editable, draggingId, stock, begin]);
+  const value = useMemo(() => ({ badges, editable, draggingId, stock, acquiredAt, openStore: () => openStoreRef.current(), begin }), [badges, editable, draggingId, stock, acquiredAt, begin]);
 
   return (
     <BadgeCtx.Provider value={value}>

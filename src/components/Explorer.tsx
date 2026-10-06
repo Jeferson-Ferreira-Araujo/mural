@@ -278,6 +278,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     [afterModeration, own, slug, isMember],
   );
   // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PLUS: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
+  // ordem da barra: os bottons comprados primeiro (o mais novo no início)
+  const acquiredAt = useCallback((key: number) => inventory?.catalog.find((c) => c.key === key)?.acquired ?? undefined, [inventory]);
   const badgeStock = useCallback(
     (key: number): Stock => {
       if (!inventory) return FREE_BADGES.includes(key) ? { owned: true, left: 1, total: 1 } : { owned: false, left: 0, total: 0 };
@@ -624,7 +626,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
         <ListEditProvider onSave={saveList}>
-        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} onOpenStore={() => setStoreOpen(true)}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
