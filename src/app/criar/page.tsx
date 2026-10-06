@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { NEW_MURAL_COST } from "@/lib/plans";
 import { fetchInventory } from "@/lib/badges";
-import { getOwnMurals, getOwnNickname, homeRouteFor, useSession } from "@/lib/auth";
+import { getOwnMurals, getOwnProfile, homeRouteFor, useSession } from "@/lib/auth";
+import { NicknameSetup } from "@/components/account/NicknameSetup";
 import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
@@ -17,6 +18,7 @@ export default function CriarMural() {
   const { session, loading } = useSession();
   const [ready, setReady] = useState(false);
   const [savedNick, setSavedNick] = useState<string | null>(null);
+  const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
 
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -37,9 +39,10 @@ export default function CriarMural() {
       return;
     }
     const sb = getBrowserSupabase();
-    Promise.all([getOwnMurals(sb), getOwnNickname(sb), fetchInventory(sb)]).then(([murals, n, inv]) => {
+    Promise.all([getOwnMurals(sb), getOwnProfile(sb), fetchInventory(sb)]).then(([murals, prof, inv]) => {
       setTaken(murals.map((m) => m.slug));
-      setSavedNick(n);
+      setSavedNick(prof?.nickname ?? null);
+      setNickPending(prof ? !prof.confirmed : false);
       setSlots(1 + (inv?.extraMurals ?? 0));
       setPlus(inv?.plus === true);
       setReady(true);
@@ -77,6 +80,8 @@ export default function CriarMural() {
     );
   }
 
+  const nickSetup = <NicknameSetup open={nickPending && !!savedNick} suggested={savedNick ?? ""} onDone={(n) => { setSavedNick(n); setNickPending(false); }} />;
+
   // 1 mural por conta; mais murais, só no PLUS (comprando na loja com créditos)
   if (taken.length >= slots) {
     return (
@@ -90,12 +95,14 @@ export default function CriarMural() {
             Ir para o meu mural
           </Link>
         </div>
+        {nickSetup}
       </AuthShell>
     );
   }
 
   return (
     <AuthShell wide>
+      {nickSetup}
       <ol className="mb-6 flex gap-1.5 sm:gap-2" aria-label="Etapas">
         {STEPS.map((label, i) => (
           <li key={label} className="min-w-0 flex-1" aria-current={i === step ? "step" : undefined}>
