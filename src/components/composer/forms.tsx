@@ -591,7 +591,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o mapa.</>}>
+      <Field label="Mensagem curta no papelzinho (opcional)" hint={<Counter value={caption} max={PLAYER_NOTE_MAX} />}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que mais amo!" className={inputClass} />}
       </Field>
     </div>
