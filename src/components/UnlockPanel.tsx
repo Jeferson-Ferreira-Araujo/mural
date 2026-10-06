@@ -76,14 +76,14 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words">{owner ? `@${owner}` : title}</span>
-              {/* contagem de acessos ao perfil (visitantes diferentes que abriram o mural) */}
+              {/* contagem de visualizações do perfil (visitantes diferentes que abriram o mural) */}
               {visits !== undefined && (
                 <span className={`mt-[0.3em] flex items-center gap-[0.35em] text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
                   <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
-                  {visits.toLocaleString("pt-BR")} {visits === 1 ? "acesso" : "acessos"}
+                  {visits.toLocaleString("pt-BR")} {visits === 1 ? "visualização" : "visualizações"}
                 </span>
               )}
             </p>
