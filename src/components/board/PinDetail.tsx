@@ -229,10 +229,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
                     }} className={`${ghost} flex-1`}>
-                      <span className="inline-flex items-center justify-center gap-2">
-                        {mod.plan !== "full" || !item.ownerHidden ? <EyeClosed /> : <EyeOpen />}
-                        {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
-                      </span>
+                      {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
                     </button>
                   </>
                 )}
