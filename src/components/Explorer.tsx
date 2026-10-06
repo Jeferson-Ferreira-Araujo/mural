@@ -520,6 +520,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               owner={selected.nickname}
               avatar={selected.avatar}
               plus={selected.plan === "full"}
+              visits={selected.kind === "shared" ? undefined : selected.stats.visited}
               question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}

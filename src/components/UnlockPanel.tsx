@@ -20,6 +20,8 @@ type Props = {
   open?: boolean;
   /** dono com PINZ PLUS: borda dourada na foto e selo PLUS no cabeçalho */
   plus?: boolean;
+  /** quantos acessos o perfil teve (não aparece sem o número) */
+  visits?: number;
   /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
   password?: boolean;
 };
@@ -34,7 +36,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -74,14 +76,23 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words">{owner ? `@${owner}` : title}</span>
-              {/* selo dourado só para quem é PLUS; FREE fica só com o nome */}
-              {plus && (
-                <span className="mt-[0.35em] block">
-                  <span className="inline-block rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">★ PLUS</span>
+              {/* contagem de acessos ao perfil (visitantes diferentes que abriram o mural) */}
+              {visits !== undefined && (
+                <span className={`mt-[0.3em] flex items-center gap-[0.35em] text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+                  <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  {visits.toLocaleString("pt-BR")} {visits === 1 ? "acesso" : "acessos"}
                 </span>
               )}
             </p>
           </div>
+          {plus && (
+            <span className="shrink-0 rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
+              ★ PLUS
+            </span>
+          )}
         </header>
       )}
       {open ? null : unlocked ? (
