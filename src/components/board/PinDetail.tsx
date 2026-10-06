@@ -109,8 +109,8 @@ export function PinDetail({ items, index, onIndex, onClose }: { items: BoardItem
   }, [open, index, items.length, onIndex]);
 
   const item = index !== null ? items[index] : null;
-  // só compartilha pin à vista: nada de segredo, nada aguardando aprovação, nada fechado
-  const shareable = !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
+  // só o dono do mural (mod existe só para ele) compartilha, e só pin à vista: nada de segredo, nada aguardando aprovação, nada fechado
+  const shareable = !!mod && !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
 
   async function sharePin() {
     if (sharing || !cardRef.current) return;
