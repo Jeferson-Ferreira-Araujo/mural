@@ -66,7 +66,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const [shareMsg, setShareMsg] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
-  const revealBtn = (
+  const revealBtn = () => (
     <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
       {showSecret ? <EyeClosed /> : <EyeOpen />}
       {showSecret ? "Esconder PIN" : "Revelar PIN"}
@@ -171,7 +171,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {shareMsg}
             </p>
           )}
-          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn}
+          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn()}
           <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
