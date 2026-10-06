@@ -9,7 +9,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
   return (
     <li className="flex items-center justify-center gap-[0.7em]">
       <span className="shrink-0 text-[#4a3826]">{Icon}</span>
-      <span className="min-w-0">
+      <span className="min-w-0 text-center">
         <span className="font-title block text-[1.6em] leading-none font-semibold">{value}</span>
         <span className="mt-[0.2em] block text-[0.78em] leading-tight text-[#6b5440]">{label}</span>
       </span>
