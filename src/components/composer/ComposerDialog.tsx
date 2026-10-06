@@ -144,12 +144,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
-      {signAs && (
-        <p className="rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-center text-sm text-[#4a3826]">
-          Seu pin aparece assinado como <strong>@{signAs}</strong>.
-        </p>
-      )}
-
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
