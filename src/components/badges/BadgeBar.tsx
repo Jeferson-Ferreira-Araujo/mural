@@ -11,8 +11,15 @@ import { useBadges } from "./BadgeContext";
 export function BadgeBar({ className = "" }: { className?: string }) {
   const { editable, begin, stock, openStore, acquiredAt } = useBadges();
   if (!editable) return null;
-  // os bottons comprados ficam no início da lista (o mais novo primeiro); o resto segue a ordem de sempre
-  const mine = BADGES.filter((b) => stock(b.key).owned).sort((a, b) => (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0));
+  // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
+  // quem ficou sem unidades vai para o final (continua visível, só apagado)
+  const mine = BADGES.filter((b) => stock(b.key).owned).sort((a, b) => {
+    const la = stock(a.key).left ?? 0;
+    const lb = stock(b.key).left ?? 0;
+    if ((la > 0) !== (lb > 0)) return la > 0 ? -1 : 1;
+    if (la !== lb) return lb - la;
+    return (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0);
+  });
   return (
     <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       <div className="flex items-center gap-2">
