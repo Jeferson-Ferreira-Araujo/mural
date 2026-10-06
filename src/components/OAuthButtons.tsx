@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { callbackUrl } from "@/lib/auth";
 import { OAUTH_LABEL, OAUTH_PROVIDERS, type OAuthProvider } from "@/lib/oauth";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -20,6 +20,18 @@ function GoogleLogo() {
 /** Botões "Continuar com…" (só os provedores ligados). `onError` recebe o texto do erro, se houver. */
 export function OAuthButtons({ onError, className = "" }: { onError: (msg: string | null) => void; className?: string }) {
   const [busy, setBusy] = useState<OAuthProvider | null>(null);
+  // voltou do Google pelo botão "voltar": o navegador restaura a página com o botão preso em "Abrindo…"
+  useEffect(() => {
+    const reset = () => setBusy(null);
+    const onShow = (e: PageTransitionEvent) => e.persisted && reset();
+    window.addEventListener("pageshow", onShow);
+    const onVisible = () => document.visibilityState === "visible" && reset();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("pageshow", onShow);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
   if (OAUTH_PROVIDERS.length === 0) return null;
 
   async function go(provider: OAuthProvider) {
