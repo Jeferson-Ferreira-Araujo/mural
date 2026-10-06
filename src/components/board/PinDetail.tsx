@@ -145,7 +145,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label="Ver mensagem em detalhe"
-      className="m-auto w-[min(94vw,34rem)] overflow-visible bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(94vw,34rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && item && index !== null && (
         <div className="flex flex-col items-center gap-4">
@@ -184,7 +184,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
             </button>
-            <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center text-[min(26px,4.3vw)]" key={item.id}>
+            <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center pt-[1.2em] pb-[2.4em] text-[min(26px,4.3vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
             </div>
