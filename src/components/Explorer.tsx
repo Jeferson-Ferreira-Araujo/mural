@@ -19,7 +19,7 @@ import {
 } from "@/lib/mural";
 import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
@@ -69,6 +69,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [token, setToken] = useState<string | null>(null); // token de desbloqueio (dá acesso ao quadro e ao envio)
   const [items, setItems] = useState<BoardItem[]>([]); // pins reais do mural aberto
   const [boardLoaded, setBoardLoaded] = useState(false); // os pins do mural aberto já chegaram do servidor?
+  const [lockedLayout, setLockedLayout] = useState<BoardItem[]>([]); // mural pessoal trancado: o desenho real (sem conteúdo), borrado ao fundo
   const [sharedLayout, setSharedLayout] = useState<BoardItem[]>([]); // mural compartilhado trancado: como ele está montado (sem conteúdo)
   const [openFailed, setOpenFailed] = useState(false);
   const [companyWelcome, setCompanyWelcome] = useState(false); // conta de empresa recém-criada: mensagem de boas-vindas
@@ -603,6 +604,18 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       cancelled = true;
     };
   }, [isMember, unlocked, nick, slug]);
+  const wantsBackdrop = !!selected && !isShared && !unlocked;
+  useEffect(() => {
+    if (!wantsBackdrop || !nick || !slug) {
+      setLockedLayout([]);
+      return;
+    }
+    let cancelled = false;
+    void fetchLockedLayout(getBrowserSupabase(), { nick, slug }).then((l) => !cancelled && setLockedLayout(l));
+    return () => {
+      cancelled = true;
+    };
+  }, [wantsBackdrop, nick, slug]);
   const revealed = unlocked && !!selected;
 
   // abertura animada: só na tela inicial, para quem ainda não entrou, uma vez por visita
@@ -674,7 +687,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
-          items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : decor}
+          items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : selected ? lockedLayout : decor}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
           showMeter={revealed}
           locked={!!selected && !unlocked}

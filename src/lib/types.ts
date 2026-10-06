@@ -58,6 +58,8 @@ export type HiddenItem = {
   slot?: number;
   hidden: true;
   pending?: boolean;
+  /** Fundo de um mural trancado: só o desenho borrado, sem cadeado nem aviso. */
+  backdrop?: true;
   /** Só o tipo e o estilo visual: o conteúdo nunca vem. */
   type?: MessageType;
   color?: PostItColor;

@@ -11,6 +11,12 @@ export async function fetchBoard(sb: SupabaseClient, ref: MuralRef, token: strin
   return data as BoardItem[];
 }
 
+/** Mural trancado: como ele está montado (espaços, tipos e estilos, SEM conteúdo), para servir de fundo borrado. */
+export async function fetchLockedLayout(sb: SupabaseClient, ref: MuralRef): Promise<BoardItem[]> {
+  const { data, error } = await sb.rpc("get_locked_layout", { p_nick: ref.nick, p_slug: ref.slug });
+  return error || !Array.isArray(data) ? [] : (data as BoardItem[]);
+}
+
 export type SendFailure = "cooldown" | "pending_exists" | "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
 export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
 

@@ -48,7 +48,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
           <div className="h-[13.5em] w-[14em] rounded-[0.2em] bg-[#e8dcc0]" />
         )}
       </div>
-      <span aria-hidden className="absolute inset-0 grid place-items-center">
+      <span aria-hidden className={item.backdrop ? "hidden" : "absolute inset-0 grid place-items-center"}>
         {item.pending ? (
           // aguardando o dono liberar: olho + aviso (os outros veem o pin, mas borrado)
           <span className="flex flex-col items-center gap-[0.45em]">
