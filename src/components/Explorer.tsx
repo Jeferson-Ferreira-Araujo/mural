@@ -329,6 +329,21 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     },
     [loadBoard],
   );
+  // marcar/desmarcar um item da lista: aparece na hora e o servidor confirma (se falhar, volta)
+  const toggleListItem = useCallback(
+    async (id: string, index: number) => {
+      const list = items.find((it) => it.id === id && "type" in it && it.type === "list" && "items" in it) as (BoardItem & { title: string; items: { text: string; done: boolean }[] }) | undefined;
+      if (!list) return;
+      const next = list.items.map((x, i) => (i === index ? { ...x, done: !x.done } : x));
+      setItems((prev) => prev.map((it) => (it.id === id && "items" in it ? { ...it, items: next } : it)));
+      const ok = await updateListPin(getBrowserSupabase(), id, list.title, next);
+      if (!ok) {
+        setItems((prev) => prev.map((it) => (it.id === id && "items" in it ? { ...it, items: list.items } : it)));
+        notify("Não foi possível marcar agora. Tente de novo.");
+      }
+    },
+    [items, notify],
+  );
   const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
   async function onSendPin(p: SendPayload): Promise<string | void> {
@@ -624,7 +639,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {playIntro && <IntroAnimation />}
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
-        <ListEditProvider onSave={saveList}>
+        <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           sidebarMenu={sidebarMenu}

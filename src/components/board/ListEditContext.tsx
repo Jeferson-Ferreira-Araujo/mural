@@ -8,6 +8,9 @@ export type ListData = { id: string; title: string; items: { text: string; done:
 /** Quem pode editar uma lista (dono do mural ou quem criou o pin) recebe `edit`; os outros não têm provider. */
 const Ctx = createContext<((l: ListData) => void) | null>(null);
 export const useListEdit = () => useContext(Ctx);
+/** Marcar/desmarcar um item da lista (mesma regra de quem pode editar). */
+const ToggleCtx = createContext<((id: string, index: number) => void) | null>(null);
+export const useListToggle = () => useContext(ToggleCtx);
 
 const MAX_ITEMS = 6;
 
@@ -93,14 +96,16 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
 }
 
 /** Envolve o mural: guarda qual lista está sendo editada e mostra o editor. `onSave` devolve true se salvou. */
-export function ListEditProvider({ onSave, children }: { onSave: (l: ListData) => Promise<boolean>; children: ReactNode }) {
+export function ListEditProvider({ onSave, onToggle, children }: { onSave: (l: ListData) => Promise<boolean>; onToggle?: (id: string, index: number) => void; children: ReactNode }) {
   const [list, setList] = useState<ListData | null>(null);
   const edit = useCallback((l: ListData) => setList(l), []);
   const value = useMemo(() => edit, [edit]);
   return (
     <Ctx.Provider value={value}>
-      {children}
-      {list && <Editor key={list.id} list={list} onSave={onSave} onClose={() => setList(null)} />}
+      <ToggleCtx.Provider value={onToggle ?? null}>
+        {children}
+        {list && <Editor key={list.id} list={list} onSave={onSave} onClose={() => setList(null)} />}
+      </ToggleCtx.Provider>
     </Ctx.Provider>
   );
 }
