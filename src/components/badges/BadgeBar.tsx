@@ -9,7 +9,7 @@ import { useBadges } from "./BadgeContext";
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
-  const { editable, begin, stock, openStore, acquiredAt } = useBadges();
+  const { editable, begin, stock, openStore, acquiredAt, draggingId } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -21,7 +21,13 @@ export function BadgeBar({ className = "" }: { className?: string }) {
     return (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0);
   });
   return (
-    <section data-badge-bar aria-label="Seus Bottons" className={`rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+    <section data-badge-bar aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+      {/* arrastando um botton que já está no mural: avisa onde soltar para devolvê-lo */}
+      {draggingId && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
+          Solte aqui para tirar do mural
+        </div>
+      )}
       <div className="flex items-center gap-2">
         {/* a loja é o primeiro item da barra e fica fixa: só os bottons ao lado rolam */}
         <button type="button" onClick={openStore} aria-label="Loja de Bottons" title="Loja" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
