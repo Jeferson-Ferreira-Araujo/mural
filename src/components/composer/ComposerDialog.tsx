@@ -196,7 +196,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             ) : (
               <span />
             )}
-            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Deixar um PIN"}</p>
+            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Coloque um PIN"}</p>
             <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>

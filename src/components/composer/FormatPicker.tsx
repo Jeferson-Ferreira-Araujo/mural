@@ -79,8 +79,7 @@ export function FormatPicker({ formats, onPick }: { formats: readonly MessageTyp
   const card = "flex h-full w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-4 text-center transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
     <div>
-      <h3 className="font-title text-lg font-semibold">Como você quer deixar o seu PINZ?</h3>
-      <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {formats.map((f) => (
           <li key={f}>
                         <button
@@ -90,7 +89,6 @@ export function FormatPicker({ formats, onPick }: { formats: readonly MessageTyp
             >
               <span className="grid h-12 place-items-center">{THUMBS[f]}</span>
               <span className="text-sm font-bold">{formatInfo[f].label}</span>
-              <span className="text-xs leading-tight text-[#6b5440]">{formatInfo[f].hint}</span>
             </button>
           </li>
         ))}
