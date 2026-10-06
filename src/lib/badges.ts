@@ -97,7 +97,7 @@ export const badgeSrc = (key: number) => `/img/badges/b${String(key).padStart(2,
 export const BADGE_EM = 3;
 /** Pins decorativos do plano gratuito (1 unidade de cada). O PLUS libera os 25 iniciais; os outros se compram. */
 export const FREE_BADGES: readonly number[] = [1, 2, 4, 5, 9, 12, 13, 17, 22, 25];
-export const MAX_BADGES = 200; // teto técnico (o PLUS é "quantos quiser")
+export const MAX_BADGES = 200; // teto técnico de bottons por mural
 
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
@@ -168,11 +168,10 @@ export const buyBadgeQty = (sb: SupabaseClient, key: number, qty: number) => buy
 export const buyBoard = (sb: SupabaseClient, id: string) => buy(sb, "buy_board", { p_board: id });
 export const buyMuralSlot = (sb: SupabaseClient) => buy(sb, "buy_mural_slot", {});
 
-/** Quantas unidades de um pin a pessoa ainda pode colocar. left = null: ilimitado (PLUS). owned = false: ainda não liberou (loja). */
+/** Quantas unidades de um pin a pessoa ainda pode colocar (ninguém tem ilimitado). owned = false: ainda não liberou (loja). */
 export type Stock = { owned: boolean; left: number | null; total: number | null };
-export function stockFor(item: CatalogItem | undefined, plan: "free" | "full", placedOfKey: number): Stock {
+export function stockFor(item: CatalogItem | undefined, placedOfKey: number): Stock {
   if (!item || !item.owned) return { owned: false, left: 0, total: 0 };
-  if (plan === "full") return { owned: true, left: null, total: null };
   const total = 1 + item.extra;
   return { owned: true, left: Math.max(0, total - placedOfKey), total };
 }

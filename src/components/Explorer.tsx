@@ -277,27 +277,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }),
     [afterModeration, own, slug, isMember],
   );
-  // estoque de pins decorativos (FREE: 1 por pin + extras compradas; PLUS: ilimitado). Enquanto a loja carrega, só os 25 iniciais.
-  const ownPlan = own.find((m) => m.slug === slug)?.plan ?? own[0]?.plan ?? "free";
-  const placedCount = useMemo(() => {
-    const c: Record<number, number> = {};
-    badges.forEach((b) => (c[b.key] = (c[b.key] ?? 0) + 1));
-    return c;
-  }, [badges]);
+  // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PLUS: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
   const badgeStock = useCallback(
     (key: number): Stock => {
-      if (!inventory) return FREE_BADGES.includes(key) ? { owned: true, left: null, total: null } : { owned: false, left: 0, total: 0 };
-      // mural compartilhado: contagem real da conta (1 + unidades extras), somando os botons já colocados em TODOS os murais
-      if (isMember) return stockFor(inventory.catalog.find((c) => c.key === key), "free", inventory.placed?.[String(key)] ?? 0);
-      return stockFor(inventory.catalog.find((c) => c.key === key), ownPlan, placedCount[key] ?? 0);
+      if (!inventory) return FREE_BADGES.includes(key) ? { owned: true, left: 1, total: 1 } : { owned: false, left: 0, total: 0 };
+      // contagem real da conta (1 + unidades extras compradas), somando os botons já colocados em TODOS os murais
+      return stockFor(inventory.catalog.find((c) => c.key === key), inventory.placed?.[String(key)] ?? 0);
     },
-    [inventory, ownPlan, placedCount, isMember],
+    [inventory],
   );
-  // mural compartilhado: o estoque é a contagem real da conta, então recarrega ao abrir e a cada botom colocado ou devolvido
-  const badgeSig = isMember ? badges.map((b) => b.id).join(",") : "";
+  // o estoque é a contagem real da conta (todos os murais): recarrega ao abrir e a cada botom colocado ou devolvido
+  const badgeSig = badges.map((b) => b.id).join(",");
   useEffect(() => {
-    if (isMember && unlocked) void reloadInventory();
-  }, [isMember, unlocked, badgeSig, reloadInventory]);
+    if ((isOwner || isMember) && unlocked) void reloadInventory();
+  }, [isOwner, isMember, unlocked, badgeSig, reloadInventory]);
   // salvar a imagem do mural (dono ou participante do compartilhado, com o mural aberto)
   const exporting = useRef(false);
   const exportImage = useCallback(async () => {

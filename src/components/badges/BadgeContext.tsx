@@ -12,13 +12,13 @@ type Ctx = {
   editable: boolean;
   /** botom que está sendo arrastado (some do lugar de origem até soltar) */
   draggingId: string | null;
-  /** unidades que a pessoa ainda pode colocar de cada pin (FREE: 1 por pin; PLUS: ilimitado) */
+  /** unidades que a pessoa ainda pode colocar de cada pin (1 por pin + extras compradas; ninguém tem ilimitado) */
   stock: (key: number) => Stock;
   openStore: () => void;
   begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;
 };
 
-const unlimited = (): Stock => ({ owned: true, left: null, total: null });
+const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
 const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, openStore: () => undefined, begin: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 

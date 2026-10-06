@@ -6,7 +6,7 @@ import { useBadges } from "./BadgeContext";
 /**
  * Barra de baixo (só para o dono, no próprio mural): os pins decorativos que ele tem, numa faixa que rola na horizontal.
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
- * No FREE cada pin tem 1 unidade (esgota ao colocar); no PLUS é ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
+ * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
   const { editable, begin, stock, openStore } = useBadges();
@@ -41,12 +41,12 @@ export function BadgeBar({ className = "" }: { className?: string }) {
                 <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
               </button>
               {out && <span className="pointer-events-none absolute inset-x-0 bottom-0 text-center text-[9px] leading-none font-bold text-white/80 uppercase">Esgotado</span>}
-              {/* quantidade que a pessoa ainda tem para colocar (∞ = ilimitado) */}
+              {/* quantidade que a pessoa ainda tem para colocar */}
               <span
-                aria-label={st.left === null ? "ilimitado" : `${st.left} disponível${st.left === 1 ? "" : "is"}`}
+                aria-label={`${st.left ?? 0} disponível${st.left === 1 ? "" : "is"}`}
                 className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-full px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)] ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}
               >
-                {st.left === null ? "∞" : st.left}
+                {st.left ?? 0}
               </span>
             </li>
           );

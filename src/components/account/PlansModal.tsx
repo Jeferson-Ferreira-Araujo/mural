@@ -21,7 +21,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Mais de um mural (comprando com créditos)", on: true },
     { text: "28 espaços em cada mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
-    { text: "25 Bottons, quantas unidades quiser", on: true },
+    { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
     { text: "Deixar pins específicos em segredo", on: true },

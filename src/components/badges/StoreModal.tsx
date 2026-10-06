@@ -122,7 +122,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     ) : (
                       <>
                         <p className="mt-1 text-[11px] text-[#6b5440]">
-                          {1 + c.extra} unidade(s){plus ? " · ilimitado no seu mural" : ""}
+                          {1 + c.extra} unidade(s)
                         </p>
                         <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
                         <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice * qtyOf(b.key))} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
