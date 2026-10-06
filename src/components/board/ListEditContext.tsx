@@ -11,6 +11,10 @@ export const useListEdit = () => useContext(Ctx);
 /** Marcar/desmarcar um item da lista (mesma regra de quem pode editar). */
 const ToggleCtx = createContext<((id: string, index: number) => void) | null>(null);
 export const useListToggle = () => useContext(ToggleCtx);
+/** true dentro do detalhe do pin: marcar itens só é permitido ali (no mural, o clique no pin abre o detalhe). */
+const DetailCtx = createContext(false);
+export const DetailProvider = DetailCtx.Provider;
+export const useInDetail = () => useContext(DetailCtx);
 
 const MAX_ITEMS = 6;
 

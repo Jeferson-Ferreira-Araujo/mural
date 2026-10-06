@@ -7,6 +7,7 @@ import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
 import { ReportBox } from "../account/PinsModal";
 import { Modal } from "../account/Modal";
+import { DetailProvider } from "./ListEditContext";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 
 const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
@@ -186,7 +187,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
             <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center pt-[1.2em] pb-[2.4em] text-[min(26px,4.3vw)]" key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
-              <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+              <DetailProvider value>
+                <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+              </DetailProvider>
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
               <ChevronRight />
