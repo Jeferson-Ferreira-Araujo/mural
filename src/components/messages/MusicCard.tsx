@@ -38,6 +38,8 @@ export function MusicCard({
   const look = PLAYER_PALETTE[color];
   const dur = parse(duration);
   const embed = embedFor(link);
+  // pins novos não têm nome nem artista: a tela mostra de onde vem a música
+  const label = title || (embed ? (embed.provider === "spotify" ? "Spotify" : "YouTube") : "Minha música");
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
 
@@ -112,8 +114,8 @@ export function MusicCard({
                 />
               </span>
               <span className="min-w-0">
-                <span className="line-clamp-2 block text-[0.78em] leading-[1.1] font-bold break-words">{title}</span>
-                <span className="mt-[0.1em] line-clamp-1 block text-[0.58em] leading-tight break-words text-[#9ec8ff]">{artist}</span>
+                <span className="line-clamp-2 block text-[0.78em] leading-[1.1] font-bold break-words">{label}</span>
+                {artist && <span className="mt-[0.1em] line-clamp-1 block text-[0.58em] leading-tight break-words text-[#9ec8ff]">{artist}</span>}
               </span>
             </div>
 
@@ -175,7 +177,7 @@ export function MusicCard({
         <div className={`relative z-10 mx-auto mt-[0.6em] w-full overflow-hidden rounded-[0.7em] bg-black shadow-[0_0.3em_0.8em_rgba(0,0,0,.45)] ${embed.kind === "video" ? "aspect-video" : "h-[6.4em]"}`}>
           <iframe
             src={embed.src}
-            title={`Tocando: ${title}`}
+            title={`Tocando: ${label}`}
             allow="autoplay; encrypted-media; fullscreen"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
