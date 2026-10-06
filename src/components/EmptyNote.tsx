@@ -7,7 +7,7 @@ export const DEFAULT_WELCOME = "Nenhuma mensagem neste mural. Seja o primeiro a 
 export function EmptyNote({ unlocked, message }: { unlocked: boolean; /** texto personalizado do dono (PLUS) */ message?: string | null }) {
   const text = unlocked ? message?.trim() || DEFAULT_WELCOME : "Responda a pergunta para deixar uma mensagem!";
   return (
-    <div style={{ fontSize: "1.7em" }} className="px-[0.3em]">
+    <div style={{ fontSize: "2.05em" }} className="px-[0.3em]">
     <article
       className="paper-grain shadow-paper pinned relative mx-auto w-[19em] max-w-full bg-[#f5f0e2] px-[1.6em] pt-[2.4em] pb-[1.8em] text-center"
       style={{ ["--rot" as string]: "-2deg", borderRadius: "0.2em" }}
