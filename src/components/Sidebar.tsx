@@ -64,7 +64,8 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* atalhos da conta: ocupam o espaço entre o cartão do mural e os números */}
       {menu && <div className="mt-[1.4em] flex-1">{menu}</div>}
 
-      {siteStats && (
+      {/* os números do site aparecem só na tela inicial de login (sem conta e sem mural aberto) */}
+      {siteStats && !compact && !account && (
         <ul className="mt-[1.4em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
           <Stat
             value={siteStats.murals}
