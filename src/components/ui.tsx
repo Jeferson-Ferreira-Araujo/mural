@@ -32,6 +32,9 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
         <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">
           {children}
         </main>
+        <p className="mt-3 text-center text-xs text-[#fbf3e2]/70">
+          <Link href="/privacidade" className="underline hover:text-[#fbf3e2]">Privacidade</Link> · <Link href="/termos" className="underline hover:text-[#fbf3e2]">Termos de uso</Link>
+        </p>
       </div>
     </div>
   );
