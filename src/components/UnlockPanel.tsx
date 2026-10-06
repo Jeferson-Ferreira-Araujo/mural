@@ -66,11 +66,16 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       className={
         dark
           ? "rounded-[1.1em] border border-white/15 bg-[#1c1510]/70 p-[1.2em] text-[#f6efe2] shadow-[0_0.6em_2em_rgba(0,0,0,.45)] backdrop-blur-md"
-          : "rounded-[1.1em] border border-[#d9c9ad] bg-[#fbf6ea]/90 p-[1.2em] text-[#2f2218] shadow-[0_0.3em_1em_rgba(80,50,20,.15)]"
+          : "p-[0.2em] text-[#2f2218]"
       }
     >
       {title && (
-        <header className={`flex items-start justify-between gap-[0.8em] ${open ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
+        <header className={`flex flex-col gap-[0.5em] ${open ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
+          {plus && (
+            <span className="self-end rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
+              ★ PLUS
+            </span>
+          )}
           <div className="flex min-w-0 items-center gap-[0.7em]">
             {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em]" />}
             <p className="min-w-0">
@@ -78,8 +83,8 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               <span className="block text-[0.95em] leading-tight font-bold break-words">{owner ? `@${owner}` : title}</span>
               {/* contagem de visualizações do perfil (visitantes diferentes que abriram o mural) */}
               {visits !== undefined && (
-                <span className={`mt-[0.3em] flex items-center gap-[0.35em] text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
-                  <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <span className={`mt-[0.3em] flex items-center gap-[0.35em] whitespace-nowrap text-[0.8em] leading-none ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+                  <svg viewBox="0 0 24 24" className="size-[1.1em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -88,11 +93,6 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               )}
             </p>
           </div>
-          {plus && (
-            <span className="shrink-0 rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
-              ★ PLUS
-            </span>
-          )}
         </header>
       )}
       {open ? null : unlocked ? (
