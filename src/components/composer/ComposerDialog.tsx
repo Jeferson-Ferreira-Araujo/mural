@@ -125,15 +125,15 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         if (!draft || !canSend || slot === null) return;
         onSend({ message: withPos(draft), slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
-      className="space-y-5"
+      className={`space-y-5 ${format !== "draw" ? "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-x-8 lg:space-y-0" : ""}`}
     >
       {/* prévia sempre no topo (e visível ao rolar): já mostra um exemplo antes de digitar */}
-      {format !== "draw" && <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3">
-        <div className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-3">
+      {format !== "draw" && <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3 lg:top-0 lg:z-auto lg:col-start-1 lg:row-start-1 lg:m-0 lg:self-start lg:bg-transparent lg:p-0">
+        <div className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-3 lg:flex lg:min-h-[30rem] lg:flex-col lg:justify-center lg:py-8">
           <p className="mb-2 text-center text-[10px] font-semibold tracking-wide text-[#8a7b69] uppercase">Prévia no mural</p>
           {hasPos && <p className="mb-2 text-center text-xs text-[#6b5440]">Toque na silhueta para mudar onde o pin prende.</p>}
           <div className="flex justify-center">
-            <div className="text-[11px]">
+            <div className="text-[11px] lg:text-[17px]">
               {capsule.enabled ? (
                 <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
               ) : null}
@@ -147,6 +147,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         </div>
       </section>}
 
+      <div className="space-y-5 lg:col-start-2 lg:row-start-1">
       <FormFor format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
@@ -156,6 +157,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
+      </div>
     </form>
   );
 }
@@ -163,6 +165,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const [format, setFormat] = useState<MessageType | null>(null);
+  const wide = !!format && format !== "draw"; // com prévia: duas colunas no desktop
 
   useEffect(() => {
     const d = ref.current;
@@ -184,7 +187,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
         if (e.target === e.currentTarget) onClose(); // clique no fundo escuro
       }}
       aria-label="Deixar uma mensagem"
-      className="m-auto max-h-[92dvh] w-[min(94vw,36rem)] overflow-hidden rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60 max-sm:mb-0 max-sm:max-h-[94dvh] max-sm:w-full max-sm:max-w-none max-sm:rounded-b-none"
+      className={`m-auto max-h-[92dvh] w-[min(94vw,36rem)] ${wide ? "lg:w-[min(94vw,62rem)]" : ""} overflow-hidden rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60 max-sm:mb-0 max-sm:max-h-[94dvh] max-sm:w-full max-sm:max-w-none max-sm:rounded-b-none`}
     >
       {open && (
         <div className="flex max-h-[92dvh] flex-col max-sm:max-h-[94dvh]">
