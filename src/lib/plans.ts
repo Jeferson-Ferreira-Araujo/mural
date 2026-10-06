@@ -48,7 +48,9 @@ export const PLANS: Record<PlanId, PlanInfo> = {
 /** Espaços liberados: no FREE são os 15 do plano; no PLUS, todos os do quadro (28). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));
 export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
-export const canUseCapsule = (plan: PlanId) => PLANS[plan].capsule;
+/** Cápsulas PINZ (pin que abre numa data futura): desativadas por enquanto; ligue aqui quando a melhoria for lançada. */
+export const CAPSULE_ENABLED = false;
+export const canUseCapsule = (plan: PlanId) => CAPSULE_ENABLED && PLANS[plan].capsule;
 
 /** Pacotes de créditos (valores iniciais). A compra real ainda não existe. */
 export const CREDIT_PACKS: readonly { credits: number; price: string; note?: string }[] = [
@@ -62,4 +64,4 @@ export const CREDIT_PACKS: readonly { credits: number; price: string; note?: str
 export const NEW_MURAL_COST = 5;
 
 /** Recursos listados nos planos (apenas informativo). */
-export const FULL_EXTRAS = ["Música, Vídeo, Voz e Local", "Cápsulas PINZ", "Futuras personalizações", "Futuras estatísticas avançadas"] as const;
+export const FULL_EXTRAS = ["Música, Vídeo, Voz e Local", ...(CAPSULE_ENABLED ? ["Cápsulas PINZ"] : []), "Futuras personalizações", "Futuras estatísticas avançadas"];

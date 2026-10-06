@@ -1,6 +1,6 @@
 "use client";
 
-import { CREDIT_PACKS, NEW_MURAL_COST, PLANS, type PlanId } from "@/lib/plans";
+import { CAPSULE_ENABLED, CREDIT_PACKS, NEW_MURAL_COST, PLANS, type PlanId } from "@/lib/plans";
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
@@ -41,7 +41,7 @@ function PlanCard({ id, current }: { id: PlanId; current: boolean }) {
       <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
       <p className="text-sm text-[#6b5440]">{full ? "Cobrança em breve" : "Para sempre"}</p>
       <ul className="mt-4 space-y-2 text-sm">
-        {FEATURES[id].map((f) => (
+        {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
           <li key={f.text} className={`flex items-start gap-2 ${f.on ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>
             <span aria-hidden className={`mt-0.5 font-bold ${f.on ? "text-[#2f6a3c]" : "text-[#b0a08a]"}`}>
               {f.on ? "✓" : "–"}
