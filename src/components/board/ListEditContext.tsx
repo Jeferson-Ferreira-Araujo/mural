@@ -16,7 +16,7 @@ const DetailCtx = createContext(false);
 export const DetailProvider = DetailCtx.Provider;
 export const useInDetail = () => useContext(DetailCtx);
 
-const MAX_ITEMS = 6;
+const MAX_ITEMS = 3;
 
 function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListData) => Promise<boolean>; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);

@@ -113,7 +113,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
   const [items, setItems] = useState(["", "", ""]);
   const [font, setFont] = useState<HandId>("caveat");
   const [tape, setTape] = useState<TapeColor>("yellow");
-  const max = 6;
+  const max = 3;
   useEffect(() => {
     const filled = items.map((t) => t.trim()).filter(Boolean);
     onChange(
