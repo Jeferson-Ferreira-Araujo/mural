@@ -8,7 +8,7 @@ const LOREM = "Lorem ipsum dolor sit amet consectetur";
  * O servidor só manda o tipo e o estilo visual (cor, papel, letra...), então o mural parece cheio de cards diferentes.
  */
 function placeholderFor(h: HiddenItem): Message | null {
-  const style = { font: h.font, pin: h.pin, tape: h.tape };
+  const style = { font: h.font, pin: h.pin, tape: h.tape, pos: h.pos };
   switch (h.type) {
     case "postit":
       return { id: h.id, type: "postit", color: h.color ?? "yellow", text: LOREM, ...style };

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
 import { formatInfo, type Message, type MessageType } from "@/lib/types";
+import type { PinPos } from "@/lib/style";
+import { FastenerPicker } from "../messages/fasteners";
 import { MessageView } from "../messages/MessageView";
 import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
@@ -88,6 +90,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
   const [picked, setPicked] = useState<number | null>(null);
+  const [pos, setPos] = useState<PinPos>("left"); // onde a tachinha/fita prende (post-it, folha e foto)
   const choice = fixedSlot ?? picked;
   const slot = choice !== null && choice < capacity && !taken.includes(choice) ? choice : firstFree;
 
@@ -98,6 +101,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
   // voltou para a escolha do formato: zera o rascunho
   useEffect(() => {
+    setPos("left");
     if (!format) {
       setDraft(null);
       setEmpty(true);
@@ -109,7 +113,9 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
 
   const canSend = !!signAs && !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
-  const shown = draft ?? SAMPLE[format];
+  const hasPos = format === "postit" || format === "text" || format === "photo";
+  const withPos = (d: DraftMessage): DraftMessage => (hasPos ? ({ ...d, pos } as DraftMessage) : d);
+  const shown = withPos(draft ?? SAMPLE[format]);
 
   return (
     <form
@@ -117,7 +123,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       onSubmit={(e) => {
         e.preventDefault();
         if (!draft || !canSend || slot === null) return;
-        onSend({ message: draft, slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        onSend({ message: withPos(draft), slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className="space-y-5"
     >
@@ -125,13 +131,16 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       {format !== "draw" && <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3">
         <div className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-3">
           <p className="mb-2 text-center text-[10px] font-semibold tracking-wide text-[#8a7b69] uppercase">Prévia no mural</p>
+          {hasPos && <p className="mb-2 text-center text-xs text-[#6b5440]">Toque na silhueta para mudar onde o pin prende.</p>}
           <div className="flex justify-center">
             <div className="text-[11px]">
               {capsule.enabled ? (
                 <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
-                <MessageView message={{ ...shown, id: "preview", signedBy: signAs ?? undefined } as Message} />
+                <FastenerPicker value={hasPos ? { onPick: setPos } : null}>
+                  <MessageView message={{ ...shown, id: "preview", signedBy: signAs ?? undefined } as Message} />
+                </FastenerPicker>
               </div>
             </div>
           </div>

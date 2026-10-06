@@ -18,13 +18,13 @@ function Content({ m }: { m: Message }) {
   const inDetail = useInDetail();
   switch (m.type) {
     case "postit":
-      return <PostIt color={m.color} text={m.text} font={m.font} pin={m.pin} />;
+      return <PostIt color={m.color} text={m.text} font={m.font} pin={m.pin} pos={m.pos} />;
     case "text":
-      return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} />;
+      return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} pos={m.pos} />;
     case "list":
       return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} onEdit={m.canEdit && editList && inDetail ? () => editList({ id: m.id, title: m.title, items: m.items }) : undefined} onToggle={m.canEdit && toggleList && inDetail ? (i) => toggleList(m.id, i) : undefined} />;
     case "photo":
-      return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} />;
+      return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} pos={m.pos} />;
     case "draw":
       return <DrawingCard caption={m.caption} src={m.src} font={m.font} tape={m.tape} />;
     case "music":

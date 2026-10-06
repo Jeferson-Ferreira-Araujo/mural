@@ -1,4 +1,69 @@
-export { Pin } from "./Pin";
+"use client";
+
+import { createContext, useContext } from "react";
+import { PIN_POSITIONS, POS_LABEL, posOf, type PinColor, type PinPos } from "@/lib/style";
+import { Pin, PIN_LEFT } from "./Pin";
+
+export { Pin };
+
+/** Só na prévia do compositor: mostra silhuetas clicáveis nas outras posições da tachinha/fita. */
+const PickCtx = createContext<{ onPick: (p: PinPos) => void } | null>(null);
+export const FastenerPicker = PickCtx.Provider;
+
+/** Tachinha na posição escolhida (`top` = classe de topo do card). Na prévia, as outras posições viram silhuetas clicáveis. */
+export function PinSlot({ tone, pos, top }: { tone?: PinColor; pos?: PinPos; top: string }) {
+  const pick = useContext(PickCtx);
+  const at = posOf(pos);
+  return (
+    <>
+      <Pin tone={tone} pos={at} className={top} />
+      {pick &&
+        PIN_POSITIONS.filter((p) => p !== at).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => pick.onPick(p)}
+            aria-label={`Prender ${POS_LABEL[p]}`}
+            title={`Prender ${POS_LABEL[p]}`}
+            className={`group absolute z-30 -mt-[0.85em] -mr-[0.55em] -ml-[0.95em] block w-[3em] cursor-pointer ${top}`}
+            style={{ left: `${PIN_LEFT[p]}em` }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/tachinha.webp" alt="" aria-hidden draggable={false} className="block w-full opacity-30 transition-opacity group-hover:opacity-60 group-focus-visible:opacity-60" style={{ filter: "brightness(0)", transform: p === "right" ? "scaleX(-1)" : undefined }} />
+          </button>
+        ))}
+    </>
+  );
+}
+
+const TAPE_AT: Record<PinPos, { cls: string; rotate: number }> = {
+  left: { cls: "left-[1.2em]", rotate: -5 },
+  center: { cls: "left-1/2 -translate-x-1/2", rotate: -3 },
+  right: { cls: "right-[1.2em]", rotate: 5 },
+};
+
+/** Fita na posição escolhida. Sem `pos` (pin de antes da opção existir), usa a posição que o card sempre teve (`fallback`). */
+export function TapeSlot({ tone, pos, fallback, top }: { tone?: string; pos?: PinPos; fallback: PinPos; top: string }) {
+  const pick = useContext(PickCtx);
+  const at = pos === undefined ? fallback : posOf(pos);
+  return (
+    <>
+      <Tape className={`${top} ${TAPE_AT[at].cls}`} rotate={TAPE_AT[at].rotate} tone={tone} />
+      {pick &&
+        PIN_POSITIONS.filter((p) => p !== at).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => pick.onPick(p)}
+            aria-label={`Prender ${POS_LABEL[p]}`}
+            title={`Prender ${POS_LABEL[p]}`}
+            className={`absolute z-30 block h-[1.9em] w-[6em] cursor-pointer rounded-[0.15em] border-[0.12em] border-dashed border-[#2f2218]/35 bg-[#2f2218]/10 transition-colors hover:bg-[#2f2218]/25 focus-visible:bg-[#2f2218]/25 ${top} ${TAPE_AT[p].cls}`}
+            style={{ transform: `rotate(${TAPE_AT[p].rotate}deg)` }}
+          />
+        ))}
+    </>
+  );
+}
 
 
 /** Fita adesiva translúcida. */

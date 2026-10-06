@@ -51,3 +51,10 @@ export const TAPE_COLORS: readonly { id: TapeColor; label: string; swatch: strin
   { id: "black", label: "Preta", swatch: "#34343a", tone: "rgba(48, 48, 54, .8)" },
 ];
 export const tapeOf = (id?: string | null) => TAPE_COLORS.find((c) => c.id === id) ?? TAPE_COLORS[0];
+
+/** Onde a tachinha (ou a fita) prende o card: esquerda (padrão), meio ou direita. */
+export type PinPos = "left" | "center" | "right";
+export const PIN_POSITIONS: readonly PinPos[] = ["left", "center", "right"];
+export const POS_LABEL: Record<PinPos, string> = { left: "na esquerda", center: "no meio", right: "na direita" };
+/** Valor vindo do servidor: qualquer coisa fora da lista vira "esquerda". */
+export const posOf = (p?: string | null): PinPos => (p === "center" || p === "right" ? p : "left");

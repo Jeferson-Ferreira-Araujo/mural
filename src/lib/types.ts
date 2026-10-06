@@ -1,4 +1,4 @@
-import type { HandId, PinColor, TapeColor } from "./style";
+import type { HandId, PinColor, PinPos, TapeColor } from "./style";
 
 export type PostItColor = "yellow" | "pink" | "green" | "orange" | "blue";
 
@@ -15,6 +15,8 @@ type Base = {
   font?: HandId;
   pin?: PinColor;
   tape?: TapeColor;
+  /** Onde a tachinha/fita prende o card (post-it, folha e foto). Sem isso, fica como era antes da opção existir. */
+  pos?: PinPos;
   /** Pin ainda não aprovado pelo dono: só quem enviou o vê, até a aprovação. */
   pending?: boolean;
   /** Visão do dono: este pin está em blur para quem visita (recurso PLUS). */
@@ -64,6 +66,7 @@ export type HiddenItem = {
   font?: HandId;
   pin?: PinColor;
   tape?: TapeColor;
+  pos?: PinPos;
 };
 
 /** O que ocupa um espaço do mural. */
