@@ -22,7 +22,7 @@ function Content({ m }: { m: Message }) {
     case "text":
       return <PaperNote text={m.text} variant={m.variant} font={m.font} tape={m.tape} />;
     case "list":
-      return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} onEdit={m.canEdit && editList ? () => editList({ id: m.id, title: m.title, items: m.items }) : undefined} onToggle={m.canEdit && toggleList && inDetail ? (i) => toggleList(m.id, i) : undefined} />;
+      return <ListCard title={m.title} items={m.items} font={m.font} tape={m.tape} onEdit={m.canEdit && editList && inDetail ? () => editList({ id: m.id, title: m.title, items: m.items }) : undefined} onToggle={m.canEdit && toggleList && inDetail ? (i) => toggleList(m.id, i) : undefined} />;
     case "photo":
       return <PolaroidPhoto caption={m.caption} scene={m.scene} src={m.src} font={m.font} pin={m.pin} tape={m.tape} />;
     case "draw":
