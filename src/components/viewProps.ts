@@ -37,7 +37,7 @@ export type ViewProps = {
   /** Fundo do mural (padrão: cortiça). */
   board?: BoardId;
   /** Para o botão Compartilhar (null = nada para compartilhar). */
-  share: { title: string; path: string } | null;
+  share: { title: string; /** frase do convite */ text?: string; path: string } | null;
   /** Busca, escolha do mural e pergunta de desbloqueio; cada visualização escolhe o tom. */
   panel: (tone: Tone) => ReactNode;
   /** Celular: nenhuma pessoa/mural escolhido ainda → tela inicial com logo grande e busca no meio. */
