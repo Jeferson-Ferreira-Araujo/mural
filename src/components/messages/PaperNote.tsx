@@ -10,20 +10,23 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
   const tone = tape ? tapeOf(tape).tone : undefined;
   if (variant === "letter") {
     return (
+      <div className="relative w-[14em]">
       <article
         aria-label="Texto"
-        className="paper-grain shadow-paper relative w-[14em] min-h-[13.5em] bg-[#f5f0e2] px-[1.3em] pt-[1.9em] pb-[1.3em]"
+        className="paper-grain shadow-paper relative w-full min-h-[13.5em] bg-[#f5f0e2] px-[1.3em] pt-[1.9em] pb-[1.3em]"
         style={{
           clipPath:
             "polygon(0 3%, 6% 0, 13% 2.5%, 21% 0.5%, 30% 3%, 39% 0, 48% 2%, 57% 0.5%, 66% 3%, 75% 0.5%, 84% 2.5%, 92% 0, 100% 2%, 100% 100%, 0 100%)",
           backgroundImage: "linear-gradient(120deg, rgba(0,0,0,.05), transparent 30%, rgba(255,255,255,.4) 60%, rgba(0,0,0,.04))",
         }}
       >
-        <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={-3} tone={tone} />
         <p className="leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.55 * hand.scale}em` }}>
           {text}
         </p>
       </article>
+      {/* fita fora do papel recortado, para não ser cortada junto com a borda rasgada */}
+      <Tape className="top-[-0.5em] left-1/2 -translate-x-1/2" rotate={-3} tone={tone} />
+      </div>
     );
   }
 

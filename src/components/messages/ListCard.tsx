@@ -14,7 +14,7 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title
       className="paper-grain shadow-paper relative w-[14em] bg-[#f7f1e1] px-[1.1em] pt-[1.8em] pb-[1.2em]"
       style={{
         borderRadius: "0.2em",
-        clipPath: "polygon(0 0, 100% 0, 100% 96%, 94% 100%, 86% 97%, 76% 100%, 64% 97.5%, 52% 100%, 40% 97%, 28% 100%, 16% 97.5%, 6% 100%, 0 97%)",
+        clipPath: "polygon(0 -2em, 100% -2em, 100% 96%, 94% 100%, 86% 97%, 76% 100%, 64% 97.5%, 52% 100%, 40% 97%, 28% 100%, 16% 97.5%, 6% 100%, 0 97%)",
       }}
     >
       <Tape className="top-[-0.5em] right-[1.5em]" rotate={6} tone={tape ? tapeOf(tape).tone : undefined} />
