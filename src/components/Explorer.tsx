@@ -289,10 +289,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     [inventory],
   );
   // o estoque é a contagem real da conta (todos os murais): recarrega ao abrir e a cada botom colocado ou devolvido
-  const badgeSig = badges.map((b) => b.id).join(",");
   useEffect(() => {
     if ((isOwner || isMember) && unlocked) void reloadInventory();
-  }, [isOwner, isMember, unlocked, badgeSig, reloadInventory]);
+  }, [isOwner, isMember, unlocked, reloadInventory]);
   // salvar a imagem do mural (dono ou participante do compartilhado, com o mural aberto)
   const exporting = useRef(false);
   const exportImage = useCallback(async () => {
@@ -626,7 +625,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
         <ListEditProvider onSave={saveList}>
-        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onOpenStore={() => setStoreOpen(true)}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}

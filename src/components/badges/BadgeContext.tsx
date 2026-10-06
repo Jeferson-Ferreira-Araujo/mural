@@ -107,6 +107,7 @@ export function BadgeProvider({
   notify,
   stock = unlimited,
   acquiredAt = () => undefined,
+  onSynced,
   onOpenStore = () => undefined,
   children,
 }: {
@@ -117,13 +118,15 @@ export function BadgeProvider({
   notify: (msg: string) => void;
   stock?: (key: number) => Stock;
   acquiredAt?: (key: number) => number | undefined;
+  /** chamado depois que o servidor confirmou (ou recusou) colocar/tirar um botton: hora de reler o estoque */
+  onSynced?: () => void;
   onOpenStore?: () => void;
   children: ReactNode;
 }) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  const live = useRef({ muralId, editable, badges, notify, stock });
-  live.current = { muralId, editable, badges, notify, stock };
+  const live = useRef({ muralId, editable, badges, notify, stock, onSynced });
+  live.current = { muralId, editable, badges, notify, stock, onSynced };
   const cleanup = useRef<(() => void) | null>(null);
 
   const begin = useCallback(
@@ -224,6 +227,7 @@ export function BadgeProvider({
                 setBadges(() => prev);
                 notify("Não foi possível tirar o botton agora.");
               }
+              live.current.onSynced?.(); // só agora o servidor já contou a devolução: atualiza o número da barra
             });
           } else sendBack(at);
           return;
@@ -258,8 +262,9 @@ export function BadgeProvider({
         void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((res) => {
           if ("error" in res) {
             setBadges((l) => l.filter((b) => b.id !== tmp));
-            notify(res.error === "sold_out" ? "Esgotado: compre mais unidades deste botton na loja." : res.error === "not_owned" ? "Este botton é da loja. Libere com créditos para usar." : "Não foi possível colocar o botton agora.");
+            notify(res.error === "sold_out" ? "Sem unidades: compre mais deste botton na loja ou tire um do mural." : res.error === "not_owned" ? "Este botton é da loja. Libere com créditos para usar." : "Não foi possível colocar o botton agora.");
           } else setBadges((l) => l.map((b) => (b.id === tmp ? { ...b, id: res.id } : b)));
+          live.current.onSynced?.();
         });
       }
 
