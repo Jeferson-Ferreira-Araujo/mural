@@ -520,7 +520,6 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               owner={selected.nickname}
               avatar={selected.avatar}
               plus={selected.plan === "full"}
-              onSwap={logged ? () => setSearchOpen(true) : clear}
               question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}

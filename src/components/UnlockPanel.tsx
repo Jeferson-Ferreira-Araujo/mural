@@ -11,15 +11,14 @@ type Props = {
   /** id do campo de resposta (usado para focar a partir de outros botões). */
   inputId: string;
   tone?: "light" | "dark";
-  /** cabeçalho do cartão: o mural escolhido, de quem é e como trocar */
+  /** cabeçalho do cartão: o mural escolhido e de quem é */
   title?: string;
   owner?: string;
   /** foto do dono */
   avatar?: string | null;
-  onSwap?: () => void;
   /** mural público (sem pergunta): só o cabeçalho */
   open?: boolean;
-  /** dono com PINZ PLUS: borda dourada na foto */
+  /** dono com PINZ PLUS: borda dourada na foto e selo PLUS no cabeçalho */
   plus?: boolean;
   /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
   password?: boolean;
@@ -35,7 +34,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, onSwap, open = false, password = false, plus = false }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -77,10 +76,10 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               {owner && <span className={`block text-[0.8em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>de {owner}</span>}
             </p>
           </div>
-          {onSwap && (
-            <button type="button" onClick={onSwap} className={`shrink-0 cursor-pointer text-[0.8em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
-              Trocar
-            </button>
+          {plus && (
+            <span className="shrink-0 rounded-full bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
+              ★ PLUS
+            </span>
           )}
         </header>
       )}
