@@ -109,6 +109,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
 
   const item = index !== null ? items[index] : null;
   // só o dono do mural (mod existe só para ele) compartilha, e só pin à vista: nada de segredo, nada aguardando aprovação, nada fechado
+  // sempre que o segredo liga/desliga num pin, volta ao estado borrado (quem acabou de habilitar já vê como fica)
+  const secretOn = !!item && !isSealed(item) && !isHidden(item) && !!item.ownerHidden;
+  useEffect(() => {
+    setShowSecret(false);
+  }, [item?.id, secretOn]);
   const shareable = !!mod && !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
 
   async function sharePin() {
@@ -217,7 +222,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       <Trash />
                       <span className="hidden sm:inline">Excluir PIN</span>
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.setSecret(item.id, !item.ownerHidden), false)} className={`${ghost} flex-1`}>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => {
+                      setShowSecret(false);
+                      void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
+                    }} className={`${ghost} flex-1`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         {mod.plan !== "full" || !item.ownerHidden ? <EyeClosed /> : <EyeOpen />}
                         {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
