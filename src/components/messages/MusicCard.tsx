@@ -232,7 +232,8 @@ export function MusicCard({
       </div>
 
       {embed && open && (
-        <div className={`relative z-10 mx-auto mt-[0.6em] w-full overflow-hidden rounded-[0.7em] bg-black shadow-[0_0.3em_0.8em_rgba(0,0,0,.45)] ${embed.kind === "video" ? "aspect-video" : "h-[6.4em]"}`}>
+        // o player oficial toca "por trás": carregado, mas fora da vista; quem aparece e comanda é o aparelho
+        <div aria-hidden className={`pointer-events-none fixed top-0 -left-[9999px] opacity-0 ${embed.kind === "video" ? "h-[180px] w-[320px]" : "h-[152px] w-[352px]"}`}>
           <iframe
             ref={frame}
             onLoad={() => embed.provider === "youtube" && send({ event: "listening", id: 1, channel: "widget" })}
