@@ -465,7 +465,7 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
         const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
         const w = BADGE_EM * em * sc * (MAX_SCALE / 100);
         const h = w / (badgeDef(keyRef.current ?? 0)?.ratio ?? 1);
-        next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round(Math.hypot(w, h) / 2) };
+        next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round((Math.hypot(w, h) / 2) * 0.82) };
       }
       setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.R === next.R ? p : next));
       raf = requestAnimationFrame(tick);
@@ -484,18 +484,19 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
   const W = 40;
   const TRACK = 108;
   const Hh = 164;
-  const onRight = g.cx + g.R + 8 + W <= vw - 4;
-  const pLeft = onRight ? g.cx + g.R + 8 : Math.max(4, g.cx - g.R - 8 - W);
+  // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
+  const SW = 140;
+  const off = Math.max(g.R + 8, SW / 2 + 8);
+  const onRight = g.cx + off + W <= vw - 4;
+  const pLeft = onRight ? g.cx + off : Math.max(4, g.cx - off - W);
   const pTop = Math.min(Math.max(g.cy - Hh / 2, 8), vh - Hh - 8);
 
-  // barra de inclinação (abaixo do botton, ao lado da pílula; em cima se não couber embaixo)
-  const SW = 196;
-  const SH = 62;
-  const rawLeft = onRight ? pLeft - 6 - SW : pLeft + W + 6;
-  const beside = rawLeft >= 4 && rawLeft + SW <= vw - 4; // cabe ao lado da pílula, sem sobrepor?
-  const sLeft = Math.min(Math.max(rawLeft, 4), vw - SW - 4);
-  const under = g.cy + g.R + 8;
-  const lowest = beside ? under : Math.max(under, pTop + Hh + 6); // sem espaço ao lado: vai para baixo da pílula
+  // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
+  const SH = 50;
+  const sLeft = Math.min(Math.max(g.cx - SW / 2, 4), vw - SW - 4);
+  const under = g.cy + g.R + 6;
+  const touchesPill = sLeft < pLeft + W && sLeft + SW > pLeft && under < pTop + Hh && under + SH > pTop;
+  const lowest = touchesPill ? pTop + Hh + 6 : under;
   const sTop = lowest + SH <= vh - 8 ? lowest : Math.max(8, Math.min(g.cy - g.R, pTop) - 6 - SH);
 
   return createPortal(
@@ -504,15 +505,15 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
         data-badge-controls
         onPointerEnter={() => onKeep(id)}
         onPointerLeave={() => onKeep(null)}
-        className="fixed z-[350] flex touch-none flex-col items-center rounded-2xl bg-[#17110c]/92 px-1 pt-1.5 pb-1 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+        className="fixed z-[350] flex touch-none flex-col items-center rounded-xl bg-[#17110c]/92 px-1.5 pt-1 pb-0.5 text-white shadow-[0_0.25rem_0.8rem_rgba(0,0,0,.5)] backdrop-blur"
         style={{ left: sLeft, top: sTop, width: SW }}
       >
         <div className="flex w-full items-center justify-center gap-1">
-          <span aria-hidden className="text-base leading-none opacity-80" title="Anti-horário">
+          <span aria-hidden className="text-sm leading-none opacity-80" title="Anti-horário">
             ↺
           </span>
-          <TouchSlider value={deg} min={-MAX_TILT} max={MAX_TILT} onChange={(v) => onTilt(id, v)} onEnd={() => onTiltEnd(id)} length={SW - 64} label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário" />
-          <span aria-hidden className="text-base leading-none opacity-80" title="Horário">
+          <TouchSlider value={deg} min={-MAX_TILT} max={MAX_TILT} onChange={(v) => onTilt(id, v)} onEnd={() => onTiltEnd(id)} length={SW - 50} label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário" />
+          <span aria-hidden className="text-sm leading-none opacity-80" title="Horário">
             ↻
           </span>
         </div>
@@ -524,7 +525,7 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
             onTilt(id, 0);
             window.setTimeout(() => onTiltEnd(id), 0);
           }}
-          className="-mt-0.5 cursor-pointer px-3 py-0.5 text-[11px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+          className="-mt-1 cursor-pointer px-3 pt-0 pb-0.5 text-[10px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
         >
           Restaurar
         </button>

@@ -47,7 +47,7 @@ export function TouchSlider({
     onChange(Math.max(min, Math.min(max, value + (up ? step : -step))));
   };
 
-  const thumb = 22;
+  const thumb = vertical ? 22 : 18;
   return (
     <div
       ref={box}
@@ -84,7 +84,7 @@ export function TouchSlider({
       onKeyDown={key}
       onKeyUp={(e) => (e.key.startsWith("Arrow") ? onEnd() : undefined)}
       className="relative cursor-pointer touch-none outline-none select-none focus-visible:ring-2 focus-visible:ring-[#f6c93f]/70"
-      style={vertical ? { width: 36, height: length } : { width: length, height: 32 }}
+      style={vertical ? { width: 36, height: length } : { width: length, height: 26 }}
     >
       {/* trilha */}
       <span
