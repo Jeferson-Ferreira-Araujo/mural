@@ -2,10 +2,10 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, MAX_TILT, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeRotation, setBadgeSize, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, badgeDef, badgeSrc, BADGE_EM, DEFAULT_SCALE, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeRotation, setBadgeScale, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 
-export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** 1 ou 2: o tamanho do botton que está sendo arrastado */ size?: number };
+export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** tamanho em % do botton que está sendo arrastado */ scale?: number };
 
 type Ctx = {
   badges: PlacedBadge[];
@@ -167,7 +167,7 @@ export function BadgeProvider({
           const lr = layer.getBoundingClientRect();
           const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
           const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const w = BADGE_EM * em * scale * (src.kind === "placed" ? (src.size ?? 1) : 1);
+          const w = BADGE_EM * em * scale * (src.kind === "placed" ? (src.scale ?? 100) / 100 : 1);
           size = { w, h: w / (def?.ratio ?? 1) };
         }
         origin = sourceCenter();
@@ -345,32 +345,49 @@ export function BadgeProvider({
   }, [setBadges]);
   // a inclinação já salva de cada botton (referência para o caso de falhar ao salvar)
   useEffect(() => {
-    for (const b of badges) tiltSaved.current[b.id] ??= b.rotation ?? 0;
+    for (const b of badges) {
+      tiltSaved.current[b.id] ??= b.rotation ?? 0;
+      scaleSaved.current[b.id] ??= b.scale ?? DEFAULT_SCALE;
+    }
   }, [badges]);
 
-  /** Dobra (dir = 1) ou volta ao tamanho padrão (dir = -1). Para aumentar, o botton maior tem que caber no lugar. */
-  const resize = useCallback((id: string, dir: 1 | -1) => {
+  /** Muda o tamanho na tela enquanto a barra vertical é arrastada (ainda sem salvar). Perto do meio, "gruda" no tamanho padrão. */
+  const rescale = useCallback((id: string, pct: number) => {
+    const snapped = Math.abs(pct - DEFAULT_SCALE) <= 4 ? DEFAULT_SCALE : pct;
+    const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(snapped)));
+    setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: v } : x)));
+  }, [setBadges]);
+  const scaleSaved = useRef<Record<string, number>>({});
+  /** Ao soltar a barra: se ficou maior, tem que caber no lugar; grava o tamanho (se falhar, volta ao anterior). */
+  const commitScale = useCallback((id: string) => {
     const { badges: cur, notify } = live.current;
     const b = cur.find((x) => x.id === id);
     if (!b || id.startsWith("tmp-")) return;
-    const now = b.size ?? 1;
-    const next = (dir > 0 ? 2 : 1) as 1 | 2;
-    if (next === now) return;
+    const before = scaleSaved.current[id] ?? DEFAULT_SCALE;
+    const pct = b.scale ?? DEFAULT_SCALE;
+    if (pct === before) return;
+    const back = () => setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: before } : x)));
     let nx = b.x;
     let ny = b.y;
-    if (next === 2) {
+    if (pct > before) {
       const el = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null; // a tela tem duas cópias do mural (desktop e celular): vale a visível
       const layer = visibleOne("[data-badge-layer]");
       if (el && layer) {
         const lr = layer.getBoundingClientRect();
         const r = el.getBoundingClientRect();
         const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
-        const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-        const w = BADGE_EM * em * scale * 2;
+        const sc = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
+        const w = (BADGE_EM * em * sc * pct) / 100;
         const h = w / (badgeDef(b.key)?.ratio ?? 1);
         const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el);
-        if (drop.kind === "physical") return notify("Não há espaço para aumentar: o botton cobriria um pinz.");
-        if (drop.kind === "badge") return notify("Não há espaço para aumentar: ele encostaria em outro botton.");
+        if (drop.kind === "physical") {
+          back();
+          return notify("Não há espaço para aumentar: o botton cobriria um pinz.");
+        }
+        if (drop.kind === "badge") {
+          back();
+          return notify("Não há espaço para aumentar: ele encostaria em outro botton.");
+        }
         if (drop.kind === "ok") {
           nx = drop.x;
           ny = drop.y;
@@ -378,12 +395,15 @@ export function BadgeProvider({
       }
     }
     const sb = getBrowserSupabase();
-    setBadges((l) => l.map((x) => (x.id === id ? { ...x, size: next, x: nx, y: ny } : x)));
-    void setBadgeSize(sb, id, next).then((ok) => {
-      if (!ok) {
-        setBadges((l) => l.map((x) => (x.id === id ? { ...x, size: now, x: b.x, y: b.y } : x)));
+    if (nx !== b.x || ny !== b.y) setBadges((l) => l.map((x) => (x.id === id ? { ...x, x: nx, y: ny } : x)));
+    void setBadgeScale(sb, id, pct).then((ok) => {
+      if (ok) {
+        scaleSaved.current[id] = pct;
+        if (Math.abs(nx - b.x) > 0.05 || Math.abs(ny - b.y) > 0.05) void moveBadge(sb, id, nx, ny); // só grava a posição se ela mudou de verdade
+      } else {
+        back();
         notify("Não foi possível mudar o tamanho agora.");
-      } else if (Math.abs(nx - b.x) > 0.05 || Math.abs(ny - b.y) > 0.05) void moveBadge(sb, id, nx, ny); // só grava a posição se ela mudou de verdade
+      }
     });
   }, [setBadges]);
 
@@ -395,7 +415,7 @@ export function BadgeProvider({
   return (
     <BadgeCtx.Provider value={value}>
       {children}
-      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onResize={resize} onRemove={removeById} onKeep={hover} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -424,7 +444,7 @@ export function BadgeProvider({
  * Controles do botton (+, −, lixeira): uma pílula de tamanho fixo ao lado dele, por cima do mural (não encolhe com o zoom do celular).
  * Segue o botton enquanto o quadro é arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onResize: (id: string, dir: 1 | -1) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const [box, setBox] = useState<{ l: number; t: number; r: number; b: number } | null>(null);
   useEffect(() => {
     let raf = 0;
@@ -451,9 +471,9 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
   }, [id]);
   if (!box || !badge || typeof document === "undefined") return null;
 
-  const size = badge.size ?? 1;
+  const scale = badge.scale ?? DEFAULT_SCALE;
   const W = 32;
-  const Hh = 88;
+  const Hh = 128;
   const left = box.r + 8 + W > window.innerWidth ? box.l - 8 - W : box.r + 8;
   const top = Math.min(Math.max((box.t + box.b) / 2 - Hh / 2, 8), window.innerHeight - Hh - 8);
   const btn = "grid size-[1.65rem] cursor-pointer place-items-center rounded-full text-base leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
@@ -518,12 +538,25 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
       className="fixed z-[350] flex flex-col items-center gap-px rounded-full bg-[#17110c]/90 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
       style={{ left, top, width: W }}
     >
-      <button type="button" disabled={size >= 2} onClick={() => onResize(id, 1)} aria-label="Aumentar o botton" title="Aumentar" className={btn}>
-        +
-      </button>
-      <button type="button" disabled={size <= 1} onClick={() => onResize(id, -1)} aria-label="Diminuir o botton" title="Diminuir" className={btn}>
-        −
-      </button>
+      {/* tamanho: barra vertical (em cima maior, embaixo menor; o meio é o tamanho padrão) */}
+      <span aria-hidden className="mt-0.5 size-2.5 rounded-full bg-white/80" title="Maior" />
+      <div className="relative h-[68px] w-6">
+        <input
+          type="range"
+          min={MIN_SCALE}
+          max={MAX_SCALE}
+          step={1}
+          value={scale}
+          onChange={(e) => onScale(id, Number(e.target.value))}
+          onPointerUp={() => onScaleEnd(id)}
+          onKeyUp={() => onScaleEnd(id)}
+          onBlur={() => onScaleEnd(id)}
+          aria-label="Tamanho do botton: para cima maior, para baixo menor"
+          aria-orientation="vertical"
+          className="absolute top-1/2 left-1/2 h-6 w-[68px] -translate-x-1/2 -translate-y-1/2 -rotate-90 cursor-pointer accent-[#f6c93f]"
+        />
+      </div>
+      <span aria-hidden className="mb-0.5 size-1.5 rounded-full bg-white/80" title="Menor" />
       <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className={btn}>
         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />

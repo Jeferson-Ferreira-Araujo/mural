@@ -13,8 +13,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   beginRef.current = begin;
   const selectRef = useRef(select);
   selectRef.current = select;
-  const sizeRef = useRef<number>(b.size ?? 1);
-  sizeRef.current = b.size ?? 1;
+  const scaleRef = useRef<number>(b.scale ?? 100);
+  scaleRef.current = b.scale ?? 100;
   const lastType = useRef("mouse");
   const tapStart = useRef<{ x: number; y: number; t: number } | null>(null);
 
@@ -27,7 +27,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       lastType.current = ev.pointerType;
       tapStart.current = { x: ev.clientX, y: ev.clientY, t: performance.now() };
       selectRef.current(null); // começou um arraste: fecha os controles
-      beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, size: sizeRef.current }, el);
+      beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, scale: scaleRef.current }, el);
     };
     // no celular, um toque (sem arrastar) mostra os controles +, − e lixeira. Reage ao levantar o dedo (o quadro atrasa o "clique" 0,3 s)
     const up = (ev: PointerEvent) => {
@@ -56,7 +56,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       style={{
         left: `${b.x}%`,
         top: `${b.y}%`,
-        width: `${BADGE_EM * (b.size === 2 ? 2 : 1)}em`,
+        width: `${(BADGE_EM * (b.scale ?? 100)) / 100}em`,
         aspectRatio: def.ratio,
         transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`,
         opacity: draggingId === b.id ? 0.25 : 1,

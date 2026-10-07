@@ -102,7 +102,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** 1 = padrão (pequeno), 2 = o dobro */ size?: 1 | 2; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+export type PlacedBadge = { id: string; key: number; /** tamanho em % do padrão: 50 a 150 (100 = o tamanho de sempre, no meio da barra) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -125,11 +125,15 @@ export async function moveBadge(sb: SupabaseClient, id: string, x: number, y: nu
   return !error;
 }
 
-/** Troca o tamanho do botton já colocado (1 = padrão, 2 = o dobro). */
-export async function setBadgeSize(sb: SupabaseClient, id: string, size: 1 | 2): Promise<boolean> {
-  const { error } = await sb.rpc("set_badge_size", { p_id: id, p_size: size });
+/** Salva o tamanho do botton já colocado, em % do padrão (50 a 150). */
+export async function setBadgeScale(sb: SupabaseClient, id: string, pct: number): Promise<boolean> {
+  const { error } = await sb.rpc("set_badge_scale", { p_id: id, p_scale: Math.round(pct) });
   return !error;
 }
+
+export const MIN_SCALE = 50;
+export const MAX_SCALE = 150;
+export const DEFAULT_SCALE = 100; // o meio entre o menor e o maior
 
 /** Salva a inclinação do botton (graus; negativo = anti-horário). */
 export async function setBadgeRotation(sb: SupabaseClient, id: string, deg: number): Promise<boolean> {
