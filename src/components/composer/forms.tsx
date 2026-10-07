@@ -8,6 +8,7 @@ import { Field, inputClass } from "../ui";
 import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
 import { embedFor } from "@/lib/embed";
+import { fetchMusicMeta, type MusicMeta } from "@/lib/music";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 
@@ -235,12 +236,34 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   const [link, setLink] = useState("");
   const [color, setColor] = useState<PlayerColor>("black");
 
-  // link, cor do aparelho e mensagem opcional: sem nome nem artista
+  // link, cor do aparelho e mensagem opcional; o nome, o artista e a duração vêm sozinhos do Spotify/YouTube
   const linkOk = /^https?:\/\/\S+$/i.test(link.trim());
+  const [meta, setMeta] = useState<MusicMeta | null>(null);
+  const [looking, setLooking] = useState(false);
+  useEffect(() => {
+    setMeta(null);
+    if (!linkOk || !embedFor(link.trim())) return setLooking(false);
+    let cancelled = false;
+    setLooking(true);
+    const t = setTimeout(async () => {
+      const m = await fetchMusicMeta(link.trim());
+      if (cancelled) return;
+      setMeta(m);
+      setLooking(false);
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [link, linkOk]);
   useEffect(
     // sempre manda um rascunho (com a cor escolhida) para a prévia acompanhar; "empty" = ainda falta o link
-    () => onChange({ type: "music", title: "", artist: "", caption: caption.trim(), ...(linkOk ? { link: link.trim() } : {}), playerColor: color }, { empty: !linkOk }),
-    [caption, link, linkOk, color, onChange],
+    () =>
+      onChange(
+        { type: "music", title: meta?.title ?? "", artist: meta?.artist ?? "", caption: caption.trim(), ...(meta?.duration ? { duration: meta.duration } : {}), ...(linkOk ? { link: link.trim() } : {}), playerColor: color },
+        { empty: !linkOk },
+      ),
+    [caption, link, linkOk, color, meta, onChange],
   );
   return (
     <div className="space-y-4">
@@ -248,7 +271,9 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
       <Field label="Mensagem (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
       </Field>
-      <Field label="Link da música" error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint="Spotify e YouTube tocam aqui mesmo no mural; outros links abrem em outra aba.">
+      <Field label="Link da música" error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint={
+          looking ? "Buscando o nome e a duração…" : meta ? `Encontrada: ${meta.title}${meta.artist ? ` · ${meta.artist}` : ""}${meta.duration ? ` · ${meta.duration}` : ""}` : "Spotify e YouTube tocam aqui mesmo no mural (com nome e duração); outros links abrem em outra aba."
+        }>
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
       </Field>
     </div>

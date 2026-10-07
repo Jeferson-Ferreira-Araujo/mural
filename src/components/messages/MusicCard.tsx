@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PlayerColor } from "@/lib/types";
 import { embedFor } from "@/lib/embed";
 import { CaptionNote } from "./CaptionNote";
@@ -36,12 +36,53 @@ export function MusicCard({
   color?: PlayerColor;
 }) {
   const look = PLAYER_PALETTE[color];
-  const dur = parse(duration);
   const embed = embedFor(link);
   // pins novos não têm nome nem artista: a tela mostra de onde vem a música
   const label = title || (embed ? (embed.provider === "spotify" ? "Spotify" : "YouTube") : "Minha música");
-  const [playing, setPlaying] = useState(false);
+  const [open, setOpen] = useState(false); // player embutido aberto
+  const [playing, setPlaying] = useState(false); // tocando de verdade (vem do próprio player)
   const [cur, setCur] = useState(0);
+  const [realDur, setRealDur] = useState(0); // duração exata, informada pelo player
+  const dur = realDur || parse(duration);
+  const frame = useRef<HTMLIFrameElement>(null);
+  const wantPlay = useRef(false);
+  const send = useCallback((m: unknown) => frame.current?.contentWindow?.postMessage(typeof m === "string" ? m : JSON.stringify(m), "*"), []);
+
+  // o player embutido avisa quando toca, pausa ou termina (e a posição/duração exatas): o botão e o tempo acompanham
+  useEffect(() => {
+    if (!embed || !open) return;
+    const onMsg = (e: MessageEvent) => {
+      if (e.source !== frame.current?.contentWindow) return;
+      let d: { type?: string; payload?: { isPaused?: boolean; position?: number; duration?: number }; event?: string; info?: unknown } | null = null;
+      try {
+        d = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      } catch {
+        return;
+      }
+      if (!d) return;
+      if (embed.provider === "spotify") {
+        if (d.type === "ready") {
+          send({ command: "load_complete_ack" });
+          if (wantPlay.current) send({ command: "play" });
+        }
+        if (d.type === "playback_update" && d.payload) {
+          setPlaying(!d.payload.isPaused);
+          setCur((d.payload.position ?? 0) / 1000);
+          if (d.payload.duration) setRealDur(d.payload.duration / 1000);
+        }
+      } else {
+        const info = d.info as { playerState?: number; currentTime?: number; duration?: number } | number | undefined;
+        if (d.event === "onStateChange" && typeof info === "number") setPlaying(info === 1 || info === 3);
+        if (d.event === "infoDelivery" && info && typeof info === "object") {
+          if (typeof info.playerState === "number") setPlaying(info.playerState === 1 || info.playerState === 3);
+          if (typeof info.currentTime === "number") setCur(info.currentTime);
+          if (info.duration) setRealDur(info.duration);
+        }
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [embed, open, send]);
 
   // sem link: simula a reprodução (tempo e vinil)
   useEffect(() => {
@@ -59,8 +100,18 @@ export function MusicCard({
   }, [link, playing, dur]);
 
   function onPlay() {
-    if (embed) setPlaying((p) => !p); // abre/fecha o player embutido (fechar para a música)
-    else if (link) window.open(link, "_blank", "noopener,noreferrer");
+    if (embed) {
+      if (!open) {
+        wantPlay.current = true; // abre o player; quando ele avisar que está pronto, manda tocar
+        setOpen(true);
+        return;
+      }
+      // player já aberto: o botão alterna tocar/pausar
+      if (embed.provider === "spotify") send({ command: "toggle" });
+      else send({ event: "command", func: playing ? "pauseVideo" : "playVideo", args: "" });
+      return;
+    }
+    if (link) window.open(link, "_blank", "noopener,noreferrer");
     else setPlaying((p) => !p);
   }
 
@@ -155,7 +206,7 @@ export function MusicCard({
           <button
             type="button"
             onClick={onPlay}
-            aria-label={embed ? (playing ? "Parar a música" : "Ouvir a música aqui") : link ? "Ouvir a música (abre o link)" : playing ? "Pausar" : "Reproduzir"}
+            aria-label={embed ? (playing ? "Pausar a música" : "Ouvir a música aqui") : link ? "Ouvir a música (abre o link)" : playing ? "Pausar" : "Reproduzir"}
             className="absolute top-1/2 left-1/2 grid size-[2.3em] -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full transition active:scale-95 active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f4c542]"
             style={{ color: look.icon, background: keyBg, boxShadow: `${key}, 0 0 0 0.1em rgba(0,0,0,.28)` }}
           >
@@ -173,9 +224,11 @@ export function MusicCard({
         </div>
       </div>
 
-      {embed && playing && (
+      {embed && open && (
         <div className={`relative z-10 mx-auto mt-[0.6em] w-full overflow-hidden rounded-[0.7em] bg-black shadow-[0_0.3em_0.8em_rgba(0,0,0,.45)] ${embed.kind === "video" ? "aspect-video" : "h-[6.4em]"}`}>
           <iframe
+            ref={frame}
+            onLoad={() => embed.provider === "youtube" && send({ event: "listening", id: 1, channel: "widget" })}
             src={embed.src}
             title={`Tocando: ${label}`}
             allow="autoplay; encrypted-media; fullscreen"
