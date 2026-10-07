@@ -69,7 +69,7 @@ function Coin({ className = "size-6" }: { className?: string }) {
 }
 
 /** Tamanho da moeda de cada pacote: quanto mais créditos, maior (e mais moedas). */
-const COIN_SIZE = ["size-10", "size-12", "size-14", "size-16"];
+const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
 
 /**
  * Loja do Pinz. Os pacotes de créditos ficam sempre à vista, no topo (a compra é no Mercado Pago).
@@ -171,17 +171,22 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </header>
         <ul className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4 sm:p-4">
           {CREDIT_PACKS.map((p, i) => (
-            <li key={p.id} className="relative flex flex-col items-center rounded-2xl border border-[#e8d9b0] bg-white px-3 pt-4 pb-3 text-center shadow-[0_0.2rem_0.6rem_rgba(120,80,0,.08)]">
+            <li key={p.id} className="relative flex flex-col items-center rounded-2xl border border-[#e8d9b0] bg-white px-3 pt-5 pb-3 text-center shadow-[0_0.2rem_0.6rem_rgba(120,80,0,.08)]">
               {p.note && <span className="absolute -top-2.5 rounded-full bg-[#2f9e5a] px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">{p.note}</span>}
-              <div className="grid h-16 place-items-center">
-                <Coin className={COIN_SIZE[i] ?? "size-12"} />
+              {/* moeda e quantidade lado a lado; preço e botão lado a lado: cartão baixo */}
+              <div className="flex items-center justify-center gap-2.5">
+                <Coin className={COIN_SIZE[i] ?? "size-10"} />
+                <p className="text-left leading-none">
+                  <span className="font-title block text-3xl font-semibold">{p.credits}</span>
+                  <span className="text-xs text-[#8a7b69]">créditos</span>
+                </p>
               </div>
-              <p className="font-title mt-1 text-3xl leading-none font-semibold">{p.credits}</p>
-              <p className="text-xs text-[#8a7b69]">créditos</p>
-              <p className="mt-3 text-xl font-bold">{p.price}</p>
-              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="mt-3 w-full cursor-pointer rounded-xl bg-[#f6c93f] px-3 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
-                {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
-              </button>
+              <div className="mt-3 flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2">
+                <p className="text-lg font-bold whitespace-nowrap">{p.price}</p>
+                <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="grow cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
+                  {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
+                </button>
+              </div>
             </li>
           ))}
         </ul>
