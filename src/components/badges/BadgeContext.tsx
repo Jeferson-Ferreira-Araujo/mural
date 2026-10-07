@@ -1,10 +1,11 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, moveBadge, PHYSICAL_TYPES, removeBadge, type PlacedBadge, type Stock } from "@/lib/badges";
+import { createPortal } from "react-dom";
+import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeSize, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 
-export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number };
+export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** 1 ou 2: o tamanho do botton que está sendo arrastado */ size?: number };
 
 type Ctx = {
   badges: PlacedBadge[];
@@ -18,10 +19,14 @@ type Ctx = {
   acquiredAt: (key: number) => number | undefined;
   openStore: () => void;
   begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;
+  /** mouse sobre um botton (null = saiu): mostra os controles +, − e lixeira ao lado dele */
+  hover: (id: string | null) => void;
+  /** toque no botton (celular): mostra os controles até tocar em outro lugar */
+  select: (id: string | null) => void;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
@@ -125,6 +130,9 @@ export function BadgeProvider({
 }) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [selId, setSelId] = useState<string | null>(null);
+  const hoverTimer = useRef<number | null>(null);
   const live = useRef({ muralId, editable, badges, notify, stock, onSynced });
   live.current = { muralId, editable, badges, notify, stock, onSynced };
   const cleanup = useRef<(() => void) | null>(null);
@@ -159,7 +167,7 @@ export function BadgeProvider({
           const lr = layer.getBoundingClientRect();
           const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
           const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const w = BADGE_EM * em * scale;
+          const w = BADGE_EM * em * scale * (src.kind === "placed" ? (src.size ?? 1) : 1);
           size = { w, h: w / (def?.ratio ?? 1) };
         }
         origin = sourceCenter();
@@ -279,13 +287,88 @@ export function BadgeProvider({
 
   useEffect(() => () => cleanup.current?.(), []);
 
+  const hover = useCallback((id: string | null) => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
+    if (id) setHoverId(id);
+    else hoverTimer.current = window.setTimeout(() => setHoverId(null), 180); // dá tempo de o mouse chegar nos controles
+  }, []);
+  const select = useCallback((id: string | null) => setSelId(id), []);
+  // tocar em qualquer outro lugar fecha os controles (celular)
+  useEffect(() => {
+    if (!selId) return;
+    const away = (ev: PointerEvent) => {
+      const t = ev.target as Element | null;
+      if (t?.closest("[data-badge-controls]") || t?.closest(`[data-badge-id="${selId}"]`)) return;
+      setSelId(null);
+    };
+    window.addEventListener("pointerdown", away, true);
+    return () => window.removeEventListener("pointerdown", away, true);
+  }, [selId]);
+
+  /** Tira o botton do mural (volta para a barra): o mesmo que arrastar para a barra. */
+  const removeById = useCallback((id: string) => {
+    const { badges: cur, notify } = live.current;
+    const prev = cur;
+    setSelId(null);
+    setHoverId(null);
+    setBadges((l) => l.filter((b) => b.id !== id));
+    void removeBadge(getBrowserSupabase(), id).then((ok) => {
+      if (!ok) {
+        setBadges(() => prev);
+        notify("Não foi possível tirar o botton agora.");
+      }
+      live.current.onSynced?.();
+    });
+  }, [setBadges]);
+
+  /** Dobra (dir = 1) ou volta ao tamanho padrão (dir = -1). Para aumentar, o botton maior tem que caber no lugar. */
+  const resize = useCallback((id: string, dir: 1 | -1) => {
+    const { badges: cur, notify } = live.current;
+    const b = cur.find((x) => x.id === id);
+    if (!b || id.startsWith("tmp-")) return;
+    const now = b.size ?? 1;
+    const next = (dir > 0 ? 2 : 1) as 1 | 2;
+    if (next === now) return;
+    let nx = b.x;
+    let ny = b.y;
+    if (next === 2) {
+      const el = document.querySelector<HTMLElement>(`[data-badge-id="${id}"]`);
+      const layer = visibleOne("[data-badge-layer]");
+      if (el && layer) {
+        const lr = layer.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
+        const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
+        const w = BADGE_EM * em * scale * 2;
+        const h = w / (badgeDef(b.key)?.ratio ?? 1);
+        const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el);
+        if (drop.kind === "physical") return notify("Não há espaço para aumentar: o botton cobriria um pinz.");
+        if (drop.kind === "badge") return notify("Não há espaço para aumentar: ele encostaria em outro botton.");
+        if (drop.kind === "ok") {
+          nx = drop.x;
+          ny = drop.y;
+        }
+      }
+    }
+    const sb = getBrowserSupabase();
+    setBadges((l) => l.map((x) => (x.id === id ? { ...x, size: next, x: nx, y: ny } : x)));
+    void setBadgeSize(sb, id, next).then((ok) => {
+      if (!ok) {
+        setBadges((l) => l.map((x) => (x.id === id ? { ...x, size: now, x: b.x, y: b.y } : x)));
+        notify("Não foi possível mudar o tamanho agora.");
+      } else if (nx !== b.x || ny !== b.y) void moveBadge(sb, id, nx, ny);
+    });
+  }, [setBadges]);
+
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
-  const value = useMemo(() => ({ badges, editable, draggingId, stock, acquiredAt, openStore: () => openStoreRef.current(), begin }), [badges, editable, draggingId, stock, acquiredAt, begin]);
+  const value = useMemo(() => ({ badges, editable, draggingId, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select }), [badges, editable, draggingId, stock, acquiredAt, begin, hover, select]);
+  const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
     <BadgeCtx.Provider value={value}>
       {children}
+      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onResize={resize} onRemove={removeById} onKeep={hover} />}
       {ghost && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -307,5 +390,58 @@ export function BadgeProvider({
         />
       )}
     </BadgeCtx.Provider>
+  );
+}
+
+/**
+ * Controles do botton (+, −, lixeira): uma pílula de tamanho fixo ao lado dele, por cima do mural (não encolhe com o zoom do celular).
+ * Segue o botton enquanto o quadro é arrastado ou ampliado.
+ */
+function BadgeControls({ id, badge, onResize, onRemove, onKeep }: { id: string; badge?: PlacedBadge; onResize: (id: string, dir: 1 | -1) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void }) {
+  const [box, setBox] = useState<{ l: number; t: number; r: number; b: number } | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = document.querySelector(`[data-badge-id="${id}"]`);
+      const r = el?.getBoundingClientRect();
+      const next = r && r.width > 0 ? { l: Math.round(r.left), t: Math.round(r.top), r: Math.round(r.right), b: Math.round(r.bottom) } : null;
+      setBox((p) => (p && next && p.l === next.l && p.t === next.t && p.r === next.r && p.b === next.b ? p : next));
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
+  }, [id]);
+  if (!box || !badge || typeof document === "undefined") return null;
+
+  const size = badge.size ?? 1;
+  const W = 40;
+  const Hh = 124;
+  const left = box.r + 8 + W > window.innerWidth ? box.l - 8 - W : box.r + 8;
+  const top = Math.min(Math.max((box.t + box.b) / 2 - Hh / 2, 8), window.innerHeight - Hh - 8);
+  const btn = "grid size-8 cursor-pointer place-items-center rounded-full text-lg leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
+
+  return createPortal(
+    <div
+      data-badge-controls
+      role="toolbar"
+      aria-label="Tamanho e posição do botton"
+      onPointerEnter={() => onKeep(id)}
+      onPointerLeave={() => onKeep(null)}
+      className="fixed z-[350] flex flex-col items-center gap-0.5 rounded-full bg-[#17110c]/92 p-1 shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+      style={{ left, top, width: W }}
+    >
+      <button type="button" disabled={size >= 2} onClick={() => onResize(id, 1)} aria-label="Aumentar o botton" title="Aumentar" className={btn}>
+        +
+      </button>
+      <button type="button" disabled={size <= 1} onClick={() => onResize(id, -1)} aria-label="Diminuir o botton" title="Diminuir" className={btn}>
+        −
+      </button>
+      <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className={btn}>
+        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
+        </svg>
+      </button>
+    </div>,
+    document.body,
   );
 }

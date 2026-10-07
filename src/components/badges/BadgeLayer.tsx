@@ -6,11 +6,16 @@ import { useBadges } from "./BadgeContext";
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
   const ctx = useBadges();
-  const { begin, draggingId } = ctx;
+  const { begin, draggingId, hover, select } = ctx;
   const editable = ctx.editable && b.mine !== false; // no mural compartilhado, o botom da outra pessoa só ela mexe
   const ref = useRef<HTMLDivElement>(null);
   const beginRef = useRef(begin);
   beginRef.current = begin;
+  const selectRef = useRef(select);
+  selectRef.current = select;
+  const sizeRef = useRef<number>(b.size ?? 1);
+  sizeRef.current = b.size ?? 1;
+  const lastType = useRef("mouse");
 
   // ouvinte nativo: o quadro do celular também escuta o toque (arrastar/pinçar) e não pode "roubar" este gesto
   useEffect(() => {
@@ -18,10 +23,20 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     if (!el || !editable) return;
     const down = (ev: PointerEvent) => {
       ev.stopPropagation();
-      beginRef.current(ev, { kind: "placed", id: b.id, key: b.key }, el);
+      lastType.current = ev.pointerType;
+      selectRef.current(null); // começou um arraste: fecha os controles
+      beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, size: sizeRef.current }, el);
+    };
+    // no celular, um toque (sem arrastar) mostra os controles +, − e lixeira
+    const tap = () => {
+      if (lastType.current !== "mouse") selectRef.current(b.id);
     };
     el.addEventListener("pointerdown", down);
-    return () => el.removeEventListener("pointerdown", down);
+    el.addEventListener("click", tap);
+    return () => {
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("click", tap);
+    };
   }, [editable, b.id, b.key]);
 
   const def = badgeDef(b.key);
@@ -29,11 +44,14 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   return (
     <div
       ref={ref}
+      data-badge-id={b.id}
+      onPointerEnter={(e) => editable && e.pointerType === "mouse" && hover(b.id)}
+      onPointerLeave={(e) => editable && e.pointerType === "mouse" && hover(null)}
       className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
       style={{
         left: `${b.x}%`,
         top: `${b.y}%`,
-        width: `${BADGE_EM}em`,
+        width: `${BADGE_EM * (b.size === 2 ? 2 : 1)}em`,
         aspectRatio: def.ratio,
         transform: "translate(-50%, -50%)",
         opacity: draggingId === b.id ? 0.25 : 1,

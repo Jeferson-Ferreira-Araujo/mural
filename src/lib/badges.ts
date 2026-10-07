@@ -102,7 +102,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+export type PlacedBadge = { id: string; key: number; /** 1 = padrão (pequeno), 2 = o dobro */ size?: 1 | 2; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -122,6 +122,12 @@ export async function addBadge(sb: SupabaseClient, muralId: string, key: number,
 
 export async function moveBadge(sb: SupabaseClient, id: string, x: number, y: number): Promise<boolean> {
   const { error } = await sb.rpc("move_badge", { p_id: id, p_x: x, p_y: y });
+  return !error;
+}
+
+/** Troca o tamanho do botton já colocado (1 = padrão, 2 = o dobro). */
+export async function setBadgeSize(sb: SupabaseClient, id: string, size: 1 | 2): Promise<boolean> {
+  const { error } = await sb.rpc("set_badge_size", { p_id: id, p_size: size });
   return !error;
 }
 
