@@ -122,7 +122,26 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const can = (cost: number) => credits >= cost;
 
   return (
-    <Modal open={open} onClose={onClose} title="Loja" xl>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Loja"
+      xl
+      aside={
+        // saldo sempre à vista no cabeçalho: dá para ver os créditos sendo gastos mesmo com a loja rolada
+        <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
+          <Coin className="size-6" />
+          <strong key={done?.at ?? 0} className="inline-block text-base tabular-nums" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
+            {credits}
+          </strong>
+          {done && done.spent > 0 && (
+            <span key={done.at} aria-hidden className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
+              −{done.spent}
+            </span>
+          )}
+        </p>
+      }
+    >
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
       <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
         <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">

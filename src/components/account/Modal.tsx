@@ -3,7 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
-export function Modal({ open, onClose, title, label, children, wide = false, xl = false }: { xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
+export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside }: { aside?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -26,6 +26,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
         <div className="flex max-h-[92dvh] flex-col">
           <header className={`flex items-center gap-3 px-5 py-3 ${title ? "justify-between border-b border-[#e6d8bd]" : "justify-end pb-0"}`}>
             {title && <h2 className="font-title text-lg font-semibold">{title}</h2>}
+            {aside && <div className="ml-auto">{aside}</div>}
             <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
               ×
             </button>
