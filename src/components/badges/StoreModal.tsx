@@ -107,7 +107,10 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     setBusy(id);
     const ok = await onBuy(item);
     setBusy(null);
-    if (ok) setDone({ id, ...win, at: Date.now() });
+    if (ok) {
+      setDone({ id, ...win, at: Date.now() });
+      if (item.kind === "badge" || item.kind === "unit") setQty((q) => ({ ...q, [item.key]: 1 })); // depois de comprar, volta para 1 unidade
+    }
   }
   async function buyCredits(id: string) {
     setBusy(`credits:${id}`);
