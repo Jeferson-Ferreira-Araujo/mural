@@ -122,24 +122,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
 
   return (
     <Modal open={open} onClose={onClose} title="Loja" xl>
-      {done && (
-        <div role="status" key={done.at} className="sticky top-0 z-30 mb-4 flex items-center gap-3 rounded-2xl border-2 border-[#3aa655] bg-[#effbf1] p-3 shadow-[0_0.6rem_1.6rem_rgba(40,120,60,.3)]" style={{ animation: "banner-in 0.35s ease-out" }}>
-          {done.img && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={done.img} alt="" draggable={false} className="size-12 shrink-0 object-contain" style={{ animation: "buy-wiggle 0.9s ease", filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
-          )}
-          <div className="min-w-0">
-            <p className="font-title text-base font-semibold text-[#1f6b36]">🎉 Compra realizada!</p>
-            <p className="text-sm text-[#2f2218]">
-              <strong>{done.title}</strong> · {done.text}
-            </p>
-          </div>
-          <button type="button" onClick={() => setDone(null)} aria-label="Fechar aviso" className="ml-auto grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-lg text-[#4a3826] hover:bg-black/5">
-            ×
-          </button>
-        </div>
-      )}
-
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
       <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
         <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
