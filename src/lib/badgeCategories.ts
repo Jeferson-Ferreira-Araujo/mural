@@ -31,3 +31,9 @@ export const BADGE_CATEGORY: Record<number, BadgeCategoryId> = Object.fromEntrie
 
 /** "Novos": os últimos Bottons adicionados à loja (os de maior número). */
 export const NEW_BADGES_COUNT = 12;
+
+/**
+ * Bottons da loja que são cópias (mesma arte) de um dos 25 primeiros, que já vêm de graça/PLUS: não aparecem na loja
+ * (quem já comprou um deles continua vendo e usando). Correspondência: 26=1, 27=2, 28=4, 31=13, 33=25, 34=9, 36=24, 41=22, 42=15, 50=7, 55=21, 58=17, 66=23.
+ */
+export const STORE_DUPLICATES: ReadonlySet<number> = new Set([26, 27, 28, 31, 33, 34, 36, 41, 42, 50, 55, 58, 66]);

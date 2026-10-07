@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
-import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT } from "@/lib/badgeCategories";
+import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
 import { BOARDS } from "@/lib/boards";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
@@ -54,7 +54,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const credits = inventory?.credits ?? 0;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
   // a loja mostra TODOS os bottons do site; quem já tem um compra só unidades extras
-  const all = BADGES.filter((b) => byKey.has(b.key));
+  const all = BADGES.filter((b) => byKey.has(b.key) && (!STORE_DUPLICATES.has(b.key) || byKey.get(b.key)!.owned));
   const shown =
     filter === "new" ? [...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT) : filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter);
   const chips: { id: string; text: string }[] = [
