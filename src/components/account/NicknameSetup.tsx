@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { checkSignup } from "@/lib/reserved";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton, NicknameField, useNicknameStatus } from "../ui";
 
@@ -19,7 +20,24 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
   const [nick, setNick] = useState(suggested);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const state = useNicknameStatus(nick);
+  const free = useNicknameStatus(nick);
+  const [reserved, setReserved] = useState<"checking" | "ok" | "denied">("ok");
+  // nome de empresa: só passa quem entrou com e-mail do domínio da marca (o servidor confere de novo ao salvar)
+  useEffect(() => {
+    if (free !== "ok" || nick === suggested) return setReserved("ok");
+    setReserved("checking");
+    let cancelled = false;
+    void (async () => {
+      const sb = getBrowserSupabase();
+      const email = (await sb.auth.getUser()).data.user?.email ?? "";
+      const r = await checkSignup(sb, nick, email);
+      if (!cancelled) setReserved(r === "denied" ? "denied" : "ok");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [free, nick, suggested]);
+  const state = free === "ok" ? (reserved === "denied" ? "denied" : reserved === "checking" ? "checking" : "ok") : free;
   // o nome sugerido já é da própria conta: vale mesmo sendo "ocupado" por ela
   const ok = nick === suggested || state === "ok";
 

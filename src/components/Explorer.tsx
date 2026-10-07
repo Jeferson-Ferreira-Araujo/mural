@@ -644,7 +644,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // desktop: os atalhos da conta ficam na coluna bege (o celular continua com a gaveta do hambúrguer)
   const sidebarMenu =
-    logged && myNick ? (
+    logged && myNick && !nickPending ? (
       <AccountDrawer
         inline
         open
@@ -740,7 +740,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </ListEditProvider>
       </ModerationProvider>
       </BoardLoadingProvider>
-      {logged && myNick && (
+      {logged && myNick && !nickPending && (
         <>
           <AccountDrawer
             open={drawer.open}
@@ -781,7 +781,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         suggested={myNick ?? ""}
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
-      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked} nick={myNick ?? ""} company={companyWelcome} />
+      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company={companyWelcome} />
       <Toast message={toast} />
     </div>
   );

@@ -86,7 +86,7 @@ export function Spinner({ label = "Carregando…" }: { label?: string }) {
   );
 }
 
-export type NickState = "idle" | "checking" | "ok" | "taken" | "invalid";
+export type NickState = "idle" | "checking" | "ok" | "taken" | "invalid" | "denied";
 
 /** Verifica (com pequena espera) se o nickname é válido e está livre. */
 export function useNicknameStatus(nick: string): NickState {
@@ -114,6 +114,7 @@ const nickMessage: Record<NickState, string | null> = {
   ok: "Disponível ✓",
   taken: "Esse nome de usuário já está em uso.",
   invalid: "Use de 3 a 30 letras minúsculas, números ou underline (_).",
+  denied: "Esse nome de usuário não pode ser utilizado.",
 };
 
 /** Campo de nickname: ele vira o endereço do mural (SITE_HOST/nickname). */
@@ -128,7 +129,7 @@ export function NicknameField({
   state: NickState;
   autoFocus?: boolean;
 }) {
-  const bad = state === "taken" || state === "invalid";
+  const bad = state === "taken" || state === "invalid" || state === "denied";
   return (
     <Field
       label="Nome de usuário"
