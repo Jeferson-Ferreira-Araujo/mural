@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
@@ -9,7 +8,7 @@ import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "mural" };
-type Tab = "pins" | "themes" | "murals" | "credits";
+type Tab = "pins" | "boards";
 
 const MAX_QTY = 20;
 
@@ -33,9 +32,17 @@ function Qty({ value, onChange, label }: { value: number; onChange: (n: number) 
 
 const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 
+function Coin({ className = "size-6" }: { className?: string }) {
+  return (
+    <span aria-hidden className={`inline-grid place-items-center rounded-full border-2 border-[#b9801a] bg-[radial-gradient(circle_at_35%_30%,#ffe27a,#e8a91c_70%)] text-[0.7em] font-black text-[#7a4c00] shadow-[inset_0_0.1em_0.15em_rgba(255,255,255,.6)] ${className}`}>
+      $
+    </span>
+  );
+}
+
 /**
- * Loja do Pinz. Qualquer conta compra com créditos: pins decorativos (e unidades extras no grátis) e temas (fundos). Mural extra é do PLUS.
- * Os pacotes de créditos aparecem aqui (a cobrança em dinheiro ainda não existe).
+ * Loja do Pinz. Os pacotes de créditos ficam sempre à vista, no topo (a compra é no Mercado Pago).
+ * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PLUS (sem limite), não se vende.
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<void> }) {
   const [tab, setTab] = useState<Tab>("pins");
@@ -44,38 +51,60 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
   const qtyOf = (key: number) => qty[key] ?? 1;
   const credits = inventory?.credits ?? 0;
-  const plus = inventory?.plus === true;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
   const pinsToBuy = BADGES.filter((b) => byKey.has(b.key) && !byKey.get(b.key)!.owned);
   const myPins = BADGES.filter((b) => byKey.has(b.key) && byKey.get(b.key)!.owned);
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
-  const slots = 1 + (inventory?.extraMurals ?? 0);
-  const used = inventory?.muralCount ?? 0;
 
   async function buy(id: string, item: BuyItem) {
     setBusy(id);
     await onBuy(item);
     setBusy(null);
   }
+  async function buyCredits(id: string) {
+    setBusy(`credits:${id}`);
+    const err = await startCheckout(`credits:${id}`);
+    if (err) {
+      window.alert(err);
+      setBusy(null);
+    }
+  }
   const can = (cost: number) => credits >= cost;
   const label = (cost: number) => (credits >= cost ? `Comprar · ${cost} cr.` : `${cost} cr. (faltam)`);
 
   return (
-    <Modal open={open} onClose={onClose} title="Loja" wide>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
-        <p className="text-sm">
-          Seus créditos: <strong className="text-lg">{credits}</strong>
-        </p>
-        <p className="text-xs text-[#6b5440]">Comprar créditos: em breve</p>
-      </div>
+    <Modal open={open} onClose={onClose} title="Loja" xl>
+      {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
+      <section aria-label="Comprar créditos" className="mb-5 rounded-2xl border border-[#e8d9a8] bg-[#fff6d6] p-3 sm:p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <p className="flex items-center gap-2 text-sm">
+            <Coin className="size-7" />
+            Seus créditos: <strong className="text-xl">{credits}</strong>
+          </p>
+          <p className="text-xs text-[#6b5440]">{PAYMENTS_ENABLED ? "Escolha um pacote · pagamento no Mercado Pago (Pix, cartão…)" : "Compra de créditos: em breve"}</p>
+        </div>
+        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          {CREDIT_PACKS.map((p) => (
+            <li key={p.id} className="flex flex-col items-center rounded-xl border border-[#e1d3ba] bg-white/80 p-3 text-center">
+              <p className="flex items-center gap-1.5 font-title text-2xl font-semibold">
+                <Coin className="size-5" />
+                {p.credits}
+              </p>
+              <p className="mt-0.5 text-lg font-bold">{p.price}</p>
+              <p className="min-h-4 text-[11px] font-semibold text-[#2f6a3c]">{p.note ?? ""}</p>
+              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className={buyBtn}>
+                {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
             ["pins", "Bottons"],
-            ["themes", "Temas"],
-            ["murals", "Murais"],
-            ["credits", "Créditos"],
+            ["boards", "Fundos do mural"],
           ] as const
         ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -103,7 +132,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           {(pinView === "new" ? pinsToBuy : myPins).length === 0 ? (
             <p className="py-6 text-center text-sm text-[#6b5440]">{pinView === "new" ? "Você já liberou todos os Bottons. Novos chegam em breve!" : "Você ainda não tem Bottons."}</p>
           ) : (
-            <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+            <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
               {(pinView === "new" ? pinsToBuy : myPins).map((b) => {
                 const c = byKey.get(b.key)!;
                 return (
@@ -122,9 +151,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </>
                     ) : (
                       <>
-                        <p className="mt-1 text-[11px] text-[#6b5440]">
-                          {1 + c.extra} unidade(s)
-                        </p>
+                        <p className="mt-1 text-[11px] text-[#6b5440]">{1 + c.extra} unidade(s)</p>
                         <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
                         <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice * qtyOf(b.key))} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
                           {can(c.unitPrice * qtyOf(b.key)) ? `+${qtyOf(b.key)} unidade${qtyOf(b.key) > 1 ? "s" : ""} · ${c.unitPrice * qtyOf(b.key)} cr.` : `${c.unitPrice * qtyOf(b.key)} cr. (faltam)`}
@@ -137,19 +164,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             </ul>
           )}
         </>
-      ) : tab === "themes" ? (
-        <ul className="grid gap-3 sm:grid-cols-2">
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BOARDS.map((b) => {
             const info = boards.get(b.id);
             const owned = info?.owned ?? b.id === "cortica";
             return (
               <li key={b.id} className="overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={b.image} alt={`Tema ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
                 <div className="p-3">
                   <p className="font-title text-base font-semibold">{b.name}</p>
                   {owned ? (
-                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{b.id === "cortica" ? "Tema padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
+                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
                   ) : (
                     <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id })} className={buyBtn}>
                       {label(info?.price ?? 3)}
@@ -160,50 +187,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             );
           })}
         </ul>
-      ) : tab === "murals" ? (
-        <div className="rounded-2xl border border-[#e1d3ba] bg-white/70 p-5">
-          <h3 className="font-title text-lg font-semibold">Mural extra</h3>
-          <p className="mt-1 text-sm text-[#4a3826]">Tenha mais de um mural: um para cada ocasião ou grupo de amigos. Cada mural tem 28 espaços.</p>
-          <p className="mt-3 text-sm">
-            Seus murais: <strong>{used}</strong> de <strong>{slots}</strong> permitidos
-          </p>
-          <button type="button" disabled={busy === "mural" || !can(inventory.muralPrice)} onClick={() => buy("mural", { kind: "mural" })} className={`${buyBtn} sm:max-w-xs`}>
-            {plus ? (credits >= inventory.muralPrice ? `Comprar um mural · ${inventory.muralPrice} cr.` : `${inventory.muralPrice} cr. (faltam)`) : "Só no PLUS"}
-          </button>
-          {plus && used < slots && (
-            <Link href="/criar" className="mt-3 inline-block rounded-lg border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold hover:bg-[#efe4cf]">
-              Criar o novo mural agora
-            </Link>
-          )}
-        </div>
-      ) : (
-        <div>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {CREDIT_PACKS.map((p) => (
-              <li key={p.id} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-center">
-                <p className="font-title text-3xl font-semibold">{p.credits}</p>
-                <p className="text-xs text-[#6b5440]">créditos</p>
-                <p className="mt-2 text-lg font-bold">{p.price}</p>
-                {p.note && <p className="text-[11px] font-semibold text-[#2f6a3c]">{p.note}</p>}
-                <button
-                  type="button"
-                  disabled={!PAYMENTS_ENABLED || busy !== null}
-                  onClick={async () => {
-                    setBusy(`credits:${p.id}`);
-                    const err = await startCheckout(`credits:${p.id}`);
-                    if (err) {
-                      window.alert(err);
-                      setBusy(null);
-                    }
-                  }}
-                  className={buyBtn}
-                >
-                  {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
       )}
     </Modal>
   );

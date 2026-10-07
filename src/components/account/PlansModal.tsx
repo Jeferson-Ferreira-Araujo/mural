@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { CAPSULE_ENABLED, CREDIT_PACKS, NEW_MURAL_COST, PAYMENTS_ENABLED, PLANS, type PlanId } from "@/lib/plans";
+import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, type PlanId } from "@/lib/plans";
 import { cancelSubscription, fetchSubscription, startCheckout, type Subscription } from "@/lib/payments";
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
@@ -20,7 +20,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Mais de um mural", on: false },
   ],
   full: [
-    { text: "Mais de um mural (comprando com créditos)", on: true },
+    { text: "Quantos murais quiser", on: true },
     { text: "28 espaços em cada mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
@@ -135,7 +135,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-xs text-[#6b5440]">Um novo mural custa {NEW_MURAL_COST} créditos.</p>
+        <p className="mt-2 text-xs text-[#6b5440]">Créditos compram Bottons e Fundos de mural na Loja.</p>
       </div>
     </Modal>
   );

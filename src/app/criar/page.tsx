@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { NEW_MURAL_COST } from "@/lib/plans";
 import { fetchInventory } from "@/lib/badges";
 import { getOwnMurals, getOwnProfile, homeRouteFor, useSession } from "@/lib/auth";
 import { NicknameSetup } from "@/components/account/NicknameSetup";
@@ -43,8 +42,8 @@ export default function CriarMural() {
       setTaken(murals.map((m) => m.slug));
       setSavedNick(prof?.nickname ?? null);
       setNickPending(prof ? !prof.confirmed : false);
-      setSlots(1 + (inv?.extraMurals ?? 0));
       setPlus(inv?.plus === true);
+      setSlots(inv?.plus === true ? Number.POSITIVE_INFINITY : 1 + (inv?.extraMurals ?? 0)); // PLUS: quantos murais quiser
       setReady(true);
     });
   }, [loading, session, router]);
@@ -66,7 +65,7 @@ export default function CriarMural() {
     });
     if (err) {
       setBusy(false);
-      setError(err.message.includes("mural_limit") ? "Você já usou todos os murais que tem. Compre um mural extra na loja." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err.message.includes("mural_limit") ? "O plano gratuito inclui 1 mural. Com o PINZ PLUS você cria quantos murais quiser." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     router.replace(await homeRouteFor(sb)); // vai para o mural novo; segue "Criando…" até a navegação terminar
@@ -89,7 +88,7 @@ export default function CriarMural() {
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
           <h1 className="font-title text-2xl font-semibold">{plus ? "Todos os seus murais estão no ar" : "Seu mural já está no ar"}</h1>
           <p className="mt-2 text-sm text-[#6b5440]">
-            {plus ? `Para ter mais um mural, compre um mural extra na Loja (${NEW_MURAL_COST} créditos) pelo menu da conta.` : "O plano gratuito inclui 1 mural. O PINZ PLUS permite ter mais murais, comprados na loja com créditos."}
+            O plano gratuito inclui 1 mural. O PINZ PLUS permite criar quantos murais quiser.
           </p>
           <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
             Ir para o meu mural
