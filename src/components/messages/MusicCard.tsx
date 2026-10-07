@@ -46,6 +46,7 @@ export function MusicCard({
   const dur = realDur || parse(duration);
   const frame = useRef<HTMLIFrameElement>(null);
   const wantPlay = useRef(false);
+  const tries = useRef(0);
   // o Spotify só entende comandos como OBJETO; o YouTube, como texto JSON
   const send = useCallback((m: unknown) => frame.current?.contentWindow?.postMessage(embed?.provider === "youtube" && typeof m !== "string" ? JSON.stringify(m) : m, "*"), [embed?.provider]);
 
@@ -64,9 +65,20 @@ export function MusicCard({
       if (embed.provider === "spotify") {
         if (d.type === "ready") {
           send({ command: "load_complete_ack" });
-          if (wantPlay.current) send({ command: "play" });
+          if (wantPlay.current) {
+            send({ command: "play" });
+            // o player só aceita depois de carregar a faixa: tenta de novo por alguns segundos até começar
+            let n = 0;
+            const t = window.setInterval(() => {
+              if (!wantPlay.current || ++n > 12) return window.clearInterval(t);
+              send({ command: "play" });
+            }, 500);
+          }
         }
         if (d.type === "playback_update" && d.payload) {
+          // o "tocar" mandado cedo demais é ignorado: enquanto o clique ainda espera, repete a cada atualização do player
+          if (d.payload.isPaused && wantPlay.current && tries.current++ < 12) send({ command: "play" });
+          if (!d.payload.isPaused) wantPlay.current = false;
           setPlaying(!d.payload.isPaused);
           setCur((d.payload.position ?? 0) / 1000);
           if (d.payload.duration) setRealDur(d.payload.duration / 1000);
@@ -108,6 +120,7 @@ export function MusicCard({
         return;
       }
       // player já aberto: o botão alterna tocar/pausar
+      if (wantPlay.current) return; // ainda carregando para tocar: um segundo clique não deve cancelar
       if (embed.provider === "spotify") send({ command: "toggle" });
       else send({ event: "command", func: playing ? "pauseVideo" : "playVideo", args: "" });
       return;
