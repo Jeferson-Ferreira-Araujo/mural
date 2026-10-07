@@ -6,7 +6,7 @@ import { useBadges } from "./BadgeContext";
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
   const ctx = useBadges();
-  const { begin, draggingId, hover, select } = ctx;
+  const { begin, draggingId, select } = ctx;
   const editable = ctx.editable && b.mine !== false; // no mural compartilhado, o botom da outra pessoa só ela mexe
   const ref = useRef<HTMLDivElement>(null);
   const beginRef = useRef(begin);
@@ -29,11 +29,11 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       selectRef.current(null); // começou um arraste: fecha os controles
       beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, scale: scaleRef.current }, el);
     };
-    // no celular, um toque (sem arrastar) mostra os controles +, − e lixeira. Reage ao levantar o dedo (o quadro atrasa o "clique" 0,3 s)
+    // um toque ou clique (sem arrastar) mostra os controles +, − e lixeira. Reage ao levantar o dedo (o quadro atrasa o "clique" 0,3 s)
     const up = (ev: PointerEvent) => {
       const s0 = tapStart.current;
       tapStart.current = null;
-      if (!s0 || ev.pointerType === "mouse") return;
+      if (!s0) return;
       if (Math.hypot(ev.clientX - s0.x, ev.clientY - s0.y) < 8 && performance.now() - s0.t < 600) selectRef.current(b.id);
     };
     el.addEventListener("pointerdown", down);
@@ -50,8 +50,6 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     <div
       ref={ref}
       data-badge-id={b.id}
-      onPointerEnter={(e) => editable && e.pointerType === "mouse" && hover(b.id)}
-      onPointerLeave={(e) => editable && e.pointerType === "mouse" && hover(null)}
       className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
       style={{
         left: `${b.x}%`,
