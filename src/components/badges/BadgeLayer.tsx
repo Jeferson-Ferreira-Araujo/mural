@@ -16,6 +16,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   const sizeRef = useRef<number>(b.size ?? 1);
   sizeRef.current = b.size ?? 1;
   const lastType = useRef("mouse");
+  const tapStart = useRef<{ x: number; y: number; t: number } | null>(null);
 
   // ouvinte nativo: o quadro do celular também escuta o toque (arrastar/pinçar) e não pode "roubar" este gesto
   useEffect(() => {
@@ -24,18 +25,22 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     const down = (ev: PointerEvent) => {
       ev.stopPropagation();
       lastType.current = ev.pointerType;
+      tapStart.current = { x: ev.clientX, y: ev.clientY, t: performance.now() };
       selectRef.current(null); // começou um arraste: fecha os controles
       beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, size: sizeRef.current }, el);
     };
-    // no celular, um toque (sem arrastar) mostra os controles +, − e lixeira
-    const tap = () => {
-      if (lastType.current !== "mouse") selectRef.current(b.id);
+    // no celular, um toque (sem arrastar) mostra os controles +, − e lixeira. Reage ao levantar o dedo (o quadro atrasa o "clique" 0,3 s)
+    const up = (ev: PointerEvent) => {
+      const s0 = tapStart.current;
+      tapStart.current = null;
+      if (!s0 || ev.pointerType === "mouse") return;
+      if (Math.hypot(ev.clientX - s0.x, ev.clientY - s0.y) < 8 && performance.now() - s0.t < 600) selectRef.current(b.id);
     };
     el.addEventListener("pointerdown", down);
-    el.addEventListener("click", tap);
+    el.addEventListener("pointerup", up);
     return () => {
       el.removeEventListener("pointerdown", down);
-      el.removeEventListener("click", tap);
+      el.removeEventListener("pointerup", up);
     };
   }, [editable, b.id, b.key]);
 
@@ -58,6 +63,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         filter: "drop-shadow(0.12em 0.22em 0.2em rgba(30,12,0,.5))",
       }}
     >
+      {/* área de toque maior no celular: o botton é pequeno para acertar com o dedo */}
+      {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[3em]" />}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={badgeSrc(b.key)} alt="" draggable={false} className="pointer-events-none block size-full select-none" />
     </div>
