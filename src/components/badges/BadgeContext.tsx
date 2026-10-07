@@ -144,7 +144,8 @@ export function BadgeProvider({
       if (src.kind === "new") {
         const st = live.current.stock(src.key);
         if (!st.owned || st.left === 0) {
-          live.current.notify(st.owned ? "Esgotado: você já colocou a unidade deste botton. Compre mais na loja." : "Este botton é da loja. Libere com créditos para usar.");
+          // esgotado: só não arrasta, sem aviso; botton da loja ainda não comprado: avisa
+          if (!st.owned) live.current.notify("Este botton é da loja. Libere com créditos para usar.");
           return;
         }
       }
