@@ -202,3 +202,9 @@ body.badge-dragging * {
 [data-share-card] [data-share-hide] {
   visibility: hidden;
 }
+
+/* controles do botton abertos: arrastar para baixo (celular) não "puxa para recarregar" a página */
+html:has([data-badge-controls]),
+html:has([data-badge-controls]) body {
+  overscroll-behavior: none;
+}

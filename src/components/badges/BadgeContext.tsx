@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { createPortal } from "react-dom";
 import { addBadge, badgeDef, badgeSrc, BADGE_EM, DEFAULT_SCALE, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeRotation, setBadgeScale, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { TouchSlider } from "./TouchSlider";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** tamanho em % do botton que está sendo arrastado */ scale?: number };
 
@@ -323,7 +324,8 @@ export function BadgeProvider({
 
   /** Inclina na tela enquanto a barra é arrastada (ainda sem salvar). */
   const tilt = useCallback((id: string, deg: number) => {
-    const v = Math.max(-MAX_TILT, Math.min(MAX_TILT, Math.round(deg)));
+    const snap = [0, 90, -90, 180, -180].find((t) => Math.abs(deg - t) <= 4);
+    const v = Math.max(-MAX_TILT, Math.min(MAX_TILT, Math.round(snap ?? deg)));
     setBadges((l) => l.map((x) => (x.id === id ? { ...x, rotation: v } : x)));
   }, [setBadges]);
   const tiltSaved = useRef<Record<string, number>>({});
@@ -351,10 +353,9 @@ export function BadgeProvider({
     }
   }, [badges]);
 
-  /** Muda o tamanho na tela enquanto a barra vertical é arrastada (ainda sem salvar). Perto do meio, "gruda" no tamanho padrão. */
+  /** Muda o tamanho na tela enquanto a barra vertical é arrastada (ainda sem salvar). Perto da ponta de baixo, "gruda" no tamanho de sempre. */
   const rescale = useCallback((id: string, pct: number) => {
-    const snapped = Math.abs(pct - DEFAULT_SCALE) <= 4 ? DEFAULT_SCALE : pct;
-    const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(snapped)));
+    const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(pct <= MIN_SCALE + 3 ? MIN_SCALE : pct)));
     setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: v } : x)));
   }, [setBadges]);
   const scaleSaved = useRef<Record<string, number>>({});
@@ -441,128 +442,112 @@ export function BadgeProvider({
 }
 
 /**
- * Controles do botton (+, −, lixeira): uma pílula de tamanho fixo ao lado dele, por cima do mural (não encolhe com o zoom do celular).
- * Segue o botton enquanto o quadro é arrastado ou ampliado.
+ * Controles do botton: uma barra vertical de tamanho + lixeira ao lado dele e uma barra horizontal de inclinação abaixo.
+ * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
+ * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
 function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
-  const [box, setBox] = useState<{ l: number; t: number; r: number; b: number } | null>(null);
+  const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
+  const keyRef = useRef(badge?.key);
+  keyRef.current = badge?.key;
   useEffect(() => {
     let raf = 0;
     const tick = () => {
       const el = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null;
       const r = el?.getBoundingClientRect();
-      let next: { l: number; t: number; r: number; b: number } | null = null;
+      let next: { cx: number; cy: number; R: number } | null = null;
       if (el && r && r.width > 0) {
-        // o centro não muda ao girar; o tamanho é o do botton reto (offsetWidth ignora a rotação) na escala do quadro
+        // o centro não muda ao girar nem ao mudar de tamanho; o raio é o do botton no tamanho MÁXIMO (independe do tamanho atual)
         const layer = el.closest("[data-badge-layer]") as HTMLElement | null;
         const lr = layer?.getBoundingClientRect();
+        const em = layer ? parseFloat(getComputedStyle(layer).fontSize) || 10 : 10;
         const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
-        const w = el.offsetWidth * sc;
-        const h = el.offsetHeight * sc;
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        next = { l: Math.round(cx - w / 2), t: Math.round(cy - h / 2), r: Math.round(cx + w / 2), b: Math.round(cy + h / 2) };
+        const w = BADGE_EM * em * sc * (MAX_SCALE / 100);
+        const h = w / (badgeDef(keyRef.current ?? 0)?.ratio ?? 1);
+        next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round(Math.hypot(w, h) / 2) };
       }
-      setBox((p) => (p && next && p.l === next.l && p.t === next.t && p.r === next.r && p.b === next.b ? p : next));
+      setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.R === next.R ? p : next));
       raf = requestAnimationFrame(tick);
     };
     tick();
     return () => cancelAnimationFrame(raf);
   }, [id]);
-  if (!box || !badge || typeof document === "undefined") return null;
+  if (!g || !badge || typeof document === "undefined") return null;
 
   const scale = badge.scale ?? DEFAULT_SCALE;
-  const W = 32;
-  const Hh = 128;
-  const left = box.r + 8 + W > window.innerWidth ? box.l - 8 - W : box.r + 8;
-  const top = Math.min(Math.max((box.t + box.b) / 2 - Hh / 2, 8), window.innerHeight - Hh - 8);
-  const btn = "grid size-[1.65rem] cursor-pointer place-items-center rounded-full text-base leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
-
   const deg = badge.rotation ?? 0;
-  const SW = 138;
-  const SH = 36;
-  const sLeft = Math.min(Math.max((box.l + box.r) / 2 - SW / 2, 8), window.innerWidth - SW - 8);
-  // a barra fica abaixo do botton E abaixo da pílula (+, −, lixeira), sem sobrepor; sem espaço embaixo, vai para cima dos dois
-  const lowest = Math.max(box.b + 10, top + Hh + 6);
-  const sTop = lowest + SH <= window.innerHeight - 8 ? lowest : Math.max(8, Math.min(box.t, top) - 6 - SH);
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // pílula do tamanho (à direita; à esquerda se não couber)
+  const W = 40;
+  const TRACK = 108;
+  const Hh = 164;
+  const onRight = g.cx + g.R + 8 + W <= vw - 4;
+  const pLeft = onRight ? g.cx + g.R + 8 : Math.max(4, g.cx - g.R - 8 - W);
+  const pTop = Math.min(Math.max(g.cy - Hh / 2, 8), vh - Hh - 8);
+
+  // barra de inclinação (abaixo do botton, ao lado da pílula; em cima se não couber embaixo)
+  const SW = 196;
+  const SH = 62;
+  const rawLeft = onRight ? pLeft - 6 - SW : pLeft + W + 6;
+  const beside = rawLeft >= 4 && rawLeft + SW <= vw - 4; // cabe ao lado da pílula, sem sobrepor?
+  const sLeft = Math.min(Math.max(rawLeft, 4), vw - SW - 4);
+  const under = g.cy + g.R + 8;
+  const lowest = beside ? under : Math.max(under, pTop + Hh + 6); // sem espaço ao lado: vai para baixo da pílula
+  const sTop = lowest + SH <= vh - 8 ? lowest : Math.max(8, Math.min(g.cy - g.R, pTop) - 6 - SH);
 
   return createPortal(
     <>
-    <div
-      data-badge-controls
-      onPointerEnter={() => onKeep(id)}
-      onPointerLeave={() => onKeep(null)}
-      className="fixed z-[350] flex flex-col items-center rounded-xl bg-[#17110c]/90 px-2 pt-0.5 pb-0.5 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
-      style={{ left: sLeft, top: sTop, width: SW }}
-    >
-      <div className="flex w-full items-center gap-1.5">
-        <span aria-hidden className="text-sm leading-none opacity-80" title="Anti-horário">
-          ↺
-        </span>
-        <input
-          type="range"
-          min={-MAX_TILT}
-          max={MAX_TILT}
-          step={1}
-          value={deg}
-          onChange={(e) => onTilt(id, Number(e.target.value))}
-          onPointerUp={() => onTiltEnd(id)}
-          onKeyUp={() => onTiltEnd(id)}
-          onBlur={() => onTiltEnd(id)}
-          aria-label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário"
-          className="h-5 min-w-0 flex-1 cursor-pointer accent-[#f6c93f]"
-        />
-        <span aria-hidden className="text-sm leading-none opacity-80" title="Horário">
-          ↻
-        </span>
-      </div>
-      <button
-        type="button"
-        aria-label="Restaurar: deixa o botton reto"
-        disabled={deg === 0}
-        onClick={() => {
-          onTilt(id, 0);
-          window.setTimeout(() => onTiltEnd(id), 0);
-        }}
-        className="-mt-0.5 cursor-pointer text-[10px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+      <div
+        data-badge-controls
+        onPointerEnter={() => onKeep(id)}
+        onPointerLeave={() => onKeep(null)}
+        className="fixed z-[350] flex touch-none flex-col items-center rounded-2xl bg-[#17110c]/92 px-1 pt-1.5 pb-1 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+        style={{ left: sLeft, top: sTop, width: SW }}
       >
-        Restaurar
-      </button>
-    </div>
-    <div
-      data-badge-controls
-      role="toolbar"
-      aria-label="Tamanho e posição do botton"
-      onPointerEnter={() => onKeep(id)}
-      onPointerLeave={() => onKeep(null)}
-      className="fixed z-[350] flex flex-col items-center gap-px rounded-full bg-[#17110c]/90 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
-      style={{ left, top, width: W }}
-    >
-      {/* tamanho: barra vertical (em cima maior, embaixo menor; o meio é o tamanho padrão) */}
-      <span aria-hidden className="mt-0.5 size-2.5 rounded-full bg-white/80" title="Maior" />
-      <div className="relative h-[68px] w-6">
-        <input
-          type="range"
-          min={MIN_SCALE}
-          max={MAX_SCALE}
-          step={1}
-          value={scale}
-          onChange={(e) => onScale(id, Number(e.target.value))}
-          onPointerUp={() => onScaleEnd(id)}
-          onKeyUp={() => onScaleEnd(id)}
-          onBlur={() => onScaleEnd(id)}
-          aria-label="Tamanho do botton: para cima maior, para baixo menor"
-          aria-orientation="vertical"
-          className="absolute top-1/2 left-1/2 h-6 w-[68px] -translate-x-1/2 -translate-y-1/2 -rotate-90 cursor-pointer accent-[#f6c93f]"
-        />
+        <div className="flex w-full items-center justify-center gap-1">
+          <span aria-hidden className="text-base leading-none opacity-80" title="Anti-horário">
+            ↺
+          </span>
+          <TouchSlider value={deg} min={-MAX_TILT} max={MAX_TILT} onChange={(v) => onTilt(id, v)} onEnd={() => onTiltEnd(id)} length={SW - 64} label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário" />
+          <span aria-hidden className="text-base leading-none opacity-80" title="Horário">
+            ↻
+          </span>
+        </div>
+        <button
+          type="button"
+          aria-label="Restaurar: deixa o botton reto"
+          disabled={deg === 0}
+          onClick={() => {
+            onTilt(id, 0);
+            window.setTimeout(() => onTiltEnd(id), 0);
+          }}
+          className="-mt-0.5 cursor-pointer px-3 py-0.5 text-[11px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+        >
+          Restaurar
+        </button>
       </div>
-      <span aria-hidden className="mb-0.5 size-1.5 rounded-full bg-white/80" title="Menor" />
-      <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className={btn}>
-        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
-        </svg>
-      </button>
-    </div>
+
+      <div
+        data-badge-controls
+        role="toolbar"
+        aria-label="Tamanho e posição do botton"
+        onPointerEnter={() => onKeep(id)}
+        onPointerLeave={() => onKeep(null)}
+        className="fixed z-[350] flex touch-none flex-col items-center gap-0.5 rounded-full bg-[#17110c]/92 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+        style={{ left: pLeft, top: pTop, width: W, height: Hh }}
+      >
+        {/* tamanho: em cima maior, embaixo menor (o menor é o tamanho de sempre) */}
+        <span aria-hidden className="mt-1.5 size-2.5 rounded-full bg-white/80" title="Maior" />
+        <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label="Tamanho do botton: para cima maior, para baixo menor" />
+        <span aria-hidden className="size-1.5 rounded-full bg-white/80" title="Menor" />
+        <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className="mt-auto mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
+          </svg>
+        </button>
+      </div>
     </>,
     document.body,
   );

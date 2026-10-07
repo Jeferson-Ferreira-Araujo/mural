@@ -102,7 +102,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** tamanho em % do padrão: 50 a 150 (100 = o tamanho de sempre, no meio da barra) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+export type PlacedBadge = { id: string; key: number; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -131,9 +131,9 @@ export async function setBadgeScale(sb: SupabaseClient, id: string, pct: number)
   return !error;
 }
 
-export const MIN_SCALE = 50;
-export const MAX_SCALE = 150;
-export const DEFAULT_SCALE = 100; // o meio entre o menor e o maior
+export const MIN_SCALE = 100; // o menor é o tamanho de sempre
+export const MAX_SCALE = 200; // o maior é o dobro
+export const DEFAULT_SCALE = MIN_SCALE; // botton novo entra no tamanho de sempre
 
 /** Salva a inclinação do botton (graus; negativo = anti-horário). */
 export async function setBadgeRotation(sb: SupabaseClient, id: string, deg: number): Promise<boolean> {
@@ -141,7 +141,7 @@ export async function setBadgeRotation(sb: SupabaseClient, id: string, deg: numb
   return !error;
 }
 
-export const MAX_TILT = 45; // a barra de inclinação vai de -45° a +45°
+export const MAX_TILT = 180; // a barra de inclinação vai de -180° a +180° (dá a volta até ficar de cabeça para baixo)
 
 export async function removeBadge(sb: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await sb.rpc("remove_badge", { p_id: id });
