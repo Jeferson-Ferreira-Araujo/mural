@@ -33,7 +33,7 @@ const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: n
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
-type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; back?: { x: number; y: number } };
+type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; /** inclinação do botton já colocado: o arraste mostra o botton como ele é */ rot?: number; back?: { x: number; y: number } };
 
 const visible = (el: Element | null) => !!el && el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
 const visibleOne = (sel: string) => [...document.querySelectorAll(sel)].find(visible) ?? null;
@@ -161,6 +161,7 @@ export function BadgeProvider({
       let layer: Element | null = null;
       let origin: { x: number; y: number } | null = null; // para onde voltar se não puder soltar
 
+      const rotOf = () => (src.kind === "placed" ? (live.current.badges.find((b) => b.id === src.id)?.rotation ?? 0) : undefined);
       const sourceCenter = () => {
         const r = sourceEl.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -198,7 +199,7 @@ export function BadgeProvider({
           activate();
         }
         ev.preventDefault();
-        setGhost({ key: src.key, x: ev.clientX, y: ev.clientY, w: size.w, h: size.h, state: stateAt(ev.clientX, ev.clientY) });
+        setGhost({ key: src.key, x: ev.clientX, y: ev.clientY, w: size.w, h: size.h, state: stateAt(ev.clientX, ev.clientY), rot: rotOf() });
       };
       const onUp = (ev: PointerEvent) => {
         if (ev.pointerId !== e.pointerId) return;
@@ -213,7 +214,7 @@ export function BadgeProvider({
       const sendBack = (at: { x: number; y: number }) => {
         // o botom desliza de volta para onde saiu (a barra, ou o lugar antigo no mural)
         const to = origin ?? sourceCenter();
-        setGhost({ key: src.key, x: at.x, y: at.y, w: size.w, h: size.h, state: "bad", back: to });
+        setGhost({ key: src.key, x: at.x, y: at.y, w: size.w, h: size.h, state: "bad", back: to, rot: rotOf() });
         window.setTimeout(() => setGhost(null), 280);
       };
 
@@ -444,7 +445,7 @@ export function BadgeProvider({
             height: ghost.h,
             transition: ghost.back ? "left 0.26s ease, top 0.26s ease, opacity 0.26s ease" : "none",
             opacity: ghost.back ? 0.2 : ghost.state === "bad" ? 0.6 : 1,
-            transform: ghost.back ? "scale(0.8)" : "scale(1.12) rotate(-6deg)",
+            transform: ghost.rot !== undefined ? `rotate(${ghost.rot}deg)${ghost.back ? " scale(0.8)" : ""}` : ghost.back ? "scale(0.8)" : "scale(1.12) rotate(-6deg)",
             filter: `drop-shadow(0 6px 8px rgba(0,0,0,.45))${ghost.state === "bad" && !ghost.back ? " grayscale(0.6)" : ""}`,
           }}
         />
