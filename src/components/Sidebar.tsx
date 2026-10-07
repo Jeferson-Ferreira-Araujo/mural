@@ -55,7 +55,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </div>
       )}
 
-      {panel("light")}
+      {panel("light", "profile")}
 
       {notice?.("light")}
 

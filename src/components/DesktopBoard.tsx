@@ -19,6 +19,7 @@ export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
+  const lockForm = props.locked ? props.panel("dark", "form") : null;
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
   const hasPager = !!muralSwitch && muralSwitch.items.length >= 2;
@@ -53,7 +54,13 @@ export function DesktopBoard(props: ViewProps) {
 
 
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose}>
-          {locked && <LockedNotice hasSelection={hasSelection} />}
+          {locked &&
+            (lockForm ? (
+              // a pergunta fica bem no centro do quadro: fica claro que só entra quem acertar a resposta
+              <div className="absolute inset-0 z-30 grid place-items-center overflow-y-auto p-6 text-[clamp(14px,1.1vw,17px)]">{lockForm}</div>
+            ) : (
+              <LockedNotice hasSelection={hasSelection} />
+            ))}
         </BoardCanvas>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">

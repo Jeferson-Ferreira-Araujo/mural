@@ -24,6 +24,8 @@ type Props = {
   visits?: number;
   /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
   password?: boolean;
+  /** "form": só o cartão de pergunta, grande, para o centro do quadro (desktop); "profile": só o perfil (sem a pergunta); padrão: tudo junto */
+  part?: "form" | "profile";
 };
 
 const LockIcon = () => (
@@ -36,7 +38,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, part }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -60,6 +62,56 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     } else setHint("Não foi possível verificar agora. Tente de novo.");
   }
 
+  if (part === "form") {
+    if (unlocked || open) return null;
+    return (
+      <section aria-label="Acesso ao mural" className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+        <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
+          <LockIcon />
+        </span>
+        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? "Mural compartilhado" : "Mural trancado"}</p>
+        <h2 className="font-title mt-[0.45em] text-[1.9em] leading-tight font-semibold [overflow-wrap:anywhere]">{question}</h2>
+        <p className="mt-[0.6em] text-[0.95em] text-white/75">
+          {password ? "Digite a senha para entrar." : owner ? `Só entra no mural de @${owner} quem acertar a resposta.` : "Só entra no mural quem acertar a resposta."}
+        </p>
+        <form onSubmit={submit} noValidate className="mt-[1.2em] text-left">
+          <label htmlFor={inputId} className="sr-only">
+            {question}
+          </label>
+          <input
+            id={inputId}
+            data-focus-target
+            autoFocus
+            value={answer}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+              if (hint) setHint(null);
+            }}
+            type={password ? "password" : "text"}
+            autoComplete={password ? "current-password" : "off"}
+            placeholder={password ? "Digite a senha..." : "Digite sua resposta..."}
+            aria-invalid={hint !== null}
+            aria-describedby={hint ? `${inputId}-hint` : undefined}
+            className="w-full rounded-[0.7em] border border-transparent bg-[#e9e5df] px-[1em] py-[0.8em] text-[1.05em] text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#f2c230]/80"
+          />
+          {hint && (
+            <p id={`${inputId}-hint`} role="alert" className="mt-[0.5em] text-[0.9em] text-[#ffb4a2]">
+              {hint}
+            </p>
+          )}
+          <button type="submit" disabled={busy} className="mt-[0.9em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.7em] bg-[#f2c230] px-[1em] py-[0.85em] text-[1.05em] font-bold text-[#2a1c12] transition hover:bg-[#f7cd45] disabled:opacity-70">
+            {busy ? "Verificando…" : "Desbloquear"}
+            <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </form>
+      </section>
+    );
+  }
+
+  const profileOnly = part === "profile" && !unlocked && !open; // desktop trancado: a pergunta vai para o centro do quadro
+
   return (
     <section
       aria-label="Acesso ao mural"
@@ -70,7 +122,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       }
     >
       {title && (
-        <header className={`flex flex-col gap-[0.5em] ${open ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
+        <header className={`flex flex-col gap-[0.5em] ${open || profileOnly ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
           {plus && (
             <span className="self-end rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
               ★ PLUS
@@ -95,7 +147,12 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           </div>
         </header>
       )}
-      {open ? null : unlocked ? (
+      {profileOnly ? (
+        <p className={`mt-[0.8em] flex items-center gap-[0.5em] text-[0.85em] font-semibold ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
+          <LockIcon />
+          Responda à pergunta no centro do mural para entrar.
+        </p>
+      ) : open ? null : unlocked ? (
         <div className="rise" role="status">
           <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
         </div>

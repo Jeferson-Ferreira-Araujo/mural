@@ -522,8 +522,26 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // ainda não sabemos quem está olhando (sessão/nickname carregando): não mostra pergunta nem quadro trancado por um instante para depois trocar
   const resolving = sessionLoading || (logged && !myNick);
   const panel = useCallback(
-    (tone: Tone) => {
+    (tone: Tone, part?: "form" | "profile") => {
       const dark = tone === "dark";
+      // só o cartão de pergunta (centro do quadro no desktop): sem busca, avisos nem outras seções
+      if (part === "form") {
+        if (!selected || resolving || (isShared && !isMember) || (isMember && selected.locked) || unlocked) return null;
+        return (
+          <UnlockPanel
+            part="form"
+            password={isMember}
+            key={`${selected.nickname}/${selected.slug}/form`}
+            owner={selected.nickname}
+            question={isMember ? "Senha do mural" : selected.question}
+            open={selected.open || isOwner}
+            unlocked={unlocked}
+            onSubmit={submitAnswer}
+            inputId="unlock-center"
+            tone="dark"
+          />
+        );
+      }
       return (
         <div className="space-y-[1.2em]">
           {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
@@ -598,6 +616,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               onSubmit={submitAnswer}
               inputId={`unlock-${tone}`}
               tone={tone}
+              part={part}
             />
           )}
         </div>

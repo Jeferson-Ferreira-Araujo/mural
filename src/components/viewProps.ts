@@ -39,7 +39,8 @@ export type ViewProps = {
   /** Para o botão Compartilhar (null = nada para compartilhar). */
   share: { title: string; /** frase do convite */ text?: string; path: string } | null;
   /** Busca, escolha do mural e pergunta de desbloqueio; cada visualização escolhe o tom. */
-  panel: (tone: Tone) => ReactNode;
+  /** `part`: "form" = só o cartão de pergunta (centro do quadro, desktop); "profile" = só o perfil (coluna da esquerda, desktop) */
+  panel: (tone: Tone, part?: "form" | "profile") => ReactNode;
   /** Celular: nenhuma pessoa/mural escolhido ainda → tela inicial com logo grande e busca no meio. */
   landing?: boolean;
   /** Desktop: o quadro de exemplo da tela inicial ainda está sendo sorteado; a lousa fica invisível para não piscar o quadro errado. */
