@@ -33,8 +33,8 @@ export function DesktopBoard(props: ViewProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
-        <nav aria-label="Informações do mural" className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
-          <div className="flex min-h-11 min-w-0 items-center gap-2">
+        <nav aria-label="Informações do mural" className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
+          <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
             {hasSelection && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
@@ -46,7 +46,7 @@ export function DesktopBoard(props: ViewProps) {
               <ShareButton iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="pointer-events-auto flex items-center gap-2">
             {account && <AccountActions account={account} tone="dark" menu={false} />}
           </div>
         </nav>
@@ -56,12 +56,12 @@ export function DesktopBoard(props: ViewProps) {
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </BoardCanvas>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
           {hasPager && <div aria-hidden className="w-[9.5rem] shrink-0" />}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
-            <BadgeBar className="w-[min(46rem,100%)]" />
+            <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
           </div>
-          {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="w-[9.5rem] bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
+          {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="pointer-events-auto w-[9.5rem] bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
         </div>
       </div>
     </div>
