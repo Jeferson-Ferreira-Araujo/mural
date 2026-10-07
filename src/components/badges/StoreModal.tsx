@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
+import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT } from "@/lib/badgeCategories";
 import { BOARDS } from "@/lib/boards";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
@@ -47,13 +48,20 @@ function Coin({ className = "size-6" }: { className?: string }) {
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<void> }) {
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
-  const [pinView, setPinView] = useState<"new" | "mine">("new");
+  const [filter, setFilter] = useState<string>("new"); // "new" | "all" | id da categoria
   const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
   const qtyOf = (key: number) => qty[key] ?? 1;
   const credits = inventory?.credits ?? 0;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
-  const pinsToBuy = BADGES.filter((b) => byKey.has(b.key) && !byKey.get(b.key)!.owned);
-  const myPins = BADGES.filter((b) => byKey.has(b.key) && byKey.get(b.key)!.owned);
+  // a loja mostra TODOS os bottons do site; quem já tem um compra só unidades extras
+  const all = BADGES.filter((b) => byKey.has(b.key));
+  const shown =
+    filter === "new" ? [...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT) : filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter);
+  const chips: { id: string; text: string }[] = [
+    { id: "new", text: "Novos" },
+    { id: "all", text: `Todos (${all.length})` },
+    ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
+  ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
 
   async function buy(id: string, item: BuyItem) {
@@ -117,47 +125,39 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
       ) : tab === "pins" ? (
         <>
-          <div role="tablist" aria-label="Bottons" className="mb-3 grid max-w-xs grid-cols-2 rounded-lg border border-[#e1d3ba] bg-white/60 p-0.5 text-xs">
-            {(
-              [
-                ["new", `Novos (${pinsToBuy.length})`],
-                ["mine", `Meus Bottons (${myPins.length})`],
-              ] as const
-            ).map(([id, text]) => (
-              <button key={id} role="tab" type="button" aria-selected={pinView === id} onClick={() => setPinView(id)} className={`cursor-pointer rounded-md py-1.5 font-semibold ${pinView === id ? "bg-[#1f232b] text-white" : "text-[#4a3826]"}`}>
-                {text}
+          <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex flex-wrap gap-1.5">
+            {chips.map((c) => (
+              <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => setFilter(c.id)} className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                {c.text}
               </button>
             ))}
           </div>
-          {(pinView === "new" ? pinsToBuy : myPins).length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#6b5440]">{pinView === "new" ? "Você já liberou todos os Bottons. Novos chegam em breve!" : "Você ainda não tem Bottons."}</p>
+          {shown.length === 0 ? (
+            <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum botton nesta categoria ainda.</p>
           ) : (
             <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
-              {(pinView === "new" ? pinsToBuy : myPins).map((b) => {
+              {shown.map((b) => {
                 const c = byKey.get(b.key)!;
+                const owned = c.starter || c.owned;
+                const n = qtyOf(b.key);
+                const cost = owned ? c.unitPrice * n : c.price + c.unitPrice * (n - 1);
+                const name = b.name ?? `Botton ${b.key}`;
                 return (
                   <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
                     <div className="grid h-16 w-full place-items-center">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
                     </div>
-                    <p className="mt-1 w-full truncate text-xs font-semibold">{b.name ?? `Botton ${b.key}`}</p>
-                    {pinView === "new" ? (
-                      <>
-                        <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
-                        <button type="button" disabled={busy === `b${b.key}` || !can(c.price + c.unitPrice * (qtyOf(b.key) - 1))} onClick={() => buy(`b${b.key}`, { kind: "badge", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
-                          {label(c.price + c.unitPrice * (qtyOf(b.key) - 1))}
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-1 text-[11px] text-[#6b5440]">{1 + c.extra} unidade(s)</p>
-                        <Qty value={qtyOf(b.key)} onChange={(n) => setQty((q) => ({ ...q, [b.key]: n }))} label={`Quantidade de ${b.name ?? `Botton ${b.key}`}`} />
-                        <button type="button" disabled={busy === `u${b.key}` || !can(c.unitPrice * qtyOf(b.key))} onClick={() => buy(`u${b.key}`, { kind: "unit", key: b.key, qty: qtyOf(b.key) })} className={buyBtn}>
-                          {can(c.unitPrice * qtyOf(b.key)) ? `+${qtyOf(b.key)} unidade${qtyOf(b.key) > 1 ? "s" : ""} · ${c.unitPrice * qtyOf(b.key)} cr.` : `${c.unitPrice * qtyOf(b.key)} cr. (faltam)`}
-                        </button>
-                      </>
-                    )}
+                    <p className="mt-1 w-full truncate text-xs font-semibold">{name}</p>
+                    <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={`Quantidade de ${name}`} />
+                    <button
+                      type="button"
+                      disabled={busy === `p${b.key}` || !can(cost)}
+                      onClick={() => buy(`p${b.key}`, owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n })}
+                      className={buyBtn}
+                    >
+                      {can(cost) ? (owned ? `+${n} unidade${n > 1 ? "s" : ""} · ${cost} cr.` : `Comprar · ${cost} cr.`) : `${cost} cr. (faltam)`}
+                    </button>
                   </li>
                 );
               })}
