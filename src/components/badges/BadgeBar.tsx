@@ -9,7 +9,7 @@ import { useBadges } from "./BadgeContext";
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
-  const { editable, begin, stock, openStore, acquiredAt, draggingId } = useBadges();
+  const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -26,6 +26,12 @@ export function BadgeBar({ className = "" }: { className?: string }) {
       {draggingId && (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
           Solte aqui para tirar do mural
+        </div>
+      )}
+      {/* arrastando um botton novo: avisa para soltar no mural */}
+      {draggingNew && !draggingId && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
+          Solte o pin no mural
         </div>
       )}
       <div className="flex items-center gap-2">

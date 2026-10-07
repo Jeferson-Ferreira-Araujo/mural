@@ -14,6 +14,8 @@ type Ctx = {
   editable: boolean;
   /** botom que está sendo arrastado (some do lugar de origem até soltar) */
   draggingId: string | null;
+  /** arrastando um botton NOVO da barra para o mural */
+  draggingNew: boolean;
   /** unidades que a pessoa ainda pode colocar de cada pin (1 por pin + extras compradas; ninguém tem ilimitado) */
   stock: (key: number) => Stock;
   /** quando o botton foi comprado (segundos), para ordenar a barra; undefined = já era da conta */
@@ -27,7 +29,7 @@ type Ctx = {
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
@@ -131,6 +133,7 @@ export function BadgeProvider({
 }) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [draggingNew, setDraggingNew] = useState(false);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selId, setSelId] = useState<string | null>(null);
   const hoverTimer = useRef<number | null>(null);
@@ -174,6 +177,7 @@ export function BadgeProvider({
         }
         origin = sourceCenter();
         if (src.kind === "placed") setDraggingId(src.id);
+        else setDraggingNew(true);
         document.body.classList.add("badge-dragging");
       };
       const stateAt = (x: number, y: number): "ok" | "bad" => {
@@ -221,6 +225,7 @@ export function BadgeProvider({
         cleanup.current = null;
         document.body.classList.remove("badge-dragging");
         setDraggingId(null);
+        setDraggingNew(false);
         if (!active) return;
         const { notify, muralId: mid, badges: cur } = live.current;
         const at = ev ? { x: ev.clientX, y: ev.clientY } : (origin ?? { x: 0, y: 0 });
@@ -412,7 +417,7 @@ export function BadgeProvider({
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
-  const value = useMemo(() => ({ badges, editable, draggingId, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select }), [badges, editable, draggingId, stock, acquiredAt, begin, hover, select]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
