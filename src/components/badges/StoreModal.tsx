@@ -31,7 +31,7 @@ function Qty({ value, onChange, label }: { value: number; onChange: (n: number) 
   );
 }
 
-const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
+const buyBtn = "mt-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-[#f6c93f] px-2 py-1.5 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-45";
 
 const CONFETTI = ["#e8a91c", "#e0495a", "#3aa655", "#4a90e2", "#b565d9", "#f08a24", "#ffd54a", "#2fb8a6"];
 
@@ -120,7 +120,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     }
   }
   const can = (cost: number) => credits >= cost;
-  const label = (cost: number) => (credits >= cost ? `Comprar · ${cost} cr.` : `${cost} cr. (faltam)`);
 
   return (
     <Modal open={open} onClose={onClose} title="Loja" xl>
@@ -161,7 +160,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <p className="font-title mt-1 text-3xl leading-none font-semibold">{p.credits}</p>
               <p className="text-xs text-[#8a7b69]">créditos</p>
               <p className="mt-3 text-xl font-bold">{p.price}</p>
-              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="mt-3 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-3 py-2 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="mt-3 w-full cursor-pointer rounded-xl bg-[#f6c93f] px-3 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
                 {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
               </button>
             </li>
@@ -219,6 +218,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <button
                         type="button"
                         disabled={busy === `p${b.key}` || !can(cost)}
+                        title={can(cost) ? undefined : "Créditos insuficientes"}
+                        aria-label={`${owned ? "Comprar mais " + n + " de" : "Comprar"} ${name} por ${cost} crédito${cost > 1 ? "s" : ""}`}
                         onClick={() =>
                           buy(
                             `p${b.key}`,
@@ -233,7 +234,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         }
                         className={buyBtn}
                       >
-                        {busy === `p${b.key}` ? "Comprando…" : can(cost) ? (owned ? `+${n} unidade${n > 1 ? "s" : ""} · ${cost} cr.` : `Comprar · ${cost} cr.`) : `${cost} cr. (faltam)`}
+                        {busy === `p${b.key}` ? "Comprando…" : (<><Coin className="size-4" />{cost}</>)}
                       </button>
                     )}
                   </li>
@@ -259,7 +260,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{just ? "✓ Comprado! Aplique em Editar mural." : b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
                   ) : (
                     <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 3 })} className={buyBtn}>
-                      {busy === `t${b.id}` ? "Comprando…" : label(info?.price ?? 3)}
+                      {busy === `t${b.id}` ? "Comprando…" : (<><Coin className="size-4" />{info?.price ?? 3}</>)}
                     </button>
                   )}
                 </div>
