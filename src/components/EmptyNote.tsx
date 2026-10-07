@@ -1,4 +1,4 @@
-import { Pin, Tape } from "./messages/fasteners";
+import { Tape } from "./messages/fasteners";
 
 /** Mensagem padrão do mural vazio (o dono do plano PLUS pode trocá-la). */
 export const DEFAULT_WELCOME = "Nenhuma mensagem neste mural. Seja o primeiro a deixar!";
@@ -13,7 +13,6 @@ export function EmptyNote({ unlocked, message }: { unlocked: boolean; /** texto 
       style={{ ["--rot" as string]: "-2deg", borderRadius: "0.2em" }}
     >
       <Tape className="top-[-0.6em] left-1/2 -translate-x-1/2" rotate={-3} />
-      <Pin tone="red" className="top-[0.6em] right-[1.4em]" />
       <p className="font-hand text-[1.9em] leading-[1.1] text-[#243a7a] [overflow-wrap:anywhere]">{text}</p>
     </article>
     </div>
