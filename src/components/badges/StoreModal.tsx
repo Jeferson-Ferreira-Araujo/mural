@@ -288,11 +288,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
                 <div className="p-3">
-                  <p className="font-title text-base font-semibold">{b.name}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-title text-base font-semibold">{b.name}</p>
+                    {!owned && (
+                      <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${info?.price ?? 25} créditos`}>
+                        <Coin className="size-5" />
+                        {info?.price ?? 25}
+                      </p>
+                    )}
+                  </div>
                   {owned ? (
                     <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{just ? "✓ Comprado! Aplique em Editar mural." : b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
                   ) : (
-                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 3 })} className={buyBtn}>
+                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 25)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
                       {busy === `t${b.id}` ? "Comprando…" : "Comprar"}
                     </button>
                   )}
