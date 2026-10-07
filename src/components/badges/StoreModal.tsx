@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
 import { BOARDS } from "@/lib/boards";
@@ -33,6 +33,35 @@ function Qty({ value, onChange, label }: { value: number; onChange: (n: number) 
 
 const buyBtn = "mt-2 w-full cursor-pointer rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 
+const CONFETTI = ["#e8a91c", "#e0495a", "#3aa655", "#4a90e2", "#b565d9", "#f08a24", "#ffd54a", "#2fb8a6"];
+
+/** Confete que sai do centro do cartão (só CSS; some sozinho). */
+function Confetti() {
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center overflow-visible">
+      {Array.from({ length: 16 }, (_, i) => {
+        const a = (i / 16) * Math.PI * 2 + (i % 2) * 0.2;
+        const d = 46 + (i % 3) * 16;
+        return (
+          <span
+            key={i}
+            className="absolute size-2 rounded-[2px]"
+            style={{
+              background: CONFETTI[i % CONFETTI.length],
+              ["--dx" as string]: `${Math.cos(a) * d}px`,
+              ["--dy" as string]: `${Math.sin(a) * d - 8}px`,
+              ["--r" as string]: `${(i % 2 ? 1 : -1) * (120 + i * 20)}deg`,
+              animation: "confetti 0.9s ease-out forwards",
+            }}
+          />
+        );
+      })}
+    </span>
+  );
+}
+
+type Done = { id: string; title: string; text: string; img?: string; spent: number; at: number };
+
 function Coin({ className = "size-6" }: { className?: string }) {
   return (
     <span aria-hidden className={`inline-grid place-items-center rounded-full border-2 border-[#b9801a] bg-[radial-gradient(circle_at_35%_30%,#ffe27a,#e8a91c_70%)] text-[0.7em] font-black text-[#7a4c00] shadow-[inset_0_0.1em_0.15em_rgba(255,255,255,.6)] ${className}`}>
@@ -45,7 +74,7 @@ function Coin({ className = "size-6" }: { className?: string }) {
  * Loja do Pinz. Os pacotes de créditos ficam sempre à vista, no topo (a compra é no Mercado Pago).
  * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PLUS (sem limite), não se vende.
  */
-export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<void> }) {
+export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("new"); // "new" | "all" | id da categoria
@@ -64,10 +93,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
 
-  async function buy(id: string, item: BuyItem) {
+  const [done, setDone] = useState<Done | null>(null);
+  // a comemoração some depois de alguns segundos
+  useEffect(() => {
+    if (!done) return;
+    const t = setTimeout(() => setDone(null), 5000);
+    return () => clearTimeout(t);
+  }, [done]);
+
+  async function buy(id: string, item: BuyItem, win: { title: string; text: string; img?: string; spent: number }) {
     setBusy(id);
-    await onBuy(item);
+    const ok = await onBuy(item);
     setBusy(null);
+    if (ok) setDone({ id, ...win, at: Date.now() });
   }
   async function buyCredits(id: string) {
     setBusy(`credits:${id}`);
@@ -87,7 +125,17 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <p className="flex items-center gap-2 text-sm">
             <Coin className="size-7" />
-            Seus créditos: <strong className="text-xl">{credits}</strong>
+            Seus créditos:
+            <span className="relative">
+              <strong key={done?.at ?? 0} className="inline-block text-xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                {credits}
+              </strong>
+              {done && done.spent > 0 && (
+                <span key={done.at} aria-hidden className="pointer-events-none absolute -top-1 left-full ml-1 text-sm font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
+                  −{done.spent}
+                </span>
+              )}
+            </span>
           </p>
           <p className="text-xs text-[#6b5440]">{PAYMENTS_ENABLED ? "Escolha um pacote · pagamento no Mercado Pago (Pix, cartão…)" : "Compra de créditos: em breve"}</p>
         </div>
@@ -121,6 +169,24 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         ))}
       </div>
 
+      {done && (
+        <div role="status" key={done.at} className="sticky top-0 z-30 mb-4 flex items-center gap-3 rounded-2xl border-2 border-[#3aa655] bg-[#effbf1] p-3 shadow-[0_0.6rem_1.6rem_rgba(40,120,60,.3)]" style={{ animation: "banner-in 0.35s ease-out" }}>
+          {done.img && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={done.img} alt="" draggable={false} className="size-12 shrink-0 object-contain" style={{ animation: "buy-wiggle 0.9s ease", filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
+          )}
+          <div className="min-w-0">
+            <p className="font-title text-base font-semibold text-[#1f6b36]">🎉 Compra realizada!</p>
+            <p className="text-sm text-[#2f2218]">
+              <strong>{done.title}</strong> · {done.text}
+            </p>
+          </div>
+          <button type="button" onClick={() => setDone(null)} aria-label="Fechar aviso" className="ml-auto grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-lg text-[#4a3826] hover:bg-black/5">
+            ×
+          </button>
+        </div>
+      )}
+
       {!inventory ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
       ) : tab === "pins" ? (
@@ -142,22 +208,39 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 const n = qtyOf(b.key);
                 const cost = owned ? c.unitPrice * n : c.price + c.unitPrice * (n - 1);
                 const name = b.name ?? `Botton ${b.key}`;
+                const just = done?.id === `p${b.key}`;
                 return (
-                  <li key={b.key} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 text-center">
+                  <li key={b.key} className={`relative flex flex-col items-center rounded-2xl border p-2.5 text-center transition-colors ${just ? "border-[#3aa655] bg-[#effbf1] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba] bg-white/70"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                    {just && <Confetti key={done.at} />}
                     <div className="grid h-16 w-full place-items-center">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
+                      <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))", animation: just ? "buy-wiggle 0.9s ease" : undefined }} />
                     </div>
                     <p className="mt-1 w-full truncate text-xs font-semibold">{name}</p>
                     <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={`Quantidade de ${name}`} />
-                    <button
-                      type="button"
-                      disabled={busy === `p${b.key}` || !can(cost)}
-                      onClick={() => buy(`p${b.key}`, owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n })}
-                      className={buyBtn}
-                    >
-                      {can(cost) ? (owned ? `+${n} unidade${n > 1 ? "s" : ""} · ${cost} cr.` : `Comprar · ${cost} cr.`) : `${cost} cr. (faltam)`}
-                    </button>
+                    {just ? (
+                      <p className="mt-2 w-full rounded-lg bg-[#3aa655] px-2 py-1.5 text-xs font-bold text-white">✓ Comprado!</p>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={busy === `p${b.key}` || !can(cost)}
+                        onClick={() =>
+                          buy(
+                            `p${b.key}`,
+                            owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n },
+                            {
+                              title: name,
+                              text: owned ? `+${n} unidade${n > 1 ? "s" : ""} já disponível${n > 1 ? "s" : ""} na sua barra de bottons.` : n > 1 ? `liberado com ${n} unidades! Já está na sua barra de bottons.` : "liberado! Já está na sua barra de bottons.",
+                              img: badgeSrc(b.key),
+                              spent: cost,
+                            },
+                          )
+                        }
+                        className={buyBtn}
+                      >
+                        {busy === `p${b.key}` ? "Comprando…" : can(cost) ? (owned ? `+${n} unidade${n > 1 ? "s" : ""} · ${cost} cr.` : `Comprar · ${cost} cr.`) : `${cost} cr. (faltam)`}
+                      </button>
+                    )}
                   </li>
                 );
               })}
@@ -169,17 +252,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           {BOARDS.map((b) => {
             const info = boards.get(b.id);
             const owned = info?.owned ?? b.id === "cortica";
+            const just = done?.id === `t${b.id}`;
             return (
-              <li key={b.id} className="overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70">
+              <li key={b.id} className={`relative overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                {just && <Confetti key={done.at} />}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
                 <div className="p-3">
                   <p className="font-title text-base font-semibold">{b.name}</p>
                   {owned ? (
-                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
+                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{just ? "✓ Comprado! Aplique em Editar mural." : b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
                   ) : (
-                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id })} className={buyBtn}>
-                      {label(info?.price ?? 3)}
+                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 3)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 3 })} className={buyBtn}>
+                      {busy === `t${b.id}` ? "Comprando…" : label(info?.price ?? 3)}
                     </button>
                   )}
                 </div>

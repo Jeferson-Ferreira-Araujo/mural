@@ -120,6 +120,34 @@ body {
   animation: rise 0.6s ease backwards;
 }
 
+/* compra na loja: o cartão salta, o item balança, confete sai do centro e o "-N" dos créditos sobe */
+@keyframes buy-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.09); }
+  60% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+@keyframes buy-wiggle {
+  0%, 100% { transform: rotate(0) scale(1); }
+  20% { transform: rotate(-14deg) scale(1.25); }
+  40% { transform: rotate(12deg) scale(1.25); }
+  60% { transform: rotate(-8deg) scale(1.12); }
+  80% { transform: rotate(5deg) scale(1.05); }
+}
+@keyframes confetti {
+  0% { transform: translate(0, 0) rotate(0) scale(0.4); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1); opacity: 0; }
+}
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(-1.6rem); opacity: 0; }
+}
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(-0.8rem) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

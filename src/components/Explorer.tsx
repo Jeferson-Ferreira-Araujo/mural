@@ -347,7 +347,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       if (res.ok) {
         notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
-      } else notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
+        return true;
+      }
+      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
+      return false;
     },
     [notify, reloadInventory],
   );
