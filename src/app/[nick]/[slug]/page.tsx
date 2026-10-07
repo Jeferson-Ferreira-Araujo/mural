@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { nick } = await params;
   const who = `@${nick.toLowerCase()}`;
   const title = `Mural de ${who} no Pinz`;
-  const description = "Deixe um recado em meu mural.";
+  const description = "Deixe um recado no meu mural";
   return {
     title: `Mural de ${who}`,
     description,
