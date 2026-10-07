@@ -178,9 +178,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             {PAYMENTS_ENABLED ? "Pagamento seguro no Mercado Pago (Pix ou cartão)" : "Compra de créditos: em breve"}
           </p>
         </header>
-        <ul className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4 sm:p-4">
+        <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pt-5 pb-3 [scrollbar-width:none] sm:grid sm:grid-cols-4 sm:overflow-visible sm:p-4 [&::-webkit-scrollbar]:hidden">
           {CREDIT_PACKS.map((p, i) => (
-            <li key={p.id} className="relative flex flex-col items-center rounded-2xl border border-[#e8d9b0] bg-white px-3 pt-5 pb-3 text-center shadow-[0_0.2rem_0.6rem_rgba(120,80,0,.08)]">
+            <li key={p.id} className="relative flex w-[68%] shrink-0 snap-center flex-col items-center rounded-2xl sm:w-auto border border-[#e8d9b0] bg-white px-3 pt-5 pb-3 text-center shadow-[0_0.2rem_0.6rem_rgba(120,80,0,.08)]">
               {p.note && <span className="absolute -top-2.5 rounded-full bg-[#2f9e5a] px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">{p.note}</span>}
               {/* moeda e quantidade lado a lado; preço e botão lado a lado: cartão baixo */}
               <div className="flex items-center justify-center gap-2.5">
@@ -205,7 +205,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         {(
           [
             ["pins", "Bottons"],
-            ["boards", "Fundos do mural"],
+            ["boards", "Murais"],
           ] as const
         ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -218,9 +218,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
       ) : tab === "pins" ? (
         <>
-          <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex flex-wrap gap-1.5">
+          <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
-              <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => setFilter(c.id)} className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+              <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => setFilter(c.id)} className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
                 {c.text}
               </button>
             ))}
