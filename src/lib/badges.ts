@@ -133,7 +133,7 @@ export async function setBadgeScale(sb: SupabaseClient, id: string, pct: number)
 
 export const MIN_SCALE = 100; // o menor é o tamanho de sempre
 export const MAX_SCALE = 200; // o maior é o dobro
-export const DEFAULT_SCALE = MIN_SCALE; // botton novo entra no tamanho de sempre
+export const DEFAULT_SCALE = (MIN_SCALE + MAX_SCALE) / 2; // o padrão é o meio da barra (150%)
 
 /** Salva a inclinação do botton (graus; negativo = anti-horário). */
 export async function setBadgeRotation(sb: SupabaseClient, id: string, deg: number): Promise<boolean> {

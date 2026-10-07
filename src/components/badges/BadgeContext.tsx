@@ -168,7 +168,7 @@ export function BadgeProvider({
           const lr = layer.getBoundingClientRect();
           const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
           const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const w = BADGE_EM * em * scale * (src.kind === "placed" ? (src.scale ?? 100) / 100 : 1);
+          const w = BADGE_EM * em * scale * ((src.kind === "placed" ? (src.scale ?? DEFAULT_SCALE) : DEFAULT_SCALE) / 100);
           size = { w, h: w / (def?.ratio ?? 1) };
         }
         origin = sourceCenter();
@@ -267,7 +267,7 @@ export function BadgeProvider({
           return sendBack(at);
         }
         const tmp = `tmp-${Date.now()}`;
-        setBadges((l) => [...l, { id: tmp, key: src.key, x: drop.x, y: drop.y }]);
+        setBadges((l) => [...l, { id: tmp, key: src.key, x: drop.x, y: drop.y, scale: DEFAULT_SCALE }]);
         void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((res) => {
           if ("error" in res) {
             setBadges((l) => l.filter((b) => b.id !== tmp));
@@ -355,7 +355,8 @@ export function BadgeProvider({
 
   /** Muda o tamanho na tela enquanto a barra vertical é arrastada (ainda sem salvar). Perto da ponta de baixo, "gruda" no tamanho de sempre. */
   const rescale = useCallback((id: string, pct: number) => {
-    const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(pct <= MIN_SCALE + 3 ? MIN_SCALE : pct)));
+    const near = [MIN_SCALE, DEFAULT_SCALE, MAX_SCALE].find((t) => Math.abs(pct - t) <= 3); // grudinha no menor, no padrão (meio) e no maior
+    const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(near ?? pct)));
     setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: v } : x)));
   }, [setBadges]);
   const scaleSaved = useRef<Record<string, number>>({});

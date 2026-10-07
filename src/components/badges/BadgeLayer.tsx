@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { badgeDef, badgeSrc, BADGE_EM, type PlacedBadge } from "@/lib/badges";
+import { badgeDef, badgeSrc, BADGE_EM, DEFAULT_SCALE, type PlacedBadge } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
@@ -13,8 +13,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   beginRef.current = begin;
   const selectRef = useRef(select);
   selectRef.current = select;
-  const scaleRef = useRef<number>(b.scale ?? 100);
-  scaleRef.current = b.scale ?? 100;
+  const scaleRef = useRef<number>(b.scale ?? DEFAULT_SCALE);
+  scaleRef.current = b.scale ?? DEFAULT_SCALE;
   const lastType = useRef("mouse");
   const tapStart = useRef<{ x: number; y: number; t: number } | null>(null);
 
@@ -56,7 +56,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       style={{
         left: `${b.x}%`,
         top: `${b.y}%`,
-        width: `${(BADGE_EM * (b.scale ?? 100)) / 100}em`,
+        width: `${(BADGE_EM * (b.scale ?? DEFAULT_SCALE)) / 100}em`,
         aspectRatio: def.ratio,
         transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`,
         opacity: draggingId === b.id ? 0.25 : 1,
