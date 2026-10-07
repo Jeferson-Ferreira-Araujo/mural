@@ -102,7 +102,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** 1 = padrão (pequeno), 2 = o dobro */ size?: 1 | 2; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+export type PlacedBadge = { id: string; key: number; /** 1 = padrão (pequeno), 2 = o dobro */ size?: 1 | 2; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -130,6 +130,14 @@ export async function setBadgeSize(sb: SupabaseClient, id: string, size: 1 | 2):
   const { error } = await sb.rpc("set_badge_size", { p_id: id, p_size: size });
   return !error;
 }
+
+/** Salva a inclinação do botton (graus; negativo = anti-horário). */
+export async function setBadgeRotation(sb: SupabaseClient, id: string, deg: number): Promise<boolean> {
+  const { error } = await sb.rpc("set_badge_rotation", { p_id: id, p_deg: Math.round(deg) });
+  return !error;
+}
+
+export const MAX_TILT = 45; // a barra de inclinação vai de -45° a +45°
 
 export async function removeBadge(sb: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await sb.rpc("remove_badge", { p_id: id });

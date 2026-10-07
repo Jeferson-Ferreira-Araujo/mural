@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeSize, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, badgeDef, badgeSrc, BADGE_EM, MAX_BADGES, MAX_TILT, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeRotation, setBadgeSize, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** 1 ou 2: o tamanho do botton que está sendo arrastado */ size?: number };
@@ -321,6 +321,33 @@ export function BadgeProvider({
     });
   }, [setBadges]);
 
+  /** Inclina na tela enquanto a barra é arrastada (ainda sem salvar). */
+  const tilt = useCallback((id: string, deg: number) => {
+    const v = Math.max(-MAX_TILT, Math.min(MAX_TILT, Math.round(deg)));
+    setBadges((l) => l.map((x) => (x.id === id ? { ...x, rotation: v } : x)));
+  }, [setBadges]);
+  const tiltSaved = useRef<Record<string, number>>({});
+  /** Ao soltar a barra: grava a inclinação (se falhar, volta à anterior). */
+  const commitTilt = useCallback((id: string) => {
+    const { badges: cur, notify } = live.current;
+    const b = cur.find((x) => x.id === id);
+    if (!b || id.startsWith("tmp-")) return;
+    const deg = b.rotation ?? 0;
+    const before = tiltSaved.current[id] ?? 0;
+    if (deg === before) return;
+    void setBadgeRotation(getBrowserSupabase(), id, deg).then((ok) => {
+      if (ok) tiltSaved.current[id] = deg;
+      else {
+        setBadges((l) => l.map((x) => (x.id === id ? { ...x, rotation: before } : x)));
+        notify("Não foi possível inclinar o botton agora.");
+      }
+    });
+  }, [setBadges]);
+  // a inclinação já salva de cada botton (referência para o caso de falhar ao salvar)
+  useEffect(() => {
+    for (const b of badges) tiltSaved.current[b.id] ??= b.rotation ?? 0;
+  }, [badges]);
+
   /** Dobra (dir = 1) ou volta ao tamanho padrão (dir = -1). Para aumentar, o botton maior tem que caber no lugar. */
   const resize = useCallback((id: string, dir: 1 | -1) => {
     const { badges: cur, notify } = live.current;
@@ -368,7 +395,7 @@ export function BadgeProvider({
   return (
     <BadgeCtx.Provider value={value}>
       {children}
-      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onResize={resize} onRemove={removeById} onKeep={hover} />}
+      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onResize={resize} onRemove={removeById} onKeep={hover} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -397,7 +424,7 @@ export function BadgeProvider({
  * Controles do botton (+, −, lixeira): uma pílula de tamanho fixo ao lado dele, por cima do mural (não encolhe com o zoom do celular).
  * Segue o botton enquanto o quadro é arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onResize, onRemove, onKeep }: { id: string; badge?: PlacedBadge; onResize: (id: string, dir: 1 | -1) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void }) {
+function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onResize: (id: string, dir: 1 | -1) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const [box, setBox] = useState<{ l: number; t: number; r: number; b: number } | null>(null);
   useEffect(() => {
     let raf = 0;
@@ -420,7 +447,56 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep }: { id: string; 
   const top = Math.min(Math.max((box.t + box.b) / 2 - Hh / 2, 8), window.innerHeight - Hh - 8);
   const btn = "grid size-8 cursor-pointer place-items-center rounded-full text-lg leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
 
+  const deg = badge.rotation ?? 0;
+  const SW = 176;
+  const SH = 46;
+  const sLeft = Math.min(Math.max((box.l + box.r) / 2 - SW / 2, 8), window.innerWidth - SW - 8);
+  // a barra fica abaixo do botton E abaixo da pílula (+, −, lixeira), sem sobrepor; sem espaço embaixo, vai para cima dos dois
+  const lowest = Math.max(box.b + 10, top + Hh + 6);
+  const sTop = lowest + SH <= window.innerHeight - 8 ? lowest : Math.max(8, Math.min(box.t, top) - 6 - SH);
+
   return createPortal(
+    <>
+    <div
+      data-badge-controls
+      onPointerEnter={() => onKeep(id)}
+      onPointerLeave={() => onKeep(null)}
+      className="fixed z-[350] flex flex-col items-center rounded-2xl bg-[#17110c]/92 px-2.5 pt-1.5 pb-1 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+      style={{ left: sLeft, top: sTop, width: SW }}
+    >
+      <div className="flex w-full items-center gap-1.5">
+        <span aria-hidden className="text-base leading-none opacity-80" title="Anti-horário">
+          ↺
+        </span>
+        <input
+          type="range"
+          min={-MAX_TILT}
+          max={MAX_TILT}
+          step={1}
+          value={deg}
+          onChange={(e) => onTilt(id, Number(e.target.value))}
+          onPointerUp={() => onTiltEnd(id)}
+          onKeyUp={() => onTiltEnd(id)}
+          onBlur={() => onTiltEnd(id)}
+          aria-label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário"
+          className="h-7 min-w-0 flex-1 cursor-pointer accent-[#f6c93f]"
+        />
+        <span aria-hidden className="text-base leading-none opacity-80" title="Horário">
+          ↻
+        </span>
+      </div>
+      <button
+        type="button"
+        disabled={deg === 0}
+        onClick={() => {
+          onTilt(id, 0);
+          window.setTimeout(() => onTiltEnd(id), 0);
+        }}
+        className="mt-0.5 cursor-pointer text-[11px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+      >
+        {deg === 0 ? "reto" : `${deg > 0 ? "+" : ""}${deg}° · endireitar`}
+      </button>
+    </div>
     <div
       data-badge-controls
       role="toolbar"
@@ -441,7 +517,8 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep }: { id: string; 
           <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
         </svg>
       </button>
-    </div>,
+    </div>
+    </>,
     document.body,
   );
 }

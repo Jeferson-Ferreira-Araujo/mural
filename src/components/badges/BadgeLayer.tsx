@@ -58,7 +58,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         top: `${b.y}%`,
         width: `${BADGE_EM * (b.size === 2 ? 2 : 1)}em`,
         aspectRatio: def.ratio,
-        transform: "translate(-50%, -50%)",
+        transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`,
         opacity: draggingId === b.id ? 0.25 : 1,
         filter: "drop-shadow(0.12em 0.22em 0.2em rgba(30,12,0,.5))",
       }}
