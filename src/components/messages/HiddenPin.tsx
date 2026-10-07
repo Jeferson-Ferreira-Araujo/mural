@@ -1,4 +1,5 @@
 import type { HiddenItem, Message } from "@/lib/types";
+import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
 
 const LOREM = "Lorem ipsum dolor sit amet consectetur";
@@ -38,6 +39,7 @@ function placeholderFor(h: HiddenItem): Message | null {
  * (PLUS) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
 export function HiddenPin({ item }: { item: HiddenItem }) {
+  const inDetail = useInDetail();
   const fake = placeholderFor(item);
   return (
     <div aria-label="Pin em segredo" role="img" className="relative select-none">
@@ -48,7 +50,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
           <div className="h-[13.5em] w-[14em] rounded-[0.2em] bg-[#e8dcc0]" />
         )}
       </div>
-      <span aria-hidden className={item.backdrop ? "hidden" : "absolute inset-0 grid place-items-center"}>
+      <span aria-hidden className={item.backdrop ? "hidden" : "absolute inset-0 grid place-items-center"} style={{ fontSize: inDetail ? "1em" : item.pending ? "1.4em" : "2.4em" }}>
         {item.pending ? (
           // aguardando o dono liberar: olho + aviso (os outros veem o pin, mas borrado)
           <span className="flex flex-col items-center gap-[0.45em]">
@@ -58,7 +60,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </span>
-            <span className="max-w-[11em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Aguardando liberação do dono do mural</span>
+            <span className="max-w-[9.5em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Aguardando liberação do dono do mural</span>
           </span>
         ) : (
           <span className="flex flex-col items-center gap-[0.45em]">
@@ -67,7 +69,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
                 <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
               </svg>
             </span>
-            <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+            <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
           </span>
         )}
       </span>

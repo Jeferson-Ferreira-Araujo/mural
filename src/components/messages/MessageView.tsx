@@ -50,12 +50,15 @@ function Signature({ name }: { name?: string }) {
 
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
+  const inDetail = useInDetail();
+  const kSecret = inDetail ? "1em" : "2.4em"; // no mural inteiro o cartão é pequeno: o selo cresce para continuar visível
+  const kPending = inDetail ? "1em" : "1.4em";
   if (m.pending) {
     // aguardando aprovação: selo redondo com um olho, no centro do pin (mesmo estilo do cadeado do pin em blur)
     return (
       <div className="relative">
         <Content m={m} />
-        <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+        <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: kPending }}>
           <span role="img" aria-label={m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"} title={m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"} className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
             <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
               <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -63,7 +66,7 @@ function Marked({ m }: { m: Message }) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </span>
-            <span className="max-w-[11em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
+            <span className="max-w-[9.5em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
           </span>
         </span>
         <Signature name={m.signedBy} />
@@ -74,14 +77,14 @@ function Marked({ m }: { m: Message }) {
     <div className="relative">
       <Content m={m} />
       <Signature name={m.signedBy} />
-      <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+      <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: kSecret }}>
         <span role="img" aria-label="Segredo: os visitantes veem este pin borrado" title="Segredo: os visitantes veem este pin borrado" className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
           <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
             <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor" aria-hidden>
               <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
             </svg>
           </span>
-          <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+          <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
         </span>
       </span>
     </div>
@@ -93,6 +96,7 @@ function Marked({ m }: { m: Message }) {
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
 export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
+  const inDetail = useInDetail();
   let m = message;
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
   if (isHidden(m)) return <HiddenPin item={m} />;
@@ -105,14 +109,14 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
             <Content m={m} />
             <Signature name={m.signedBy} />
           </div>
-          <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+          <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
             <span className="flex flex-col items-center gap-[0.45em]">
               <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
                 <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor">
                   <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
                 </svg>
               </span>
-              <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.68em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+              <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
             </span>
           </span>
         </div>
