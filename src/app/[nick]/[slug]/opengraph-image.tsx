@@ -7,7 +7,7 @@ import { SITE_HOST } from "@/lib/mural";
 
 export const alt = "Mural no Pinz";
 export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+export const contentType = "image/jpeg";
 export const dynamic = "force-dynamic";
 
 const W = 1200;
@@ -159,7 +159,15 @@ async function build(nick: string, slug: string): Promise<ArrayBuffer> {
     ),
     { width: W, height: H },
   );
-  return res.arrayBuffer();
+  // WhatsApp e outros ignoram prévias acima de ~300 KB (mostram só o logo): o PNG do gerador tem ~1 MB, o JPG fica em poucas dezenas de KB
+  const png = Buffer.from(await res.arrayBuffer());
+  try {
+    const sharp = (await import("sharp")).default;
+    const jpg = await sharp(png).flatten({ background: "#2a1a0e" }).jpeg({ quality: 76, mozjpeg: true }).toBuffer();
+    return new Uint8Array(jpg).buffer as ArrayBuffer;
+  } catch {
+    return new Uint8Array(png).buffer as ArrayBuffer;
+  }
 }
 
 export default async function Image({ params }: { params: Promise<{ nick: string; slug: string }> }) {
@@ -168,7 +176,7 @@ export default async function Image({ params }: { params: Promise<{ nick: string
   const slug = decodeURIComponent(p.slug).toLowerCase();
   const key = `${nick}/${slug}`;
   const hit = cache.get(key);
-  const headers = { "Content-Type": "image/png", "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" };
+  const headers = { "Content-Type": "image/jpeg", "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" };
   if (hit && Date.now() - hit.at < TTL) return new Response(hit.buf, { headers });
   const buf = await build(nick, slug);
   if (cache.size > 200) cache.clear();
