@@ -62,13 +62,15 @@ function Confetti() {
 
 type Done = { id: string; title: string; text: string; img?: string; spent: number; at: number };
 
+/** Moeda do Pinz (public/img/moeda.webp). O tamanho vem do `className`. */
 function Coin({ className = "size-6" }: { className?: string }) {
-  return (
-    <span aria-hidden className={`inline-grid place-items-center rounded-full border-2 border-[#b9801a] bg-[radial-gradient(circle_at_35%_30%,#ffe27a,#e8a91c_70%)] text-[0.7em] font-black text-[#7a4c00] shadow-[inset_0_0.1em_0.15em_rgba(255,255,255,.6)] ${className}`}>
-      $
-    </span>
-  );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/img/moeda.webp" alt="" aria-hidden draggable={false} className={`shrink-0 select-none object-contain drop-shadow-[0_0.15rem_0.2rem_rgba(120,70,0,.35)] ${className}`} />;
 }
+
+const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+/** Tamanho da moeda de cada pacote: quanto mais créditos, maior (e mais moedas). */
+const COIN_SIZE = ["size-10", "size-12", "size-14", "size-16"];
 
 /**
  * Loja do Pinz. Os pacotes de créditos ficam sempre à vista, no topo (a compra é no Mercado Pago).
@@ -120,35 +122,63 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
 
   return (
     <Modal open={open} onClose={onClose} title="Loja" xl>
-      {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
-      <section aria-label="Comprar créditos" className="mb-5 rounded-2xl border border-[#e8d9a8] bg-[#fff6d6] p-3 sm:p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="flex items-center gap-2 text-sm">
-            <Coin className="size-7" />
-            Seus créditos:
-            <span className="relative">
-              <strong key={done?.at ?? 0} className="inline-block text-xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
-                {credits}
-              </strong>
-              {done && done.spent > 0 && (
-                <span key={done.at} aria-hidden className="pointer-events-none absolute -top-1 left-full ml-1 text-sm font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
-                  −{done.spent}
-                </span>
-              )}
-            </span>
-          </p>
-          <p className="text-xs text-[#6b5440]">{PAYMENTS_ENABLED ? "Escolha um pacote · pagamento no Mercado Pago (Pix, cartão…)" : "Compra de créditos: em breve"}</p>
+      {done && (
+        <div role="status" key={done.at} className="sticky top-0 z-30 mb-4 flex items-center gap-3 rounded-2xl border-2 border-[#3aa655] bg-[#effbf1] p-3 shadow-[0_0.6rem_1.6rem_rgba(40,120,60,.3)]" style={{ animation: "banner-in 0.35s ease-out" }}>
+          {done.img && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={done.img} alt="" draggable={false} className="size-12 shrink-0 object-contain" style={{ animation: "buy-wiggle 0.9s ease", filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
+          )}
+          <div className="min-w-0">
+            <p className="font-title text-base font-semibold text-[#1f6b36]">🎉 Compra realizada!</p>
+            <p className="text-sm text-[#2f2218]">
+              <strong>{done.title}</strong> · {done.text}
+            </p>
+          </div>
+          <button type="button" onClick={() => setDone(null)} aria-label="Fechar aviso" className="ml-auto grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-lg text-[#4a3826] hover:bg-black/5">
+            ×
+          </button>
         </div>
-        <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-          {CREDIT_PACKS.map((p) => (
-            <li key={p.id} className="flex flex-col items-center rounded-xl border border-[#e1d3ba] bg-white/80 p-3 text-center">
-              <p className="flex items-center gap-1.5 font-title text-2xl font-semibold">
-                <Coin className="size-5" />
-                {p.credits}
+      )}
+
+      {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
+      <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
+        <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
+          <div className="flex items-center gap-3">
+            <Coin className="size-12 sm:size-14" />
+            <div className="leading-tight">
+              <p className="text-xs font-semibold tracking-wide text-[#8a6a1c] uppercase">Seus créditos</p>
+              <p className="relative">
+                <strong key={done?.at ?? 0} className="font-title inline-block text-3xl sm:text-4xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                  {credits}
+                </strong>
+                {done && done.spent > 0 && (
+                  <span key={done.at} aria-hidden className="pointer-events-none absolute -top-1 left-full ml-2 text-base font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
+                    −{done.spent}
+                  </span>
+                )}
               </p>
-              <p className="mt-0.5 text-lg font-bold">{p.price}</p>
-              <p className="min-h-4 text-[11px] font-semibold text-[#2f6a3c]">{p.note ?? ""}</p>
-              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className={buyBtn}>
+            </div>
+          </div>
+          <p className="flex items-center gap-1.5 text-xs text-[#6b5440]">
+            <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="5" y="11" width="14" height="9" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            {PAYMENTS_ENABLED ? "Escolha um pacote · pagamento seguro no Mercado Pago (Pix ou cartão)" : "Compra de créditos: em breve"}
+          </p>
+        </header>
+        <ul className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4 sm:p-4">
+          {CREDIT_PACKS.map((p, i) => (
+            <li key={p.id} className="relative flex flex-col items-center rounded-2xl border border-[#e8d9b0] bg-white px-3 pt-4 pb-3 text-center shadow-[0_0.2rem_0.6rem_rgba(120,80,0,.08)]">
+              {p.note && <span className="absolute -top-2.5 rounded-full bg-[#2f9e5a] px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">{p.note}</span>}
+              <div className="grid h-16 place-items-center">
+                <Coin className={COIN_SIZE[i] ?? "size-12"} />
+              </div>
+              <p className="font-title mt-1 text-3xl leading-none font-semibold">{p.credits}</p>
+              <p className="text-xs text-[#8a7b69]">créditos</p>
+              <p className="mt-3 text-xl font-bold">{p.price}</p>
+              <p className="text-[11px] text-[#8a7b69]">{brl(p.cents / p.credits)} por crédito</p>
+              <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="mt-3 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-3 py-2 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
                 {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
               </button>
             </li>
@@ -168,24 +198,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           </button>
         ))}
       </div>
-
-      {done && (
-        <div role="status" key={done.at} className="sticky top-0 z-30 mb-4 flex items-center gap-3 rounded-2xl border-2 border-[#3aa655] bg-[#effbf1] p-3 shadow-[0_0.6rem_1.6rem_rgba(40,120,60,.3)]" style={{ animation: "banner-in 0.35s ease-out" }}>
-          {done.img && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={done.img} alt="" draggable={false} className="size-12 shrink-0 object-contain" style={{ animation: "buy-wiggle 0.9s ease", filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))" }} />
-          )}
-          <div className="min-w-0">
-            <p className="font-title text-base font-semibold text-[#1f6b36]">🎉 Compra realizada!</p>
-            <p className="text-sm text-[#2f2218]">
-              <strong>{done.title}</strong> · {done.text}
-            </p>
-          </div>
-          <button type="button" onClick={() => setDone(null)} aria-label="Fechar aviso" className="ml-auto grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-lg text-[#4a3826] hover:bg-black/5">
-            ×
-          </button>
-        </div>
-      )}
 
       {!inventory ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
