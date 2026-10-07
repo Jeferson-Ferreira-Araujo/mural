@@ -35,13 +35,21 @@ async function handle(req: Request) {
     }
 
     if (type === "subscription_preapproval" || type === "preapproval") {
-      return (await syncPreapproval(id)) ? ok() : NextResponse.json({ error: "lookup_failed" }, { status: 502 });
+      return (await syncPreapproval(id)).ok ? ok() : NextResponse.json({ error: "lookup_failed" }, { status: 502 });
     }
 
     if (type === "subscription_authorized_payment") {
-      const r = await mp<{ preapproval_id?: string }>(`/authorized_payments/${id}`);
+      const r = await mp<{ preapproval_id?: string; status?: string; transaction_amount?: number }>(`/authorized_payments/${id}`);
       if (!r.ok) return NextResponse.json({ error: "lookup_failed" }, { status: r.status === 404 ? 200 : 502 });
-      return r.data.preapproval_id && !(await syncPreapproval(r.data.preapproval_id)) ? NextResponse.json({ error: "lookup_failed" }, { status: 502 }) : ok();
+      if (!r.data.preapproval_id) return ok();
+      const sync = await syncPreapproval(r.data.preapproval_id);
+      if (!sync.ok) return NextResponse.json({ error: "lookup_failed" }, { status: 502 });
+      // cada mensalidade fica registrada (aparece no extrato do usuário e no admin)
+      if (sync.uid) {
+        const status = r.data.status === "processed" ? "approved" : (r.data.status ?? "pending");
+        await adminClient().rpc("pay_record", { p_user: sync.uid, p_kind: "plus", p_payment: `sub:${id}`, p_cents: Math.round((r.data.transaction_amount ?? 0) * 100), p_status: status });
+      }
+      return ok();
     }
   } catch {
     return NextResponse.json({ error: "error" }, { status: 500 });

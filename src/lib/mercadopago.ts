@@ -48,15 +48,15 @@ export function validSignature(req: Request, dataId: string | null): boolean {
 export const isUuid = (s: unknown): s is string => typeof s === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
 /** Atualiza o estado da assinatura PLUS no banco a partir do que o Mercado Pago diz agora. */
-export async function syncPreapproval(preapprovalId: string): Promise<boolean> {
+export async function syncPreapproval(preapprovalId: string): Promise<{ ok: boolean; uid?: string }> {
   const r = await mp<{ id?: string; status?: string; external_reference?: string; next_payment_date?: string }>(`/preapproval/${encodeURIComponent(preapprovalId)}`);
-  if (!r.ok) return false;
+  if (!r.ok) return { ok: false };
   const uid = r.data.external_reference;
-  if (!isUuid(uid) || !r.data.id) return true; // não é uma assinatura nossa: ignora
+  if (!isUuid(uid) || !r.data.id) return { ok: true }; // não é uma assinatura nossa: ignora
   const status = r.data.status ?? "pending";
   // vale até a próxima cobrança + 3 dias de tolerância
   const next = r.data.next_payment_date ? new Date(r.data.next_payment_date).getTime() : Date.now() + 30 * 864e5;
   const paidUntil = new Date(next + 3 * 864e5).toISOString();
   const { error } = await adminClient().rpc("pay_plus_apply", { p_user: uid, p_preapproval: r.data.id, p_status: status, p_paid_until: paidUntil });
-  return !error;
+  return { ok: !error, uid };
 }

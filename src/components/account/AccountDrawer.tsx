@@ -11,10 +11,11 @@ import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
 import { PinsModal } from "./PinsModal";
 import { PlansModal } from "./PlansModal";
+import { TransactionsModal } from "./TransactionsModal";
 import { ProfileModal } from "./ProfileModal";
 import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers" | "shared";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers" | "shared" | "purchases";
 
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
@@ -249,6 +250,17 @@ export function AccountDrawer({
                   </svg>
                 }
               />
+              <Row
+                onClick={() => setModal("purchases")}
+                label="Minhas compras"
+                hint="Pagamentos e uso dos créditos"
+                icon={
+                  <svg {...ic}>
+                    <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" />
+                    <path d="M9 8h6M9 12h6" />
+                  </svg>
+                }
+              />
               {isAdmin && (
                 <Row
                   onClick={() => window.location.assign("/admin")}
@@ -303,6 +315,7 @@ export function AccountDrawer({
       <Modal open={isOpen && modal === "shared"} onClose={close} title="Mural compartilhado">
         <SharedMurals plus={account.plan === "full"} onChanged={() => onSharedChanged?.()} onNotify={onNotify} />
       </Modal>
+      <TransactionsModal open={isOpen && modal === "purchases"} onClose={close} credits={credits} />
       <PlansModal open={isOpen && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
       <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} plus={account.plan === "full"} />
     </>

@@ -10,12 +10,15 @@ import { AnalyticsPanel } from "./AnalyticsPanel";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
+import { StatusChip, payTitle } from "@/components/account/TransactionsModal";
+import { brl, type TxPayment } from "@/lib/payments";
 import type { BoardItem, Message } from "@/lib/types";
 import type { PlacedBadge } from "@/lib/badges";
 
 type MuralLite = { id: string; slug: string; title: string; plan: "free" | "full"; private: boolean };
 type UserRow = { id: string; email: string; nickname: string; createdAt: string; lastSignIn: string | null; credits: number; banned: boolean; isAdmin: boolean; murals: MuralLite[]; pinsReceived: number; pinsSent: number };
-type UserDetail = Omit<UserRow, "murals" | "pinsReceived"> & { banReason: string | null; bannedAt: string | null; reportsAgainst: number; murals: (MuralLite & { pins: number; pending: number; badges: number })[]; ledger: { delta: number; reason: string; at: string }[] };
+type UserDetail = Omit<UserRow, "murals" | "pinsReceived"> & { banReason: string | null; bannedAt: string | null; reportsAgainst: number; murals: (MuralLite & { pins: number; pending: number; badges: number })[]; ledger: { delta: number; reason: string; at: string }[]; payments: TxPayment[]; subscription: { status: string; paidUntil: string | null; active: boolean; mpId: string | null } | null };
+type PayRow = TxPayment & { id: string; updatedAt: string; userId: string | null; nickname: string | null; email: string | null };
 type PinRow = { id: string; slot: number; type: string; content: Record<string, unknown>; status: "pending" | "approved"; signed: boolean; hidden: boolean; createdAt: string; opensAt: string | null; authorId: string | null; author: string | null; authorEmail: string | null; visitor: string | null };
 type MuralPins = { mural: MuralLite & { question: string; owner: string; ownerId: string; board: string; welcome: string | null }; badges: PlacedBadge[]; pins: PinRow[] };
 type Report = { id: string; createdAt: string; reason: string; details: string | null; blocked: boolean; type: string; content: Record<string, unknown>; mural: string | null; owner: string | null; senderId: string | null; sender: string | null; senderBanned: boolean };
@@ -268,6 +271,37 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
             )}
           </section>
 
+          <section aria-label="Pagamentos" className="rounded-2xl border border-[#e1d3ba] bg-white/60 p-4">
+            <h3 className="font-title text-base font-semibold">Pagamentos</h3>
+            {u.subscription && (
+              <p className="mt-1 text-xs text-[#6b5440]">
+                Assinatura PLUS: <strong>{u.subscription.status}</strong>
+                {u.subscription.paidUntil ? ` · vale até ${fmt(u.subscription.paidUntil)}` : ""}
+                {u.subscription.mpId ? ` · assinatura Mercado Pago Nº ${u.subscription.mpId}` : ""}
+              </p>
+            )}
+            {u.payments.length === 0 ? (
+              <p className="mt-1 text-sm text-[#6b5440]">Nenhum pagamento.</p>
+            ) : (
+              <ul className="mt-2 divide-y divide-[#e6d8bd] text-sm">
+                {u.payments.map((p) => (
+                  <li key={p.ref} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-2">
+                    <span className="min-w-0">
+                      <strong>{payTitle(p)}</strong>
+                      <span className="block text-xs text-[#6b5440]">
+                        {fmt(p.at)} · Mercado Pago Nº {p.ref}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <strong>{brl(p.cents)}</strong>
+                      <StatusChip status={p.status} />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           <section aria-label="Murais">
             <h3 className="font-title text-base font-semibold">Murais</h3>
             {u.murals.length === 0 ? (
@@ -336,7 +370,9 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "analytics">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "analytics">("users");
+  const [payQ, setPayQ] = useState("");
+  const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
   const [users, setUsers] = useState<{ total: number; rows: UserRow[] } | null>(null);
   const [reports, setReports] = useState<Report[] | null>(null);
@@ -368,6 +404,14 @@ export default function Admin() {
   useEffect(() => {
     if (allowed && tab === "reports") void loadReports();
   }, [allowed, tab, loadReports]);
+  useEffect(() => {
+    if (!allowed || tab !== "payments") return;
+    const t = setTimeout(async () => {
+      const r = await rpc<PayRow[]>("admin_payments", { p_q: payQ.trim(), p_limit: 200 });
+      if (r.ok) setPays(r.data);
+    }, 250);
+    return () => clearTimeout(t);
+  }, [allowed, tab, payQ]);
 
   async function confirmBan() {
     if (!banTarget || banReason.trim().length < 3) return;
@@ -413,11 +457,12 @@ export default function Admin() {
           </Link>
         </header>
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-md grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-xl grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
               ["reports", "Denúncias"],
+              ["payments", "Pagamentos"],
               ["analytics", "Analytics"],
             ] as const
           ).map(([id, label]) => (
@@ -435,6 +480,48 @@ export default function Admin() {
 
         {tab === "analytics" ? (
           <AnalyticsPanel />
+        ) : tab === "payments" ? (
+          <section className="mt-4" aria-label="Pagamentos">
+            <input className={input} placeholder="Buscar por usuário, e-mail ou número do pagamento do Mercado Pago…" value={payQ} onChange={(e) => setPayQ(e.target.value)} aria-label="Buscar pagamento" />
+            {!pays ? (
+              <div className="py-8">
+                <Spinner />
+              </div>
+            ) : pays.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pagamento encontrado.</p>
+            ) : (
+              <>
+                <p className="mt-3 text-xs text-[#6b5440]">
+                  {pays.length} pagamento(s) · aprovados: <strong>{brl(pays.filter((p) => p.status === "approved").reduce((n, p) => n + p.cents, 0))}</strong>
+                </p>
+                <ul className="mt-2 divide-y divide-[#e6d8bd] rounded-2xl border border-[#e1d3ba] bg-white/70">
+                  {pays.map((p) => (
+                    <li key={p.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2.5 text-sm">
+                      <div className="min-w-0">
+                        <p>
+                          <strong>{payTitle(p)}</strong>
+                          {p.userId ? (
+                            <button type="button" onClick={() => setUserId(p.userId)} className="ml-2 cursor-pointer text-[#3b6fd0] underline">
+                              @{p.nickname ?? "?"}
+                            </button>
+                          ) : (
+                            <span className="ml-2 text-[#8a7b69]">(conta removida)</span>
+                          )}
+                        </p>
+                        <p className="truncate text-xs text-[#6b5440]">
+                          {fmt(p.at)} · {p.email ?? "sem e-mail"} · Mercado Pago Nº {p.ref}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <strong>{brl(p.cents)}</strong>
+                        <StatusChip status={p.status} />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
         ) : tab === "users" ? (
           <section className="mt-4" aria-label="Usuários">
             <input className={input} placeholder="Buscar por e-mail ou nome de usuário…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar usuário" />

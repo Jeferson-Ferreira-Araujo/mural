@@ -67,3 +67,25 @@ export async function fetchSubscription(): Promise<Subscription> {
 export async function cancelSubscription(): Promise<boolean> {
   return (await post("/api/pay/cancel")).ok;
 }
+
+export type TxPayment = { ref: string; kind: "credits" | "plus"; cents: number; credits: number | null; status: string; at: string };
+export type TxLedger = { delta: number; reason: string; at: string };
+export type Transactions = { payments: TxPayment[]; ledger: TxLedger[]; subscription: Subscription };
+
+/** Extrato da própria conta: o que foi pago e no que os créditos foram gastos. */
+export async function fetchTransactions(): Promise<Transactions | null> {
+  const { data, error } = await getBrowserSupabase().rpc("my_transactions");
+  return error || !data ? null : (data as Transactions);
+}
+
+export const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+export const PAY_STATUS: Record<string, { text: string; tone: "ok" | "wait" | "bad" }> = {
+  approved: { text: "Aprovado", tone: "ok" },
+  authorized: { text: "Aprovado", tone: "ok" },
+  pending: { text: "Pendente", tone: "wait" },
+  in_process: { text: "Em análise", tone: "wait" },
+  rejected: { text: "Recusado", tone: "bad" },
+  cancelled: { text: "Cancelado", tone: "bad" },
+  refunded: { text: "Reembolsado", tone: "bad" },
+  charged_back: { text: "Estornado", tone: "bad" },
+};
