@@ -54,7 +54,6 @@ export async function POST(req: Request) {
     method: "POST",
     body: {
       items: [{ id: pack.id, title: `Pinz — ${pack.credits} créditos`, quantity: 1, unit_price: pack.cents / 100, currency_id: "BRL" }],
-      payer: { email },
       external_reference: `${uid}:${pack.id}`,
       notification_url: `${SITE_URL}/api/pay/webhook`,
       back_urls: { success: `${SITE_URL}/pagamento?produto=creditos&status=ok`, pending: `${SITE_URL}/pagamento?produto=creditos&status=pendente`, failure: `${SITE_URL}/pagamento?produto=creditos&status=falhou` },
