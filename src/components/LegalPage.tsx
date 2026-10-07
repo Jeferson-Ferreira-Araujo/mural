@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import { AuthShell } from "./ui";
 
-/** E-mail de contato exibido nas páginas legais (NEXT_PUBLIC_CONTACT_EMAIL). Sem ele, a seção de contato não aparece. */
-const CONTACT = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+const CONTACT = CONTACT_EMAIL;
 
 export function LegalPage({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
   return (

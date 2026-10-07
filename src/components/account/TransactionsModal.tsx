@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BADGES } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
+import { SUPPORT_EMAIL } from "@/lib/contact";
 import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxLedger, type TxPayment } from "@/lib/payments";
 import { Modal } from "./Modal";
 
@@ -116,7 +117,13 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
               </ul>
             )}
           </section>
-          <p className="text-center text-xs text-[#8a7b69]">Dúvida sobre uma cobrança? Guarde o número do pagamento (Nº) e fale com o Pinz.</p>
+          <p className="text-center text-xs text-[#6b5440]">
+            Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para{" "}
+            <a className="font-semibold underline" href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Dúvida sobre um pagamento")}`}>
+              {SUPPORT_EMAIL}
+            </a>
+            .
+          </p>
         </div>
       )}
     </Modal>
