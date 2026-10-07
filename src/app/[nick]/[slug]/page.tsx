@@ -14,8 +14,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: `Mural de ${who}`,
     description,
-    openGraph: { title, description, siteName: "Pinz", type: "website", locale: "pt_BR", images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Pinz" }] },
-    twitter: { card: "summary_large_image", title, description, images: ["/og.jpg"] },
+    openGraph: { title, description, siteName: "Pinz", type: "website", locale: "pt_BR" }, // a imagem vem de opengraph-image.tsx (mural borrado ou real)
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
