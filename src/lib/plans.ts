@@ -55,6 +55,9 @@ export const canUseCapsule = (plan: PlanId) => CAPSULE_ENABLED && PLANS[plan].ca
 /** Cobrança real (Mercado Pago). Só liga com NEXT_PUBLIC_PAYMENTS_ENABLED=true e as chaves no servidor. */
 export const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true";
 
+/** Máximo de murais pessoais no PINZ PLUS (o banco usa o mesmo número em create_mural: troque nos dois). */
+export const PLUS_MAX_MURALS = 10;
+
 /** Mensalidade do PINZ PLUS, em centavos (o servidor usa este valor, nunca o que o navegador manda). */
 export const PLUS_PRICE_CENTS = 990;
 

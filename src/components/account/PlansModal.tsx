@@ -20,7 +20,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Mais de um mural", on: false },
   ],
   full: [
-    { text: "Quantos murais quiser", on: true },
+    { text: "Até 10 murais", on: true },
     { text: "28 espaços em cada mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
