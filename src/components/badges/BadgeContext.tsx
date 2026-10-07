@@ -429,9 +429,20 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
   useEffect(() => {
     let raf = 0;
     const tick = () => {
-      const el = visibleOne(`[data-badge-id="${id}"]`);
+      const el = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null;
       const r = el?.getBoundingClientRect();
-      const next = r && r.width > 0 ? { l: Math.round(r.left), t: Math.round(r.top), r: Math.round(r.right), b: Math.round(r.bottom) } : null;
+      let next: { l: number; t: number; r: number; b: number } | null = null;
+      if (el && r && r.width > 0) {
+        // o centro não muda ao girar; o tamanho é o do botton reto (offsetWidth ignora a rotação) na escala do quadro
+        const layer = el.closest("[data-badge-layer]") as HTMLElement | null;
+        const lr = layer?.getBoundingClientRect();
+        const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
+        const w = el.offsetWidth * sc;
+        const h = el.offsetHeight * sc;
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        next = { l: Math.round(cx - w / 2), t: Math.round(cy - h / 2), r: Math.round(cx + w / 2), b: Math.round(cy + h / 2) };
+      }
       setBox((p) => (p && next && p.l === next.l && p.t === next.t && p.r === next.r && p.b === next.b ? p : next));
       raf = requestAnimationFrame(tick);
     };
@@ -441,15 +452,15 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
   if (!box || !badge || typeof document === "undefined") return null;
 
   const size = badge.size ?? 1;
-  const W = 40;
-  const Hh = 124;
+  const W = 32;
+  const Hh = 88;
   const left = box.r + 8 + W > window.innerWidth ? box.l - 8 - W : box.r + 8;
   const top = Math.min(Math.max((box.t + box.b) / 2 - Hh / 2, 8), window.innerHeight - Hh - 8);
-  const btn = "grid size-8 cursor-pointer place-items-center rounded-full text-lg leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
+  const btn = "grid size-[1.65rem] cursor-pointer place-items-center rounded-full text-base leading-none font-bold text-white transition hover:bg-white/20 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent";
 
   const deg = badge.rotation ?? 0;
-  const SW = 176;
-  const SH = 46;
+  const SW = 138;
+  const SH = 36;
   const sLeft = Math.min(Math.max((box.l + box.r) / 2 - SW / 2, 8), window.innerWidth - SW - 8);
   // a barra fica abaixo do botton E abaixo da pílula (+, −, lixeira), sem sobrepor; sem espaço embaixo, vai para cima dos dois
   const lowest = Math.max(box.b + 10, top + Hh + 6);
@@ -461,11 +472,11 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
       data-badge-controls
       onPointerEnter={() => onKeep(id)}
       onPointerLeave={() => onKeep(null)}
-      className="fixed z-[350] flex flex-col items-center rounded-2xl bg-[#17110c]/92 px-2.5 pt-1.5 pb-1 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+      className="fixed z-[350] flex flex-col items-center rounded-xl bg-[#17110c]/90 px-2 pt-0.5 pb-0.5 text-white shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
       style={{ left: sLeft, top: sTop, width: SW }}
     >
       <div className="flex w-full items-center gap-1.5">
-        <span aria-hidden className="text-base leading-none opacity-80" title="Anti-horário">
+        <span aria-hidden className="text-sm leading-none opacity-80" title="Anti-horário">
           ↺
         </span>
         <input
@@ -479,22 +490,23 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
           onKeyUp={() => onTiltEnd(id)}
           onBlur={() => onTiltEnd(id)}
           aria-label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário"
-          className="h-7 min-w-0 flex-1 cursor-pointer accent-[#f6c93f]"
+          className="h-5 min-w-0 flex-1 cursor-pointer accent-[#f6c93f]"
         />
-        <span aria-hidden className="text-base leading-none opacity-80" title="Horário">
+        <span aria-hidden className="text-sm leading-none opacity-80" title="Horário">
           ↻
         </span>
       </div>
       <button
         type="button"
+        aria-label="Restaurar: deixa o botton reto"
         disabled={deg === 0}
         onClick={() => {
           onTilt(id, 0);
           window.setTimeout(() => onTiltEnd(id), 0);
         }}
-        className="mt-0.5 cursor-pointer text-[11px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+        className="-mt-0.5 cursor-pointer text-[10px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
       >
-        {deg === 0 ? "reto" : `${deg > 0 ? "+" : ""}${deg}° · endireitar`}
+        Restaurar
       </button>
     </div>
     <div
@@ -503,7 +515,7 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
       aria-label="Tamanho e posição do botton"
       onPointerEnter={() => onKeep(id)}
       onPointerLeave={() => onKeep(null)}
-      className="fixed z-[350] flex flex-col items-center gap-0.5 rounded-full bg-[#17110c]/92 p-1 shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+      className="fixed z-[350] flex flex-col items-center gap-px rounded-full bg-[#17110c]/90 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
       style={{ left, top, width: W }}
     >
       <button type="button" disabled={size >= 2} onClick={() => onResize(id, 1)} aria-label="Aumentar o botton" title="Aumentar" className={btn}>
@@ -513,7 +525,7 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep, onTilt, onTiltEn
         −
       </button>
       <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className={btn}>
-        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
         </svg>
       </button>
