@@ -300,6 +300,11 @@ export function BadgeProvider({
     else hoverTimer.current = window.setTimeout(() => setHoverId(null), 180); // dá tempo de o mouse chegar nos controles
   }, []);
   const select = useCallback((id: string | null) => setSelId(id), []);
+  const closeControls = useCallback(() => {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
+    setSelId(null);
+    setHoverId(null);
+  }, []);
   // tocar em qualquer outro lugar fecha os controles (celular)
   useEffect(() => {
     if (!selId) return;
@@ -423,7 +428,7 @@ export function BadgeProvider({
   return (
     <BadgeCtx.Provider value={value}>
       {children}
-      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -453,7 +458,7 @@ export function BadgeProvider({
  * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
   const keyRef = useRef(badge?.key);
   keyRef.current = badge?.key;
@@ -488,14 +493,14 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
 
   // pílula do tamanho (à direita; à esquerda se não couber)
   const W = 40;
-  const TRACK = 108;
-  const Hh = 164;
+  const TRACK = 90; // mesmo comprimento da barra de inclinação
+  const Hh = 146;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
   const off = Math.max(g.R + 8, SW / 2 + 8);
   const onRight = g.cx + off + W <= vw - 4;
   const pLeft = onRight ? g.cx + off : Math.max(4, g.cx - off - W);
-  const pTop = Math.min(Math.max(g.cy - Hh / 2, 8), vh - Hh - 8);
+  const pTop = Math.min(Math.max(g.cy - Hh / 2, 44), vh - Hh - 8);
 
   // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
   const SH = 50;
@@ -556,6 +561,19 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onTil
           </svg>
         </button>
       </div>
+      <button
+        type="button"
+        data-badge-controls
+        aria-label="Fechar as opções do botton"
+        title="Fechar"
+        onClick={onClose}
+        className="fixed z-[350] grid size-8 cursor-pointer place-items-center rounded-full bg-[#17110c]/92 text-white shadow-[0_0.25rem_0.8rem_rgba(0,0,0,.5)] backdrop-blur transition hover:bg-black active:scale-90"
+        style={{ left: pLeft + W / 2 - 16, top: pTop - 38 }}
+      >
+        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
     </>,
     document.body,
   );
