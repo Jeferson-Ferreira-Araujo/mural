@@ -68,7 +68,6 @@ function Coin({ className = "size-6" }: { className?: string }) {
   return <img src="/img/moeda.webp" alt="" aria-hidden draggable={false} className={`shrink-0 select-none object-contain drop-shadow-[0_0.15rem_0.2rem_rgba(120,70,0,.35)] ${className}`} />;
 }
 
-const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 /** Tamanho da moeda de cada pacote: quanto mais créditos, maior (e mais moedas). */
 const COIN_SIZE = ["size-10", "size-12", "size-14", "size-16"];
 
@@ -149,7 +148,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <rect x="5" y="11" width="14" height="9" rx="2" />
               <path d="M8 11V8a4 4 0 0 1 8 0v3" />
             </svg>
-            {PAYMENTS_ENABLED ? "Escolha um pacote · pagamento seguro no Mercado Pago (Pix ou cartão)" : "Compra de créditos: em breve"}
+            {PAYMENTS_ENABLED ? "Pagamento seguro no Mercado Pago (Pix ou cartão)" : "Compra de créditos: em breve"}
           </p>
         </header>
         <ul className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4 sm:p-4">
@@ -162,7 +161,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <p className="font-title mt-1 text-3xl leading-none font-semibold">{p.credits}</p>
               <p className="text-xs text-[#8a7b69]">créditos</p>
               <p className="mt-3 text-xl font-bold">{p.price}</p>
-              <p className="text-[11px] text-[#8a7b69]">{brl(p.cents / p.credits)} por crédito</p>
               <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="mt-3 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-3 py-2 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
                 {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
               </button>
