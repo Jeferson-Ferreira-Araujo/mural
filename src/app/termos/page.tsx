@@ -28,6 +28,17 @@ export default function Termos() {
       </section>
 
       <section>
+        <h2>Pagamentos</h2>
+        <ul>
+          <li>O PINZ PLUS é uma assinatura mensal (R$ 9,90) cobrada pelo Mercado Pago, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.</li>
+          <li>Você pode cancelar a assinatura quando quiser, pelo próprio Pinz, sem multa. O PLUS continua até o fim do período já pago e não há novas cobranças.</li>
+          <li>Você pode desistir de uma compra em até 7 dias, como prevê o Código de Defesa do Consumidor, e pedir o reembolso pelo contato do Pinz. Créditos já gastos na loja são descontados.</li>
+          <li>Se a assinatura deixar de ser paga, a conta volta ao plano gratuito: seus pins continuam, mas os recursos do PLUS ficam indisponíveis.</li>
+          <li>Os créditos não são dinheiro, não podem ser transferidos nem sacados.</li>
+        </ul>
+      </section>
+
+      <section>
         <h2>Disponibilidade</h2>
         <p>Fazemos o possível para manter o serviço no ar, mas ele é oferecido como está, sem garantia de funcionamento ininterrupto. Podemos alterar ou encerrar recursos, e estes termos, avisando no site.</p>
       </section>

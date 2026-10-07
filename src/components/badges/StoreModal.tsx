@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
-import { CREDIT_PACKS } from "@/lib/plans";
+import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
+import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "mural" };
@@ -179,13 +180,25 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <div>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {CREDIT_PACKS.map((p) => (
-              <li key={p.credits} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-center">
+              <li key={p.id} className="flex flex-col items-center rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-center">
                 <p className="font-title text-3xl font-semibold">{p.credits}</p>
                 <p className="text-xs text-[#6b5440]">créditos</p>
                 <p className="mt-2 text-lg font-bold">{p.price}</p>
                 {p.note && <p className="text-[11px] font-semibold text-[#2f6a3c]">{p.note}</p>}
-                <button type="button" disabled className={buyBtn}>
-                  Em breve
+                <button
+                  type="button"
+                  disabled={!PAYMENTS_ENABLED || busy !== null}
+                  onClick={async () => {
+                    setBusy(`credits:${p.id}`);
+                    const err = await startCheckout(`credits:${p.id}`);
+                    if (err) {
+                      window.alert(err);
+                      setBusy(null);
+                    }
+                  }}
+                  className={buyBtn}
+                >
+                  {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
                 </button>
               </li>
             ))}

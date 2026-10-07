@@ -39,6 +39,7 @@ export default function Privacidade() {
           <li>Google: login com o Google e mapas e busca de lugares (Google Maps).</li>
           <li>Resend: envio dos e-mails da conta.</li>
           <li>Cloudflare: proteção e entrega do site.</li>
+          <li>Mercado Pago: pagamentos da assinatura e dos créditos. Os dados do cartão ou do Pix são informados direto no Mercado Pago; o Pinz não os recebe nem os guarda, só o resultado do pagamento.</li>
         </ul>
         <p className="mt-2">Esses serviços tratam os dados segundo as próprias políticas e podem processá-los fora do Brasil.</p>
       </section>

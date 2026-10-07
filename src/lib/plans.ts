@@ -52,12 +52,18 @@ export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
 export const CAPSULE_ENABLED = false;
 export const canUseCapsule = (plan: PlanId) => CAPSULE_ENABLED && PLANS[plan].capsule;
 
-/** Pacotes de créditos (valores iniciais). A compra real ainda não existe. */
-export const CREDIT_PACKS: readonly { credits: number; price: string; note?: string }[] = [
-  { credits: 3, price: "R$ 3" },
-  { credits: 11, price: "R$ 10", note: "+1 de bônus" },
-  { credits: 29, price: "R$ 25", note: "+4 de bônus" },
-  { credits: 60, price: "R$ 50", note: "+10 de bônus" },
+/** Cobrança real (Mercado Pago). Só liga com NEXT_PUBLIC_PAYMENTS_ENABLED=true e as chaves no servidor. */
+export const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true";
+
+/** Mensalidade do PINZ PLUS, em centavos (o servidor usa este valor, nunca o que o navegador manda). */
+export const PLUS_PRICE_CENTS = 990;
+
+/** Pacotes de créditos. `cents` é o preço cobrado; `credits` já inclui o bônus. */
+export const CREDIT_PACKS: readonly { id: string; credits: number; cents: number; price: string; note?: string }[] = [
+  { id: "c3", credits: 3, cents: 300, price: "R$ 3" },
+  { id: "c11", credits: 11, cents: 1000, price: "R$ 10", note: "+1 de bônus" },
+  { id: "c29", credits: 29, cents: 2500, price: "R$ 25", note: "+4 de bônus" },
+  { id: "c60", credits: 60, cents: 5000, price: "R$ 50", note: "+10 de bônus" },
 ];
 
 /** Custo, em créditos, de abrir um novo mural (quando os créditos existirem). */
