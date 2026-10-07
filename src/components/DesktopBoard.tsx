@@ -52,7 +52,7 @@ export function DesktopBoard(props: ViewProps) {
         </nav>
 
 
-        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} emptyMessage={props.welcome}>
+        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose}>
           {locked && <LockedNotice hasSelection={hasSelection} />}
         </BoardCanvas>
 

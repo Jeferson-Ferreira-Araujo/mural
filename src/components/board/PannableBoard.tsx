@@ -56,13 +56,22 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
     [limits],
   );
 
+  const promoteTimer = useRef<number | null>(null);
+  const rafId = useRef(0);
+  const boxRect = useRef<DOMRect | null>(null);
   const apply = useCallback(
     (animate = false) => {
       const el = world.current;
       if (!el) return;
       const { x, y, s } = view.current;
       el.style.transition = animate ? "transform .28s cubic-bezier(.2,.8,.2,1)" : "none";
-      el.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+      el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
+      // durante o gesto o quadro vira uma camada da GPU (mover não repinta os cartões); depois solta, e o navegador redesenha nítido
+      el.style.willChange = "transform";
+      if (promoteTimer.current) window.clearTimeout(promoteTimer.current);
+      promoteTimer.current = window.setTimeout(() => {
+        if (world.current) world.current.style.willChange = "";
+      }, animate ? 360 : 240);
       const out = s <= limits().minS * 1.02;
       if (out !== zoomedOutRef.current) {
         zoomedOutRef.current = out;
@@ -72,6 +81,15 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
     [limits],
   );
 
+  /** Agrupa os movimentos do dedo: no máximo um desenho por quadro da tela. */
+  const scheduleApply = useCallback(() => {
+    if (rafId.current) return;
+    rafId.current = requestAnimationFrame(() => {
+      rafId.current = 0;
+      apply(false);
+    });
+  }, [apply]);
+
   /** Muda a ampliação mantendo o ponto (cx, cy) da tela no mesmo lugar do quadro. */
   const zoomTo = useCallback(
     (newS: number, cx: number, cy: number, animate: boolean) => {
@@ -79,9 +97,10 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
       const wx = (cx - x) / s;
       const wy = (cy - y) / s;
       view.current = clampView(cx - wx * newS, cy - wy * newS, newS);
-      apply(animate);
+      if (animate) apply(true);
+      else scheduleApply();
     },
-    [apply, clampView],
+    [apply, clampView, scheduleApply],
   );
 
   // mede a área e, na primeira vez, mostra o mural inteiro
@@ -121,8 +140,9 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
     return () => b.removeEventListener("wheel", onWheel);
   }, [zoomTo]);
 
-  const rel = useCallback((e: PointerEvent | React.PointerEvent) => {
-    const r = box.current!.getBoundingClientRect();
+  const rel = useCallback((e: PointerEvent | React.PointerEvent, fresh = false) => {
+    if (fresh || !boxRect.current) boxRect.current = box.current!.getBoundingClientRect();
+    const r = boxRect.current;
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }, []);
 
@@ -153,10 +173,10 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
       if (!dragged.current && Math.hypot(dx, dy) > DRAG_PX) dragged.current = true;
       if (dragged.current) {
         view.current = clampView(pan.current.vx + dx, pan.current.vy + dy, view.current.s);
-        apply(false);
+        scheduleApply();
       }
     },
-    [apply, clampView, rel, zoomTo],
+    [scheduleApply, clampView, rel, zoomTo],
   );
 
   const onUp = useCallback(
@@ -207,7 +227,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
-    const p = rel(e);
+    const p = rel(e, true); // lê o retângulo uma vez, no começo do toque
     pointers.current.set(e.pointerId, p);
     if (world.current) world.current.style.transition = "none";
     if (pointers.current.size === 1) {
