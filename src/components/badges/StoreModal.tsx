@@ -95,6 +95,15 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
 
   const [done, setDone] = useState<Done | null>(null);
+  // o saldo do cabeçalho só aparece quando o saldo grande (no bloco de créditos) sai da vista
+  const [bigEl, setBigEl] = useState<HTMLElement | null>(null);
+  const [bigVisible, setBigVisible] = useState(true);
+  useEffect(() => {
+    if (!bigEl) return;
+    const io = new IntersectionObserver(([e]) => setBigVisible(e.isIntersecting), { threshold: 0.2 });
+    io.observe(bigEl);
+    return () => io.disconnect();
+  }, [bigEl]);
   // a comemoração some depois de alguns segundos
   useEffect(() => {
     if (!done) return;
@@ -128,8 +137,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       title="Loja"
       xl
       aside={
-        // saldo sempre à vista no cabeçalho: dá para ver os créditos sendo gastos mesmo com a loja rolada
-        <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
+        // com a loja rolada (saldo grande fora da vista), o saldo passa para o cabeçalho: dá para ver os créditos sendo gastos
+        bigVisible ? undefined : <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
           <Coin className="size-6" />
           <strong key={done?.at ?? 0} className="inline-block text-base tabular-nums" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
             {credits}
@@ -145,7 +154,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
       <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
         <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
-          <div className="flex items-center gap-3">
+          <div ref={setBigEl} className="flex items-center gap-3">
             <Coin className="size-12 sm:size-14" />
             <div className="leading-tight">
               <p className="text-xs font-semibold tracking-wide text-[#8a6a1c] uppercase">Seus créditos</p>
