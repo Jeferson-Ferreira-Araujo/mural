@@ -46,7 +46,8 @@ export function MusicCard({
   const dur = realDur || parse(duration);
   const frame = useRef<HTMLIFrameElement>(null);
   const wantPlay = useRef(false);
-  const send = useCallback((m: unknown) => frame.current?.contentWindow?.postMessage(typeof m === "string" ? m : JSON.stringify(m), "*"), []);
+  // o Spotify só entende comandos como OBJETO; o YouTube, como texto JSON
+  const send = useCallback((m: unknown) => frame.current?.contentWindow?.postMessage(embed?.provider === "youtube" && typeof m !== "string" ? JSON.stringify(m) : m, "*"), [embed?.provider]);
 
   // o player embutido avisa quando toca, pausa ou termina (e a posição/duração exatas): o botão e o tempo acompanham
   useEffect(() => {
@@ -198,8 +199,14 @@ export function MusicCard({
           <svg aria-hidden viewBox="0 0 24 24" className="absolute top-1/2 right-[0.5em] size-[0.8em] -translate-y-1/2" style={mark} fill="currentColor">
             <path d="M12 6v12l9-6-9-6ZM3 6v12l9-6-9-6Z" />
           </svg>
-          <span aria-hidden className="absolute bottom-[0.4em] left-1/2 -translate-x-1/2 text-[0.6em] leading-none" style={mark}>
-            ▶❚❚
+          <span aria-hidden className="absolute bottom-[0.4em] left-1/2 flex -translate-x-1/2 items-center gap-[0.18em]" style={mark}>
+            <svg viewBox="0 0 24 24" className="size-[0.5em]" fill="currentColor">
+              <path d="M6 3.5v17L21 12 6 3.5Z" />
+            </svg>
+            <svg viewBox="0 0 24 24" className="size-[0.5em]" fill="currentColor">
+              <rect x="5" y="4" width="5" height="16" rx="1" />
+              <rect x="14" y="4" width="5" height="16" rx="1" />
+            </svg>
           </span>
 
           {/* botão central: o único que funciona */}
