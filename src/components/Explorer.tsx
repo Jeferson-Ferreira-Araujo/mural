@@ -37,6 +37,7 @@ import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
 import { fetchNotifications, markAllRead, unreadCount, type Notification } from "@/lib/notifications";
 import { NotificationsModal } from "./account/NotificationsModal";
 import { NicknameSetup } from "./account/NicknameSetup";
+import { PAY_RESULTS, PaymentResultModal } from "./account/PaymentResultModal";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
 import { boardToImage, deliverImage, visibleBoardElement } from "@/lib/exportImage";
 import type { BoardItem } from "@/lib/types";
@@ -121,6 +122,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
   const [searchOpen, setSearchOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
+  const [payResult, setPayResult] = useState<string | null>(null); // volta do Mercado Pago: resultado num modal sobre a loja
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     if (!session) {
@@ -340,6 +342,26 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       exporting.current = false;
     }
   }, [notify, slug]);
+  // voltou do Mercado Pago (?pg=ok|pendente|falhou|plus): reabre a loja e mostra o resultado num modal; limpa o endereço
+  useEffect(() => {
+    const u = new URL(window.location.href);
+    const pg = u.searchParams.get("pg");
+    if (!pg || !(pg in PAY_RESULTS)) return;
+    u.searchParams.delete("pg");
+    window.history.replaceState(null, "", u.pathname + u.search + u.hash);
+    setPayResult(pg);
+    if (pg !== "plus") setStoreOpen(true);
+  }, []);
+  // pagamento aprovado: o crédito chega pelo aviso do Mercado Pago em poucos segundos; atualiza o saldo até aparecer
+  useEffect(() => {
+    if (payResult !== "ok" && payResult !== "pendente") return;
+    let n = 0;
+    const t = setInterval(() => {
+      void reloadInventory();
+      if (++n >= 8) clearInterval(t);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [payResult, reloadInventory]);
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
@@ -775,6 +797,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             }}
           />
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
+          <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
         </>
       )}

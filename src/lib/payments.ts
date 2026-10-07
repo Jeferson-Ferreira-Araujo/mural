@@ -25,10 +25,33 @@ const MESSAGE: Record<string, string> = {
   unavailable: "O pagamento ainda não está disponível.",
 };
 
+const RETURN_KEY = "pinz:payReturn";
+
+/** Guarda a tela de onde a pessoa saiu para pagar: ao voltar do Mercado Pago ela cai de novo ali (vale por 2 horas). */
+function rememberReturn() {
+  try {
+    localStorage.setItem(RETURN_KEY, JSON.stringify({ path: window.location.pathname, at: Date.now() }));
+  } catch {}
+}
+
+/** Lê e apaga a tela de origem guardada (só caminhos internos). */
+export function takePayReturn(): string | null {
+  try {
+    const raw = localStorage.getItem(RETURN_KEY);
+    localStorage.removeItem(RETURN_KEY);
+    const v = raw ? (JSON.parse(raw) as { path?: string; at?: number }) : null;
+    if (!v?.path || !v.path.startsWith("/") || v.path.startsWith("//") || v.path.startsWith("/pagamento") || Date.now() - (v.at ?? 0) > 2 * 3600_000) return null;
+    return v.path;
+  } catch {
+    return null;
+  }
+}
+
 /** Abre o pagamento no Mercado Pago. `product` = "plus" ou "credits:<id do pacote>". Em caso de sucesso, a página vai para o Mercado Pago. */
 export async function startCheckout(product: string): Promise<string | null> {
   const r = await post("/api/pay/checkout", { product });
   if (r.ok && typeof r.data.url === "string") {
+    rememberReturn();
     window.location.assign(r.data.url);
     return null;
   }
