@@ -70,7 +70,10 @@ export function MusicCard({
             // o player só aceita depois de carregar a faixa: tenta de novo por alguns segundos até começar
             let n = 0;
             const t = window.setInterval(() => {
-              if (!wantPlay.current || ++n > 12) return window.clearInterval(t);
+              if (!wantPlay.current || ++n > 12) {
+                wantPlay.current = false; // desistiu: o botão volta a responder normalmente
+                return window.clearInterval(t);
+              }
               send({ command: "play" });
             }, 500);
           }
