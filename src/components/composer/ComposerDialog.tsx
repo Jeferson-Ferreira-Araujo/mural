@@ -8,6 +8,7 @@ import { FastenerPicker } from "../messages/fasteners";
 import { MessageView } from "../messages/MessageView";
 import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
+import { enabledFormats, useFeatureFlags } from "@/lib/features";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
 import { SlotPicker } from "./SlotPicker";
@@ -85,7 +86,8 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const firstFree = Array.from({ length: capacity }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
   const planLimit = used >= available && firstFree !== null;
   const full = firstFree === null || used >= available;
-  const formats = formatsFor(plan);
+  const flags = useFeatureFlags();
+  const formats = enabledFormats(formatsFor(plan), flags);
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });

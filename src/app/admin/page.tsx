@@ -7,6 +7,7 @@ import { BadgeProvider } from "@/components/badges/BadgeContext";
 import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
 import { AnalyticsPanel } from "./AnalyticsPanel";
+import { FeaturesPanel } from "./FeaturesPanel";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
@@ -370,7 +371,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "payments" | "analytics">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics">("users");
   const [payQ, setPayQ] = useState("");
   const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
@@ -457,12 +458,13 @@ export default function Admin() {
           </Link>
         </header>
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-xl grid-cols-4 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-2xl grid-cols-5 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
               ["reports", "Denúncias"],
               ["payments", "Pagamentos"],
+              ["features", "Recursos"],
               ["analytics", "Analytics"],
             ] as const
           ).map(([id, label]) => (
@@ -478,7 +480,9 @@ export default function Admin() {
           </p>
         )}
 
-        {tab === "analytics" ? (
+        {tab === "features" ? (
+          <FeaturesPanel onToast={setToast} />
+        ) : tab === "analytics" ? (
           <AnalyticsPanel />
         ) : tab === "payments" ? (
           <section className="mt-4" aria-label="Pagamentos">

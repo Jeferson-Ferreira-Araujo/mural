@@ -60,7 +60,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string |
   if (!error) return { ok: true };
   const m = error.message;
   const known: SendFailure[] = ["cooldown", "pending_exists", "not_authenticated", "blocked", "too_many_pending", "plan_limit", "slot_taken", "rate_limited", "not_unlocked", "format_not_allowed"];
-  const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") ? "format_not_allowed" : "error");
+  const hit = known.find((k) => m.includes(k)) ?? (m.includes("capsule_not_allowed") || m.includes("format_disabled") ? "format_not_allowed" : "error");
   return { ok: false, reason: hit };
 }
 
@@ -75,7 +75,7 @@ export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
   slot_taken: "Alguém acabou de colar um pin nesse espaço. Escolha outro.",
   rate_limited: "Você colou muitos pins agora há pouco. Tente de novo daqui a pouco.",
   not_unlocked: "Responda a pergunta de novo para continuar.",
-  format_not_allowed: "Esse formato não está liberado neste mural.",
+  format_not_allowed: "Esse formato não está disponível no momento.",
   upload_failed: "Não foi possível enviar o arquivo. Tente de novo.",
   error: "Não foi possível colar o pin agora. Tente de novo.",
 };
