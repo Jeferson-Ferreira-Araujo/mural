@@ -10,9 +10,11 @@ type Props = {
   className?: string;
   /** só o ícone (com dica e leitor de tela) */
   iconOnly?: boolean;
+  /** texto ao lado do ícone (quando não é só o ícone); padrão: "Compartilhar" */
+  label?: string;
 };
 
-export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false }: Props) {
+export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false, label = "Compartilhar" }: Props) {
   async function share() {
     const url = path ? `${window.location.origin}${path}` : window.location.href;
     try {
@@ -40,7 +42,7 @@ export function ShareButton({ title, text, path, onNotify, className = "", iconO
         <circle cx="18" cy="19" r="2.6" />
         <path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3" />
       </svg>
-      {!iconOnly && "Compartilhar"}
+      {!iconOnly && label}
     </button>
   );
 }

@@ -10,6 +10,7 @@ import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { GuestLinks, MobileHeaderLeft, MobileHeaderRight, type AccountApi } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
+import { ShareButton } from "./ShareButton";
 import { MuralPager, type MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
 
@@ -33,13 +34,16 @@ type Props = {
   /** mural trancado por pergunta: o quadro fica borrado e este cartão (pergunta + resposta) aparece por cima */
   locked?: boolean;
   lockPanel?: ReactNode;
+  /** convite para ver o mural: botão "Compartilhar" no canto inferior esquerdo do quadro */
+  share?: { title: string; text?: string; path: string } | null;
+  onNotify?: (msg: string) => void;
 };
 
 /**
  * Mural no celular (retrato), como no mockup: topo com o logo e o menu; cabeçalho com a foto e o nome de quem é o mural;
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
-export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch, locked = false, lockPanel }: Props) {
+export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, welcome, account, guestNext, muralSwitch, locked = false, lockPanel, share, onNotify }: Props) {
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
 
@@ -76,7 +80,21 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
-        <PannableBoard ambient={look.image}>
+        <PannableBoard
+          ambient={look.image}
+          cornerLeft={
+            share && onNotify ? (
+              <ShareButton
+                title="Compartilhar este mural"
+                text={share.text}
+                path={share.path}
+                onNotify={onNotify}
+                className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur"
+                label="Compartilhar"
+              />
+            ) : undefined
+          }
+        >
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain emptyMessage={welcome} />
         </PannableBoard>
         {locked && lockPanel && (

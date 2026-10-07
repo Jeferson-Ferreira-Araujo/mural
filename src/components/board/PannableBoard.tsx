@@ -15,7 +15,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient }: { children: ReactNode; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string }) {
+export function PannableBoard({ children, ambient, cornerLeft }: { children: ReactNode; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const world = useRef<HTMLDivElement>(null);
   const view = useRef({ x: 0, y: 0, s: 1 });
@@ -275,6 +275,12 @@ export function PannableBoard({ children, ambient }: { children: ReactNode; /** 
       <div ref={world} className="absolute top-0 left-0 origin-top-left [container-type:size]" style={{ width: WORLD_W, height: WORLD_H }}>
         {children}
       </div>
+
+      {cornerLeft && (
+        <div onPointerDown={(e) => e.stopPropagation()} className="absolute bottom-3 left-3 z-20">
+          {cornerLeft}
+        </div>
+      )}
 
       <button
         type="button"

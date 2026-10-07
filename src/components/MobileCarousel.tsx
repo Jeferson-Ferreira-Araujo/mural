@@ -15,14 +15,14 @@ import type { ViewProps } from "./viewProps";
  * - Tela inicial e mural trancado: logo, busca/pergunta no centro; "Acessar meu mural" e "Criar novo mural" no rodapé.
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch, share, onNotify }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
 
   // mural escolhido (aberto ou trancado): sempre a tela do mural; se estiver trancado, o quadro fica borrado e a pergunta aparece por cima
   if (!landing && hasSelection && muralInfo) {
-    return <MobileMural locked={locked} lockPanel={locked ? panel("dark") : undefined} items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} muralSwitch={muralSwitch} />;
+    return <MobileMural locked={locked} lockPanel={locked ? panel("dark") : undefined} items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} info={muralInfo} onChangeMural={onChangeMural} welcome={welcome} account={account} guestNext={guestNext} muralSwitch={muralSwitch} share={share} onNotify={onNotify} />;
   }
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração
