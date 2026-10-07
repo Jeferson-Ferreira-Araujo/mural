@@ -47,7 +47,9 @@ export const PLANS: Record<PlanId, PlanInfo> = {
 
 /** Espaços liberados: no FREE são os 15 do plano; no PLUS, todos os do quadro (28). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));
-export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
+/** Pin de música (aparelho MP3): desligado por enquanto (o Spotify só toca 30 s de prévia para quem não está logado); os já criados continuam aparecendo. Ligue aqui para voltar. */
+export const MUSIC_ENABLED = false;
+export const formatsFor = (plan: PlanId) => PLANS[plan].formats.filter((f) => MUSIC_ENABLED || f !== "music");
 /** Cápsulas PINZ (pin que abre numa data futura): desativadas por enquanto; ligue aqui quando a melhoria for lançada. */
 export const CAPSULE_ENABLED = false;
 export const canUseCapsule = (plan: PlanId) => CAPSULE_ENABLED && PLANS[plan].capsule;
@@ -73,4 +75,4 @@ export const CREDIT_PACKS: readonly { id: string; credits: number; cents: number
 export const NEW_MURAL_COST = 5;
 
 /** Recursos listados nos planos (apenas informativo). */
-export const FULL_EXTRAS = ["Música, Vídeo, Voz e Local", ...(CAPSULE_ENABLED ? ["Cápsulas PINZ"] : []), "Futuras personalizações", "Futuras estatísticas avançadas"];
+export const FULL_EXTRAS = ["Vídeo, Voz e Local", ...(CAPSULE_ENABLED ? ["Cápsulas PINZ"] : []), "Futuras personalizações", "Futuras estatísticas avançadas"];
