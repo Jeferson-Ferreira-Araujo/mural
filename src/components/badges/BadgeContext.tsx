@@ -332,7 +332,7 @@ export function BadgeProvider({
     let nx = b.x;
     let ny = b.y;
     if (next === 2) {
-      const el = document.querySelector<HTMLElement>(`[data-badge-id="${id}"]`);
+      const el = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null; // a tela tem duas cópias do mural (desktop e celular): vale a visível
       const layer = visibleOne("[data-badge-layer]");
       if (el && layer) {
         const lr = layer.getBoundingClientRect();
@@ -356,7 +356,7 @@ export function BadgeProvider({
       if (!ok) {
         setBadges((l) => l.map((x) => (x.id === id ? { ...x, size: now, x: b.x, y: b.y } : x)));
         notify("Não foi possível mudar o tamanho agora.");
-      } else if (nx !== b.x || ny !== b.y) void moveBadge(sb, id, nx, ny);
+      } else if (Math.abs(nx - b.x) > 0.05 || Math.abs(ny - b.y) > 0.05) void moveBadge(sb, id, nx, ny); // só grava a posição se ela mudou de verdade
     });
   }, [setBadges]);
 
@@ -402,7 +402,7 @@ function BadgeControls({ id, badge, onResize, onRemove, onKeep }: { id: string; 
   useEffect(() => {
     let raf = 0;
     const tick = () => {
-      const el = document.querySelector(`[data-badge-id="${id}"]`);
+      const el = visibleOne(`[data-badge-id="${id}"]`);
       const r = el?.getBoundingClientRect();
       const next = r && r.width > 0 ? { l: Math.round(r.left), t: Math.round(r.top), r: Math.round(r.right), b: Math.round(r.bottom) } : null;
       setBox((p) => (p && next && p.l === next.l && p.t === next.t && p.r === next.r && p.b === next.b ? p : next));
