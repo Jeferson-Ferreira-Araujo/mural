@@ -77,16 +77,23 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         </p>
         <MuralPager sw={muralSwitch} />
       </div>
-      {account?.onNewMural && (
-        <div className="relative z-20 shrink-0 bg-[#e8dcc2] px-4 pb-2">
-          <button type="button" onClick={account.onNewMural} className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#c9b48a] bg-white/60 py-1.5 text-sm font-semibold text-[#2a1c12] transition active:scale-[0.98]">
-            <span aria-hidden className="text-lg leading-none">+</span> Novo mural
-          </button>
-        </div>
-      )}
+
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
+        {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
+        {account?.onNewMural && (
+          <button
+            type="button"
+            onClick={account.onNewMural}
+            className="absolute top-3 left-3 z-20 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+          >
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Novo mural
+          </button>
+        )}
         <PannableBoard
           ambient={look.image}
           cornerLeft={
