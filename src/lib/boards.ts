@@ -33,3 +33,6 @@ export const boardById = (id?: string | null): BoardInfo => BOARDS.find((b) => b
 
 /** Trocar o fundo é do PINZ PLUS ou de quem já comprou créditos. (Cobrança real ainda não existe.) */
 export const canChangeBoard = (plan: PlanId, credits: number) => plan === "full" || credits > 0;
+
+/** Murais lançados mais recentemente, do mais novo para o mais antigo: ganham o selo "Novo" e aparecem primeiro na loja. Ao lançar um mural, coloque-o no começo desta lista (e tire os mais velhos). */
+export const NEW_BOARDS: readonly BoardId[] = ["viagens", "pets", "musica"];

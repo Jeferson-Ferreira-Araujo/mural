@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
-import { BOARDS } from "@/lib/boards";
+import { BOARDS, NEW_BOARDS } from "@/lib/boards";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
@@ -278,7 +278,18 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {BOARDS.map((b) => {
+          {[...BOARDS]
+            // os que ainda não são seus primeiro; entre eles (e entre os seus) os lançamentos mais novos vêm antes
+            .sort((a, b) => {
+              const oa = boards.get(a.id)?.owned ?? a.id === "cortica";
+              const ob = boards.get(b.id)?.owned ?? b.id === "cortica";
+              if (oa !== ob) return oa ? 1 : -1;
+              const na = NEW_BOARDS.indexOf(a.id);
+              const nb = NEW_BOARDS.indexOf(b.id);
+              if ((na >= 0) !== (nb >= 0)) return na >= 0 ? -1 : 1;
+              return na >= 0 ? na - nb : BOARDS.indexOf(a) - BOARDS.indexOf(b);
+            })
+            .map((b) => {
             const info = boards.get(b.id);
             const owned = info?.owned ?? b.id === "cortica";
             const just = done?.id === `t${b.id}`;
@@ -286,7 +297,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <li key={b.id} className={`relative overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
                 {just && <Confetti key={done.at} />}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                  {NEW_BOARDS.includes(b.id) && <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">Novo</span>}
+                </div>
                 <div className="p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-title text-base font-semibold">{b.name}</p>
