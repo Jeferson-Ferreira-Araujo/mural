@@ -115,7 +115,13 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
               ref={strip}
               role="radiogroup"
               aria-label="Tipo do mural"
-              onScroll={(e) => setSlide(Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1)))}
+              onScroll={(e) => {
+                // o fundo que está à vista é o escolhido: deslizar já troca a seleção (o check acompanha)
+                const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
+                setSlide(i);
+                const b = selectable[i];
+                if (b && b.id !== board && currentBoard) setBoard(b.id);
+              }}
               className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl shadow-[0_0.5rem_1.4rem_rgba(60,35,10,.25)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {selectable.map((bd) => {
