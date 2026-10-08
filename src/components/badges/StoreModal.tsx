@@ -78,17 +78,27 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>("new"); // "new" | "all" | id da categoria
+  const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria
   const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
   const qtyOf = (key: number) => qty[key] ?? 1;
   const credits = inventory?.credits ?? 0;
   const byKey = new Map((inventory?.catalog ?? []).map((c) => [c.key, c]));
   // a loja mostra TODOS os bottons do site; quem já tem um compra só unidades extras
   const all = BADGES.filter((b) => byKey.has(b.key) && (!STORE_DUPLICATES.has(b.key) || byKey.get(b.key)!.owned));
-  const shown =
-    filter === "new" ? [...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT) : filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter);
+  // os lançamentos mais recentes (maiores números) ganham o selo "Novo"
+  const newKeys = new Set([...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT).map((b) => b.key));
+  const isOwned = (key: number) => !!(byKey.get(key)?.starter || byKey.get(key)?.owned);
+  // ordem: os que ainda não são seus primeiro; os novos antes (mais novo primeiro); depois os demais na ordem de sempre
+  const shown = (filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter)).slice().sort((a, b) => {
+    const oa = isOwned(a.key);
+    const ob = isOwned(b.key);
+    if (oa !== ob) return oa ? 1 : -1;
+    const na = newKeys.has(a.key);
+    const nb = newKeys.has(b.key);
+    if (na !== nb) return na ? -1 : 1;
+    return na ? b.key - a.key : 0;
+  });
   const chips: { id: string; text: string }[] = [
-    { id: "new", text: "Novos" },
     { id: "all", text: `Todos (${all.length})` },
     ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
   ];
@@ -239,6 +249,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 return (
                   <li key={b.key} className={`relative flex flex-col items-center rounded-2xl border p-2.5 text-center transition-colors ${just ? "border-[#3aa655] bg-[#effbf1] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba] bg-white/70"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
                     {just && <Confetti key={done.at} />}
+                    {newKeys.has(b.key) && <span className="absolute top-1.5 left-1.5 z-10 rounded-full bg-[#e8554a] px-1.5 py-px text-[9px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.3)]">Novo</span>}
                     <div className="grid h-16 w-full place-items-center">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))", animation: just ? "buy-wiggle 0.9s ease" : undefined }} />
