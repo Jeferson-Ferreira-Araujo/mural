@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
 import { buyBoard, fetchInventory, type BoardOffer } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -21,6 +21,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const strip = useRef<HTMLDivElement>(null);
+  const slide = (dir: 1 | -1) => strip.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
 
   const load = () =>
     fetchInventory(getBrowserSupabase()).then((inv) => {
@@ -128,7 +130,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                 {credits}
               </span>
             </div>
-            <div role="radiogroup" aria-label="Tipo de mural" className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+            <div className="relative">
+            <div ref={strip} role="radiogroup" aria-label="Tipo de mural" className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
               {BOARDS.map((b) => {
                 const id = b.id as string;
                 const has = owns(id);
@@ -152,15 +155,24 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                         type="button"
                         onClick={() => startBuy(id)}
                         aria-label={`Comprar o mural ${b.name} por ${priceOf(id)} créditos`}
-                        className="absolute top-[28%] left-1/2 inline-flex -translate-x-1/2 cursor-pointer items-center gap-1 rounded-full bg-[#17110c]/90 px-3 py-1.5 text-xs font-bold text-white shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.45)] transition active:scale-95"
+                        className="mt-1 inline-flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg bg-[#17110c] px-2 py-1.5 text-xs font-bold whitespace-nowrap text-white transition hover:bg-[#2b1c12] active:scale-95"
                       >
-                        Comprar · <Coin className="size-3.5" />
+                        Comprar <Coin className="size-3.5" />
                         {priceOf(id)}
                       </button>
                     )}
                   </div>
                 );
               })}
+            </div>
+            {/* setas: no computador não há como deslizar com o dedo */}
+            {([-1, 1] as const).map((d) => (
+              <button key={d} type="button" onClick={() => slide(d)} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-[2.6rem] z-10 hidden size-8 cursor-pointer place-items-center rounded-full bg-[#17110c]/85 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 sm:grid ${d < 0 ? "-left-3" : "-right-3"}`}>
+                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
+                </svg>
+              </button>
+            ))}
             </div>
           </fieldset>
 
