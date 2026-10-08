@@ -273,6 +273,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     else if (!loadedRef.current) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
 
+  // quando o dono troca a pergunta/resposta, o banco avisa em tempo real: quem está com o mural aberto é trancado na hora
+  const watchId = selected?.id;
+  useEffect(() => {
+    if (!unlocked || !watchId || isOwner || isMember) return;
+    const sb = getBrowserSupabase();
+    const ch = sb
+      .channel(`mural:${watchId}`)
+      .on("broadcast", { event: "revoked" }, () => relock("O dono mudou a pergunta do mural. Responda de novo para continuar."))
+      .subscribe();
+    return () => {
+      void sb.removeChannel(ch);
+    };
+  }, [unlocked, watchId, isOwner, isMember, relock]);
+
   // o desbloqueio é conferido só na hora de abrir o mural (acima): a leitura abaixo, se falhar depois de o mural já estar na tela, não tranca nada
   useEffect(() => {
     if (!unlocked || (!token && !isOwner)) {
