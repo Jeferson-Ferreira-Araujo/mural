@@ -139,6 +139,16 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       setSharing(false);
     }
   }
+  // tamanho do pin em "em" (altura e largura): a fonte é calculada para o pin ocupar o máximo possível da área livre
+  const fit = (() => {
+    if (!item || isSealed(item) || isHidden(item)) return { h: 21, w: 16 };
+    if (item.type === "photo") {
+      const r = Math.min(2, Math.max(0.5, item.ratio ?? 1));
+      const pw = Math.min(12.2, 14 * r);
+      return { h: 4.6 + pw / r + (item.caption ? 3.8 : 0), w: Math.max(pw + 1.8, 8.6) + 1.4 };
+    }
+    return { h: 23, w: 16 };
+  })();
   const arrow =
     "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-xl border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
@@ -151,7 +161,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label="Ver mensagem em detalhe"
-      className="m-auto w-[min(94vw,40rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && item && index !== null && (
         <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
@@ -192,7 +202,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
             {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
             <div className="relative min-w-0 flex-1 self-stretch [container-type:size]">
-            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[2.4em]" style={{ fontSize: "min(34px, calc(100cqh / 23), calc(100cqw / 15))" }} key={item.id}>
+            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h}), calc(100cqw / ${fit.w}))` }} key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
