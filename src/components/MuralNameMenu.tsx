@@ -58,7 +58,6 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
         <div role="menu" className={`absolute top-full z-50 mt-2 w-max min-w-[12rem] max-w-[min(80vw,22rem)] rounded-xl border border-[#e1d3ba] bg-[#fbf6ea] p-1.5 text-[#2a1c12] shadow-[0_0.8rem_2rem_rgba(0,0,0,.4)] ${align === "right" ? "right-0" : "left-0"}`}>
           {listed.length > 0 && (
             <>
-              <p className="px-3 pt-1.5 pb-1 text-[11px] font-bold tracking-wide text-[#8a6a2a] uppercase">Meus murais</p>
               {listed.map((m) => {
                 const here = m.slug === sw?.current;
                 return (
