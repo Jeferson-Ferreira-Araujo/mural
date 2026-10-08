@@ -95,41 +95,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   return (
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
-        {/* nome e tipo na mesma linha; o tipo é um slide que desliza para o lado */}
-        <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
-        <div className="min-w-0 space-y-3">
-        <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid grid-cols-2 gap-2">
-            {(
-              [
-                [false, "🌐 Público"],
-                [true, "🔒 Privado"],
-              ] as const
-            ).map(([val, label]) => (
-              <button
-                key={label}
-                type="button"
-                role="radio"
-                aria-checked={priv === val}
-                onClick={() => setPriv(val)}
-                className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {priv && (
-            <Field label="Pergunta de segurança">
-              {(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}
-            </Field>
-          )}
-          {priv && (
-            <Field label="Resposta">
-              {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
-            </Field>
-          )}
-        </div>
-        <fieldset className="min-w-0">
+        {/* uma coluna: tipo (fundo) do mural, nome, público/privado e, se privado, pergunta e resposta */}
+        <fieldset className="mx-auto w-full max-w-[24rem] min-w-0">
           <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
           <div className="relative">
           <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none]">
@@ -165,6 +132,37 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           ))}
           </div>
         </fieldset>
+        <div className="space-y-4">
+        <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid grid-cols-2 gap-2">
+            {(
+              [
+                [false, "🌐 Público"],
+                [true, "🔒 Privado"],
+              ] as const
+            ).map(([val, label]) => (
+              <button
+                key={label}
+                type="button"
+                role="radio"
+                aria-checked={priv === val}
+                onClick={() => setPriv(val)}
+                className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {priv && (
+            <Field label="Pergunta de segurança">
+              {(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}
+            </Field>
+          )}
+          {priv && (
+            <Field label="Resposta">
+              {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
+            </Field>
+          )}
         </div>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
