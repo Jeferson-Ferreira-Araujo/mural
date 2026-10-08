@@ -260,7 +260,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`/img/blur/${board}.webp`} alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "relative", marginBottom: 118 }}>
-          <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined }} revealSecret />
+          <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined, reaction: undefined }} revealSecret />
         </div>
         {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
         <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "row", alignItems: "center", gap: 16, padding: "12px 18px 12px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>

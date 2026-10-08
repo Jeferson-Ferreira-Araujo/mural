@@ -225,7 +225,11 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
     };
   }, [onMove, onUp]);
 
+  // janelas (detalhe do pin, avisos…) são filhas do quadro no DOM, mas não fazem parte dele: nada de arrastar nem de adiar o clique delas
+  const inDialog = (t: EventTarget | null) => t instanceof Element && !!t.closest("dialog");
+
   const onPointerDown = (e: React.PointerEvent) => {
+    if (inDialog(e.target)) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const p = rel(e, true); // lê o retângulo uma vez, no começo do toque
     pointers.current.set(e.pointerId, p);
@@ -242,6 +246,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
 
   // cliques dos filhos: ignorados depois de arrastar, adiados até saber se vem um segundo toque
   const onClickCapture = (e: React.MouseEvent) => {
+    if (inDialog(e.target)) return;
     if (bypassClick.current) {
       bypassClick.current = false;
       return;
