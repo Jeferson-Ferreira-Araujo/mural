@@ -208,3 +208,16 @@ html:has([data-badge-controls]),
 html:has([data-badge-controls]) body {
   overscroll-behavior: none;
 }
+
+/* arrastar um pin: o espaço de destino fica marcado */
+[data-slot][data-drop] {
+  outline: 0.16em dashed #f7f0dd;
+  outline-offset: 0.35em;
+  border-radius: 0.6em;
+  background: rgba(255, 243, 214, 0.22);
+}
+body.pin-dragging,
+body.pin-dragging * {
+  cursor: grabbing !important;
+  user-select: none;
+}

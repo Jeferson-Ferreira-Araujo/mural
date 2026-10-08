@@ -308,10 +308,19 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       plan: (isMember ? "full" : (own.find((m) => m.slug === slug)?.plan ?? "free")) as "free" | "full",
       moderate: async (id: string, approve: boolean, secret = false) =>
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
+      move: async (id: string, slot: number) => {
+        const { error } = await getBrowserSupabase().rpc("move_pin", { p_id: id, p_slot: slot });
+        if (error) {
+          notify("Não foi possível mover o pin agora.");
+          return false;
+        }
+        await loadBoard();
+        return true;
+      },
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
       report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Denúncia enviada e pin removido."),
     }),
-    [afterModeration, own, slug, isMember],
+    [afterModeration, own, slug, isMember, notify, loadBoard],
   );
   // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PLUS: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
   // ordem da barra: os bottons comprados primeiro (o mais novo no início)

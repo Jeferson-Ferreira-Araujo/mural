@@ -164,6 +164,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const onMove = useCallback(
     (e: PointerEvent) => {
       if (!pointers.current.has(e.pointerId)) return;
+      if (document.body.classList.contains("pin-dragging")) return; // arrastando um pin: o quadro fica parado
       const p = rel(e);
       pointers.current.set(e.pointerId, p);
       if (pointers.current.size >= 2) {
@@ -235,6 +236,8 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const onPointerDown = (e: React.PointerEvent) => {
     if (inDialog(e.target)) return;
     lastType.current = e.pointerType;
+    // mouse sobre um pin que o dono pode arrastar: quem cuida disso é o próprio pin, o quadro não começa a mover
+    if (e.pointerType === "mouse" && e.target instanceof Element && e.target.closest("[data-pin-drag]")) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const p = rel(e, true); // lê o retângulo uma vez, no começo do toque
     pointers.current.set(e.pointerId, p);

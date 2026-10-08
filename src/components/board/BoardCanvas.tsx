@@ -9,6 +9,8 @@ import { MessageView } from "../messages/MessageView";
 import { EmptySlot } from "./SlotMarker";
 import { PinDetail } from "./PinDetail";
 import { BadgeLayer } from "../badges/BadgeLayer";
+import { useModeration } from "./ModerationContext";
+import { usePinDrag } from "./usePinDrag";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -91,6 +93,8 @@ export function BoardCanvas({
   // o detalhe (clique no pin) só existe para pins com conteúdo; espaços em blur não abrem nada
   const placed = layout.filter((x): x is BoardItem => !!x && !isHidden(x));
   const [detail, setDetail] = useState<number | null>(null);
+  const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
+  const drag = usePinDrag(mod ? (id, slot) => void mod.move(id, slot) : null);
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
   const baseEm = BASE_EM_CQW * look.size * (dense ? 0.64 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
@@ -129,7 +133,7 @@ export function BoardCanvas({
                       if (!item) {
                         if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
                         return (
-                          <div key={`slot-${i}`} data-empty-slot style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
+                          <div key={`slot-${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                             {onCompose && unlocked ? (
                               <button
                                 type="button"
@@ -150,6 +154,8 @@ export function BoardCanvas({
                         <div
                           key={item.id}
                           className="pinned relative"
+                          data-slot={i}
+                          {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
                           data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}
                           style={
                             {
@@ -165,7 +171,7 @@ export function BoardCanvas({
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => setDetail(placed.indexOf(item))}
+                              onClick={() => !drag.wasDrag() && setDetail(placed.indexOf(item))}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
                                   e.preventDefault();

@@ -12,6 +12,8 @@ export type Moderation = {
   plan: PlanId;
   moderate: (id: string, approve: boolean, secret?: boolean) => Promise<boolean>;
   setSecret: (id: string, secret: boolean) => Promise<boolean>;
+  /** muda o pin de espaço (arrastando); se o espaço estiver ocupado, os dois trocam de lugar */
+  move: (id: string, slot: number) => Promise<boolean>;
   report: (id: string, r: { reason: ReportReason; details: string; block: boolean }) => Promise<boolean>;
 };
 
