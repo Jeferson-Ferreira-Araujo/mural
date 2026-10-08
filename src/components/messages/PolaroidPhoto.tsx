@@ -5,7 +5,7 @@ import { Scene, type SceneVariant } from "./Scene";
 /** Foto em Polaroid. `src` = foto escolhida pela pessoa; sem `src`, usa uma cena ilustrada de exemplo. */
 export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, pos, ratio }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor; pos?: PinPos; /** largura ÷ altura da foto: o quadro se ajusta a ela (sem cortar) mantendo o lado maior no tamanho padrão */ ratio?: number }) {
   const hand = handOf(font);
-  const r = src && ratio ? Math.min(2, Math.max(0.5, ratio)) : 1;
+  const r = ratio ? Math.min(2, Math.max(0.5, ratio)) : 1;
   const PHOTO = 12.2; // lado maior da foto, em em (o quadro padrão tem 14em com 0,9em de borda)
   const photoW = r >= 1 ? PHOTO : PHOTO * r;
   const cardW = Math.max(photoW + 1.8, 10); // nunca mais estreito que 10em, para a legenda caber

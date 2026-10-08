@@ -18,7 +18,7 @@ function placeholderFor(h: HiddenItem): Message | null {
     case "list":
       return { id: h.id, type: "list", title: "Lorem ipsum", items: [{ text: "Lorem ipsum", done: false }, { text: "Dolor sit amet", done: true }, { text: "Consectetur", done: false }], ...style };
     case "photo":
-      return { id: h.id, type: "photo", caption: "", scene: "hills", ...style };
+      return { id: h.id, type: "photo", caption: "", scene: "hills", ratio: h.ratio, ...style };
     case "draw":
       return { id: h.id, type: "draw", caption: "", ...style };
     case "music":

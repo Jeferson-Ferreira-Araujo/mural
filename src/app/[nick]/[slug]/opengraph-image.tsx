@@ -14,7 +14,7 @@ const W = 1200;
 const H = 630;
 const IMG_H = 800; // o fundo é 1200×800 (3:2) e a prévia mostra a faixa central
 
-type Item = { slot: number; type?: string; hidden?: boolean; sealed?: boolean; color?: string; text?: string; title?: string; caption?: string; src?: string; items?: { text: string }[] };
+type Item = { slot: number; ratio?: number; type?: string; hidden?: boolean; sealed?: boolean; color?: string; text?: string; title?: string; caption?: string; src?: string; items?: { text: string }[] };
 type Preview = { nickname: string; avatar: string | null; board: string; open: boolean; items: Item[] };
 
 const NOTE: Record<string, string> = { yellow: "#fbe36a", pink: "#f7a8c0", green: "#b9e08a", orange: "#fbbd78", blue: "#a9d8f0" };
@@ -34,7 +34,7 @@ async function localAsset(name: string): Promise<string | null> {
 }
 
 /** Foto de fora (perfil ou pin): baixa, reduz para um quadrado pequeno em JPG (aceita WebP, HEIC já convertido etc.) e devolve como data URL. Falhou? null (vira um quadrado cinza). */
-async function remoteImage(url?: string | null): Promise<string | null> {
+async function remoteImage(url?: string | null, fit: "cover" | "inside" = "cover"): Promise<string | null> {
   if (!url || !url.startsWith("https://")) return null;
   try {
     const r = await fetch(url, { signal: AbortSignal.timeout(4000) });
@@ -42,16 +42,23 @@ async function remoteImage(url?: string | null): Promise<string | null> {
     const input = Buffer.from(await r.arrayBuffer());
     if (input.length > 10_000_000) return null;
     const sharp = (await import("sharp")).default;
-    const out = await sharp(input).rotate().resize(300, 300, { fit: "cover" }).jpeg({ quality: 72 }).toBuffer();
+    const out = await sharp(input).rotate().resize(300, 300, { fit }).jpeg({ quality: 72 }).toBuffer();
     return `data:image/jpeg;base64,${out.toString("base64")}`;
   } catch {
     return null;
   }
 }
 
+/** Largura e altura do cartão: a foto segue a proporção (lado maior = tamanho padrão), igual ao pin do mural. */
+function dims(it: Item, side: number) {
+  const r = it.type === "photo" && it.ratio ? Math.min(2, Math.max(0.5, it.ratio)) : 1;
+  return { w: Math.round(r >= 1 ? side : side * r), h: Math.round(r <= 1 ? side : side / r) };
+}
+
 function card(it: Item, side: number, photo: string | null) {
   const rot = ((it.slot * 37) % 7) - 3;
-  const base = { position: "absolute" as const, display: "flex", width: side, height: side, transform: `rotate(${rot}deg)`, overflow: "hidden", boxShadow: "0 6px 14px rgba(20,8,0,.45)" };
+  const { w, h } = dims(it, side);
+  const base = { position: "absolute" as const, display: "flex", width: w, height: h, transform: `rotate(${rot}deg)`, overflow: "hidden", boxShadow: "0 6px 14px rgba(20,8,0,.45)" };
   if (it.sealed) return { ...base, background: "#3b2616", borderRadius: 8, opacity: 0.85 };
   // trancado, em segredo ou de aparelho: só uma silhueta suave, sem conteúdo
   if (it.hidden) {
@@ -68,12 +75,15 @@ function inner(it: Item, side: number, photo: string | null) {
   if (it.hidden || it.sealed) return null;
   if (it.type === "postit") return clean(it.text, 60);
   if (it.type === "photo" || it.type === "draw") {
-    const inside = side - Math.round(side * 0.16);
+    const d = dims(it, side);
+    const pad = Math.round(side * 0.16);
+    const iw = d.w - pad;
+    const ih = d.h - pad;
     return photo ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={photo} width={inside} height={inside} style={{ objectFit: "cover" }} alt="" />
+      <img src={photo} width={iw} height={ih} style={{ objectFit: "cover" }} alt="" />
     ) : (
-      <div style={{ width: inside, height: inside, background: "#c9c2b4", display: "flex" }} />
+      <div style={{ width: iw, height: ih, background: "#c9c2b4", display: "flex" }} />
     );
   }
   if (it.type === "music" || it.type === "video" || it.type === "voice" || it.type === "place") {
@@ -114,7 +124,7 @@ async function build(nick: string, slug: string): Promise<ArrayBuffer> {
   const items = (pv?.items ?? []).filter((i) => typeof i.slot === "number" && i.slot >= 0 && i.slot < 28);
   const photos = new Map<number, string | null>();
   if (pv?.open) {
-    await Promise.all(items.filter((i) => (i.type === "photo" || i.type === "draw") && !i.hidden).slice(0, 8).map(async (i) => photos.set(i.slot, await remoteImage(i.src))));
+    await Promise.all(items.filter((i) => (i.type === "photo" || i.type === "draw") && !i.hidden).slice(0, 8).map(async (i) => photos.set(i.slot, await remoteImage(i.src, "inside"))));
   }
 
   const res = new ImageResponse(
@@ -127,8 +137,9 @@ async function build(nick: string, slug: string): Promise<ArrayBuffer> {
         {items.map((it) => {
           const col = it.slot % 7;
           const row = Math.floor(it.slot / 7);
-          const x = cl + col * cellW + (cellW - side) / 2;
-          const y = ct - off + row * cellH + (cellH - side) / 2;
+          const dm = dims(it, side);
+          const x = cl + col * cellW + (cellW - dm.w) / 2;
+          const y = ct - off + row * cellH + (cellH - dm.h) / 2;
           return (
             <div key={it.slot} style={{ ...card(it, side, photos.get(it.slot) ?? null), left: x, top: y }}>
               {inner(it, side, photos.get(it.slot) ?? null)}

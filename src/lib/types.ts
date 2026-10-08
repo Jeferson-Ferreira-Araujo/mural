@@ -67,6 +67,8 @@ export type HiddenItem = {
   color?: PostItColor;
   variant?: "letter" | "notebook";
   playerColor?: PlayerColor;
+  /** Foto: só a proporção (para a silhueta ter o mesmo tamanho do pin de verdade). */
+  ratio?: number;
   font?: HandId;
   pin?: PinColor;
   tape?: TapeColor;
