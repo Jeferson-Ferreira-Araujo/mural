@@ -52,7 +52,8 @@ async function remoteImage(url?: string | null, fit: "cover" | "inside" = "cover
 /** Largura e altura do cartão: a foto segue a proporção (lado maior = tamanho padrão), igual ao pin do mural. */
 function dims(it: Item, side: number) {
   const r = it.type === "photo" && it.ratio ? Math.min(2, Math.max(0.5, it.ratio)) : 1;
-  return { w: Math.round(r >= 1 ? side : side * r), h: Math.round(r <= 1 ? side : side / r) };
+  const w = Math.min(12.2, 14 * r) / 12.2; // mesma regra do pin: largura até 12,2 e altura até 14 (em unidades do quadro padrão)
+  return { w: Math.round(side * w), h: Math.round((side * w) / r) };
 }
 
 function card(it: Item, side: number, photo: string | null) {
