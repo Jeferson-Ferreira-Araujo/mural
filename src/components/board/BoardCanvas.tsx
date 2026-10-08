@@ -131,9 +131,9 @@ export function BoardCanvas({
                       // espaço sem mensagem: todos aparecem livres, em qualquer plano (o limite do plano é de QUANTOS pins, não de quais espaços).
                       // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                       if (!item) {
-                        if (!hasSelection) return <div key={`slot-${i}`} aria-hidden />;
+                        if (!hasSelection) return <div key={`s${i}`} aria-hidden />;
                         return (
-                          <div key={`slot-${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
+                          <div key={`s${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                             {onCompose && unlocked ? (
                               <button
                                 type="button"
@@ -152,7 +152,7 @@ export function BoardCanvas({
 
                       return (
                         <div
-                          key={item.id}
+                          key={`s${i}`}
                           className="pinned relative"
                           data-slot={i}
                           {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
@@ -182,11 +182,11 @@ export function BoardCanvas({
                               className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
                             >
                               <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.18]">
-                                <MessageView message={item} />
+                                <MessageView key={item.id} message={item} />
                               </div>
                             </div>
                           ) : (
-                            <MessageView message={item} />
+                            <MessageView key={item.id} message={item} />
                           )}
                         </div>
                       );

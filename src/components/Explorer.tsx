@@ -309,12 +309,18 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       moderate: async (id: string, approve: boolean, secret = false) =>
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
       move: async (id: string, slot: number) => {
+        // a tela muda na hora (troca os dois espaços); o servidor confirma em seguida e, se falhar, recarrega o quadro como estava
+        setItems((prev) => {
+          const from = prev.find((i) => i.id === id)?.slot;
+          if (typeof from !== "number") return prev;
+          return prev.map((i) => (i.id === id ? { ...i, slot } : i.slot === slot ? { ...i, slot: from } : i));
+        });
         const { error } = await getBrowserSupabase().rpc("move_pin", { p_id: id, p_slot: slot });
         if (error) {
           notify("Não foi possível mover o pin agora.");
+          await loadBoard();
           return false;
         }
-        await loadBoard();
         return true;
       },
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
