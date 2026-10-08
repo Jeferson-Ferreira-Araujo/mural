@@ -25,6 +25,8 @@ import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
+import { NewMuralModal } from "./account/NewMuralModal";
+import { PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
 import { ReactionsProvider } from "./board/ReactionsContext";
 import { ListEditProvider, type ListData } from "./board/ListEditContext";
@@ -132,6 +134,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
   }, [session]);
+  const [newMuralOpen, setNewMuralOpen] = useState(false);
   const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
     const list = await getOwnMurals(getBrowserSupabase());
@@ -718,7 +721,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           void reloadOwn();
           if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
         }}
-        onDeleted={() => window.location.assign("/criar")}
+        onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
         onSignOut={() => {
           void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
         }}
@@ -754,7 +757,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
-          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites, notifications: { count: unread, onOpen: () => void openNotifications() } } : undefined}
+          account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, ...(isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? { onNewMural: () => setNewMuralOpen(true) } : {}), onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites, notifications: { count: unread, onOpen: () => void openNotifications() } } : undefined}
           muralSwitch={unlocked && nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
@@ -817,11 +820,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               void reloadOwn();
               if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
             }}
-            onDeleted={() => window.location.assign("/criar")}
+            onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
             onSignOut={() => {
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
             }}
           />
+          {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />

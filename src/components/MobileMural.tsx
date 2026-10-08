@@ -77,6 +77,13 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         </p>
         <MuralPager sw={muralSwitch} />
       </div>
+      {account?.onNewMural && (
+        <div className="relative z-20 shrink-0 bg-[#e8dcc2] px-4 pb-2">
+          <button type="button" onClick={account.onNewMural} className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#c9b48a] bg-white/60 py-1.5 text-sm font-semibold text-[#2a1c12] transition active:scale-[0.98]">
+            <span aria-hidden className="text-lg leading-none">+</span> Novo mural
+          </button>
+        </div>
+      )}
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">

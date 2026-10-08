@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { loginUrl } from "@/lib/auth";
 
-export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number; /** sino de notificações */ notifications?: { count: number; onOpen: () => void } };
+export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number; /** PINZ PLUS: botão "Novo mural" no cabeçalho do mural (celular) */ onNewMural?: () => void; /** sino de notificações */ notifications?: { count: number; onOpen: () => void } };
 
 const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-center rounded-xl transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
