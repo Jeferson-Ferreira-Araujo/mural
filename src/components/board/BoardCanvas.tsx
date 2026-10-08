@@ -93,6 +93,15 @@ export function BoardCanvas({
   // o detalhe (clique no pin) só existe para pins com conteúdo; espaços em blur não abrem nada
   const placed = layout.filter((x): x is BoardItem => !!x && !isHidden(x));
   const [detail, setDetail] = useState<number | null>(null);
+  // pins que ainda não tinham aparecido neste quadro ganham a animação de entrada; os que só mudam de espaço, não
+  const known = useRef(new Set<string>());
+  const entering = useRef(new Set<string>());
+  for (const it of items) {
+    if (!known.current.has(it.id)) {
+      known.current.add(it.id);
+      entering.current.add(it.id);
+    }
+  }
   const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
   const drag = usePinDrag(mod ? (id, slot) => void mod.move(id, slot) : null);
   const look = boardById(board);
@@ -153,7 +162,7 @@ export function BoardCanvas({
                       return (
                         <div
                           key={`s${i}`}
-                          className="pinned relative"
+                          className={`pinned relative${entering.current.has(item.id) ? " enter" : ""}`}
                           data-slot={i}
                           {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
                           data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}

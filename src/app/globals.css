@@ -77,11 +77,10 @@ body {
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
     left 0.6s ease,
     top 0.6s ease;
-  animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-/* depois de arrastar um pin para outro espaço: sem animação de entrada */
-body.pin-moved .pinned {
-  animation: none !important;
+/* a animação de entrada só vale para pin que acabou de aparecer (nunca para um que só mudou de lugar) */
+.pinned.enter {
+  animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
 @media (hover: hover) {
   .pinned:hover {
