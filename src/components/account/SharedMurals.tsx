@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createSharedMural, deleteSharedMural, listSharedMurals, respondSharedInvite, setSharedPassword, SHARED_ERROR_TEXT, type SharedFailure, type SharedMural } from "@/lib/shared";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { cleanNickname } from "@/lib/mural";
+import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
+import { fetchInventory, type BoardOffer } from "@/lib/badges";
+import { SearchBox } from "../SearchBox";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 
 /** Murais compartilhados entre duas pessoas PLUS: convites recebidos, os seus murais e a criação de um novo. */
@@ -16,6 +18,8 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
   const [partner, setPartner] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [board, setBoard] = useState<string>(DEFAULT_BOARD);
+  const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [changing, setChanging] = useState<string | null>(null);
   const [newPw, setNewPw] = useState("");
 
@@ -25,7 +29,9 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
   }, [sb, onChanged]);
   useEffect(() => {
     void listSharedMurals(sb).then(setList);
+    void fetchInventory(sb).then((inv) => setOffers(inv?.boards ?? []));
   }, [sb]);
+  const ownedBoards = BOARDS.filter((b) => b.id === DEFAULT_BOARD || offers.find((o) => o.id === b.id)?.owned === true);
 
   const fail = (r: SharedFailure) => setErr(SHARED_ERROR_TEXT[r]);
 
@@ -37,6 +43,8 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
     const res = await createSharedMural(sb, title.trim(), partner.trim(), password);
     setBusy(false);
     if (!res.ok) return fail(res.reason);
+    if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: res.id, p_board: board });
+    setBoard(DEFAULT_BOARD);
     setTitle("");
     setPartner("");
     setPassword("");
@@ -80,7 +88,10 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
 
   return (
     <div className="space-y-5 text-[15px]">
-      <p className="text-[#4a3826]">Um mural só de vocês dois. Quem cria define a senha, a outra pessoa aceita o convite, e só as duas contas conseguem abrir (sempre com a senha).</p>
+      <section aria-label="Como funciona" className="rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-3.5 text-sm text-[#4a3826]">
+        <p className="font-semibold text-[#2a1c12]">Como funciona</p>
+        <p className="mt-1">Um mural só de vocês dois: você cria, define a senha e convida uma pessoa PLUS. Quando ela aceitar, só as duas contas conseguem abrir o mural, sempre com a senha. Os dois podem colar pins.</p>
+      </section>
 
       {invites.length > 0 && (
         <section aria-label="Convites recebidos" className="space-y-2">
@@ -152,11 +163,32 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
           <p className="mt-2 rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-sm text-[#4a3826]">É um recurso do PINZ PLUS: você e a outra pessoa precisam ter o plano.</p>
         ) : (
           <form onSubmit={create} noValidate className="mt-2 space-y-3">
-            <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Nossa viagem" className={inputClass} />}</Field>
-            <Field label="Usuário da outra pessoa">
-              {(id) => <input id={id} value={partner} onChange={(e) => setPartner(cleanNickname(e.target.value))} autoComplete="off" placeholder="nome_de_usuario" className={inputClass} />}
-            </Field>
-            <Field label="Senha do mural" hint={<span className="text-xs text-[#8a7b69]">Combine com a outra pessoa</span>}>
+            <fieldset className="min-w-0">
+              <legend className="mb-1 text-sm font-semibold">1. Tipo do mural</legend>
+              <div role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+                {ownedBoards.map((bd) => {
+                  const on = board === bd.id;
+                  return (
+                    <button
+                      key={bd.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => setBoard(bd.id)}
+                      className={`relative w-[7.5rem] shrink-0 cursor-pointer snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full rounded-lg object-cover" />
+                      {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
+                      <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {ownedBoards.length === 1 && <p className="text-xs text-[#6b5440]">Outros tipos de mural você compra na loja.</p>}
+            </fieldset>
+            <Field label="2. Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Nossa viagem" className={inputClass} />}</Field>
+            <Field label="3. Senha do mural" hint={<span className="text-xs text-[#8a7b69]">Combine com a outra pessoa (mínimo 6 caracteres)</span>}>
               {(id) => (
                 <div className="relative">
                   <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className={`${inputClass} pr-20`} />
@@ -166,6 +198,19 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
                 </div>
               )}
             </Field>
+            <div>
+              <p className="mb-1 text-sm font-semibold">4. Para quem enviar o convite</p>
+              {partner ? (
+                <p className="flex items-center justify-between gap-2 rounded-xl border border-[#e1d3ba] bg-white px-3 py-2.5 text-sm">
+                  <strong>@{partner}</strong>
+                  <button type="button" onClick={() => setPartner("")} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+                    Trocar
+                  </button>
+                </p>
+              ) : (
+                <SearchBox hideLabel onSelect={(n) => setPartner(n)} />
+              )}
+            </div>
             {err && (
               <p role="alert" className="text-sm text-[#a23b2a]">
                 {err}

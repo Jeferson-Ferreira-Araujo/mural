@@ -162,6 +162,21 @@ export function AccountDrawer({
                       </svg>
                     }
                   />
+                  {account.plan === "full" && (
+                  <Row
+                    onClick={() => setModal("shared")}
+                    label="Mural compartilhado"
+                    hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PLUS)"}
+                    badge={sharedInvites}
+                    icon={
+                      <svg {...ic}>
+                        <circle cx="9" cy="8.5" r="3" />
+                        <circle cx="16.5" cy="9.5" r="2.5" />
+                        <path d="M3.5 19c.6-3 2.7-4.6 5.5-4.6s4.9 1.600 5.500 4.600M15 14.800c2.600-.4 4.800.9 5.500 4.200" />
+                      </svg>
+                    }
+                  />
+                  )}
                   <Row
                     onClick={() => setModal("numbers")}
                     label="Números do mural"
@@ -217,19 +232,6 @@ export function AccountDrawer({
                   }
                 />
               )}
-              <Row
-                onClick={() => setModal("shared")}
-                label="Mural compartilhado"
-                hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PLUS)"}
-                badge={sharedInvites}
-                icon={
-                  <svg {...ic}>
-                    <circle cx="9" cy="8.5" r="3" />
-                    <circle cx="16.5" cy="9.5" r="2.5" />
-                    <path d="M3.5 19c.6-3 2.7-4.6 5.5-4.6s4.9 1.600 5.500 4.600M15 14.800c2.600-.4 4.800.9 5.500 4.200" />
-                  </svg>
-                }
-              />
               <Row
                 onClick={onOpenStore}
                 label="Loja"

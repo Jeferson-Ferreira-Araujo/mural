@@ -40,10 +40,10 @@ export const SHARED_ERROR_TEXT: Record<SharedFailure, string> = {
   error: "Não foi possível concluir agora. Tente de novo.",
 };
 
-export async function createSharedMural(sb: SupabaseClient, title: string, partner: string, password: string): Promise<{ ok: true; slug: string; nickname: string } | { ok: false; reason: SharedFailure }> {
+export async function createSharedMural(sb: SupabaseClient, title: string, partner: string, password: string): Promise<{ ok: true; id: string; slug: string; nickname: string } | { ok: false; reason: SharedFailure }> {
   const { data, error } = await sb.rpc("create_shared_mural", { p_title: title, p_partner: partner, p_password: password });
   if (error || !data) return { ok: false, reason: failure(error?.message ?? "") };
-  return { ok: true, slug: data.slug, nickname: data.nickname };
+  return { ok: true, id: data.id, slug: data.slug, nickname: data.nickname };
 }
 
 export async function respondSharedInvite(sb: SupabaseClient, id: string, accept: boolean): Promise<{ ok: true } | { ok: false; reason: SharedFailure }> {
