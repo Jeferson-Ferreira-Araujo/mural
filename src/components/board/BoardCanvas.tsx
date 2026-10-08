@@ -9,6 +9,8 @@ import { MessageView } from "../messages/MessageView";
 import { EmptySlot } from "./SlotMarker";
 import { PinDetail } from "./PinDetail";
 import { BadgeLayer } from "../badges/BadgeLayer";
+import { useBadges } from "../badges/BadgeContext";
+import { PHYSICAL_TYPES } from "@/lib/badges";
 import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
 
@@ -103,7 +105,27 @@ export function BoardCanvas({
     }
   }
   const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
-  const drag = usePinDrag(mod ? (id, slot) => void mod.move(id, slot) : null);
+  const { removeOver } = useBadges();
+  const root = useRef<HTMLElement>(null);
+  const drag = usePinDrag(
+    mod
+      ? (id, to) => {
+          // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima: os que estiverem na área de destino voltam para a barra
+          const from = layout.findIndex((x) => x?.id === id);
+          const slotEl = (n: number) => root.current?.querySelector<HTMLElement>(`[data-slot="${n}"]`) ?? null;
+          const isPhysical = (it: BoardItem | null | undefined) => !!it && (isSealed(it) || (PHYSICAL_TYPES as readonly string[]).includes(it.type ?? ""));
+          const over = (el: HTMLElement | null, size: HTMLElement | null) => {
+            if (!el || !size) return;
+            const c = el.getBoundingClientRect();
+            const s = size.getBoundingClientRect();
+            removeOver({ left: c.left + c.width / 2 - s.width / 2, right: c.left + c.width / 2 + s.width / 2, top: c.top + c.height / 2 - s.height / 2, bottom: c.top + c.height / 2 + s.height / 2 });
+          };
+          if (from >= 0 && isPhysical(layout[from])) over(slotEl(to), slotEl(from));
+          if (isPhysical(layout[to])) over(slotEl(from), slotEl(to)); // quem estava no destino vai para o espaço de origem (troca)
+          void mod.move(id, to);
+        }
+      : null,
+  );
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
   const baseEm = BASE_EM_CQW * look.size * (dense ? 0.64 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
@@ -111,7 +133,7 @@ export function BoardCanvas({
 
   return (
     <>
-            <main className="absolute inset-0 [container-type:size]">
+            <main ref={root} className="absolute inset-0 [container-type:size]">
               <div
                 data-board-capture
                 className="absolute top-1/2 left-1/2 aspect-[3/2] -translate-x-1/2 -translate-y-1/2 transition-[filter] duration-700 ease-out [container-type:inline-size]"

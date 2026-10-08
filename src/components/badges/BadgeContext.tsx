@@ -26,10 +26,12 @@ type Ctx = {
   hover: (id: string | null) => void;
   /** toque no botton (celular): mostra os controles até tocar em outro lugar */
   select: (id: string | null) => void;
+  /** tira do mural (e devolve à barra) os botons que estão debaixo desta área da tela: usado quando um pin de aparelho é movido para cima deles */
+  removeOver: (rect: { left: number; right: number; top: number; bottom: number }) => void;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
@@ -423,7 +425,21 @@ export function BadgeProvider({
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select]);
+  const removeOver = useCallback(
+    (rect: { left: number; right: number; top: number; bottom: number }) => {
+      const mine = new Set(live.current.badges.filter((b) => b.mine !== false).map((b) => b.id));
+      for (const el of document.querySelectorAll<HTMLElement>("[data-badge-id]")) {
+        const id = el.dataset.badgeId;
+        if (!id || !mine.has(id) || !visible(el)) continue;
+        const r = el.getBoundingClientRect();
+        const mx = r.width * 0.1;
+        const my = r.height * 0.1; // só conta se o botton cobre um pedaço de verdade
+        if (r.right - mx > rect.left && r.left + mx < rect.right && r.bottom - my > rect.top && r.top + my < rect.bottom) removeById(id);
+      }
+    },
+    [removeById],
+  );
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
