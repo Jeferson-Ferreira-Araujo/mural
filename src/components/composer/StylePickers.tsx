@@ -18,12 +18,11 @@ export function FontPicker({ value, onChange }: { value: HandId; onChange: (f: H
             aria-checked={value === f.id}
             aria-label={`Letra ${f.label}`}
             onClick={() => onChange(f.id)}
-            className={`cursor-pointer rounded-xl border-2 bg-white/70 px-1 py-2 text-center transition ${ring} ${value === f.id ? "border-[#2f2218] bg-white shadow-sm" : "border-[#e1d3ba] hover:bg-white"}`}
+            className={`cursor-pointer rounded-xl border-2 bg-white/70 px-1 py-2.5 text-center transition ${ring} ${value === f.id ? "border-[#2f2218] bg-white shadow-sm" : "border-[#e1d3ba] hover:bg-white"}`}
           >
             <span className="block text-[1.55rem] leading-none text-[#2f2218]" style={{ fontFamily: f.family }}>
               Olá!
             </span>
-            <span className="mt-1 block text-[11px] leading-none text-[#8a7b69]">{f.label}</span>
           </button>
         ))}
       </div>
