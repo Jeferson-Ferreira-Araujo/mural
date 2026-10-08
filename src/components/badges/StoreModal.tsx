@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
 import { BOARDS, NEW_BOARDS } from "@/lib/boards";
+import { BoardLightbox } from "./BoardLightbox";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
@@ -104,6 +105,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
 
+  const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
   const [done, setDone] = useState<Done | null>(null);
   // o saldo do cabeçalho só aparece quando o saldo grande (no bloco de créditos) sai da vista
   const [bigEl, setBigEl] = useState<HTMLElement | null>(null);
@@ -321,6 +323,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                  {/* ver o mural em tela cheia (discreto, no centro da foto) */}
+                  <button
+                    type="button"
+                    onClick={() => setViewBoard({ image: b.image, name: b.name })}
+                    aria-label={`Ver o mural ${b.name} em tela cheia`}
+                    title="Ver em tela cheia"
+                    className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/40 text-white/90 opacity-80 backdrop-blur-sm transition hover:bg-black/65 hover:opacity-100 active:scale-90"
+                  >
+                    <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
                   {NEW_BOARDS.includes(b.id) && <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">Novo</span>}
                 </div>
                 <div className="p-3">
@@ -351,6 +366,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           })}
         </ul>
       )}
+      <BoardLightbox image={viewBoard?.image ?? null} name={viewBoard?.name ?? ""} onClose={() => setViewBoard(null)} />
     </Modal>
   );
 }
