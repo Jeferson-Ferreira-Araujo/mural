@@ -217,15 +217,16 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Foto" hint="Fotos grandes são reduzidas automaticamente.">
+      <Field label="Foto">
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
       <PinColorPicker value={pin} onChange={setPin} />
-      <FontPicker value={font} onChange={setFont} />
       <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder="Ex: Churrasco de 2019" className={inputClass} />}
       </Field>
+      {/* a letra só importa se houver legenda: o seletor aparece depois de digitar */}
+      {caption.trim() && <FontPicker value={font} onChange={setFont} />}
     </div>
   );
 }
