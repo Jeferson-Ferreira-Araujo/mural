@@ -14,7 +14,9 @@ export function ProfileMurals({ nick }: { nick: string }) {
 
   useEffect(() => {
     void getProfileMurals(getBrowserSupabase(), nick).then((p) => {
-      if (p && p.murals.length === 1) router.replace(`/${p.nickname}/${p.murals[0].slug}`);
+      // com ?primeiro (vem do @ no detalhe de um pin) abre direto o primeiro mural da pessoa
+      const first = new URLSearchParams(window.location.search).has("primeiro");
+      if (p && p.murals.length > 0 && (p.murals.length === 1 || first)) router.replace(`/${p.nickname}/${p.murals[0].slug}`);
       else setProfile(p);
     });
   }, [nick, router]);
