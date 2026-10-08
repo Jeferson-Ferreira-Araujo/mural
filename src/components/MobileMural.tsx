@@ -11,7 +11,8 @@ import { Brand } from "./Brand";
 import { GuestLinks, MobileHeaderLeft, MobileHeaderRight, type AccountApi } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
 import { ShareButton } from "./ShareButton";
-import { MuralPager, type MuralSwitch } from "./MuralSwitcher";
+import { MuralNameMenu } from "./MuralNameMenu";
+import type { MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
 
 type Props = {
@@ -73,9 +74,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11" />
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
-          <span className="block truncate text-sm leading-tight text-[#6b5440]">{info.title}</span>
         </p>
-        <MuralPager sw={muralSwitch} />
+        <MuralNameMenu title={info.title} sw={muralSwitch} showShared={!!account?.atHome} align="right" className="max-w-[55%] shrink-0 text-right text-base font-bold text-[#2a1c12]" />
       </div>
 
 

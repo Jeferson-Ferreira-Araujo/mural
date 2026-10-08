@@ -6,7 +6,7 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { AccountActions } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
-import { MuralPager } from "./MuralSwitcher";
+import { MuralNameMenu } from "./MuralNameMenu";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { Sidebar } from "./Sidebar";
@@ -23,9 +23,8 @@ export function DesktopBoard(props: ViewProps) {
   const lockForm = props.locked ? props.panel("dark", "form") : null;
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
-  const hasPager = !!muralSwitch && muralSwitch.items.length >= 2;
   const newMural = account?.onNewMural; // PLUS: botão "Novo mural" abaixo do passador de murais
-  const hasRight = hasPager || !!newMural;
+  const hasRight = !!newMural;
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
@@ -43,7 +42,7 @@ export function DesktopBoard(props: ViewProps) {
             {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
             {hasSelection && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
-                <span className="block max-w-full truncate">{props.muralInfo.title}</span>
+                <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />
               </h2>
             )}
             {/* convida outras pessoas a ver este mural */}
@@ -79,7 +78,6 @@ export function DesktopBoard(props: ViewProps) {
           </div>
           {hasRight && (
             <div className="pointer-events-auto flex w-[9.5rem] shrink-0 flex-col items-stretch gap-2">
-              {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="w-full bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
               {newMural && (
                 <button
                   type="button"
