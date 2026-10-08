@@ -263,10 +263,13 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false }} revealSecret />
         </div>
         {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
-        <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "12px 16px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>
+        <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "row", alignItems: "center", gap: 16, padding: "12px 18px 12px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64 }} />
-          <p style={{ margin: 0, fontFamily: "var(--font-fredoka), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "center" }}>Crie seu mural também e compartilhe momentos.</p>
+          <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+            <p style={{ margin: 0, fontFamily: "var(--font-fredoka), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "left", lineHeight: 1.25 }}>Crie seu mural também e compartilhe momentos.</p>
+            <p style={{ margin: 0, fontFamily: "var(--font-fredoka), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218", textAlign: "left" }}>Acesse Pinz.digital</p>
+          </div>
         </div>
       </div>
     )}
