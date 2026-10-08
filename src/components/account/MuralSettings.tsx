@@ -12,7 +12,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [title, setTitle] = useState(mural.title);
   const [question, setQuestion] = useState(mural.question);
   const [priv, setPriv] = useState(mural.question.trim() !== ""); // público ou privado (com pergunta de segurança)
-  const [changeAnswer, setChangeAnswer] = useState(false);
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -40,7 +39,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   }, [mural.id]);
 
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
-  const askAnswer = priv && (changeAnswer || (question.trim() !== "" && !had));
+  const answerFilled = answer.trim() !== ""; // resposta digitada (troca a atual); em branco mantém a que já existe
 
   async function save(e: FormEvent) {
     e.preventDefault();
@@ -50,13 +49,13 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       setMsg({ ok: false, text: !title.trim() ? "Preencha o nome do mural." : q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras." });
       return;
     }
-    if (q !== "" && askAnswer && !answer.trim()) {
+    if (q !== "" && !had.trim() && !answerFilled) {
       setMsg({ ok: false, text: "Digite a resposta." });
       return;
     }
     setBusy(true);
     const sb = getBrowserSupabase();
-    const { error } = await sb.rpc("update_mural", { p_id: mural.id, p_title: title.trim(), p_question: q, p_answer: q !== "" && askAnswer ? answer.trim() : null });
+    const { error } = await sb.rpc("update_mural", { p_id: mural.id, p_title: title.trim(), p_question: q, p_answer: q !== "" && answerFilled ? answer.trim() : null });
     if (error) {
       setBusy(false);
       setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
@@ -72,9 +71,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       setCurrentBoard(board);
     }
     setBusy(false);
-    setMsg({ ok: true, text: q === "" ? "Salvo! Seu mural está público." : askAnswer ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
+    setMsg({ ok: true, text: q === "" ? "Salvo! Seu mural está público." : q !== had.trim() || answerFilled ? "Salvo! Quem já tinha desbloqueado precisará responder de novo." : "Salvo!" });
     setHad(q);
-    setChangeAnswer(false);
     setAnswer("");
     onSaved();
   }
@@ -118,7 +116,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </div>
         </fieldset>
         {priv && (
-          <Field label="Pergunta de segurança" hint="Quem for abrir este mural precisa responder. Cada mural tem a sua própria pergunta e resposta.">
+          <Field label="Pergunta de segurança">
             {(fid) => (
               <>
                 <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />
@@ -127,14 +125,10 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             )}
           </Field>
         )}
-        {!priv || question.trim() === "" ? null : askAnswer ? (
-          <Field label={had ? "Nova resposta" : "Resposta"} hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
-            {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" className={inputClass} />}
+        {priv && question.trim() !== "" && (
+          <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
+            {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
           </Field>
-        ) : (
-          <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            Trocar a resposta
-          </button>
         )}
         <fieldset>
           <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
