@@ -115,43 +115,31 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
               ref={strip}
               role="radiogroup"
               aria-label="Tipo do mural"
-              onScroll={(e) => {
-                // o fundo que está à vista é o escolhido: deslizar já troca a seleção (o check acompanha)
-                const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
-                setSlide(i);
-                const b = selectable[i];
-                if (b && b.id !== board && currentBoard) setBoard(b.id);
-              }}
+              onScroll={(e) => setSlide(Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1)))}
               className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl shadow-[0_0.5rem_1.4rem_rgba(60,35,10,.25)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {selectable.map((bd) => {
                 const on = board === bd.id;
                 return (
-                  <button
-                    key={bd.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    aria-label={bd.name}
-                    onClick={() => setBoard(bd.id)}
-                    className="relative block w-full shrink-0 cursor-pointer snap-center overflow-hidden focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#d98a2b]"
-                  >
+                  <div key={bd.id} role="radio" aria-checked={on} aria-label={bd.name} className="relative block w-full shrink-0 snap-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full object-cover" />
-                    <span aria-hidden className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-8 pb-3 text-left text-base font-bold text-white">
-                      {bd.name}
-                    </span>
-                    {on && (
-                      <>
-                        <span aria-hidden className="absolute inset-0 rounded-2xl ring-4 ring-inset ring-[#f4c542]" />
-                        <span aria-hidden className="absolute top-3 left-3 grid size-8 place-items-center rounded-full bg-[#f4c542] text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)]">
-                          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent px-3 pt-10 pb-3">
+                      <span className="min-w-0 truncate text-base font-bold text-white">{bd.name}</span>
+                      {on ? (
+                        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#f4c542] px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)]">
+                          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                             <path d="m5 12.5 4.5 4.5L19 7.5" />
                           </svg>
+                          Selecionado
                         </span>
-                      </>
-                    )}
-                  </button>
+                      ) : (
+                        <button type="button" onClick={() => setBoard(bd.id)} className="shrink-0 cursor-pointer rounded-full bg-white/90 px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-white active:scale-95">
+                          Selecionar
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 );
               })}
             </div>
