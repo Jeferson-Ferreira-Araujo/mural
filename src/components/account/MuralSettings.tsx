@@ -90,7 +90,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     }
     setBusy(false);
     const lines = [`Nome: ${title.trim()}`, `Tipo: ${BOARDS.find((b) => b.id === (board || currentBoard))?.name ?? "Cortiça"}`, q === "" ? "Acesso: público" : "Acesso: privado, com pergunta de segurança"];
-    if (q !== "" && (q !== had.trim() || answerFilled)) lines.push("Quem já tinha entrado precisará responder de novo.");
     setMsg(null);
     const at = Date.now();
     setSaved({ at, lines });
