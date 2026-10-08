@@ -774,7 +774,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           board={boardById(selected ? selected.board : decorBoard).id}
           boardPending={boardPendingNow}
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
-          share={selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
+          share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : undefined}
           onChangeMural={clear}
           panel={panel}
