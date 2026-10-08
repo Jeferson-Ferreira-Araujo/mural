@@ -12,6 +12,33 @@ import { ReactionBar } from "./ReactionBar";
 import { useReactionsAccess } from "./ReactionsContext";
 import { useFeatureFlags } from "@/lib/features";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
+import { badgeDef, badgeSrc } from "@/lib/badges";
+import { useBadges } from "../badges/BadgeContext";
+
+/** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
+type Over = { id: string; key: number; rot: number; rx: number; ry: number; wr: number };
+
+function BadgesOver({ list }: { list: Over[] }) {
+  return (
+    <>
+      {list.map((o) => {
+        const d = badgeDef(o.key);
+        if (!d) return null;
+        return (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={o.id}
+            src={badgeSrc(o.key)}
+            alt=""
+            draggable={false}
+            className="pointer-events-none absolute z-[35] select-none"
+            style={{ left: `${50 + o.rx * 100}%`, top: `${50 + o.ry * 100}%`, width: `${o.wr * 100}%`, aspectRatio: d.ratio, transform: `translate(-50%, -50%) rotate(${o.rot}deg)`, filter: "drop-shadow(0.12em 0.22em 0.2em rgba(30,12,0,.5))" }}
+          />
+        );
+      })}
+    </>
+  );
+}
 
 const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 /** Olho aberto: o pin está à vista. */
@@ -67,6 +94,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const open = index !== null && !!items[index];
   const mod = useModeration();
   const react = useReactionsAccess();
+  const { badges: placedBadges } = useBadges();
+  const [over, setOver] = useState<Over[]>([]);
   const flags = useFeatureFlags();
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
@@ -117,6 +146,39 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   }, [open, index, items.length, onIndex]);
 
   const item = index !== null ? items[index] : null;
+
+  // bottons que estão sobre este pin no mural: aparecem no detalhe na mesma posição (relativa ao pin) e no mesmo tamanho proporcional
+  const itemId = item && !isSealed(item) && !isHidden(item) ? item.id : null;
+  useEffect(() => {
+    if (!open || !itemId) {
+      setOver([]);
+      return;
+    }
+    const vis = (el: Element) => (el as HTMLElement).offsetParent !== null && el.getBoundingClientRect().width > 0;
+    const pin = [...document.querySelectorAll<HTMLElement>(`[data-pin-id="${CSS.escape(itemId)}"]`)].find(vis);
+    if (!pin) {
+      setOver([]);
+      return;
+    }
+    const p = pin.getBoundingClientRect();
+    const out: Over[] = [];
+    for (const el of document.querySelectorAll<HTMLElement>("[data-badge-id]")) {
+      if (!vis(el)) continue;
+      const b = el.getBoundingClientRect();
+      const ix = Math.max(0, Math.min(b.right, p.right) - Math.max(b.left, p.left));
+      const iy = Math.max(0, Math.min(b.bottom, p.bottom) - Math.max(b.top, p.top));
+      if (ix * iy < b.width * b.height * 0.2) continue; // só os que realmente cobrem o pin
+      const pb = placedBadges.find((x) => x.id === el.dataset.badgeId);
+      if (!pb) continue;
+      // escala da tela (zoom do quadro): o pin pode estar inclinado, então o tamanho dele vem do layout, não do retângulo da tela
+      const layer = el.closest<HTMLElement>("[data-badge-layer]");
+      const sc = layer && layer.offsetWidth ? layer.getBoundingClientRect().width / layer.offsetWidth : 1;
+      const pw = (pin.offsetWidth || 1) * sc;
+      const ph = (pin.offsetHeight || 1) * sc;
+      out.push({ id: pb.id, key: pb.key, rot: pb.rotation ?? 0, rx: (b.left + b.width / 2 - (p.left + p.width / 2)) / pw, ry: (b.top + b.height / 2 - (p.top + p.height / 2)) / ph, wr: el.offsetWidth / (pin.offsetWidth || 1) });
+    }
+    setOver(out);
+  }, [open, itemId, placedBadges]);
   // só o dono do mural (mod existe só para ele) compartilha, e só pin à vista: nada de segredo, nada aguardando aprovação, nada fechado
   // sempre que o segredo liga/desliga num pin, volta ao estado borrado (quem acabou de habilitar já vê como fica)
   const secretOn = !!item && !isSealed(item) && !isHidden(item) && !!item.ownerHidden;
@@ -208,7 +270,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h}), calc(100cqw / ${fit.w}))` }} key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
-                <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+                <div className="relative">
+                  <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+                  <BadgesOver list={over} />
+                </div>
               </DetailProvider>
             </div>
             </div>
@@ -276,7 +341,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`/img/blur/${board}.webp`} alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "relative", marginBottom: 118 }}>
-          <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined, reaction: undefined }} revealSecret />
+          <div style={{ position: "relative" }}>
+            <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined, reaction: undefined }} revealSecret />
+            <BadgesOver list={over} />
+          </div>
         </div>
         {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
         <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "row", alignItems: "center", gap: 16, padding: "12px 18px 12px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>
