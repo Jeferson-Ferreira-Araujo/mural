@@ -190,7 +190,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
             </button>
-            <div className="grid min-h-[22rem] min-w-0 flex-1 place-items-center pt-[1.2em] pb-[2.4em] text-[min(26px,4.3vw)]" key={item.id}>
+            {/* o tamanho do pin também respeita a altura da janela (botões em cima e embaixo ficam fora da conta): nunca precisa de barra de rolagem */}
+            <div className="grid min-w-0 flex-1 place-items-center pt-[1.2em] pb-[2.4em]" style={{ fontSize: "min(26px, 4.3vw, calc((96dvh - 270px) / 23))" }} key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
