@@ -50,10 +50,10 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
   );
 }
 
-/** Pins do mural em carrossel: "Para aprovar" (um por vez, com aprovar/recusar) e "No mural" (segredo no PLUS, remover). */
+/** Aprovações: só os pins que esperam aprovação, em carrossel (um por vez), com aprovar, excluir e denunciar. */
 export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void }) {
   const [pins, setPins] = useState<OwnerPin[] | null>(null);
-  const [tab, setTab] = useState<"pending" | "approved">("pending");
+  const tab = "pending" as const; // esta tela mostra só o que espera aprovação
   const [busy, setBusy] = useState<string | null>(null);
   const [reporting, setReporting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,18 +70,11 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
     if (open) {
       setError(null);
       setReporting(null);
-      setTab("pending");
       void load();
     }
   }, [open, load]);
 
   const pending = (pins ?? []).filter((p) => p.status === "pending");
-  const approved = (pins ?? []).filter((p) => p.status === "approved");
-  // sem nada para aprovar: mostra os que já estão no mural
-  useEffect(() => {
-    if (pins && tab === "pending" && pending.length === 0 && approved.length > 0) setTab("approved");
-  }, [pins, tab, pending.length, approved.length]);
-
   async function run(id: string, action: () => Promise<boolean>) {
     setBusy(id);
     setError(null);
@@ -91,7 +84,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
     setBusy(null);
   }
   const sb = getBrowserSupabase();
-  const list = tab === "pending" ? pending : approved;
+  const list = pending;
 
   const card = (p: OwnerPin) => (
     <div className="text-center">
@@ -106,7 +99,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
         {tab === "pending" ? (
           <>
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>
-              Recusar
+              Excluir
             </button>
             {full && (
               <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em segredo (os visitantes veem o pin borrado)" onClick={() => run(p.id, () => moderatePin(sb, p.id, true, true))}>
@@ -138,19 +131,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
   );
 
   return (
-    <Modal open={open} onClose={onClose} title="Pins do mural" wide>
-      <div role="tablist" aria-label="Pins" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
-        {(
-          [
-            ["pending", `Para aprovar (${pending.length})`],
-            ["approved", `No mural (${approved.length})`],
-          ] as const
-        ).map(([id, label]) => (
-          <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
-            {label}
-          </button>
-        ))}
-      </div>
+    <Modal open={open} onClose={onClose} title="Aprovações" wide>
       {error && (
         <p role="alert" className="mb-3 text-sm text-[#a23b2a]">
           {error}
@@ -159,7 +140,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
       {!pins ? (
         <p className="text-sm text-[#6b5440]">Carregando pins…</p>
       ) : list.length === 0 ? (
-        <p className="py-8 text-center text-sm text-[#6b5440]">{tab === "pending" ? "Nenhum pin aguardando. Quando alguém colar um, ele aparece aqui." : "Ainda não há pins aprovados no mural."}</p>
+        <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colar um pin no seu mural, ele aparece aqui.</p>
       ) : (
         <>
           {tab === "pending" && <p className="mb-3 text-center text-xs text-[#6b5440]">Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.</p>}

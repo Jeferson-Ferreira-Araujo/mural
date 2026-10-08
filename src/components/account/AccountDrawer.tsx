@@ -141,24 +141,24 @@ export function AccountDrawer({
               {mural && (
                 <>
                   <Row
-                    onClick={() => setModal("pins")}
-                    label="Pins do mural"
-                    hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Aprovar, recusar e gerenciar"}
-                    badge={pendingCount}
-                    icon={
-                      <svg {...ic}>
-                        <path d="M5 4h14v12l-4 4H5V4Z" />
-                        <path d="M15 20v-4h4M8.5 9h7M8.5 12.5h4" />
-                      </svg>
-                    }
-                  />
-                  <Row
                     onClick={() => setModal("mymurals")}
                     label="Meus murais"
                     hint={murals.length > 1 ? `${murals.length} murais · nome, pergunta e tipo` : "Nome, pergunta e tipo do mural"}
                     icon={
                       <svg {...ic}>
                         <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
+                      </svg>
+                    }
+                  />
+                  <Row
+                    onClick={() => setModal("pins")}
+                    label="Aprovações"
+                    hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Nenhum pin aguardando"}
+                    badge={pendingCount}
+                    icon={
+                      <svg {...ic}>
+                        <path d="M5 4h14v12l-4 4H5V4Z" />
+                        <path d="M15 20v-4h4M8.5 9h7M8.5 12.5h4" />
                       </svg>
                     }
                   />
