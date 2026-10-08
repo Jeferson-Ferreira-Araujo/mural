@@ -39,7 +39,9 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     const { w, h } = size.current;
     const minS = Math.min(w / WORLD_W, h / WORLD_H);
     // o máximo é o mesmo tanto que o botão "Aproximar" amplia (~2,4 cartões por tela): mais que isso não deixa
-    const defS = Math.max(minS, w / 310);
+    // celular: ~2,4 cartões por tela; telas largas (desktop): ~5 cartões, senão a ampliação fica enorme
+    const perScreen = w >= 700 ? 5 : 2.4;
+    const defS = Math.max(minS, w / (130 * perScreen));
     const maxS = Math.max(minS * 1.001, defS);
     return { minS, maxS, defS };
   }, []);
