@@ -234,8 +234,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // tranca o mural de novo (desbloqueio vencido, apagado pelo dono ou inválido): precisa responder a pergunta outra vez
   const openMural_ = selected?.open === true;
+  const [relockTick, setRelockTick] = useState(0); // sobe a cada tranca: mural público tenta entrar de novo sozinho
   const relock = useCallback(
     (why: string) => {
+      setRelockTick((t) => t + 1);
       if (nick && slug) clearGrant({ nick, slug });
       setToken(null);
       setUnlocked(false);
@@ -538,11 +540,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // mural público (sem pergunta): entra direto, sem digitar nada
   useEffect(() => {
     if (!selected?.open || unlocked || !nick || !slug) return;
-    const key = `${nick}/${slug}`;
+    const key = `${nick}/${slug}#${relockTick}`;
     if (autoKey.current === key) return;
     autoKey.current = key;
     void submitAnswer("");
-  }, [selected?.open, unlocked, nick, slug, submitAnswer]);
+  }, [selected?.open, unlocked, nick, slug, submitAnswer, relockTick]);
 
   // ainda não sabemos quem está olhando (sessão/nickname carregando): não mostra pergunta nem quadro trancado por um instante para depois trocar
   const resolving = sessionLoading || (logged && !myNick);
