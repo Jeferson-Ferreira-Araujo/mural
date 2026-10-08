@@ -143,7 +143,6 @@ export function AccountDrawer({
                   <Row
                     onClick={() => setModal("mymurals")}
                     label="Meus murais"
-                    hint={murals.length > 1 ? `${murals.length} murais · nome, pergunta e tipo` : "Nome, pergunta e tipo do mural"}
                     icon={
                       <svg {...ic}>
                         <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
