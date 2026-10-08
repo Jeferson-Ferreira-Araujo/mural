@@ -234,6 +234,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // tranca o mural de novo (desbloqueio vencido, apagado pelo dono ou inválido): precisa responder a pergunta outra vez
   const openMural_ = selected?.open === true;
+  useEffect(() => {
+    if (!unlocked) loadedRef.current = false;
+  }, [unlocked]);
   const [relockTick, setRelockTick] = useState(0); // sobe a cada tranca: mural público tenta entrar de novo sozinho
   const relock = useCallback(
     (why: string) => {
@@ -253,6 +256,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
   const moveSeq = useRef(0); // sobe a cada movimento de pin: uma leitura que começou antes dele traz o quadro velho e é descartada
+  const loadedRef = useRef(false); // o quadro já chegou nesta abertura?
   const loadBoard = useCallback(async () => {
     if (!nick || !slug) return;
     const sb = getBrowserSupabase();
@@ -260,29 +264,16 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const list = await fetchBoard(sb, { nick, slug }, token);
     if (seq !== moveSeq.current) return;
     if (list) {
+      loadedRef.current = true;
       // só redesenha se algo mudou de verdade (a atualização automática a cada minuto não deve mexer em nada)
       setItems((prev) => (JSON.stringify(prev) === JSON.stringify(list) ? prev : list));
       setBoardLoaded(true);
       void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges((prev) => (JSON.stringify(prev) === JSON.stringify(b) ? prev : b)));
     }
-    else relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
+    else if (!loadedRef.current) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
 
-  // de tempos em tempos (e ao voltar para a aba) confere se o desbloqueio continua valendo
-  useEffect(() => {
-    if (!unlocked || !token || !nick || !slug) return;
-    const check = async () => {
-      const ok = await checkGrantClient(getBrowserSupabase(), { nick, slug }, token);
-      if (!ok) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
-    };
-    const t = setInterval(() => void check(), 30_000);
-    const onVisible = () => document.visibilityState === "visible" && void check();
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      clearInterval(t);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [unlocked, token, nick, slug, relock]);
+  // o desbloqueio é conferido só na hora de abrir o mural (acima): a leitura abaixo, se falhar depois de o mural já estar na tela, não tranca nada
   useEffect(() => {
     if (!unlocked || (!token && !isOwner)) {
       setItems([]);
