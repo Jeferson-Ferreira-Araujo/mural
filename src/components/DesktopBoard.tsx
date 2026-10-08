@@ -24,6 +24,8 @@ export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
   const hasPager = !!muralSwitch && muralSwitch.items.length >= 2;
+  const newMural = account?.onNewMural; // PLUS: botão "Novo mural" abaixo do passador de murais
+  const hasRight = hasPager || !!newMural;
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
@@ -70,11 +72,27 @@ export function DesktopBoard(props: ViewProps) {
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
-          {hasPager && <div aria-hidden className="w-[9.5rem] shrink-0" />}
+          {hasRight && <div aria-hidden className="w-[9.5rem] shrink-0" />}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
             <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
           </div>
-          {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="pointer-events-auto w-[9.5rem] bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
+          {hasRight && (
+            <div className="pointer-events-auto flex w-[9.5rem] shrink-0 flex-col items-stretch gap-2">
+              {hasPager && <MuralPager sw={muralSwitch} tone="dark" className="w-full bg-[#2a1c12]/70 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.35)] backdrop-blur-md" />}
+              {newMural && (
+                <button
+                  type="button"
+                  onClick={newMural}
+                  className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition hover:bg-[#2b1c12] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+                >
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  Novo mural
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
