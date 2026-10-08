@@ -147,6 +147,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       const pw = Math.min(12.2, 14 * r);
       return { h: 4.6 + pw / r + (item.caption ? 3.8 : 0), w: Math.max(pw + 1.8, 8.6) + 1.4 };
     }
+    // players e mapa são cartões baixos (14em de largura, ~10em de altura); a legenda é um papelzinho que pende embaixo
+    if (item.type === "place" || item.type === "voice" || item.type === "video" || item.type === "music") return { h: 12.5 + ("caption" in item && item.caption ? 5.5 : 0), w: 16 };
+    if (item.type === "draw") return { h: 19 + ("caption" in item && item.caption ? 4 : 0), w: 17 };
     return { h: 23, w: 16 };
   })();
   const arrow =
