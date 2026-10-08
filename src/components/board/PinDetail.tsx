@@ -131,7 +131,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     setShareMsg(null);
     try {
       const blob = await cardToPng(cardRef.current);
-      const res = await deliverImage(blob, "pinz-pin");
+      const res = await deliverImage(blob, "pinz-pin", "Crie seu mural agora, acesse: https://pinz.digital");
       if (res === "downloaded") setShareMsg("Imagem salva! Agora é só postar.");
     } catch {
       setShareMsg("Não foi possível gerar a imagem agora.");

@@ -119,13 +119,13 @@ export async function boardToImage(el: HTMLElement): Promise<Blob> {
  * Entrega a imagem: no celular/tablet abre o menu de compartilhar (dá para postar direto ou salvar na galeria);
  * no computador baixa o arquivo.
  */
-export async function deliverImage(blob: Blob, name: string): Promise<"shared" | "downloaded" | "canceled"> {
+export async function deliverImage(blob: Blob, name: string, text?: string): Promise<"shared" | "downloaded" | "canceled"> {
   const ext = blob.type === "image/png" ? "png" : "jpg";
   const file = new File([blob], `${name}.${ext}`, { type: blob.type || "image/jpeg" });
   const touch = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
   if (touch && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], title: "Pinz" });
+      await navigator.share({ files: [file], title: "Pinz", ...(text ? { text } : {}) }); // o texto vai junto (legenda no WhatsApp); o endereço completo vira link
       return "shared";
     } catch (e) {
       if ((e as DOMException).name === "AbortError") return "canceled";
