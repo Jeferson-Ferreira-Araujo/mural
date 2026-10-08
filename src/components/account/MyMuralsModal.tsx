@@ -32,16 +32,14 @@ export function MyMuralsModal({ open, onClose, murals, onChanged, onDeleted }: {
   const editing = murals.find((m) => m.id === editId) ?? null;
 
   return (
-    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide>
-      {editing ? (
-        <div className="space-y-4">
-          <button type="button" onClick={() => setEditId(null)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#6b5440] hover:text-[#2a1c12]">
+    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide headerLeft={editing ? (<button type="button" onClick={() => setEditId(null)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#4a3826] hover:text-[#2a1c12]">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
             Voltar para Meus murais
-          </button>
-          <h3 className="font-title text-xl font-semibold">{editing.title}</h3>
+          </button>) : undefined}>
+      {editing ? (
+        <div className="space-y-4">
           <MuralSettings
             mural={editing}
             canDelete={editing.id !== murals[0]?.id}

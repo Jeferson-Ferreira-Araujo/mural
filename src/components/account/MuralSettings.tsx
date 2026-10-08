@@ -14,6 +14,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [priv, setPriv] = useState(mural.question.trim() !== ""); // público ou privado (com pergunta de segurança)
   const [answer, setAnswer] = useState("");
   const strip = useRef<HTMLDivElement>(null);
+  const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,6 +45,17 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
 
   // só os tipos que a pessoa já tem (mais o que o mural usa agora, por garantia)
   const selectable = BOARDS.filter((b) => b.id === "cortica" || b.id === currentBoard || offers.find((o) => o.id === b.id)?.owned === true);
+
+  // ao abrir (e quando o tipo do mural chega do servidor), o slide já mostra o tipo em uso
+  useEffect(() => {
+    const el = strip.current;
+    const i = selectable.findIndex((b) => b.id === currentBoard);
+    if (el && i >= 0) {
+      el.scrollTo({ left: i * el.clientWidth });
+      setSlide(i);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentBoard, selectable.length]);
 
   async function save(e: FormEvent) {
     e.preventDefault();
@@ -96,41 +108,69 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
         {/* uma coluna: tipo (fundo) do mural, nome, público/privado e, se privado, pergunta e resposta */}
-        <fieldset className="mx-auto w-full max-w-[24rem] min-w-0">
-          <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
+        <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
+          <legend className="mb-2 text-sm font-semibold">Tipo do mural</legend>
           <div className="relative">
-          <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-            {selectable.map((bd) => {
-              const owned = true;
-              const on = board === bd.id;
-              return (
+            <div
+              ref={strip}
+              role="radiogroup"
+              aria-label="Tipo do mural"
+              onScroll={(e) => setSlide(Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1)))}
+              className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl shadow-[0_0.5rem_1.4rem_rgba(60,35,10,.25)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {selectable.map((bd) => {
+                const on = board === bd.id;
+                return (
+                  <button
+                    key={bd.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    aria-label={bd.name}
+                    onClick={() => setBoard(bd.id)}
+                    className="relative block w-full shrink-0 cursor-pointer snap-center overflow-hidden focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#d98a2b]"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full object-cover" />
+                    <span aria-hidden className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-8 pb-3 text-left text-base font-bold text-white">
+                      {bd.name}
+                    </span>
+                    {on && (
+                      <>
+                        <span aria-hidden className="absolute inset-0 rounded-2xl ring-4 ring-inset ring-[#f4c542]" />
+                        <span aria-hidden className="absolute top-3 left-3 grid size-8 place-items-center rounded-full bg-[#f4c542] text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)]">
+                          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m5 12.5 4.5 4.5L19 7.5" />
+                          </svg>
+                        </span>
+                      </>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            {selectable.length > 1 &&
+              ([-1, 1] as const).map((d) => (
                 <button
-                  key={bd.id}
+                  key={d}
                   type="button"
-                  role="radio"
-                  aria-checked={on}
-                  disabled={!owned}
-                  onClick={() => setBoard(bd.id)}
-                  className={`relative w-full shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
+                  onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
+                  aria-label={d < 0 ? "Tipo anterior" : "Próximo tipo"}
+                  className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${owned ? "" : "opacity-55"}`} />
-                  {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
-                  {!owned && <span aria-hidden className="absolute top-2.5 right-2.5 text-sm">🔒</span>}
-                  <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                  <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
+                  </svg>
                 </button>
-              );
-            })}
+              ))}
           </div>
-          {/* setas para o mouse: no computador não dá para deslizar com o dedo */}
-          {selectable.length > 1 && ([-1, 1] as const).map((d) => (
-            <button key={d} type="button" onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-1/3 z-10 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-[#17110c]/80 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 ${d < 0 ? "left-2.5" : "right-2.5"}`}>
-              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
-              </svg>
-            </button>
-          ))}
-          </div>
+          {selectable.length > 1 && (
+            <div className="mt-2.5 flex justify-center gap-1.5" aria-hidden>
+              {selectable.map((bd, i) => (
+                <span key={bd.id} className={`h-1.5 rounded-full transition-all ${i === slide ? "w-5 bg-[#d9a21b]" : "w-1.5 bg-[#cdbb97]"}`} />
+              ))}
+            </div>
+          )}
         </fieldset>
         <div className="space-y-4">
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
