@@ -11,6 +11,7 @@ import { Field, ghostButton, inputClass, primaryButton, QuestionSuggestions } fr
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void ; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
   const [title, setTitle] = useState(mural.title);
   const [question, setQuestion] = useState(mural.question);
+  const [priv, setPriv] = useState(mural.question.trim() !== ""); // público ou privado (com pergunta de segurança)
   const [changeAnswer, setChangeAnswer] = useState(false);
   const [answer, setAnswer] = useState("");
   const [busy, setBusy] = useState(false);
@@ -24,6 +25,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   useEffect(() => {
     setTitle(mural.title);
     setQuestion(mural.question);
+    setPriv(mural.question.trim() !== "");
     setHad(mural.question);
   }, [mural.id, mural.title, mural.question]);
 
@@ -38,14 +40,14 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   }, [mural.id]);
 
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
-  const askAnswer = changeAnswer || (question.trim() !== "" && !had);
+  const askAnswer = priv && (changeAnswer || (question.trim() !== "" && !had));
 
   async function save(e: FormEvent) {
     e.preventDefault();
     setMsg(null);
-    const q = question.trim();
-    if (!title.trim() || (q !== "" && q.length < 3)) {
-      setMsg({ ok: false, text: q === "" ? "Preencha o nome do mural." : "A pergunta precisa ter pelo menos 3 letras." });
+    const q = priv ? question.trim() : ""; // público = sem pergunta
+    if (!title.trim() || (priv && q.length < 3)) {
+      setMsg({ ok: false, text: !title.trim() ? "Preencha o nome do mural." : q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras." });
       return;
     }
     if (q !== "" && askAnswer && !answer.trim()) {
@@ -92,15 +94,40 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Pergunta de segurança (opcional)" hint="Quem for abrir seus murais precisa responder. Vale para todos os seus murais. Em branco, os murais ficam públicos: qualquer pessoa com o link abre.">
-          {(fid) => (
-            <>
-              <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />
-              <QuestionSuggestions onPick={setQuestion} />
-            </>
-          )}
-        </Field>
-        {question.trim() === "" ? null : askAnswer ? (
+        <fieldset>
+          <legend className="mb-1 text-sm font-semibold">Quem pode abrir este mural?</legend>
+          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid gap-2 sm:grid-cols-2">
+            {(
+              [
+                [false, "🌐 Público", "Qualquer pessoa com o link abre."],
+                [true, "🔒 Privado", "Só entra quem acertar a pergunta de segurança."],
+              ] as const
+            ).map(([val, label, hint]) => (
+              <button
+                key={label}
+                type="button"
+                role="radio"
+                aria-checked={priv === val}
+                onClick={() => setPriv(val)}
+                className={`cursor-pointer rounded-xl border-2 px-3 py-2.5 text-left transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+              >
+                <span className="block text-sm font-bold">{label}</span>
+                <span className="block text-xs text-[#6b5440]">{hint}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        {priv && (
+          <Field label="Pergunta de segurança" hint="Quem for abrir seus murais precisa responder. Vale para todos os seus murais.">
+            {(fid) => (
+              <>
+                <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />
+                <QuestionSuggestions onPick={setQuestion} />
+              </>
+            )}
+          </Field>
+        )}
+        {!priv || question.trim() === "" ? null : askAnswer ? (
           <Field label={had ? "Nova resposta" : "Resposta"} hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
             {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" className={inputClass} />}
           </Field>
