@@ -63,7 +63,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
   postit: { type: "postit", color: "yellow", text: "Seu recado aparece aqui" },
   text: { type: "text", variant: "letter", text: "Sua mensagem aparece aqui." },
   list: { type: "list", title: "Sua lista", items: [{ text: "Primeiro item", done: false }, { text: "Segundo item", done: false }] },
-  photo: { type: "photo", caption: "", scene: "hills" },
+  photo: { type: "photo", caption: "", scene: "hills", tape: "yellow" },
   draw: { type: "draw", caption: "" },
   music: { type: "music", title: "Nome da música", artist: "Artista", caption: "", playerColor: "black" },
   video: { type: "video", caption: "", playerColor: "black" },

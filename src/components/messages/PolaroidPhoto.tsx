@@ -11,7 +11,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, 
       className="paper-grain shadow-paper relative w-[14em] bg-[#fdfcf7] px-[0.9em] pt-[0.9em] pb-[0.9em]"
       style={{ borderRadius: "0.15em" }}
     >
-      {scene === "group" || src ? (
+      {scene === "group" || src || tape ? (
         <TapeSlot top="-top-[0.8em]" at="center" tone={tape ? tapeOf(tape).tone : undefined} />
       ) : (
         <PinSlot tone={pin ? pinOf(pin).id : "red"} pos={pos} top="top-[-0.6em]" />
