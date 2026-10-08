@@ -109,6 +109,24 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
         <p className="py-6 text-center text-sm text-[#6b5440]">Você ainda não criou nenhum mural.</p>
       ) : (
         <div>
+          {/* discreto, no topo à direita, acima do primeiro mural */}
+          {onNewMural && (
+            <div className="mb-2.5 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onNewMural();
+                }}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white/70 px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-white active:scale-95"
+              >
+                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Criar novo mural
+              </button>
+            </div>
+          )}
           <ul className="space-y-2.5">
             {murals.map((m, i) => {
               const b = boardById(boards[m.id]);
@@ -141,21 +159,6 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
               );
             })}
           </ul>
-          {onNewMural && (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onNewMural();
-              }}
-              className="mt-3.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#c9b48a] bg-white/60 px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#fff6dd] active:scale-[0.99]"
-            >
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Criar novo mural
-            </button>
-          )}
         </div>
       )}
     </Modal>
