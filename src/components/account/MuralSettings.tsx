@@ -13,6 +13,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [question, setQuestion] = useState(mural.question);
   const [priv, setPriv] = useState(mural.question.trim() !== ""); // público ou privado (com pergunta de segurança)
   const [answer, setAnswer] = useState("");
+  const [stored, setStored] = useState(""); // a resposta salva (o dono pode relê-la caso tenha esquecido)
   const strip = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
   const [busy, setBusy] = useState(false);
@@ -32,6 +33,18 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   }, [mural.id, mural.title, mural.question]);
 
   useEffect(() => {
+    setAnswer("");
+    setStored("");
+    void getBrowserSupabase()
+      .rpc("get_mural_answer", { p_id: mural.id })
+      .then(({ data }) => {
+        const a = typeof data === "string" ? data : "";
+        setStored(a);
+        setAnswer(a);
+      });
+  }, [mural.id]);
+
+  useEffect(() => {
     const sb = getBrowserSupabase();
     void fetchInventory(sb).then((inv) => setOffers(inv?.boards ?? []));
     void sb.from("murals").select("board").eq("id", mural.id).maybeSingle().then(({ data }) => {
@@ -42,7 +55,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   }, [mural.id]);
 
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
-  const answerFilled = answer.trim() !== ""; // resposta digitada (troca a atual); em branco mantém a que já existe
+  const answerFilled = answer.trim() !== "" && answer.trim() !== stored; // resposta nova digitada (troca a atual); igual à salva ou em branco mantém a que já existe
 
   // só os tipos que a pessoa já tem (mais o que o mural usa agora, por garantia)
   const selectable = BOARDS.filter((b) => b.id === "cortica" || b.id === currentBoard || offers.find((o) => o.id === b.id)?.owned === true);
@@ -95,7 +108,11 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     setSaved({ at, lines });
     window.setTimeout(() => setSaved((cur) => (cur?.at === at ? null : cur)), 7000);
     setHad(q);
-    setAnswer("");
+    if (q !== "" && (answerFilled || stored === "")) setStored(answer.trim() || stored);
+    if (q === "") {
+      setStored("");
+      setAnswer("");
+    }
     onSaved();
   }
 
@@ -200,7 +217,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           )}
           {priv && (
             <Field label="Resposta">
-              {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
+              {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() && !stored ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
             </Field>
           )}
         </div>
