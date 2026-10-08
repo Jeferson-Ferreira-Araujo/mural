@@ -118,7 +118,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </div>
         </fieldset>
         {priv && (
-          <Field label="Pergunta de segurança" hint="Quem for abrir seus murais precisa responder. Vale para todos os seus murais.">
+          <Field label="Pergunta de segurança" hint="Quem for abrir este mural precisa responder. Cada mural tem a sua própria pergunta e resposta.">
             {(fid) => (
               <>
                 <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />
