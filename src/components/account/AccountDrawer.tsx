@@ -9,13 +9,14 @@ import { getOwnAvatar } from "@/lib/avatar";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
+import { MyMuralsModal } from "./MyMuralsModal";
 import { PinsModal } from "./PinsModal";
 import { PlansModal } from "./PlansModal";
 import { TransactionsModal } from "./TransactionsModal";
 import { ProfileModal } from "./ProfileModal";
 import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "numbers" | "shared" | "purchases";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "purchases";
 
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
@@ -152,9 +153,9 @@ export function AccountDrawer({
                     }
                   />
                   <Row
-                    onClick={() => setModal("edit")}
-                    label="Editar mural"
-                    hint={mural.title}
+                    onClick={() => setModal("mymurals")}
+                    label="Meus murais"
+                    hint={murals.length > 1 ? `${murals.length} murais · nome, pergunta e tipo` : "Nome, pergunta e tipo do mural"}
                     icon={
                       <svg {...ic}>
                         <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
@@ -290,6 +291,7 @@ export function AccountDrawer({
   const modals = (
     <>
       {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
+      <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} onChanged={onChanged} onDeleted={onDeleted} />
       {mural && (
         <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">
           <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} canDelete={mural.id !== murals[0]?.id} />

@@ -92,7 +92,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
-        <Field label="Pergunta de desbloqueio (opcional)" hint="Vale para todos os seus murais: em branco, ficam públicos (qualquer pessoa com o link abre). Com pergunta e resposta, só entra quem souber, e quem acerta abre todos os murais.">
+        <Field label="Pergunta de segurança (opcional)" hint="Quem for abrir seus murais precisa responder. Vale para todos os seus murais. Em branco, os murais ficam públicos: qualquer pessoa com o link abre.">
           {(fid) => (
             <>
               <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} className={inputClass} />
@@ -106,24 +106,37 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </Field>
         ) : (
           <button type="button" onClick={() => setChangeAnswer(true)} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            Alterar a resposta
+            Trocar a resposta
           </button>
         )}
-        <Field label="Tema do mural" hint="Os temas se compram na loja com créditos.">
-          {(fid) => (
-            <select id={fid} value={board} onChange={(e) => setBoard(e.target.value)} className={inputClass}>
-              {BOARDS.map((b) => {
-                const owned = b.id === "cortica" || offers.find((o) => o.id === b.id)?.owned === true;
-                return (
-                  <option key={b.id} value={b.id} disabled={!owned}>
-                    {b.name}
-                    {owned ? "" : " (na loja)"}
-                  </option>
-                );
-              })}
-            </select>
-          )}
-        </Field>
+        <fieldset>
+          <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
+          <p className="mb-2 text-xs text-[#6b5440]">É o fundo do quadro. Toque no que você quer usar. Os com 🔒 você compra na loja.</p>
+          <div role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+            {BOARDS.map((bd) => {
+              const owned = bd.id === "cortica" || offers.find((o) => o.id === bd.id)?.owned === true;
+              const on = board === bd.id;
+              return (
+                <button
+                  key={bd.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  disabled={!owned}
+                  onClick={() => setBoard(bd.id)}
+                  className={`relative w-[7.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${owned ? "" : "opacity-55"}`} />
+                  {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
+                  {!owned && <span aria-hidden className="absolute top-2.5 right-2.5 text-sm">🔒</span>}
+                  <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                  <span className={`block text-[11px] font-bold ${on ? "text-[#8a6a10]" : "text-transparent"}`}>Em uso neste mural</span>
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
             {msg.text}
