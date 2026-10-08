@@ -11,7 +11,7 @@ import { MuralSettings } from "./MuralSettings";
  * Meus murais: a lista dos murais da conta. Tocar num deles abre a edição (nome, pergunta de segurança e resposta, tipo do mural),
  * com o botão de voltar para a lista.
  */
-export function MyMuralsModal({ open, onClose, murals, currentId, onChanged, onDeleted }: { open: boolean; onClose: () => void; murals: OwnMural[]; /** mural aberto agora: se for apagado, sai dele */ currentId?: string; onChanged: () => void; onDeleted: () => void }) {
+export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, onChanged, onDeleted }: { /** botão "Criar novo mural" (só quem pode criar mais um) */ onNewMural?: () => void; open: boolean; onClose: () => void; murals: OwnMural[]; /** mural aberto agora: se for apagado, sai dele */ currentId?: string; onChanged: () => void; onDeleted: () => void }) {
   const [editId, setEditId] = useState<string | null>(null);
   const [boards, setBoards] = useState<Record<string, string>>({});
   const [confirmId, setConfirmId] = useState<string | null>(null); // mural que a pessoa quer apagar (pede confirmação)
@@ -109,7 +109,6 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onChanged, onD
         <p className="py-6 text-center text-sm text-[#6b5440]">Você ainda não criou nenhum mural.</p>
       ) : (
         <div>
-          <p className="mb-3 text-sm text-[#6b5440]">Toque num mural para mudar o nome, a pergunta de segurança ou o tipo dele.</p>
           <ul className="space-y-2.5">
             {murals.map((m, i) => {
               const b = boardById(boards[m.id]);
@@ -142,6 +141,21 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onChanged, onD
               );
             })}
           </ul>
+          {onNewMural && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onNewMural();
+              }}
+              className="mt-3.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#c9b48a] bg-white/60 px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#fff6dd] active:scale-[0.99]"
+            >
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Criar novo mural
+            </button>
+          )}
         </div>
       )}
     </Modal>

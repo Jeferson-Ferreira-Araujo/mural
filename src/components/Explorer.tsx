@@ -718,6 +718,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const sidebarMenu =
     logged && myNick && !nickPending ? (
       <AccountDrawer
+        onNewMural={isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? () => setNewMuralOpen(true) : undefined}
         inline
         open
         onClose={() => undefined}
@@ -818,6 +819,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {logged && myNick && !nickPending && (
         <>
           <AccountDrawer
+            onNewMural={isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? () => setNewMuralOpen(true) : undefined}
             open={drawer.open}
             onClose={() => setDrawer((d) => ({ ...d, open: false }))}
             nick={myNick}

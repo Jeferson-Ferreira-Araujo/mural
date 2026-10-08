@@ -62,6 +62,7 @@ export function AccountDrawer({
   onSignOut,
   onPending,
   onNotify,
+  onNewMural,
   sharedInvites = 0,
   onSharedChanged,
   onExportImage,
@@ -87,6 +88,8 @@ export function AccountDrawer({
   onSignOut: () => void;
   onPending: (n: number) => void;
   onNotify: (msg: string) => void;
+  /** PINZ PLUS (e abaixo do limite de murais): abre a criação de um mural novo */
+  onNewMural?: () => void;
   /** convites de mural compartilhado esperando resposta */
   sharedInvites?: number;
   /** a lista de murais compartilhados mudou (aceitou, criou, apagou) */
@@ -292,7 +295,7 @@ export function AccountDrawer({
   const modals = (
     <>
       {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
-      <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onChanged={onChanged} onDeleted={onDeleted} />
+      <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onNewMural={onNewMural} onChanged={onChanged} onDeleted={onDeleted} />
       {mural && (
         <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">
           <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} canDelete={mural.id !== murals[0]?.id} />
