@@ -825,7 +825,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
             }}
           />
-          {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} />}
+          {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
