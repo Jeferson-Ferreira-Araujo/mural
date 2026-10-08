@@ -15,7 +15,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft }: { children: ReactNode; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3" }: { children: ReactNode; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const world = useRef<HTMLDivElement>(null);
   const view = useRef({ x: 0, y: 0, s: 1 });
@@ -33,6 +33,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
   const swallowClick = useRef(false);
   const bypassClick = useRef(false);
   const pending = useRef<{ timer: number; target: HTMLElement } | null>(null);
+  const lastType = useRef("touch"); // mouse: o clique é imediato e não existe toque duplo
 
   const limits = useCallback(() => {
     const { w, h } = size.current;
@@ -192,7 +193,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
         return;
       }
       if (pointers.current.size > 0) return;
-      if (e.type !== "pointercancel" && !dragged.current) {
+      if (e.type !== "pointercancel" && !dragged.current && e.pointerType !== "mouse") {
         // toque: dois seguidos e perto um do outro = ampliar onde tocou
         const now = performance.now();
         const lt = lastTap.current;
@@ -230,6 +231,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (inDialog(e.target)) return;
+    lastType.current = e.pointerType;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const p = rel(e, true); // lê o retângulo uma vez, no começo do toque
     pointers.current.set(e.pointerId, p);
@@ -247,6 +249,14 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
   // cliques dos filhos: ignorados depois de arrastar, adiados até saber se vem um segundo toque
   const onClickCapture = (e: React.MouseEvent) => {
     if (inDialog(e.target)) return;
+    if (lastType.current === "mouse") {
+      // mouse: depois de arrastar o quadro o clique não vale; fora isso passa direto, sem o atraso do toque duplo
+      if (dragged.current) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      return;
+    }
     if (bypassClick.current) {
       bypassClick.current = false;
       return;
@@ -313,7 +323,7 @@ export function PannableBoard({ children, ambient, cornerLeft }: { children: Rea
         onClick={toggleZoom}
         aria-label={zoomedOut ? "Aproximar o mural" : "Afastar o mural"}
         title={zoomedOut ? "Aproximar" : "Afastar"}
-        className="absolute right-3 bottom-3 z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+        className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
       >
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           {/* lupa: "+" para aproximar, "−" para ver tudo */}

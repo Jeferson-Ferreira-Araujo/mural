@@ -3,6 +3,7 @@
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
+import { PannableBoard } from "./board/PannableBoard";
 import { AccountActions } from "./account/AccountActions";
 import { BadgeBar } from "./badges/BadgeBar";
 import { MuralPager } from "./MuralSwitcher";
@@ -53,7 +54,10 @@ export function DesktopBoard(props: ViewProps) {
         </nav>
 
 
-        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose}>
+        {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
+        <div className="absolute inset-0">
+        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5">
+        <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain>
           {locked &&
             (lockForm ? (
               // a pergunta fica bem no centro do quadro: fica claro que só entra quem acertar a resposta
@@ -62,6 +66,8 @@ export function DesktopBoard(props: ViewProps) {
               <LockedNotice hasSelection={hasSelection} />
             ))}
         </BoardCanvas>
+        </PannableBoard>
+        </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
           {hasPager && <div aria-hidden className="w-[9.5rem] shrink-0" />}
