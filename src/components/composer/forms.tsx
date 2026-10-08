@@ -198,7 +198,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
-  const [pin, setPin] = useState<PinColor>("red");
+  const [tape, setTape] = useState<TapeColor>("yellow");
   const [error, setError] = useState<string | null>(null);
   const prev = useRef<string | null>(null);
 
@@ -213,7 +213,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
     prev.current = url;
     setSrc(url);
   }
-  useEffect(() => onChange({ type: "photo", caption: caption.trim(), ...(src ? { src } : { scene: "hills" as const }), font, pin }, { empty: !src }), [src, caption, font, pin, onChange]);
+  useEffect(() => onChange({ type: "photo", caption: caption.trim(), ...(src ? { src } : { scene: "hills" as const }), font, tape }, { empty: !src }), [src, caption, font, tape, onChange]);
 
   return (
     <div className="space-y-4">
@@ -221,7 +221,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       {error && <ErrorText>{error}</ErrorText>}
-      <PinColorPicker value={pin} onChange={setPin} />
+      <TapeColorPicker value={tape} onChange={setTape} />
       <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder="Ex: Churrasco de 2019" className={inputClass} />}
       </Field>

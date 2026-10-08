@@ -115,7 +115,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
 
   const canSend = !!signAs && !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
-  const hasPos = format === "postit" || format === "photo"; // só a tachinha muda de lugar; a fita fica sempre no lugar do card
+  const hasPos = format === "postit"; // só a tachinha muda de lugar; a fita fica sempre no lugar do card
   const withPos = (d: DraftMessage): DraftMessage => (hasPos ? ({ ...d, pos } as DraftMessage) : d);
   const shown = withPos(draft ?? SAMPLE[format]);
 
