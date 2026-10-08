@@ -13,6 +13,11 @@ export const TOGGLEABLE_FORMATS: { key: string; type: MessageType; label: string
   { key: "pin_place", type: "place", label: "Local", hint: "Lugar no mapa" },
 ];
 
+/** Recursos do site (não são formatos de pin). Desligado: some a opção; o que já foi criado continua. */
+export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string }[] = [
+  { key: "reactions", label: "Reações aos pins", hint: "O dono do mural reage com emoji no detalhe do pin (e o autor é avisado no sino)" },
+];
+
 export type FeatureFlags = Record<string, boolean>;
 
 let cache: FeatureFlags | null = null;

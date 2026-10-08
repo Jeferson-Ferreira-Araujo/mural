@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { loadFeatureFlags, setFeatureFlags, TOGGLEABLE_FORMATS, type FeatureFlags } from "@/lib/features";
+import { loadFeatureFlags, setFeatureFlags, TOGGLEABLE_FEATURES, TOGGLEABLE_FORMATS, type FeatureFlags } from "@/lib/features";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
 
@@ -33,9 +33,9 @@ export function FeaturesPanel({ onToast }: { onToast: (m: string) => void }) {
   }
   return (
     <section className="mt-4" aria-label="Recursos">
-      <p className="text-sm text-[#6b5440]">Formatos de pin. Ao desligar, a opção some para quem for criar um pin novo; os pins que já existem continuam no mural.</p>
+      <p className="text-sm text-[#6b5440]">Formatos de pin e recursos. Ao desligar, a opção some para todos; o que já foi criado continua no mural.</p>
       <ul className="mt-3 divide-y divide-[#e6d8bd] rounded-2xl border border-[#e1d3ba] bg-white/70">
-        {TOGGLEABLE_FORMATS.map((f) => {
+        {[...TOGGLEABLE_FORMATS, ...TOGGLEABLE_FEATURES].map((f) => {
           const on = flags[f.key] !== false;
           return (
             <li key={f.key} className="flex items-center justify-between gap-3 px-4 py-3">
