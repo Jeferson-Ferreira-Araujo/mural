@@ -40,12 +40,18 @@ function Content({ m }: { m: Message }) {
 
 /** Assinatura de quem deixou o pin (só aparece se a pessoa escolheu assinar). */
 function Signature({ name }: { name?: string }) {
+  const inDetail = useInDetail();
   if (!name) return null;
-  return (
-    <span className="absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-lg bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
-      @{name}
-    </span>
-  );
+  const cls = "absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-lg bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]";
+  // no destaque do pin, o nome leva aos murais da pessoa
+  if (inDetail) {
+    return (
+      <a href={`/${encodeURIComponent(name)}`} title={`Ver os murais de @${name}`} className={`${cls} underline decoration-[#4a3826]/40 underline-offset-2 transition hover:bg-white hover:decoration-[#4a3826]`}>
+        @{name}
+      </a>
+    );
+  }
+  return <span className={cls}>@{name}</span>;
 }
 
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */

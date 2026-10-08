@@ -5,7 +5,7 @@ import { Modal } from "./Modal";
 
 const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
-/** Sino: avisos da conta (hoje, quando o dono do mural marca ou desmarca um item de uma lista que você criou). */
+/** Sino: avisos da conta (reações aos seus pins; e quando o dono do mural marca ou desmarca um item de uma lista que você criou). */
 export function NotificationsModal({ open, onClose, items }: { open: boolean; onClose: () => void; items: Notification[] | null }) {
   return (
     <Modal open={open} onClose={onClose} title="Notificações">

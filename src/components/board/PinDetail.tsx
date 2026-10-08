@@ -8,6 +8,8 @@ import { useModeration } from "./ModerationContext";
 import { ReportBox } from "../account/PinsModal";
 import { Modal } from "../account/Modal";
 import { DetailProvider } from "./ListEditContext";
+import { ReactionBar } from "./ReactionBar";
+import { useReactionsAccess } from "./ReactionsContext";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 
 const icon = { viewBox: "0 0 24 24", className: "size-5 shrink-0", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
@@ -63,6 +65,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
   const mod = useModeration();
+  const react = useReactionsAccess();
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -195,6 +198,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <ChevronRight />
             </button>
           </div>
+          {react && item && !isSealed(item) && !isHidden(item) && !item.pending && <ReactionBar key={item.id} messageId={item.id} token={react.token} />}
           {item && !isSealed(item) && !isHidden(item) && item.pending && (
             <p role="status" className="flex items-center gap-2 rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
               <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

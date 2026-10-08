@@ -26,6 +26,7 @@ import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { ModerationProvider } from "./board/ModerationContext";
+import { ReactionsProvider } from "./board/ReactionsContext";
 import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import { BoardLoadingProvider } from "./board/BoardLoadingContext";
 import type { ReportReason } from "./board/PinsManager";
@@ -726,6 +727,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {playIntro && <IntroAnimation />}
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
+      <ReactionsProvider value={logged ? { token } : null}>
         <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)}>
         <MuralScreen
@@ -782,6 +784,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         />
         </BadgeProvider>
         </ListEditProvider>
+      </ReactionsProvider>
       </ModerationProvider>
       </BoardLoadingProvider>
       {logged && myNick && !nickPending && (
