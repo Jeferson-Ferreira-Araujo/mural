@@ -8,7 +8,7 @@ import { BOARDS } from "@/lib/boards";
 import { Field, ghostButton, inputClass, primaryButton, QuestionSuggestions } from "../ui";
 
 /** Editar o mural: nome, pergunta (opcional: em branco = público), mensagem do mural vazio (PLUS) e excluir. */
-export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void }) {
+export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void ; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
   const [title, setTitle] = useState(mural.title);
   const [question, setQuestion] = useState(mural.question);
   const [changeAnswer, setChangeAnswer] = useState(false);
@@ -135,7 +135,9 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
       </form>
 
       <div className="mt-6 border-t border-[#e1d3ba] pt-4">
-        {confirmDelete ? (
+        {!canDelete ? (
+          <p className="text-sm text-[#6b5440]">Este é o seu primeiro mural: ele não pode ser excluído. Os murais criados depois podem.</p>
+        ) : confirmDelete ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
             <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também a resposta, os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
             <div className="mt-3 flex gap-2">
@@ -148,7 +150,7 @@ export function MuralSettings({ mural, onSaved, onDeleted }: { mural: OwnMural; 
             </div>
           </div>
         ) : (
-          <button type="button" onClick={() => setConfirmDelete(true)} className="cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
+          <button type="button" onClick={() => setConfirmDelete(true)} className="w-full cursor-pointer rounded-xl border border-[#e3b3a8] bg-white/60 px-4 py-3 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
             Excluir este mural
           </button>
         )}

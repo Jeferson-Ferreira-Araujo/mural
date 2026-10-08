@@ -292,7 +292,7 @@ export function AccountDrawer({
       {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
       {mural && (
         <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">
-          <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} />
+          <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} canDelete={mural.id !== murals[0]?.id} />
         </Modal>
       )}
       <Modal open={isOpen && modal === "numbers"} onClose={close} title="Números do mural">
