@@ -522,8 +522,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // ainda não sabemos quem está olhando (sessão/nickname carregando): não mostra pergunta nem quadro trancado por um instante para depois trocar
   const resolving = sessionLoading || (logged && !myNick);
+  // abrindo pelo endereço de um mural: sem busca nem "Buscando…" aparecendo por um instante
+  const opening = !!initialRef && !selected && !choices && !openFailed;
   const panel = useCallback(
     (tone: Tone, part?: "form" | "profile") => {
+      if (opening) return null;
       const dark = tone === "dark";
       // só o cartão de pergunta (centro do quadro no desktop): sem busca, avisos nem outras seções
       if (part === "form") {
@@ -623,7 +626,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </div>
       );
     },
-    [choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving],
+    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
@@ -739,6 +742,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           locked={!!selected && !unlocked}
           hasSelection={!!selected}
           landing={!selected && !choices}
+          opening={opening}
           unlocked={unlocked}
           stats={selected?.stats ?? null}
           siteStats={siteStats}

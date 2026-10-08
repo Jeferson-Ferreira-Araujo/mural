@@ -43,6 +43,8 @@ export type ViewProps = {
   panel: (tone: Tone, part?: "form" | "profile") => ReactNode;
   /** Celular: nenhuma pessoa/mural escolhido ainda → tela inicial com logo grande e busca no meio. */
   landing?: boolean;
+  /** Abrindo um mural pelo endereço (/nick/slug): ainda não chegou; nada de tela de busca por um instante. */
+  opening?: boolean;
   /** Desktop: o quadro de exemplo da tela inicial ainda está sendo sorteado; a lousa fica invisível para não piscar o quadro errado. */
   boardPending?: boolean;
   /** Texto do divisor acima do painel na barra lateral (sem título, não mostra o divisor). */
