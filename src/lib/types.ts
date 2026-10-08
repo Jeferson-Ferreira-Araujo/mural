@@ -23,6 +23,8 @@ type Base = {
   ownerHidden?: boolean;
   /** Nickname de quem deixou o pin. Pins antigos de antes do fim do envio anônimo podem não ter. */
   signedBy?: string;
+  /** Reação (chave do emoji) que o dono do mural deixou neste pin. */
+  reaction?: string;
   /** Lista que quem está vendo pode editar (dono do mural ou autor do pin). Vem do servidor. */
   canEdit?: boolean;
   /** Visão do dono: este pin pendente está esperando a aprovação dele. */

@@ -2,8 +2,8 @@
 
 import { createContext, useContext } from "react";
 
-/** Quem está vendo o mural pode reagir aos pins (só com conta, e só no destaque do pin). `token` é o desbloqueio de quem visita. */
-export type ReactionsAccess = { token: string | null };
+/** Só quem cuida do mural (dono ou participante) reage aos pins, no destaque. `onChanged` recarrega o quadro para o emoji aparecer no pin. */
+export type ReactionsAccess = { onChanged: () => void };
 
 const Ctx = createContext<ReactionsAccess | null>(null);
 export const ReactionsProvider = Ctx.Provider;

@@ -1,3 +1,4 @@
+import { reactionEmoji } from "@/lib/reactions";
 import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
@@ -39,19 +40,33 @@ function Content({ m }: { m: Message }) {
 }
 
 /** Assinatura de quem deixou o pin (só aparece se a pessoa escolheu assinar). */
-function Signature({ name }: { name?: string }) {
+function Signature({ name, reaction }: { name?: string; reaction?: string }) {
   const inDetail = useInDetail();
-  if (!name) return null;
+  // emoji que o dono do mural deixou: canto inferior esquerdo do pin
+  const mark = reaction ? (
+    <span role="img" aria-label="Reação do dono do mural" title="Reação do dono do mural" className="absolute -bottom-[0.9em] -left-[0.5em] z-30 grid size-[2em] place-items-center rounded-full bg-[#fff8e6] text-[1em] leading-none shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
+      {reactionEmoji(reaction)}
+    </span>
+  ) : null;
+  if (!name) return mark;
   const cls = "absolute -right-[0.3em] -bottom-[0.8em] z-30 max-w-[90%] truncate rounded-lg bg-[#fff8e6] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold text-[#4a3826] shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]";
   // no destaque do pin, o nome leva aos murais da pessoa
   if (inDetail) {
     return (
-      <a href={`/${encodeURIComponent(name)}`} title={`Ver os murais de @${name}`} className={`${cls} underline decoration-[#4a3826]/40 underline-offset-2 transition hover:bg-white hover:decoration-[#4a3826]`}>
-        @{name}
-      </a>
+      <>
+        {mark}
+        <a href={`/${encodeURIComponent(name)}`} title={`Ver os murais de @${name}`} className={`${cls} underline decoration-[#4a3826]/40 underline-offset-2 transition hover:bg-white hover:decoration-[#4a3826]`}>
+          @{name}
+        </a>
+      </>
     );
   }
-  return <span className={cls}>@{name}</span>;
+  return (
+    <>
+      {mark}
+      <span className={cls}>@{name}</span>
+    </>
+  );
 }
 
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
@@ -75,14 +90,14 @@ function Marked({ m }: { m: Message }) {
             <span className="max-w-[9.5em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{m.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}</span>
           </span>
         </span>
-        <Signature name={m.signedBy} />
+        <Signature name={m.signedBy} reaction={m.reaction} />
       </div>
     );
   }
   return (
     <div className="relative">
       <Content m={m} />
-      <Signature name={m.signedBy} />
+      <Signature name={m.signedBy} reaction={m.reaction} />
       <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: kSecret }}>
         <span role="img" aria-label="Segredo: os visitantes veem este pin borrado" title="Segredo: os visitantes veem este pin borrado" className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
           <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
@@ -113,7 +128,7 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
         <div aria-label="Pin em segredo" role="img" className="relative select-none">
           <div inert aria-hidden className="pointer-events-none relative" style={{ filter: "blur(0.38em) saturate(0.9)" }}>
             <Content m={m} />
-            <Signature name={m.signedBy} />
+            <Signature name={m.signedBy} reaction={m.reaction} />
           </div>
           <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
             <span className="flex flex-col items-center gap-[0.45em]">
@@ -131,12 +146,12 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
     m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
   }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
-  if (!m.fromCapsule && !m.signedBy) return <Content m={m} />;
+  if (!m.fromCapsule && !m.signedBy && !m.reaction) return <Content m={m} />;
   // mensagem assinada e/ou vinda de uma Cápsula já aberta (ganha um pequeno lacre no canto)
   return (
     <div className="relative">
       <Content m={m} />
-      <Signature name={m.signedBy} />
+      <Signature name={m.signedBy} reaction={m.reaction} />
       {m.fromCapsule && (
       <span
         title="Aberta de uma Cápsula PINZ"
