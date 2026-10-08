@@ -274,7 +274,7 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
       </Field>
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label="Mensagem (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
+      <Field label="Mensagem (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
       </Field>
     </div>
@@ -378,7 +378,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
       {note && <p role="status" className="text-sm text-[#2f6a3c]">{note}</p>}
       {error && <ErrorText>{error}</ErrorText>}
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o player.</>}>
+      <Field label="Legenda (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o player.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que me fez bem" className={inputClass} />}
       </Field>
     </div>
@@ -515,7 +515,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Mensagem curta no papelzinho (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem mensagem, aparece só o aparelho.</>}>
+      <Field label="Legenda (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Sua voz sempre me faz sorrir!" className={inputClass} />}
       </Field>
     </div>
@@ -636,7 +636,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Mensagem curta no papelzinho (opcional)" hint={<Counter value={caption} max={PLAYER_NOTE_MAX} />}>
+      <Field label="Legenda (opcional)" hint={<Counter value={caption} max={PLAYER_NOTE_MAX} />}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que mais amo!" className={inputClass} />}
       </Field>
     </div>
