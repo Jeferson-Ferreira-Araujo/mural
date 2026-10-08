@@ -164,6 +164,8 @@ export function BoardCanvas({
                           key={`p${item.id}`} // chave pelo pin (não pelo espaço): ao mudar de lugar o pin chega pronto, sem a transição do espaço vazio
                           className={`pinned relative${entering.current.has(item.id) ? " enter" : ""}`}
                           data-slot={i}
+                          // terminada a entrada, tira a classe: um pin movido de lugar no DOM (os vizinhos mudam de posição na lista) não pode repetir a animação
+                          onAnimationEnd={(e) => e.target === e.currentTarget && e.currentTarget.classList.remove("enter")}
                           {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
                           data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}
                           style={
