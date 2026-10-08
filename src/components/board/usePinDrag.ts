@@ -110,7 +110,12 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) 
         if (was) {
           window.setTimeout(() => (suppress.current = false), 450);
           const to = dest ? Number(dest.dataset.slot) : NaN;
-          if (Number.isInteger(to) && to !== slot) onMove?.(id, to);
+          if (Number.isInteger(to) && to !== slot) {
+            // trocar de lugar não repete a animação de entrada nem o atraso: a mudança é imediata
+            document.body.classList.add("pin-moved");
+            window.setTimeout(() => document.body.classList.remove("pin-moved"), 1500);
+            onMove?.(id, to);
+          }
         }
       }
       function onCancel(ev: PointerEvent) {
