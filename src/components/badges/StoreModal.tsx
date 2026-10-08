@@ -298,7 +298,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     )}
                   </div>
                   {owned ? (
-                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{just ? "✓ Comprado! Aplique em Editar mural." : b.id === "cortica" ? "Fundo padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
+                    <p className="mt-1 text-xs font-semibold text-[#2f6a3c]">{just ? "✓ Comprado! Aplique em Editar mural." : b.id === "cortica" ? "Mural padrão ✓" : "É seu ✓ (aplique em Editar mural)"}</p>
                   ) : (
                     <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 25)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
                       {busy === `t${b.id}` ? "Comprando…" : "Comprar"}
