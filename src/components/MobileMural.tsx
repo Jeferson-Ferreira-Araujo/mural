@@ -75,7 +75,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
         </p>
-        <MuralNameMenu title={info.title} sw={muralSwitch} showShared={!!account?.atHome} align="right" className="max-w-[55%] shrink-0 text-right text-base font-bold text-[#2a1c12]" />
+        <MuralNameMenu title={info.title} label="Murais" sw={muralSwitch} showShared={!!account?.atHome} align="right" className="max-w-[55%] shrink-0 text-right text-base font-bold text-[#2a1c12]" />
       </div>
 
 
