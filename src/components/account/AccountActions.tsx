@@ -54,7 +54,7 @@ const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", strok
 export function MobileHeaderLeft({ account }: { account: AccountApi }) {
   return (
     <div className="flex items-center gap-1.5">
-      {account.onHome && (
+      {account.onHome && !account.atHome && (
         <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={iconBtn}>
           <svg {...iconSvg}>
             <path d="M3 11.5 12 4l9 7.5" />
