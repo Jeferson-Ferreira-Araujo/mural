@@ -194,8 +194,19 @@ function PlayerColorPicker({ value, onChange }: { value: PlayerColor; onChange: 
 // ---------- Foto ----------
 const MAX_PHOTO_MB = 8;
 
+/** Proporção (largura ÷ altura) da imagem, limitada a 1:2 … 2:1; null se não der para ler. */
+function measureRatio(url: string): Promise<number | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img.naturalWidth && img.naturalHeight ? Math.round(Math.min(2, Math.max(0.5, img.naturalWidth / img.naturalHeight)) * 1000) / 1000 : null);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
+  const [ratio, setRatio] = useState<number | null>(null);
   const [caption, setCaption] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
   const [tape, setTape] = useState<TapeColor>("yellow");
@@ -211,9 +222,10 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
     if (prev.current) URL.revokeObjectURL(prev.current);
     const url = URL.createObjectURL(file);
     prev.current = url;
+    setRatio(await measureRatio(url));
     setSrc(url);
   }
-  useEffect(() => onChange({ type: "photo", caption: caption.trim(), ...(src ? { src } : { scene: "hills" as const }), font, tape }, { empty: !src }), [src, caption, font, tape, onChange]);
+  useEffect(() => onChange({ type: "photo", caption: caption.trim(), ...(src ? { src, ...(ratio ? { ratio } : {}) } : { scene: "hills" as const }), font, tape }, { empty: !src }), [src, ratio, caption, font, tape, onChange]);
 
   return (
     <div className="space-y-4">

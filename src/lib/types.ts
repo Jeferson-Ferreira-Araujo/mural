@@ -36,7 +36,7 @@ export type Message =
   | (Base & { type: "postit"; color: PostItColor; text: string })
   | (Base & { type: "text"; variant: "letter" | "notebook"; text: string })
   | (Base & { type: "list"; title: string; items: { text: string; done: boolean }[] })
-  | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string })
+  | (Base & { type: "photo"; caption: string; scene?: "hills" | "group" | "sunset"; src?: string; /** proporção da foto (largura ÷ altura, entre 0,5 e 2); sem ela o quadro é quadrado */ ratio?: number })
   | (Base & { type: "draw"; caption: string; src?: string })
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; /** vídeo do YouTube (no lugar do arquivo) */ link?: string; playerColor?: PlayerColor })

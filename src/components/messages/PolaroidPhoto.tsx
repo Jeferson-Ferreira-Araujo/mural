@@ -3,20 +3,24 @@ import { PinSlot, TapeSlot } from "./fasteners";
 import { Scene, type SceneVariant } from "./Scene";
 
 /** Foto em Polaroid. `src` = foto escolhida pela pessoa; sem `src`, usa uma cena ilustrada de exemplo. */
-export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, pos }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor; pos?: PinPos }) {
+export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, pos, ratio }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor; pos?: PinPos; /** largura ÷ altura da foto: o quadro se ajusta a ela (sem cortar) mantendo o lado maior no tamanho padrão */ ratio?: number }) {
   const hand = handOf(font);
+  const r = src && ratio ? Math.min(2, Math.max(0.5, ratio)) : 1;
+  const PHOTO = 12.2; // lado maior da foto, em em (o quadro padrão tem 14em com 0,9em de borda)
+  const photoW = r >= 1 ? PHOTO : PHOTO * r;
+  const cardW = Math.max(photoW + 1.8, 10); // nunca mais estreito que 10em, para a legenda caber
   return (
     <article
       aria-label="Foto"
-      className="paper-grain shadow-paper relative w-[14em] bg-[#fdfcf7] px-[0.9em] pt-[0.9em] pb-[0.9em]"
-      style={{ borderRadius: "0.15em" }}
+      className="paper-grain shadow-paper relative bg-[#fdfcf7] px-[0.9em] pt-[0.9em] pb-[0.9em]"
+      style={{ borderRadius: "0.15em", width: `${cardW}em` }}
     >
       {scene === "group" || src || tape ? (
         <TapeSlot top="-top-[0.8em]" at="center" tone={tape ? tapeOf(tape).tone : undefined} />
       ) : (
         <PinSlot tone={pin ? pinOf(pin).id : "red"} pos={pos} top="top-[-0.6em]" />
       )}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#222] shadow-[inset_0_0_0.6em_rgba(0,0,0,.55)]">
+      <div className="relative mx-auto overflow-hidden bg-[#222] shadow-[inset_0_0_0.6em_rgba(0,0,0,.55)]" style={{ width: `${photoW}em`, aspectRatio: r }}>
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={caption || "Foto"} className="size-full object-cover" draggable={false} />
