@@ -140,9 +140,9 @@ export function BoardCanvas({
                       // espaço sem mensagem: todos aparecem livres, em qualquer plano (o limite do plano é de QUANTOS pins, não de quais espaços).
                       // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                       if (!item) {
-                        if (!hasSelection) return <div key={`s${i}`} aria-hidden />;
+                        if (!hasSelection) return <div key={`e${i}`} aria-hidden />;
                         return (
-                          <div key={`s${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
+                          <div key={`e${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                             {onCompose && unlocked ? (
                               <button
                                 type="button"
@@ -161,7 +161,7 @@ export function BoardCanvas({
 
                       return (
                         <div
-                          key={`s${i}`}
+                          key={`p${item.id}`} // chave pelo pin (não pelo espaço): ao mudar de lugar o pin chega pronto, sem a transição do espaço vazio
                           className={`pinned relative${entering.current.has(item.id) ? " enter" : ""}`}
                           data-slot={i}
                           {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
