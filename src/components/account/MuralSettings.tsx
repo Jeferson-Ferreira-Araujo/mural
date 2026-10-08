@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
@@ -13,6 +13,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [question, setQuestion] = useState(mural.question);
   const [priv, setPriv] = useState(mural.question.trim() !== ""); // público ou privado (com pergunta de segurança)
   const [answer, setAnswer] = useState("");
+  const strip = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -91,7 +92,47 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   return (
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
+        {/* nome e tipo na mesma linha; o tipo é um slide que desliza para o lado */}
+        <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+        <fieldset className="min-w-0">
+          <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
+          <div className="relative">
+          <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+            {BOARDS.map((bd) => {
+              const owned = bd.id === "cortica" || offers.find((o) => o.id === bd.id)?.owned === true;
+              const on = board === bd.id;
+              return (
+                <button
+                  key={bd.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  disabled={!owned}
+                  onClick={() => setBoard(bd.id)}
+                  className={`relative w-[6.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${owned ? "" : "opacity-55"}`} />
+                  {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
+                  {!owned && <span aria-hidden className="absolute top-2.5 right-2.5 text-sm">🔒</span>}
+                  <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                  <span className={`block text-[11px] font-bold ${on ? "text-[#8a6a10]" : "text-transparent"}`}>Em uso neste mural</span>
+                </button>
+              );
+            })}
+          </div>
+          {/* setas para o mouse: no computador não dá para deslizar com o dedo */}
+          {([-1, 1] as const).map((d) => (
+            <button key={d} type="button" onClick={() => strip.current?.scrollBy({ left: d * 230, behavior: "smooth" })} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-9 z-10 hidden size-7 cursor-pointer place-items-center rounded-full bg-[#17110c]/85 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 sm:grid ${d < 0 ? "-left-2" : "-right-2"}`}>
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
+              </svg>
+            </button>
+          ))}
+          </div>
+        </fieldset>
+        </div>
         <fieldset>
           <legend className="mb-1 text-sm font-semibold">Quem pode abrir este mural?</legend>
           <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid gap-2 sm:grid-cols-2">
@@ -130,34 +171,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
           </Field>
         )}
-        <fieldset>
-          <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
-          <p className="mb-2 text-xs text-[#6b5440]">É o fundo do quadro. Toque no que você quer usar. Os com 🔒 você compra na loja.</p>
-          <div role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
-            {BOARDS.map((bd) => {
-              const owned = bd.id === "cortica" || offers.find((o) => o.id === bd.id)?.owned === true;
-              const on = board === bd.id;
-              return (
-                <button
-                  key={bd.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  disabled={!owned}
-                  onClick={() => setBoard(bd.id)}
-                  className={`relative w-[7.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${owned ? "" : "opacity-55"}`} />
-                  {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
-                  {!owned && <span aria-hidden className="absolute top-2.5 right-2.5 text-sm">🔒</span>}
-                  <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
-                  <span className={`block text-[11px] font-bold ${on ? "text-[#8a6a10]" : "text-transparent"}`}>Em uso neste mural</span>
-                </button>
-              );
-            })}
-          </div>
-        </fieldset>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
             {msg.text}
