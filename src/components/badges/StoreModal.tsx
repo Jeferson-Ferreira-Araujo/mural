@@ -265,9 +265,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                             },
                           )
                         }
-                        className={buyBtn}
+                        className={`${buyBtn} !gap-1 !px-1.5 !text-xs`}
                       >
-                        {busy === `p${b.key}` ? "Comprando…" : "Comprar"}
+                        {busy === `p${b.key}` ? (
+                          "Comprando…"
+                        ) : (
+                          <>
+                            Comprar
+                            <span className="inline-flex items-center gap-0.5">
+                              <Coin className="size-3.5" />
+                              {cost}
+                            </span>
+                          </>
+                        )}
                       </button>
                     )}
                   </li>
