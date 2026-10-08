@@ -160,7 +160,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                 const has = owns(id);
                 const on = board === id;
                 return (
-                  <div key={id} className={`relative w-[8.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#2f2218] bg-white shadow-sm" : "border-[#e1d3ba] bg-white/60"}`}>
+                  <div key={id} className={`relative w-[8.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.3rem_0.9rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : has ? "border-[#e1d3ba] bg-white" : "border-[#e1d3ba] bg-white/50"}`}>
                     <button
                       type="button"
                       role="radio"
@@ -181,6 +181,13 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                         )}
                       </span>
                     </button>
+                    {on && (
+                      <span aria-hidden className="absolute top-2.5 left-2.5 grid size-6 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow">
+                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m5 12.5 4.5 4.5L19 7.5" />
+                        </svg>
+                      </span>
+                    )}
                     {/* olhinho: abre o mural em tamanho grande para ver como ele é */}
                     <button
                       type="button"
@@ -194,6 +201,13 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                         <circle cx="12" cy="12" r="3" />
                       </svg>
                     </button>
+                    {has && (on ? (
+                      <p className="mt-1.5 inline-flex w-full items-center justify-center rounded-lg bg-[#d9a21b] px-2 py-1.5 text-xs font-bold text-[#2a1c12]">Selecionado</p>
+                    ) : (
+                      <button type="button" onClick={() => setBoard(id)} className="mt-1.5 w-full cursor-pointer rounded-lg border border-[#c9b48a] bg-white px-2 py-1.5 text-xs font-bold text-[#2a1c12] transition hover:bg-[#fff6dd] active:scale-95">
+                        Usar este
+                      </button>
+                    ))}
                     {!has && (
                       <button
                         type="button"
