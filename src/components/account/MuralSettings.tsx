@@ -124,7 +124,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             </Field>
           )}
           {priv && (
-            <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
+            <Field label="Resposta">
               {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
             </Field>
           )}
