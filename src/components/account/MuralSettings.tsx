@@ -5,7 +5,7 @@ import type { OwnMural } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
-import { Field, ghostButton, inputClass, primaryButton, QuestionSuggestions } from "../ui";
+import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 
 /** Editar o mural: nome, pergunta (opcional: em branco = público), mensagem do mural vazio (PLUS) e excluir. */
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void ; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
@@ -118,6 +118,16 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
               </button>
             ))}
           </div>
+          {priv && (
+            <Field label="Pergunta de segurança">
+              {(fid) => <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}
+            </Field>
+          )}
+          {priv && (
+            <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
+              {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
+            </Field>
+          )}
         </div>
         <fieldset className="min-w-0">
           <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
@@ -156,28 +166,13 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </div>
         </fieldset>
         </div>
-        {priv && (
-          <Field label="Pergunta de segurança">
-            {(fid) => (
-              <>
-                <input id={fid} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />
-                <QuestionSuggestions onPick={setQuestion} />
-              </>
-            )}
-          </Field>
-        )}
-        {priv && question.trim() !== "" && (
-          <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (maiúsculas e minúsculas não importam).">
-            {(fid) => <input id={fid} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder={had.trim() ? "Digite aqui para trocar a resposta" : "Digite a resposta"} className={inputClass} />}
-          </Field>
-        )}
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
             {msg.text}
           </p>
         )}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : "Salvar alterações"}
+          {busy ? "Salvando…" : "Salvar"}
         </button>
       </form>
 
