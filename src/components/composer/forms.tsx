@@ -631,7 +631,6 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
               ))}
             </ul>
           )}
-          <p className="mt-2 text-xs text-[#8a7b69]">Busca e mapas do Google.</p>
         </div>
       )}
 
