@@ -57,7 +57,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
         <div role="alertdialog" aria-label="Apagar mural" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#2a1c12]/55 p-5 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-5 text-center shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
             <p className="font-title text-xl font-semibold">Apagar “{toDelete.title}”?</p>
-            <p className="mt-2 text-sm text-[#4a3826]">Os pins, os bottons e os acessos deste mural serão apagados. Isso não pode ser desfeito.</p>
+            <p className="mt-2 text-sm text-[#4a3826]">Os bottons serão devolvidos a você, os Pinz serão perdidos e não será mais possível acessar esse mural.</p>
             {err && <p role="alert" className="mt-2 text-sm text-[#a23b2a]">{err}</p>}
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => (setConfirmId(null), setErr(null))} disabled={busy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
