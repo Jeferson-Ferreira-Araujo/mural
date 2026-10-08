@@ -18,6 +18,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [credits, setCredits] = useState(0);
+  const [preview, setPreview] = useState<string | null>(null); // tipo aberto em destaque (olhinho)
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     setTitle("");
     setBoard(DEFAULT_BOARD);
     setBuying(null);
+    setPreview(null);
     setError(null);
     void load();
   }, [open]);
@@ -88,12 +90,33 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     window.location.assign(`/${nick}/${created.slug}`); // abre o mural novo
   }
 
+  const view = preview ? BOARDS.find((b) => b.id === preview) : null;
   const target = buying ? BOARDS.find((b) => b.id === buying) : null;
   const price = buying ? priceOf(buying) : 0;
 
   return (
     <Modal open={open} onClose={onClose} title="" label="Novo mural">
-      {target ? (
+      {view && !target ? (
+        <div className="space-y-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={view.image} alt={`Mural ${view.name}`} draggable={false} className="aspect-[3/2] w-full rounded-xl object-cover shadow" />
+          <p className="text-center text-base font-semibold">{view.name}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setPreview(null)} className={`${ghostButton} flex-1`}>
+              Voltar
+            </button>
+            {owns(view.id) ? (
+              <button type="button" onClick={() => (setBoard(view.id), setPreview(null))} className={`${primaryButton} flex-1`}>
+                Usar este
+              </button>
+            ) : (
+              <button type="button" onClick={() => (setPreview(null), startBuy(view.id))} className={`${primaryButton} flex-1`}>
+                Comprar · {priceOf(view.id)}
+              </button>
+            )}
+          </div>
+        </div>
+      ) : target ? (
         <div className="space-y-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={target.image} alt="" draggable={false} className="mx-auto aspect-[3/2] w-48 rounded-xl object-cover shadow" />
@@ -147,18 +170,37 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                       className={`block w-full ${has ? "cursor-pointer" : "cursor-default"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={b.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${has ? "" : "opacity-55"}`} />
-                      <span className="mt-1 block text-sm font-semibold">{b.name}</span>
+                      <img src={b.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${has ? "" : "opacity-60"}`} />
+                      <span className="mt-1 flex items-center justify-between gap-1 px-0.5">
+                        <span className="truncate text-sm font-semibold">{b.name}</span>
+                        {!has && (
+                          <span className="inline-flex shrink-0 items-center gap-0.5 text-xs font-bold text-[#6b5440]">
+                            <Coin className="size-3.5" />
+                            {priceOf(id)}
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                    {/* olhinho: abre o mural em tamanho grande para ver como ele é */}
+                    <button
+                      type="button"
+                      onClick={() => setPreview(id)}
+                      aria-label={`Ver o mural ${b.name} em detalhe`}
+                      title="Ver em detalhe"
+                      className="absolute top-2.5 right-2.5 grid size-7 cursor-pointer place-items-center rounded-full bg-black/60 text-white shadow transition hover:bg-black/80 active:scale-90"
+                    >
+                      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
                     </button>
                     {!has && (
                       <button
                         type="button"
                         onClick={() => startBuy(id)}
-                        aria-label={`Comprar o mural ${b.name} por ${priceOf(id)} créditos`}
-                        className="mt-1 inline-flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg bg-[#17110c] px-2 py-1.5 text-xs font-bold whitespace-nowrap text-white transition hover:bg-[#2b1c12] active:scale-95"
+                        className="mt-1.5 w-full cursor-pointer rounded-lg bg-[#17110c] px-2 py-1.5 text-xs font-bold text-white transition hover:bg-[#2b1c12] active:scale-95"
                       >
-                        Comprar <Coin className="size-3.5" />
-                        {priceOf(id)}
+                        Comprar
                       </button>
                     )}
                   </div>
