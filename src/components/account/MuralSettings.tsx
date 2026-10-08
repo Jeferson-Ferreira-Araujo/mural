@@ -94,11 +94,32 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       <form onSubmit={save} className="space-y-4" noValidate>
         {/* nome e tipo na mesma linha; o tipo é um slide que desliza para o lado */}
         <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+        <div className="min-w-0 space-y-3">
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid grid-cols-2 gap-2">
+            {(
+              [
+                [false, "🌐 Público"],
+                [true, "🔒 Privado"],
+              ] as const
+            ).map(([val, label]) => (
+              <button
+                key={label}
+                type="button"
+                role="radio"
+                aria-checked={priv === val}
+                onClick={() => setPriv(val)}
+                className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         <fieldset className="min-w-0">
           <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
           <div className="relative">
-          <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+          <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none]">
             {BOARDS.map((bd) => {
               const owned = bd.id === "cortica" || offers.find((o) => o.id === bd.id)?.owned === true;
               const on = board === bd.id;
@@ -110,21 +131,20 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
                   aria-checked={on}
                   disabled={!owned}
                   onClick={() => setBoard(bd.id)}
-                  className={`relative w-[6.5rem] shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
+                  className={`relative w-full shrink-0 snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : owned ? "cursor-pointer border-[#e1d3ba] bg-white hover:bg-[#fff6dd]" : "cursor-default border-[#e1d3ba] bg-white/50"}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full rounded-lg object-cover ${owned ? "" : "opacity-55"}`} />
                   {on && <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow"><svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span>}
                   {!owned && <span aria-hidden className="absolute top-2.5 right-2.5 text-sm">🔒</span>}
                   <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
-                  <span className={`block text-[11px] font-bold ${on ? "text-[#8a6a10]" : "text-transparent"}`}>Em uso neste mural</span>
                 </button>
               );
             })}
           </div>
           {/* setas para o mouse: no computador não dá para deslizar com o dedo */}
           {([-1, 1] as const).map((d) => (
-            <button key={d} type="button" onClick={() => strip.current?.scrollBy({ left: d * 230, behavior: "smooth" })} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-9 z-10 hidden size-7 cursor-pointer place-items-center rounded-full bg-[#17110c]/85 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 sm:grid ${d < 0 ? "-left-2" : "-right-2"}`}>
+            <button key={d} type="button" onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-1/3 z-10 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-[#17110c]/80 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 ${d < 0 ? "left-2.5" : "right-2.5"}`}>
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
               </svg>
@@ -133,29 +153,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </div>
         </fieldset>
         </div>
-        <fieldset>
-          <legend className="mb-1 text-sm font-semibold">Quem pode abrir este mural?</legend>
-          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid gap-2 sm:grid-cols-2">
-            {(
-              [
-                [false, "🌐 Público", "Qualquer pessoa com o link abre."],
-                [true, "🔒 Privado", "Só entra quem acertar a pergunta de segurança."],
-              ] as const
-            ).map(([val, label, hint]) => (
-              <button
-                key={label}
-                type="button"
-                role="radio"
-                aria-checked={priv === val}
-                onClick={() => setPriv(val)}
-                className={`cursor-pointer rounded-xl border-2 px-3 py-2.5 text-left transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
-              >
-                <span className="block text-sm font-bold">{label}</span>
-                <span className="block text-xs text-[#6b5440]">{hint}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
         {priv && (
           <Field label="Pergunta de segurança">
             {(fid) => (
