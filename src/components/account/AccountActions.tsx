@@ -12,6 +12,20 @@ export function AccountActions({ account, tone = "light", className = "", menu =
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
+      {/* desktop: o sino de notificações fica à esquerda do botão de pesquisar (no celular ele está no cabeçalho) */}
+      {!menu && account.notifications && (
+        <button type="button" onClick={account.notifications.onOpen} aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"} title="Notificações" className={`${base} ${look}`}>
+          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
+            <path d="M10 20a2.2 2.2 0 0 0 4 0" />
+          </svg>
+          {!!account.notifications.count && (
+            <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+              {account.notifications.count}
+            </span>
+          )}
+        </button>
+      )}
       <button type="button" onClick={account.onSearch} aria-label="Pesquisar Usuário" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
