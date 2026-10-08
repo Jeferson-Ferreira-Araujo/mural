@@ -250,14 +250,18 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   );
 
   // mural desbloqueado: carrega os pins e atualiza de tempos em tempos (cápsulas que abrem, pins novos)
+  const moveSeq = useRef(0); // sobe a cada movimento de pin: uma leitura que começou antes dele traz o quadro velho e é descartada
   const loadBoard = useCallback(async () => {
     if (!nick || !slug) return;
     const sb = getBrowserSupabase();
+    const seq = moveSeq.current;
     const list = await fetchBoard(sb, { nick, slug }, token);
+    if (seq !== moveSeq.current) return;
     if (list) {
-      setItems(list);
+      // só redesenha se algo mudou de verdade (a atualização automática a cada minuto não deve mexer em nada)
+      setItems((prev) => (JSON.stringify(prev) === JSON.stringify(list) ? prev : list));
       setBoardLoaded(true);
-      void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges(b));
+      void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges((prev) => (JSON.stringify(prev) === JSON.stringify(b) ? prev : b)));
     }
     else relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.");
   }, [nick, slug, token, relock]);
@@ -310,12 +314,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
       move: async (id: string, slot: number) => {
         // a tela muda na hora (troca os dois espaços); o servidor confirma em seguida e, se falhar, recarrega o quadro como estava
+        moveSeq.current++;
         setItems((prev) => {
           const from = prev.find((i) => i.id === id)?.slot;
           if (typeof from !== "number") return prev;
           return prev.map((i) => (i.id === id ? { ...i, slot } : i.slot === slot ? { ...i, slot: from } : i));
         });
         const { error } = await getBrowserSupabase().rpc("move_pin", { p_id: id, p_slot: slot });
+        moveSeq.current++;
         if (error) {
           notify("Não foi possível mover o pin agora.");
           await loadBoard();
