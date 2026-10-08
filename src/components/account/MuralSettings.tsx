@@ -42,6 +42,9 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   // a resposta é pedida quando o mural passa a ter pergunta (era público) ou quando a pessoa escolhe trocá-la
   const answerFilled = answer.trim() !== ""; // resposta digitada (troca a atual); em branco mantém a que já existe
 
+  // só os tipos que a pessoa já tem (mais o que o mural usa agora, por garantia)
+  const selectable = BOARDS.filter((b) => b.id === "cortica" || b.id === currentBoard || offers.find((o) => o.id === b.id)?.owned === true);
+
   async function save(e: FormEvent) {
     e.preventDefault();
     setMsg(null);
@@ -120,8 +123,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
           <div className="relative">
           <div ref={strip} role="radiogroup" aria-label="Tipo do mural" className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-            {BOARDS.map((bd) => {
-              const owned = bd.id === "cortica" || offers.find((o) => o.id === bd.id)?.owned === true;
+            {selectable.map((bd) => {
+              const owned = true;
               const on = board === bd.id;
               return (
                 <button
@@ -143,7 +146,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             })}
           </div>
           {/* setas para o mouse: no computador não dá para deslizar com o dedo */}
-          {([-1, 1] as const).map((d) => (
+          {selectable.length > 1 && ([-1, 1] as const).map((d) => (
             <button key={d} type="button" onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })} aria-label={d < 0 ? "Tipos anteriores" : "Próximos tipos"} className={`absolute top-1/3 z-10 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-[#17110c]/80 text-white shadow transition hover:bg-[#2b1c12] active:scale-90 ${d < 0 ? "left-2.5" : "right-2.5"}`}>
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
