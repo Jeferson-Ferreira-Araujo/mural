@@ -81,7 +81,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       {showSecret ? "Esconder PIN" : "Revelar PIN"}
     </button>
   );
-  const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-4 py-3 text-base font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
+  const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
   // executa a ação e, se for o caso, fecha o destaque (o pin já saiu do mural ou mudou)
   async function run(action: () => Promise<boolean>, closeAfter: boolean) {
     setBusy(true);
@@ -165,7 +165,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     >
       {open && item && index !== null && (
         <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
-          <div className="flex w-full items-center justify-end gap-2 px-1">
+          <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
               <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={arrow}>
                 <ShareIcon />
@@ -224,33 +224,33 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </p>
           )}
           {mod && item && !isSealed(item) && !isHidden(item) && (
-            <div className="flex w-full flex-col gap-2" role="group" aria-label="Moderar este pin">
-              <div className="flex w-full flex-wrap gap-2">
+            <div className="flex w-full flex-col items-center gap-2" role="group" aria-label="Moderar este pin">
+              <div className="flex w-full flex-wrap justify-center gap-2">
                 {item.pending ? (
                   <>
-                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost} flex-1`}>
+                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost}`}>
                       Recusar
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost} flex-1`}>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
                         {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PLUS)"}
                       </span>
                     </button>
-                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="min-w-[8rem] flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
+                    <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
                       Aprovar
                     </button>
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} aria-label="Excluir PIN" title="Excluir PIN" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:flex-1 sm:items-center sm:justify-center sm:gap-2`}>
+                    <button type="button" disabled={busy} aria-label="Excluir PIN" title="Excluir PIN" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
                       <Trash />
                       <span className="hidden sm:inline">Excluir PIN</span>
                     </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => {
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
-                    }} className={`${ghost} flex-1`}>
+                    }} className={`${ghost}`}>
                       {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
                     </button>
                   </>
