@@ -7,16 +7,15 @@ import { getProfileMurals, type ProfileMurals as Profile } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, ghostButton, Spinner } from "@/components/ui";
 
-/** Página da pessoa (só para quem entrou na conta): com um único mural abre direto nele; com vários, lista todos. */
+/** Página da pessoa (só para quem entrou na conta): abre direto o primeiro mural dela. */
 export function ProfileMurals({ nick }: { nick: string }) {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
 
   useEffect(() => {
     void getProfileMurals(getBrowserSupabase(), nick).then((p) => {
-      // com ?primeiro (vem do @ no detalhe de um pin) abre direto o primeiro mural da pessoa
-      const first = new URLSearchParams(window.location.search).has("primeiro");
-      if (p && p.murals.length > 0 && (p.murals.length === 1 || first)) router.replace(`/${p.nickname}/${p.murals[0].slug}`);
+      // sempre abre direto o primeiro mural da pessoa
+      if (p && p.murals.length > 0) router.replace(`/${p.nickname}/${p.murals[0].slug}`);
       else setProfile(p);
     });
   }, [nick, router]);

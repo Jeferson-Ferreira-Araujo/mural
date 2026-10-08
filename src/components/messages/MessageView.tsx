@@ -55,7 +55,7 @@ function Signature({ name, reaction }: { name?: string; reaction?: string }) {
     return (
       <>
         {mark}
-        <a href={`/${encodeURIComponent(name)}?primeiro`} title={`Ir ao mural de @${name}`} className={`${cls} transition hover:bg-white`}>
+        <a href={`/${encodeURIComponent(name)}`} title={`Ir ao mural de @${name}`} className={`${cls} transition hover:bg-white`}>
           @{name}
         </a>
       </>
