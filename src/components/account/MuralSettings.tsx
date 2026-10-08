@@ -181,10 +181,9 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         </button>
       </form>
 
-      <div className="mt-6 border-t border-[#e1d3ba] pt-4">
-        {!canDelete ? (
-          <p className="text-sm text-[#6b5440]">Este é o seu primeiro mural: ele não pode ser excluído. Os murais criados depois podem.</p>
-        ) : confirmDelete ? (
+      {/* o primeiro mural nunca pode ser excluído: nesse caso a área nem aparece */}
+      <div className={`mt-6 border-t border-[#e1d3ba] pt-4 ${canDelete ? "" : "hidden"}`}>
+        {!canDelete ? null : confirmDelete ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
             <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também a resposta, os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
             <div className="mt-3 flex gap-2">
