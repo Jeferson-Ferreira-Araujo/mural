@@ -1,9 +1,9 @@
-import { handOf, pinOf, tapeOf, type HandId, type PinColor, type PinPos, type TapeColor } from "@/lib/style";
-import { PinSlot, TapeSlot } from "./fasteners";
+import { handOf, pinOf, type HandId, type PinColor, type PinPos } from "@/lib/style";
+import { PinSlot } from "./fasteners";
 import { Scene, type SceneVariant } from "./Scene";
 
 /** Foto em Polaroid. `src` = foto escolhida pela pessoa; sem `src`, usa uma cena ilustrada de exemplo. */
-export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, pos }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor; pos?: PinPos }) {
+export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, pos }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; pos?: PinPos }) {
   const hand = handOf(font);
   return (
     <article
@@ -11,11 +11,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, 
       className="paper-grain shadow-paper relative w-[14em] bg-[#fdfcf7] px-[0.9em] pt-[0.9em] pb-[0.9em]"
       style={{ borderRadius: "0.15em" }}
     >
-      {scene === "group" || src ? (
-        <TapeSlot top="-top-[0.8em]" at="center" tone={tape ? tapeOf(tape).tone : undefined} />
-      ) : (
-        <PinSlot tone={pin ? pinOf(pin).id : "red"} pos={pos} top="top-[-0.6em]" />
-      )}
+      <PinSlot tone={pin ? pinOf(pin).id : "red"} pos={pos} top="top-[-0.6em]" />
       <div className="relative aspect-square w-full overflow-hidden bg-[#222] shadow-[inset_0_0_0.6em_rgba(0,0,0,.55)]">
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
