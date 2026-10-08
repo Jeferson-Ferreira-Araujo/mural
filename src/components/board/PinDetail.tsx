@@ -151,10 +151,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label="Ver mensagem em detalhe"
-      className="m-auto w-[min(94vw,34rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(94vw,40rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && item && index !== null && (
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-end gap-2 px-1">
             {shareable && (
               <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={arrow}>
@@ -186,16 +186,18 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </p>
           )}
           {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn()}
-          <div className="flex w-full items-center justify-center gap-2 sm:gap-3">
+          <div className="flex min-h-0 w-full flex-1 items-center justify-center gap-2 sm:gap-3">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
               <ChevronLeft />
             </button>
-            {/* o tamanho do pin também respeita a altura da janela (botões em cima e embaixo ficam fora da conta): nunca precisa de barra de rolagem */}
-            <div className="grid min-w-0 flex-1 place-items-center pt-[1.2em] pb-[2.4em]" style={{ fontSize: "min(26px, 4.3vw, calc((96dvh - 270px) / 23))" }} key={item.id}>
+            {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
+            <div className="relative min-w-0 flex-1 self-stretch [container-type:size]">
+            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[2.4em]" style={{ fontSize: "min(34px, calc(100cqh / 23), calc(100cqw / 15))" }} key={item.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
               </DetailProvider>
+            </div>
             </div>
             <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
               <ChevronRight />
