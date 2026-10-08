@@ -18,7 +18,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  const [saved, setSaved] = useState<{ at: number; lines: string[] } | null>(null); // confirmação de que salvou (some sozinha)
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [board, setBoard] = useState("");
@@ -74,7 +73,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   async function save(e: FormEvent) {
     e.preventDefault();
     setMsg(null);
-    setSaved(null);
     const q = priv ? question.trim() : ""; // público = sem pergunta
     if (!title.trim() || (priv && q.length < 3)) {
       setMsg({ ok: false, text: !title.trim() ? "Preencha o nome do mural." : q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras." });
@@ -102,11 +100,6 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       setCurrentBoard(board);
     }
     setBusy(false);
-    const lines = [`Nome: ${title.trim()}`, `Tipo: ${BOARDS.find((b) => b.id === (board || currentBoard))?.name ?? "Cortiça"}`, q === "" ? "Acesso: público" : "Acesso: privado, com pergunta de segurança"];
-    setMsg(null);
-    const at = Date.now();
-    setSaved({ at, lines });
-    window.setTimeout(() => setSaved((cur) => (cur?.at === at ? null : cur)), 7000);
     setHad(q);
     if (q !== "" && (answerFilled || stored === "")) setStored(answer.trim() || stored);
     if (q === "") {
@@ -226,25 +219,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             {msg.text}
           </p>
         )}
-        {saved && (
-          <div key={saved.at} role="status" className="flex items-start gap-3 rounded-2xl border border-[#b9dfc2] bg-[#e8f6ec] p-3.5 text-[#1f4d2b]" style={{ animation: "buy-pop 0.5s ease" }}>
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#3aa655] text-white shadow-[0_0.2rem_0.6rem_rgba(58,166,85,.45)]">
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="m5 12.5 4.5 4.5L19 7.5" />
-              </svg>
-            </span>
-            <span className="min-w-0 text-sm">
-              <strong className="block text-base">Alterações salvas!</strong>
-              {saved.lines.map((l) => (
-                <span key={l} className="block truncate">
-                  {l}
-                </span>
-              ))}
-            </span>
-          </div>
-        )}
-        <button type="submit" disabled={busy} className={saved ? "w-full cursor-pointer rounded-xl bg-[#3aa655] px-4 py-3 text-base font-bold text-white transition" : primaryButton}>
-          {busy ? "Salvando…" : saved ? "✓ Salvo" : "Salvar"}
+        <button type="submit" disabled={busy} className={primaryButton}>
+          {busy ? "Salvando…" : "Salvar"}
         </button>
       </form>
 

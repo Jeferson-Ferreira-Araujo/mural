@@ -14,11 +14,13 @@ import { MuralSettings } from "./MuralSettings";
 export function MyMuralsModal({ open, onClose, murals, onChanged, onDeleted }: { open: boolean; onClose: () => void; murals: OwnMural[]; onChanged: () => void; onDeleted: () => void }) {
   const [editId, setEditId] = useState<string | null>(null);
   const [boards, setBoards] = useState<Record<string, string>>({});
+  const [flash, setFlash] = useState(false); // "salvo com sucesso" por cima da janela
 
   // ao abrir: volta para a lista e lê o tipo (fundo) de cada mural
   useEffect(() => {
     if (!open) return;
     setEditId(null);
+    setFlash(false);
   }, [open]);
   useEffect(() => {
     if (!open || murals.length === 0) return;
@@ -32,7 +34,18 @@ export function MyMuralsModal({ open, onClose, murals, onChanged, onDeleted }: {
   const editing = murals.find((m) => m.id === editId) ?? null;
 
   return (
-    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide headerLeft={editing ? (<button type="button" onClick={() => setEditId(null)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#4a3826] hover:text-[#2a1c12]">
+    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide overlay={flash ? (
+        <div role="status" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#fbf6ea]/95 backdrop-blur-sm">
+          <div className="text-center" style={{ animation: "buy-pop 0.5s ease" }}>
+            <span className="mx-auto grid size-20 place-items-center rounded-full bg-[#3aa655] text-white shadow-[0_0.5rem_1.6rem_rgba(58,166,85,.5)]">
+              <svg viewBox="0 0 24 24" className="size-11" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <p className="font-title mt-4 text-2xl font-semibold text-[#1f4d2b]">Mural salvo com sucesso!</p>
+          </div>
+        </div>
+      ) : undefined} headerLeft={editing ? (<button type="button" onClick={() => setEditId(null)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#4a3826] hover:text-[#2a1c12]">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
@@ -43,7 +56,14 @@ export function MyMuralsModal({ open, onClose, murals, onChanged, onDeleted }: {
           <MuralSettings
             mural={editing}
             canDelete={editing.id !== murals[0]?.id}
-            onSaved={onChanged}
+            onSaved={() => {
+              onChanged();
+              setFlash(true);
+              window.setTimeout(() => {
+                setFlash(false);
+                setEditId(null); // volta para a lista, já com o mural alterado
+              }, 1700);
+            }}
             onDeleted={() => {
               setEditId(null);
               onDeleted();
