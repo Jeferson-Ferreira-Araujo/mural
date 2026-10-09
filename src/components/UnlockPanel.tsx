@@ -121,7 +121,8 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           : "p-[0.2em] text-[#2f2218]"
       }
     >
-      {title && (
+      {/* mural privado (com pergunta) ainda trancado: sem foto, nome nem visualizações */}
+      {title && (open || unlocked) && (
         <header className={`flex flex-col gap-[0.5em] ${open || profileOnly ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
           {plus && (
             <span className="self-end rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">

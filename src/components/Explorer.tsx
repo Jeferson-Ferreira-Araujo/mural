@@ -148,7 +148,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [newMuralOpen, setNewMuralOpen] = useState(false);
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
-  const followNick = logged && selected && !isOwner && !isShared ? selected.nickname : null;
+  const followNick = logged && selected && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
   useEffect(() => {
     setFollowingState(false);
     if (!followNick) return;

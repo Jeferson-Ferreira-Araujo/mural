@@ -15,7 +15,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3" }: { children: ReactNode; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false }: { children: ReactNode; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const world = useRef<HTMLDivElement>(null);
   const view = useRef({ x: 0, y: 0, s: 1 });
@@ -323,7 +323,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         </div>
       )}
 
-      <button
+      {!hideControls && <button
         type="button"
         onPointerDown={(e) => e.stopPropagation()}
         onClick={toggleZoom}
@@ -338,7 +338,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           {zoomedOut ? <path d="M11 8v6M8 11h6" /> : <path d="M8 11h6" />}
         </svg>
         {zoomedOut ? "Aproximar" : "Afastar"}
-      </button>
+      </button>}
     </div>
   );
 }

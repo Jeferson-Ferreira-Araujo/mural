@@ -41,12 +41,12 @@ export function DesktopBoard(props: ViewProps) {
         <nav aria-label="Informações do mural" className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
-            {hasSelection && props.muralInfo?.title && (
+            {hasSelection && !locked && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
                 <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />
               </h2>
             )}
-            {hasSelection && props.follow && <FollowButton follow={props.follow} />}
+            {hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
               <ShareButton iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
@@ -60,7 +60,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5">
+        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5" hideControls={locked}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain>
           {locked &&
             (lockForm ? (
