@@ -83,6 +83,16 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [tried, setTried] = useState(false);
   const [badges, setBadges] = useState<PlacedBadge[]>([]); // pins decorativos do mural aberto
   const { message: toast, notify } = useToast();
+  // conta que estava desativada (exclusão pedida) e voltou a ser usada: avisa que foi reativada
+  useEffect(() => {
+    if (!session) return;
+    try {
+      if (sessionStorage.getItem("pinz:reactivated") === "1") {
+        sessionStorage.removeItem("pinz:reactivated");
+        notify("Bem-vindo de volta! Sua conta foi reativada.");
+      }
+    } catch {}
+  }, [session, notify]);
   const [siteStats, setSiteStats] = useState<SiteStats | null>(null);
   useEffect(() => {
     void getSiteStats(getBrowserSupabase()).then(setSiteStats);

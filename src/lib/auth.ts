@@ -10,11 +10,25 @@ export function useSession() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const sb = getBrowserSupabase();
-    sb.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    let checked: string | null = null;
+    // entrar de novo numa conta que estava desativada (exclusão pedida) a reativa: a pessoa volta como estava
+    const apply = async (s: Session | null) => {
+      if (s?.user && checked !== s.user.id) {
+        checked = s.user.id;
+        const { data } = await sb.rpc("reactivate_account");
+        if (data === true) {
+          try {
+            sessionStorage.setItem("pinz:reactivated", "1");
+          } catch {}
+        }
+      }
+      setSession(s);
       setLoading(false);
+    };
+    sb.auth.getSession().then(({ data }) => void apply(data.session));
+    const { data } = sb.auth.onAuthStateChange((_e, s) => {
+      setTimeout(() => void apply(s), 0); // não chama o Supabase de dentro do próprio aviso de login
     });
-    const { data } = sb.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => data.subscription.unsubscribe();
   }, []);
   return { session, loading };
