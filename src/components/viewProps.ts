@@ -37,6 +37,8 @@ export type ViewProps = {
   /** Fundo do mural (padrão: cortiça). */
   board?: BoardId;
   /** Para o botão Compartilhar (null = nada para compartilhar). */
+  /** seguir a pessoa dona do mural aberto (só em mural de outra pessoa, logado) */
+  follow?: { following: boolean; busy: boolean; onToggle: () => void } | null;
   share: { title: string; /** frase do convite */ text?: string; path: string } | null;
   /** Busca, escolha do mural e pergunta de desbloqueio; cada visualização escolhe o tom. */
   /** `part`: "form" = só o cartão de pergunta (centro do quadro, desktop); "profile" = só o perfil (coluna da esquerda, desktop) */

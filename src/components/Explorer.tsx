@@ -26,6 +26,7 @@ import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { NewMuralModal } from "./account/NewMuralModal";
+import { isFollowing, setFollowing } from "@/lib/social";
 import { PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
 import { ReactionsProvider } from "./board/ReactionsContext";
@@ -145,6 +146,30 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
   }, [session]);
   const [newMuralOpen, setNewMuralOpen] = useState(false);
+  const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
+  const [followBusy, setFollowBusy] = useState(false);
+  const followNick = logged && selected && !isOwner && !isShared ? selected.nickname : null;
+  useEffect(() => {
+    setFollowingState(false);
+    if (!followNick) return;
+    let alive = true;
+    void isFollowing(getBrowserSupabase(), followNick).then((v) => alive && setFollowingState(v));
+    return () => {
+      alive = false;
+    };
+  }, [followNick]);
+  const toggleFollow = useCallback(async () => {
+    if (!followNick || followBusy) return;
+    const next = !following;
+    setFollowBusy(true);
+    setFollowingState(next); // muda na hora; se o servidor recusar, volta
+    const ok = await setFollowing(getBrowserSupabase(), followNick, next);
+    setFollowBusy(false);
+    if (!ok) {
+      setFollowingState(!next);
+      notify("Não foi possível agora. Tente de novo.");
+    } else notify(next ? `Você segue @${followNick}. Ele fica em Seguindo, no menu.` : `Você deixou de seguir @${followNick}.`);
+  }, [followNick, followBusy, following, notify]);
   const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
     const list = await getOwnMurals(getBrowserSupabase());
@@ -795,6 +820,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           board={boardById(selected ? selected.board : decorBoard).id}
           boardPending={boardPendingNow}
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
+          follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
           share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : undefined}
           onChangeMural={clear}

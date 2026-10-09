@@ -9,6 +9,7 @@ import { BadgeBar } from "./badges/BadgeBar";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
+import { FollowButton } from "./FollowButton";
 import { Sidebar } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 
@@ -45,6 +46,7 @@ export function DesktopBoard(props: ViewProps) {
                 <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />
               </h2>
             )}
+            {hasSelection && props.follow && <FollowButton follow={props.follow} />}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
               <ShareButton iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />

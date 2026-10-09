@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Política de Privacidade", alternate
 
 export default function Privacidade() {
   return (
-    <LegalPage title="Política de Privacidade" updated="6 de outubro de 2026">
+    <LegalPage title="Política de Privacidade" updated="8 de outubro de 2026">
       <p>O Pinz (pinz.digital) é um mural de recados. Esta página explica quais dados usamos e para quê.</p>
 
       <section>
@@ -13,6 +13,7 @@ export default function Privacidade() {
         <ul>
           <li>Conta: e-mail, nome de usuário (apelido) e, se você enviar, a foto de perfil. Se entrar com o Google, recebemos o e-mail e o nome da conta Google.</li>
           <li>Conteúdo: os pins que você publica (textos, listas, fotos, desenhos, áudios, vídeos, músicas e locais), a pergunta e a resposta que protegem seu mural e a senha do mural compartilhado (guardada de forma criptografada).</li>
+          <li>Visitas e seguidores: quando você entra com a sua conta e visita o mural de outra pessoa, o @ e a foto de perfil aparecem na lista de visitantes dela (sem data). Quem você segue fica numa lista só sua, e quem segue você aparece apenas como um número.</li>
           <li>Uso: notificações da sua conta, contagem de visualizações do mural e registros técnicos de segurança, como o endereço IP, para evitar abuso.</li>
         </ul>
       </section>

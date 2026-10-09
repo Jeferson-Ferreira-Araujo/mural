@@ -10,13 +10,14 @@ import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
+import { FollowingModal, VisitorsModal } from "./PeopleModals";
 import { PinsModal } from "./PinsModal";
 import { PlansModal } from "./PlansModal";
 import { TransactionsModal } from "./TransactionsModal";
 import { ProfileModal } from "./ProfileModal";
 import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "purchases";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "purchases" | "following" | "visitors";
 
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
@@ -153,6 +154,16 @@ export function AccountDrawer({
                     }
                   />
                   <Row
+                    onClick={() => setModal("visitors")}
+                    label="Visitantes"
+                    icon={
+                      <svg {...ic}>
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    }
+                  />
+                  <Row
                     onClick={() => setModal("pins")}
                     label="Aprovações"
                     hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Nenhum pin aguardando"}
@@ -217,6 +228,16 @@ export function AccountDrawer({
                   }
                 />
               )}
+              <Row
+                onClick={() => setModal("following")}
+                label="Seguindo"
+                hint="Murais de quem você segue"
+                icon={
+                  <svg {...ic}>
+                    <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+                  </svg>
+                }
+              />
               {notifications && (
                 <Row
                   onClick={() => {
@@ -295,6 +316,8 @@ export function AccountDrawer({
   const modals = (
     <>
       {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
+      <VisitorsModal open={isOpen && modal === "visitors"} onClose={close} />
+      <FollowingModal open={isOpen && modal === "following"} onClose={close} />
       <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onNewMural={onNewMural} onChanged={onChanged} onDeleted={onDeleted} />
       {mural && (
         <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">

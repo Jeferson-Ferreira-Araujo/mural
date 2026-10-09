@@ -12,6 +12,8 @@ import { GuestLinks, MobileHeaderLeft, MobileHeaderRight, type AccountApi } from
 import { BadgeBar } from "./badges/BadgeBar";
 import { ShareButton } from "./ShareButton";
 import { MuralNameMenu } from "./MuralNameMenu";
+import { FollowButton } from "./FollowButton";
+import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
 
@@ -37,6 +39,8 @@ type Props = {
   lockPanel?: ReactNode;
   /** convite para ver o mural: botão "Compartilhar" no canto inferior esquerdo do quadro */
   share?: { title: string; text?: string; path: string } | null;
+  /** seguir a pessoa (só em mural de outra pessoa) */
+  follow?: ViewProps["follow"];
   onNotify?: (msg: string) => void;
 };
 
@@ -44,7 +48,7 @@ type Props = {
  * Mural no celular (retrato), como no mockup: topo com o logo e o menu; cabeçalho com a foto e o nome de quem é o mural;
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
-export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, onNotify }: Props) {
+export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
 
@@ -75,6 +79,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
         </p>
+        {follow && <FollowButton follow={follow} compact />}
         <MuralNameMenu title={info.title} label="Murais" sw={muralSwitch} showShared={!!account?.atHome} align="right" className="max-w-[55%] shrink-0 text-right text-base font-bold text-[#2a1c12]" />
       </div>
 
