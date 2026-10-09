@@ -5,7 +5,7 @@ import { Modal } from "./Modal";
 
 const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
-/** Sino: avisos da conta (reações aos seus pins; e quando o dono do mural marca ou desmarca um item de uma lista que você criou). */
+/** Sino: avisos da conta, em tempo real: pin novo no seu mural, pin aprovado, novo seguidor, reações e listas marcadas. */
 export function NotificationsModal({ open, onClose, items }: { open: boolean; onClose: () => void; items: Notification[] | null }) {
   return (
     <Modal open={open} onClose={onClose} title="Notificações">
@@ -20,8 +20,8 @@ export function NotificationsModal({ open, onClose, items }: { open: boolean; on
               <p className="text-[15px] leading-snug">{notificationText(n)}</p>
               <p className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-[#8a7b69]">
                 <span>{when(n.createdAt)}</span>
-                <a href={`/${n.data.muralNick}/${n.data.muralSlug}`} className="font-semibold text-[#4a3826] underline">
-                  Ver o mural
+                <a href={n.kind === "follow" ? `/${n.data.actor}` : `/${n.data.muralNick}/${n.data.muralSlug}`} className="font-semibold text-[#4a3826] underline">
+                  {n.kind === "follow" ? "Ver o perfil" : "Ver o mural"}
                 </a>
               </p>
             </li>

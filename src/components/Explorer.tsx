@@ -40,7 +40,7 @@ import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInv
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
-import { fetchNotifications, markAllRead, unreadCount, type Notification } from "@/lib/notifications";
+import { fetchNotifications, markAllRead, notificationText, unreadCount, type Notification } from "@/lib/notifications";
 import { NotificationsModal } from "./account/NotificationsModal";
 import { NicknameSetup } from "./account/NicknameSetup";
 import { PAY_RESULTS, PaymentResultModal } from "./account/PaymentResultModal";
@@ -342,6 +342,33 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     else if (!loadedRef.current) relock("Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
+
+  // avisos em tempo real: quando chega algo para esta conta (pin novo, aprovação, seguidor, reação), o servidor manda um sinal sem conteúdo
+  // e o site busca o resto já autenticado: sino, contagem de pins para aprovar, o mural aberto e um aviso rápido na tela
+  const live = useRef({ loadBoard, isOwner, notifOpen, firstOwnId, notify });
+  live.current = { loadBoard, isOwner, notifOpen, firstOwnId, notify };
+  const myUid = session?.user.id;
+  useEffect(() => {
+    if (!myUid) return;
+    const sb = getBrowserSupabase();
+    const ch = sb
+      .channel(`user:${myUid}`)
+      .on("broadcast", { event: "notify" }, () => {
+        const l = live.current;
+        void reloadUnread();
+        if (l.firstOwnId) void listOwnerPins(sb, l.firstOwnId).then((p) => p && setPendingCount(p.filter((x) => x.status === "pending").length));
+        if (l.isOwner) void l.loadBoard();
+        void fetchNotifications(sb).then((list) => {
+          if (l.notifOpen) setNotifs(list);
+          const latest = list.find((n) => !n.read);
+          if (latest) l.notify(notificationText(latest));
+        });
+      })
+      .subscribe();
+    return () => {
+      void sb.removeChannel(ch);
+    };
+  }, [myUid, reloadUnread]);
 
   // o autor excluiu o próprio pin no detalhe: recarrega o quadro
   useEffect(() => {

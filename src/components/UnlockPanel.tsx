@@ -202,12 +202,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           )}
         </header>
       )}
-      {profileOnly ? (
-        <p className={`mt-[0.8em] flex items-center gap-[0.5em] text-[0.85em] font-semibold ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-          <LockIcon />
-          Responda à pergunta no centro do mural para entrar.
-        </p>
-      ) : open ? null : unlocked ? (
+      {profileOnly ? null : open ? null : unlocked ? (
         <div className="rise" role="status">
           <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
         </div>
