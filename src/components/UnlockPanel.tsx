@@ -113,7 +113,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
         <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
           <LockIcon />
         </span>
-        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? "Mural compartilhado" : "Mural trancado"}</p>
+        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? "Mural compartilhado" : "Mural privado"}</p>
         <h2 className="font-title mt-[0.45em] text-[1.9em] leading-tight font-semibold [overflow-wrap:anywhere]">{question}</h2>
         {password && <p className="mt-[0.6em] text-[0.95em] text-white/75">Digite a senha para entrar.</p>}
         <form onSubmit={submit} noValidate className="mt-[1.2em] text-left">

@@ -340,7 +340,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       setBoardLoaded(true);
       void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges((prev) => (JSON.stringify(prev) === JSON.stringify(b) ? prev : b)));
     }
-    else if (!loadedRef.current) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
+    else if (!loadedRef.current) relock("Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
 
   // o autor excluiu o próprio pin no detalhe: recarrega o quadro
@@ -523,7 +523,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     if (res.reason === "not_authenticated") return SEND_ERROR_TEXT.not_authenticated;
     if (res.reason === "not_unlocked") {
-      const msg = "Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar.";
+      const msg = "Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar.";
       relock(msg);
       return msg;
     }
