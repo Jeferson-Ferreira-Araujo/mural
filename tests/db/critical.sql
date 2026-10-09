@@ -119,5 +119,17 @@ begin
   perform set_config('request.jwt.claims', '{"role":"anon"}', true);
   rep := rep || case when public._pin_upload_allowed('00000000-0000-0000-0000-000000000000/x.png') is not true then 'OK    ' else 'FALHA ' end || 'envio de arquivo sem conta é recusado' || E'\n';
 
+  -- 10) pin da loja "Mensagem do dia": só o dono que comprou cola; o quadro já traz o texto de hoje
+  perform set_config('request.jwt.claims', json_build_object('sub', o, 'role', 'authenticated')::text, true);
+  delete from public.pin_product_inventory where user_id = o and product_id = 'daily';
+  begin perform public.send_message(nick, a.slug, null, 26, 'daily', '{"category":"mix"}'::jsonb); rep := rep || 'FALHA ' || 'pin do dia sem comprar' || E'
+'; exception when others then rep := rep || case when sqlerrm like '%product_not_owned%' then 'OK    ' else 'FALHA ' end || 'sem comprar, o pin do dia é recusado' || E'
+'; end;
+  update public.profiles set credits = 30 where user_id = o;
+  perform public.buy_pin_product('daily');
+  perform public.send_message(nick, a.slug, null, 26, 'daily', '{"category":"versiculo"}'::jsonb);
+  rep := rep || case when (select count(*) from jsonb_array_elements(public.get_board(nick, a.slug, null)) e where e->>'type' = 'daily' and coalesce(e->>'text','') <> '') = 1 then 'OK    ' else 'FALHA ' end || 'o pin do dia chega com o texto de hoje' || E'
+';
+
   raise exception E'\n===== RELATÓRIO (nada foi gravado) =====\n%', rep;
 end $$;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { PlayerColor, PostItColor } from "@/lib/types";
+import type { DailyCategory, PlayerColor, PostItColor } from "@/lib/types";
 import type { HandId, PinColor, TapeColor } from "@/lib/style";
 import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
@@ -41,6 +41,45 @@ const POSTIT_COLORS: { id: PostItColor; label: string; bg: string }[] = [
   { id: "blue", label: "Azul", bg: "#a9d8f0" },
   { id: "orange", label: "Laranja", bg: "#fbbd78" },
 ];
+
+// ---------- Mensagem do dia (pin da loja) ----------
+const DAILY_OPTIONS: { id: DailyCategory; label: string; hint: string; sample: string; ref?: string }[] = [
+  { id: "mix", label: "Surpresa do dia", hint: "Cada dia uma categoria diferente", sample: "Bom dia! Que o seu dia seja leve e cheio de boas notícias." },
+  { id: "mensagem", label: "Mensagem", hint: "Recados carinhosos", sample: "Respire, sorria e siga em frente. Você está indo bem." },
+  { id: "frase", label: "Frase motivacional", hint: "Para começar o dia com ânimo", sample: "Um passo pequeno hoje vale mais do que um grande plano guardado." },
+  { id: "versiculo", label: "Versículo bíblico", hint: "Um versículo por dia", sample: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" },
+];
+
+export function DailyForm({ onChange }: { onChange: DraftChange }) {
+  const [category, setCategory] = useState<DailyCategory>("mix");
+  const opt = DAILY_OPTIONS.find((o) => o.id === category) ?? DAILY_OPTIONS[0];
+  // a prévia mostra um exemplo; o texto de verdade muda todo dia, no servidor
+  useEffect(() => onChange({ type: "daily", category, text: opt.sample, ref: opt.ref ?? null, kind: category === "mix" ? "mensagem" : category } as DraftMessage), [category, opt, onChange]);
+  return (
+    <fieldset className="space-y-2">
+      <legend className="mb-1.5 text-sm font-semibold">O que você quer receber todo dia?</legend>
+      <div role="radiogroup" aria-label="Categoria" className="space-y-2">
+        {DAILY_OPTIONS.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            role="radio"
+            aria-checked={category === o.id}
+            onClick={() => setCategory(o.id)}
+            className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border-2 px-3.5 py-3 text-left transition ${category === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-[#fff6dd]"}`}
+          >
+            <span>
+              <span className="block text-sm font-bold">{o.label}</span>
+              <span className="block text-xs text-[#6b5440]">{o.hint}</span>
+            </span>
+            {category === o.id && <span aria-hidden className="text-[#d9a21b]">✓</span>}
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-[#6b5440]">Na prévia você vê um exemplo. O texto muda sozinho todos os dias, à meia-noite.</p>
+    </fieldset>
+  );
+}
 
 export function PostItForm({ onChange }: { onChange: DraftChange }) {
   const [color, setColor] = useState<PostItColor>("yellow");

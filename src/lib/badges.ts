@@ -153,6 +153,8 @@ export async function removeBadge(sb: SupabaseClient, id: string): Promise<boole
 /** Um pin do catálogo, do ponto de vista de quem está logado. */
 export type CatalogItem = { key: number; /** todo mundo tem (1 unidade no FREE) */ starter: boolean; /** preço, em créditos, para liberar (pins da loja) */ price: number; /** preço de +1 unidade (FREE) */ unitPrice: number; owned: boolean; /** unidades extras compradas */ extra: number; /** quando foi comprado (segundos); sem valor = já era da conta */ acquired?: number | null };
 export type BoardOffer = { id: string; price: number; owned: boolean };
+/** Pin da loja (formato novo de pin, como "Mensagem do dia"). */
+export type PinProduct = { id: string; name: string; description: string; price: number; owned: boolean };
 export type BadgeInventory = {
   credits: number;
   /** a conta tem o plano PINZ+ (só ele compra na loja) */
@@ -162,6 +164,8 @@ export type BadgeInventory = {
   /** preço de um mural extra, em créditos */
   muralPrice: number;
   boards: BoardOffer[];
+  /** pins da loja (formatos novos) */
+  pinProducts?: PinProduct[];
   catalog: CatalogItem[];
   /** quantos botons de cada pin a conta já colocou, somando todos os murais (pessoais e compartilhados) */
   placed?: Record<string, number>;
@@ -184,6 +188,7 @@ export const buyBadge = (sb: SupabaseClient, key: number, mode: "unlock" | "unit
 /** Compra `qty` unidades de um pin (se ainda não liberou, a 1ª é o pin e as demais são unidades extras). */
 export const buyBadgeQty = (sb: SupabaseClient, key: number, qty: number) => buy(sb, "buy_badge_qty", { p_key: key, p_qty: qty });
 export const buyBoard = (sb: SupabaseClient, id: string) => buy(sb, "buy_board", { p_board: id });
+export const buyPinProduct = (sb: SupabaseClient, id: string) => buy(sb, "buy_pin_product", { p_id: id });
 export const buyMuralSlot = (sb: SupabaseClient) => buy(sb, "buy_mural_slot", {});
 
 /** Quantas unidades de um pin a pessoa ainda pode colocar (ninguém tem ilimitado). owned = false: ainda não liberou (loja). */

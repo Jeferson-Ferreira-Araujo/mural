@@ -8,9 +8,11 @@ import { BoardLightbox } from "./BoardLightbox";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
+import { MessageView } from "../messages/MessageView";
+import type { Message } from "@/lib/types";
 
-export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "mural" };
-type Tab = "pins" | "boards";
+export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
+type Tab = "pins" | "boards" | "formats";
 
 const MAX_QTY = 20;
 
@@ -104,6 +106,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
+  const products = inventory?.pinProducts ?? [];
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
   const [done, setDone] = useState<Done | null>(null);
@@ -213,11 +216,12 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </ul>
       </section>
 
-      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
             ["pins", "Bottons"],
             ["boards", "Murais"],
+            ["formats", "Pins"],
           ] as const
         ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -299,6 +303,48 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             </ul>
           )}
         </>
+      ) : tab === "formats" ? (
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">Em breve, novos pins por aqui.</li>}
+          {products.map((p) => {
+            const just = done?.id === `f${p.id}`;
+            return (
+              <li key={p.id} className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                {just && <Confetti key={done.at} />}
+                {/* amostra do pin: o cartão como aparece no mural */}
+                <div className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-6">
+                  <div className="w-[13rem] text-[10px]">
+                    <div className="relative">
+                      <MessageView message={{ id: "loja", type: "daily", category: "mix", kind: "versiculo", text: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" } as Message} />
+                    </div>
+                  </div>
+                </div>
+                <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">Novo</span>
+                <div className="flex flex-1 flex-col p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-title text-base font-semibold">{p.name}</p>
+                    {p.owned ? (
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">✓ Comprado</span>
+                    ) : (
+                      <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${p.price} créditos`}>
+                        <Coin className="size-5" />
+                        {p.price}
+                      </p>
+                    )}
+                  </div>
+                  <p className="mt-1 flex-1 text-sm text-[#6b5440]">{p.description}</p>
+                  {p.owned ? (
+                    <p className="mt-2 text-xs text-[#6b5440]">Cole no seu mural: toque num espaço vazio e escolha “{p.name}”.</p>
+                  ) : (
+                    <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: p.name, text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={buyBtn}>
+                      {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[...BOARDS]

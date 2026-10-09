@@ -1,6 +1,7 @@
 import { reactionEmoji } from "@/lib/reactions";
 import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
+import { DailyCard } from "./DailyCard";
 import { DrawingCard } from "./DrawingCard";
 import { HiddenPin } from "./HiddenPin";
 import { ClosedCapsule } from "./ClosedCapsule";
@@ -34,6 +35,8 @@ function Content({ m }: { m: Message }) {
       return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} link={m.link} color={m.playerColor} />;
     case "voice":
       return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
+    case "daily":
+      return <DailyCard category={m.category} kind={m.kind} text={m.text} reference={m.ref} />;
     case "place":
       return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} blank={(m as { blank?: boolean }).blank} />;
   }

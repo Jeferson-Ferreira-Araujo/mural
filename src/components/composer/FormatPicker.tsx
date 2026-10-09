@@ -62,6 +62,16 @@ const THUMBS: Record<MessageType, ReactNode> = {
       </span>
     </span>
   ),
+  daily: (
+    <span className="block h-10 w-9 rotate-[3deg] overflow-hidden rounded-[2px] bg-[#fbf6e6] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]">
+      <span className="block h-[10px] bg-[#c9803a]" />
+      <span className="mt-[4px] block space-y-[3px] px-[4px]">
+        <span className="block h-[2px] bg-[#2f2218]/60" />
+        <span className="block h-[2px] w-[70%] bg-[#2f2218]/60" />
+        <span className="block h-[2px] w-[85%] bg-[#2f2218]/60" />
+      </span>
+    </span>
+  ),
   video: (
     <span className="block w-10 rounded-[6px] bg-gradient-to-br from-[#3b3b40] to-[#19191b] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#d6a062]/60">
       <span className="grid aspect-[16/10] place-items-center rounded-[3px] bg-black text-[9px] text-white">▶</span>

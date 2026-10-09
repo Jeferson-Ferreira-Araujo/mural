@@ -11,6 +11,7 @@ export const TOGGLEABLE_FORMATS: { key: string; type: MessageType; label: string
   { key: "pin_video", type: "video", label: "Vídeo", hint: "Arquivo de vídeo ou link do YouTube" },
   { key: "pin_voice", type: "voice", label: "Voz", hint: "Recado gravado em áudio" },
   { key: "pin_place", type: "place", label: "Local", hint: "Lugar no mapa" },
+  { key: "pin_daily", type: "daily", label: "Mensagem do dia", hint: "Pin da loja: um texto novo todo dia" },
 ];
 
 /** Recursos do site (não são formatos de pin). Desligado: some a opção; o que já foi criado continua. */

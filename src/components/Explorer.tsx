@@ -36,7 +36,7 @@ import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import { BoardLoadingProvider } from "./board/BoardLoadingContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadgeQty, buyBoard, buyMuralSlot, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { buyBadgeQty, buyBoard, buyMuralSlot, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
@@ -505,9 +505,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
-      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : await buyMuralSlot(sb);
+      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : item.kind === "product" ? "Pin liberado! Ele já está na escolha de formatos ao colar um pin." : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
         return true;
       }
@@ -914,6 +914,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                   mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
                   onSend: onSendPin,
                   sentNote: "Pin colado no seu mural! 📌",
+                  extraFormats: (inventory?.pinProducts ?? []).some((p) => p.id === "daily" && p.owned) ? (["daily"] as const) : [],
                   onTried: () => undefined,
                   triedAlready: false,
                   signAs: myNick,

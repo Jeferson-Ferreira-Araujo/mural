@@ -14,7 +14,7 @@ import { FullNotice } from "./FullNotice";
 import { SEND_ERROR_TEXT } from "@/lib/pins";
 import { SlotPicker } from "./SlotPicker";
 import { DrawForm } from "./DrawForm";
-import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
+import { DailyForm, ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 
 type Props = {
@@ -36,6 +36,8 @@ type Props = {
   signAs?: string | null;
   /** motivo de o último envio não ter dado certo (aparece junto do botão, dentro da janela) */
   error?: string | null;
+  /** formatos que a pessoa tem por compra na loja (ex.: Mensagem do dia): somam-se aos do plano */
+  extraFormats?: readonly MessageType[];
 };
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
@@ -58,6 +60,8 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
       return <VoiceForm onChange={onChange} />;
     case "place":
       return <PlaceForm onChange={onChange} />;
+    case "daily":
+      return <DailyForm onChange={onChange} />;
   }
 }
 
@@ -72,6 +76,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
   video: { type: "video", caption: "", playerColor: "black" },
   voice: { type: "voice", caption: "", playerColor: "cream" },
   // só o desenho do aparelho (não carrega o mapa)
+  daily: { type: "daily", category: "mix", text: "O texto de hoje aparece aqui." },
   place: { type: "place", name: "Nome do lugar", address: "", lat: 0, lon: 0, caption: "", playerColor: "silver", blank: true } as unknown as DraftMessage,
 };
 
@@ -82,7 +87,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  *    (PINZ+) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error, extraFormats }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -90,7 +95,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const planLimit = used >= available && firstFree !== null;
   const full = firstFree === null || used >= available;
   const flags = useFeatureFlags();
-  const formats = enabledFormats(formatsFor(plan), flags);
+  const formats = [...enabledFormats(formatsFor(plan), flags), ...(extraFormats ?? []).filter((f) => flags[`pin_${f}`] !== false)];
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });

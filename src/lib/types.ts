@@ -33,6 +33,8 @@ type Base = {
   ownerReview?: boolean;
 };
 
+export type DailyCategory = "mix" | "mensagem" | "frase" | "versiculo";
+
 /** Os formatos. FREE: postit, text, list, photo. PINZ+: + music, video, voice, place. */
 export type Message =
   | (Base & { type: "postit"; color: PostItColor; text: string })
@@ -43,6 +45,7 @@ export type Message =
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; /** vídeo do YouTube (no lugar do arquivo) */ link?: string; playerColor?: PlayerColor })
   | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
+  | (Base & { type: "daily"; /** o que a pessoa escolheu: surpresa (mix) ou uma categoria; o texto de hoje vem do servidor */ category: DailyCategory; text?: string; ref?: string | null; /** de qual categoria é o texto de hoje */ kind?: Exclude<DailyCategory, "mix"> })
   | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor });
 
 export type MessageType = Message["type"];
@@ -97,6 +100,7 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
   voice: { label: "Voz", hint: "Uma mensagem de voz", tier: "full" },
   place: { label: "Local", hint: "Um lugar no mapa", tier: "full" },
+  daily: { label: "Mensagem do dia", hint: "Um texto novo todo dia", tier: "free" },
 };
 
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(
