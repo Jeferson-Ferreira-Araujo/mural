@@ -22,6 +22,8 @@ body {
   background: #3b2616;
   color: var(--ink);
   font-family: var(--font-ui);
+  font-variant-ligatures: none; /* sem ligaduras: "fi", "fl" etc. ficam com as letras separadas */
+  font-feature-settings: "liga" 0, "clig" 0;
   -webkit-font-smoothing: antialiased;
 }
 
