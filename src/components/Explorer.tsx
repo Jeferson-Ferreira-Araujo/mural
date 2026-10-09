@@ -159,7 +159,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       alive = false;
     };
   }, [countNick]);
-  const followNick = logged && selected && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
+  const followNick = logged && !!myNick && selected && selected.nickname.toLowerCase() !== myNick.toLowerCase() && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
   useEffect(() => {
     setFollowingState(false);
     if (!followNick) return;
