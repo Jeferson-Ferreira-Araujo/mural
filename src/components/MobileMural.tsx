@@ -25,7 +25,7 @@ type Props = {
   hasSelection: boolean;
   unlocked: boolean;
   onCompose: ((slot?: number) => void) | null;
-  info: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null };
+  info: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null; topFollowers?: { nickname: string; avatar: string | null; plus?: boolean }[] };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
   /** texto do mural vazio (PLUS) */
@@ -81,10 +81,18 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         </p>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
-          <p className="shrink-0 text-right text-sm leading-tight text-[#2a1c12]">
-            <strong className="block text-base">{info.followers.toLocaleString("pt-BR")}</strong>
-            {info.followers === 1 ? "seguidor" : "seguidores"}
-          </p>
+          <div className="flex shrink-0 items-center gap-2 text-sm text-[#2a1c12]">
+            {!!info.topFollowers?.length && (
+              <div className="flex -space-x-2.5" aria-hidden>
+                {info.topFollowers.map((p) => (
+                  <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-8 ring-2 ring-[#e8dcc2]" />
+                ))}
+              </div>
+            )}
+            <p className="whitespace-nowrap">
+              <strong className="text-base">{info.followers.toLocaleString("pt-BR")}</strong> {info.followers === 1 ? "seguidor" : "seguidores"}
+            </p>
+          </div>
         )}
       </div>
 
