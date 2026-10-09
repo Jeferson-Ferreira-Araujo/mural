@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { frameOf, type FrameColor } from "@/lib/style";
-import { PinSlot } from "./fasteners";
 
 export type SceneId = "meadow" | "mountains" | "day" | "night" | "cloudy" | "rain" | "storm" | "snow" | "fog";
 
@@ -217,7 +216,7 @@ export const CloudIcon = () => (
 );
 
 /**
- * Cartão quadrado com aro colorido e paisagem de fundo (modelo dos pins da loja): ícone da categoria no canto esquerdo,
+ * Display quadrado com aro colorido e paisagem de fundo, sem tachinha (modelo dos pins da loja): ícone da categoria no canto esquerdo,
  * sol ou lua no direito e o conteúdo no centro. Quem cola o pin escolhe a cor do aro.
  */
 export function ScenicCard({ scene, frame, left, right, label, children }: { scene: SceneId; frame?: FrameColor | string | null; left: ReactNode; right: ReactNode; label: string; children: ReactNode }) {
@@ -235,7 +234,6 @@ export function ScenicCard({ scene, frame, left, right, label, children }: { sce
           <div className="relative flex size-full flex-col items-center justify-center px-[1em] pt-[1.6em] pb-[0.9em] text-center">{children}</div>
         </div>
       </article>
-      <PinSlot tone="red" pos="center" top="top-[-0.25em]" />
     </div>
   );
 }
