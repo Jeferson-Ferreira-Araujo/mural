@@ -16,6 +16,36 @@ const parse = (d?: string) => {
 };
 const clamp = (n: number, lo: number, hi: number) => Math.min(Math.max(n, lo), hi);
 
+/** O vídeo em tamanho grande, por cima da tela inteira. */
+function BigVideo({ src, embedSrc, onClose }: { src?: string; embedSrc?: string; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = ref.current;
+    if (d && !d.open) d.showModal();
+  }, []);
+  return (
+    <dialog
+      ref={ref}
+      onClose={onClose}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      aria-label="Vídeo em tamanho maior"
+      className="m-0 size-full max-h-none max-w-none bg-black/95 p-0 backdrop:bg-black/95"
+    >
+      <div className="relative grid size-full place-items-center p-2 sm:p-6" onClick={(e) => e.target === e.currentTarget && onClose()}>
+        {embedSrc ? (
+          <iframe src={embedSrc} title="Vídeo do YouTube" allow="autoplay; encrypted-media; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" className="aspect-video max-h-full w-full max-w-[min(100%,calc((100dvh-3rem)*16/9))] rounded-xl border-0" />
+        ) : (
+          // eslint-disable-next-line jsx-a11y/media-has-caption
+          <video src={src} controls autoPlay playsInline className="max-h-full max-w-full rounded-xl" />
+        )}
+        <button type="button" onClick={onClose} aria-label="Fechar" className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/20 text-2xl text-white backdrop-blur transition hover:bg-white/35 active:scale-90">
+          ×
+        </button>
+      </div>
+    </dialog>
+  );
+}
+
 /** Botão físico do aparelho: convexo, com brilho em cima e sombra embaixo. */
 function HwButton({ look, label, onClick, big = false, children }: { look: PlayerLook; label: string; onClick?: () => void; big?: boolean; children: ReactNode }) {
   const btn = (
@@ -61,7 +91,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(parse(duration));
-  const [muted, setMuted] = useState(false);
+  const [big, setBig] = useState(false);
 
   // exemplo (sem arquivo): o tempo corre sozinho enquanto "toca"
   useEffect(() => {
@@ -87,10 +117,12 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
     } else setPlaying((p) => !p);
   }
 
-  function skip(delta: number) {
-    const v = videoRef.current;
-    if (v) v.currentTime = clamp(v.currentTime + delta, 0, v.duration || 0);
-    else setCur((c) => clamp(c + delta, 0, dur));
+  // ampliar: abre o vídeo grande por cima de tudo (para de tocar aqui; no grande ele já começa)
+  function expand() {
+    if (!src && !embed) return;
+    videoRef.current?.pause();
+    setPlaying(false);
+    setBig(true);
   }
 
   const ratio = dur > 0 ? clamp(cur / dur, 0, 1) : 0;
@@ -108,9 +140,10 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
 
   return (
     <article aria-label="Vídeo" className="relative w-[14em]">
+      {big && <BigVideo src={src} embedSrc={embed?.src} onClose={() => setBig(false)} />}
       {/* corpo do player */}
       <div
-        className="relative rounded-[1.15em] p-[0.62em] pt-[0.78em]"
+        className="relative rounded-[1em] p-[0.3em]"
         style={{
           background: `linear-gradient(172deg, ${look.body[0]} 0%, ${look.body[1]} 46%, ${look.body[2]} 100%)`,
           boxShadow: [
@@ -124,21 +157,11 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
         }}
       >
         {/* brilho de plástico/metal passando pelo corpo */}
-        <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[1.15em]" style={{ background: "linear-gradient(150deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 70%, rgba(255,255,255,.12) 100%)" }} />
-
-        {/* marca gravada e LED */}
-        <span aria-hidden className="absolute top-[0.22em] left-1/2 -translate-x-1/2 font-mono text-[0.42em] leading-none font-bold tracking-[0.6em]" style={{ color: look.icon, opacity: 0.42, textShadow: "0 0.08em 0 rgba(0,0,0,.35)" }}>
-          PINZ
-        </span>
-        <span
-          aria-hidden
-          className="absolute top-[0.24em] right-[1.2em] size-[0.3em] rounded-full"
-          style={{ background: playing ? "#52ff94" : "#1f6b3a", boxShadow: playing ? "0 0 0.5em 0.12em rgba(82,255,148,.8)" : "none", transition: "all .3s" }}
-        />
+        <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[1em]" style={{ background: "linear-gradient(150deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 70%, rgba(255,255,255,.12) 100%)" }} />
 
         {/* moldura da tela (vidro) */}
-        <div className="relative rounded-[0.75em] bg-black p-[0.2em]" style={{ boxShadow: "inset 0 0 0 0.07em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.35), inset 0 0.2em 0.5em rgba(0,0,0,.9)" }}>
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.55em] bg-black">
+        <div className="relative rounded-[0.7em] bg-black p-[0.12em]" style={{ boxShadow: "inset 0 0 0 0.07em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.35), inset 0 0.2em 0.5em rgba(0,0,0,.9)" }}>
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.6em] bg-black">
             {embed ? (
               playing ? (
                 <iframe
@@ -160,7 +183,6 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
                 src={`${src}#t=0.1`}
                 preload="metadata"
                 playsInline
-                muted={muted}
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
                 onEnded={() => setPlaying(false)}
@@ -197,22 +219,6 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
                 <span>
                   {fmt(cur)} / {dur > 0 ? fmt(dur) : "--:--"}
                 </span>
-                <span className="ml-auto flex items-center gap-[0.6em]">
-                  {src ? (
-                    <button type="button" aria-label={muted ? "Ativar som" : "Silenciar"} aria-pressed={muted} onClick={() => setMuted((m) => !m)} className="pointer-events-auto cursor-pointer text-[1.5em] leading-none">
-                      {muted ? "🔇" : "🔊"}
-                    </button>
-                  ) : (
-                    <span aria-hidden className="text-[1.5em] leading-none">🔊</span>
-                  )}
-                  {src ? (
-                    <button type="button" aria-label="Tela cheia" onClick={() => void videoRef.current?.requestFullscreen?.()} className="pointer-events-auto cursor-pointer text-[1.5em] leading-none">
-                      ⛶
-                    </button>
-                  ) : (
-                    <span aria-hidden className="text-[1.5em] leading-none">⛶</span>
-                  )}
-                </span>
               </div>
             </div>
 
@@ -221,41 +227,16 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
           </div>
         </div>
 
-        {/* botões do aparelho */}
-        <div className="mt-[0.6em] flex items-center justify-between px-[0.15em]">
-          {/* alto-falante (furinhos num encaixe) */}
-          <span aria-hidden className="rounded-[0.45em] p-[0.24em]" style={{ background: "rgba(0,0,0,.18)", boxShadow: "inset 0 0.08em 0.14em rgba(0,0,0,.5), 0 0.05em 0 rgba(255,255,255,.3)" }}>
-            <span className="grid grid-cols-4 gap-[0.17em]">
-              {Array.from({ length: 12 }, (_, i) => (
-                <span key={i} className="size-[0.25em] rounded-full" style={{ background: look.hole, boxShadow: "0 0.05em 0 rgba(255,255,255,.3)" }} />
-              ))}
-            </span>
-          </span>
-          <span className="flex items-center gap-[0.22em]">
-            <HwButton look={look} label="Voltar 5 segundos" onClick={() => skip(-5)}>
-              <svg viewBox="0 0 24 24" className={icon} fill="currentColor" aria-hidden>
-                <path d="M12 6v12L3 12l9-6Zm9 0v12l-9-6 9-6Z" />
-              </svg>
-            </HwButton>
-            <HwButton look={look} label={playing ? "Pausar" : "Reproduzir"} onClick={toggle} big>
-              {playing ? PauseIcon : PlayIcon}
-            </HwButton>
-            <HwButton look={look} label="Avançar 5 segundos" onClick={() => skip(5)}>
-              <svg viewBox="0 0 24 24" className={icon} fill="currentColor" aria-hidden>
-                <path d="M12 6v12l9-6-9-6ZM3 6v12l9-6-9-6Z" />
-              </svg>
-            </HwButton>
-          </span>
-          {/* botão de menu: só enfeite do aparelho */}
-          <span
-            aria-hidden
-            className="grid h-[1.75em] w-[1.9em] place-items-center rounded-full"
-            style={{ color: look.icon, background: `radial-gradient(120% 90% at 50% 15%, ${look.btn[0]}, ${look.btn[1]} 80%)`, boxShadow: "inset 0 0.08em 0.06em rgba(255,255,255,.5), inset 0 -0.1em 0.12em rgba(0,0,0,.4), 0 0.14em 0.2em rgba(0,0,0,.5)", opacity: 0.9 }}
-          >
-            <svg viewBox="0 0 24 24" className="size-[0.95em]" fill="currentColor">
-              <path d="M5 7h14v2H5V7Zm0 4h14v2H5v-2Zm0 4h14v2H5v-2Z" />
+        {/* botões do aparelho: só tocar/pausar e ampliar */}
+        <div className="mt-[0.35em] flex items-center justify-center gap-[0.5em]">
+          <HwButton look={look} label={playing ? "Pausar" : "Reproduzir"} onClick={toggle} big>
+            {playing ? PauseIcon : PlayIcon}
+          </HwButton>
+          <HwButton look={look} label="Ver o vídeo em tamanho maior" onClick={expand}>
+            <svg viewBox="0 0 24 24" className={icon} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" />
             </svg>
-          </span>
+          </HwButton>
         </div>
       </div>
 
