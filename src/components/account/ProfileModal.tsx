@@ -15,6 +15,31 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [delOpen, setDelOpen] = useState(false); // confirmação de excluir a conta
+  const [delText, setDelText] = useState("");
+  const [delBusy, setDelBusy] = useState(false);
+  const [delErr, setDelErr] = useState<string | null>(null);
+
+  async function deleteAccount() {
+    if (delText.trim().toUpperCase() !== "EXCLUIR" || delBusy) return;
+    setDelBusy(true);
+    setDelErr(null);
+    const sb = getBrowserSupabase();
+    const { data } = await sb.auth.getSession();
+    const res = await fetch("/api/account/delete", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${data.session?.access_token ?? ""}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ confirm: "EXCLUIR" }),
+    }).catch(() => null);
+    if (res?.ok) {
+      await sb.auth.signOut();
+      window.location.assign("/");
+      return;
+    }
+    setDelBusy(false);
+    const err = (await res?.json().catch(() => null)) as { error?: string } | null;
+    setDelErr(err?.error === "admin" ? "Contas de administrador não podem ser excluídas por aqui." : err?.error === "rate_limited" ? "Muitas tentativas. Tente de novo mais tarde." : "Não foi possível excluir agora. Tente de novo ou fale com o suporte.");
+  }
 
   async function save(e: FormEvent) {
     e.preventDefault();
@@ -75,6 +100,50 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
       <button type="button" onClick={onSignOut} className="mt-5 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
         Sair da conta
       </button>
+
+      <div className="mt-6 border-t border-[#e1d3ba] pt-4">
+        {!delOpen ? (
+          <button type="button" onClick={() => setDelOpen(true)} className="cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
+            Excluir minha conta
+          </button>
+        ) : (
+          <div role="alertdialog" aria-label="Excluir minha conta" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
+            <p className="text-sm font-bold text-[#6b2a1c]">Excluir a conta apaga tudo</p>
+            <p className="mt-1 text-sm text-[#6b2a1c]">Seus murais, pins, fotos, bottons e créditos serão apagados, e a assinatura PLUS será cancelada. Os recados que você deixou em murais de outras pessoas também somem. Não tem como desfazer.</p>
+            <label htmlFor="del-confirm" className="mt-3 block text-sm font-semibold text-[#6b2a1c]">
+              Para confirmar, digite EXCLUIR
+            </label>
+            <input id="del-confirm" value={delText} onChange={(e) => setDelText(e.target.value)} autoComplete="off" className={`${inputClass} mt-1`} />
+            {delErr && (
+              <p role="alert" className="mt-2 text-sm text-[#a23b2a]">
+                {delErr}
+              </p>
+            )}
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setDelOpen(false);
+                  setDelText("");
+                  setDelErr(null);
+                }}
+                disabled={delBusy}
+                className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => void deleteAccount()}
+                disabled={delBusy || delText.trim().toUpperCase() !== "EXCLUIR"}
+                className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {delBusy ? "Excluindo…" : "Excluir para sempre"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </Modal>
   );
 }
