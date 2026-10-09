@@ -17,7 +17,7 @@ export async function fetchLockedLayout(sb: SupabaseClient, ref: MuralRef): Prom
   return error || !Array.isArray(data) ? [] : (data as BoardItem[]);
 }
 
-export type SendFailure = "cooldown" | "pending_exists" | "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "error";
+export type SendFailure = "cooldown" | "pending_exists" | "not_authenticated" | "blocked" | "too_many_pending" | "plan_limit" | "slot_taken" | "rate_limited" | "not_unlocked" | "format_not_allowed" | "upload_failed" | "inappropriate" | "error";
 export type SendResult = { ok: true } | { ok: false; reason: SendFailure };
 
 const EXT: Record<string, string> = {
@@ -27,7 +27,7 @@ const EXT: Record<string, string> = {
 };
 
 /** Sobe o arquivo (foto, vídeo ou voz) para o armazenamento e devolve o endereço público. O caminho começa com o token de desbloqueio. */
-async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string): Promise<string> {
+async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string): Promise<{ url: string; path: string }> {
   const blob = await (await fetch(blobUrl)).blob();
   const type = blob.type.split(";")[0].trim().toLowerCase();
   const ext = EXT[type];
@@ -35,7 +35,18 @@ async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string):
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from("pin-media").upload(path, blob, { contentType: type, cacheControl: "31536000" });
   if (error) throw error;
-  return sb.storage.from("pin-media").getPublicUrl(path).data.publicUrl;
+  return { url: sb.storage.from("pin-media").getPublicUrl(path).data.publicUrl, path };
+}
+
+class InappropriateImage extends Error {}
+
+/** Foto e desenho passam pelo detector de nudez do servidor; só com a aprovação assinada o banco aceita o pin. */
+async function verifyImage(sb: SupabaseClient, path: string): Promise<{ exp: number; sig: string }> {
+  const { data: s } = await sb.auth.getSession();
+  const res = await fetch("/api/pin/verify", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.session?.access_token ?? ""}` }, body: JSON.stringify({ path }) });
+  if (res.status === 422) throw new InappropriateImage();
+  if (!res.ok) throw new Error("verificação indisponível");
+  return (await res.json()) as { exp: number; sig: string };
 }
 
 /** Cola um pin no espaço escolhido. O servidor valida tudo de novo (token, plano, limite, espaço livre, formatos). */
@@ -43,9 +54,13 @@ async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string):
 export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string | null, payload: SendPayload, ownerFolder?: string): Promise<SendResult> {
   const { type, ...content } = payload.message as Record<string, unknown> & { type: string };
   try {
-    if (typeof content.src === "string" && content.src.startsWith("blob:")) content.src = await uploadMedia(sb, token ?? ownerFolder ?? "", content.src);
-  } catch {
-    return { ok: false, reason: "upload_failed" };
+    if (typeof content.src === "string" && content.src.startsWith("blob:")) {
+      const up = await uploadMedia(sb, token ?? ownerFolder ?? "", content.src);
+      content.src = up.url;
+      if (type === "photo" || type === "draw") content.approval = await verifyImage(sb, up.path);
+    }
+  } catch (e) {
+    return { ok: false, reason: e instanceof InappropriateImage ? "inappropriate" : "upload_failed" };
   }
   const { error } = await sb.rpc("send_message", {
     p_nick: ref.nick,
@@ -77,6 +92,7 @@ export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
   not_unlocked: "Responda a pergunta de novo para continuar.",
   format_not_allowed: "Esse formato não está disponível no momento.",
   upload_failed: "Não foi possível enviar o arquivo. Tente de novo.",
+  inappropriate: "Essa imagem não pode ser publicada: ela parece conter conteúdo impróprio.",
   error: "Não foi possível colar o pin agora. Tente de novo.",
 };
 
