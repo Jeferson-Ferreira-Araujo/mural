@@ -148,6 +148,17 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [newMuralOpen, setNewMuralOpen] = useState(false);
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
+  const [followers, setFollowers] = useState<number | null>(null); // seguidores da pessoa dona do mural aberto (só o número)
+  const countNick = selected && !isShared && unlocked ? selected.nickname : null;
+  useEffect(() => {
+    setFollowers(null);
+    if (!countNick) return;
+    let alive = true;
+    void getBrowserSupabase().rpc("get_follower_count", { p_nick: countNick }).then(({ data }) => alive && setFollowers(typeof data === "number" ? data : null));
+    return () => {
+      alive = false;
+    };
+  }, [countNick]);
   const followNick = logged && selected && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
   useEffect(() => {
     setFollowingState(false);
@@ -165,6 +176,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     setFollowingState(next); // muda na hora; se o servidor recusar, volta
     const ok = await setFollowing(getBrowserSupabase(), followNick, next);
     setFollowBusy(false);
+    if (ok) setFollowers((n) => (n === null ? n : Math.max(0, n + (next ? 1 : -1))));
     if (!ok) {
       setFollowingState(!next);
       notify("Não foi possível agora. Tente de novo.");
@@ -822,7 +834,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
           follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
           share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
-          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : undefined}
+          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null } : undefined}
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
