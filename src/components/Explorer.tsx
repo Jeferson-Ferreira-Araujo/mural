@@ -512,14 +512,17 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     async (n: string, s: string) => {
       setLoading(true);
       const m = await getPublicMural(getBrowserSupabase(), { nick: n, slug: s });
+      // se este mural já foi aberto nesta aba, confere o desbloqueio ANTES de trocar: assim a tela da pergunta não pisca na troca
+      const saved = m && m.kind !== "shared" ? loadGrant({ nick: n, slug: s }) : null;
+      const stillOk = saved ? await checkGrantClient(getBrowserSupabase(), { nick: n, slug: s }, saved) : false;
       setLoading(false);
       if (!m) {
         setOpenFailed(true);
         notify("Não foi possível abrir esse mural.");
         return;
       }
-      setUnlocked(false);
-      setToken(null);
+      setUnlocked(stillOk);
+      setToken(stillOk ? saved : null);
       setTried(false);
       setChoices(null);
       setSelected(m);
