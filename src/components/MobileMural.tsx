@@ -86,9 +86,9 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           <button type="button" onClick={() => setFollowersOpen(true)} aria-label="Ver os seguidores" className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">
             <span className="flex items-center justify-end gap-2">
               {!!info.topFollowers?.length && (
-                <span className="flex -space-x-2.5" aria-hidden>
+                <span className="flex -space-x-2" aria-hidden>
                   {info.topFollowers.map((p) => (
-                    <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-8 ring-2 ring-[#e8dcc2]" />
+                    <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-6 ring-2 ring-[#e8dcc2]" />
                   ))}
                 </span>
               )}
