@@ -371,7 +371,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       </div>
     )}
     {item && !isSealed(item) && !isHidden(item) && (mod || item.mine) && (
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="" label="Excluir PIN">
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir PIN" label="Excluir PIN">
         <div className="space-y-4">
           <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este pin? Essa ação não poderá ser desfeita.</p>
           <div className="flex gap-2">
