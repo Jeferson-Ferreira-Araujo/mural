@@ -464,7 +464,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         await reloadInventory();
         return true;
       }
-      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é do PINZ PLUS." : "Não foi possível concluir a compra agora.");
+      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é para quem assina o PINZ PLUS." : "Não foi possível concluir a compra agora.");
       return false;
     },
     [notify, reloadInventory],

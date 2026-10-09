@@ -65,7 +65,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     const res = await buyBoard(getBrowserSupabase(), buying);
     if (!res.ok) {
       setBusy(false);
-      setError(res.reason === "no_credits" ? "Créditos insuficientes para este mural." : res.reason === "plus_required" ? "A compra de murais é do PINZ PLUS." : "Não foi possível comprar agora. Tente de novo.");
+      setError(res.reason === "no_credits" ? "Créditos insuficientes para este mural." : res.reason === "plus_required" ? "Comprar murais é para quem assina o PINZ PLUS." : "Não foi possível comprar agora. Tente de novo.");
       return;
     }
     await load();
