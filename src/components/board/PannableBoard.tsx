@@ -96,15 +96,18 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
 
   /** Muda a ampliação mantendo o ponto (cx, cy) da tela no mesmo lugar do quadro. */
   const zoomTo = useCallback(
-    (newS: number, cx: number, cy: number, animate: boolean) => {
+    (wanted: number, cx: number, cy: number, animate: boolean) => {
       const { x, y, s } = view.current;
+      // o tamanho é limitado ANTES de calcular a posição: pedir mais que o máximo (ou menos que o mínimo) não pode deslocar o quadro
+      const { minS, maxS } = limits();
+      const newS = Math.min(maxS, Math.max(minS, wanted));
       const wx = (cx - x) / s;
       const wy = (cy - y) / s;
       view.current = clampView(cx - wx * newS, cy - wy * newS, newS);
       if (animate) apply(true);
       else scheduleApply();
     },
-    [apply, clampView, scheduleApply],
+    [apply, clampView, scheduleApply, limits],
   );
 
   // mede a área e, na primeira vez, mostra o mural inteiro
