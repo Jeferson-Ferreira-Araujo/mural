@@ -131,38 +131,40 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       {/* mural privado trancado: no cartão da pergunta (celular) o cabeçalho não repete a foto e o nome, que já estão no topo da tela */}
       {title && (open || unlocked || part === "profile") && (
         <header className={`flex flex-col gap-[0.5em] ${open || profileOnly ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
-          {plus && (
-            <span className="self-end rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">
-              PINZ+
-            </span>
-          )}
           <Wrap {...wrapProps} className={`flex min-w-0 items-center gap-[0.7em] text-left ${onProfile ? "cursor-pointer rounded-xl transition hover:opacity-80 active:scale-[0.98]" : ""}`}>
             {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[3.6em]" />}
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words lg:text-[1.45em]">{owner ? `@${owner}` : title}</span>
-              {/* contagem de visualizações do perfil (visitantes diferentes que abriram o mural) */}
-              {visits !== undefined && (open || unlocked) && (
-                <span className={`mt-[0.3em] flex items-center gap-[0.35em] whitespace-nowrap text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+              {plus && (
+                <span className="mt-[0.35em] inline-block rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">PINZ+</span>
+              )}
+            </p>
+          </Wrap>
+          {/* números do perfil, juntos: visualizações (visitantes diferentes que abriram o mural), seguidores e PINZ que a pessoa já colocou */}
+          {(open || unlocked) && (visits !== undefined || followers != null || placed != null) && (
+            <ul className={`flex flex-col gap-[0.35em] text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+              {visits !== undefined && (
+                <li className="flex items-center gap-[0.35em] whitespace-nowrap">
                   <svg viewBox="0 0 24 24" className="size-[1.1em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                   {visits.toLocaleString("pt-BR")} {visits === 1 ? "visualização" : "visualizações"}
-                </span>
+                </li>
               )}
-              {(open || unlocked) && followers != null && (
-                <span className={`mt-[0.3em] block whitespace-nowrap text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+              {followers != null && (
+                <li className="whitespace-nowrap">
                   {followers.toLocaleString("pt-BR")} {followers === 1 ? "seguidor" : "seguidores"}
-                </span>
+                </li>
               )}
-              {(open || unlocked) && placed != null && (
-                <span className={`mt-[0.3em] block whitespace-nowrap text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+              {placed != null && (
+                <li className="whitespace-nowrap">
                   {placed.toLocaleString("pt-BR")} {placed === 1 ? "PINZ colocado" : "PINZ colocados"}
-                </span>
+                </li>
               )}
-            </p>
-          </Wrap>
+            </ul>
+          )}
         </header>
       )}
       {profileOnly ? (
