@@ -57,7 +57,7 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string |
     if (typeof content.src === "string" && content.src.startsWith("blob:")) {
       const up = await uploadMedia(sb, token ?? ownerFolder ?? "", content.src);
       content.src = up.url;
-      if (type === "photo" || type === "draw") content.approval = await verifyImage(sb, up.path);
+      if (type === "photo" || type === "draw" || type === "video") content.approval = await verifyImage(sb, up.path);
     }
   } catch (e) {
     return { ok: false, reason: e instanceof InappropriateImage ? "inappropriate" : "upload_failed" };
@@ -92,7 +92,7 @@ export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
   not_unlocked: "Responda a pergunta de novo para continuar.",
   format_not_allowed: "Esse formato não está disponível no momento.",
   upload_failed: "Não foi possível enviar o arquivo. Tente de novo.",
-  inappropriate: "Essa imagem não pode ser publicada: ela parece conter conteúdo impróprio.",
+  inappropriate: "Esse arquivo não pode ser publicado: ele parece conter conteúdo impróprio.",
   error: "Não foi possível colar o pin agora. Tente de novo.",
 };
 

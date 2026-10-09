@@ -12,6 +12,7 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
 const SECRET = process.env.AVATAR_SIGNING_SECRET ?? "";
 const NSFW_URL = process.env.NSFW_URL ?? "http://nsfw-check:8080";
 const MAX_BYTES = 12 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const APPROVAL_TTL_S = 600;
 
 const fail = (status: number, error: string) => NextResponse.json({ error }, { status });
@@ -34,12 +35,13 @@ export async function POST(req: Request) {
 
   const body = (await req.json().catch(() => null)) as { path?: unknown } | null;
   const path = typeof body?.path === "string" ? body.path : "";
-  if (!/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}\.(jpg|png|webp|gif|heic)$/i.test(path)) return fail(400, "invalid_path");
+  if (!/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}\.(jpg|png|webp|gif|heic|mp4|webm|mov)$/i.test(path)) return fail(400, "invalid_path");
+  const video = /.(mp4|webm|mov)$/i.test(path);
 
   const admin = adminClient();
   const { data: file, error: dlErr } = await admin.storage.from("pin-media").download(path);
   if (dlErr || !file) return fail(404, "not_found");
-  if (file.size > MAX_BYTES) {
+  if (file.size > (video ? MAX_VIDEO_BYTES : MAX_BYTES)) {
     await admin.storage.from("pin-media").remove([path]);
     return fail(413, "too_large");
   }
@@ -47,7 +49,7 @@ export async function POST(req: Request) {
 
   let verdict: { safe?: boolean; flags?: string[]; detected?: string[]; nsfw_prob?: number } | null = null;
   try {
-    const r = await fetch(`${NSFW_URL}/check`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" }, signal: AbortSignal.timeout(25_000) });
+    const r = await fetch(`${NSFW_URL}/${video ? "check-video" : "check"}`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" }, signal: AbortSignal.timeout(video ? 90_000 : 25_000) });
     if (r.status === 422) {
       await admin.storage.from("pin-media").remove([path]);
       return fail(422, "unreadable");

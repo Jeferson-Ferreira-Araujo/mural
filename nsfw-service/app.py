@@ -5,6 +5,7 @@ Só é acessível pela rede interna do Docker (o app Next.js chama este serviço
 """
 import json
 import os
+import subprocess
 import tempfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -34,6 +35,8 @@ MIN_SCORE = {
     "BUTTOCKS_EXPOSED": 0.9,
 }
 MAX_BYTES = 3 * 1024 * 1024
+MAX_VIDEO_BYTES = 60 * 1024 * 1024
+VIDEO_FRAMES = 8  # quadros espalhados pelo vídeo
 
 detector = NudeDetector()
 
@@ -64,6 +67,35 @@ def check(data: bytes) -> dict:
     return {"safe": not flags and prob < CLASSIFIER_MAX, "flags": flags, "nsfw_prob": round(prob, 3), "detected": [f'{d["class"]}:{d["score"]:.2f}' for d in found]}
 
 
+def check_video(data: bytes) -> dict:
+    """Tira `VIDEO_FRAMES` quadros espalhados pelo vídeo e passa cada um pelos dois detectores: basta um reprovar."""
+    with tempfile.TemporaryDirectory() as d:
+        vid = os.path.join(d, "v.bin")
+        with open(vid, "wb") as f:
+            f.write(data)
+        probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", vid], capture_output=True, text=True, timeout=30)
+        try:
+            dur = float(probe.stdout.strip())
+        except ValueError:
+            dur = 0.0
+        if dur <= 0:
+            raise ValueError("vídeo ilegível")
+        flags, worst, scanned = set(), 0.0, 0
+        for i in range(VIDEO_FRAMES):
+            out = os.path.join(d, f"f{i}.jpg")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{dur * (i + 0.5) / VIDEO_FRAMES:.2f}", "-i", vid, "-frames:v", "1", "-vf", "scale=-2:640", out], capture_output=True, timeout=30)
+            if not os.path.exists(out):
+                continue
+            with open(out, "rb") as fr:
+                r = check(fr.read())
+            scanned += 1
+            flags.update(r["flags"])
+            worst = max(worst, r["nsfw_prob"])
+        if scanned == 0:
+            raise ValueError("sem quadros")
+        return {"safe": not flags and worst < CLASSIFIER_MAX, "flags": sorted(flags), "nsfw_prob": worst, "frames": scanned}
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, code: int, body: dict):
         raw = json.dumps(body).encode()
@@ -77,13 +109,15 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, {"ok": True}) if self.path == "/health" else self._send(404, {"error": "not_found"})
 
     def do_POST(self):
-        if self.path != "/check":
+        if self.path not in ("/check", "/check-video"):
             return self._send(404, {"error": "not_found"})
+        video = self.path == "/check-video"
         n = int(self.headers.get("Content-Length", "0"))
-        if n <= 0 or n > MAX_BYTES:
+        if n <= 0 or n > (MAX_VIDEO_BYTES if video else MAX_BYTES):
             return self._send(413, {"error": "invalid_size"})
         try:
-            self._send(200, check(self.rfile.read(n)))
+            data = self.rfile.read(n)
+            self._send(200, check_video(data) if video else check(data))
         except Exception as e:  # imagem ilegível etc.: nunca aprova por engano
             self._send(422, {"error": "unreadable", "detail": str(e)[:120]})
 
