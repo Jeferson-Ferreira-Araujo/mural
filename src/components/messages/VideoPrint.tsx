@@ -92,6 +92,32 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(parse(duration));
   const [big, setBig] = useState(false);
+  const [opened, setOpened] = useState(false); // YouTube: o player oficial já foi aberto (fica montado: pausar não pode recomeçar o vídeo)
+  const frame = useRef<HTMLIFrameElement>(null);
+  const send = (m: unknown) => frame.current?.contentWindow?.postMessage(JSON.stringify(m), "*");
+
+  // o player do YouTube avisa quando toca, pausa ou termina (e o tempo): o botão e a barra acompanham
+  useEffect(() => {
+    if (!embed || !opened) return;
+    const onMsg = (e: MessageEvent) => {
+      if (e.source !== frame.current?.contentWindow) return;
+      let d: { event?: string; info?: unknown } | null = null;
+      try {
+        d = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      } catch {
+        return;
+      }
+      const info = d?.info as { playerState?: number; currentTime?: number; duration?: number } | number | undefined;
+      if (d?.event === "onStateChange" && typeof info === "number") setPlaying(info === 1 || info === 3);
+      if (d?.event === "infoDelivery" && info && typeof info === "object") {
+        if (typeof info.playerState === "number") setPlaying(info.playerState === 1 || info.playerState === 3);
+        if (typeof info.currentTime === "number") setCur(info.currentTime);
+        if (info.duration) setDur(info.duration);
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [embed, opened]);
 
   // exemplo (sem arquivo): o tempo corre sozinho enquanto "toca"
   useEffect(() => {
@@ -109,7 +135,14 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
   }, [src, embed, playing, dur]);
 
   function toggle() {
-    if (embed) return setPlaying((p) => !p); // abre/fecha o player do YouTube
+    if (embed) {
+      // primeira vez: abre o player (já toca); depois só pausa/retoma, sem recomeçar
+      if (!opened) {
+        setOpened(true);
+        setPlaying(true);
+      } else send({ event: "command", func: playing ? "pauseVideo" : "playVideo", args: "" });
+      return;
+    }
     const v = videoRef.current;
     if (v) {
       if (v.paused) void v.play();
@@ -121,6 +154,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
   function expand() {
     if (!src && !embed) return;
     videoRef.current?.pause();
+    if (embed && opened) send({ event: "command", func: "pauseVideo", args: "" });
     setPlaying(false);
     setBig(true);
   }
@@ -163,8 +197,10 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
         <div className="relative rounded-[0.7em] bg-black p-[0.12em]" style={{ boxShadow: "inset 0 0 0 0.07em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.35), inset 0 0.2em 0.5em rgba(0,0,0,.9)" }}>
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.6em] bg-black">
             {embed ? (
-              playing ? (
+              opened ? (
                 <iframe
+                  ref={frame}
+                  onLoad={() => send({ event: "listening", id: 1, channel: "widget" })}
                   src={embed.src}
                   title="Vídeo do YouTube"
                   allow="autoplay; encrypted-media; fullscreen"
