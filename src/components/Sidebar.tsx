@@ -40,7 +40,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
       <div className={`flex flex-col gap-[1.4em] ${menu ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[6.4rem]" />
+        <Brand className="h-[8.4rem]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-fredoka)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
 

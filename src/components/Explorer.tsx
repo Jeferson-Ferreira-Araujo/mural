@@ -774,7 +774,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
 
   // desktop: os atalhos da conta ficam na coluna bege (o celular continua com a gaveta do hambúrguer)
   const sidebarMenu =
-    logged && myNick && !nickPending ? (
+    logged && myNick && !nickPending && (isOwner || !selected) ? ( // vendo o mural de outra pessoa, as opções da própria conta não aparecem
       <AccountDrawer
         onNewMural={isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? () => setNewMuralOpen(true) : undefined}
         inline
