@@ -79,13 +79,14 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
         </p>
-        {follow && <FollowButton follow={follow} compact />}
         <MuralNameMenu title={info.title} label="Murais" sw={muralSwitch} showShared={!!account?.atHome} align="right" className="max-w-[55%] shrink-0 text-right text-base font-bold text-[#2a1c12]" />
       </div>
 
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
+        {/* seguir a pessoa: canto superior esquerdo do quadro (mesmo estilo do Aproximar) */}
+        {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
         {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (
           <button
