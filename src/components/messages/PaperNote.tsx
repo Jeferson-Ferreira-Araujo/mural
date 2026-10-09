@@ -54,7 +54,6 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
       <p className="text-[#232838] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.6 * hand.scale}em`, lineHeight: `${1.55 / (1.6 * hand.scale)}` }}>
         {text}
       </p>
-      <span aria-hidden className="font-hand absolute right-[0.8em] bottom-[0.4em] text-[1.6em] text-[#232838]/70">☆</span>
     </article>
   );
 }
