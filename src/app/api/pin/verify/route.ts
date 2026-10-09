@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   }
   const bytes = Buffer.from(await file.arrayBuffer());
 
-  let verdict: { safe?: boolean } | null = null;
+  let verdict: { safe?: boolean; flags?: string[]; detected?: string[] } | null = null;
   try {
     const r = await fetch(`${NSFW_URL}/check`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" }, signal: AbortSignal.timeout(25_000) });
     if (r.status === 422) {
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
   if (!verdict) return fail(503, "checker_unavailable"); // sem verificação, sem aprovação
 
   if (!verdict.safe) {
+    console.log("pin reprovado pelo detector:", verdict.flags?.join(","), "| detectado:", verdict.detected?.join(","));
     await admin.storage.from("pin-media").remove([path]);
     return fail(422, "nsfw");
   }

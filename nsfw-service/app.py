@@ -21,6 +21,15 @@ BLOCKED = set(
     )
 )
 THRESHOLD = float(os.environ.get("NSFW_THRESHOLD", "0.45"))
+# só o que é EXPLÍCITO reprova: roupa de banho, sunga e cueca (praia, piscina) devem passar. Por isso o limite de confiança é por parte do corpo:
+# nádegas "expostas" é o que mais confunde com sunga/biquíni/short colado, então só reprova com altíssima confiança.
+MIN_SCORE = {
+    "FEMALE_GENITALIA_EXPOSED": 0.5,
+    "MALE_GENITALIA_EXPOSED": 0.65,
+    "ANUS_EXPOSED": 0.55,
+    "FEMALE_BREAST_EXPOSED": 0.65,
+    "BUTTOCKS_EXPOSED": 0.9,
+}
 MAX_BYTES = 3 * 1024 * 1024
 
 detector = NudeDetector()
@@ -31,8 +40,8 @@ def check(data: bytes) -> dict:
         f.write(data)
         f.flush()
         found = detector.detect(f.name)
-    flags = sorted({d["class"] for d in found if d["class"] in BLOCKED and d["score"] >= THRESHOLD})
-    return {"safe": not flags, "flags": flags, "detected": [d["class"] for d in found]}
+    flags = sorted({d["class"] for d in found if d["class"] in BLOCKED and d["score"] >= MIN_SCORE.get(d["class"], THRESHOLD)})
+    return {"safe": not flags, "flags": flags, "detected": [f'{d["class"]}:{d["score"]:.2f}' for d in found]}
 
 
 class Handler(BaseHTTPRequestHandler):

@@ -27,7 +27,7 @@ type Props = {
   hasSelection: boolean;
   unlocked: boolean;
   onCompose: ((slot?: number) => void) | null;
-  info: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null; topFollowers?: { nickname: string; avatar: string | null; plus?: boolean }[] };
+  info: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null; topFollowers?: { nickname: string; avatar: string | null; plus?: boolean }[]; /** tocar na foto/nome abre o resumo do perfil */ onProfile?: () => void };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
   /** texto do mural vazio (PINZ+) */
@@ -78,10 +78,10 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* de quem é o mural + quantos PINZ */}
       <div className="relative z-20 flex shrink-0 items-center gap-3 bg-[#e8dcc2] px-4 py-2 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.2)]">
-        <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11" />
-        <p className="min-w-0 flex-1">
-          <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
-        </p>
+        <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={`Ver o perfil de @${info.owner}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition active:scale-[0.98] disabled:cursor-default">
+          <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11 shrink-0" />
+          <span className="block min-w-0 truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
+        </button>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
           <button type="button" onClick={() => setFollowersOpen(true)} aria-label="Ver os seguidores" className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">

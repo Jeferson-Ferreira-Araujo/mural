@@ -26,6 +26,7 @@ import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { NewMuralModal } from "./account/NewMuralModal";
+import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { isFollowing, setFollowing } from "@/lib/social";
 import { PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
@@ -146,6 +147,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
   }, [session]);
   const [newMuralOpen, setNewMuralOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false); // resumo do perfil de quem é o mural aberto
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
   const [followers, setFollowers] = useState<number | null>(null); // seguidores da pessoa dona do mural aberto (só o número)
@@ -708,6 +710,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               owner={selected.nickname}
               avatar={selected.avatar}
               plus={selected.plan === "full"}
+              onProfile={selected.kind === "shared" ? undefined : () => setProfileOpen(true)}
               visits={selected.kind === "shared" ? undefined : selected.stats.visited}
               question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
@@ -847,7 +850,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
           follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
           share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
-          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null, topFollowers: unlocked && !isShared ? topFollowers : [] } : undefined}
+          muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null, topFollowers: unlocked && !isShared ? topFollowers : [], onProfile: isShared ? undefined : () => setProfileOpen(true) } : undefined}
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
@@ -920,6 +923,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/"));
             }}
           />
+          {selected && !isShared && <ProfileSummaryModal open={profileOpen} onClose={() => setProfileOpen(false)} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
           {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />

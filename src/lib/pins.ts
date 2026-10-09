@@ -44,7 +44,7 @@ class InappropriateImage extends Error {}
 async function verifyImage(sb: SupabaseClient, path: string): Promise<{ exp: number; sig: string }> {
   const { data: s } = await sb.auth.getSession();
   const res = await fetch("/api/pin/verify", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.session?.access_token ?? ""}` }, body: JSON.stringify({ path }) });
-  if (res.status === 422) throw new InappropriateImage();
+  if (res.status === 422 && ((await res.json().catch(() => null)) as { error?: string } | null)?.error === "nsfw") throw new InappropriateImage();
   if (!res.ok) throw new Error("verificação indisponível");
   return (await res.json()) as { exp: number; sig: string };
 }

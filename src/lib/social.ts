@@ -8,6 +8,20 @@ export async function listVisitors(sb: SupabaseClient): Promise<{ hidden: boolea
   return error || !data ? null : (data as { hidden: boolean; visitors: PersonLite[]; followers: number });
 }
 
+export type ProfileSummary = { nickname: string; avatar: string | null; plus: boolean; followers: number | null; views: number; self: boolean | null };
+
+export async function getProfileSummary(sb: SupabaseClient, nick: string): Promise<ProfileSummary | null> {
+  const { data, error } = await sb.rpc("get_profile_summary", { p_nick: nick });
+  return error || !data ? null : (data as ProfileSummary);
+}
+
+export type ProfileReportReason = "ofensa" | "assedio" | "sexual" | "falso" | "spam" | "outro";
+
+export async function reportProfile(sb: SupabaseClient, nick: string, reason: ProfileReportReason, details: string): Promise<boolean> {
+  const { error } = await sb.rpc("report_profile", { p_nick: nick, p_reason: reason, p_details: details || null });
+  return !error;
+}
+
 /** Seguidores da pessoa dona do mural aberto (quem desligou "Aparecer como visitante" não entra na lista). */
 export async function listFollowers(sb: SupabaseClient, nick: string): Promise<PersonLite[] | null> {
   const { data, error } = await sb.rpc("list_followers", { p_nick: nick });

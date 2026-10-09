@@ -377,6 +377,7 @@ export default function Admin() {
   const [q, setQ] = useState("");
   const [users, setUsers] = useState<{ total: number; rows: UserRow[] } | null>(null);
   const [reports, setReports] = useState<Report[] | null>(null);
+  const [profReports, setProfReports] = useState<{ id: string; createdAt: string; reason: string; details: string | null; reported: string | null; reportedId: string; reportedBanned: boolean; reporter: string | null; reportsAgainst: number }[] | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [muralId, setMuralId] = useState<string | null>(null);
   const [banTarget, setBanTarget] = useState<{ id: string; label: string } | null>(null);
@@ -395,6 +396,8 @@ export default function Admin() {
   const loadReports = useCallback(async () => {
     const r = await rpc<Report[]>("admin_reports", { p_limit: 100 });
     if (r.ok) setReports(r.data);
+    const p = await rpc<NonNullable<typeof profReports>>("admin_profile_reports", { p_limit: 100 });
+    if (p.ok) setProfReports(p.data);
   }, []);
 
   useEffect(() => {
@@ -563,8 +566,38 @@ export default function Admin() {
               <div className="py-8">
                 <Spinner />
               </div>
-            ) : reports.length === 0 ? (
-              <p className="py-8 text-center text-sm text-[#6b5440]">Nenhuma denúncia.</p>
+            ) : (
+              <>
+                {!!profReports?.length && (
+                  <div className="mb-5">
+                    <h3 className="font-title mb-2 text-base font-semibold">Denúncias de perfil</h3>
+                    <ul className="space-y-2.5">
+                      {profReports.map((r) => (
+                        <li key={r.id} className="rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-sm">
+                          <p className="font-semibold">
+                            <Tag tone="red">{r.reason}</Tag> contra <strong>@{r.reported ?? "—"}</strong> {r.reportedBanned && <Tag tone="red">bloqueado</Tag>}
+                          </p>
+                          <p className="mt-0.5 text-xs text-[#6b5440]">
+                            {fmt(r.createdAt)} · por @{r.reporter ?? "—"} · {r.reportsAgainst} denúncia(s) contra esta conta
+                          </p>
+                          {r.details && <p className="mt-1 text-xs break-words">“{r.details}”</p>}
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <button type="button" className={btn} onClick={() => setUserId(r.reportedId)}>
+                              Ver usuário
+                            </button>
+                            {!r.reportedBanned && (
+                              <button type="button" className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a]`} onClick={() => setBanTarget({ id: r.reportedId, label: r.reported ?? "perfil" })}>
+                                Bloquear perfil
+                              </button>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {reports.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[#6b5440]">Nenhuma denúncia de pin.</p>
             ) : (
               <ul className="space-y-2.5">
                 {reports.map((r) => (
@@ -599,6 +632,8 @@ export default function Admin() {
                   </li>
                 ))}
               </ul>
+            )}
+              </>
             )}
           </section>
         )}

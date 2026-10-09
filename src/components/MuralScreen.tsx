@@ -30,6 +30,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [needAccount, setNeedAccount] = useState(false);
   const [blocked, setBlocked] = useState<string | null>(null);
   const { onNotify } = view;
@@ -69,7 +70,7 @@ export function MuralScreen({ composer, ...view }: Props) {
       {composer.mode === "demo" && (
         <ComposerDialog
           open={open}
-          onClose={() => setOpen(false)}
+          onClose={() => (setOpen(false), setSendError(null))}
           plan={view.plan}
           capacity={capacity}
           taken={takenSlots(view.items, capacity)}
@@ -79,13 +80,15 @@ export function MuralScreen({ composer, ...view }: Props) {
           signAs={composer.signAs}
           onTried={composer.onTried}
           sending={sending}
+          error={sendError}
           onSend={async (p) => {
             if (sending) return;
             setSending(true);
+            setSendError(null);
             try {
               const err = await composer.onSend(p);
               if (err) {
-                onNotify(err);
+                setSendError(err); // dentro da janela: o aviso da página fica atrás dela
                 return;
               }
               setOpen(false);

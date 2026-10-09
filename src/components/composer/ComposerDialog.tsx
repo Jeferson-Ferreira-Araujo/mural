@@ -33,6 +33,8 @@ type Props = {
   triedAlready: boolean;
   /** Nickname de quem está logado: todo pin sai assinado com ele (não existe pin anônimo). */
   signAs?: string | null;
+  /** motivo de o último envio não ter dado certo (aparece junto do botão, dentro da janela) */
+  error?: string | null;
 };
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
@@ -79,7 +81,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  *    (PINZ+) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -156,6 +158,11 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {(fixedSlot === null || fixedSlot === undefined) && <SlotPicker capacity={capacity} available={capacity} taken={taken} value={slot} onChange={setPicked} />}
 
+      {error && (
+        <p role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] px-3.5 py-2.5 text-sm font-semibold text-[#8c3022]">
+          {error}
+        </p>
+      )}
       <button type="submit" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>

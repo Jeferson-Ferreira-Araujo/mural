@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ElementType, type FormEvent } from "react";
 import type { UnlockResult } from "@/lib/mural";
 import { Avatar } from "./Avatar";
 
@@ -26,6 +26,8 @@ type Props = {
   password?: boolean;
   /** "form": só o cartão de pergunta, grande, para o centro do quadro (desktop); "profile": só o perfil (sem a pergunta); padrão: tudo junto */
   part?: "form" | "profile";
+  /** tocar na foto/nome abre o resumo do perfil */
+  onProfile?: () => void;
 };
 
 const LockIcon = () => (
@@ -38,11 +40,13 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, part }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, part, onProfile }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const dark = tone === "dark";
+  const Wrap: ElementType = onProfile ? "button" : "div"; // foto e nome abrem o resumo do perfil
+  const wrapProps = onProfile ? { type: "button" as const, onClick: onProfile, "aria-label": `Ver o perfil de @${owner}` } : {};
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -129,7 +133,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               ★ PINZ+
             </span>
           )}
-          <div className="flex min-w-0 items-center gap-[0.7em]">
+          <Wrap {...wrapProps} className={`flex min-w-0 items-center gap-[0.7em] text-left ${onProfile ? "cursor-pointer rounded-xl transition hover:opacity-80 active:scale-[0.98]" : ""}`}>
             {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[4.6em]" />}
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
@@ -145,7 +149,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
                 </span>
               )}
             </p>
-          </div>
+          </Wrap>
         </header>
       )}
       {profileOnly ? (
