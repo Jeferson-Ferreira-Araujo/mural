@@ -94,15 +94,16 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
         {/* escolher o mural: canto superior direito do quadro, na linha do Novo mural */}
-        <MuralNameMenu
-          title={info.title}
-          label="Murais"
-          sw={muralSwitch}
-          showShared={!!account?.atHome}
-          align="right"
-          className="absolute top-3 right-3 z-30"
-          triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-        />
+        <div className="absolute top-3 right-3 z-30">
+          <MuralNameMenu
+            title={info.title}
+            label="Murais"
+            sw={muralSwitch}
+            showShared={!!account?.atHome}
+            align="right"
+            triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+          />
+        </div>
         {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (
           <button
