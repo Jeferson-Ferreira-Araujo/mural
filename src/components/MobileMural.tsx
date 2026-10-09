@@ -13,6 +13,7 @@ import { BadgeBar } from "./badges/BadgeBar";
 import { ShareButton } from "./ShareButton";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { FollowButton } from "./FollowButton";
+import { PlanLimit } from "./PlanLimit";
 import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
@@ -115,6 +116,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           />
         </div>
+        {/* conta FREE no próprio mural: contador de pins e explicação do limite (não há "Novo mural" nesse plano) */}
+        {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-3 left-3 z-20" />}
         {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
         {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (

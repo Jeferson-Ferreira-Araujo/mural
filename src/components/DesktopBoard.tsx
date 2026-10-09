@@ -10,6 +10,7 @@ import { MuralNameMenu } from "./MuralNameMenu";
 import { LockedNotice } from "./LockedNotice";
 import { ShareButton } from "./ShareButton";
 import { FollowButton } from "./FollowButton";
+import { PlanLimit } from "./PlanLimit";
 import { Sidebar } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 
@@ -46,6 +47,7 @@ export function DesktopBoard(props: ViewProps) {
                 <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />
               </h2>
             )}
+            {hasSelection && !locked && unlocked && account?.atHome && plan === "free" && <PlanLimit used={items.length} />}
             {hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
