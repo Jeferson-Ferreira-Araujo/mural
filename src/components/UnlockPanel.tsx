@@ -80,7 +80,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     if (res.reason === "wrong" && password) setHint("Senha incorreta.");
     else if (res.reason === "wrong") {
       if ((res.fails ?? 0) >= 3) {
-        setBlockMsg("Pelo jeito você não me conhece, tente novamente em 30 minutos.");
+        setBlockMsg(`Pelo jeito você não conhece ${owner ? `@${owner}` : "essa pessoa"}, tente novamente em 30 minutos.`);
         setHint(null);
         setAnswer("");
         onBlock?.(res.retryAfter ?? 1800);
