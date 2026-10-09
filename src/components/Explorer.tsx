@@ -280,12 +280,16 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const sb = getBrowserSupabase();
     const ch = sb
       .channel(`mural:${watchId}`)
-      .on("broadcast", { event: "revoked" }, () => relock("O dono mudou a pergunta do mural. Responda de novo para continuar."))
+      // o canal é aberto: qualquer um poderia mandar um aviso falso. Por isso o aviso só vale se o servidor confirmar que o acesso caiu
+      .on("broadcast", { event: "revoked" }, () => {
+        if (!nick || !slug || !token) return;
+        void checkGrantClient(sb, { nick, slug }, token).then((ok) => !ok && relock("O dono mudou a pergunta do mural. Responda de novo para continuar."));
+      })
       .subscribe();
     return () => {
       void sb.removeChannel(ch);
     };
-  }, [unlocked, watchId, isOwner, isMember, relock]);
+  }, [unlocked, watchId, isOwner, isMember, relock, nick, slug, token]);
 
   // o desbloqueio é conferido só na hora de abrir o mural (acima): a leitura abaixo, se falhar depois de o mural já estar na tela, não tranca nada
   useEffect(() => {
