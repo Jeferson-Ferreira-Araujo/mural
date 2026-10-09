@@ -87,7 +87,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           <div className="flex flex-col items-center gap-2 text-center">
             <Avatar src={data.avatar} name={data.nickname} plus={data.plus} className="size-28" />
             <p className="font-title text-2xl font-semibold [overflow-wrap:anywhere]">@{data.nickname}</p>
-            {data.plus && <span className="rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-3 py-1 text-xs font-bold tracking-wide text-[#3a2300] shadow-[0_0.15rem_0.5rem_rgba(150,90,0,.4)]">★ PINZ+</span>}
+            {data.plus && <span className="rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-3 py-1 text-xs font-bold tracking-wide text-[#3a2300] shadow-[0_0.15rem_0.5rem_rgba(150,90,0,.4)]">PINZ+</span>}
           </div>
 
           {showStats && (

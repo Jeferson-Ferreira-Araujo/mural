@@ -11,7 +11,6 @@ export function PlanBadge({ plan, className = "" }: { plan: PlanId; className?: 
           : "border border-[#c9b68f] bg-[#f3ead8] text-[#6b5440]"
       } ${className}`}
     >
-      {full && <span aria-hidden>★</span>}
       {PLANS[plan].name}
     </span>
   );
