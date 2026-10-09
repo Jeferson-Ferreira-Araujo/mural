@@ -243,7 +243,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 <ShareIcon />
               </button>
             )}
-            {mod && !isSealed(item) && !isHidden(item) && (
+            {mod && !isSealed(item) && !isHidden(item) && !item.mine && (
               <button
                 type="button"
                 disabled={busy}
