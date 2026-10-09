@@ -29,7 +29,7 @@ services:
     container_name: nsfw-check
     restart: unless-stopped
     networks: [coolify]
-    mem_limit: 640m
+    mem_limit: 1100m
     cpus: 1.0
 
 networks:

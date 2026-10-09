@@ -8,6 +8,9 @@ import os
 import tempfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+import cv2
+import numpy as np
+import onnxruntime
 from nudenet import NudeDetector
 
 # partes do corpo EXPOSTAS que reprovam a foto (rostos, braços, pés etc. são liberados)
@@ -34,14 +37,31 @@ MAX_BYTES = 3 * 1024 * 1024
 
 detector = NudeDetector()
 
+# 2ª opinião: classificador da imagem INTEIRA (ViT), que pega o que o detector de partes do corpo não enxerga (enquadramento fechado, ângulo, etc).
+# Em teste: fotos comuns e de praia (sunga/biquíni) ficam com nota perto de 0; conteúdo explícito, perto de 1.
+CLASSIFIER_MAX = float(os.environ.get("NSFW_CLASSIFIER_MAX", "0.9"))
+classifier = onnxruntime.InferenceSession("/app/cls.onnx", providers=["CPUExecutionProvider"])
+
+
+def nsfw_prob(path: str) -> float:
+    im = cv2.imread(path)
+    if im is None:
+        raise ValueError("imagem ilegível")
+    im = cv2.cvtColor(cv2.resize(im, (224, 224), interpolation=cv2.INTER_CUBIC), cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
+    x = ((im - 0.5) / 0.5).transpose(2, 0, 1)[None]
+    logits = classifier.run(None, {classifier.get_inputs()[0].name: x})[0][0]
+    e = np.exp(logits - logits.max())
+    return float((e / e.sum())[1])
+
 
 def check(data: bytes) -> dict:
     with tempfile.NamedTemporaryFile(suffix=".img", delete=True) as f:
         f.write(data)
         f.flush()
         found = detector.detect(f.name)
+        prob = nsfw_prob(f.name)
     flags = sorted({d["class"] for d in found if d["class"] in BLOCKED and d["score"] >= MIN_SCORE.get(d["class"], THRESHOLD)})
-    return {"safe": not flags, "flags": flags, "detected": [f'{d["class"]}:{d["score"]:.2f}' for d in found]}
+    return {"safe": not flags and prob < CLASSIFIER_MAX, "flags": flags, "nsfw_prob": round(prob, 3), "detected": [f'{d["class"]}:{d["score"]:.2f}' for d in found]}
 
 
 class Handler(BaseHTTPRequestHandler):
