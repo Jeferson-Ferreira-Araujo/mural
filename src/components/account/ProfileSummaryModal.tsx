@@ -4,6 +4,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { createSharedMural, SHARED_ERROR_TEXT } from "@/lib/shared";
 import { getProfileSummary, reportProfile, type ProfileReportReason, type ProfileSummary } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
+import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { Avatar } from "../Avatar";
 import { ShareButton } from "../ShareButton";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
@@ -38,6 +40,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   const [password, setPassword] = useState("");
   const [reason, setReason] = useState<ProfileReportReason>("ofensa");
   const [details, setDetails] = useState("");
+  const [board, setBoard] = useState<string>(DEFAULT_BOARD);
+  const [offers, setOffers] = useState<BoardOffer[]>([]);
 
   useEffect(() => {
     if (!open) return;
@@ -47,8 +51,12 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setTitle("");
     setPassword("");
     setDetails("");
+    setBoard(DEFAULT_BOARD);
+    if (logged) void fetchInventory(getBrowserSupabase()).then((inv) => setOffers(inv?.boards ?? []));
     void getProfileSummary(getBrowserSupabase(), nick).then(setData);
-  }, [open, nick]);
+  }, [open, nick, logged]);
+  // o padrão e os tipos de mural que quem cria (você) já tem
+  const ownedBoards = BOARDS.filter((b) => b.id === DEFAULT_BOARD || offers.find((o) => o.id === b.id)?.owned === true);
 
   const self = data?.self === true;
 
@@ -60,6 +68,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     const res = await createSharedMural(getBrowserSupabase(), title.trim(), nick, password);
     setBusy(false);
     if (!res.ok) return setErr(SHARED_ERROR_TEXT[res.reason]);
+    if (board !== DEFAULT_BOARD) await getBrowserSupabase().rpc("set_mural_board", { p_mural_id: res.id, p_board: board });
     onNotify(`Convite enviado para @${nick}! O mural abre quando a pessoa aceitar.`);
     onClose();
   }
@@ -117,6 +126,36 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             Um mural só de vocês dois. Você define o nome e a senha e <strong>@{data.nickname}</strong> recebe o convite. Os dois precisam ter o PINZ+.
           </p>
           {!viewerPlus && <p className="rounded-xl border border-[#ecd9a0] bg-[#fff6dd] px-3 py-2 text-sm text-[#6b4a10]">Você ainda não tem o PINZ+. Assine o PINZ+ no menu (Planos) para criar murais compartilhados.</p>}
+          <fieldset className="min-w-0">
+            <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
+            <div role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+              {ownedBoards.map((bd) => {
+                const on = board === bd.id;
+                return (
+                  <button
+                    key={bd.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    onClick={() => setBoard(bd.id)}
+                    className={`relative w-[7.5rem] shrink-0 cursor-pointer snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full rounded-lg object-cover" />
+                    {on && (
+                      <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow">
+                        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m5 12.5 4.5 4.5L19 7.5" />
+                        </svg>
+                      </span>
+                    )}
+                    <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {ownedBoards.length === 1 && <p className="text-xs text-[#6b5440]">Outros tipos de mural você compra na loja.</p>}
+          </fieldset>
           <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Nossa viagem" className={inputClass} />}</Field>
           <Field label="Senha do mural" hint={<span className="text-xs text-[#8a7b69]">Combine com a outra pessoa (mínimo 6 caracteres)</span>}>
             {(id) => <input id={id} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />}
