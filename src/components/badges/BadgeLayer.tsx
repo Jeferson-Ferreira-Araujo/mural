@@ -5,6 +5,8 @@ import { badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKe
 import { DisplayCard, WIDGET_W } from "../widgets";
 import { useBadges } from "./BadgeContext";
 
+const HOLD_MS = 380; // tempo de segurar um widget no celular para movê-lo
+
 function PlacedItem({ b }: { b: PlacedBadge }) {
   const ctx = useBadges();
   const { begin, draggingId, select } = ctx;
@@ -25,9 +27,34 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     const el = ref.current;
     if (!el || !editable) return;
     const down = (ev: PointerEvent) => {
-      ev.stopPropagation();
       lastType.current = ev.pointerType;
       tapStart.current = { x: ev.clientX, y: ev.clientY, t: performance.now() };
+      // widget da loja no celular: arrastar com o dedo move o MURAL (o dedo costuma passar por cima do widget); para mover o widget é preciso apertar e segurar
+      if (display && ev.pointerType !== "mouse") {
+        selectRef.current(null);
+        const x0 = ev.clientX;
+        const y0 = ev.clientY;
+        const stop = () => {
+          if (timer) window.clearTimeout(timer);
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", stop);
+          window.removeEventListener("pointercancel", stop);
+        };
+        const move = (e2: PointerEvent) => {
+          if (e2.pointerId === ev.pointerId && Math.hypot(e2.clientX - x0, e2.clientY - y0) > 8) stop(); // o dedo andou: é o mural sendo arrastado
+        };
+        const timer = window.setTimeout(() => {
+          stop();
+          tapStart.current = null; // não vira toque de seleção
+          navigator.vibrate?.(25);
+          beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, scale: scaleRef.current }, el);
+        }, HOLD_MS);
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", stop);
+        window.addEventListener("pointercancel", stop);
+        return; // sem stopPropagation: o quadro pode arrastar normalmente
+      }
+      ev.stopPropagation();
       selectRef.current(null); // começou um arraste: fecha os controles
       beginRef.current(ev, { kind: "placed", id: b.id, key: b.key, scale: scaleRef.current }, el);
     };
@@ -36,7 +63,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       const s0 = tapStart.current;
       tapStart.current = null;
       if (!s0) return;
-      if (Math.hypot(ev.clientX - s0.x, ev.clientY - s0.y) < 8 && performance.now() - s0.t < 600) selectRef.current(b.id);
+      if (Math.hypot(ev.clientX - s0.x, ev.clientY - s0.y) < 8 && performance.now() - s0.t < (display && ev.pointerType !== "mouse" ? HOLD_MS : 600)) selectRef.current(b.id);
     };
     el.addEventListener("pointerdown", down);
     el.addEventListener("pointerup", up);
@@ -44,7 +71,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       el.removeEventListener("pointerdown", down);
       el.removeEventListener("pointerup", up);
     };
-  }, [editable, b.id, b.key]);
+  }, [editable, b.id, b.key, display]);
 
   const def = badgeDef(b.key);
   if (display) {
@@ -53,6 +80,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       <div
         ref={ref}
         data-badge-id={b.id}
+        data-badge-kind="display"
         className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >

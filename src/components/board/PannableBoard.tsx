@@ -167,7 +167,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const onMove = useCallback(
     (e: PointerEvent) => {
       if (!pointers.current.has(e.pointerId)) return;
-      if (document.body.classList.contains("pin-dragging")) return; // arrastando um pin: o quadro fica parado
+      if (document.body.classList.contains("pin-dragging") || document.body.classList.contains("badge-dragging")) return; // arrastando um pin, botton ou widget: o quadro fica parado
       const p = rel(e);
       pointers.current.set(e.pointerId, p);
       if (pointers.current.size >= 2) {

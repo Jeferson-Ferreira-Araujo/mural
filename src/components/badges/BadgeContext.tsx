@@ -29,7 +29,7 @@ type Ctx = {
   /** toque no botton (celular): mostra os controles até tocar em outro lugar */
   select: (id: string | null) => void;
   /** tira do mural (e devolve à barra) os botons que estão debaixo desta área da tela: usado quando um pin de aparelho é movido para cima deles */
-  removeOver: (rect: { left: number; right: number; top: number; bottom: number }) => void;
+  removeOver: (rect: { left: number; right: number; top: number; bottom: number }, minOverlap?: number) => void;
   /** pins da loja que a pessoa tem (bible, motivation, clock, weather): aparecem na barra */
   displays: string[];
   /** escolheu um pin da loja na barra: abre as opções e depois o mural escurece para ela arrastar o pin ao lugar que quiser */
@@ -44,7 +44,7 @@ const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão 
 const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false });
 export const useBadges = () => useContext(BadgeCtx);
 
-type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[] } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
+type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
 type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; /** inclinação do botton já colocado: o arraste mostra o botton como ele é */ rot?: number; back?: { x: number; y: number } };
 
 const visible = (el: Element | null) => !!el && el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
@@ -93,7 +93,9 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   if (display) {
     const dx = clamp(px, lr.left + w / 2, lr.right - w / 2);
     const dy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
-    if (coversBadge(dx, dy)) return { kind: "badge" };
+    // outro widget da loja no caminho não vale; botton comum não impede: ele volta para a barra (como acontece com pins de aparelho)
+    const dOthers = [...layer.children].filter((c) => c !== ignore && (c as HTMLElement).dataset.badgeKind === "display").map((c) => c.getBoundingClientRect());
+    if (dOthers.some((o) => dx + (w * 0.8) / 2 > o.left + o.width * 0.1 && dx - (w * 0.8) / 2 < o.right - o.width * 0.1 && dy + (h * 0.8) / 2 > o.top + o.height * 0.1 && dy - (h * 0.8) / 2 < o.bottom - o.height * 0.1)) return { kind: "badge" };
     const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
     const slots: number[] = [];
     let taken = false;
@@ -108,7 +110,7 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
       }
     }
     if (taken) return { kind: "occupied" };
-    return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots };
+    return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }
   if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
 
@@ -184,6 +186,7 @@ export function BadgeProvider({
   const live = useRef({ muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged });
   live.current = { muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged };
   const cleanup = useRef<(() => void) | null>(null);
+  const removeOverRef = useRef<((rect: { left: number; right: number; top: number; bottom: number }, minOverlap?: number) => void) | null>(null);
 
   const begin = useCallback(
     (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => {
@@ -313,6 +316,7 @@ export function BadgeProvider({
           // display da loja: a posição e os espaços cobertos mudam juntos (os espaços que ele deixa ficam livres)
           const cur0 = live.current.badges.find((b) => b.id === src.id);
           const before = cur0 ? { x: cur0.x, y: cur0.y, slots: cur0.slots } : null;
+          if (drop.rect) removeOverRef.current?.(drop.rect, 0.02); // botton debaixo do widget volta para a barra
           setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y, slots: drop.slots ?? [] } : b)));
           void updateDisplayLayout(getBrowserSupabase(), src.id, drop.x, drop.y, src.scale ?? DISPLAY_SCALE, drop.slots ?? []).then((r) => {
             if (!r.ok) {
@@ -490,6 +494,7 @@ export function BadgeProvider({
           nx = d2.x;
           ny = d2.y;
           slots = d2.slots ?? [];
+          if (d2.rect) removeOverRef.current?.(d2.rect, 0.02);
         } else if (d2.kind === "occupied") {
           back();
           return notify("Não há espaço para aumentar: ele cobriria um pin.");
@@ -550,10 +555,11 @@ export function BadgeProvider({
     live.current.onDisplaysChanged?.();
   }
   /** O pin foi solto num lugar válido: grava no servidor. */
-  async function placeDisplay(product: string, data: DisplayPayload, x: number, y: number, slots: number[]) {
+  async function placeDisplay(product: string, data: DisplayPayload, x: number, y: number, slots: number[], rect?: { left: number; right: number; top: number; bottom: number }) {
     const mid = live.current.muralId;
     setPlacing(null);
     if (!mid) return;
+    if (rect) removeOverRef.current?.(rect, 0.02); // botton debaixo do widget volta para a barra
     const { text: _t, ref: _r, product: _p, ...clean } = data;
     void _t;
     void _r;
@@ -568,19 +574,20 @@ export function BadgeProvider({
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
   const removeOver = useCallback(
-    (rect: { left: number; right: number; top: number; bottom: number }) => {
-      const mine = new Set(live.current.badges.filter((b) => b.mine !== false).map((b) => b.id));
+    (rect: { left: number; right: number; top: number; bottom: number }, minOverlap = 0.1) => {
+      const mine = new Set(live.current.badges.filter((b) => b.mine !== false && !isDisplayKey(b.key)).map((b) => b.id)); // só bottons comuns voltam para a barra, nunca outros widgets
       for (const el of document.querySelectorAll<HTMLElement>("[data-badge-id]")) {
         const id = el.dataset.badgeId;
         if (!id || !mine.has(id) || !visible(el)) continue;
         const r = el.getBoundingClientRect();
-        const mx = r.width * 0.1;
-        const my = r.height * 0.1; // só conta se o botton cobre um pedaço de verdade
+        const mx = r.width * minOverlap;
+        const my = r.height * minOverlap; // só conta se o botton cobre um pedaço de verdade
         if (r.right - mx > rect.left && r.left + mx < rect.right && r.bottom - my > rect.top && r.top + my < rect.bottom) removeById(id);
       }
     },
     [removeById],
   );
+  removeOverRef.current = removeOver;
   const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
@@ -599,7 +606,7 @@ export function BadgeProvider({
           onSubmit={(d) => void submitDialog(d as DisplayPayload)}
         />
       )}
-      {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots) => void placeDisplay(placing.product, placing.data, x, y, slots)} notify={notify} />}
+      {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots, rect) => void placeDisplay(placing.product, placing.data, x, y, slots, rect)} notify={notify} />}
       {controlsId && <BadgeControls onEdit={editDisplay} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && isDisplayKey(ghost.key) && (
         <div
@@ -782,7 +789,7 @@ const visibleLayer = () => visibleOne("[data-badge-layer]") as HTMLElement | nul
  * Pin da loja escolhido: o mural fica escuro, o pin aparece no centro do quadro e a pessoa o arrasta para onde quiser.
  * Só vale sobre espaços livres (os espaços que o pin cobrir deixam de receber post-its, fotos e vídeos).
  */
-function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: string; data: DisplayPayload; onCancel: () => void; onDrop: (x: number, y: number, slots: number[]) => void; notify: (m: string) => void }) {
+function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: string; data: DisplayPayload; onCancel: () => void; onDrop: (x: number, y: number, slots: number[], rect?: { left: number; right: number; top: number; bottom: number }) => void; notify: (m: string) => void }) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [size, setSize] = useState({ w: 120, h: 120 });
   const [state, setState] = useState<"ok" | "bad">("ok");
@@ -836,8 +843,8 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
       if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return; // foi só um toque
       const d = check(x, y);
       if (!d) return;
-      if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? []);
-      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar sobre outro botton ou pin da loja." : "Solte o pin sobre o mural.");
+      if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? [], d.rect);
+      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar um pin da loja sobre outro pin da loja." : "Solte o pin sobre o mural.");
       const lr = layerRef.current?.getBoundingClientRect();
       if (lr) setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 }); // volta ao centro
       setState("ok");
