@@ -33,3 +33,17 @@ export async function setVisitPrivacy(sb: SupabaseClient, show: boolean): Promis
   const { error } = await sb.rpc("set_visit_privacy", { p_show: show });
   return !error;
 }
+
+/** Privacidade do PERFIL: público ou privado (com pergunta e resposta de segurança), valendo para todos os murais. */
+export type ProfilePrivacy = { private: boolean; question: string; answer: string };
+
+export async function getProfilePrivacy(sb: SupabaseClient): Promise<ProfilePrivacy | null> {
+  const { data, error } = await sb.rpc("get_profile_privacy");
+  return error || !data ? null : (data as ProfilePrivacy);
+}
+
+/** answer = null mantém a resposta atual (só vale se já existir uma). */
+export async function saveProfilePrivacy(sb: SupabaseClient, priv: boolean, question: string, answer: string | null): Promise<boolean> {
+  const { error } = await sb.rpc("set_profile_privacy", { p_private: priv, p_question: question, p_answer: answer });
+  return !error;
+}

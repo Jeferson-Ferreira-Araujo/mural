@@ -13,15 +13,12 @@ function Coin({ className = "size-5" }: { className?: string }) {
 }
 
 /**
- * Novo mural (PINZ PLUS), no mesmo modelo da edição: tipo em slide (os que ainda não são seus têm o botão Comprar),
- * nome, Público/Privado e, se privado, pergunta e resposta de segurança.
+ * Novo mural (PINZ PLUS), no mesmo modelo da edição: tipo em slide (os que ainda não são seus têm o botão Comprar) e nome.
+ * Público ou privado é do perfil (Perfil → Privacidade): o mural novo já nasce com a mesma regra.
  */
 export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean; onClose: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
   const [title, setTitle] = useState("");
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
-  const [priv, setPriv] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [credits, setCredits] = useState(0);
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
@@ -40,9 +37,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     if (!open) return;
     setTitle("");
     setBoard(DEFAULT_BOARD);
-    setPriv(false);
-    setQuestion("");
-    setAnswer("");
     setBuying(null);
     setSlide(0);
     setError(null);
@@ -86,22 +80,17 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   async function create(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
-    const q = priv ? question.trim() : "";
     if (!title.trim()) return setError("Preencha o nome do mural.");
-    if (priv && q.length < 3) return setError(q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras.");
-    if (priv && !answer.trim()) return setError("Digite a resposta.");
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: q, p_answer: priv ? answer.trim() : "" });
+    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "" } /* o mural novo segue a privacidade do perfil */);
     const created = data as { slug?: string; id?: string } | null;
     if (err || !created?.slug || !created.id) {
       setBusy(false);
       setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
-    // público de verdade: sem herdar a pergunta do primeiro mural
-    if (!priv) await sb.rpc("update_mural", { p_id: created.id, p_title: title.trim(), p_question: "", p_answer: null });
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
     window.location.assign(`/${nick}/${created.slug}`); // abre o mural novo
   }
@@ -211,32 +200,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           </fieldset>
 
           <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
-
-          <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid grid-cols-2 gap-2">
-            {(
-              [
-                [false, "🌐 Público"],
-                [true, "🔒 Privado"],
-              ] as const
-            ).map(([val, label]) => (
-              <button
-                key={label}
-                type="button"
-                role="radio"
-                aria-checked={priv === val}
-                onClick={() => setPriv(val)}
-                className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {priv && (
-            <>
-              <Field label="Pergunta de segurança">{(id) => <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}</Field>
-              <Field label="Resposta">{(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder="Digite a resposta" className={inputClass} />}</Field>
-            </>
-          )}
 
           {error && (
             <p role="alert" className="text-sm text-[#a23b2a]">

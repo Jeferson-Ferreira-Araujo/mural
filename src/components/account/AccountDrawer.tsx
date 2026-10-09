@@ -346,7 +346,7 @@ export function AccountDrawer({
       </Modal>
       <TransactionsModal open={isOpen && modal === "purchases"} onClose={close} credits={credits} />
       <PlansModal open={isOpen && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
-      <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} plus={account.plan === "full"} />
+      <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} onPrivacySaved={onChanged} plus={account.plan === "full"} />
     </>
   );
 

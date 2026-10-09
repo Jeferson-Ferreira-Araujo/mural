@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { passwordProblem } from "@/lib/password";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { getVisitPrivacy, setVisitPrivacy } from "@/lib/social";
+import { getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
 import { PasswordHints } from "../PasswordHints";
@@ -11,12 +11,46 @@ import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
 /** Perfil: foto, nome de usuário e e-mail (só leitura) e troca de senha. */
-export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; plus?: boolean }) {
+export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacySaved, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; /** a privacidade mudou: recarrega os murais da tela */ onPrivacySaved?: () => void; plus?: boolean }) {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  // privacidade do perfil: público ou privado (pergunta e resposta de segurança, valendo para todos os murais)
+  const [priv, setPriv] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [hadAnswer, setHadAnswer] = useState(false);
+  const [privBusy, setPrivBusy] = useState(false);
+  const [privErr, setPrivErr] = useState<string | null>(null);
+  const [flash, setFlash] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    setPrivErr(null);
+    setFlash(false);
+    void getProfilePrivacy(getBrowserSupabase()).then((p) => {
+      if (!p) return;
+      setPriv(p.private);
+      setQuestion(p.question);
+      setAnswer(p.answer);
+      setHadAnswer(p.private);
+    });
+  }, [open]);
+  async function savePrivacy() {
+    setPrivErr(null);
+    const q = question.trim();
+    if (priv && q.length < 3) return setPrivErr(q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras.");
+    if (priv && !answer.trim() && !hadAnswer) return setPrivErr("Digite a resposta.");
+    setPrivBusy(true);
+    const ok = await saveProfilePrivacy(getBrowserSupabase(), priv, priv ? q : "", priv && answer.trim() ? answer.trim() : null);
+    setPrivBusy(false);
+    if (!ok) return setPrivErr("Não foi possível salvar. Confira os campos e tente de novo.");
+    setHadAnswer(priv);
+    onPrivacySaved?.();
+    setFlash(true);
+    window.setTimeout(() => setFlash(false), 1600);
+  }
   const [showVisits, setShowVisits] = useState(true); // aparecer como visitante
   useEffect(() => {
     if (open) void getVisitPrivacy(getBrowserSupabase()).then(setShowVisits);
@@ -71,7 +105,25 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Perfil">
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Perfil"
+      overlay={
+        flash ? (
+          <div role="status" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#fbf6ea]/95 backdrop-blur-sm">
+            <div className="text-center" style={{ animation: "buy-pop 0.5s ease" }}>
+              <span className="mx-auto grid size-20 place-items-center rounded-full bg-[#3aa655] text-white shadow-[0_0.5rem_1.6rem_rgba(58,166,85,.5)]">
+                <svg viewBox="0 0 24 24" className="size-11" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="m5 12.5 4.5 4.5L19 7.5" />
+                </svg>
+              </span>
+              <p className="font-title mt-4 text-2xl font-semibold text-[#1f4d2b]">Privacidade salva!</p>
+            </div>
+          </div>
+        ) : undefined
+      }
+    >
       <AvatarUploader nickname={nick} plus={plus} />
       <dl className="mt-4 space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 text-sm">
         <div>
@@ -83,6 +135,43 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
           <dd className="break-all">{email || "—"}</dd>
         </div>
       </dl>
+
+      <section aria-label="Privacidade dos seus murais" className="mt-5 space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4">
+        <h3 className="font-title text-base font-semibold">Privacidade dos murais</h3>
+        <div role="radiogroup" aria-label="Quem pode abrir os seus murais" className="grid grid-cols-2 gap-2">
+          {(
+            [
+              [false, "🌐 Público"],
+              [true, "🔒 Privado"],
+            ] as const
+          ).map(([val, label]) => (
+            <button
+              key={label}
+              type="button"
+              role="radio"
+              aria-checked={priv === val}
+              onClick={() => setPriv(val)}
+              className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {priv && (
+          <>
+            <Field label="Pergunta de segurança">{(id) => <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}</Field>
+            <Field label="Resposta">{(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder="Digite a resposta" className={inputClass} />}</Field>
+          </>
+        )}
+        {privErr && (
+          <p role="alert" className="text-sm text-[#a23b2a]">
+            {privErr}
+          </p>
+        )}
+        <button type="button" onClick={() => void savePrivacy()} disabled={privBusy} className={primaryButton}>
+          {privBusy ? "Salvando…" : "Salvar privacidade"}
+        </button>
+      </section>
 
       <form onSubmit={save} noValidate className="mt-5 space-y-3">
         <h3 className="font-title text-base font-semibold">Mudar senha</h3>

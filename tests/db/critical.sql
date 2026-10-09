@@ -1,4 +1,4 @@
--- Testes dos fluxos críticos do banco (pergunta de segurança, acessos, pagamentos, permissões).
+-- Testes dos fluxos críticos do banco (privacidade do perfil, acessos, pagamentos, permissões).
 -- Como usar: cole TUDO no editor SQL do Supabase e execute. Nada fica gravado: no fim o bloco "estoura" de propósito
 -- (desfazendo tudo) e o relatório aparece na mensagem de erro. Procure por "FALHA": se não houver, está tudo certo.
 -- Precisa de uma conta com 2+ murais pessoais (usa a primeira que achar) e de outra conta qualquer.
@@ -17,21 +17,32 @@ begin
   -- como o dono
   perform set_config('request.jwt.claims', json_build_object('sub', o, 'role', 'authenticated')::text, true);
 
-  -- 1) pergunta e resposta são de cada mural
-  perform public.update_mural(a.id, a.title, 'Pergunta A?', 'resposta a');
-  perform public.update_mural(b.id, b.title, 'Pergunta B?', 'resposta b');
-  rep := rep || case when (select question from public.murals where id = a.id) = 'Pergunta A?' and (select question from public.murals where id = b.id) = 'Pergunta B?' then 'OK    ' else 'FALHA ' end || 'cada mural tem a sua pergunta' || E'\n';
+  -- 1) a pergunta e a resposta são do PERFIL: valem para todos os murais da pessoa
+  perform public.set_profile_privacy(true, 'Pergunta do perfil?', 'resposta a');
+  rep := rep || case when (select count(distinct question) from public.murals where owner_id = o and kind = 'personal') = 1
+                      and (select question from public.murals where id = a.id) = 'Pergunta do perfil?' then 'OK    ' else 'FALHA ' end || 'a pergunta vale para todos os murais do perfil' || E'
+';
 
-  -- 2) resposta errada não abre; certa abre só aquele mural
+  -- 2) resposta errada não abre; certa abre todos os murais da pessoa
   r := public.try_unlock(nick, a.slug, 'errada', 'visitante-teste-0001');
-  rep := rep || case when (r->>'ok')::boolean is not true then 'OK    ' else 'FALHA ' end || 'resposta errada não abre' || E'\n';
+  rep := rep || case when (r->>'ok')::boolean is not true then 'OK    ' else 'FALHA ' end || 'resposta errada não abre' || E'
+';
   r := public.try_unlock(nick, a.slug, 'Resposta A', 'visitante-teste-0001');
   tok := (r->>'token')::uuid;
-  rep := rep || case when (r->>'ok')::boolean and (select count(*) from jsonb_object_keys(r->'tokens')) = 1 then 'OK    ' else 'FALHA ' end || 'resposta certa abre só o mural dela' || E'\n';
+  rep := rep || case when (r->>'ok')::boolean and (select count(*) from jsonb_object_keys(r->'tokens')) = (select count(*) from public.murals where owner_id = o and kind = 'personal') then 'OK    ' else 'FALHA ' end || 'resposta certa abre todos os murais do perfil' || E'
+';
 
-  -- 3) trocar a resposta derruba o acesso
-  perform public.update_mural(a.id, a.title, 'Pergunta A?', 'outra resposta');
-  rep := rep || case when public.check_grant(nick, a.slug, tok) is not true then 'OK    ' else 'FALHA ' end || 'trocar a resposta revoga o acesso' || E'\n';
+  -- 3) trocar a resposta derruba o acesso; trocar só a pergunta mantém a resposta
+  perform public.set_profile_privacy(true, 'Outra pergunta?', 'outra resposta');
+  rep := rep || case when public.check_grant(nick, a.slug, tok) is not true then 'OK    ' else 'FALHA ' end || 'trocar a resposta revoga o acesso' || E'
+';
+  perform public.set_profile_privacy(true, 'Mais outra pergunta?', null);
+  r := public.try_unlock(nick, a.slug, 'outra resposta', 'visitante-teste-0002');
+  rep := rep || case when (r->>'ok')::boolean then 'OK    ' else 'FALHA ' end || 'trocar só a pergunta mantém a resposta' || E'
+';
+  perform public.set_profile_privacy(false);
+  rep := rep || case when (select count(*) from public.murals where owner_id = o and kind = 'personal' and question <> '') = 0 then 'OK    ' else 'FALHA ' end || 'perfil público não deixa mural com pergunta' || E'
+';
 
   -- 4) o primeiro mural não pode ser apagado
   begin
