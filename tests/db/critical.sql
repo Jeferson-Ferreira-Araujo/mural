@@ -32,6 +32,16 @@ begin
   rep := rep || case when (r->>'ok')::boolean and (select count(*) from jsonb_object_keys(r->'tokens')) = (select count(*) from public.murals where owner_id = o and kind = 'personal') then 'OK    ' else 'FALHA ' end || 'resposta certa abre todos os murais do perfil' || E'
 ';
 
+  -- 2b) 3 erros seguidos bloqueiam por 30 minutos (a 4ª tentativa, até a certa, é recusada)
+  perform public.try_unlock(nick, a.slug, 'x1', 'visitante-teste-bloq');
+  perform public.try_unlock(nick, a.slug, 'x2', 'visitante-teste-bloq');
+  r := public.try_unlock(nick, a.slug, 'x3', 'visitante-teste-bloq');
+  rep := rep || case when (r->>'fails')::int = 3 and (r->>'retry_after')::int = 1800 then 'OK    ' else 'FALHA ' end || 'o 3º erro seguido avisa o bloqueio de 30 min' || E'
+';
+  r := public.try_unlock(nick, a.slug, 'Resposta A', 'visitante-teste-bloq');
+  rep := rep || case when r->>'reason' = 'rate_limited' and public.unlock_lock_status(nick, a.slug, 'visitante-teste-bloq') > 0 then 'OK    ' else 'FALHA ' end || 'bloqueado, nem a resposta certa entra' || E'
+';
+
   -- 3) trocar a resposta derruba o acesso; trocar só a pergunta mantém a resposta
   perform public.set_profile_privacy(true, 'Outra pergunta?', 'outra resposta');
   rep := rep || case when public.check_grant(nick, a.slug, tok) is not true then 'OK    ' else 'FALHA ' end || 'trocar a resposta revoga o acesso' || E'

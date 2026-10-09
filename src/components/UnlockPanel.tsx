@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ElementType, type FormEvent } from "react";
+import { useEffect, useState, type ElementType, type FormEvent } from "react";
 import type { UnlockResult } from "@/lib/mural";
 import { Avatar } from "./Avatar";
 
@@ -31,6 +31,9 @@ type Props = {
   part?: "form" | "profile";
   /** tocar na foto/nome abre o resumo do perfil */
   onProfile?: () => void;
+  /** 3 erros seguidos: até quando (ms) a pessoa fica sem poder tentar; o campo e o botão somem */
+  blockedUntil?: number | null;
+  onBlock?: (seconds: number) => void;
 };
 
 const LockIcon = () => (
@@ -43,11 +46,23 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, blockedUntil, onBlock }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [blockMsg, setBlockMsg] = useState<string | null>(null);
+  const [, setTick] = useState(0);
   const dark = tone === "dark";
+  const blocked = !password && !!blockedUntil && blockedUntil > Date.now();
+  // quando o bloqueio acaba, a tela volta a mostrar o campo sozinha
+  useEffect(() => {
+    if (!blockedUntil) return;
+    const ms = blockedUntil - Date.now();
+    if (ms <= 0) return;
+    const t = window.setTimeout(() => (setBlockMsg(null), setTick((n) => n + 1)), ms + 200);
+    return () => window.clearTimeout(t);
+  }, [blockedUntil]);
+  const blockedText = blocked ? blockMsg ?? `Tente novamente em ${Math.max(1, Math.ceil(((blockedUntil ?? 0) - Date.now()) / 60000))} min.` : "";
   const Wrap: ElementType = onProfile ? "button" : "div"; // foto e nome abrem o resumo do perfil
   const wrapProps = onProfile ? { type: "button" as const, onClick: onProfile, "aria-label": `Ver o perfil de @${owner}` } : {};
 
@@ -62,15 +77,37 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     const res = await onSubmit(answer);
     setBusy(false);
     if (res.ok) return;
-    if (res.reason === "wrong") setHint(password ? "Senha incorreta." : "Essa não é a resposta. Tente de novo!");
-    else if (res.reason === "rate_limited") {
-      const min = Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60));
-      setHint(`Muitas tentativas. Tente novamente em ${min} min.`);
+    if (res.reason === "wrong" && password) setHint("Senha incorreta.");
+    else if (res.reason === "wrong") {
+      if ((res.fails ?? 0) >= 3) {
+        setBlockMsg("Pelo jeito você não me conhece, tente novamente em 30 minutos.");
+        setHint(null);
+        setAnswer("");
+        onBlock?.(res.retryAfter ?? 1800);
+      } else setHint(res.fails === 2 ? "Eita, ainda não acertou." : "Essa não é a resposta, tente novamente.");
+    } else if (res.reason === "rate_limited") {
+      if (password) setHint(`Muitas tentativas. Tente novamente em ${Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60))} min.`);
+      else {
+        setBlockMsg(null);
+        onBlock?.(res.retryAfter ?? 1800);
+      }
     } else setHint("Não foi possível verificar agora. Tente de novo.");
   }
 
   if (part === "form") {
     if (unlocked || open) return null;
+    if (blocked)
+      return (
+        <section aria-label="Mural bloqueado" className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+          <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
+            <LockIcon />
+          </span>
+          <h2 className="font-title mt-[0.9em] text-[1.7em] leading-tight font-semibold">Mural bloqueado</h2>
+          <p role="status" className="mt-[0.6em] text-[1em] text-white/80">
+            {blockedText}
+          </p>
+        </section>
+      );
     return (
       <section aria-label="Acesso ao mural" className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
         <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
@@ -173,6 +210,14 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       ) : open ? null : unlocked ? (
         <div className="rise" role="status">
           <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
+        </div>
+      ) : blocked ? (
+        <div role="status" className="rise">
+          <p className="flex items-center gap-[0.5em] text-[1.15em] leading-snug font-bold">
+            <LockIcon />
+            Mural bloqueado
+          </p>
+          <p className={`mt-[0.4em] text-[0.95em] ${dark ? "text-white/75" : "text-[#6b5440]"}`}>{blockedText}</p>
         </div>
       ) : (
         <form onSubmit={submit} noValidate>

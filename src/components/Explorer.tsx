@@ -8,6 +8,7 @@ import {
   getProfileMurals,
   getSiteStats,
   getPublicMural,
+  getUnlockLock,
   getVisitorId,
   loadGrant,
   saveGrant,
@@ -147,6 +148,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
   }, [session]);
   const [newMuralOpen, setNewMuralOpen] = useState(false);
+  const [blockedUntil, setBlockedUntil] = useState<number | null>(null); // 3 erros seguidos na pergunta: bloqueado por 30 min (o servidor também recusa)
   const [profileOpen, setProfileOpen] = useState(false); // resumo do perfil de quem é o mural aberto
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
@@ -264,6 +266,19 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   useEffect(() => {
     if (isOwner && !unlocked) setUnlocked(true);
   }, [isOwner, unlocked]);
+
+  // ao abrir um mural com pergunta: se esta pessoa já errou 3 vezes há menos de 30 minutos, já abre bloqueado
+  const lockProbe = selected && selected.kind === "personal" && selected.question && !selected.open && !isOwner ? `${selected.nickname}/${selected.slug}` : null;
+  useEffect(() => {
+    setBlockedUntil(null);
+    if (!lockProbe) return;
+    const [n, s] = lockProbe.split("/");
+    let alive = true;
+    void getUnlockLock(getBrowserSupabase(), { nick: n, slug: s }, getVisitorId()).then((sec) => alive && sec > 0 && setBlockedUntil(Date.now() + sec * 1000));
+    return () => {
+      alive = false;
+    };
+  }, [lockProbe]);
 
   // mural escolhido: registra a visita e restaura um desbloqueio anterior (validado no servidor)
   useEffect(() => {
@@ -643,6 +658,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             onSubmit={submitAnswer}
             inputId="unlock-center"
             tone="dark"
+            blockedUntil={blockedUntil}
+            onBlock={(sec) => setBlockedUntil(Date.now() + sec * 1000)}
           />
         );
       }
@@ -724,12 +741,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               inputId={`unlock-${tone}`}
               tone={tone}
               part={part}
+              blockedUntil={blockedUntil}
+              onBlock={(sec) => setBlockedUntil(Date.now() + sec * 1000)}
             />
           )}
         </div>
       );
     },
-    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving, followers, placed],
+    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving, followers, placed, blockedUntil],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.

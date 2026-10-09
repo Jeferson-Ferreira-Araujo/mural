@@ -51,7 +51,7 @@ export type ProfileMurals = {
 
 export type UnlockResult =
   | { ok: true; token?: string; /** desbloqueio de cada mural da pessoa (por endereço): acertar uma vez abre todos */ tokens?: Record<string, string> }
-  | { ok: false; reason: "wrong" | "rate_limited" | "plus_required" | "error"; retryAfter?: number };
+  | { ok: false; reason: "wrong" | "rate_limited" | "plus_required" | "error"; retryAfter?: number; /** erros seguidos até agora (o 3º bloqueia por 30 minutos) */ fails?: number };
 
 export const SITE_HOST = "pinz.digital";
 export const muralPath = (r: MuralRef) => `/${r.nick}/${r.slug}`;
@@ -79,7 +79,14 @@ export async function tryUnlock(sb: SupabaseClient, ref: MuralRef, answer: strin
   if (error || !data) return { ok: false, reason: "error" };
   if (data.ok) return { ok: true, token: data.token, tokens: data.tokens ?? undefined };
   if (data.reason === "rate_limited") return { ok: false, reason: "rate_limited", retryAfter: data.retry_after };
-  return { ok: false, reason: data.reason === "wrong" ? "wrong" : "error" };
+  if (data.reason === "wrong") return { ok: false, reason: "wrong", fails: data.fails ?? undefined, retryAfter: data.retry_after ?? undefined };
+  return { ok: false, reason: "error" };
+}
+
+/** Segundos que faltam para esta pessoa poder tentar de novo (0 = pode tentar): 3 erros seguidos bloqueiam por 30 minutos. */
+export async function getUnlockLock(sb: SupabaseClient, ref: MuralRef, visitorId: string): Promise<number> {
+  const { data, error } = await sb.rpc("unlock_lock_status", { p_nick: ref.nick, p_slug: ref.slug, p_visitor_id: visitorId });
+  return error || typeof data !== "number" ? 0 : data;
 }
 
 export async function checkGrantClient(sb: SupabaseClient, ref: MuralRef, token: string): Promise<boolean> {
