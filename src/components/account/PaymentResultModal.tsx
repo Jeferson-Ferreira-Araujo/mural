@@ -8,7 +8,7 @@ export const PAY_RESULTS: Record<string, { icon: string; title: string; body: st
   ok: { icon: "🎉", title: "Pagamento recebido!", body: "Seus créditos entram na conta em instantes. O saldo da loja atualiza sozinho." },
   pendente: { icon: "⏳", title: "Pagamento em análise", body: "Assim que o Mercado Pago confirmar, seus créditos entram sozinhos na conta." },
   falhou: { icon: "↩️", title: "Pagamento não concluído", body: "Nada foi cobrado. Você pode tentar de novo quando quiser." },
-  plus: { icon: "⭐", title: "Assinatura enviada!", body: "Assim que o Mercado Pago confirmar, o seu mural vira PLUS automaticamente. Pode levar alguns instantes." },
+  plus: { icon: "⭐", title: "Assinatura enviada!", body: "Assim que o Mercado Pago confirmar, o seu mural vira PINZ+ automaticamente. Pode levar alguns instantes." },
 };
 
 export function PaymentResultModal({ result, onClose }: { result: string | null; onClose: () => void }) {

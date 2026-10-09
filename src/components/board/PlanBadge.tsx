@@ -1,6 +1,6 @@
 import { PLANS, type PlanId } from "@/lib/plans";
 
-/** Selo do plano do mural: FREE discreto, PLUS dourado. */
+/** Selo do plano do mural: FREE discreto, PINZ+ dourado. */
 export function PlanBadge({ plan, className = "" }: { plan: PlanId; className?: string }) {
   const full = plan === "full";
   return (

@@ -14,7 +14,7 @@ const fail = (status: number, error: string) => NextResponse.json({ error }, { s
 /**
  * Pede a exclusão da PRÓPRIA conta. A conta fica DESATIVADA (escondida de todos) por 30 dias: se a pessoa entrar de novo nesse prazo,
  * ela volta como estava. Passado o prazo, uma rotina diária (/api/account/purge) apaga tudo de vez.
- * A assinatura PLUS é cancelada já (para não cobrar mais). Contas de administrador não podem se excluir por aqui.
+ * A assinatura PINZ+ é cancelada já (para não cobrar mais). Contas de administrador não podem se excluir por aqui.
  */
 export async function POST(req: Request) {
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");

@@ -20,7 +20,7 @@ async function post(path: string, body?: unknown): Promise<{ ok: boolean; data: 
 
 const MESSAGE: Record<string, string> = {
   not_authenticated: "Entre na sua conta para continuar.",
-  already_subscribed: "Você já tem uma assinatura PLUS ativa.",
+  already_subscribed: "Você já tem uma assinatura PINZ+ ativa.",
   rate_limited: "Muitas tentativas. Tente de novo em instantes.",
   unavailable: "O pagamento ainda não está disponível.",
 };
@@ -63,7 +63,7 @@ export async function fetchSubscription(): Promise<Subscription> {
   return error || !data ? null : (data as Subscription);
 }
 
-/** Cancela a assinatura PLUS. O PLUS vale até o fim do período já pago. */
+/** Cancela a assinatura PINZ+. O PINZ+ vale até o fim do período já pago. */
 export async function cancelSubscription(): Promise<boolean> {
   return (await post("/api/pay/cancel")).ok;
 }

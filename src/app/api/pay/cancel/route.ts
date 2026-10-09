@@ -11,7 +11,7 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
 
 const fail = (status: number, error: string) => NextResponse.json({ error }, { status });
 
-/** Cancela a assinatura PLUS da própria conta. O PLUS continua até o fim do período já pago. */
+/** Cancela a assinatura PINZ+ da própria conta. O PINZ+ continua até o fim do período já pago. */
 export async function POST(req: Request) {
   if (!paymentsConfigured()) return fail(503, "unavailable");
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");

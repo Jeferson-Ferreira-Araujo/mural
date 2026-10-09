@@ -28,17 +28,17 @@ export type PublicMural = {
   board?: string;
   /** Plano do mural: define o limite de pins e os formatos (validado no servidor). */
   plan?: "free" | "full";
-  /** Mensagem do mural vazio, personalizada pelo dono (só chega se o mural é PLUS). */
+  /** Mensagem do mural vazio, personalizada pelo dono (só chega se o mural é PINZ+). */
   welcome?: string | null;
   /** true = mural público (sem pergunta): abre direto; com pergunta é privado */
   open?: boolean;
-  /** shared = mural entre duas pessoas PLUS (abre com a senha, só para os participantes) */
+  /** shared = mural entre duas pessoas PINZ+ (abre com a senha, só para os participantes) */
   kind?: "personal" | "shared";
   /** compartilhado: quem está vendo é um dos dois participantes */
   member?: boolean;
   /** compartilhado: o nickname da outra pessoa */
   partner?: string | null;
-  /** compartilhado: alguém dos dois perdeu o PLUS, o mural está bloqueado */
+  /** compartilhado: alguém dos dois perdeu o PINZ+, o mural está bloqueado */
   locked?: boolean;
   stats: MuralStats;
 };
@@ -183,7 +183,7 @@ export function uniqueSlug(title: string, existing: string[]): string {
   return cand;
 }
 
-export type ProfileHit = { nickname: string; murals: number; avatar?: string | null; /** conta PLUS */ plus?: boolean };
+export type ProfileHit = { nickname: string; murals: number; avatar?: string | null; /** conta PINZ+ */ plus?: boolean };
 
 /** Busca pessoas pelo nickname (só quem tem mural). */
 export async function searchProfiles(sb: SupabaseClient, query: string): Promise<ProfileHit[]> {

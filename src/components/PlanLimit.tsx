@@ -6,7 +6,7 @@ import { startCheckout } from "@/lib/payments";
 import { Modal } from "./account/Modal";
 
 /**
- * Plano FREE, no próprio mural: contador de pins (ex.: 3/15) com um "?" que explica o limite e leva à assinatura do PLUS.
+ * Plano FREE, no próprio mural: contador de pins (ex.: 3/15) com um "?" que explica o limite e leva à assinatura do PINZ+.
  * `glass`: sobre o quadro (celular); sem ele: pílula clara (desktop).
  */
 export function PlanLimit({ used, glass = false, className = "" }: { used: number; glass?: boolean; className?: string }) {
@@ -49,7 +49,7 @@ export function PlanLimit({ used, glass = false, className = "" }: { used: numbe
             Você está usando <strong>{used}</strong> de <strong>{max}</strong> pins do seu mural. Esse é o limite da conta <strong>FREE</strong>, que inclui 1 mural.
           </p>
           <div className="rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] p-4">
-            <p className="font-bold">Com o PINZ PLUS você tem:</p>
+            <p className="font-bold">Com o PINZ+ você tem:</p>
             <ul className="mt-2 space-y-1.5">
               {["Todos os 28 espaços em cada mural", "Até 10 murais", "Vídeo, voz e local nos pins", "Pins em segredo e mais Bottons"].map((t) => (
                 <li key={t} className="flex gap-2">
@@ -72,7 +72,7 @@ export function PlanLimit({ used, glass = false, className = "" }: { used: numbe
             onClick={() => void subscribe()}
             className="w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {!PAYMENTS_ENABLED ? "PLUS em breve" : busy ? "Abrindo o pagamento…" : "Assinar o PLUS por R$ 9,90/mês"}
+            {!PAYMENTS_ENABLED ? "PINZ+ em breve" : busy ? "Abrindo o pagamento…" : "Assinar o PINZ+ por R$ 9,90/mês"}
           </button>
           {PAYMENTS_ENABLED && <p className="text-center text-xs text-[#6b5440]">Cobrado todo mês no Mercado Pago · cancele quando quiser.</p>}
         </div>

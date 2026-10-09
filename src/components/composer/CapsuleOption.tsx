@@ -20,8 +20,8 @@ export function capsuleDateOk(v: CapsuleValue, now = Date.now()) {
 }
 
 /**
- * Cápsula PINZ — recurso exclusivo PLUS. Não é um formato: é uma opção aplicada a qualquer mensagem.
- * Só é renderizado quando o mural é PLUS (o visitante nunca vê isso em um mural FREE).
+ * Cápsula PINZ — recurso exclusivo PINZ+. Não é um formato: é uma opção aplicada a qualquer mensagem.
+ * Só é renderizado quando o mural é PINZ+ (o visitante nunca vê isso em um mural FREE).
  */
 export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChange: (v: CapsuleValue) => void }) {
   const min = toLocalInput(new Date(Date.now() + MIN_AHEAD_MS));

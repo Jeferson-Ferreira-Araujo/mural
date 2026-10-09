@@ -36,7 +36,7 @@ function placeholderFor(h: HiddenItem): Message | null {
 
 /**
  * Espaço ocupado em blur: o conteúdo NÃO veio do servidor (pin aguardando aprovação de outra pessoa ou pin que o dono
- * (PLUS) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
+ * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
 export function HiddenPin({ item }: { item: HiddenItem }) {
   const inDetail = useInDetail();

@@ -61,7 +61,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
 const btn = "mt-4 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
 const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("pt-BR") : "");
 
-/** Planos em carrossel: o que cada um custa e inclui; com a cobrança ligada, também assina o PLUS e compra créditos. */
+/** Planos em carrossel: o que cada um custa e inclui; com a cobrança ligada, também assina o PINZ+ e compra créditos. */
 export function PlansModal({ open, onClose, plan, credits }: { open: boolean; onClose: () => void; plan: PlanId; credits: number }) {
   const [sub, setSub] = useState<Subscription>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -82,9 +82,9 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   }
 
   async function cancel() {
-    if (!window.confirm("Cancelar a assinatura PLUS? Você continua com o PLUS até o fim do período já pago.")) return;
+    if (!window.confirm("Cancelar a assinatura PINZ+? Você continua com o PINZ+ até o fim do período já pago.")) return;
     setBusy("cancel");
-    setMsg((await cancelSubscription()) ? "Assinatura cancelada. O PLUS continua até o fim do período pago." : "Não foi possível cancelar agora. Tente de novo.");
+    setMsg((await cancelSubscription()) ? "Assinatura cancelada. O PINZ+ continua até o fim do período pago." : "Não foi possível cancelar agora. Tente de novo.");
     setSub(await fetchSubscription());
     setBusy(null);
   }
@@ -98,10 +98,10 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
       </button>
     </div>
   ) : sub?.status === "cancelled" && sub.active ? (
-    <p className="mt-4 text-sm font-semibold text-[#6b5440]">Assinatura cancelada · PLUS até {fmtDate(sub.paidUntil)}</p>
+    <p className="mt-4 text-sm font-semibold text-[#6b5440]">Assinatura cancelada · PINZ+ até {fmtDate(sub.paidUntil)}</p>
   ) : plan === "free" ? (
     <button type="button" disabled={busy !== null} onClick={() => void buy("plus")} className={btn}>
-      {busy === "plus" ? "Abrindo o pagamento…" : "Assinar o PLUS por R$ 9,90/mês"}
+      {busy === "plus" ? "Abrindo o pagamento…" : "Assinar o PINZ+ por R$ 9,90/mês"}
     </button>
   ) : undefined;
 

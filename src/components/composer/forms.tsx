@@ -243,7 +243,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Música (PLUS) ----------
+// ---------- Música (PINZ+) ----------
 export function MusicForm({ onChange }: { onChange: DraftChange }) {
   const [caption, setCaption] = useState("");
   const [link, setLink] = useState("");
@@ -293,7 +293,7 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Vídeo (PLUS) ----------
+// ---------- Vídeo (PINZ+) ----------
 const MAX_VIDEO_MB = 40; // depois de otimizado (o armazenamento aceita até 50 MB)
 
 const mb = (bytes: number) => `${(bytes / 1048576).toFixed(bytes < 10485760 ? 1 : 0)} MB`;
@@ -397,7 +397,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Voz (PLUS) ----------
+// ---------- Voz (PINZ+) ----------
 const MAX_VOICE_SEC = 60;
 const MAX_AUDIO_MB = 10;
 
@@ -534,7 +534,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
   );
 }
 
-// ---------- Local / Maps (PLUS) ----------
+// ---------- Local / Maps (PINZ+) ----------
 type PlaceHit = { name: string; address: string; lat: number; lon: number };
 
 /** Busca de lugares pelo nome (Google Places, pelo nosso servidor: só para quem está logado). Só roda quando a pessoa pede. */

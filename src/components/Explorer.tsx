@@ -266,7 +266,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const ref = { nick, slug };
     const sb = getBrowserSupabase();
     // mural compartilhado: sem contagem de visitas. O desbloqueio é restaurado só nesta aba (ao atualizar a página não pede a senha de novo),
-    // e o servidor revalida conta + participante + PLUS dos dois a cada uso: fechar a aba/navegador volta a pedir a senha.
+    // e o servidor revalida conta + participante + PINZ+ dos dois a cada uso: fechar a aba/navegador volta a pedir a senha.
     if (selected?.kind !== "shared") sb.rpc("record_visit", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
     // compartilhado: o desbloqueio só vale com a conta (espera a sessão carregar antes de conferir)
     if (selected?.kind === "shared" && !logged) return;
@@ -402,7 +402,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }),
     [afterModeration, own, slug, isMember, notify, loadBoard],
   );
-  // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PLUS: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
+  // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PINZ+: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
   // ordem da barra: os bottons comprados primeiro (o mais novo no início)
   const acquiredAt = useCallback((key: number) => inventory?.catalog.find((c) => c.key === key)?.acquired ?? undefined, [inventory]);
   const badgeStock = useCallback(
@@ -464,7 +464,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         await reloadInventory();
         return true;
       }
-      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é para quem assina o PINZ PLUS." : "Não foi possível concluir a compra agora.");
+      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é para quem assina o PINZ+." : "Não foi possível concluir a compra agora.");
       return false;
     },
     [notify, reloadInventory],

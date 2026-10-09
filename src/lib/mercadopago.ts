@@ -47,7 +47,7 @@ export function validSignature(req: Request, dataId: string | null): boolean {
 
 export const isUuid = (s: unknown): s is string => typeof s === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
-/** Atualiza o estado da assinatura PLUS no banco a partir do que o Mercado Pago diz agora. */
+/** Atualiza o estado da assinatura PINZ+ no banco a partir do que o Mercado Pago diz agora. */
 export async function syncPreapproval(preapprovalId: string): Promise<{ ok: boolean; uid?: string }> {
   const r = await mp<{ id?: string; status?: string; external_reference?: string; next_payment_date?: string }>(`/preapproval/${encodeURIComponent(preapprovalId)}`);
   if (!r.ok) return { ok: false };

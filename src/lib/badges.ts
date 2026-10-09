@@ -95,7 +95,7 @@ export const badgeSrc = (key: number) => `/img/badges/b${String(key).padStart(2,
 
 /** Largura de um botom no mural, em em (1em ≈ 1% da largura do quadro). */
 export const BADGE_EM = 3;
-/** Pins decorativos do plano gratuito (1 unidade de cada). O PLUS libera os 25 iniciais; os outros se compram. */
+/** Pins decorativos do plano gratuito (1 unidade de cada). O PINZ+ libera os 25 iniciais; os outros se compram. */
 export const FREE_BADGES: readonly number[] = [1, 2, 4, 5, 9, 12, 13, 17, 22, 25];
 export const MAX_BADGES = 200; // teto técnico de bottons por mural
 
@@ -155,7 +155,7 @@ export type CatalogItem = { key: number; /** todo mundo tem (1 unidade no FREE) 
 export type BoardOffer = { id: string; price: number; owned: boolean };
 export type BadgeInventory = {
   credits: number;
-  /** a conta tem o plano PLUS (só ele compra na loja) */
+  /** a conta tem o plano PINZ+ (só ele compra na loja) */
   plus: boolean;
   extraMurals: number;
   muralCount: number;

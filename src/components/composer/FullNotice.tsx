@@ -21,7 +21,7 @@ export function FullNotice({ planLimit = false, onTried, triedAlready, onClose }
       </div>
 
       <h3 className="font-title text-2xl font-semibold">{planLimit ? "Este mural chegou ao limite do plano." : "Este PINZ está lotado."}</h3>
-      {planLimit && <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito tem um limite de pins. Para ter mais espaços, o dono precisa do PINZ PLUS ou de créditos.</p>}
+      {planLimit && <p className="mt-2 text-sm text-[#6b5440]">O plano gratuito tem um limite de pins. Para ter mais espaços, o dono precisa do PINZ+ ou de créditos.</p>}
       {sent ? (
         <>
           <p role="status" className="mt-3 text-[#4a3826]">

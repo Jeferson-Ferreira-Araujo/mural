@@ -25,7 +25,7 @@ export function DesktopBoard(props: ViewProps) {
   const lockForm = props.locked ? props.panel("dark", "form") : null;
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
-  const newMural = account?.onNewMural; // PLUS: botão "Novo mural" abaixo do passador de murais
+  const newMural = account?.onNewMural; // PINZ+: botão "Novo mural" abaixo do passador de murais
   const hasRight = !!newMural;
 
   return (

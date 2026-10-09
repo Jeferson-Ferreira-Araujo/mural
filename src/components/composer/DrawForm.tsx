@@ -5,7 +5,7 @@ import { TAPE_COLORS, tapeOf, type TapeColor } from "@/lib/style";
 import { Tape } from "../messages/fasteners";
 import type { DraftChange } from "./types";
 
-// ---------- Desenho (PLUS) ----------
+// ---------- Desenho (PINZ+) ----------
 const DRAW_W = 800;
 const DRAW_H = 600;
 const DRAW_COLORS = ["#1f232b", "#e0443a", "#f08a24", "#f2c230", "#3f9b4a", "#2b6fd6", "#8a4fd6", "#e66fa5", "#8a5a34"];

@@ -36,7 +36,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   },
   full: {
     id: "full",
-    name: "PINZ PLUS",
+    name: "PINZ+",
     slots: 28,
     formats: ["postit", "text", "list", "photo", "draw", "music", "video", "voice", "place"],
     capsule: true,
@@ -45,7 +45,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   },
 };
 
-/** Espaços liberados: no FREE são os 15 do plano; no PLUS, todos os do quadro (28). */
+/** Espaços liberados: no FREE são os 15 do plano; no PINZ+, todos os do quadro (28). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));
 
 export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
@@ -56,10 +56,10 @@ export const canUseCapsule = (plan: PlanId) => CAPSULE_ENABLED && PLANS[plan].ca
 /** Cobrança real (Mercado Pago). Só liga com NEXT_PUBLIC_PAYMENTS_ENABLED=true e as chaves no servidor. */
 export const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "true";
 
-/** Máximo de murais pessoais no PINZ PLUS (o banco usa o mesmo número em create_mural: troque nos dois). */
+/** Máximo de murais pessoais no PINZ+ (o banco usa o mesmo número em create_mural: troque nos dois). */
 export const PLUS_MAX_MURALS = 10;
 
-/** Mensalidade do PINZ PLUS, em centavos (o servidor usa este valor, nunca o que o navegador manda). */
+/** Mensalidade do PINZ+, em centavos (o servidor usa este valor, nunca o que o navegador manda). */
 export const PLUS_PRICE_CENTS = 990;
 
 /** Pacotes de créditos. `cents` é o preço cobrado; `credits` já inclui o bônus. */

@@ -8,7 +8,7 @@ import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { SearchBox } from "../SearchBox";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 
-/** Murais compartilhados entre duas pessoas PLUS: convites recebidos, os seus murais e a criação de um novo. */
+/** Murais compartilhados entre duas pessoas PINZ+: convites recebidos, os seus murais e a criação de um novo. */
 export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onChanged: () => void; onNotify: (m: string) => void }) {
   const sb = getBrowserSupabase();
   const [list, setList] = useState<SharedMural[] | null>(null);
@@ -90,7 +90,7 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
     <div className="space-y-5 text-[15px]">
       <section aria-label="Como funciona" className="rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-3.5 text-sm text-[#4a3826]">
         <p className="font-semibold text-[#2a1c12]">Como funciona</p>
-        <p className="mt-1">Um mural só de vocês dois: você cria, define a senha e convida uma pessoa PLUS. Quando ela aceitar, só as duas contas conseguem abrir o mural, sempre com a senha. Os dois podem colar pins.</p>
+        <p className="mt-1">Um mural só de vocês dois: você cria, define a senha e convida uma pessoa PINZ+. Quando ela aceitar, só as duas contas conseguem abrir o mural, sempre com a senha. Os dois podem colar pins.</p>
       </section>
 
       {invites.length > 0 && (
@@ -160,7 +160,7 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
       <section aria-label="Criar mural compartilhado">
         <h3 className="font-title text-base font-semibold">Criar um mural compartilhado</h3>
         {!plus ? (
-          <p className="mt-2 rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-sm text-[#4a3826]">É um recurso do PINZ PLUS: você e a outra pessoa precisam ter o plano.</p>
+          <p className="mt-2 rounded-xl border border-[#d9c9ad] bg-white/60 px-3 py-2 text-sm text-[#4a3826]">É um recurso do PINZ+: você e a outra pessoa precisam ter o plano.</p>
         ) : (
           <form onSubmit={create} noValidate className="mt-2 space-y-3">
             <fieldset className="min-w-0">

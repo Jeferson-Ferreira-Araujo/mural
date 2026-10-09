@@ -219,7 +219,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         ) : (
           <div role="alertdialog" aria-label="Excluir minha conta" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
             <p className="text-sm font-bold text-[#6b2a1c]">Excluir a conta</p>
-            <p className="mt-1 text-sm text-[#6b2a1c]">Sua conta fica desativada por 30 dias e ninguém mais a vê, e a assinatura PLUS é cancelada. Se você entrar de novo nesse período, ela volta como estava. Depois disso, tudo é apagado de vez: murais, pins, fotos, bottons, créditos e os recados que você deixou em murais de outras pessoas.</p>
+            <p className="mt-1 text-sm text-[#6b2a1c]">Sua conta fica desativada por 30 dias e ninguém mais a vê, e a assinatura PINZ+ é cancelada. Se você entrar de novo nesse período, ela volta como estava. Depois disso, tudo é apagado de vez: murais, pins, fotos, bottons, créditos e os recados que você deixou em murais de outras pessoas.</p>
             <label htmlFor="del-confirm" className="mt-3 block text-sm font-semibold text-[#6b2a1c]">
               Para confirmar, digite EXCLUIR
             </label>

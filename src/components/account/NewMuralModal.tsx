@@ -13,7 +13,7 @@ function Coin({ className = "size-5" }: { className?: string }) {
 }
 
 /**
- * Novo mural (PINZ PLUS), no mesmo modelo da edição: tipo em slide (os que ainda não são seus têm o botão Comprar) e nome.
+ * Novo mural (PINZ+), no mesmo modelo da edição: tipo em slide (os que ainda não são seus têm o botão Comprar) e nome.
  * Público ou privado é do perfil (Perfil → Privacidade): o mural novo já nasce com a mesma regra.
  */
 export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean; onClose: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
@@ -65,7 +65,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     const res = await buyBoard(getBrowserSupabase(), buying);
     if (!res.ok) {
       setBusy(false);
-      setError(res.reason === "no_credits" ? "Créditos insuficientes para este mural." : res.reason === "plus_required" ? "Comprar murais é para quem assina o PINZ PLUS." : "Não foi possível comprar agora. Tente de novo.");
+      setError(res.reason === "no_credits" ? "Créditos insuficientes para este mural." : res.reason === "plus_required" ? "Comprar murais é para quem assina o PINZ+." : "Não foi possível comprar agora. Tente de novo.");
       return;
     }
     await load();

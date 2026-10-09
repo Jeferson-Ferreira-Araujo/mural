@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const r = await mp<{ init_point?: string; message?: string }>("/preapproval", {
       method: "POST",
       body: {
-        reason: "Pinz PLUS (mensal)",
+        reason: "Pinz PINZ+ (mensal)",
         external_reference: uid,
         payer_email: email,
         back_url: `${SITE_URL}/pagamento?produto=plus`,

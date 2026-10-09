@@ -28,7 +28,7 @@ export type ViewProps = {
   siteStats?: SiteStats | null;
   /** Quem é o dono do mural aberto (cabeçalho da tela do mural no celular). */
   muralInfo?: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null; /** até 3 seguidores mais assíduos (fotos redondas ao lado do número) */ topFollowers?: { nickname: string; avatar: string | null; plus?: boolean }[] };
-  /** Texto do bilhete do mural vazio (personalizado pelo dono PLUS). */
+  /** Texto do bilhete do mural vazio (personalizado pelo dono PINZ+). */
   welcome?: string | null;
   /** Celular: "Procurar outro mural" (volta à busca). */
   onChangeMural?: () => void;

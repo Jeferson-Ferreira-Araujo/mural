@@ -30,7 +30,7 @@ type Props = {
   info: { title: string; owner: string; avatar?: string | null; plus?: boolean; /** seguidores da pessoa (só o número); null = não mostrar */ followers?: number | null; topFollowers?: { nickname: string; avatar: string | null; plus?: boolean }[] };
   /** "Procurar outro mural": volta à busca */
   onChangeMural?: () => void;
-  /** texto do mural vazio (PLUS) */
+  /** texto do mural vazio (PINZ+) */
   welcome?: string | null;
   /** logado: ícones de pesquisar e menu; sem conta: links de entrar */
   account?: AccountApi;
@@ -119,7 +119,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* conta FREE no próprio mural: contador de pins e explicação do limite (não há "Novo mural" nesse plano) */}
         {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-3 left-3 z-20" />}
         {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
-        {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
+        {/* PINZ+: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (
           <button
             type="button"

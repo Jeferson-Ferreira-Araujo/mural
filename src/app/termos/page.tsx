@@ -10,7 +10,7 @@ export default function Termos() {
 
       <section>
         <h2>O serviço</h2>
-        <p>O Pinz permite criar um mural pessoal, ou compartilhado entre duas pessoas, e deixar pins (recados, fotos, músicas e outros formatos) nos murais. Alguns recursos fazem parte do plano PLUS.</p>
+        <p>O Pinz permite criar um mural pessoal, ou compartilhado entre duas pessoas, e deixar pins (recados, fotos, músicas e outros formatos) nos murais. Alguns recursos fazem parte do plano PINZ+.</p>
       </section>
 
       <section>
@@ -30,10 +30,10 @@ export default function Termos() {
       <section>
         <h2>Pagamentos</h2>
         <ul>
-          <li>O PINZ PLUS é uma assinatura mensal (R$ 9,90) cobrada pelo Mercado Pago, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.</li>
-          <li>Você pode cancelar a assinatura quando quiser, pelo próprio Pinz, sem multa. O PLUS continua até o fim do período já pago e não há novas cobranças.</li>
+          <li>O PINZ+ é uma assinatura mensal (R$ 9,90) cobrada pelo Mercado Pago, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.</li>
+          <li>Você pode cancelar a assinatura quando quiser, pelo próprio Pinz, sem multa. O PINZ+ continua até o fim do período já pago e não há novas cobranças.</li>
           <li>Você pode desistir de uma compra em até 7 dias, como prevê o Código de Defesa do Consumidor, e pedir o reembolso pelo contato do Pinz. Créditos já gastos na loja são descontados.</li>
-          <li>Se a assinatura deixar de ser paga, a conta volta ao plano gratuito: seus pins continuam, mas os recursos do PLUS ficam indisponíveis.</li>
+          <li>Se a assinatura deixar de ser paga, a conta volta ao plano gratuito: seus pins continuam, mas os recursos do PINZ+ ficam indisponíveis.</li>
           <li>Os créditos não são dinheiro, não podem ser transferidos nem sacados.</li>
         </ul>
       </section>

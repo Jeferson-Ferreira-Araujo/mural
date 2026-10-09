@@ -95,7 +95,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
               <p className="font-title truncate text-lg font-semibold">{data ? data.mural.title : "Mural"}</p>
               {data && (
                 <p className="truncate text-xs text-[#6b5440]">
-                  de <strong>{data.mural.owner}</strong> · {data.mural.plan === "full" ? "PLUS" : "FREE"} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} · {data.pins.length} pins · {data.badges.length} botons ·{" "}
+                  de <strong>{data.mural.owner}</strong> · {data.mural.plan === "full" ? "PINZ+" : "FREE"} · {data.mural.private ? `🔒 privado (pergunta: ${data.mural.question})` : "🌐 público"} · {data.pins.length} pins · {data.badges.length} botons ·{" "}
                   <Link href={`/${data.mural.owner}/${data.mural.slug}`} target="_blank" className="underline">
                     abrir no site
                   </Link>
@@ -276,7 +276,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
             <h3 className="font-title text-base font-semibold">Pagamentos</h3>
             {u.subscription && (
               <p className="mt-1 text-xs text-[#6b5440]">
-                Assinatura PLUS: <strong>{u.subscription.status}</strong>
+                Assinatura PINZ+: <strong>{u.subscription.status}</strong>
                 {u.subscription.paidUntil ? ` · vale até ${fmt(u.subscription.paidUntil)}` : ""}
                 {u.subscription.mpId ? ` · assinatura Mercado Pago Nº ${u.subscription.mpId}` : ""}
               </p>
@@ -324,8 +324,8 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                       <button type="button" className={btn} onClick={() => onOpenMural(m.id)}>
                         Ver mural
                       </button>
-                      <button type="button" className={btn} disabled={busy} onClick={() => run(`Plano do mural: ${m.plan === "full" ? "FREE" : "PLUS"}.`, () => rpc("admin_set_plan", { p_mural_id: m.id, p_plan: m.plan === "full" ? "free" : "full" }))}>
-                        {m.plan === "full" ? "Mudar para FREE" : "Mudar para PLUS"}
+                      <button type="button" className={btn} disabled={busy} onClick={() => run(`Plano do mural: ${m.plan === "full" ? "FREE" : "PINZ+"}.`, () => rpc("admin_set_plan", { p_mural_id: m.id, p_plan: m.plan === "full" ? "free" : "full" }))}>
+                        {m.plan === "full" ? "Mudar para FREE" : "Mudar para PINZ+"}
                       </button>
                     </div>
                   </li>

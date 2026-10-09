@@ -74,7 +74,7 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
 
 /**
  * Loja do Pinz. Os pacotes de créditos ficam sempre à vista, no topo (a compra é no Mercado Pago).
- * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PLUS (sem limite), não se vende.
+ * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PINZ+ (sem limite), não se vende.
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
   const [tab, setTab] = useState<Tab>("pins");

@@ -23,7 +23,7 @@ export function ledgerLabel(reason: string): string {
   return reason;
 }
 
-export const payTitle = (p: Pick<TxPayment, "kind" | "credits">) => (p.kind === "plus" ? "Assinatura PINZ PLUS (mensalidade)" : `${p.credits ?? ""} créditos`);
+export const payTitle = (p: Pick<TxPayment, "kind" | "credits">) => (p.kind === "plus" ? "Assinatura PINZ+ (mensalidade)" : `${p.credits ?? ""} créditos`);
 
 export function StatusChip({ status }: { status: string }) {
   const s = PAY_STATUS[status] ?? { text: status, tone: "wait" as const };
@@ -70,7 +70,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
 
           {sub && (
             <p className="rounded-xl border border-[#e8d9a8] bg-[#fff6d6] px-3 py-2 text-sm">
-              <strong>Assinatura PLUS:</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
+              <strong>Assinatura PINZ+:</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
               {sub.paidUntil ? ` · vale até ${new Date(sub.paidUntil).toLocaleDateString("pt-BR")}` : ""}
             </p>
           )}

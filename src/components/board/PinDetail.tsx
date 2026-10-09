@@ -312,10 +312,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost}`}>
                       Recusar
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ PLUS"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ+"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
-                        {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PLUS)"}
+                        {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PINZ+)"}
                       </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
@@ -328,11 +328,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       <Trash />
                       <span className="hidden sm:inline">Excluir PIN</span>
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ PLUS"} onClick={() => {
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ+"} onClick={() => {
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
                     }} className={`${ghost}`}>
-                      {mod.plan !== "full" ? "Segredo (PLUS)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
+                      {mod.plan !== "full" ? "Segredo (PINZ+)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
                     </button>
                   </>
                 )}

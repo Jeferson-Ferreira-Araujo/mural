@@ -89,7 +89,7 @@ export function AccountDrawer({
   onSignOut: () => void;
   onPending: (n: number) => void;
   onNotify: (msg: string) => void;
-  /** PINZ PLUS (e abaixo do limite de murais): abre a criação de um mural novo */
+  /** PINZ+ (e abaixo do limite de murais): abre a criação de um mural novo */
   onNewMural?: () => void;
   /** convites de mural compartilhado esperando resposta */
   sharedInvites?: number;
@@ -179,7 +179,7 @@ export function AccountDrawer({
                   <Row
                     onClick={() => setModal("shared")}
                     label="Mural compartilhado"
-                    hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PLUS)"}
+                    hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PINZ+)"}
                     badge={sharedInvites}
                     icon={
                       <svg {...ic}>
@@ -269,7 +269,7 @@ export function AccountDrawer({
               <Row
                 onClick={() => setModal("plans")}
                 label="Planos"
-                hint={`Seu plano: ${account.plan === "full" ? "PLUS" : "FREE"}`}
+                hint={`Seu plano: ${account.plan === "full" ? "PINZ+" : "FREE"}`}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />

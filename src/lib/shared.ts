@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { MuralRef, UnlockResult } from "./mural";
 import type { BoardItem } from "./types";
 
-/** Mural compartilhado entre duas pessoas PLUS (entra por senha + conta de um dos participantes). */
+/** Mural compartilhado entre duas pessoas PINZ+ (entra por senha + conta de um dos participantes). */
 export type SharedMural = {
   id: string;
   slug: string;
@@ -14,7 +14,7 @@ export type SharedMural = {
   status: "pending" | "accepted";
   /** true = fui eu quem criou */
   mine: boolean;
-  /** uma das duas pessoas perdeu o PLUS: o mural fica bloqueado para as duas */
+  /** uma das duas pessoas perdeu o PINZ+: o mural fica bloqueado para as duas */
   locked?: boolean;
 };
 
@@ -30,7 +30,7 @@ const KNOWN: SharedFailure[] = ["plus_required", "partner_not_found", "partner_s
 const failure = (message: string): SharedFailure => KNOWN.find((k) => message.includes(k)) ?? "error";
 
 export const SHARED_ERROR_TEXT: Record<SharedFailure, string> = {
-  plus_required: "O mural compartilhado é do PINZ PLUS, e as duas pessoas precisam ter o plano.",
+  plus_required: "O mural compartilhado é do PINZ+, e as duas pessoas precisam ter o plano.",
   partner_not_found: "Não encontramos ninguém com esse nome de usuário.",
   partner_self: "Escolha outra pessoa: você não pode compartilhar o mural com você mesmo.",
   shared_limit: "Você já criou o máximo de 3 murais compartilhados.",

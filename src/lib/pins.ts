@@ -95,13 +95,13 @@ export async function updateListPin(sb: SupabaseClient, id: string, title: strin
   return !error;
 }
 
-/** Aprova (opcionalmente já em blur, no PLUS) ou recusa/remove (apaga e libera o espaço). */
+/** Aprova (opcionalmente já em blur, no PINZ+) ou recusa/remove (apaga e libera o espaço). */
 export async function moderatePin(sb: SupabaseClient, id: string, approve: boolean, hidden = false): Promise<boolean> {
   const { error } = await sb.rpc("moderate_pin", { p_id: id, p_approve: approve, p_hidden: hidden });
   return !error;
 }
 
-/** PLUS: deixa um pin visível ou em blur para quem visita. */
+/** PINZ+: deixa um pin visível ou em blur para quem visita. */
 export async function setPinHidden(sb: SupabaseClient, id: string, hidden: boolean): Promise<boolean> {
   const { error } = await sb.rpc("set_pin_hidden", { p_id: id, p_hidden: hidden });
   return !error;

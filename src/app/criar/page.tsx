@@ -44,7 +44,7 @@ export default function CriarMural() {
       setSavedNick(prof?.nickname ?? null);
       setNickPending(prof ? !prof.confirmed : false);
       setPlus(inv?.plus === true);
-      setSlots(Math.max(inv?.plus === true ? PLUS_MAX_MURALS : 1, 1 + (inv?.extraMurals ?? 0))); // PLUS: até 10 murais
+      setSlots(Math.max(inv?.plus === true ? PLUS_MAX_MURALS : 1, 1 + (inv?.extraMurals ?? 0))); // PINZ+: até 10 murais
       setReady(true);
     });
   }, [loading, session, router]);
@@ -66,7 +66,7 @@ export default function CriarMural() {
     });
     if (err) {
       setBusy(false);
-      setError(err.message.includes("mural_limit") ? plus ? `Você chegou ao limite de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. Com o PINZ PLUS você pode ter até 10." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err.message.includes("mural_limit") ? plus ? `Você chegou ao limite de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. Com o PINZ+ você pode ter até 10." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     router.replace(await homeRouteFor(sb)); // vai para o mural novo; segue "Criando…" até a navegação terminar
@@ -82,14 +82,14 @@ export default function CriarMural() {
 
   const nickSetup = <NicknameSetup open={nickPending && !!savedNick} suggested={savedNick ?? ""} onDone={(n) => { setSavedNick(n); setNickPending(false); }} />;
 
-  // 1 mural por conta; mais murais, só no PLUS (comprando na loja com créditos)
+  // 1 mural por conta; mais murais, só no PINZ+ (comprando na loja com créditos)
   if (taken.length >= slots) {
     return (
       <AuthShell>
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
           <h1 className="font-title text-2xl font-semibold">{plus ? "Todos os seus murais estão no ar" : "Seu mural já está no ar"}</h1>
           <p className="mt-2 text-sm text-[#6b5440]">
-            {plus ? `O limite do PINZ PLUS é de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. O PINZ PLUS permite ter até 10 murais."}
+            {plus ? `O limite do PINZ+ é de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. O PINZ+ permite ter até 10 murais."}
           </p>
           <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
             Ir para o meu mural
