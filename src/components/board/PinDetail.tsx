@@ -14,6 +14,7 @@ import { useFeatureFlags } from "@/lib/features";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
+import { getBrowserSupabase } from "@/lib/supabase";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
 type Over = { id: string; key: number; rot: number; rx: number; ry: number; wr: number };
@@ -111,6 +112,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
+  // quem deixou o pin pode excluí-lo a qualquer momento (aguardando aprovação ou já aprovado), mesmo no mural de outra pessoa
+  async function deleteOwn(id: string): Promise<boolean> {
+    const { error } = await getBrowserSupabase().rpc("delete_own_pin", { p_id: id });
+    if (!error) window.dispatchEvent(new Event("pinz:reload-board"));
+    return !error;
+  }
   // executa a ação e, se for o caso, fecha o destaque (o pin já saiu do mural ou mudou)
   async function run(action: () => Promise<boolean>, closeAfter: boolean) {
     setBusy(true);
@@ -291,6 +298,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
             </p>
           )}
+          {!mod && item && !isSealed(item) && !isHidden(item) && item.mine && (
+            <button type="button" disabled={busy} onClick={() => setConfirmDelete(true)} className={`${ghost} flex items-center justify-center gap-2`}>
+              <Trash />
+              Excluir meu PIN
+            </button>
+          )}
           {mod && item && !isSealed(item) && !isHidden(item) && (
             <div className="flex w-full flex-col items-center gap-2" role="group" aria-label="Moderar este pin">
               <div className="flex w-full flex-wrap justify-center gap-2">
@@ -357,7 +370,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         </div>
       </div>
     )}
-    {mod && item && !isSealed(item) && !isHidden(item) && (
+    {item && !isSealed(item) && !isHidden(item) && (mod || item.mine) && (
       <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="" label="Excluir PIN">
         <div className="space-y-4">
           <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este pin? Essa ação não poderá ser desfeita.</p>
@@ -370,7 +383,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               disabled={busy}
               onClick={() => {
                 setConfirmDelete(false);
-                void run(() => mod.moderate(item.id, false), true);
+                void run(() => (mod ? mod.moderate(item.id, false) : deleteOwn(item.id)), true);
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
             >

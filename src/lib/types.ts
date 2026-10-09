@@ -27,6 +27,8 @@ type Base = {
   reaction?: string;
   /** Lista que quem está vendo pode editar (dono do mural ou autor do pin). Vem do servidor. */
   canEdit?: boolean;
+  /** Fui eu quem deixou este pin (posso excluí-lo). Vem do servidor. */
+  mine?: boolean;
   /** Visão do dono: este pin pendente está esperando a aprovação dele. */
   ownerReview?: boolean;
 };

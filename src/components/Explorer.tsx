@@ -320,6 +320,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     else if (!loadedRef.current) relock("Por segurança, o mural foi trancado de novo. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
 
+  // o autor excluiu o próprio pin no detalhe: recarrega o quadro
+  useEffect(() => {
+    const h = () => void loadBoard();
+    window.addEventListener("pinz:reload-board", h);
+    return () => window.removeEventListener("pinz:reload-board", h);
+  }, [loadBoard]);
+
   // quando o dono troca a pergunta/resposta, o banco avisa em tempo real: quem está com o mural aberto é trancado na hora
   const watchId = selected?.id;
   useEffect(() => {
