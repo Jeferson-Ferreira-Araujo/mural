@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { boardById } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
@@ -13,6 +13,7 @@ import { BadgeBar } from "./badges/BadgeBar";
 import { ShareButton } from "./ShareButton";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { FollowButton } from "./FollowButton";
+import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
 import { useBadges } from "./badges/BadgeContext";
@@ -51,6 +52,7 @@ type Props = {
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
+  const [followersOpen, setFollowersOpen] = useState(false);
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
@@ -81,21 +83,24 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         </p>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
-          <div className="flex shrink-0 items-center gap-2 text-sm text-[#2a1c12]">
-            {!!info.topFollowers?.length && (
-              <div className="flex -space-x-2.5" aria-hidden>
-                {info.topFollowers.map((p) => (
-                  <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-8 ring-2 ring-[#e8dcc2]" />
-                ))}
-              </div>
-            )}
-            <p className="whitespace-nowrap">
-              <strong className="text-base">{info.followers.toLocaleString("pt-BR")}</strong> {info.followers === 1 ? "seguidor" : "seguidores"}
-            </p>
-          </div>
+          <button type="button" onClick={() => setFollowersOpen(true)} aria-label="Ver os seguidores" className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">
+            <span className="flex items-center justify-end gap-2">
+              {!!info.topFollowers?.length && (
+                <span className="flex -space-x-2.5" aria-hidden>
+                  {info.topFollowers.map((p) => (
+                    <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-8 ring-2 ring-[#e8dcc2]" />
+                  ))}
+                </span>
+              )}
+              <strong className="text-base leading-none">{info.followers.toLocaleString("pt-BR")}</strong>
+            </span>
+            <span className="mt-0.5 block text-right text-xs leading-tight">{info.followers === 1 ? "seguidor" : "seguidores"}</span>
+          </button>
         )}
       </div>
 
+
+      <FollowersModal open={followersOpen} onClose={() => setFollowersOpen(false)} nick={info.owner} />
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">

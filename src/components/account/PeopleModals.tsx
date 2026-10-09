@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listFollowing, listVisitors, setFollowing, type PersonLite } from "@/lib/social";
+import { listFollowers, listFollowing, listVisitors, setFollowing, type PersonLite } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
@@ -50,6 +50,31 @@ export function FollowingModal({ open, onClose }: { open: boolean; onClose: () =
                 </button>
               }
             />
+          ))}
+        </ul>
+      )}
+    </Modal>
+  );
+}
+
+/** Seguidores de uma pessoa (aberto ao tocar no número de seguidores do mural). */
+export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose: () => void; nick: string }) {
+  const [list, setList] = useState<PersonLite[] | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    setList(null);
+    void listFollowers(getBrowserSupabase(), nick).then((l) => setList(l ?? []));
+  }, [open, nick]);
+  return (
+    <Modal open={open} onClose={onClose} title="Seguidores" label="Seguidores">
+      {!list ? (
+        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+      ) : list.length === 0 ? (
+        <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum seguidor para mostrar.</p>
+      ) : (
+        <ul className="space-y-2.5">
+          {list.map((p) => (
+            <Row key={p.nickname} p={p} />
           ))}
         </ul>
       )}
