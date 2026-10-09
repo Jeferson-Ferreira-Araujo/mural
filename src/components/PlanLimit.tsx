@@ -38,7 +38,7 @@ export function PlanLimit({ used, glass = false, className = "" }: { used: numbe
         <span className="tabular-nums">
           {used}/{max}
         </span>
-        <span aria-hidden className={`grid size-5 place-items-center rounded-full text-xs font-bold ${glass ? "bg-white/90 text-[#2a1c12]" : "bg-[#2a1c12] text-white"}`}>
+        <span aria-hidden className={`grid size-4 place-items-center rounded-full text-[10px] leading-none font-bold ${glass ? "bg-white/90 text-[#2a1c12]" : "bg-[#2a1c12] text-white"}`}>
           ?
         </span>
       </button>
