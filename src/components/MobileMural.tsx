@@ -93,7 +93,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
                   ))}
                 </span>
               )}
-              <strong className="text-2xl leading-none font-extrabold">{info.followers.toLocaleString("pt-BR")}</strong>
+              <strong className="text-lg leading-none font-bold">{info.followers.toLocaleString("pt-BR")}</strong>
             </span>
             <span className="mt-0.5 block text-right text-[11px] leading-tight text-[#6b5440]">{info.followers === 1 ? "seguidor" : "seguidores"}</span>
           </button>
