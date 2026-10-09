@@ -11,7 +11,9 @@ export const TOGGLEABLE_FORMATS: { key: string; type: MessageType; label: string
   { key: "pin_video", type: "video", label: "Vídeo", hint: "Arquivo de vídeo ou link do YouTube" },
   { key: "pin_voice", type: "voice", label: "Voz", hint: "Recado gravado em áudio" },
   { key: "pin_place", type: "place", label: "Local", hint: "Lugar no mapa" },
-  { key: "pin_daily", type: "daily", label: "Mensagem do dia", hint: "Pin da loja: um texto novo todo dia" },
+  { key: "pin_daily", type: "daily", label: "Versículo e frase do dia", hint: "Pins da loja: um texto novo todo dia" },
+  { key: "pin_clock", type: "clock", label: "Relógio", hint: "Pin da loja: a hora passando no mural" },
+  { key: "pin_weather", type: "weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
 ];
 
 /** Recursos do site (não são formatos de pin). Desligado: some a opção; o que já foi criado continua. */

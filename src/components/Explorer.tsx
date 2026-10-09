@@ -914,7 +914,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
                   mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
                   onSend: onSendPin,
                   sentNote: "Pin colado no seu mural! 📌",
-                  extraFormats: (inventory?.pinProducts ?? []).some((p) => p.id === "daily" && p.owned) ? (["daily"] as const) : [],
+                  products: (inventory?.pinProducts ?? []).filter((p) => p.owned).map((p) => p.id),
                   onTried: () => undefined,
                   triedAlready: false,
                   signAs: myNick,

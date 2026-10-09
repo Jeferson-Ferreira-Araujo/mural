@@ -63,6 +63,20 @@ function Confetti() {
   );
 }
 
+/** Amostra de cada pin da loja, como aparece no mural. */
+function sampleFor(id: string): Message {
+  switch (id) {
+    case "bible":
+      return { id: "loja", type: "daily", category: "versiculo", text: "Entrega o teu caminho ao Senhor; confia nele, e ele o fará.", ref: "Salmos 37:5" } as Message;
+    case "motivation":
+      return { id: "loja", type: "daily", category: "frase", text: "Pequenas ações diárias geram grandes mudanças.", frame: "silver" } as Message;
+    case "clock":
+      return { id: "loja", type: "clock", tz: "America/Sao_Paulo", frame: "brown" } as Message;
+    default:
+      return { id: "loja", type: "weather", city: "Sua cidade", lat: 0, lon: 0, frame: "blue" } as Message;
+  }
+}
+
 type Done = { id: string; title: string; text: string; img?: string; spent: number; at: number };
 
 /** Moeda do Pinz (public/img/moeda.webp). O tamanho vem do `className`. */
@@ -315,7 +329,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <div className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-6">
                   <div className="w-[13rem] text-[10px]">
                     <div className="relative">
-                      <MessageView message={{ id: "loja", type: "daily", category: "mix", kind: "versiculo", text: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" } as Message} />
+                      <MessageView message={sampleFor(p.id)} />
                     </div>
                   </div>
                 </div>

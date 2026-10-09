@@ -1,27 +1,25 @@
 import type { DailyCategory } from "@/lib/types";
-import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
-import { TapeSlot } from "./fasteners";
+import { LeafIcon, ScenicCard, SunIcon } from "./ScenicCard";
 
-const TITLE: Record<Exclude<DailyCategory, "mix">, string> = { mensagem: "Mensagem do dia", frase: "Frase do dia", versiculo: "Versículo do dia" };
-const ACCENT: Record<Exclude<DailyCategory, "mix">, string> = { mensagem: "#c9803a", frase: "#4f7f5c", versiculo: "#4a6a9c" };
+const TITLE: Record<"versiculo" | "frase", string> = { versiculo: "Versículo do dia", frase: "Frase do dia" };
 
-/** Cartão do pin "Mensagem do dia": o texto de hoje vem do servidor e muda sozinho a cada dia. */
-export function DailyCard({ category, kind, text, reference, font, tape }: { category: DailyCategory; kind?: Exclude<DailyCategory, "mix">; text?: string; reference?: string | null; font?: HandId; tape?: TapeColor }) {
-  const k = kind ?? (category === "mix" ? "mensagem" : category);
-  const hand = handOf(font ?? "caveat");
-  const tone = tape ? tapeOf(tape).tone : undefined;
+/** Pins "Versículo do dia" e "Frase motivacional": o texto de hoje vem do servidor e muda sozinho a cada dia. */
+export function DailyCard({ category, text, reference, frame }: { category: DailyCategory; kind?: string; text?: string; reference?: string | null; frame?: string | null }) {
+  const bible = category === "versiculo";
+  const body = text ?? "O texto de hoje aparece aqui.";
+  // textos longos (versículos) pedem letra menor para caber no cartão
+  const size = body.length <= 60 ? 1.2 : body.length <= 110 ? 0.98 : body.length <= 160 ? 0.82 : 0.7;
   return (
-    <div className="relative w-[14em]">
-      <article aria-label={TITLE[k]} className="paper-grain shadow-paper relative w-full min-h-[11em] bg-[#fbf6e6] px-[1.2em] pt-[1.8em] pb-[1.1em]" style={{ borderRadius: "0.15em" }}>
-        <p className="text-[0.62em] leading-none font-bold tracking-[0.16em] uppercase" style={{ color: ACCENT[k] }}>
-          {TITLE[k]}
+    <ScenicCard scene={bible ? "meadow" : "mountains"} frame={frame} left={<LeafIcon />} right={<SunIcon />} label={TITLE[bible ? "versiculo" : "frase"]}>
+      <p className="leading-[1.18] [overflow-wrap:anywhere]" style={{ fontFamily: "var(--font-patrick), cursive", fontSize: `${size}em` }}>
+        {body}
+      </p>
+      {reference && (
+        <p className="mt-[0.5em] text-[0.7em] leading-tight font-semibold opacity-90" style={{ fontFamily: "var(--font-patrick), cursive" }}>
+          {reference}
         </p>
-        <p className="mt-[0.7em] leading-[1.2] text-[#2f2218] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.45 * hand.scale}em` }}>
-          {text ?? "O texto de hoje aparece aqui."}
-        </p>
-        {reference && <p className="mt-[0.8em] text-[0.7em] leading-tight font-semibold text-[#6b5440]">{reference}</p>}
-      </article>
-      <TapeSlot top="top-[-0.5em]" at="center" tone={tone} />
-    </div>
+      )}
+    </ScenicCard>
   );
 }
+

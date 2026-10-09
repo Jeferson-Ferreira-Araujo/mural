@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { DailyCategory, PlayerColor, PostItColor } from "@/lib/types";
+import type { FrameColor } from "@/lib/style";
+import { CLOCK_ZONES } from "../messages/ClockCard";
 import type { HandId, PinColor, TapeColor } from "@/lib/style";
 import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
-import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
+import { FontPicker, FrameColorPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
 import { embedFor } from "@/lib/embed";
 import { fetchMusicMeta, type MusicMeta } from "@/lib/music";
@@ -42,42 +44,130 @@ const POSTIT_COLORS: { id: PostItColor; label: string; bg: string }[] = [
   { id: "orange", label: "Laranja", bg: "#fbbd78" },
 ];
 
-// ---------- Mensagem do dia (pin da loja) ----------
-const DAILY_OPTIONS: { id: DailyCategory; label: string; hint: string; sample: string; ref?: string }[] = [
-  { id: "mix", label: "Surpresa do dia", hint: "Cada dia uma categoria diferente", sample: "Bom dia! Que o seu dia seja leve e cheio de boas notícias." },
-  { id: "mensagem", label: "Mensagem", hint: "Recados carinhosos", sample: "Respire, sorria e siga em frente. Você está indo bem." },
-  { id: "frase", label: "Frase motivacional", hint: "Para começar o dia com ânimo", sample: "Um passo pequeno hoje vale mais do que um grande plano guardado." },
-  { id: "versiculo", label: "Versículo bíblico", hint: "Um versículo por dia", sample: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" },
-];
+// ---------- Pins da loja: Versículo/Frase do dia, Relógio e Clima ----------
+const DAILY_SAMPLE: Record<DailyCategory, { text: string; ref: string | null }> = {
+  versiculo: { text: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" },
+  frase: { text: "Um passo pequeno hoje vale mais do que um grande plano guardado.", ref: null },
+};
 
-export function DailyForm({ onChange }: { onChange: DraftChange }) {
-  const [category, setCategory] = useState<DailyCategory>("mix");
-  const opt = DAILY_OPTIONS.find((o) => o.id === category) ?? DAILY_OPTIONS[0];
-  // a prévia mostra um exemplo; o texto de verdade muda todo dia, no servidor
-  useEffect(() => onChange({ type: "daily", category, text: opt.sample, ref: opt.ref ?? null, kind: category === "mix" ? "mensagem" : category } as DraftMessage), [category, opt, onChange]);
+export function DailyForm({ category, onChange }: { category: DailyCategory; onChange: DraftChange }) {
+  const [frame, setFrame] = useState<FrameColor>("gold");
+  // a prévia mostra um exemplo; o texto de verdade muda sozinho todos os dias, à meia-noite
+  useEffect(() => onChange({ type: "daily", category, text: DAILY_SAMPLE[category].text, ref: DAILY_SAMPLE[category].ref, frame } as DraftMessage), [category, frame, onChange]);
   return (
-    <fieldset className="space-y-2">
-      <legend className="mb-1.5 text-sm font-semibold">O que você quer receber todo dia?</legend>
-      <div role="radiogroup" aria-label="Categoria" className="space-y-2">
-        {DAILY_OPTIONS.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            role="radio"
-            aria-checked={category === o.id}
-            onClick={() => setCategory(o.id)}
-            className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border-2 px-3.5 py-3 text-left transition ${category === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-[#fff6dd]"}`}
-          >
-            <span>
-              <span className="block text-sm font-bold">{o.label}</span>
-              <span className="block text-xs text-[#6b5440]">{o.hint}</span>
-            </span>
-            {category === o.id && <span aria-hidden className="text-[#d9a21b]">✓</span>}
+    <div className="space-y-4">
+      <FrameColorPicker value={frame} onChange={setFrame} />
+      <p className="text-sm text-[#6b5440]">{category === "versiculo" ? "Todo dia um versículo novo aparece aqui, sozinho." : "Todo dia uma frase motivacional nova aparece aqui, sozinha."} Na prévia você vê um exemplo.</p>
+    </div>
+  );
+}
+
+export function ClockForm({ onChange }: { onChange: DraftChange }) {
+  const [frame, setFrame] = useState<FrameColor>("gold");
+  const [tz, setTz] = useState("America/Sao_Paulo");
+  useEffect(() => onChange({ type: "clock", tz, frame } as DraftMessage), [tz, frame, onChange]);
+  return (
+    <div className="space-y-4">
+      <FrameColorPicker value={frame} onChange={setFrame} />
+      <Field label="Horário de qual lugar?">
+        {(id) => (
+          <select id={id} value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass}>
+            {CLOCK_ZONES.map((z) => (
+              <option key={z.id} value={z.id}>
+                {z.label}
+              </option>
+            ))}
+          </select>
+        )}
+      </Field>
+      <p className="text-sm text-[#6b5440]">A hora passa sozinha e a paisagem muda do amanhecer à noite.</p>
+    </div>
+  );
+}
+
+export function WeatherForm({ onChange }: { onChange: DraftChange }) {
+  const [frame, setFrame] = useState<FrameColor>("gold");
+  const [query, setQuery] = useState("");
+  const [hits, setHits] = useState<PlaceHit[]>([]);
+  const [place, setPlace] = useState<PlaceHit | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function search() {
+    const q = query.trim();
+    if (q.length < 3) return setError("Digite pelo menos 3 letras do nome da cidade.");
+    setError(null);
+    setSearching(true);
+    try {
+      setHits(await searchPlaces(q));
+      setSearched(true);
+    } catch {
+      setError("Não foi possível buscar agora. Tente de novo em instantes.");
+    } finally {
+      setSearching(false);
+    }
+  }
+  useEffect(
+    () => onChange({ type: "weather", city: place ? place.name : "Sua cidade", lat: place ? place.lat : 0, lon: place ? place.lon : 0, frame } as DraftMessage, { empty: !place }),
+    [place, frame, onChange],
+  );
+  return (
+    <div className="space-y-4">
+      <FrameColorPicker value={frame} onChange={setFrame} />
+      {place ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
+          <div className="min-w-0">
+            <p className="truncate font-semibold">{place.name}</p>
+            {place.address && <p className="truncate text-sm text-[#6b5440]">{place.address}</p>}
+          </div>
+          <button type="button" onClick={() => setPlace(null)} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+            Trocar
           </button>
-        ))}
-      </div>
-      <p className="text-xs text-[#6b5440]">Na prévia você vê um exemplo. O texto muda sozinho todos os dias, à meia-noite.</p>
-    </fieldset>
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="weather-q" className="mb-1.5 block text-sm font-semibold">
+            De qual cidade?
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="weather-q"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void search();
+                }
+              }}
+              placeholder="Ex: Goiânia, GO"
+              className={inputClass}
+              maxLength={100}
+              autoComplete="off"
+            />
+            <button type="button" onClick={() => void search()} disabled={searching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
+              {searching ? "Buscando…" : "Buscar"}
+            </button>
+          </div>
+          {error && <ErrorText>{error}</ErrorText>}
+          {searched && hits.length === 0 && !error && <p className="mt-2 text-sm text-[#6b5440]">Nenhuma cidade encontrada. Tente outro nome.</p>}
+          {hits.length > 0 && (
+            <ul className="mt-2 space-y-1.5">
+              {hits.map((h, i) => (
+                <li key={i}>
+                  <button type="button" onClick={() => setPlace(h)} className="w-full cursor-pointer rounded-xl border border-[#e1d3ba] bg-white/70 px-3 py-2 text-left hover:bg-white">
+                    <span className="block truncate text-sm font-semibold">{h.name}</span>
+                    {h.address && <span className="block truncate text-xs text-[#6b5440]">{h.address}</span>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+      <p className="text-sm text-[#6b5440]">O tempo agora na cidade escolhida, sempre atualizado.</p>
+    </div>
   );
 }
 

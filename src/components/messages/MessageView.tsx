@@ -1,7 +1,9 @@
 import { reactionEmoji } from "@/lib/reactions";
 import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
+import { ClockCard } from "./ClockCard";
 import { DailyCard } from "./DailyCard";
+import { WeatherCard } from "./WeatherCard";
 import { DrawingCard } from "./DrawingCard";
 import { HiddenPin } from "./HiddenPin";
 import { ClosedCapsule } from "./ClosedCapsule";
@@ -36,7 +38,11 @@ function Content({ m }: { m: Message }) {
     case "voice":
       return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
     case "daily":
-      return <DailyCard category={m.category} kind={m.kind} text={m.text} reference={m.ref} />;
+      return <DailyCard category={m.category} text={m.text} reference={m.ref} frame={m.frame} />;
+    case "clock":
+      return <ClockCard tz={m.tz} frame={m.frame} />;
+    case "weather":
+      return <WeatherCard city={m.city} lat={m.lat} lon={m.lon} frame={m.frame} />;
     case "place":
       return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} blank={(m as { blank?: boolean }).blank} />;
   }

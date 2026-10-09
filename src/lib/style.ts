@@ -58,3 +58,18 @@ export const PIN_POSITIONS: readonly PinPos[] = ["left", "center", "right"];
 export const POS_LABEL: Record<PinPos, string> = { left: "na esquerda", center: "no meio", right: "na direita" };
 /** Valor vindo do servidor: qualquer coisa fora da lista vira "esquerda". */
 export const posOf = (p?: string | null): PinPos => (p === "center" || p === "right" ? p : "left");
+
+// ---- contorno dos pins da loja (Versículo, Frase, Relógio, Clima) ----
+export type FrameColor = "gold" | "silver" | "pink" | "brown" | "blue" | "green" | "black" | "white";
+
+export const FRAME_COLORS: readonly { id: FrameColor; label: string; swatch: string; /** degradê do aro: claro → escuro */ from: string; to: string }[] = [
+  { id: "gold", label: "Dourado", swatch: "#d9a84a", from: "#f6e2b0", to: "#b88a3a" },
+  { id: "silver", label: "Prata", swatch: "#b9bcc6", from: "#f6f6f8", to: "#9a9ca8" },
+  { id: "pink", label: "Rosa", swatch: "#e98fb0", from: "#fbd0de", to: "#d0678d" },
+  { id: "brown", label: "Madeira", swatch: "#9a6d44", from: "#c99b6b", to: "#6a4527" },
+  { id: "blue", label: "Azul", swatch: "#5a8fd0", from: "#c4daf6", to: "#4a7bbd" },
+  { id: "green", label: "Verde", swatch: "#5a9a60", from: "#cdeac8", to: "#4a8650" },
+  { id: "black", label: "Preto", swatch: "#2a2a30", from: "#6a6a72", to: "#18181c" },
+  { id: "white", label: "Branco", swatch: "#f4f1ea", from: "#ffffff", to: "#d9d4c8" },
+];
+export const frameOf = (id?: string | null) => FRAME_COLORS.find((f) => f.id === id) ?? FRAME_COLORS[0];
