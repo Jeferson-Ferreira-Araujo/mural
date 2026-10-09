@@ -62,7 +62,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     const t = window.setTimeout(() => (setBlockMsg(null), setTick((n) => n + 1)), ms + 200);
     return () => window.clearTimeout(t);
   }, [blockedUntil]);
-  const blockedText = blocked ? blockMsg ?? `Tente novamente em ${Math.max(1, Math.ceil(((blockedUntil ?? 0) - Date.now()) / 60000))} min.` : "";
+  const blockedText = blocked ? blockMsg ?? (() => { const m = Math.max(1, Math.ceil(((blockedUntil ?? 0) - Date.now()) / 60000)); return `Em ${m} ${m === 1 ? "minuto" : "minutos"} você poderá tentar acessar novamente.`; })() : "";
   const Wrap: ElementType = onProfile ? "button" : "div"; // foto e nome abrem o resumo do perfil
   const wrapProps = onProfile ? { type: "button" as const, onClick: onProfile, "aria-label": `Ver o perfil de @${owner}` } : {};
 
