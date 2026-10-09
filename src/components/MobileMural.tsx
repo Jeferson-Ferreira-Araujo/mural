@@ -79,31 +79,30 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <p className="min-w-0 flex-1">
           <span className="block truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
         </p>
-        {/* à direita, na linha da foto: no mural de outra pessoa o botão Seguir/Seguindo; no seu, quantos seguidores você tem */}
-        {follow ? (
-          <FollowButton follow={follow} compact />
-        ) : !locked && info.followers != null ? (
+        {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
+        {!locked && info.followers != null && (
           <p className="shrink-0 text-right text-sm leading-tight text-[#2a1c12]">
             <strong className="block text-base">{info.followers.toLocaleString("pt-BR")}</strong>
             {info.followers === 1 ? "seguidor" : "seguidores"}
           </p>
-        ) : null}
+        )}
       </div>
 
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
-        {/* escolher o mural: canto superior direito do quadro, na linha do Novo mural */}
-        <div className="absolute top-3 right-3 z-30">
+        {/* escolher o mural: no próprio perfil fica no canto superior direito (o esquerdo é do Novo mural); visitando, vai para a esquerda e a direita é do Seguir */}
+        <div className={`absolute top-3 z-30 ${follow ? "left-3" : "right-3"}`}>
           <MuralNameMenu
             title={info.title}
             label="Murais"
             sw={muralSwitch}
             showShared={!!account?.atHome}
-            align="right"
+            align={follow ? "left" : "right"}
             triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           />
         </div>
+        {follow && <FollowButton follow={follow} glass className="absolute top-3 right-3 z-30" />}
         {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (
           <button
