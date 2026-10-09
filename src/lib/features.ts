@@ -11,13 +11,13 @@ export const TOGGLEABLE_FORMATS: { key: string; type: MessageType; label: string
   { key: "pin_video", type: "video", label: "Vídeo", hint: "Arquivo de vídeo ou link do YouTube" },
   { key: "pin_voice", type: "voice", label: "Voz", hint: "Recado gravado em áudio" },
   { key: "pin_place", type: "place", label: "Local", hint: "Lugar no mapa" },
-  { key: "pin_daily", type: "daily", label: "Versículo e frase do dia", hint: "Pins da loja: um texto novo todo dia" },
-  { key: "pin_clock", type: "clock", label: "Relógio", hint: "Pin da loja: a hora passando no mural" },
-  { key: "pin_weather", type: "weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
 ];
 
 /** Recursos do site (não são formatos de pin). Desligado: some a opção; o que já foi criado continua. */
 export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string }[] = [
+  { key: "pin_daily", label: "Versículo e frase do dia", hint: "Pins da loja: um texto novo todo dia, colocado em qualquer lugar do mural" },
+  { key: "pin_clock", label: "Relógio", hint: "Pin da loja: a hora passando no mural" },
+  { key: "pin_weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
   { key: "reactions", label: "Reações aos pins", hint: "O dono do mural reage com emoji no detalhe do pin (e o autor é avisado no sino)" },
 ];
 

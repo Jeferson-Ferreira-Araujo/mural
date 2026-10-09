@@ -119,17 +119,21 @@ begin
   perform set_config('request.jwt.claims', '{"role":"anon"}', true);
   rep := rep || case when public._pin_upload_allowed('00000000-0000-0000-0000-000000000000/x.png') is not true then 'OK    ' else 'FALHA ' end || 'envio de arquivo sem conta é recusado' || E'\n';
 
-  -- 10) pin da loja "Versículo do dia": só o dono que comprou cola; o quadro já traz o texto de hoje
+  -- 10) pins da loja (widgets): só o dono que comprou coloca; o espaço coberto não recebe pin; cobrir espaço ocupado é recusado
   perform set_config('request.jwt.claims', json_build_object('sub', o, 'role', 'authenticated')::text, true);
-  delete from public.pin_product_inventory where user_id = o and product_id = 'bible';
-  begin perform public.send_message(nick, a.slug, null, 26, 'daily', '{"category":"mix"}'::jsonb); rep := rep || 'FALHA ' || 'pin do dia sem comprar' || E'
-'; exception when others then rep := rep || case when sqlerrm like '%product_not_owned%' then 'OK    ' else 'FALHA ' end || 'sem comprar, o pin do dia é recusado' || E'
+  delete from public.pin_product_inventory where user_id = o and product_id = 'clock';
+  begin perform public.add_display(a.id, 'clock', '{}'::jsonb, 50, 50, array[24]); rep := rep || 'FALHA ' || 'widget sem comprar' || E'
+'; exception when others then rep := rep || case when sqlerrm like '%product_not_owned%' then 'OK    ' else 'FALHA ' end || 'sem comprar, o widget é recusado' || E'
 '; end;
   update public.profiles set credits = 30 where user_id = o;
-  perform public.buy_pin_product('bible');
-  perform public.send_message(nick, a.slug, null, 26, 'daily', '{"category":"versiculo"}'::jsonb);
-  rep := rep || case when (select count(*) from jsonb_array_elements(public.get_board(nick, a.slug, null)) e where e->>'type' = 'daily' and coalesce(e->>'text','') <> '') = 1 then 'OK    ' else 'FALHA ' end || 'o pin do dia chega com o texto de hoje' || E'
-';
+  perform public.buy_pin_product('clock');
+  perform public.add_display(a.id, 'clock', '{"style":"flip"}'::jsonb, 50, 50, array[24, 25]);
+  begin perform public.send_message(nick, a.slug, null, 24, 'postit', '{"text":"x","color":"yellow"}'::jsonb); rep := rep || 'FALHA ' || 'pin em espaço coberto' || E'
+'; exception when others then rep := rep || case when sqlerrm like '%slot_taken%' then 'OK    ' else 'FALHA ' end || 'espaço coberto por widget não recebe pin' || E'
+'; end;
+  begin perform public.add_display(a.id, 'clock', '{"style":"neon"}'::jsonb, 10, 10, '{}'); rep := rep || 'FALHA ' || 'estilo inválido' || E'
+'; exception when others then rep := rep || case when sqlerrm like '%invalid_content%' then 'OK    ' else 'FALHA ' end || 'estilo inválido é recusado' || E'
+'; end;
 
   raise exception E'\n===== RELATÓRIO (nada foi gravado) =====\n%', rep;
 end $$;

@@ -3,13 +3,17 @@
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
 
+const DISPLAY_LABEL: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
+/** Miniatura de cada pin da loja: cores da paisagem e um sinal. */
+const TILE: Record<string, [string, string, string]> = { bible: ["#f9e7ad", "#d9a352", "Sl"], motivation: ["#2b4a8c", "#f3a766", "★"], clock: ["#4fa8ee", "#d9f0ff", "12:30"], weather: ["#7d93a8", "#c6d2dc", "24°"] };
+
 /**
  * Barra de baixo (só para o dono, no próprio mural): os pins decorativos que ele tem, numa faixa que rola na horizontal.
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
-  const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
+  const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew, displays, pickDisplay, placing } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -71,6 +75,32 @@ export function BadgeBar({ className = "" }: { className?: string }) {
           );
         })}
       </ul>
+      {/* pins da loja (versículo, frase, relógio, clima): tocar abre as opções e depois o pin vai para o lugar que você quiser */}
+      {displays.length > 0 && (
+        <>
+          <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+          <ul className="flex shrink-0 gap-2" aria-label="Seus pins da loja">
+            {displays.map((p) => (
+              <li key={p}>
+                <button
+                  type="button"
+                  disabled={placing}
+                  onClick={() => pickDisplay(p)}
+                  aria-label={`${DISPLAY_LABEL[p] ?? p}: toque para colocar no mural`}
+                  title={DISPLAY_LABEL[p] ?? p}
+                  className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 disabled:opacity-50"
+                >
+                  <span className="grid size-11 place-items-center rounded-[10px] p-[2px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.4)]" style={{ background: "linear-gradient(145deg,#f6e2b0,#b88a3a)" }}>
+                    <span className="grid size-full place-items-center rounded-[8px] text-[10px] leading-none font-bold text-[#2a3a4a]" style={{ background: `linear-gradient(180deg, ${TILE[p]?.[0] ?? "#4fa8ee"}, ${TILE[p]?.[1] ?? "#d9f0ff"})` }}>
+                      {TILE[p]?.[2]}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       </div>
     </section>
   );

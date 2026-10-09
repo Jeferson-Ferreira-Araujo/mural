@@ -45,9 +45,6 @@ export type Message =
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; /** vídeo do YouTube (no lugar do arquivo) */ link?: string; playerColor?: PlayerColor })
   | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
-  | (Base & { type: "daily"; /** versículo ou frase motivacional; o texto de hoje vem do servidor */ category: DailyCategory; text?: string; ref?: string | null; /** cor do contorno do cartão */ frame?: string })
-  | (Base & { type: "clock"; /** fuso do relógio ("local" = o de quem está vendo) */ tz: string; frame?: string })
-  | (Base & { type: "weather"; city: string; lat: number; lon: number; frame?: string })
   | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor });
 
 export type MessageType = Message["type"];
@@ -102,9 +99,6 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
   voice: { label: "Voz", hint: "Uma mensagem de voz", tier: "full" },
   place: { label: "Local", hint: "Um lugar no mapa", tier: "full" },
-  daily: { label: "Mensagem do dia", hint: "Um texto novo todo dia", tier: "free" },
-  clock: { label: "Relógio", hint: "A hora passando no mural", tier: "free" },
-  weather: { label: "Clima", hint: "O tempo da sua cidade", tier: "free" },
 };
 
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(

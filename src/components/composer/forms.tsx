@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { DailyCategory, PlayerColor, PostItColor } from "@/lib/types";
-import type { FrameColor } from "@/lib/style";
-import { CLOCK_ZONES } from "../messages/ClockCard";
+import type { PlayerColor, PostItColor } from "@/lib/types";
 import type { HandId, PinColor, TapeColor } from "@/lib/style";
 import { PLAYER_COLOR_IDS, PLAYER_PALETTE } from "../messages/playerPalette";
 import { Field, inputClass } from "../ui";
-import { FontPicker, FrameColorPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
+import { FontPicker, PinColorPicker, TapeColorPicker } from "./StylePickers";
 import type { DraftChange, DraftMessage } from "./types";
 import { embedFor } from "@/lib/embed";
 import { fetchMusicMeta, type MusicMeta } from "@/lib/music";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { searchPlaces, type PlaceHit } from "@/lib/places";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
@@ -43,133 +42,6 @@ const POSTIT_COLORS: { id: PostItColor; label: string; bg: string }[] = [
   { id: "blue", label: "Azul", bg: "#a9d8f0" },
   { id: "orange", label: "Laranja", bg: "#fbbd78" },
 ];
-
-// ---------- Pins da loja: Versículo/Frase do dia, Relógio e Clima ----------
-const DAILY_SAMPLE: Record<DailyCategory, { text: string; ref: string | null }> = {
-  versiculo: { text: "O Senhor é o meu pastor; nada me faltará.", ref: "Salmos 23:1" },
-  frase: { text: "Um passo pequeno hoje vale mais do que um grande plano guardado.", ref: null },
-};
-
-export function DailyForm({ category, onChange }: { category: DailyCategory; onChange: DraftChange }) {
-  const [frame, setFrame] = useState<FrameColor>("gold");
-  // a prévia mostra um exemplo; o texto de verdade muda sozinho todos os dias, à meia-noite
-  useEffect(() => onChange({ type: "daily", category, text: DAILY_SAMPLE[category].text, ref: DAILY_SAMPLE[category].ref, frame } as DraftMessage), [category, frame, onChange]);
-  return (
-    <div className="space-y-4">
-      <FrameColorPicker value={frame} onChange={setFrame} />
-      <p className="text-sm text-[#6b5440]">{category === "versiculo" ? "Todo dia um versículo novo aparece aqui, sozinho." : "Todo dia uma frase motivacional nova aparece aqui, sozinha."} Na prévia você vê um exemplo.</p>
-    </div>
-  );
-}
-
-export function ClockForm({ onChange }: { onChange: DraftChange }) {
-  const [frame, setFrame] = useState<FrameColor>("gold");
-  const [tz, setTz] = useState("America/Sao_Paulo");
-  useEffect(() => onChange({ type: "clock", tz, frame } as DraftMessage), [tz, frame, onChange]);
-  return (
-    <div className="space-y-4">
-      <FrameColorPicker value={frame} onChange={setFrame} />
-      <Field label="Horário de qual lugar?">
-        {(id) => (
-          <select id={id} value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass}>
-            {CLOCK_ZONES.map((z) => (
-              <option key={z.id} value={z.id}>
-                {z.label}
-              </option>
-            ))}
-          </select>
-        )}
-      </Field>
-      <p className="text-sm text-[#6b5440]">A hora passa sozinha e a paisagem muda do amanhecer à noite.</p>
-    </div>
-  );
-}
-
-export function WeatherForm({ onChange }: { onChange: DraftChange }) {
-  const [frame, setFrame] = useState<FrameColor>("gold");
-  const [query, setQuery] = useState("");
-  const [hits, setHits] = useState<PlaceHit[]>([]);
-  const [place, setPlace] = useState<PlaceHit | null>(null);
-  const [searching, setSearching] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function search() {
-    const q = query.trim();
-    if (q.length < 3) return setError("Digite pelo menos 3 letras do nome da cidade.");
-    setError(null);
-    setSearching(true);
-    try {
-      setHits(await searchPlaces(q));
-      setSearched(true);
-    } catch {
-      setError("Não foi possível buscar agora. Tente de novo em instantes.");
-    } finally {
-      setSearching(false);
-    }
-  }
-  useEffect(
-    () => onChange({ type: "weather", city: place ? place.name : "Sua cidade", lat: place ? place.lat : 0, lon: place ? place.lon : 0, frame } as DraftMessage, { empty: !place }),
-    [place, frame, onChange],
-  );
-  return (
-    <div className="space-y-4">
-      <FrameColorPicker value={frame} onChange={setFrame} />
-      {place ? (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 px-4 py-3">
-          <div className="min-w-0">
-            <p className="truncate font-semibold">{place.name}</p>
-            {place.address && <p className="truncate text-sm text-[#6b5440]">{place.address}</p>}
-          </div>
-          <button type="button" onClick={() => setPlace(null)} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            Trocar
-          </button>
-        </div>
-      ) : (
-        <div>
-          <label htmlFor="weather-q" className="mb-1.5 block text-sm font-semibold">
-            De qual cidade?
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="weather-q"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  void search();
-                }
-              }}
-              placeholder="Ex: Goiânia, GO"
-              className={inputClass}
-              maxLength={100}
-              autoComplete="off"
-            />
-            <button type="button" onClick={() => void search()} disabled={searching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
-              {searching ? "Buscando…" : "Buscar"}
-            </button>
-          </div>
-          {error && <ErrorText>{error}</ErrorText>}
-          {searched && hits.length === 0 && !error && <p className="mt-2 text-sm text-[#6b5440]">Nenhuma cidade encontrada. Tente outro nome.</p>}
-          {hits.length > 0 && (
-            <ul className="mt-2 space-y-1.5">
-              {hits.map((h, i) => (
-                <li key={i}>
-                  <button type="button" onClick={() => setPlace(h)} className="w-full cursor-pointer rounded-xl border border-[#e1d3ba] bg-white/70 px-3 py-2 text-left hover:bg-white">
-                    <span className="block truncate text-sm font-semibold">{h.name}</span>
-                    {h.address && <span className="block truncate text-xs text-[#6b5440]">{h.address}</span>}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-      <p className="text-sm text-[#6b5440]">O tempo agora na cidade escolhida, sempre atualizado.</p>
-    </div>
-  );
-}
 
 export function PostItForm({ onChange }: { onChange: DraftChange }) {
   const [color, setColor] = useState<PostItColor>("yellow");
@@ -664,18 +536,6 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 }
 
 // ---------- Local / Maps (PINZ+) ----------
-type PlaceHit = { name: string; address: string; lat: number; lon: number };
-
-/** Busca de lugares pelo nome (Google Places, pelo nosso servidor: só para quem está logado). Só roda quando a pessoa pede. */
-async function searchPlaces(q: string): Promise<PlaceHit[]> {
-  const { data } = await getBrowserSupabase().auth.getSession();
-  const token = data.session?.access_token;
-  if (!token) throw new Error("not_authenticated");
-  const res = await fetch(`/api/places/search?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${token}` } });
-  if (!res.ok) throw new Error("search failed");
-  const body = (await res.json()) as { places?: PlaceHit[] };
-  return (body.places ?? []).filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon));
-}
 
 /** Escolhe um lugar buscando pelo nome; o resultado vira um mini aparelho de mapa. */
 export function PlaceForm({ onChange }: { onChange: DraftChange }) {

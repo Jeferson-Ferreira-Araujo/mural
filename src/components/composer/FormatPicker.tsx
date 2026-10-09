@@ -62,9 +62,6 @@ const THUMBS: Record<MessageType, ReactNode> = {
       </span>
     </span>
   ),
-  daily: <Tile from="#f9e7ad" to="#d9a352" lines />,
-  clock: <Tile from="#4fa8ee" to="#d9f0ff" glyph="12:30" />,
-  weather: <Tile from="#7d93a8" to="#c6d2dc" glyph="24°" />,
   video: (
     <span className="block w-10 rounded-[6px] bg-gradient-to-br from-[#3b3b40] to-[#19191b] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#d6a062]/60">
       <span className="grid aspect-[16/10] place-items-center rounded-[3px] bg-black text-[9px] text-white">▶</span>
@@ -77,29 +74,8 @@ const THUMBS: Record<MessageType, ReactNode> = {
   ),
 };
 
-/** Miniatura do cartão da loja: quadrado com aro dourado e paisagem. */
-function Tile({ from, to, glyph, lines }: { from: string; to: string; glyph?: string; lines?: boolean }) {
-  return (
-    <span className="grid size-11 rotate-[-3deg] place-items-center rounded-[10px] p-[2px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]" style={{ background: "linear-gradient(145deg,#f6e2b0,#b88a3a)" }}>
-      <span className="grid size-full place-items-center rounded-[8px] text-[10px] leading-none font-bold text-[#2a3a4a]" style={{ background: `linear-gradient(180deg, ${from}, ${to})` }}>
-        {lines ? (
-          <span className="block w-[70%] space-y-[3px]">
-            <span className="block h-[2px] bg-[#3a2a12]/70" />
-            <span className="block h-[2px] w-[80%] bg-[#3a2a12]/70" />
-            <span className="block h-[2px] w-[60%] bg-[#3a2a12]/70" />
-          </span>
-        ) : (
-          glyph
-        )}
-      </span>
-    </span>
-  );
-}
-
-export type ExtraFormat = { key: string; type: MessageType; label: string; hint: string; preset?: { category?: string } };
-
 /** Escolha do formato. Mostra SÓ os formatos liberados neste mural (o visitante nunca vê o que não está disponível). */
-export function FormatPicker({ formats, extra = [], onPick }: { formats: readonly MessageType[]; /** pins que a pessoa comprou na loja: aparecem abaixo dos formatos de sempre */ extra?: readonly ExtraFormat[]; onPick: (f: MessageType, preset?: ExtraFormat["preset"], label?: string) => void }) {
+export function FormatPicker({ formats, onPick }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void }) {
   const card = "flex h-full w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-4 text-center transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
     <div>
@@ -117,21 +93,6 @@ export function FormatPicker({ formats, extra = [], onPick }: { formats: readonl
           </li>
         ))}
       </ul>
-      {extra.length > 0 && (
-        <section aria-label="Seus pins da loja" className="mt-5">
-          <h3 className="mb-2 text-sm font-semibold text-[#6b5440]">Seus pins da loja</h3>
-          <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-            {extra.map((x) => (
-              <li key={x.key}>
-                <button type="button" onClick={() => onPick(x.type, x.preset, x.label)} className={card}>
-                  <span className="grid h-12 place-items-center">{THUMBS[x.type]}</span>
-                  <span className="text-sm font-bold">{x.label}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   );
 }

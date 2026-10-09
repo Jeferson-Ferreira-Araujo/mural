@@ -105,7 +105,9 @@ export function BoardCanvas({
     }
   }
   const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
-  const { removeOver } = useBadges();
+  const { removeOver, badges } = useBadges();
+  // espaços cobertos por pins da loja (relógio, clima…): ficam sem receber post-its, fotos e vídeos
+  const covered = new Set(badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])));
   const root = useRef<HTMLElement>(null);
   const drag = usePinDrag(
     mod
@@ -163,6 +165,14 @@ export function BoardCanvas({
                       // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                       if (!item) {
                         if (!hasSelection) return <div key={`e${i}`} aria-hidden />;
+                        if (covered.has(i)) {
+                          // coberto por um pin da loja: o espaço continua ocupando o lugar na grade, mas não aparece nem recebe pin
+                          return (
+                            <div key={`e${i}`} data-slot={i} data-covered aria-hidden className="invisible">
+                              <EmptySlot />
+                            </div>
+                          );
+                        }
                         return (
                           <div key={`e${i}`} data-empty-slot data-slot={i} style={{ transform: `rotate(${tilt * 0.5}deg)` }}>
                             {onCompose && unlocked ? (

@@ -8,8 +8,7 @@ import { BoardLightbox } from "./BoardLightbox";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
-import { MessageView } from "../messages/MessageView";
-import type { Message } from "@/lib/types";
+import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -64,16 +63,16 @@ function Confetti() {
 }
 
 /** Amostra de cada pin da loja, como aparece no mural. */
-function sampleFor(id: string): Message {
+function sampleFor(id: string): DisplayData {
   switch (id) {
     case "bible":
-      return { id: "loja", type: "daily", category: "versiculo", text: "Entrega o teu caminho ao Senhor; confia nele, e ele o fará.", ref: "Salmos 37:5" } as Message;
+      return { product: "bible", style: "classic", text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" };
     case "motivation":
-      return { id: "loja", type: "daily", category: "frase", text: "Pequenas ações diárias geram grandes mudanças.", frame: "silver" } as Message;
+      return { product: "motivation", style: "night", text: "Disciplina de hoje é o resultado de amanhã.", frame: "silver" };
     case "clock":
-      return { id: "loja", type: "clock", tz: "America/Sao_Paulo", frame: "brown" } as Message;
+      return { product: "clock", style: "sunset", tz: "America/Sao_Paulo", frame: "brown" };
     default:
-      return { id: "loja", type: "weather", city: "Sua cidade", lat: 0, lon: 0, frame: "blue" } as Message;
+      return { product: "weather", style: "sky", city: "São Paulo", lat: 0, lon: 0, frame: "blue" };
   }
 }
 
@@ -327,9 +326,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 {just && <Confetti key={done.at} />}
                 {/* amostra do pin: o cartão como aparece no mural */}
                 <div className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-6">
-                  <div className="w-[13rem] text-[10px]">
+                  <div className="text-[9px]">
                     <div className="relative">
-                      <MessageView message={sampleFor(p.id)} />
+                      <DisplayCard data={sampleFor(p.id)} />
                     </div>
                   </div>
                 </div>
@@ -348,7 +347,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   </div>
                   <p className="mt-1 flex-1 text-sm text-[#6b5440]">{p.description}</p>
                   {p.owned ? (
-                    <p className="mt-2 text-xs text-[#6b5440]">Cole no seu mural: toque num espaço vazio e escolha “{p.name}”.</p>
+                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “{p.name}” e arraste o pin para onde quiser.</p>
                   ) : (
                     <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: p.name, text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={buyBtn}>
                       {busy === `f${p.id}` ? "Comprando…" : "Comprar"}

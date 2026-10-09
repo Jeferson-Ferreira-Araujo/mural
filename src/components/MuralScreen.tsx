@@ -5,6 +5,7 @@ import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
 import { Modal } from "./account/Modal";
 import { ComposerDialog } from "./composer/ComposerDialog";
+import { useBadges } from "./badges/BadgeContext";
 import type { SendPayload } from "./composer/types";
 import { DesktopBoard } from "./DesktopBoard";
 import { MobileCarousel } from "./MobileCarousel";
@@ -17,7 +18,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** pins comprados na loja (bible, motivation, clock, weather) */ products?: readonly string[]; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado: o pin sai sempre assinado com ele */ signAs?: string | null; /** sem conta: não dá para publicar; a pessoa é avisada e este endereço leva à criação da conta (que volta para este mural) */ signupHref?: string; /** sem conta: endereço do login de quem já tem conta */ loginHref?: string };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado: o pin sai sempre assinado com ele */ signAs?: string | null; /** sem conta: não dá para publicar; a pessoa é avisada e este endereço leva à criação da conta (que volta para este mural) */ signupHref?: string; /** sem conta: endereço do login de quem já tem conta */ loginHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -29,6 +30,9 @@ export function MuralScreen({ composer, ...view }: Props) {
   const [open, setOpen] = useState(false);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
+  const { badges } = useBadges();
+  // espaços cobertos por pins da loja não recebem pins
+  const coveredSlots = badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : []));
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [needAccount, setNeedAccount] = useState(false);
@@ -73,7 +77,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           onClose={() => (setOpen(false), setSendError(null))}
           plan={view.plan}
           capacity={capacity}
-          taken={takenSlots(view.items, capacity)}
+          taken={[...takenSlots(view.items, capacity), ...coveredSlots]}
           fixedSlot={slot}
           used={view.items.length}
           triedAlready={composer.triedAlready}
@@ -81,7 +85,6 @@ export function MuralScreen({ composer, ...view }: Props) {
           onTried={composer.onTried}
           sending={sending}
           error={sendError}
-          products={composer.mode === "demo" ? composer.products : undefined}
           onSend={async (p) => {
             if (sending) return;
             setSending(true);

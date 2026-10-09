@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { badgeDef, badgeSrc, BADGE_EM, DEFAULT_SCALE, type PlacedBadge } from "@/lib/badges";
+import { badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, type PlacedBadge } from "@/lib/badges";
+import { DisplayCard, WIDGET_W } from "../widgets";
 import { useBadges } from "./BadgeContext";
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
@@ -13,8 +14,9 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   beginRef.current = begin;
   const selectRef = useRef(select);
   selectRef.current = select;
-  const scaleRef = useRef<number>(b.scale ?? DEFAULT_SCALE);
-  scaleRef.current = b.scale ?? DEFAULT_SCALE;
+  const display = isDisplayKey(b.key) || b.kind === "display";
+  const scaleRef = useRef<number>(b.scale ?? (display ? DISPLAY_SCALE : DEFAULT_SCALE));
+  scaleRef.current = b.scale ?? (display ? DISPLAY_SCALE : DEFAULT_SCALE);
   const lastType = useRef("mouse");
   const tapStart = useRef<{ x: number; y: number; t: number } | null>(null);
 
@@ -45,6 +47,23 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   }, [editable, b.id, b.key]);
 
   const def = badgeDef(b.key);
+  if (display) {
+    const w = (baseEmOf(b.key) * (b.scale ?? DISPLAY_SCALE)) / 100; // largura do display, em em do quadro
+    return (
+      <div
+        ref={ref}
+        data-badge-id={b.id}
+        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
+        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
+      >
+        {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[1em]" />}
+        {/* o widget tem WIDGET_W em de largura na própria fonte: a fonte do contêiner o ajusta à largura w */}
+        <div className="pointer-events-none" style={{ fontSize: `${w / WIDGET_W}em` }}>
+          {b.data ? <DisplayCard data={b.data} /> : null}
+        </div>
+      </div>
+    );
+  }
   if (!def) return null;
   return (
     <div
@@ -54,7 +73,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       style={{
         left: `${b.x}%`,
         top: `${b.y}%`,
-        width: `${(BADGE_EM * (b.scale ?? DEFAULT_SCALE)) / 100}em`,
+        width: `${(baseEmOf(b.key) * (b.scale ?? DEFAULT_SCALE)) / 100}em`,
         aspectRatio: def.ratio,
         transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`,
         opacity: draggingId === b.id ? 0.25 : 1,

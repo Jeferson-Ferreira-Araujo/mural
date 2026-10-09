@@ -1,9 +1,11 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { addBadge, badgeDef, badgeSrc, BADGE_EM, DEFAULT_SCALE, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, removeBadge, setBadgeRotation, setBadgeScale, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { DisplayCard, WIDGET_W } from "../widgets";
+import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** tamanho em % do botton que está sendo arrastado */ scale?: number };
@@ -28,13 +30,21 @@ type Ctx = {
   select: (id: string | null) => void;
   /** tira do mural (e devolve à barra) os botons que estão debaixo desta área da tela: usado quando um pin de aparelho é movido para cima deles */
   removeOver: (rect: { left: number; right: number; top: number; bottom: number }) => void;
+  /** pins da loja que a pessoa tem (bible, motivation, clock, weather): aparecem na barra */
+  displays: string[];
+  /** escolheu um pin da loja na barra: abre as opções e depois o mural escurece para ela arrastar o pin ao lugar que quiser */
+  pickDisplay: (product: string) => void;
+  /** editar contorno, horário ou cidade de um display já colocado */
+  editDisplay: (id: string) => void;
+  /** posicionando um display (o mural fica escuro) */
+  placing: boolean;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false });
 export const useBadges = () => useContext(BadgeCtx);
 
-type Drop = { kind: "ok"; x: number; y: number } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" };
+type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[] } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
 type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; /** inclinação do botton já colocado: o arraste mostra o botton como ele é */ rot?: number; back?: { x: number; y: number } };
 
 const visible = (el: Element | null) => !!el && el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
@@ -42,7 +52,7 @@ const visibleOne = (sel: string) => [...document.querySelectorAll(sel)].find(vis
 const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), Math.max(a, b));
 
 /** Onde o botom cai se for solto em (px, py)? Respeita o quadro, os pinz físicos e as tachinhas. */
-function evaluate(px: number, py: number, w: number, h: number, layer: Element, ignore?: Element): Drop {
+function evaluate(px: number, py: number, w: number, h: number, layer: Element, ignore?: Element, display = false): Drop {
   const bar = visibleOne("[data-badge-bar]");
   if (bar) {
     const b = bar.getBoundingClientRect();
@@ -79,6 +89,27 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
       return x + hw > ox - ow && x - hw < ox + ow && y + hh > oy - oh && y - hh < oy + oh;
     });
   };
+  // display da loja: vale em qualquer lugar, menos sobre outro botton/display e sobre espaços que já têm pin; os espaços vazios que ele cobre ficam sem receber pins
+  if (display) {
+    const dx = clamp(px, lr.left + w / 2, lr.right - w / 2);
+    const dy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
+    if (coversBadge(dx, dy)) return { kind: "badge" };
+    const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
+    const slots: number[] = [];
+    let taken = false;
+    for (const el of document.querySelectorAll<HTMLElement>("[data-slot]")) {
+      if (!visible(el)) continue;
+      const r = el.getBoundingClientRect();
+      const ix = Math.min(r.right, rect.right) - Math.max(r.left, rect.left);
+      const iy = Math.min(r.bottom, rect.bottom) - Math.max(r.top, rect.top);
+      if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= 0.12) {
+        slots.push(Number(el.dataset.slot));
+        if (el.hasAttribute("data-pin-id")) taken = true;
+      }
+    }
+    if (taken) return { kind: "occupied" };
+    return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots };
+  }
   if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
 
   let cx = clamp(px, lr.left + w / 2, lr.right - w / 2);
@@ -119,6 +150,8 @@ export function BadgeProvider({
   acquiredAt = () => undefined,
   onSynced,
   onOpenStore = () => undefined,
+  displays = [],
+  onDisplaysChanged,
   children,
 }: {
   muralId?: string;
@@ -131,6 +164,10 @@ export function BadgeProvider({
   /** chamado depois que o servidor confirmou (ou recusou) colocar/tirar um botton: hora de reler o estoque */
   onSynced?: () => void;
   onOpenStore?: () => void;
+  /** pins da loja que a pessoa tem */
+  displays?: string[];
+  /** um display foi colocado, mudou de lugar ou foi editado: hora de reler o mural */
+  onDisplaysChanged?: () => void;
   children: ReactNode;
 }) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
@@ -139,8 +176,13 @@ export function BadgeProvider({
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selId, setSelId] = useState<string | null>(null);
   const hoverTimer = useRef<number | null>(null);
-  const live = useRef({ muralId, editable, badges, notify, stock, onSynced });
-  live.current = { muralId, editable, badges, notify, stock, onSynced };
+  // pins da loja: diálogo de opções (novo ou edição) e o modo em que o mural escurece para a pessoa arrastar o pin ao lugar que quiser
+  const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; id?: string; initial?: DisplayPayload } | null>(null);
+  const [dialogBusy, setDialogBusy] = useState(false);
+  const [dialogError, setDialogError] = useState<string | null>(null);
+  const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
+  const live = useRef({ muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged });
+  live.current = { muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged };
   const cleanup = useRef<(() => void) | null>(null);
 
   const begin = useCallback(
@@ -157,7 +199,7 @@ export function BadgeProvider({
       cleanup.current?.();
       const start = { x: e.clientX, y: e.clientY };
       const touch = e.pointerType !== "mouse";
-      const def = badgeDef(src.key);
+      const displayDrag = isDisplayKey(src.key);
       let active = false;
       let size = { w: 56, h: 56 };
       let layer: Element | null = null;
@@ -175,8 +217,8 @@ export function BadgeProvider({
           const lr = layer.getBoundingClientRect();
           const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
           const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const w = BADGE_EM * em * scale * ((src.kind === "placed" ? (src.scale ?? DEFAULT_SCALE) : DEFAULT_SCALE) / 100);
-          size = { w, h: w / (def?.ratio ?? 1) };
+          const w = baseEmOf(src.key) * em * scale * ((src.kind === "placed" ? (src.scale ?? (displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE)) : displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE) / 100);
+          size = { w, h: w / ratioOfKey(src.key) };
         }
         origin = sourceCenter();
         if (src.kind === "placed") setDraggingId(src.id);
@@ -185,7 +227,7 @@ export function BadgeProvider({
       };
       const stateAt = (x: number, y: number): "ok" | "bad" => {
         if (!layer) return "bad";
-        const d = evaluate(x, y, size.w, size.h, layer, sourceEl);
+        const d = evaluate(x, y, size.w, size.h, layer, sourceEl, displayDrag);
         return d.kind === "ok" || d.kind === "bar" ? "ok" : "bad";
       };
       const onMove = (ev: PointerEvent) => {
@@ -233,7 +275,7 @@ export function BadgeProvider({
         const { notify, muralId: mid, badges: cur } = live.current;
         const at = ev ? { x: ev.clientX, y: ev.clientY } : (origin ?? { x: 0, y: 0 });
         if (aborted || !layer) return sendBack(at);
-        const drop = evaluate(at.x, at.y, size.w, size.h, layer, sourceEl);
+        const drop = evaluate(at.x, at.y, size.w, size.h, layer, sourceEl, displayDrag);
 
         if (drop.kind === "bar") {
           if (src.kind === "placed") {
@@ -262,7 +304,25 @@ export function BadgeProvider({
           notify("Solte o botton sobre o mural.");
           return sendBack(at);
         }
+        if (drop.kind === "occupied") {
+          notify("Esse lugar já tem um pin. Solte sobre espaços livres do mural.");
+          return sendBack(at);
+        }
         setGhost(null);
+        if (src.kind === "placed" && displayDrag) {
+          // display da loja: a posição e os espaços cobertos mudam juntos (os espaços que ele deixa ficam livres)
+          const cur0 = live.current.badges.find((b) => b.id === src.id);
+          const before = cur0 ? { x: cur0.x, y: cur0.y, slots: cur0.slots } : null;
+          setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y, slots: drop.slots ?? [] } : b)));
+          void updateDisplayLayout(getBrowserSupabase(), src.id, drop.x, drop.y, src.scale ?? DISPLAY_SCALE, drop.slots ?? []).then((r) => {
+            if (!r.ok) {
+              if (before) setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, ...before } : b)));
+              notify(r.taken ? "Esse lugar acabou de receber um pin. Escolha outro." : "Não foi possível mover o pin agora.");
+            }
+            live.current.onDisplaysChanged?.();
+          });
+          return;
+        }
         if (src.kind === "placed") {
           setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y } : b)));
           void moveBadge(getBrowserSupabase(), src.id, drop.x, drop.y).then((ok) => {
@@ -363,13 +423,14 @@ export function BadgeProvider({
   useEffect(() => {
     for (const b of badges) {
       tiltSaved.current[b.id] ??= b.rotation ?? 0;
-      scaleSaved.current[b.id] ??= b.scale ?? DEFAULT_SCALE;
+      scaleSaved.current[b.id] ??= b.scale ?? (isDisplayKey(b.key) ? DISPLAY_SCALE : DEFAULT_SCALE);
     }
   }, [badges]);
 
   /** Muda o tamanho na tela enquanto a barra vertical é arrastada (ainda sem salvar). Perto da ponta de baixo, "gruda" no tamanho de sempre. */
   const rescale = useCallback((id: string, pct: number) => {
-    const near = [MIN_SCALE, DEFAULT_SCALE, MAX_SCALE].find((t) => Math.abs(pct - t) <= 3); // grudinha no menor, no padrão (meio) e no maior
+    const isDisp = isDisplayKey(live.current.badges.find((x) => x.id === id)?.key ?? 0);
+    const near = (isDisp ? [MIN_SCALE, MAX_SCALE] : [MIN_SCALE, DEFAULT_SCALE, MAX_SCALE]).find((t) => Math.abs(pct - t) <= 3); // grudinha no menor, no padrão (meio) e no maior
     const v = Math.max(MIN_SCALE, Math.min(MAX_SCALE, Math.round(near ?? pct)));
     setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: v } : x)));
   }, [setBadges]);
@@ -379,8 +440,9 @@ export function BadgeProvider({
     const { badges: cur, notify } = live.current;
     const b = cur.find((x) => x.id === id);
     if (!b || id.startsWith("tmp-")) return;
-    const before = scaleSaved.current[id] ?? DEFAULT_SCALE;
-    const pct = b.scale ?? DEFAULT_SCALE;
+    const isDisp = isDisplayKey(b.key);
+    const before = scaleSaved.current[id] ?? (isDisp ? DISPLAY_SCALE : DEFAULT_SCALE);
+    const pct = b.scale ?? (isDisp ? DISPLAY_SCALE : DEFAULT_SCALE);
     if (pct === before) return;
     const back = () => setBadges((l) => l.map((x) => (x.id === id ? { ...x, scale: before } : x)));
     let nx = b.x;
@@ -393,9 +455,13 @@ export function BadgeProvider({
         const r = el.getBoundingClientRect();
         const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
         const sc = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-        const w = (BADGE_EM * em * sc * pct) / 100;
-        const h = w / (badgeDef(b.key)?.ratio ?? 1);
-        const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el);
+        const w = (baseEmOf(b.key) * em * sc * pct) / 100;
+        const h = w / ratioOfKey(b.key);
+        const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el, isDisp);
+        if (drop.kind === "occupied") {
+          back();
+          return notify("Não há espaço para aumentar: ele cobriria um pin.");
+        }
         if (drop.kind === "physical") {
           back();
           return notify("Não há espaço para aumentar: o botton cobriria um pinz.");
@@ -411,6 +477,36 @@ export function BadgeProvider({
       }
     }
     const sb = getBrowserSupabase();
+    if (isDisp) {
+      // display: tamanho, posição e espaços cobertos mudam juntos
+      let slots = b.slots ?? [];
+      const el2 = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null;
+      const layer2 = visibleOne("[data-badge-layer]");
+      if (el2 && layer2) {
+        const lr = layer2.getBoundingClientRect();
+        const r = el2.getBoundingClientRect();
+        const d2 = evaluate(r.left + r.width / 2, r.top + r.height / 2, r.width, r.height, layer2, el2, true);
+        if (d2.kind === "ok") {
+          nx = d2.x;
+          ny = d2.y;
+          slots = d2.slots ?? [];
+        } else if (d2.kind === "occupied") {
+          back();
+          return notify("Não há espaço para aumentar: ele cobriria um pin.");
+        }
+        void lr;
+      }
+      setBadges((l) => l.map((x) => (x.id === id ? { ...x, x: nx, y: ny, slots } : x)));
+      void updateDisplayLayout(sb, id, nx, ny, pct, slots).then((res) => {
+        if (res.ok) scaleSaved.current[id] = pct;
+        else {
+          back();
+          notify(res.taken ? "Esse lugar acabou de receber um pin." : "Não foi possível mudar o tamanho agora.");
+        }
+        live.current.onDisplaysChanged?.();
+      });
+      return;
+    }
     if (nx !== b.x || ny !== b.y) setBadges((l) => l.map((x) => (x.id === id ? { ...x, x: nx, y: ny } : x)));
     void setBadgeScale(sb, id, pct).then((ok) => {
       if (ok) {
@@ -422,6 +518,52 @@ export function BadgeProvider({
       }
     });
   }, [setBadges]);
+
+  const pickDisplay = useCallback((product: string) => {
+    setDialogError(null);
+    setDialog({ mode: "new", product });
+  }, []);
+  const editDisplay = useCallback((id: string) => {
+    const b = live.current.badges.find((x) => x.id === id);
+    if (!b?.data) return;
+    setSelId(null);
+    setHoverId(null);
+    setDialogError(null);
+    setDialog({ mode: "edit", product: b.data.product, id, initial: b.data });
+  }, []);
+  async function submitDialog(data: DisplayPayload) {
+    if (!dialog) return;
+    if (dialog.mode === "new") {
+      setDialog(null);
+      setPlacing({ product: dialog.product, data }); // o mural escurece e o pin aparece no centro
+      return;
+    }
+    setDialogBusy(true);
+    const { text: _t, ref: _r, product: _p, ...clean } = data;
+    void _t;
+    void _r;
+    void _p;
+    const ok = dialog.id ? await updateDisplayData(getBrowserSupabase(), dialog.id, clean) : false;
+    setDialogBusy(false);
+    if (!ok) return setDialogError("Não foi possível salvar agora. Tente de novo.");
+    setDialog(null);
+    live.current.onDisplaysChanged?.();
+  }
+  /** O pin foi solto num lugar válido: grava no servidor. */
+  async function placeDisplay(product: string, data: DisplayPayload, x: number, y: number, slots: number[]) {
+    const mid = live.current.muralId;
+    setPlacing(null);
+    if (!mid) return;
+    const { text: _t, ref: _r, product: _p, ...clean } = data;
+    void _t;
+    void _r;
+    void _p;
+    const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
+    if ("error" in res) {
+      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "limit" ? "O mural aceita até 12 pins da loja." : res.error === "not_owned" ? "Este pin é da loja. Libere com créditos para usar." : "Não foi possível colocar o pin agora.");
+    }
+    live.current.onDisplaysChanged?.();
+  }
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
@@ -439,14 +581,44 @@ export function BadgeProvider({
     },
     [removeById],
   );
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
     <BadgeCtx.Provider value={value}>
       {children}
-      {controlsId && <BadgeControls id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
-      {ghost && (
+      {dialog && (
+        <DisplayDialog
+          open
+          product={dialog.product}
+          initial={dialog.initial}
+          editing={dialog.mode === "edit"}
+          busy={dialogBusy}
+          error={dialogError}
+          onClose={() => setDialog(null)}
+          onSubmit={(d) => void submitDialog(d as DisplayPayload)}
+        />
+      )}
+      {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots) => void placeDisplay(placing.product, placing.data, x, y, slots)} notify={notify} />}
+      {controlsId && <BadgeControls onEdit={editDisplay} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {ghost && isDisplayKey(ghost.key) && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed z-[400] rounded-[12%]"
+          style={{
+            left: (ghost.back ?? ghost).x - ghost.w / 2,
+            top: (ghost.back ?? ghost).y - ghost.h / 2,
+            width: ghost.w,
+            height: ghost.h,
+            transition: ghost.back ? "left 0.26s ease, top 0.26s ease, opacity 0.26s ease" : "none",
+            opacity: ghost.back ? 0.2 : ghost.state === "bad" ? 0.55 : 0.9,
+            background: ghost.state === "bad" ? "linear-gradient(145deg,#e9b4aa,#a23b2a)" : "linear-gradient(145deg,#f6e2b0,#b88a3a)",
+            boxShadow: "0 6px 14px rgba(0,0,0,.45)",
+            transform: ghost.rot !== undefined ? `rotate(${ghost.rot}deg)` : undefined,
+          }}
+        />
+      )}
+      {ghost && !isDisplayKey(ghost.key) && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={badgeSrc(ghost.key)}
@@ -475,7 +647,7 @@ export function BadgeProvider({
  * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+function BadgeControls({ id, badge, onEdit, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
   const keyRef = useRef(badge?.key);
   keyRef.current = badge?.key;
@@ -491,8 +663,8 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClo
         const lr = layer?.getBoundingClientRect();
         const em = layer ? parseFloat(getComputedStyle(layer).fontSize) || 10 : 10;
         const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
-        const w = BADGE_EM * em * sc * (MAX_SCALE / 100);
-        const h = w / (badgeDef(keyRef.current ?? 0)?.ratio ?? 1);
+        const w = baseEmOf(keyRef.current ?? 0) * em * sc * (MAX_SCALE / 100);
+        const h = w / ratioOfKey(keyRef.current ?? 0);
         next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round((Math.hypot(w, h) / 2) * 0.82) };
       }
       setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.R === next.R ? p : next));
@@ -503,7 +675,8 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClo
   }, [id]);
   if (!g || !badge || typeof document === "undefined") return null;
 
-  const scale = badge.scale ?? DEFAULT_SCALE;
+  const isDisp = isDisplayKey(badge.key);
+  const scale = badge.scale ?? (isDisp ? DISPLAY_SCALE : DEFAULT_SCALE);
   const deg = badge.rotation ?? 0;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -572,7 +745,14 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClo
         <span aria-hidden className="mt-1.5 size-2.5 rounded-full bg-white/80" title="Maior" />
         <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label="Tamanho do botton: para cima maior, para baixo menor" />
         <span aria-hidden className="size-1.5 rounded-full bg-white/80" title="Menor" />
-        <button type="button" onClick={() => onRemove(id)} aria-label="Tirar o botton do mural (volta para a barra)" title="Tirar do mural" className="mt-auto mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+        {isDisp && (
+          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o pin: contorno, horário ou cidade" title="Editar" className="mt-auto grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />
+            </svg>
+          </button>
+        )}
+        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o pin do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`${isDisp ? "mb-0.5" : "mt-auto mb-0.5"} grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
@@ -592,6 +772,102 @@ function BadgeControls({ id, badge, onScale, onScaleEnd, onRemove, onKeep, onClo
         </svg>
       </button>
     </>,
+    document.body,
+  );
+}
+
+const visibleLayer = () => visibleOne("[data-badge-layer]") as HTMLElement | null;
+
+/**
+ * Pin da loja escolhido: o mural fica escuro, o pin aparece no centro do quadro e a pessoa o arrasta para onde quiser.
+ * Só vale sobre espaços livres (os espaços que o pin cobrir deixam de receber post-its, fotos e vídeos).
+ */
+function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: string; data: DisplayPayload; onCancel: () => void; onDrop: (x: number, y: number, slots: number[]) => void; notify: (m: string) => void }) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [size, setSize] = useState({ w: 120, h: 120 });
+  const [state, setState] = useState<"ok" | "bad">("ok");
+  const [dragging, setDragging] = useState(false);
+  const layerRef = useRef<HTMLElement | null>(null);
+
+  // o pin começa no centro do quadro, no tamanho que terá no mural
+  useEffect(() => {
+    const layer = visibleLayer();
+    layerRef.current = layer;
+    if (!layer) return onCancel();
+    const lr = layer.getBoundingClientRect();
+    const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
+    const sc = lr.width / (layer.offsetWidth || lr.width);
+    const w = baseEmOf(1001) * em * sc * (DISPLAY_SCALE / 100);
+    setSize({ w, h: w / 2 });
+    setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 });
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!pos || typeof document === "undefined") return null;
+  const check = (x: number, y: number) => {
+    const layer = layerRef.current;
+    if (!layer) return null;
+    return evaluate(x, y, size.w, size.h, layer, undefined, true);
+  };
+
+  const start = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const sx = e.clientX;
+    const sy = e.clientY;
+    const ox = pos.x;
+    const oy = pos.y;
+    setDragging(true);
+    const move = (ev: PointerEvent) => {
+      const x = ox + ev.clientX - sx;
+      const y = oy + ev.clientY - sy;
+      setPos({ x, y });
+      const d = check(x, y);
+      setState(d && d.kind === "ok" ? "ok" : "bad");
+    };
+    const up = (ev: PointerEvent) => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      setDragging(false);
+      const x = ox + ev.clientX - sx;
+      const y = oy + ev.clientY - sy;
+      if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return; // foi só um toque
+      const d = check(x, y);
+      if (!d) return;
+      if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? []);
+      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar sobre outro botton ou pin da loja." : "Solte o pin sobre o mural.");
+      const lr = layerRef.current?.getBoundingClientRect();
+      if (lr) setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 }); // volta ao centro
+      setState("ok");
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  const ring = state === "ok" ? "#6fdc8c" : "#ff8a7a";
+  const cardStyle: CSSProperties = { fontSize: size.w / WIDGET_W + "px", outline: dragging ? "3px solid " + ring : "none", outlineOffset: "4px", borderRadius: "1.4em" };
+
+  return createPortal(
+    <div className="fixed inset-0 z-[380]" role="dialog" aria-label="Posicionar o pin no mural">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
+      <p className="absolute top-4 left-1/2 w-[min(92vw,26rem)] -translate-x-1/2 rounded-2xl bg-[#17110c]/92 px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_0.4rem_1.4rem_rgba(0,0,0,.5)]">
+        Arraste o pin e solte onde você quiser no mural
+      </p>
+      <div
+        onPointerDown={start}
+        className="absolute touch-none select-none"
+        style={{ left: pos.x - size.w / 2, top: pos.y - size.h / 2, width: size.w, height: size.h, cursor: dragging ? "grabbing" : "grab", filter: "drop-shadow(0 10px 18px rgba(0,0,0,.55))" }}
+      >
+        <div className="pointer-events-none" style={cardStyle}>
+          <DisplayCard data={data} />
+        </div>
+      </div>
+      <button type="button" onClick={onCancel} className="absolute bottom-6 left-1/2 -translate-x-1/2 cursor-pointer rounded-xl bg-white/90 px-5 py-2.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] transition hover:bg-white active:scale-95">
+        Cancelar
+      </button>
+    </div>,
     document.body,
   );
 }

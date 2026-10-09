@@ -9,12 +9,12 @@ import { MessageView } from "../messages/MessageView";
 import { ghostButton, primaryButton } from "../ui";
 import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption";
 import { enabledFormats, useFeatureFlags } from "@/lib/features";
-import { FormatPicker, type ExtraFormat } from "./FormatPicker";
+import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
 import { SEND_ERROR_TEXT } from "@/lib/pins";
 import { SlotPicker } from "./SlotPicker";
 import { DrawForm } from "./DrawForm";
-import { ClockForm, DailyForm, ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm, WeatherForm } from "./forms";
+import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 
 type Props = {
@@ -36,11 +36,9 @@ type Props = {
   signAs?: string | null;
   /** motivo de o último envio não ter dado certo (aparece junto do botão, dentro da janela) */
   error?: string | null;
-  /** pins que a pessoa comprou na loja (bible, motivation, clock, weather): aparecem abaixo dos formatos do plano */
-  products?: readonly string[];
 };
 
-function FormFor({ format, preset, onChange }: { format: MessageType; preset: ExtraFormat["preset"] | null; onChange: (d: DraftMessage | null) => void }) {
+function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
   switch (format) {
     case "postit":
       return <PostItForm onChange={onChange} />;
@@ -60,12 +58,6 @@ function FormFor({ format, preset, onChange }: { format: MessageType; preset: Ex
       return <VoiceForm onChange={onChange} />;
     case "place":
       return <PlaceForm onChange={onChange} />;
-    case "daily":
-      return <DailyForm category={preset?.category === "frase" ? "frase" : "versiculo"} onChange={onChange} />;
-    case "clock":
-      return <ClockForm onChange={onChange} />;
-    case "weather":
-      return <WeatherForm onChange={onChange} />;
   }
 }
 
@@ -80,9 +72,6 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
   video: { type: "video", caption: "", playerColor: "black" },
   voice: { type: "voice", caption: "", playerColor: "cream" },
   // só o desenho do aparelho (não carrega o mapa)
-  daily: { type: "daily", category: "versiculo", text: "O texto de hoje aparece aqui." },
-  clock: { type: "clock", tz: "America/Sao_Paulo" },
-  weather: { type: "weather", city: "Sua cidade", lat: 0, lon: 0 },
   place: { type: "place", name: "Nome do lugar", address: "", lat: 0, lon: 0, caption: "", playerColor: "silver", blank: true } as unknown as DraftMessage,
 };
 
@@ -93,7 +82,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  *    (PINZ+) opcionalmente Cápsula → cola no mural.
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
-function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, preset, onFormat, signAs, error, products }: Omit<Props, "open"> & { format: MessageType | null; preset: ExtraFormat["preset"] | null; onFormat: (f: MessageType | null, preset?: ExtraFormat["preset"], label?: string) => void }) {
+function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -102,13 +91,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const full = firstFree === null || used >= available;
   const flags = useFeatureFlags();
   const formats = enabledFormats(formatsFor(plan), flags);
-  const owned = products ?? [];
-  const extra: ExtraFormat[] = [
-    ...(owned.includes("bible") ? [{ key: "bible", type: "daily" as const, label: "Versículo do dia", hint: "Um versículo novo todo dia", preset: { category: "versiculo" } }] : []),
-    ...(owned.includes("motivation") ? [{ key: "motivation", type: "daily" as const, label: "Frase motivacional", hint: "Uma frase nova todo dia", preset: { category: "frase" } }] : []),
-    ...(owned.includes("clock") ? [{ key: "clock", type: "clock" as const, label: "Relógio", hint: "A hora passando no mural" }] : []),
-    ...(owned.includes("weather") ? [{ key: "weather", type: "weather" as const, label: "Clima", hint: "O tempo da sua cidade" }] : []),
-  ].filter((x) => flags[`pin_${x.type}`] !== false);
   const [draft, setDraft] = useState<DraftMessage | null>(null);
   const [empty, setEmpty] = useState(true); // ainda não dá para enviar
   const [capsule, setCapsule] = useState<CapsuleValue>({ enabled: false, at: "" });
@@ -142,7 +124,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
   if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
-  if (!format) return <FormatPicker formats={formats} extra={extra} onPick={onFormat} />;
+  if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
 
   const canSend = !!signAs && !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
   const hasPos = format === "postit"; // só a tachinha muda de lugar; a fita fica sempre no lugar do card
@@ -180,7 +162,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       </section>}
 
       <div className="space-y-5 lg:col-start-2 lg:row-start-1">
-      <FormFor key={formKey} format={format} preset={preset} onChange={onDraft} />
+      <FormFor key={formKey} format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
@@ -202,8 +184,6 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const [format, setFormat] = useState<MessageType | null>(null);
-  const [preset, setPreset] = useState<ExtraFormat["preset"] | null>(null);
-  const [pickedLabel, setPickedLabel] = useState<string | null>(null); // nome do pin da loja escolhido (ex.: Versículo do dia)
   const wide = !!format && format !== "draw"; // com prévia: duas colunas no desktop
 
   useEffect(() => {
@@ -215,11 +195,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
 
   // ao fechar, a próxima abertura recomeça pela escolha do formato
   useEffect(() => {
-    if (!open) {
-      setFormat(null);
-      setPreset(null);
-      setPickedLabel(null);
-    }
+    if (!open) setFormat(null);
   }, [open]);
 
   return (
@@ -237,7 +213,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
           {/* cabeçalho: voltar (esquerda) · formato escolhido (centro) · fechar (direita) */}
           <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center border-b border-[#e6d8bd] px-4 py-3">
             {format ? (
-              <button type="button" onClick={() => (setFormat(null), setPreset(null), setPickedLabel(null))} aria-label="Voltar e trocar o formato" className={`${ghostButton} !size-9 !rounded-lg !p-0`}>
+              <button type="button" onClick={() => setFormat(null)} aria-label="Voltar e trocar o formato" className={`${ghostButton} !size-9 !rounded-lg !p-0`}>
                 <svg viewBox="0 0 24 24" className="mx-auto size-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="m15 5-7 7 7 7" />
                 </svg>
@@ -245,13 +221,13 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             ) : (
               <span />
             )}
-            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? pickedLabel ?? formatInfo[format].label : "Coloque um PIN"}</p>
+            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Coloque um PIN"}</p>
             <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>
           </div>
           <div className="overflow-y-auto px-5 py-5">
-            <Body {...rest} onClose={onClose} format={format} preset={preset} onFormat={(f, p, l) => (setFormat(f), setPreset(p ?? null), setPickedLabel(l ?? null))} />
+            <Body {...rest} onClose={onClose} format={format} onFormat={setFormat} />
           </div>
         </div>
       )}

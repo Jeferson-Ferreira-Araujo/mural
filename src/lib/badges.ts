@@ -102,7 +102,17 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-export type PlacedBadge = { id: string; key: number; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+/** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1004 e ficam em qualquer lugar do mural, não em um espaço. */
+export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004 };
+export const isDisplayKey = (key: number) => key >= 1000;
+export const displayProductOf = (key: number) => Object.entries(DISPLAY_KEYS).find(([, k]) => k === key)?.[0];
+/** Largura base de um display (em em do quadro), contra 3 de um botton comum. */
+export const DISPLAY_EM = 14;
+export const DISPLAY_SCALE = 100;
+export const baseEmOf = (key: number) => (isDisplayKey(key) ? DISPLAY_EM : BADGE_EM);
+export const ratioOfKey = (key: number) => (isDisplayKey(key) ? 2 : (badgeDef(key)?.ratio ?? 1)); // widgets: largura 2 × altura 1
+
+export type PlacedBadge = { id: string; key: number; /** botton comum ou display da loja */ kind?: "badge" | "display"; /** dados do display (o texto do dia já vem pronto do servidor) */ data?: DisplayPayload | null; /** espaços do quadro que o display cobre (ficam sem receber pins) */ slots?: number[]; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {
@@ -118,6 +128,26 @@ export async function addBadge(sb: SupabaseClient, muralId: string, key: number,
   if (!error && data && (data as { id?: string }).id) return { id: (data as { id: string }).id };
   const m = error?.message ?? "";
   return { error: m.includes("badge_sold_out") ? "sold_out" : m.includes("badge_not_owned") ? "not_owned" : m.includes("badge_limit") ? "limit" : "error" };
+}
+
+export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null };
+
+export async function addDisplay(sb: SupabaseClient, muralId: string, product: string, data: Record<string, unknown>, x: number, y: number, slots: number[]): Promise<{ id: string } | { error: "taken" | "limit" | "not_owned" | "error" }> {
+  const { data: res, error } = await sb.rpc("add_display", { p_mural_id: muralId, p_product: product, p_data: data, p_x: x, p_y: y, p_slots: slots });
+  if (!error && res && (res as { id?: string }).id) return { id: (res as { id: string }).id };
+  const m = error?.message ?? "";
+  return { error: m.includes("slot_taken") ? "taken" : m.includes("badge_limit") ? "limit" : m.includes("product_not_owned") ? "not_owned" : "error" };
+}
+
+export async function updateDisplayData(sb: SupabaseClient, id: string, data: Record<string, unknown>): Promise<boolean> {
+  const { error } = await sb.rpc("update_display", { p_id: id, p_data: data });
+  return !error;
+}
+
+/** Mover ou redimensionar um display: posição, tamanho e espaços cobertos mudam juntos. */
+export async function updateDisplayLayout(sb: SupabaseClient, id: string, x: number, y: number, scale: number, slots: number[]): Promise<{ ok: true } | { ok: false; taken: boolean }> {
+  const { error } = await sb.rpc("update_display_layout", { p_id: id, p_x: x, p_y: y, p_scale: Math.round(scale), p_slots: slots });
+  return error ? { ok: false, taken: error.message.includes("slot_taken") } : { ok: true };
 }
 
 export async function moveBadge(sb: SupabaseClient, id: string, x: number, y: number): Promise<boolean> {
