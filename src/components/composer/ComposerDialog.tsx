@@ -11,6 +11,7 @@ import { CapsuleOption, capsuleDateOk, type CapsuleValue } from "./CapsuleOption
 import { enabledFormats, useFeatureFlags } from "@/lib/features";
 import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
+import { SEND_ERROR_TEXT } from "@/lib/pins";
 import { SlotPicker } from "./SlotPicker";
 import { DrawForm } from "./DrawForm";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
@@ -112,6 +113,15 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
     }
   }, [format]);
 
+  // imagem recusada pelo detector: a foto sai da prévia e do formulário (a pessoa escolhe outra)
+  const [formKey, setFormKey] = useState(0);
+  useEffect(() => {
+    if (error !== SEND_ERROR_TEXT.inappropriate) return;
+    setFormKey((k) => k + 1);
+    setDraft(null);
+    setEmpty(true);
+  }, [error]);
+
   if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
   if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
@@ -152,7 +162,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       </section>}
 
       <div className="space-y-5 lg:col-start-2 lg:row-start-1">
-      <FormFor format={format} onChange={onDraft} />
+      <FormFor key={formKey} format={format} onChange={onDraft} />
 
       {canUseCapsule(plan) && <CapsuleOption value={capsule} onChange={setCapsule} />}
 
