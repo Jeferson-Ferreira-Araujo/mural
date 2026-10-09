@@ -3,6 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { passwordProblem } from "@/lib/password";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { getVisitPrivacy, setVisitPrivacy } from "@/lib/social";
+import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
 import { PasswordHints } from "../PasswordHints";
 import { Field, inputClass, primaryButton } from "../ui";
@@ -15,6 +17,15 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [showVisits, setShowVisits] = useState(true); // aparecer como visitante
+  useEffect(() => {
+    if (open) void getVisitPrivacy(getBrowserSupabase()).then(setShowVisits);
+  }, [open]);
+  async function toggleVisits() {
+    const next = !showVisits;
+    setShowVisits(next);
+    if (!(await setVisitPrivacy(getBrowserSupabase(), next))) setShowVisits(!next);
+  }
   const [delOpen, setDelOpen] = useState(false); // confirmação de excluir a conta
   const [delText, setDelText] = useState("");
   const [delBusy, setDelBusy] = useState(false);
@@ -96,6 +107,16 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, plus = fal
           {busy ? "Salvando…" : "Salvar nova senha"}
         </button>
       </form>
+
+      <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">Aparecer como visitante</p>
+          <p className="text-xs text-[#6b5440]">Desligado, você some das listas de visitantes e também não vê quem visitou os seus murais.</p>
+        </div>
+        <button type="button" role="switch" aria-checked={showVisits} aria-label="Aparecer como visitante" onClick={() => void toggleVisits()} className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors ${showVisits ? "bg-[#2f8f4e]" : "bg-[#b9ad9b]"}`}>
+          <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${showVisits ? "translate-x-5" : ""}`} />
+        </button>
+      </div>
 
       <button type="button" onClick={onSignOut} className="mt-5 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
         Sair da conta

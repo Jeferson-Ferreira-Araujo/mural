@@ -59,17 +59,19 @@ export function FollowingModal({ open, onClose }: { open: boolean; onClose: () =
 
 /** Visitantes: quem entrou nos seus murais com conta (sem datas) e quantos seguidores você tem. */
 export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [data, setData] = useState<{ visitors: PersonLite[]; followers: number } | null>(null);
+  const [data, setData] = useState<{ hidden: boolean; visitors: PersonLite[]; followers: number } | null>(null);
   useEffect(() => {
     if (!open) return;
     setData(null);
-    void listVisitors(getBrowserSupabase()).then((d) => setData(d ?? { visitors: [], followers: 0 }));
+    void listVisitors(getBrowserSupabase()).then((d) => setData(d ?? { hidden: false, visitors: [], followers: 0 }));
   }, [open]);
 
   return (
     <Modal open={open} onClose={onClose} title="Visitantes" label="Visitantes">
       {!data ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+      ) : data.hidden ? (
+        <p className="py-6 text-center text-sm text-[#6b5440]">Você desligou “Aparecer como visitante” no Perfil. Quem desliga também não vê quem visitou os seus murais. Ligue de novo lá para ver a lista.</p>
       ) : (
         <>
           <p className="mb-3 text-sm text-[#6b5440]">

@@ -3,9 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export type PersonLite = { nickname: string; avatar: string | null; plus?: boolean };
 
 /** Quem visitou os seus murais (só quem tem conta, sem datas) e quantos seguidores você tem. */
-export async function listVisitors(sb: SupabaseClient): Promise<{ visitors: PersonLite[]; followers: number } | null> {
+export async function listVisitors(sb: SupabaseClient): Promise<{ hidden: boolean; visitors: PersonLite[]; followers: number } | null> {
   const { data, error } = await sb.rpc("list_visitors");
-  return error || !data ? null : (data as { visitors: PersonLite[]; followers: number });
+  return error || !data ? null : (data as { hidden: boolean; visitors: PersonLite[]; followers: number });
 }
 
 export async function listFollowing(sb: SupabaseClient): Promise<PersonLite[] | null> {
@@ -20,5 +20,16 @@ export async function isFollowing(sb: SupabaseClient, nick: string): Promise<boo
 
 export async function setFollowing(sb: SupabaseClient, nick: string, follow: boolean): Promise<boolean> {
   const { error } = await sb.rpc(follow ? "follow_user" : "unfollow_user", { p_nick: nick });
+  return !error;
+}
+
+/** "Aparecer como visitante" (como o visto por último do WhatsApp): desligado, a pessoa some das listas dos outros e não vê a lista de quem visitou os murais dela. */
+export async function getVisitPrivacy(sb: SupabaseClient): Promise<boolean> {
+  const { data, error } = await sb.rpc("get_visit_privacy");
+  return error ? true : data !== false;
+}
+
+export async function setVisitPrivacy(sb: SupabaseClient, show: boolean): Promise<boolean> {
+  const { error } = await sb.rpc("set_visit_privacy", { p_show: show });
   return !error;
 }
