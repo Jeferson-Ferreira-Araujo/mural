@@ -91,18 +91,18 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
-        {/* escolher o mural: no próprio perfil fica no canto superior direito (o esquerdo é do Novo mural); visitando, vai para a esquerda e a direita é do Seguir */}
-        <div className={`absolute top-3 z-30 ${follow ? "left-3" : "right-3"}`}>
+        {/* escolher o mural: sempre no canto superior direito (o esquerdo é do Novo mural no seu perfil, ou do Seguir ao visitar) */}
+        <div className="absolute top-3 right-3 z-30">
           <MuralNameMenu
             title={info.title}
             label="Murais"
             sw={muralSwitch}
             showShared={!!account?.atHome}
-            align={follow ? "left" : "right"}
+            align="right"
             triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           />
         </div>
-        {follow && <FollowButton follow={follow} glass className="absolute top-3 right-3 z-30" />}
+        {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
         {/* PLUS: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
         {account?.onNewMural && (
           <button
