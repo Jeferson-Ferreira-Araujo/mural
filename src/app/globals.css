@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-ui: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-title: var(--font-fraunces), Georgia, serif;
+  --font-ui: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-title: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), cursive;
   --font-hand-alt: var(--font-kalam), cursive;
   --font-marker: var(--font-reenie), cursive;

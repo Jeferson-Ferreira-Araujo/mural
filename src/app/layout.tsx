@@ -1,16 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, DM_Sans, Fraunces, Fredoka, Indie_Flower, Kalam, Patrick_Hand, Reenie_Beanie } from "next/font/google";
+import { Caveat, Indie_Flower, Kalam, Patrick_Hand, Plus_Jakarta_Sans, Reenie_Beanie } from "next/font/google";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+// uma só fonte para toda a interface (textos, títulos, botões); a letra de mão fica só dentro dos pins
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
 const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
 const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--font-kalam" });
 const patrick = Patrick_Hand({ subsets: ["latin"], weight: "400", variable: "--font-patrick" });
 const indie = Indie_Flower({ subsets: ["latin"], weight: "400", variable: "--font-indie" });
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
-const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-fredoka" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${SITE_HOST}`),
@@ -32,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${dmSans.variable} ${fraunces.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable} ${fredoka.variable}`}
+      className={`${jakarta.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable}`}
     >
       <body>
         {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}

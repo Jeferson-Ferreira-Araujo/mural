@@ -42,7 +42,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       <div className="flex justify-center">
         <Brand className="h-[8.4rem]" />
       </div>
-      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-fredoka)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
+      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
 
