@@ -22,6 +22,9 @@ type Props = {
   plus?: boolean;
   /** quantos acessos o perfil teve (não aparece sem o número) */
   visits?: number;
+  /** seguidores e quantos pins a pessoa já colocou nos murais dos outros (só o número) */
+  followers?: number | null;
+  placed?: number | null;
   /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
   password?: boolean;
   /** "form": só o cartão de pergunta, grande, para o centro do quadro (desktop); "profile": só o perfil (sem a pergunta); padrão: tudo junto */
@@ -40,7 +43,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, part, onProfile }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -134,7 +137,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             </span>
           )}
           <Wrap {...wrapProps} className={`flex min-w-0 items-center gap-[0.7em] text-left ${onProfile ? "cursor-pointer rounded-xl transition hover:opacity-80 active:scale-[0.98]" : ""}`}>
-            {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[4.6em]" />}
+            {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[3.6em]" />}
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words lg:text-[1.45em]">{owner ? `@${owner}` : title}</span>
@@ -146,6 +149,16 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                   {visits.toLocaleString("pt-BR")} {visits === 1 ? "visualização" : "visualizações"}
+                </span>
+              )}
+              {(open || unlocked) && followers != null && (
+                <span className={`mt-[0.3em] block whitespace-nowrap text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+                  {followers.toLocaleString("pt-BR")} {followers === 1 ? "seguidor" : "seguidores"}
+                </span>
+              )}
+              {(open || unlocked) && placed != null && (
+                <span className={`mt-[0.3em] block whitespace-nowrap text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
+                  {placed.toLocaleString("pt-BR")} {placed === 1 ? "PINZ colocado" : "PINZ colocados"}
                 </span>
               )}
             </p>

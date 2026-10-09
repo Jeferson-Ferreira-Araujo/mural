@@ -55,14 +55,15 @@ export function DesktopBoard(props: ViewProps) {
             )}
           </div>
           <div className="pointer-events-auto flex items-center gap-2">
-            {account && <AccountActions account={account} tone="dark" menu={false} />}
+            {/* só no próprio mural: no de outra pessoa, a pesquisa fica na coluna bege e o sino não aparece */}
+            {account?.atHome && <AccountActions account={account} tone="dark" menu={false} />}
           </div>
         </nav>
 
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5" hideControls={locked}>
+        <PannableBoard ambient={look.image} controlPos={account?.atHome ? "right-[2.2vw] top-[4.6rem]" : "right-[2.2vw] top-5"} hideControls={locked}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain>
           {locked &&
             (lockForm ? (

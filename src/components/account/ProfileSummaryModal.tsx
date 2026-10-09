@@ -103,6 +103,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             <div className="flex gap-2.5">
               {data.followers != null && <Stat value={data.followers.toLocaleString("pt-BR")} label={data.followers === 1 ? "seguidor" : "seguidores"} />}
               <Stat value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? "visualização nos murais" : "visualizações nos murais"} />
+              <Stat value={data.placed.toLocaleString("pt-BR")} label={data.placed === 1 ? "PINZ colocado" : "PINZ colocados"} />
             </div>
           )}
 

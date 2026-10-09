@@ -27,7 +27,7 @@ import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
-import { isFollowing, setFollowing } from "@/lib/social";
+import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
 import { PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
 import { ReactionsProvider } from "./board/ReactionsContext";
@@ -151,14 +151,17 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
   const [followers, setFollowers] = useState<number | null>(null); // seguidores da pessoa dona do mural aberto (só o número)
+  const [placed, setPlaced] = useState<number | null>(null); // pins que a pessoa já colocou nos murais dos outros
   const [topFollowers, setTopFollowers] = useState<{ nickname: string; avatar: string | null; plus?: boolean }[]>([]);
   const countNick = selected && !isShared && unlocked ? selected.nickname : null;
   useEffect(() => {
     setFollowers(null);
     setTopFollowers([]);
+    setPlaced(null);
     if (!countNick) return;
     let alive = true;
     void getBrowserSupabase().rpc("get_follower_count", { p_nick: countNick }).then(({ data }) => alive && setFollowers(typeof data === "number" ? data : null));
+    void getProfileSummary(getBrowserSupabase(), countNick).then((s) => alive && setPlaced(s?.placed ?? null));
     void getBrowserSupabase().rpc("get_top_followers", { p_nick: countNick }).then(({ data }) => alive && setTopFollowers(Array.isArray(data) ? data : []));
     return () => {
       alive = false;
@@ -712,6 +715,8 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               plus={selected.plan === "full"}
               onProfile={selected.kind === "shared" ? undefined : () => setProfileOpen(true)}
               visits={selected.kind === "shared" ? undefined : selected.stats.visited}
+              followers={selected.kind === "shared" ? null : followers}
+              placed={selected.kind === "shared" ? null : placed}
               question={isMember ? "Senha do mural" : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}
@@ -724,7 +729,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </div>
       );
     },
-    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving],
+    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving, followers, placed],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.

@@ -8,7 +8,7 @@ export async function listVisitors(sb: SupabaseClient): Promise<{ hidden: boolea
   return error || !data ? null : (data as { hidden: boolean; visitors: PersonLite[]; followers: number });
 }
 
-export type ProfileSummary = { nickname: string; avatar: string | null; plus: boolean; followers: number | null; views: number; self: boolean | null };
+export type ProfileSummary = { nickname: string; avatar: string | null; plus: boolean; followers: number | null; views: number; /** pins que a pessoa já colocou nos murais dos outros */ placed: number; self: boolean | null };
 
 export async function getProfileSummary(sb: SupabaseClient, nick: string): Promise<ProfileSummary | null> {
   const { data, error } = await sb.rpc("get_profile_summary", { p_nick: nick });
