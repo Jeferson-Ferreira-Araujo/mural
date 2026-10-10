@@ -11,7 +11,7 @@ const HOLD_MS = 350;
 const MOUSE_PX = 6;
 const TOUCH_SLOP = 8;
 
-export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, onNudge?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => void) {
+export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, onNudge?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => void, onCheck?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => boolean) {
   const suppress = useRef(false); // logo depois de arrastar, o clique que o navegador gera não deve abrir o detalhe
 
   const start = useCallback(
@@ -55,7 +55,18 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
       };
       const place = () => {
         if (ghost) ghost.style.transform = `translate(${lx - offX}px, ${ly - offY}px) scale(${ghost.dataset.k})`;
-        setTarget(slotAt(lx, ly));
+        const over = slotAt(lx, ly);
+        setTarget(over);
+        if (ghost) {
+          // fora de qualquer espaço: o pin só será deslocado; o contorno do fantasma mostra se aqui pode (verde) ou não (vermelho)
+          if (!over && onCheck) {
+            const ok = onCheck(id, { dx: lx - sx, dy: ly - sy, k: gk, rect: g0 });
+            ghost.style.outline = `0.28em solid ${ok ? "#6fdc8c" : "#ff6b5b"}`;
+            ghost.style.outlineOffset = "0.25em";
+          } else {
+            ghost.style.outline = "none";
+          }
+        }
       };
       const begin = () => {
         dragging = true;
@@ -139,7 +150,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
       window.addEventListener("pointercancel", onCancel);
       if (touch) timer = window.setTimeout(begin, HOLD_MS);
     },
-    [onMove],
+    [onMove, onNudge, onCheck],
   );
 
   return { start, wasDrag: () => suppress.current };

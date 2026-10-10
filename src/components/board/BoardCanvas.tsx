@@ -252,6 +252,17 @@ export function BoardCanvas({
     return { slot: anchor.slot, ox, oy, cov: touched.filter((x) => x.slot !== anchor.slot).map((x) => x.slot).slice(0, 8), box: full };
   };
 
+  // durante o arraste: aqui o pin pode ser solto? (o contorno do pin fica verde ou vermelho)
+  const nudgeOk = (id: string, mv: { dx: number; dy: number; k: number; rect: Box }) => {
+    const wrap = root.current;
+    const item = items.find((i) => i.id === id);
+    const el = wrap?.querySelector<HTMLElement>(`[data-pin-id="${id}"]`);
+    if (!wrap || !item || !el || typeof item.slot !== "number") return true;
+    const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * mv.k;
+    const full = { left: mv.rect.left + mv.dx, right: mv.rect.right + mv.dx, top: mv.rect.top + mv.dy, bottom: mv.rect.bottom + mv.dy };
+    return !("error" in solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em }));
+  };
+
   // o dono leva o pin para onde quiser: ele passa a pertencer ao espaço onde fica (o espaço de onde saiu volta a aparecer)
   const nudge = (id: string, mv: { dx: number; dy: number; k: number; rect: Box }) => {
     const wrap = root.current;
@@ -378,6 +389,7 @@ export function BoardCanvas({
         }
       : null,
     mod ? nudge : undefined,
+    mod ? nudgeOk : undefined,
   );
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
