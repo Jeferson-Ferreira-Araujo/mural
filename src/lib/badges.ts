@@ -196,6 +196,10 @@ export type BadgeInventory = {
   boards: BoardOffer[];
   /** pins da loja (formatos novos) */
   pinProducts?: PinProduct[];
+  /** preço, em créditos, de ampliar um mural para 42 espaços (só PINZ+) */
+  slotsPrice?: number;
+  /** murais pessoais do dono, com o tamanho de cada um */
+  myMurals?: { id: string; title: string; slots: number }[];
   catalog: CatalogItem[];
   /** quantos botons de cada pin a conta já colocou, somando todos os murais (pessoais e compartilhados) */
   placed?: Record<string, number>;
@@ -220,6 +224,8 @@ export const buyBadgeQty = (sb: SupabaseClient, key: number, qty: number) => buy
 export const buyBoard = (sb: SupabaseClient, id: string) => buy(sb, "buy_board", { p_board: id });
 export const buyPinProduct = (sb: SupabaseClient, id: string) => buy(sb, "buy_pin_product", { p_id: id });
 export const buyMuralSlot = (sb: SupabaseClient) => buy(sb, "buy_mural_slot", {});
+/** Amplia um mural pessoal para 42 espaços (PINZ+, com créditos). */
+export const buyMuralSlots = (sb: SupabaseClient, muralId: string) => buy(sb, "buy_mural_slots", { p_mural_id: muralId });
 
 /** Quantas unidades de um pin a pessoa ainda pode colocar (ninguém tem ilimitado). owned = false: ainda não liberou (loja). */
 export type Stock = { owned: boolean; left: number | null; total: number | null };

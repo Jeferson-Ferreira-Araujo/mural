@@ -28,6 +28,8 @@ export type PublicMural = {
   board?: string;
   /** Plano do mural: define o limite de pins e os formatos (validado no servidor). */
   plan?: "free" | "full";
+  /** quantos espaços o mural tem (28; 42 depois da ampliação comprada) */
+  slots?: number;
   /** Mensagem do mural vazio, personalizada pelo dono (só chega se o mural é PINZ+). */
   welcome?: string | null;
   /** true = mural público (sem pergunta): abre direto; com pergunta é privado */

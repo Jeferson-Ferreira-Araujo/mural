@@ -29,14 +29,14 @@ import { FirstTimeTip } from "./account/FirstTimeTip";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
-import { PLUS_MAX_MURALS } from "@/lib/plans";
+import { BOARD_CAPACITY, PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
 import { ReactionsProvider } from "./board/ReactionsContext";
 import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import { BoardLoadingProvider } from "./board/BoardLoadingContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadgeQty, buyBoard, buyMuralSlot, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { buyBadgeQty, buyBoard, buyMuralSlot, buyMuralSlots, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
@@ -505,16 +505,17 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
-      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
+      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : item.kind === "slots" ? await buyMuralSlots(sb, item.muralId) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : item.kind === "product" ? "Pin liberado! Ele já está na escolha de formatos ao colar um pin." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : item.kind === "product" ? "Display liberado! Ele já está na aba Displays ao clicar num espaço livre." : item.kind === "slots" ? "Mural ampliado para 42 espaços!" : "Mural extra liberado! Crie o novo mural.");
         await reloadInventory();
+        if (item.kind === "slots" && nick && slug) await getPublicMural(sb, { nick, slug }).then((m) => m && setSelected(m)); // o mural passa a ter 42 espaços
         return true;
       }
       notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é para quem assina o PINZ+." : "Não foi possível concluir a compra agora.");
       return false;
     },
-    [notify, reloadInventory],
+    [notify, reloadInventory, nick, slug],
   );
   const saveList = useCallback(
     async (l: ListData) => {
@@ -895,6 +896,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           landing={!selected && !choices}
           opening={opening}
           unlocked={unlocked}
+          capacity={selected?.slots ?? BOARD_CAPACITY}
           stats={selected?.stats ?? null}
           siteStats={siteStats}
           board={boardById(selected ? selected.board : decorBoard).id}
