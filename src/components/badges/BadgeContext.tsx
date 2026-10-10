@@ -731,15 +731,15 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // pílula do tamanho (à direita; à esquerda se não couber)
+  // pílula do tamanho, com excluir, editar e ampliar (à esquerda; à direita se não couber)
   const W = 40;
   const TRACK = 90; // mesmo comprimento da barra de inclinação
   const Hh = isDisp ? 184 : 146;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
   const off = Math.max(g.R + 8, SW / 2 + 8);
-  const onRight = g.cx + off + W <= vw - 4;
-  const pLeft = onRight ? g.cx + off : Math.max(4, g.cx - off - W);
+  const onLeft = g.cx - off - W >= 4;
+  const pLeft = onLeft ? g.cx - off - W : Math.min(g.cx + off, vw - W - 4);
   const pTop = Math.min(Math.max(g.cy - Hh / 2, 44), vh - Hh - 8);
 
   // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
