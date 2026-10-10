@@ -112,6 +112,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
           opacity: "0.92",
           filter: "drop-shadow(0 0.6em 0.6em rgba(0,0,0,.45))",
           animation: "none",
+          translate: "none", // o deslocamento do dono (--ox/--oy) é da propriedade translate: sem isto o fantasma sai da mão do dedo
         });
         ghost.dataset.k = String(k);
         document.body.appendChild(ghost);
