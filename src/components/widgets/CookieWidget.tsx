@@ -84,7 +84,7 @@ export function CookieWidget({ style = "classic", frame }: { style?: string; fra
         aria-label={broken ? "Biscoito da sorte: tocar para pegar outro" : "Biscoito da sorte: tocar para quebrar"}
         onClick={toggle}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(e)}
-        className="absolute inset-0 cursor-pointer select-none"
+        className="pointer-events-auto absolute inset-0 cursor-pointer select-none"
         style={{ background: red ? "linear-gradient(145deg,#7d1620,#430a10)" : "linear-gradient(145deg,#fff7e0,#f3dcae)" }}
       >
         <svg viewBox="-14 -6 228 112" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 size-full" aria-hidden>

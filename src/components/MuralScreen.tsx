@@ -100,6 +100,7 @@ export function MuralScreen({ composer, ...view }: Props) {
                 return;
               }
               setOpen(false);
+              window.dispatchEvent(new CustomEvent("pinz:expect-new")); // o quadro destaca onde o pin entrou
               onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌"));
             } finally {
               setSending(false);

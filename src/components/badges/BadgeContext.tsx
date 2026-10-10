@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { spotLight } from "@/lib/spot";
 import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
 import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
@@ -651,8 +652,11 @@ export function BadgeProvider({
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
     if ("error" in res) {
       live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "limit" ? "O mural aceita até 12 displays." : res.error === "not_owned" ? "Este display é da loja. Libere com créditos para usar." : "Não foi possível colocar o display agora.");
+      live.current.onDisplaysChanged?.();
+      return;
     }
     live.current.onDisplaysChanged?.();
+    spotLight(`[data-badge-id="${res.id}"]`); // destaca onde o display entrou
   }
 
   // o dono confere (ao abrir o mural e quando algo muda) se cada widget já tem registrados todos os espaços que cobre: só ACRESCENTA os que faltam,

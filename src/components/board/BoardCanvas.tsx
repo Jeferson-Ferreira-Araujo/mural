@@ -15,6 +15,7 @@ import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
 import { paddedBox, pinBox } from "@/lib/pinBox";
 import { FREE_MURAL } from "@/lib/slots";
+import { spotLight } from "@/lib/spot";
 import { COMPOSE_AUTO_EVENT } from "../AddPinButton";
 import type { PinPlace } from "../composer/types";
 
@@ -146,6 +147,24 @@ export function BoardCanvas({
     return () => window.removeEventListener("pinz:open-widget", h);
   }, [dense]);
   const root = useRef<HTMLElement>(null);
+  // pin novo colado pelo dono: destaca onde ele entrou (o compositor avisa com um evento quando o envio dá certo)
+  const expectNew = useRef(0);
+  const prevIds = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    const h = () => (expectNew.current = Date.now());
+    window.addEventListener("pinz:expect-new", h);
+    return () => window.removeEventListener("pinz:expect-new", h);
+  }, []);
+  useEffect(() => {
+    const ids = new Set(items.map((i) => i.id));
+    const before = prevIds.current;
+    prevIds.current = ids;
+    if (!before || !expectNew.current || Date.now() - expectNew.current > 30000) return;
+    const fresh = [...ids].filter((id) => !before.has(id));
+    if (!fresh.length || !root.current || root.current.offsetParent === null) return;
+    expectNew.current = 0;
+    spotLight(`[data-pin-id="${fresh[fresh.length - 1]}"]`, root.current);
+  }, [items]);
   const say = (msg: string) => (onNotify ?? mod?.notify)?.(msg);
   type Box = { left: number; right: number; top: number; bottom: number };
   /**

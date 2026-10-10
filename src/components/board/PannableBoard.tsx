@@ -231,6 +231,25 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     [doubleTapZoom],
   );
 
+  // um item recém-colocado fora da tela: o quadro desliza até ele
+  useEffect(() => {
+    const h = (e: Event) => {
+      const el = (e as CustomEvent<HTMLElement>).detail;
+      const b = box.current;
+      if (!el || !b || !b.contains(el)) return;
+      const r = el.getBoundingClientRect();
+      const br = b.getBoundingClientRect();
+      const m = 60;
+      if (r.left > br.left + m && r.right < br.right - m && r.top > br.top + m && r.bottom < br.bottom - m) return; // já está à vista
+      const dx = br.left + br.width / 2 - (r.left + r.width / 2);
+      const dy = br.top + br.height / 2 - (r.top + r.height / 2);
+      view.current = clampView(view.current.x + dx, view.current.y + dy, view.current.s);
+      apply(true);
+    };
+    window.addEventListener("pinz:focus", h);
+    return () => window.removeEventListener("pinz:focus", h);
+  }, [apply, clampView]);
+
   // ouvintes de janela registrados uma vez (o movimento continua valendo mesmo se o dedo sair do quadro)
   useEffect(() => {
     window.addEventListener("pointermove", onMove);

@@ -14,14 +14,16 @@ export function AddPinButton({ className = "" }: { className?: string }) {
       onClick={() => window.dispatchEvent(new CustomEvent(COMPOSE_AUTO_EVENT))}
       aria-label="Colocar um pin ou um display no mural"
       title="Colocar um pin ou display"
-      className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
+      className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
     >
-      <svg viewBox="0 0 28 28" className="size-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <svg viewBox="0 0 28 28" className="size-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         {/* tachinha */}
-        <path d="M10 4.5h8l-1.2 6.2c2.2 1 3.7 2.6 3.7 4.8H7.5c0-2.2 1.5-3.8 3.7-4.8L10 4.5Z" />
-        <path d="M14 15.5v6.5" />
+        <g transform="translate(1 4) scale(.85)">
+          <path d="M12 17v5" />
+          <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+        </g>
         {/* + */}
-        <path d="M21.5 4.5v6M18.5 7.5h6" strokeWidth="2.4" />
+        <path d="M22.5 3.5v6M19.5 6.5h6" strokeWidth="2.4" />
       </svg>
     </button>
   );
