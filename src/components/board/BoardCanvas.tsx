@@ -152,7 +152,7 @@ export function BoardCanvas({
    * O pin pertence ao espaço que ele mais cobre e cobre os vizinhos cujo miolo (70% centrais) ele toca; os espaços das margens continuam livres.
    * `id` = o pin que está sendo movido (ignorado nas conferências) e `home` = o espaço onde ele está hoje (o retângulo natural dele).
    */
-  const solve = (full: Box, em: number, id?: string, home?: { slot: number; cx: number; cy: number }): { error: string } | { slot: number; ox: number; oy: number; cov: number[]; box: Box } => {
+  const solve = (full: Box, em: number, id?: string, home?: { slot: number; cx: number; cy: number }, maxSlide = 0.18): { error: string } | { slot: number; ox: number; oy: number; cov: number[]; box: Box } => {
     const wrap = root.current;
     const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
     if (!wrap || !layer) return { error: "Não foi possível posicionar agora." };
@@ -215,7 +215,7 @@ export function BoardCanvas({
       full = inside({ left: full.left + m.dx, right: full.right + m.dx, top: full.top + m.dy, bottom: full.bottom + m.dy });
     }
     if (blocked) return { error: `Não dá para soltar aqui: o pin ficaria sobre ${blocked}.` };
-    if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * 0.6) return { error: "Não cabe aqui: tente um lugar mais livre." };
+    if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * maxSlide) return { error: "Não cabe aqui: tente um lugar mais livre." }; // arrastando, o pin só escorrega um pouco (fica onde o dedo o deixou); o reencaixe automático pode escorregar mais
     type Touch = { slot: number; area: number; cx: number; cy: number };
     const touched: Touch[] = [];
     const area = (r: Box, box: Box) => {
@@ -335,7 +335,7 @@ export function BoardCanvas({
         const k = el.offsetWidth ? r.width / el.offsetWidth : 1;
         const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * k;
         const full = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
-        const sol = solve(full, em, id, { slot: item.slot, cx: (r.left + r.right) / 2 - (item.ox ?? 0) * em, cy: (r.top + r.bottom) / 2 - (item.oy ?? 0) * em });
+        const sol = solve(full, em, id, { slot: item.slot, cx: (r.left + r.right) / 2 - (item.ox ?? 0) * em, cy: (r.top + r.bottom) / 2 - (item.oy ?? 0) * em }, 0.6);
         if ("error" in sol) continue;
         const moved = Math.hypot((sol.box.left + sol.box.right) / 2 - (r.left + r.right) / 2, (sol.box.top + sol.box.bottom) / 2 - (r.top + r.bottom) / 2);
         const same = sol.slot === item.slot && sol.cov.join() === (item.fcov ?? []).join();
@@ -425,7 +425,26 @@ export function BoardCanvas({
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
   const baseEm = BASE_EM_CQW * look.size * (dense ? 0.64 : 1); // denso: cards menores que a célula, para sobrar espaço entre os pins (no tablet ficavam colados)
-  const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity]);
+  // todas as linhas têm a altura do pin mais alto: o lugar de cada espaço não muda quando um pin sai ou entra numa linha (antes a linha encolhia
+  // ou crescia e o resto do mural "andava", deixando o pin solto longe de onde o dedo o deixou)
+  const [rowEm, setRowEm] = useState(0);
+  const fit = useFitScale(baseEm, dense ? 0.2 : 0.55, [items, baseEm, capacity, rowEm]);
+  useEffect(() => {
+    const g = fit.ref.current;
+    if (!g) return;
+    const measure = () => {
+      const fs = parseFloat(getComputedStyle(g).fontSize) || 10;
+      let max = 13; // a altura de um espaço vazio
+      for (const el of g.querySelectorAll<HTMLElement>("[data-pin-id]")) if (el.offsetHeight) max = Math.max(max, el.offsetHeight / fs);
+      max = Math.ceil(max * 4) / 4;
+      setRowEm((p) => (Math.abs(p - max) > 0.2 ? max : p));
+    };
+    measure();
+    const t = window.setInterval(measure, 1500); // fotos carregam depois
+    void document.fonts?.ready.then(measure);
+    return () => window.clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, capacity]);
   const gridFont = `max(3px, ${(baseEm * fit.scale).toFixed(4)}cqw)`;
 
   // um pin do quadro (na grade ou solto): o mesmo cartão, com as mesmas regras de arrastar e abrir o detalhe
@@ -507,7 +526,7 @@ export function BoardCanvas({
                   <div
                     ref={fit.ref}
                     className="grid h-full content-evenly items-center justify-items-center"
-                    style={{ fontSize: gridFont, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? (capacity > 28 ? "3.6em" : "1.4em") : "1.5em", columnGap: dense ? "1em" : "0.4em" }}
+                    style={{ fontSize: gridFont, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: rowEm ? `repeat(${rows}, ${rowEm}em)` : `repeat(${rows}, auto)`, rowGap: dense ? (capacity > 28 ? "3.6em" : "1.4em") : "1.5em", columnGap: dense ? "1em" : "0.4em" }}
                   >
                     {Array.from({ length: capacity }, (_, i) => {
                       const item = layout[i];

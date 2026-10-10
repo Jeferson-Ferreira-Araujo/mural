@@ -454,7 +454,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         const { error } = await getBrowserSupabase().rpc("place_pin", { p_id: id, p_slot: slot, p_ox: ox, p_oy: oy, p_cov: cov });
         moveSeq.current++;
         if (error) {
-          notify(error.message.includes("slot_taken") ? "Não dá para soltar aqui: o lugar acabou de ser ocupado." : "Não foi possível mover o pin agora.");
+          notify(error.message.includes("slot_taken") ? "Não dá para soltar aqui: o lugar acabou de ser ocupado." : `Não foi possível mover o pin agora (${error.message.slice(0, 80)}).`);
           await loadBoard();
           return false;
         }
