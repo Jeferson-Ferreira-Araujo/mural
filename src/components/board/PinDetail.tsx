@@ -263,7 +263,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && entry && index !== null && (
-        <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
+        <div className="relative flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
               <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={shareBtn}>
@@ -303,8 +303,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </p>
           )}
           {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn()}
-          <div className="flex min-h-0 w-full flex-1 items-center justify-center gap-2 sm:gap-3">
-            <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={arrow}>
+          {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
+          <div className="flex min-h-0 w-full flex-1 items-center justify-center px-12 sm:px-16">
+            <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
               <ChevronLeft />
             </button>
             {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
@@ -325,7 +326,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               </DetailProvider>
             </div>
             </div>
-            <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={arrow}>
+            <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={`${arrow} absolute top-1/2 right-0 z-10 -translate-y-1/2`}>
               <ChevronRight />
             </button>
           </div>
