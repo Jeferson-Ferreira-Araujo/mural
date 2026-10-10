@@ -7,6 +7,8 @@ export const WORLD_W = 1200;
 export const WORLD_H = 800;
 
 const DRAG_PX = 6; // abaixo disso é toque, não arrasto
+const DOUBLE_TAP_MS = 300;
+const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primeiro de um toque duplo
 
 /**
  * Quadro navegável (celular): arrastar com o dedo (ou mouse), pinça para ampliar, toque duplo amplia onde tocou,
@@ -27,6 +29,10 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const pan = useRef({ px: 0, py: 0, vx: 0, vy: 0 });
   const pinch = useRef({ d: 1, s: 1 });
   const dragged = useRef(false);
+  const lastTap = useRef<{ t: number; x: number; y: number } | null>(null);
+  const swallowClick = useRef(false);
+  const bypassClick = useRef(false);
+  const pending = useRef<{ timer: number; target: HTMLElement } | null>(null);
   const lastType = useRef("touch"); // mouse: o clique é imediato e não existe toque duplo
 
   const limits = useCallback(() => {
@@ -147,6 +153,17 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }, []);
 
+  const doubleTapZoom = useCallback(
+    (cx: number, cy: number) => {
+      const { maxS, defS, minS } = limits();
+      const s = view.current.s;
+      // perto do máximo: volta ao padrão; senão, amplia onde tocou
+      const target = s >= maxS * 0.85 ? (s > defS * 1.05 ? defS : minS) : Math.min(maxS, Math.max(s * 2.2, defS * 1.8));
+      zoomTo(target, cx, cy, true);
+    },
+    [limits, zoomTo],
+  );
+
   const onMove = useCallback(
     (e: PointerEvent) => {
       if (!pointers.current.has(e.pointerId)) return;
@@ -183,10 +200,25 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         return;
       }
       if (pointers.current.size > 0) return;
-      // o zoom é pelo botão Aproximar/Afastar ou pela pinça (o toque duplo ficou livre para criar pins)
+      if (e.type !== "pointercancel" && !dragged.current && e.pointerType !== "mouse") {
+        // toque: dois seguidos e perto um do outro = ampliar onde tocou
+        const now = performance.now();
+        const lt = lastTap.current;
+        if (lt && now - lt.t < DOUBLE_TAP_MS && Math.hypot(had.x - lt.x, had.y - lt.y) < 36) {
+          lastTap.current = null;
+          if (pending.current) {
+            window.clearTimeout(pending.current.timer);
+            pending.current = null;
+          }
+          swallowClick.current = true; // o clique do segundo toque não faz nada
+          doubleTapZoom(had.x, had.y);
+        } else {
+          lastTap.current = { t: now, x: had.x, y: had.y };
+        }
+      }
       window.setTimeout(() => (dragged.current = false), 60);
     },
-    [],
+    [doubleTapZoom],
   );
 
   // ouvintes de janela registrados uma vez (o movimento continua valendo mesmo se o dedo sair do quadro)
@@ -223,7 +255,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     }
   };
 
-  // cliques dos filhos: ignorados depois de arrastar (o toque duplo não dá mais zoom, então o clique não precisa esperar)
+  // cliques dos filhos: ignorados depois de arrastar, adiados até saber se vem um segundo toque
   const onClickCapture = (e: React.MouseEvent) => {
     if (inDialog(e.target)) return;
     if (lastType.current === "mouse") {
@@ -234,10 +266,34 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       }
       return;
     }
+    if (bypassClick.current) {
+      bypassClick.current = false;
+      return;
+    }
+    if (swallowClick.current) {
+      swallowClick.current = false;
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
     if (dragged.current) {
       e.stopPropagation();
       e.preventDefault();
+      return;
     }
+    e.stopPropagation();
+    e.preventDefault();
+    if (pending.current) window.clearTimeout(pending.current.timer);
+    const target = e.target as HTMLElement;
+    pending.current = {
+      target,
+      timer: window.setTimeout(() => {
+        pending.current = null;
+        bypassClick.current = true;
+        target.click();
+        bypassClick.current = false;
+      }, CLICK_DELAY_MS),
+    };
   };
 
   function toggleZoom() {
