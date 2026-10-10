@@ -285,7 +285,7 @@ export function BoardCanvas({
   const fitted = useRef(new Map<string, string>());
   useEffect(() => {
     if (!FREE_MURAL || !mod) return;
-    const timer = window.setTimeout(() => {
+    const run = () => {
       const wrap = root.current;
       if (!wrap) return;
       for (const el of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
@@ -304,7 +304,7 @@ export function BoardCanvas({
           if (!under) continue;
         }
         const r = el.getBoundingClientRect();
-        const sig = `${id}:${item.slot}:${item.ox}:${item.oy}:${Math.round(r.width)}`;
+        const sig = `${id}:${item.slot}:${item.ox}:${item.oy}:${Math.round(r.width)}:${Math.round(r.height)}`; // inclui a altura: foto que carrega depois cresce
         if (fitted.current.get(id) === sig) continue;
         fitted.current.set(id, sig);
         const k = el.offsetWidth ? r.width / el.offsetWidth : 1;
@@ -318,8 +318,14 @@ export function BoardCanvas({
         void mod.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
         break; // um por vez; o próximo é conferido depois que este assentar
       }
-    }, 600);
-    return () => window.clearTimeout(timer);
+    };
+    // confere logo e de novo de tempos em tempos: fotos e displays mudam de tamanho depois de carregar
+    const timer = window.setTimeout(run, 600);
+    const every = window.setInterval(run, 2000);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearInterval(every);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, mod]);
 

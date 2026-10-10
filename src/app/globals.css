@@ -62,6 +62,15 @@ body {
 }
 
 /* ---------- itens presos ao mural ---------- */
+/* durante o zoom animado: sem sombras nem filtros (pesam muito com o mural cheio) */
+.zooming,
+.zooming * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
 @keyframes drop-in {
   from {
     opacity: 0;

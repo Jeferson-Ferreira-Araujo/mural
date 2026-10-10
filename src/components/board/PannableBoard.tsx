@@ -61,6 +61,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   );
 
   const promoteTimer = useRef<number | null>(null);
+  const zoomingTimer = useRef<number | null>(null);
   const rafId = useRef(0);
   const boxRect = useRef<DOMRect | null>(null);
   const apply = useCallback(
@@ -68,7 +69,13 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       const el = world.current;
       if (!el) return;
       const { x, y, s } = view.current;
-      el.style.transition = animate ? "transform .28s cubic-bezier(.2,.8,.2,1)" : "none";
+      el.style.transition = animate ? "transform .24s cubic-bezier(.2,.8,.2,1)" : "none";
+      // durante a animação as sombras e filtros saem (são o que mais pesa com dezenas de pins na tela): zoom sem travar
+      if (animate) {
+        el.classList.add("zooming");
+        if (zoomingTimer.current) window.clearTimeout(zoomingTimer.current);
+        zoomingTimer.current = window.setTimeout(() => world.current?.classList.remove("zooming"), 320);
+      }
       el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
       // durante o gesto o quadro vira uma camada da GPU (mover não repinta os cartões); depois solta, e o navegador redesenha nítido
       el.style.willChange = "transform";
