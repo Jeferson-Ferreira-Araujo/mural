@@ -186,26 +186,19 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           </div>
           {/* números do perfil, juntos: visualizações (visitantes diferentes que abriram o mural), seguidores e PINZ que a pessoa já colocou */}
           {(open || unlocked) && (visits !== undefined || followers != null || placed != null) && (
-            <ul className={`flex flex-col gap-[0.35em] text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
-              {visits !== undefined && (
-                <li className="flex items-center gap-[0.35em] whitespace-nowrap">
-                  <svg viewBox="0 0 24 24" className="size-[1.1em] shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                  {visits.toLocaleString("pt-BR")} {visits === 1 ? "visualização" : "visualizações"}
+            <ul className={`grid grid-flow-col auto-cols-fr divide-x rounded-[0.9em] border py-[0.7em] text-center ${dark ? "divide-white/10 border-white/10 text-white/60" : "divide-[#e6d8bd] border-[#e6d8bd] bg-white/40 text-[#8a7b69]"}`}>
+              {(
+                [
+                  visits !== undefined && [visits, visits === 1 ? "visualização" : "visualizações"],
+                  followers != null && [followers, followers === 1 ? "seguidor" : "seguidores"],
+                  placed != null && [placed, placed === 1 ? "PINZ colocado" : "PINZ colocados"],
+                ].filter(Boolean) as [number, string][]
+              ).map(([n, label]) => (
+                <li key={label} className="min-w-0 px-[0.4em]">
+                  <span className={`block text-[1.5em] leading-none font-semibold ${dark ? "text-white" : "text-[#2f2218]"}`}>{n.toLocaleString("pt-BR")}</span>
+                  <span className="mt-[0.35em] block text-[0.78em] leading-tight">{label}</span>
                 </li>
-              )}
-              {followers != null && (
-                <li className="whitespace-nowrap">
-                  {followers.toLocaleString("pt-BR")} {followers === 1 ? "seguidor" : "seguidores"}
-                </li>
-              )}
-              {placed != null && (
-                <li className="whitespace-nowrap">
-                  {placed.toLocaleString("pt-BR")} {placed === 1 ? "PINZ colocado" : "PINZ colocados"}
-                </li>
-              )}
+              ))}
             </ul>
           )}
         </header>

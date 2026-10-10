@@ -49,12 +49,12 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
 
       {/* vendo o mural de outra pessoa: pesquisa e notificações ficam abaixo do logo (o logo é sempre o primeiro item, só a seta de voltar vem antes) */}
       {account?.onHome && !account.atHome && (
-        <div className="flex items-center justify-center gap-[0.4em]">
+        <div className="flex items-center gap-[0.5em]">
           <button
             type="button"
             onClick={account.onSearch}
             aria-label="Pesquisar Usuário"
-            className="inline-flex cursor-pointer items-center gap-[0.45em] rounded-xl border border-[#d9c9ad] bg-white/60 px-[0.8em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+            className="inline-flex flex-1 cursor-pointer justify-center items-center gap-[0.45em] rounded-xl border border-[#d9c9ad] bg-white/60 px-[0.8em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           >
             <svg viewBox="0 0 24 24" className="size-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
               <circle cx="11" cy="11" r="6.5" />
