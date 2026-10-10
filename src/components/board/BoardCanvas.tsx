@@ -224,22 +224,52 @@ export function BoardCanvas({
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
   };
 
-  // mural livre: clicar num ponto vazio da cortiça abre o compositor já com a posição escolhida (sem passar pela grade de espaços livres)
-  const onBoardClick = (e: React.MouseEvent) => {
+  // mural livre: no desktop, clique duplo num ponto vazio da cortiça; no celular, segurar o dedo ali. Abre o compositor já com a posição escolhida
+  // (sem passar pela grade de espaços livres)
+  const ptype = useRef("mouse");
+  const hold = useRef<{ x: number; y: number; timer: number } | null>(null);
+  const cancelHold = () => {
+    if (hold.current) window.clearTimeout(hold.current.timer);
+    hold.current = null;
+  };
+  const tryPlace = (target: HTMLElement, x: number, y: number) => {
     if (!FREE_MURAL || !onCompose || !unlocked || !hasSelection) return;
-    const t = e.target as HTMLElement;
-    if (t.closest("[data-pin-id],[data-badge-id],[data-badge-controls],[data-badge-bar],button,a,dialog,[role='button']") || drag.wasDrag()) return;
+    if (target.closest("[data-pin-id],[data-badge-id],[data-badge-controls],[data-badge-bar],button,a,dialog,[role='button']") || drag.wasDrag()) return;
     const grid = fit.ref.current;
     if (!grid) return;
     const gr = grid.getBoundingClientRect();
     const em = (parseFloat(getComputedStyle(grid).fontSize) || 10) * (grid.offsetWidth ? gr.width / grid.offsetWidth : 1);
-    // o tamanho de um pin comum (o mesmo de um espaço), centrado no clique
+    // o tamanho de um pin comum (o mesmo de um espaço), centrado no ponto escolhido
     const hw = 7 * em;
     const hh = 6.5 * em;
-    const sol = solve({ left: e.clientX - hw, right: e.clientX + hw, top: e.clientY - hh, bottom: e.clientY + hh }, em);
+    const sol = solve({ left: x - hw, right: x + hw, top: y - hh, bottom: y + hh }, em);
     if ("error" in sol) return say(sol.error);
     onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
   };
+  const boardPointerDown = (e: React.PointerEvent) => {
+    ptype.current = e.pointerType;
+    cancelHold();
+    if (e.pointerType === "mouse" || !e.isPrimary) return;
+    const target = e.target as HTMLElement;
+    const x = e.clientX;
+    const y = e.clientY;
+    hold.current = {
+      x,
+      y,
+      timer: window.setTimeout(() => {
+        hold.current = null;
+        tryPlace(target, x, y);
+      }, 500),
+    };
+  };
+  const boardPointerMove = (e: React.PointerEvent) => {
+    if (hold.current && Math.hypot(e.clientX - hold.current.x, e.clientY - hold.current.y) > 10) cancelHold(); // mexeu o dedo: é o gesto de mover o quadro
+  };
+  const boardDoubleClick = (e: React.MouseEvent) => {
+    if (ptype.current !== "mouse") return;
+    tryPlace(e.target as HTMLElement, e.clientX, e.clientY);
+  };
+
   const drag = usePinDrag(
     mod
       ? (id, to) => {
@@ -332,7 +362,11 @@ export function BoardCanvas({
 
                 <div
                   className="absolute"
-                  onClick={onBoardClick}
+                  onDoubleClick={boardDoubleClick}
+                  onPointerDown={boardPointerDown}
+                  onPointerMove={boardPointerMove}
+                  onPointerUp={cancelHold}
+                  onPointerCancel={cancelHold}
                   style={{ left: `${CORK.left}%`, top: `${CORK.top + 2}%`, width: `${CORK.width}%`, height: `${CORK.height - 2.5}%`, fontSize: `max(5px, ${baseEm}cqw)` }}
                 >
                   <div
