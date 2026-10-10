@@ -59,7 +59,7 @@ export function DisplayCard({ data }: { data: DisplayData }) {
     case "motivation":
       return <TextWidget style={data.style} text={data.text} reference={data.ref} frame={data.frame} label="Frase do dia" />;
     case "clock":
-      return <ClockWidget style={data.style} tz={data.tz} frame={data.frame} />;
+      return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     default:
       return <WeatherWidget style={data.style} city={data.city} lat={data.lat} lon={data.lon} frame={data.frame} />;
   }
