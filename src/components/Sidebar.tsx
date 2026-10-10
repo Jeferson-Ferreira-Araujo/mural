@@ -53,7 +53,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
           <button
             type="button"
             onClick={account.onSearch}
-            aria-label="Pesquisar Usuário"
+            aria-label="Pesquisar usuários"
             className="inline-flex flex-1 cursor-pointer justify-center items-center gap-[0.45em] rounded-xl border border-[#d9c9ad] bg-white/60 px-[0.8em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           >
             <svg viewBox="0 0 24 24" className="size-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>

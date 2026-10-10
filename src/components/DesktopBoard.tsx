@@ -44,7 +44,7 @@ export function DesktopBoard(props: ViewProps) {
 
         <nav aria-label="Informações do mural" className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
-            {/* nome do mural: pílula igual à do botão Pesquisar Usuário, alinhada à esquerda */}
+            {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && !locked && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
                 <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />

@@ -26,12 +26,12 @@ export function AccountActions({ account, tone = "light", className = "", menu =
           )}
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Pesquisar Usuário" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
+      <button type="button" onClick={account.onSearch} aria-label="Pesquisar usuários" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
-        Pesquisar Usuário
+        Pesquisar usuários
       </button>
       {menu && <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
@@ -62,7 +62,7 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
           </svg>
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Pesquisar Usuário" title="Pesquisar Usuário" className={iconBtn}>
+      <button type="button" onClick={account.onSearch} aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
         <svg {...iconSvg} strokeWidth={2.4}>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
