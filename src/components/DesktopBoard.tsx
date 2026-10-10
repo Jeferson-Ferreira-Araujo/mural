@@ -66,7 +66,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5" hideControls={locked}>
+        <PannableBoard ambient={look.image} controlPos="right-[2.2vw] bottom-5" hideControls={locked}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain>
           {locked &&
             (lockForm ? (
@@ -80,10 +80,6 @@ export function DesktopBoard(props: ViewProps) {
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
-          {hasRight && <div aria-hidden className="w-[9.5rem] shrink-0" />}
-          <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
-            <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
-          </div>
           {hasRight && (
             <div className="pointer-events-auto flex w-[9.5rem] shrink-0 flex-col items-stretch gap-2">
               {newMural && (
@@ -100,6 +96,11 @@ export function DesktopBoard(props: ViewProps) {
               )}
             </div>
           )}
+          <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
+            <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
+          </div>
+          {/* à direita da barra ficam os botões + e − do zoom */}
+          {hasRight && <div aria-hidden className="w-[9.5rem] shrink-0" />}
         </div>
         </div>
       </div>
