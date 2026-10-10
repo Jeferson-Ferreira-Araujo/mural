@@ -11,7 +11,7 @@ import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 import { DISPLAY_CATS, defaultStyle } from "../widgets";
 
-export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "slots"; muralId: string } | { kind: "mural" };
+export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
 
 const MAX_QTY = 20;
@@ -406,44 +406,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </>
 ) : (
         <>
-          {/* mais espaços: o mural pessoal tem 28; com o PINZ+ e créditos o dono amplia cada mural para 42 */}
-          {!!inventory.myMurals?.length && (
-            <section aria-label="Mais espaços no mural" className="mb-4 rounded-2xl border border-[#e1d3ba] bg-white/70 p-3">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="font-title text-base font-semibold">Mural com 42 espaços</h3>
-                  <p className="text-sm text-[#6b5440]">Mais 14 espaços para colar pins no mural (de 28 para 42). {inventory.plus ? "A compra vale para um mural." : "Disponível para quem assina o PINZ+."}</p>
-                </div>
-                <p className="flex shrink-0 items-center gap-1 text-sm font-bold" aria-label={`${inventory.slotsPrice ?? 25} créditos`}>
-                  <Coin className="size-5" />
-                  {inventory.slotsPrice ?? 25}
-                </p>
-              </div>
-              <ul className="mt-3 grid gap-2">
-                {inventory.myMurals.map((m) => {
-                  const has42 = m.slots >= 42;
-                  const price = inventory.slotsPrice ?? 25;
-                  return (
-                    <li key={m.id} className="flex items-center justify-between gap-2 rounded-xl border border-[#e6d8bd] bg-[#fbf6ea] px-3 py-2">
-                      <span className="min-w-0 truncate text-sm font-semibold">{m.title}</span>
-                      {has42 ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">✓ 42 espaços</span>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={busy === `s${m.id}` || !inventory.plus || !can(price)}
-                          title={!inventory.plus ? "Só para quem assina o PINZ+" : can(price) ? undefined : "Créditos insuficientes"}
-                          onClick={() => buy(`s${m.id}`, { kind: "slots", muralId: m.id }, { title: "Mural com 42 espaços", text: "liberado! " + m.title + " agora tem 42 espaços.", spent: price })}
-                          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg bg-[#f6c93f] px-3 py-1.5 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-45"
-                        >
-                          {busy === `s${m.id}` ? "Comprando…" : "Ampliar para 42"}
-                        </button>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
+          {/* mural maior: não se amplia um mural que já existe; compra-se um mural novo de 42 espaços ao criá-lo */}
+          {inventory.plus && (
+            <p className="mb-4 rounded-2xl border border-[#e1d3ba] bg-white/70 px-4 py-3 text-sm text-[#4a3826]">
+              <strong>Mural com 42 espaços:</strong> ao criar um mural novo (botão “Novo mural”), escolha o tamanho 42 espaços por <Coin className="inline size-4 align-text-bottom" /> {inventory.slotsPrice ?? 25} créditos.
+            </p>
           )}
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[...BOARDS]

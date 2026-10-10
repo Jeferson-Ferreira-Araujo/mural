@@ -21,6 +21,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [credits, setCredits] = useState(0);
+  const [slotsPrice, setSlotsPrice] = useState(25); // preço do mural de 42 espaços
+  const [size, setSize] = useState<28 | 42>(28);
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +33,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     fetchInventory(getBrowserSupabase()).then((inv) => {
       setOffers(inv?.boards ?? []);
       setCredits(inv?.credits ?? 0);
+      setSlotsPrice(inv?.slotsPrice ?? 25);
     });
 
   useEffect(() => {
@@ -40,6 +43,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     setBuying(null);
     setSlide(0);
     setError(null);
+    setSize(28);
     void load();
   }, [open]);
 
@@ -81,14 +85,15 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     e.preventDefault();
     if (busy) return;
     if (!title.trim()) return setError("Preencha o nome do mural.");
+    if (size === 42 && credits < slotsPrice) return setError("Créditos insuficientes para o mural de 42 espaços: faltam " + (slotsPrice - credits) + ".");
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "" } /* o mural novo segue a privacidade do perfil */);
+    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "", p_slots: size } /* o mural novo segue a privacidade do perfil */);
     const created = data as { slug?: string; id?: string } | null;
     if (err || !created?.slug || !created.id) {
       setBusy(false);
-      setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : err?.message.includes("no_credits") ? "Créditos insuficientes para o mural de 42 espaços." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
@@ -201,13 +206,46 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
 
           <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
 
+          {/* tamanho: 28 espaços (padrão) ou 42, que é comprado com créditos e só existe criando um mural novo */}
+          <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
+            <legend className="mb-2 text-sm font-semibold">Tamanho do mural</legend>
+            <div role="radiogroup" aria-label="Tamanho do mural" className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  [28, "28 espaços", "Padrão, incluído no PINZ+"],
+                  [42, "42 espaços", "Mural maior, para mais pins"],
+                ] as const
+              ).map(([n, name, hint]) => (
+                <button
+                  key={n}
+                  type="button"
+                  role="radio"
+                  aria-checked={size === n}
+                  onClick={() => (setSize(n), setError(null))}
+                  className={`cursor-pointer rounded-xl border-2 p-3 text-left transition ${size === n ? "border-[#d9a21b] bg-[#fff6dd] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold">{name}</span>
+                    {n === 42 && (
+                      <span className="inline-flex items-center gap-1 text-sm font-bold" aria-label={`${slotsPrice} créditos`}>
+                        <Coin className="size-4" />
+                        {slotsPrice}
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-0.5 block text-[11px] text-[#6b5440]">{hint}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
           {error && (
             <p role="alert" className="text-sm text-[#a23b2a]">
               {error}
             </p>
           )}
           <button type="submit" disabled={busy} className={primaryButton}>
-            {busy ? "Criando…" : "Criar mural"}
+            {busy ? "Criando…" : size === 42 ? "Criar mural de 42 espaços (" + slotsPrice + " créditos)" : "Criar mural"}
           </button>
         </form>
       )}
