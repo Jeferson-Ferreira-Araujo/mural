@@ -234,7 +234,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   }, [onMove, onUp]);
 
   // janelas (detalhe do pin, avisos…) são filhas do quadro no DOM, mas não fazem parte dele: nada de arrastar nem de adiar o clique delas
-  const inDialog = (t: EventTarget | null) => t instanceof Element && !!t.closest("dialog");
+  const inDialog = (t: EventTarget | null) => t instanceof Element && !!t.closest("dialog, [data-zoom-controls]"); // os botões + e − também não participam do arrastar nem do adiamento do clique
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (inDialog(e.target)) return;
@@ -328,7 +328,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
 
       {!hideControls && (
         // dois botões: só o que vale agora (+ com o mural inteiro; − aproximado) é clicável; o outro fica apagado
-        <div onPointerDown={(e) => e.stopPropagation()} className={`absolute ${controlPos} z-20 inline-flex h-11 items-center overflow-hidden rounded-xl bg-[#17110c]/85 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur`}>
+        <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className={`absolute ${controlPos} z-20 inline-flex h-11 items-center overflow-hidden rounded-xl bg-[#17110c]/85 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur`}>
           {([["in", "Aproximar o mural", "M12 6v12M6 12h12"], ["out", "Afastar o mural", "M6 12h12"]] as const).map(([k, label, d]) => {
             const active = (k === "in") === zoomedOut;
             return (
