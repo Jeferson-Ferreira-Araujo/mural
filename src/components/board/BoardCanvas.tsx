@@ -244,7 +244,31 @@ export function BoardCanvas({
       if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return { error: cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display." };
       touched.push({ slot: Number(cell.dataset.slot), area: a, cx: (r.left + r.right) / 2, cy: (r.top + r.bottom) / 2 });
     }
-    if (!touched.length) return { error: "O pin precisa ficar sobre o mural." };
+    if (!touched.length) {
+      // o pin está sobre uma parte da cortiça sem nenhum espaço da grade por baixo (por exemplo, onde um pin deslocado estava antes):
+      // vale do mesmo jeito, ligado ao espaço de origem (ou, ao criar, ao espaço livre mais próximo), só com um deslocamento maior
+      if (home) {
+        touched.push({ slot: home.slot, area: 0, cx: home.cx, cy: home.cy });
+      } else {
+        const mx = (full.left + full.right) / 2;
+        const my = (full.top + full.bottom) / 2;
+        let best: Touch | null = null;
+        let bestD = Infinity;
+        for (const cell of wrap.querySelectorAll<HTMLElement>("[data-slot]")) {
+          if (cell.hasAttribute("data-pin-id") || cell.hasAttribute("data-covered") || !vis(cell)) continue;
+          const r = cell.getBoundingClientRect();
+          const cx = (r.left + r.right) / 2;
+          const cy = (r.top + r.bottom) / 2;
+          const dd = Math.hypot(cx - mx, cy - my);
+          if (dd < bestD) {
+            bestD = dd;
+            best = { slot: Number(cell.dataset.slot), area: 0, cx, cy };
+          }
+        }
+        if (!best) return { error: "Não há espaço livre neste mural." };
+        touched.push(best);
+      }
+    }
     const anchor = touched.reduce((a, b) => (b.area > a.area ? b : a));
     const ox = Math.round((((full.left + full.right) / 2 - anchor.cx) / em) * 100) / 100;
     const oy = Math.round((((full.top + full.bottom) / 2 - anchor.cy) / em) * 100) / 100;
