@@ -60,7 +60,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
               <circle cx="11" cy="11" r="6.5" />
               <path d="m20 20-4.2-4.2" />
             </svg>
-            Pesquisar
+            Pesquisar usuários
           </button>
           {/* notificações chegam em tempo real: o sino fica sempre à vista */}
           {account.notifications && (
