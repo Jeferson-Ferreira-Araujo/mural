@@ -6,8 +6,8 @@ import { Scene, type SceneVariant } from "./Scene";
 export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, pos, ratio }: { caption: string; scene?: SceneVariant; src?: string; font?: HandId; pin?: PinColor; tape?: TapeColor; pos?: PinPos; /** largura ÷ altura da foto: o quadro se ajusta a ela (sem cortar) mantendo o lado maior no tamanho padrão */ ratio?: number }) {
   const hand = handOf(font);
   const r = ratio ? Math.min(2, Math.max(0.5, ratio)) : 1;
-  // a foto cabe numa caixa de 12,2em de largura (como o quadro padrão); a vertical pode ser um pouco mais alta (14em) para aproveitar o espaço
-  const photoW = Math.min(12.2, 14 * r);
+  // a foto cabe numa caixa de 12,2em de largura (como o quadro padrão); a vertical pode ser um pouco mais alta (12,5em) para aproveitar o espaço
+  const photoW = Math.min(12.2, 12.5 * r);
   const cardW = Math.max(photoW + 1.8, 8.6); // um mínimo só para a legenda caber
   return (
     <article

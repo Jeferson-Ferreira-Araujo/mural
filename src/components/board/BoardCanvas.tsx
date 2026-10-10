@@ -40,7 +40,7 @@ function useFitScale(base: number, min: number, deps: unknown[]) {
     if (!g) return;
     const measure = () => {
       const prev = g.style.fontSize;
-      g.style.fontSize = `max(5px, ${base}cqw)`; // escala cheia
+      g.style.fontSize = `max(3px, ${base}cqw)`; // escala cheia
       const need = g.scrollHeight;
       const have = g.clientHeight;
       g.style.fontSize = prev; // devolve o valor que o React aplicou
@@ -181,7 +181,7 @@ export function BoardCanvas({
                   <div
                     ref={fit.ref}
                     className="grid h-full content-evenly items-center justify-items-center"
-                    style={{ fontSize: `max(5px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? "1.4em" : "1.5em", columnGap: dense ? "1em" : "0.4em" }}
+                    style={{ fontSize: `max(3px, ${(baseEm * fit.scale).toFixed(4)}cqw)`, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, auto)`, rowGap: dense ? (capacity > 28 ? "3.6em" : "1.4em") : "1.5em", columnGap: dense ? "1em" : "0.4em" }}
                   >
                     {Array.from({ length: capacity }, (_, i) => {
                       const item = layout[i];
