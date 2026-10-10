@@ -90,7 +90,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-id={b.id}
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
-        {...(!editable ? { role: "button", tabIndex: 0, "aria-label": "Ver o pin em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
+        {...(!editable ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
         className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : "pointer-events-auto cursor-pointer"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >

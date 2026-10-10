@@ -234,7 +234,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           [
             ["pins", "Bottons"],
             ["boards", "Murais"],
-            ["formats", "Pins"],
+            ["formats", "Displays"],
           ] as const
         ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -318,7 +318,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </>
       ) : tab === "formats" ? (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">Em breve, novos pins por aqui.</li>}
+          {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">Em breve, novos displays por aqui.</li>}
           {products.map((p) => {
             const just = done?.id === `f${p.id}`;
             return (
@@ -347,7 +347,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   </div>
                   <p className="mt-1 flex-1 text-sm text-[#6b5440]">{p.description}</p>
                   {p.owned ? (
-                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “{p.name}” e arraste o pin para onde quiser.</p>
+                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “{p.name}” e arraste o display para onde quiser.</p>
                   ) : (
                     <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: p.name, text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={buyBtn}>
                       {busy === `f${p.id}` ? "Comprando…" : "Comprar"}

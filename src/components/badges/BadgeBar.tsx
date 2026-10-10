@@ -79,7 +79,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
       {displays.length > 0 && (
         <>
           <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-          <ul className="flex shrink-0 gap-2" aria-label="Seus pins da loja">
+          <ul className="flex shrink-0 gap-2" aria-label="Seus displays">
             {displays.map((p) => (
               <li key={p}>
                 <button

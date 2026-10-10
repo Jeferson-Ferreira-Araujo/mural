@@ -30,7 +30,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
     }
   }
 
-  const title = NAME[data.product] ?? "Pin da loja";
+  const title = NAME[data.product] ?? "Display";
   return (
     <Modal open onClose={onClose} title={title} label={title}>
       <div className="space-y-4">

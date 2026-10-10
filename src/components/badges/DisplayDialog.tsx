@@ -68,7 +68,7 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
   };
   const data: DisplayData = { ...base, style: style || defaultStyle(product) };
   const ready = product !== "weather" || !!city;
-  const title = NAME[product] ?? "Pin da loja";
+  const title = NAME[product] ?? "Display";
   const styles = stylesOf(product);
 
   return (

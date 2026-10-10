@@ -333,7 +333,7 @@ export function BadgeProvider({
           void updateDisplayLayout(getBrowserSupabase(), src.id, drop.x, drop.y, src.scale ?? DISPLAY_SCALE, drop.slots ?? []).then((r) => {
             if (!r.ok) {
               if (before) setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, ...before } : b)));
-              notify(r.taken ? "Esse lugar acabou de receber um pin. Escolha outro." : "Não foi possível mover o pin agora.");
+              notify(r.taken ? "Esse lugar acabou de receber um pin. Escolha outro." : "Não foi possível mover o display agora.");
             }
             live.current.onDisplaysChanged?.();
           });
@@ -587,7 +587,7 @@ export function BadgeProvider({
     void _p;
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
     if ("error" in res) {
-      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "limit" ? "O mural aceita até 12 pins da loja." : res.error === "not_owned" ? "Este pin é da loja. Libere com créditos para usar." : "Não foi possível colocar o pin agora.");
+      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "limit" ? "O mural aceita até 12 displays." : res.error === "not_owned" ? "Este display é da loja. Libere com créditos para usar." : "Não foi possível colocar o display agora.");
     }
     live.current.onDisplaysChanged?.();
   }
@@ -814,20 +814,20 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
         style={{ left: aLeft, top: aTop, width: W, height: Ha }}
       >
         {isDisp && (
-          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o pin em tamanho grande" title="Ver em tamanho grande" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o display em tamanho grande" title="Ver em tamanho grande" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
             </svg>
           </button>
         )}
         {isDisp && (
-          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o pin: contorno, horário ou cidade" title="Editar" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o display: contorno, horário ou cidade" title="Editar" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />
             </svg>
           </button>
         )}
-        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o pin do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
+        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o display do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
@@ -912,7 +912,7 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
       const d = check(x, y);
       if (!d) return;
       if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? [], d.rect);
-      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar um pin da loja sobre outro pin da loja." : "Solte o pin sobre o mural.");
+      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar um display sobre outro display." : "Solte o display sobre o mural.");
       const lr = layerRef.current?.getBoundingClientRect();
       if (lr) setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 }); // volta ao centro
       setState("ok");
@@ -925,10 +925,10 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
   const cardStyle: CSSProperties = { fontSize: size.w / WIDGET_W + "px", outline: dragging ? "3px solid " + ring : "none", outlineOffset: "4px", borderRadius: "1.4em" };
 
   return createPortal(
-    <div className="fixed inset-0 z-[380]" role="dialog" aria-label="Posicionar o pin no mural">
+    <div className="fixed inset-0 z-[380]" role="dialog" aria-label="Posicionar o display no mural">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
       <p className="absolute top-4 left-1/2 w-[min(92vw,26rem)] -translate-x-1/2 rounded-2xl bg-[#17110c]/92 px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_0.4rem_1.4rem_rgba(0,0,0,.5)]">
-        Arraste o pin e solte onde você quiser no mural
+        Arraste o display e solte onde você quiser no mural
       </p>
       <div
         onPointerDown={start}
