@@ -178,13 +178,21 @@ export function BoardCanvas({
       return ix > 0 && iy > 0 ? ix * iy : 0;
     };
     const home = { left: homeCx - 7 * em, right: homeCx + 7 * em, top: homeCy - 6.5 * em, bottom: homeCy + 6.5 * em }; // o espaço vazio tem 14em × 13em
-    const homeA = area(full, home);
-    if (homeA / (14 * em * 13 * em) >= 0.03) touched.push({ slot: item.slot, area: homeA, cx: homeCx, cy: homeCy });
+    // um espaço só conta como tocado se o pin entra no miolo dele (70% centrais): invadir só a margem não esconde o espaço, ali ainda cabe um pin menor
+    const core = (r: { left: number; right: number; top: number; bottom: number }) => {
+      const pw = (r.right - r.left) * 0.15;
+      const ph = (r.bottom - r.top) * 0.15;
+      return { left: r.left + pw, right: r.right - pw, top: r.top + ph, bottom: r.bottom - ph };
+    };
+    const homeCore = core(home);
+    const homeA = area(full, homeCore);
+    if (homeA / ((homeCore.right - homeCore.left) * (homeCore.bottom - homeCore.top)) >= 0.03) touched.push({ slot: item.slot, area: homeA, cx: homeCx, cy: homeCy });
     for (const cell of wrap.querySelectorAll<HTMLElement>("[data-slot]")) {
       if (cell.dataset.pinId === id || !vis(cell)) continue;
       const r = cell.getBoundingClientRect();
-      const a = area(full, r);
-      if (a / (r.width * r.height) < 0.03) continue;
+      const rc = core(r);
+      const a = area(full, rc);
+      if (a / ((rc.right - rc.left) * (rc.bottom - rc.top)) < 0.03) continue;
       if (cell.hasAttribute("data-pin-id")) return m.notify("Não dá para soltar aqui: o pin ficaria sobre outro pin.");
       if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return m.notify(cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display.");
       touched.push({ slot: Number(cell.dataset.slot), area: a, cx: (r.left + r.right) / 2, cy: (r.top + r.bottom) / 2 });
