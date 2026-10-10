@@ -12,7 +12,7 @@ export function EmptySlot() {
             <path d="M12 5v14M5 12h14" />
           </svg>
         </span>
-        <span className="block text-[1.4em] leading-tight font-extrabold tracking-wide uppercase">espaço livre</span>
+        <span className="block text-[1.9em] leading-[1.05] font-extrabold tracking-wide uppercase">espaço<br />livre</span>
       </span>
     </div>
   );
