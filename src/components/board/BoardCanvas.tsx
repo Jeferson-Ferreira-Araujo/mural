@@ -275,8 +275,8 @@ export function BoardCanvas({
     const full = { left: mv.rect.left + mv.dx, right: mv.rect.right + mv.dx, top: mv.rect.top + mv.dy, bottom: mv.rect.bottom + mv.dy };
     const sol = solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em });
     if ("error" in sol) return m.notify(sol.error);
-    // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima
-    if (isSealed(item) || (PHYSICAL_TYPES as readonly string[]).includes(item.type ?? "")) removeOver(sol.box);
+    // nenhum pin fica com botton por cima: os que estiverem na área de destino voltam para a barra
+    removeOver(sol.box);
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
   };
 
@@ -382,7 +382,7 @@ export function BoardCanvas({
           // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima: os que estiverem na área de destino voltam para a barra
           const from = layout.findIndex((x) => x?.id === id);
           const slotEl = (n: number) => root.current?.querySelector<HTMLElement>(`[data-slot="${n}"]`) ?? null;
-          const isPhysical = (it: BoardItem | null | undefined) => !!it && (isSealed(it) || (PHYSICAL_TYPES as readonly string[]).includes(it.type ?? ""));
+          const isPhysical = (it: BoardItem | null | undefined) => !!it; // todo pin: os bottons debaixo dele voltam para a barra
           const over = (el: HTMLElement | null, size: HTMLElement | null) => {
             if (!el || !size) return;
             const c = el.getBoundingClientRect();

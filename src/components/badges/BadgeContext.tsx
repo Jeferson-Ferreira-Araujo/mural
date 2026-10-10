@@ -92,11 +92,11 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   const onPhysical = (x: number, y: number) =>
     document.elementsFromPoint(x, y).some((el) => {
       const pin = el.closest<HTMLElement>("[data-pin-type]");
-      return !!pin && (PHYSICAL_TYPES as readonly string[]).includes(pin.dataset.pinType ?? "");
+      return !!pin; // qualquer pin: o botton fica em volta, nunca por cima
     });
-  // pinz físicos (aparelhos): vale o ponto onde o botom foi solto E o botom inteiro (não pode cobrir nem um pedaço do aparelho)
+  // pins: vale o ponto onde o botom foi solto E o botom inteiro (não pode cobrir nem um pedaço do pin)
   const physical = [...document.querySelectorAll<HTMLElement>("[data-pin-type]")]
-    .filter((p) => visible(p) && (PHYSICAL_TYPES as readonly string[]).includes(p.dataset.pinType ?? ""))
+    .filter((p) => visible(p))
     .map((p) => p.getBoundingClientRect());
   const coversPhysical = (x: number, y: number) => {
     const hw = (w * 0.85) / 2;
@@ -322,7 +322,7 @@ export function BadgeProvider({
           return;
         }
         if (drop.kind === "physical") {
-          notify('Não dá para colocar sobre pinz "físicos".');
+          notify("Não dá para colocar um botton sobre um pin: coloque em volta dele.");
           return sendBack(at);
         }
         if (drop.kind === "badge") {
@@ -494,7 +494,7 @@ export function BadgeProvider({
         }
         if (drop.kind === "physical") {
           back();
-          return notify("Não há espaço para aumentar: o botton cobriria um pinz.");
+          return notify("Não há espaço para aumentar: o botton cobriria um pin.");
         }
         if (drop.kind === "badge") {
           back();
