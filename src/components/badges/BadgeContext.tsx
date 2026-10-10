@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
 import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -127,10 +128,9 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     if (taken.length) return { kind: "occupied" };
     // pin deslocado pelo dono no caminho: também ocupa (vale o retângulo real do pin, com uma folga pequena)
     for (const fp of document.querySelectorAll<HTMLElement>("[data-pin-id]")) {
-      const b = fp.getBoundingClientRect();
-      const gx = b.width * 0.06;
-      const gy = b.height * 0.06;
-      if (b.width > 0 && fp.offsetParent !== null && rect.left < b.right - gx && rect.right > b.left + gx && rect.top < b.bottom - gy && rect.bottom > b.top + gy) return { kind: "occupied" };
+      if (fp.getBoundingClientRect().width <= 0 || fp.offsetParent === null) continue;
+      const b = pinBox(fp); // cartão + tachinha + folga
+      if (rect.left < b.right && rect.right > b.left && rect.top < b.bottom && rect.bottom > b.top) return { kind: "occupied" };
     }
     return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }

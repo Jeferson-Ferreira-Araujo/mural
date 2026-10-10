@@ -13,6 +13,7 @@ import { useBadges } from "../badges/BadgeContext";
 import { PHYSICAL_TYPES } from "@/lib/badges";
 import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
+import { paddedBox, pinBox } from "@/lib/pinBox";
 import { FREE_MURAL } from "@/lib/slots";
 import type { PinPlace } from "../composer/types";
 
@@ -165,16 +166,20 @@ export function BoardCanvas({
     if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: "O pin é grande demais para ficar aqui." };
     const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
     // quem atrapalha: os outros pins e os displays (o retângulo real de cada um)
-    const obstacles: { box: DOMRect; what: string }[] = [];
+    const obstacles: { box: Box | DOMRect; what: string }[] = [];
     for (const other of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
-      if (other.dataset.pinId !== id && vis(other)) obstacles.push({ box: other.getBoundingClientRect(), what: "outro pin" });
+      if (other.dataset.pinId !== id && vis(other)) obstacles.push({ box: pinBox(other), what: "outro pin" }); // cartão + tachinha + folga
     }
     for (const d of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
       if (vis(d)) obstacles.push({ box: d.getBoundingClientRect(), what: "um display" });
     }
     // o pin se ajusta sozinho: se passou da borda ou invadiu um vizinho, desliza o mínimo para o lado (até uma distância razoável)
-    const t = 0.06; // folga: encostar de leve nas bordas dos vizinhos não conta como sobrepor
-    const shrink = (r: Box): Box => ({ left: r.left + w * t, right: r.right - w * t, top: r.top + h * t, bottom: r.bottom - h * t });
+    const t = 0.02; // quase nenhuma tolerância: a folga de verdade já vem do retângulo dos pins (tachinha e margem)
+    // o pin que está sendo posto também leva a tachinha (sai por cima do cartão) e uma folguinha
+    const shrink = (r: Box): Box => {
+      const p = paddedBox(r, em);
+      return { left: p.left + w * t, right: p.right - w * t, top: p.top + h * t, bottom: p.bottom - h * t };
+    };
     const inside = (r: Box) => {
       let dx = 0;
       let dy = 0;
@@ -265,7 +270,7 @@ export function BoardCanvas({
   };
 
   // ajuste automático (só o dono): um pin colado em mural livre tem o tamanho conhecido só depois de aparecer; se passou da borda ou encostou num vizinho,
-  // ele é reencaixado sozinho (mesma regra de quando se arrasta). Só mexe em pins que já têm deslocamento, nunca na grade de quem não foi movido.
+  // ele é reencaixado sozinho (mesma regra de quando se arrasta). Só mexe em pins que já têm deslocamento ou que um display passou a cobrir.
   const fitted = useRef(new Map<string, string>());
   useEffect(() => {
     if (!FREE_MURAL || !mod) return;
@@ -275,8 +280,18 @@ export function BoardCanvas({
       for (const el of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
         const id = el.dataset.pinId;
         const item = items.find((x) => x.id === id);
-        if (!id || !item || typeof item.slot !== "number" || (!item.ox && !item.oy)) continue;
+        if (!id || !item || typeof item.slot !== "number") continue;
         if (el.getBoundingClientRect().width <= 0 || el.offsetParent === null) continue;
+        if (!item.ox && !item.oy) {
+          // pin que nunca foi movido: só entra no ajuste se um display passou a cobri-lo (por exemplo, o display foi ampliado)
+          const pb = pinBox(el);
+          const lay = wrap.querySelector<HTMLElement>("[data-badge-layer]");
+          const under = [...(lay?.querySelectorAll<HTMLElement>("[data-badge-kind='display']") ?? [])].some((d) => {
+            const b = d.getBoundingClientRect();
+            return b.width > 0 && pb.left < b.right && pb.right > b.left && pb.top < b.bottom && pb.bottom > b.top;
+          });
+          if (!under) continue;
+        }
         const r = el.getBoundingClientRect();
         const sig = `${id}:${item.slot}:${item.ox}:${item.oy}:${Math.round(r.width)}`;
         if (fitted.current.get(id) === sig) continue;
