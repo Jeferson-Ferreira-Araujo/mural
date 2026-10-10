@@ -88,11 +88,13 @@ export function BadgeBar({ className = "" }: { className?: string }) {
             onClick={() => (displays.length === 1 ? pickDisplay(displays[0]) : setPickOpen(true))}
             aria-label={displays.length === 1 ? `${DISPLAY_LABEL[displays[0]] ?? displays[0]}: toque para colocar no mural` : "Seus displays: escolher qual colocar no mural"}
             title="Displays"
-            className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-white/10 text-white transition hover:bg-white/20 active:scale-95 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+            className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-[#f2e8d3] text-[#3b2616] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#fbf6ea] active:scale-95 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
           >
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <rect x="3" y="5" width="18" height="12" rx="2" />
-              <path d="M8 21h8M12 17v4" />
+              {/* cartãozinho com sol e horizonte, como os displays do mural */}
+              <rect x="3" y="5.5" width="18" height="13" rx="3.5" />
+              <circle cx="8.6" cy="10.4" r="1.7" fill="currentColor" stroke="none" />
+              <path d="M3.8 16.2l4.6-3.4 3.2 2.3 3-2.2 5.6 4" />
             </svg>
             <span className="text-[11px] leading-none font-bold">Displays</span>
           </button>
