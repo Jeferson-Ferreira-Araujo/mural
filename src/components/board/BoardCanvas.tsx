@@ -15,6 +15,7 @@ import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
 import { paddedBox, pinBox } from "@/lib/pinBox";
 import { FREE_MURAL } from "@/lib/slots";
+import { COMPOSE_AUTO_EVENT } from "../AddPinButton";
 import type { PinPlace } from "../composer/types";
 
 /**
@@ -400,6 +401,38 @@ export function BoardCanvas({
     if (ptype.current !== "mouse") return;
     tryPlace(e.target as HTMLElement, e.clientX, e.clientY);
   };
+
+  // botão "+ pin" (fora do mural): escolhe sozinho o espaço livre mais perto do centro do mural e abre o compositor (Pins e Displays) ali
+  useEffect(() => {
+    const h = () => {
+      const wrap = root.current;
+      if (!wrap || wrap.offsetParent === null || wrap.getBoundingClientRect().width <= 0 || !onCompose || !unlocked || !hasSelection) return; // a tela tem duas cópias do mural: só a visível responde
+      if (!FREE_MURAL) return onCompose();
+      const grid = fit.ref.current;
+      if (!grid) return;
+      const gr = grid.getBoundingClientRect();
+      const em = (parseFloat(getComputedStyle(grid).fontSize) || 10) * (grid.offsetWidth ? gr.width / grid.offsetWidth : 1);
+      const rr = wrap.getBoundingClientRect();
+      // o centro do que está à vista (o mural pode estar com zoom, mostrando só uma parte)
+      const cx0 = (Math.max(rr.left, 0) + Math.min(rr.right, window.innerWidth)) / 2;
+      const cy0 = (Math.max(rr.top, 0) + Math.min(rr.bottom, window.innerHeight)) / 2;
+      const cells = [...wrap.querySelectorAll<HTMLElement>("[data-slot]")]
+        .filter((el) => !el.hasAttribute("data-pin-id") && !el.hasAttribute("data-covered") && el.getBoundingClientRect().width > 0 && el.offsetParent !== null)
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          return { x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2 };
+        })
+        .sort((a, b) => Math.hypot(a.x - cx0, a.y - cy0) - Math.hypot(b.x - cx0, b.y - cy0));
+      for (const p of cells.slice(0, 14)) {
+        const sol = solve({ left: p.x - 4 * em, right: p.x + 4 * em, top: p.y - 4 * em, bottom: p.y + 4 * em }, em);
+        if (!("error" in sol)) return onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
+      }
+      say("Não há espaço livre para um pin agora. Dê dois cliques (ou segure) num ponto vazio do mural.");
+    };
+    window.addEventListener(COMPOSE_AUTO_EVENT, h);
+    return () => window.removeEventListener(COMPOSE_AUTO_EVENT, h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 
   const drag = usePinDrag(
     mod

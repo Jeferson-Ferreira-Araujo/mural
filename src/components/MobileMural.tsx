@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { AddPinButton } from "./AddPinButton";
 import { boardById } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
@@ -51,6 +52,7 @@ type Props = {
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
+  const canAdd = !!account?.atHome && unlocked && !locked && hasSelection && !!onCompose; // dono no próprio mural: botão "+ pin"
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -109,7 +111,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <div className="absolute top-3 right-3 z-30">
           <MuralNameMenu
             title={info.title}
-            label="Murais"
+            label={account?.onNewMural ? "Meus murais" : "Murais"}
+            onCreate={account?.onNewMural}
             sw={muralSwitch}
             showShared={!!account?.atHome}
             align="right"
@@ -119,32 +122,23 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* conta FREE no próprio mural: contador de pins e explicação do limite (não há "Novo mural" nesse plano) */}
         {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-3 left-3 z-20" />}
         {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
-        {/* PINZ+: novo mural, no canto superior esquerdo do quadro (mesmo estilo do botão Compartilhar) */}
-        {account?.onNewMural && (
-          <button
-            type="button"
-            onClick={account.onNewMural}
-            className="absolute top-3 left-3 z-20 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-          >
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Novo mural
-          </button>
+        {/* PINZ+: Compartilhar sobe para o canto superior esquerdo (o "novo mural" agora é a 1ª opção do menu Meus murais) */}
+        {account?.onNewMural && share && onNotify && !follow && (
+          <div className="absolute top-3 left-3 z-20">
+            <ShareButton title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+          </div>
         )}
         <PannableBoard
           hideControls={locked}
           ambient={look.image}
           cornerLeft={
-            share && onNotify ? (
-              <ShareButton
-                title="Compartilhar este mural"
-                text={share.text}
-                path={share.path}
-                onNotify={onNotify}
-                className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur"
-                label="Compartilhar"
-              />
+            canAdd || (share && onNotify && !account?.onNewMural) ? (
+              <div className="flex items-center gap-2">
+                {canAdd && <AddPinButton />}
+                {share && onNotify && !account?.onNewMural && (
+                  <ShareButton title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+                )}
+              </div>
             ) : undefined
           }
         >

@@ -1,6 +1,7 @@
 "use client";
 
 import { boardById, DEFAULT_BOARD } from "@/lib/boards";
+import { AddPinButton } from "./AddPinButton";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
@@ -26,7 +27,7 @@ export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
   const newMural = account?.onNewMural; // PINZ+: botão "Novo mural" abaixo do passador de murais
-  const hasRight = !!newMural;
+  const canAdd = hasSelection && !locked && unlocked && !!account?.atHome; // dono no próprio mural: botão "+ pin"
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616] portrait:flex-col">
@@ -47,7 +48,7 @@ export function DesktopBoard(props: ViewProps) {
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && !locked && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
-                <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} />
+                <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} onCreate={newMural} />
               </h2>
             )}
             {hasSelection && !locked && unlocked && account?.atHome && plan === "free" && <PlanLimit used={items.length} />}
@@ -80,27 +81,17 @@ export function DesktopBoard(props: ViewProps) {
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5">
-          {hasRight && (
-            <div className="pointer-events-auto flex w-[9.5rem] shrink-0 flex-col items-stretch gap-2">
-              {newMural && (
-                <button
-                  type="button"
-                  onClick={newMural}
-                  className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition hover:bg-[#2b1c12] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
-                >
-                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                  Novo mural
-                </button>
-              )}
+          {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
+          {canAdd && (
+            <div className="pointer-events-none flex w-[9.5rem] shrink-0 items-end">
+              <AddPinButton />
             </div>
           )}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
             <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
           </div>
           {/* à direita da barra ficam os botões + e − do zoom */}
-          {hasRight && <div aria-hidden className="w-[9.5rem] shrink-0" />}
+          {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}
         </div>
         </div>
       </div>

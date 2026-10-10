@@ -9,7 +9,7 @@ import type { MuralSwitch } from "./MuralSwitcher";
  * Nome do mural aberto. Quando a pessoa tem outros murais, aparece uma seta para baixo ao lado do nome: tocar abre a lista dos outros
  * murais e, no fim, os murais compartilhados com alguém (se houver). Sem outros murais, é só o nome.
  */
-export function MuralNameMenu({ title, sw, showShared = false, align = "left", className = "", label, triggerClassName }: { title: string; sw?: MuralSwitch; /** em vez do nome do mural, mostra só este rótulo (ex.: "Murais") e a lista traz TODOS os murais; sem outros murais, nada aparece (celular: nomes grandes não quebram o layout) */ label?: string; /** aparência do botão que abre a lista (ex.: pílula escura sobre o quadro) */ triggerClassName?: string; /** estou vendo um mural meu: lista também os compartilhados */ showShared?: boolean; align?: "left" | "right"; className?: string }) {
+export function MuralNameMenu({ title, sw, showShared = false, align = "left", className = "", label, triggerClassName, onCreate }: { /** PINZ+: a primeira opção do menu é criar um mural novo */ onCreate?: () => void; title: string; sw?: MuralSwitch; /** em vez do nome do mural, mostra só este rótulo (ex.: "Murais") e a lista traz TODOS os murais; sem outros murais, nada aparece (celular: nomes grandes não quebram o layout) */ label?: string; /** aparência do botão que abre a lista (ex.: pílula escura sobre o quadro) */ triggerClassName?: string; /** estou vendo um mural meu: lista também os compartilhados */ showShared?: boolean; align?: "left" | "right"; className?: string }) {
   const [open, setOpen] = useState(false);
   const [shared, setShared] = useState<SharedMural[] | null>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -40,7 +40,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
   }, [open]);
 
   const sharedList = showShared ? (shared ?? []) : [];
-  const hasMenu = others.length > 0 || sharedList.length > 0;
+  const hasMenu = others.length > 0 || sharedList.length > 0 || !!onCreate;
   const name = <span className="block min-w-0 truncate">{label ?? title}</span>;
   if (!hasMenu) return label ? null : <span className={`min-w-0 ${className}`}>{name}</span>;
   const listed = label ? (sw?.items ?? []) : others;
@@ -56,6 +56,14 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
       </button>
       {open && (
         <div role="menu" className={`absolute top-full z-50 mt-2 w-max min-w-[12rem] max-w-[min(80vw,22rem)] rounded-xl border border-[#e1d3ba] bg-[#fbf6ea] p-1.5 text-[#2a1c12] shadow-[0_0.8rem_2rem_rgba(0,0,0,.4)] ${align === "right" ? "right-0" : "left-0"}`}>
+          {onCreate && (
+            <button type="button" role="menuitem" onClick={() => (setOpen(false), onCreate())} className={`${item} ${listed.length > 0 || sharedList.length > 0 ? "mb-1 border-b border-[#e1d3ba] !rounded-b-none" : ""}`}>
+              <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span className="min-w-0 flex-1 truncate">Criar novo mural</span>
+            </button>
+          )}
           {listed.length > 0 && (
             <>
               {listed.map((m) => {
