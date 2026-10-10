@@ -293,7 +293,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 </svg>
               </button>
             )}
-            <button type="button" onClick={onClose} aria-label="Fechar" className={arrow}>
+            {/* fixo no canto superior direito da janela */}
+            <button type="button" onClick={onClose} aria-label="Fechar" className={`${arrow} absolute top-0 right-0 z-10`}>
               <CloseX />
             </button>
           </div>
