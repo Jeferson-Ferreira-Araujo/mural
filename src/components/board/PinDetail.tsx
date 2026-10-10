@@ -248,6 +248,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const arrow =
     "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-xl border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
+  // botão de compartilhar com o nome ao lado do ícone (o ícone sozinho ficava pequeno)
+  const shareBtn = `${arrow} !w-auto gap-2 px-4 text-sm font-semibold`;
+
   return (
     <>
     <dialog
@@ -263,8 +266,16 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
-              <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={arrow}>
+              <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={shareBtn}>
                 <ShareIcon />
+                Compartilhar
+              </button>
+            )}
+            {/* frase ou versículo: o mesmo botão de compartilhar de cima leva o texto */}
+            {widget && wText && (
+              <button type="button" aria-label="Compartilhar o texto" title="Compartilhar o texto" onClick={() => void shareWidgetText()} className={shareBtn}>
+                <ShareIcon />
+                {wCopied ? "Copiado!" : "Compartilhar"}
               </button>
             )}
             {mod && item && !isSealed(item) && !isHidden(item) && !item.mine && item.pending && ( // só enquanto aguarda aprovação: depois de aprovado, o dono usa Excluir PIN
@@ -318,11 +329,6 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <ChevronRight />
             </button>
           </div>
-          {widget && wText && (
-            <button type="button" onClick={() => void shareWidgetText()} className={`${ghost} flex items-center justify-center gap-2`}>
-              {wCopied ? "Texto copiado!" : "Compartilhar o texto"}
-            </button>
-          )}
           {react && flags.reactions === true && item && !isSealed(item) && !isHidden(item) && !item.pending && <ReactionBar key={item.id} messageId={item.id} current={item.reaction} onChanged={react.onChanged} />}
           {item && !isSealed(item) && !isHidden(item) && item.pending && (
             <p role="status" className="flex items-center gap-2 rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
