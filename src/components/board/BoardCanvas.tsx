@@ -13,7 +13,6 @@ import { useBadges } from "../badges/BadgeContext";
 import { PHYSICAL_TYPES } from "@/lib/badges";
 import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
-import { isFreePin, pseudoSlot } from "@/lib/slots";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -93,10 +92,11 @@ export function BoardCanvas({
   const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
   const { cols, rows } = gridFor(capacity);
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
-  const freeItems = items.filter((it) => isFreePin(it) && !isHidden(it)); // pins soltos (arrastados pelo dono para fora da grade)
-  const freeCov = new Set(items.flatMap((it) => (isFreePin(it) && "fcov" in it && it.fcov ? it.fcov : [])));
+  // espaços vizinhos que um pin deslocado pelo dono passa a cobrir (espaço → id do pin)
+  const coverBy = new Map<number, string>();
+  for (const it of items) for (const sl of it.fcov ?? []) coverBy.set(sl, it.id);
   // o detalhe (clique no pin) só existe para pins com conteúdo; espaços em blur não abrem nada
-  const placed = [...layout.filter((x): x is BoardItem => !!x && !isHidden(x)), ...freeItems];
+  const placed = layout.filter((x): x is BoardItem => !!x && !isHidden(x));
   const [detail, setDetail] = useState<number | null>(null);
   // pins que ainda não tinham aparecido neste quadro ganham a animação de entrada; os que só mudam de espaço, não
   const known = useRef(new Set<string>());
@@ -113,7 +113,7 @@ export function BoardCanvas({
   const covered = new Set(badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])));
   // fila do detalhe: pins e widgets na ordem em que aparecem no mural (o widget entra no lugar do(s) espaço(s) que cobre)
   const detailList: DetailEntry[] = (() => {
-    const keyed: { k: number; e: DetailEntry }[] = placed.map((it) => ({ k: isFreePin(it) ? pseudoSlot(it, capacity) - 0.25 : (it.slot ?? 0), e: it }));
+    const keyed: { k: number; e: DetailEntry }[] = placed.map((it) => ({ k: it.slot ?? 0, e: it }));
     for (const b of badges) {
       if (b.kind !== "display" || !b.data) continue;
       const k = b.slots && b.slots.length ? Math.min(...b.slots) : Math.floor((b.y / 100) * rows) * cols + Math.floor((b.x / 100) * cols);
@@ -139,47 +139,51 @@ export function BoardCanvas({
     return () => window.removeEventListener("pinz:open-widget", h);
   }, [dense]);
   const root = useRef<HTMLElement>(null);
-  // pin solto fora da grade (só quem cuida do mural): vale em qualquer lugar do quadro, menos sobre outro pin ou sobre um display.
-  // Os espaços que ele cobre deixam de receber pins (como acontece com os displays).
-  const placeFree = (id: string, rect: { left: number; right: number; top: number; bottom: number }) => {
+  // o dono desloca um pin um pouco para o lado: ele continua no espaço dele (que é onde os outros o encontram); só vale sem ficar
+  // sobre outro pin nem sobre um display. Os espaços vazios que o pin passa a cobrir deixam de receber pins (como os displays).
+  const nudge = (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => {
     const wrap = root.current;
-    const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
     const m = mod;
-    if (!wrap || !layer || !m) return;
+    const item = items.find((i) => i.id === id);
+    const el = wrap?.querySelector<HTMLElement>(`[data-pin-id="${id}"]`);
+    const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
+    if (!wrap || !m || !item || !el || !layer) return;
+    if (Math.hypot(mv.dx, mv.dy) < 4) return; // foi só um clique
+    const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * mv.k; // tamanho de 1em na tela (com o zoom)
+    const ox = Math.round(((item.ox ?? 0) + mv.dx / em) * 100) / 100;
+    const oy = Math.round(((item.oy ?? 0) + mv.dy / em) * 100) / 100;
+    if (Math.abs(ox) > 14 || Math.abs(oy) > 14) return m.notify("O pin só pode ficar perto do espaço dele.");
+    const w = mv.rect.right - mv.rect.left;
+    const h = mv.rect.bottom - mv.rect.top;
     const lr = layer.getBoundingClientRect();
-    const w = rect.right - rect.left;
-    const h = rect.bottom - rect.top;
-    // o pin fica inteiro dentro do quadro
-    const cx = Math.min(Math.max((rect.left + rect.right) / 2, lr.left + w / 2), lr.right - w / 2);
-    const cy = Math.min(Math.max((rect.top + rect.bottom) / 2, lr.top + h / 2), lr.bottom - h / 2);
+    const full = { left: mv.rect.left + mv.dx, right: mv.rect.right + mv.dx, top: mv.rect.top + mv.dy, bottom: mv.rect.bottom + mv.dy };
+    if (full.left < lr.left - 4 || full.right > lr.right + 4 || full.top < lr.top - 4 || full.bottom > lr.bottom + 4) return m.notify("O pin precisa ficar dentro do mural.");
     // pequena folga: encostar de leve nas bordas dos vizinhos não conta como sobrepor
     const t = 0.06;
-    const R = { left: cx - w / 2 + w * t, right: cx + w / 2 - w * t, top: cy - h / 2 + h * t, bottom: cy + h / 2 - h * t };
+    const R = { left: full.left + w * t, right: full.right - w * t, top: full.top + h * t, bottom: full.bottom - h * t };
     const hit = (b: DOMRect) => R.left < b.right && R.right > b.left && R.top < b.bottom && R.bottom > b.top;
-    const vis = (el: Element) => el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
-    for (const el of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
-      if (el.dataset.pinId === id || !vis(el)) continue;
-      if (hit(el.getBoundingClientRect())) return m.notify("Não dá para soltar aqui: o pin ficaria sobre outro pin.");
+    const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
+    for (const other of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
+      if (other.dataset.pinId === id || !vis(other)) continue;
+      if (hit(other.getBoundingClientRect())) return m.notify("Não dá para soltar aqui: o pin ficaria sobre outro pin.");
     }
-    for (const el of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
-      if (vis(el) && hit(el.getBoundingClientRect())) return m.notify("Não dá para soltar aqui: o pin ficaria sobre um display.");
+    for (const d of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
+      if (vis(d) && hit(d.getBoundingClientRect())) return m.notify("Não dá para soltar aqui: o pin ficaria sobre um display.");
     }
     const cov: number[] = [];
-    for (const el of wrap.querySelectorAll<HTMLElement>("[data-slot]")) {
-      if (!vis(el)) continue;
-      const r = el.getBoundingClientRect();
+    for (const cell of wrap.querySelectorAll<HTMLElement>("[data-slot]")) {
+      if (cell.dataset.pinId === id || !vis(cell)) continue;
+      const r = cell.getBoundingClientRect();
       const ix = Math.min(r.right, R.right) - Math.max(r.left, R.left);
       const iy = Math.min(r.bottom, R.bottom) - Math.max(r.top, R.top);
       if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= 0.03) {
-        if (el.hasAttribute("data-covered") && !el.hasAttribute("data-free-cover")) return m.notify("Não dá para soltar aqui: esse lugar está coberto por um display.");
-        if (el.hasAttribute("data-free-cover")) return m.notify("Não dá para soltar aqui: o pin ficaria sobre outro pin.");
-        cov.push(Number(el.dataset.slot));
+        if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return m.notify(cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display.");
+        cov.push(Number(cell.dataset.slot));
       }
     }
-    const moving = items.find((i) => i.id === id);
     // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima
-    if (moving && (isSealed(moving) || (PHYSICAL_TYPES as readonly string[]).includes(moving.type ?? ""))) removeOver({ left: cx - w / 2, right: cx + w / 2, top: cy - h / 2, bottom: cy + h / 2 });
-    void m.moveFree(id, ((cx - lr.left) / lr.width) * 100, ((cy - lr.top) / lr.height) * 100, cov.slice(0, 12));
+    if (isSealed(item) || (PHYSICAL_TYPES as readonly string[]).includes(item.type ?? "")) removeOver(full);
+    void m.nudge(id, ox, oy, cov.slice(0, 8));
   };
   const drag = usePinDrag(
     mod
@@ -199,7 +203,7 @@ export function BoardCanvas({
           void mod.move(id, to);
         }
       : null,
-    mod ? placeFree : undefined,
+    mod ? nudge : undefined,
   );
   const look = boardById(board);
   const CORK = look.cork; // área útil deste quadro (em % da imagem 3:2)
@@ -208,25 +212,25 @@ export function BoardCanvas({
   const gridFont = `max(3px, ${(baseEm * fit.scale).toFixed(4)}cqw)`;
 
   // um pin do quadro (na grade ou solto): o mesmo cartão, com as mesmas regras de arrastar e abrir o detalhe
-  const pinNode = (item: BoardItem, i: number, free: boolean) => {
+  const pinNode = (item: BoardItem, i: number) => {
     const tilt = TILT[i % TILT.length];
     const { dx, dy } = jitter(i);
     return (
                           <div
                             key={`p${item.id}`} // chave pelo pin (não pelo espaço): ao mudar de lugar o pin chega pronto, sem a transição do espaço vazio
                             className={`pinned relative${entering.current.has(item.id) ? " enter" : ""}`}
-                            data-slot={free ? undefined : i}
+                            data-slot={i}
                             data-pin-id={item.id}
                             // terminada a entrada, tira a classe: um pin movido de lugar no DOM (os vizinhos mudam de posição na lista) não pode repetir a animação
                             onAnimationEnd={(e) => e.target === e.currentTarget && e.currentTarget.classList.remove("enter")}
-                            {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, free ? -1 : i) } : {})}
+                            {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
                             data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}
                             style={
                               {
                                 zIndex: 2 + ((i * 7) % 5),
                                 "--rot": `${tilt}deg`,
-                                "--dx": `${dx}em`,
-                                "--dy": `${dy}em`,
+                                "--dx": `${dx + (item.ox ?? 0)}em`, // o dono pode ter deslocado o pin
+                                "--dy": `${dy + (item.oy ?? 0)}em`,
                                 animationDelay: `${0.05 + i * 0.06}s`,
                               } as CSSProperties
                             }
@@ -289,10 +293,10 @@ export function BoardCanvas({
                       // No mural de exemplo (nenhum mural escolhido) não mostramos marcadores: só os cartões de amostra.
                       if (!item) {
                         if (!hasSelection) return <div key={`e${i}`} aria-hidden />;
-                        if (covered.has(i) || freeCov.has(i)) {
+                        if (covered.has(i) || coverBy.has(i)) {
                           // coberto por um pin da loja: o espaço continua ocupando o lugar na grade, mas não aparece nem recebe pin
                           return (
-                            <div key={`e${i}`} data-slot={i} data-covered {...(freeCov.has(i) && !covered.has(i) ? { "data-free-cover": "" } : {})} aria-hidden className="invisible">
+                            <div key={`e${i}`} data-slot={i} data-covered {...(coverBy.has(i) && !covered.has(i) ? { "data-cover-by": coverBy.get(i) } : {})} aria-hidden className="invisible">
                               <EmptySlot />
                             </div>
                           );
@@ -315,20 +319,9 @@ export function BoardCanvas({
                         );
                       }
 
-                      return pinNode(item, i, false);
+                      return pinNode(item, i);
                     })}
                   </div>
-
-                  {/* pins soltos: arrastados para fora da grade, ficam onde o dono deixou (mesmo tamanho de letra da grade) */}
-                  {freeItems.length > 0 && (
-                    <div className="pointer-events-none absolute inset-0" style={{ fontSize: gridFont }}>
-                      {freeItems.map((item, n) => (
-                        <div key={`f${item.id}`} data-free-pin className="pointer-events-auto absolute" style={{ left: `${item.fx}%`, top: `${item.fy}%`, transform: "translate(-50%, -50%)", zIndex: 5 }}>
-                          {pinNode(item, 40 + n, true)}
-                        </div>
-                      ))}
-                    </div>
-                  )}
 
                   <BadgeLayer />
 

@@ -67,7 +67,7 @@ function slotsUnder(rect: { left: number; right: number; top: number; bottom: nu
     if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= COVER_MIN) {
       const n = Number(el.dataset.slot);
       slots.push(n);
-      if (el.hasAttribute("data-pin-id") || el.hasAttribute("data-free-cover")) taken.push(n);
+      if (el.hasAttribute("data-pin-id") || el.hasAttribute("data-cover-by")) taken.push(n);
     }
   }
   return { slots, taken };
@@ -125,10 +125,12 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
     const { slots, taken } = slotsUnder(rect);
     if (taken.length) return { kind: "occupied" };
-    // pin solto (arrastado para fora da grade) no caminho: também ocupa
-    for (const fp of document.querySelectorAll<HTMLElement>("[data-free-pin]")) {
+    // pin deslocado pelo dono no caminho: também ocupa (vale o retângulo real do pin, com uma folga pequena)
+    for (const fp of document.querySelectorAll<HTMLElement>("[data-pin-id]")) {
       const b = fp.getBoundingClientRect();
-      if (b.width > 0 && fp.offsetParent !== null && rect.left < b.right && rect.right > b.left && rect.top < b.bottom && rect.bottom > b.top) return { kind: "occupied" };
+      const gx = b.width * 0.06;
+      const gy = b.height * 0.06;
+      if (b.width > 0 && fp.offsetParent !== null && rect.left < b.right - gx && rect.right > b.left + gx && rect.top < b.bottom - gy && rect.bottom > b.top + gy) return { kind: "occupied" };
     }
     return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }

@@ -14,10 +14,10 @@ export type Moderation = {
   setSecret: (id: string, secret: boolean) => Promise<boolean>;
   /** muda o pin de espaço (arrastando); se o espaço estiver ocupado, os dois trocam de lugar */
   move: (id: string, slot: number) => Promise<boolean>;
-  /** deixa o pin solto em qualquer lugar do quadro: x,y em % (centro do pin) e os espaços que ele cobre */
   /** aviso curto na tela */
   notify: (msg: string) => void;
-  moveFree: (id: string, x: number, y: number, cov: number[]) => Promise<boolean>;
+  /** desloca o pin um pouco para o lado (ox, oy em "em" do quadro); cov = espaços vizinhos que ele passa a cobrir */
+  nudge: (id: string, ox: number, oy: number, cov: number[]) => Promise<boolean>;
   report: (id: string, r: { reason: ReportReason; details: string; block: boolean }) => Promise<boolean>;
 };
 
