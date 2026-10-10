@@ -758,6 +758,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
               avatar={selected.avatar}
               plus={selected.plan === "full"}
               onProfile={selected.kind === "shared" ? undefined : () => setProfileOpen(true)}
+              shareProfile={selected.kind === "shared" || isOwner ? undefined : { path: `/${selected.nickname}`, onNotify: notify }}
               visits={selected.kind === "shared" ? undefined : selected.stats.visited}
               followers={selected.kind === "shared" ? null : followers}
               placed={selected.kind === "shared" ? null : placed}

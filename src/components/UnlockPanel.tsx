@@ -3,6 +3,7 @@
 import { useEffect, useState, type ElementType, type FormEvent } from "react";
 import type { UnlockResult } from "@/lib/mural";
 import { Avatar } from "./Avatar";
+import { ShareButton } from "./ShareButton";
 
 type Props = {
   question: string;
@@ -31,6 +32,8 @@ type Props = {
   part?: "form" | "profile";
   /** tocar na foto/nome abre o resumo do perfil */
   onProfile?: () => void;
+  /** botão de compartilhar o perfil, na mesma faixa da foto e do nome (visitando o mural de outra pessoa) */
+  shareProfile?: { path: string; onNotify: (m: string) => void };
   /** 3 erros seguidos: até quando (ms) a pessoa fica sem poder tentar; o campo e o botão somem */
   blockedUntil?: number | null;
   onBlock?: (seconds: number) => void;
@@ -46,7 +49,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, blockedUntil, onBlock }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -166,6 +169,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       {/* mural privado trancado: no cartão da pergunta (celular) o cabeçalho não repete a foto e o nome, que já estão no topo da tela */}
       {title && (open || unlocked || part === "profile") && (
         <header className={`flex flex-col gap-[0.5em] ${open || profileOnly ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
+          <div className="flex items-center justify-between gap-[0.6em]">
           <Wrap {...wrapProps} className={`flex min-w-0 items-center gap-[0.7em] text-left ${onProfile ? "cursor-pointer rounded-xl transition hover:opacity-80 active:scale-[0.98]" : ""}`}>
             {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[3.6em]" />}
             <p className="min-w-0">
@@ -176,6 +180,10 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               )}
             </p>
           </Wrap>
+          {shareProfile && (
+            <ShareButton iconOnly title={`Compartilhar o perfil de @${owner}`} text={`Veja o perfil de @${owner} no Pinz!`} path={shareProfile.path} onNotify={shareProfile.onNotify} className={`shrink-0 !size-[2.6em] border ${dark ? "border-white/15 bg-white/10 text-white hover:bg-white/20" : "border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white"}`} />
+          )}
+          </div>
           {/* números do perfil, juntos: visualizações (visitantes diferentes que abriram o mural), seguidores e PINZ que a pessoa já colocou */}
           {(open || unlocked) && (visits !== undefined || followers != null || placed != null) && (
             <ul className={`flex flex-col gap-[0.35em] text-[0.8em] leading-none lg:text-[1.05em] ${dark ? "text-white/60" : "text-[#8a7b69]"}`}>
