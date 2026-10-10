@@ -731,16 +731,23 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // pílula do tamanho, com excluir, editar e ampliar (à esquerda; à direita se não couber)
+  // duas pílulas: o tamanho (à direita do botton; à esquerda se não couber) e os botões excluir/editar/ampliar (do outro lado, à esquerda)
   const W = 40;
   const TRACK = 90; // mesmo comprimento da barra de inclinação
-  const Hh = isDisp ? 184 : 146;
+  const Hh = 124;
+  const Ha = isDisp ? 108 : 42;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
   const off = Math.max(g.R + 8, SW / 2 + 8);
-  const onLeft = g.cx - off - W >= 4;
-  const pLeft = onLeft ? g.cx - off - W : Math.min(g.cx + off, vw - W - 4);
+  const sizeRight = g.cx + off + W <= vw - 4;
+  const pLeft = sizeRight ? g.cx + off : Math.max(4, g.cx - off - W);
   const pTop = Math.min(Math.max(g.cy - Hh / 2, 44), vh - Hh - 8);
+  const aLeft = sizeRight
+    ? g.cx - off - W >= 4
+      ? g.cx - off - W
+      : Math.min(pLeft + W + 6, vw - W - 4)
+    : Math.max(4, pLeft - W - 6);
+  const aTop = Math.min(Math.max(g.cy - Ha / 2, 44), vh - Ha - 8);
 
   // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
   const SH = 50;
@@ -795,8 +802,19 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
         <span aria-hidden className="mt-1.5 size-2.5 rounded-full bg-white/80" title="Maior" />
         <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label="Tamanho do botton: para cima maior, para baixo menor" />
         <span aria-hidden className="size-1.5 rounded-full bg-white/80" title="Menor" />
+      </div>
+
+      <div
+        data-badge-controls
+        role="toolbar"
+        aria-label="Ações do botton"
+        onPointerEnter={() => onKeep(id)}
+        onPointerLeave={() => onKeep(null)}
+        className="fixed z-[350] flex touch-none flex-col items-center justify-center gap-0.5 rounded-full bg-[#17110c]/92 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
+        style={{ left: aLeft, top: aTop, width: W, height: Ha }}
+      >
         {isDisp && (
-          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o pin em tamanho grande" title="Ver em tamanho grande" className="mt-auto grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o pin em tamanho grande" title="Ver em tamanho grande" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
             </svg>
@@ -809,7 +827,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
             </svg>
           </button>
         )}
-        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o pin do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`${isDisp ? "mb-0.5" : "mt-auto mb-0.5"} grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
+        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o pin do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
