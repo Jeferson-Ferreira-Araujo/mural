@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { frameOf } from "@/lib/style";
 import { INK, Scene, type SceneId } from "./scenes";
 
 /** Largura de um widget, em em da própria fonte; a altura é a metade (formato 2:1). */
 export const WIDGET_W = 24;
 
-/** Moldura metálica colorida (a cor do contorno é escolhida por quem coloca o pin) com o conteúdo por dentro. */
-export function WidgetFrame({ frame, label, scene, children }: { frame?: string | null; label: string; scene?: SceneId; children: ReactNode }) {
-  const f = frameOf(frame);
+/** Cartão do display, sem contorno colorido (menos personalização): só cantos arredondados e sombra. `frame` fica aceito por compatibilidade, mas não é mais usado. */
+export function WidgetFrame({ label, scene, children }: { frame?: string | null; label: string; scene?: SceneId; children: ReactNode }) {
   const ink = scene ? INK[scene] : null;
   return (
     <div className="relative" style={{ width: `${WIDGET_W}em` }}>
-      <article aria-label={label} className="relative aspect-[2/1] w-full rounded-[1.4em] p-[0.34em]" style={{ background: `linear-gradient(145deg, ${f.from}, ${f.to})`, boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45), inset 0 0.06em 0.14em rgba(255,255,255,.7)" }}>
+      <article aria-label={label} className="relative aspect-[2/1] w-full rounded-[1.1em]" style={{ boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45)" }}>
         <div className="relative size-full overflow-hidden rounded-[1.1em]" style={{ color: ink?.color, textShadow: ink?.shadow, boxShadow: "inset 0 0 0.6em rgba(0,0,0,.35)" }}>
           {scene && (
             <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="absolute inset-0 size-full" aria-hidden>

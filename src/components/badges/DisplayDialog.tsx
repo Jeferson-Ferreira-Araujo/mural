@@ -6,7 +6,6 @@ import type { FrameColor } from "@/lib/style";
 import { CLOCK_ZONES } from "../widgets/core";
 import { DisplayCard, defaultStyle, stylesOf, type DisplayData } from "../widgets";
 import { Modal } from "../account/Modal";
-import { FrameColorPicker } from "../composer/StylePickers";
 import { Field, inputClass, primaryButton } from "../ui";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
@@ -103,8 +102,6 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
             ))}
           </div>
         </fieldset>
-
-        <FrameColorPicker value={frame} onChange={setFrame} />
 
         {product === "clock" && (
           <Field label="Horário de qual lugar?">
