@@ -7,12 +7,12 @@ export function EmptySlot() {
     >
       <span className="text-center">
         {/* botão "+" bem visível: convida a colar um pin aqui */}
-        <span className="mx-auto mb-[0.4em] grid size-[2.3em] place-items-center rounded-[0.5em] bg-[#fff3d6] text-[#3b2616] shadow-[0_0.1em_0.4em_rgba(0,0,0,.35)] [text-shadow:none]">
-          <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
+        <span className="mx-auto mb-[0.45em] grid size-[3em] place-items-center rounded-[0.5em] bg-[#fff3d6] text-[#3b2616] shadow-[0_0.1em_0.4em_rgba(0,0,0,.35)] [text-shadow:none]">
+          <svg viewBox="0 0 24 24" className="size-[1.9em]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
             <path d="M12 5v14M5 12h14" />
           </svg>
         </span>
-        <span className="block text-[1.15em] leading-tight font-extrabold tracking-wide uppercase">espaço livre</span>
+        <span className="block text-[1.4em] leading-tight font-extrabold tracking-wide uppercase">espaço livre</span>
       </span>
     </div>
   );
