@@ -158,9 +158,9 @@ export function BoardCanvas({
     const w = full.right - full.left;
     const h = full.bottom - full.top;
     const lr = layer.getBoundingClientRect();
-    // limites do mural: a cortiça, com uma margem de 3% para dentro (o pin nunca fica sobre a moldura de madeira)
-    const padX = -lr.width * 0.03;
-    const padY = -lr.height * 0.03;
+    // limites do mural: a cortiça inteira, com uma margem mínima para dentro (o pin chega até a borda, sem passar para a moldura de madeira)
+    const padX = -lr.width * 0.012;
+    const padY = -lr.height * 0.012;
     const bounds = { left: lr.left - padX, right: lr.right + padX, top: lr.top - padY, bottom: lr.bottom + padY };
     if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: "O pin é grande demais para ficar aqui." };
     const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
@@ -264,6 +264,39 @@ export function BoardCanvas({
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
   };
 
+  // ajuste automático (só o dono): um pin colado em mural livre tem o tamanho conhecido só depois de aparecer; se passou da borda ou encostou num vizinho,
+  // ele é reencaixado sozinho (mesma regra de quando se arrasta). Só mexe em pins que já têm deslocamento, nunca na grade de quem não foi movido.
+  const fitted = useRef(new Map<string, string>());
+  useEffect(() => {
+    if (!FREE_MURAL || !mod) return;
+    const timer = window.setTimeout(() => {
+      const wrap = root.current;
+      if (!wrap) return;
+      for (const el of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
+        const id = el.dataset.pinId;
+        const item = items.find((x) => x.id === id);
+        if (!id || !item || typeof item.slot !== "number" || (!item.ox && !item.oy)) continue;
+        if (el.getBoundingClientRect().width <= 0 || el.offsetParent === null) continue;
+        const r = el.getBoundingClientRect();
+        const sig = `${id}:${item.slot}:${item.ox}:${item.oy}:${Math.round(r.width)}`;
+        if (fitted.current.get(id) === sig) continue;
+        fitted.current.set(id, sig);
+        const k = el.offsetWidth ? r.width / el.offsetWidth : 1;
+        const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * k;
+        const full = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+        const sol = solve(full, em, id, { slot: item.slot, cx: (r.left + r.right) / 2 - (item.ox ?? 0) * em, cy: (r.top + r.bottom) / 2 - (item.oy ?? 0) * em });
+        if ("error" in sol) continue;
+        const moved = Math.hypot((sol.box.left + sol.box.right) / 2 - (r.left + r.right) / 2, (sol.box.top + sol.box.bottom) / 2 - (r.top + r.bottom) / 2);
+        const same = sol.slot === item.slot && sol.cov.join() === (item.fcov ?? []).join();
+        if (moved < 2 && same) continue;
+        void mod.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
+        break; // um por vez; o próximo é conferido depois que este assentar
+      }
+    }, 600);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, mod]);
+
   // mural livre: no desktop, clique duplo num ponto vazio da cortiça; no celular, segurar o dedo ali. Abre o compositor já com a posição escolhida
   // (sem passar pela grade de espaços livres)
   const ptype = useRef("mouse");
@@ -279,9 +312,10 @@ export function BoardCanvas({
     if (!grid) return;
     const gr = grid.getBoundingClientRect();
     const em = (parseFloat(getComputedStyle(grid).fontSize) || 10) * (grid.offsetWidth ? gr.width / grid.offsetWidth : 1);
-    // o tamanho de um pin comum (o mesmo de um espaço), centrado no ponto escolhido
-    const hw = 7 * em;
-    const hh = 6.5 * em;
+    // um pin pequeno, centrado no ponto escolhido: assim dá para chegar bem perto das bordas; o tamanho real só se conhece depois de colado,
+    // e o dono do mural reencaixa o pin sozinho (veja o ajuste automático abaixo)
+    const hw = 4 * em;
+    const hh = 4 * em;
     const sol = solve({ left: x - hw, right: x + hw, top: y - hh, bottom: y + hh }, em);
     if ("error" in sol) return say(sol.error);
     onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
