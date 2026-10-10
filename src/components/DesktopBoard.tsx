@@ -29,15 +29,18 @@ export function DesktopBoard(props: ViewProps) {
   const hasRight = !!newMural;
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616]">
+    <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616] portrait:flex-col">
       <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} menu={props.sidebarMenu} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
-      {/* o mural ocupa a largura que a proporção 3:2 pede para caber inteiro na altura; o que sobrar vira a barra bege */}
-      <div style={{ width: "min(calc(100% - clamp(290px, 23vw, 360px)), 150dvh)" }} className={`relative shrink-0 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
+      {/* o mural ocupa a largura que a proporção 3:2 pede para caber inteiro na altura; o que sobrar vira a barra bege (até um limite) e,
+          em monitores muito largos, a foto desfocada dos lados. Em monitores em pé (portrait) a barra bege vai para cima e o mural fica embaixo. */}
+      <div className={`relative flex min-w-0 flex-[1_1_150dvh] justify-center overflow-hidden transition-opacity duration-300 portrait:min-h-0 portrait:flex-[1_1_0] portrait:items-center ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
+
+        <div className="relative h-full w-[min(100%,150dvh)] shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2]">
 
         <nav aria-label="Informações do mural" className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
@@ -97,6 +100,7 @@ export function DesktopBoard(props: ViewProps) {
               )}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
