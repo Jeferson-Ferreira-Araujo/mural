@@ -41,10 +41,14 @@ type Ctx = {
   placing: boolean;
   /** abre o detalhe (widget grande) de um pin da loja já colocado */
   openDetail: (id: string) => void;
+  /** o dono pode colocar displays neste mural (aba Displays do compositor) */
+  canDisplays: boolean;
+  /** coloca o display (id "tipo:estilo") no centro de um espaço livre do mural */
+  placeDisplayAtSlot: (id: string, slot: number) => void;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
@@ -74,8 +78,8 @@ const visibleOne = (sel: string) => [...document.querySelectorAll(sel)].find(vis
 const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), Math.max(a, b));
 
 /** Onde o botom cai se for solto em (px, py)? Respeita o quadro, os pinz físicos e as tachinhas. */
-function evaluate(px: number, py: number, w: number, h: number, layer: Element, ignore?: Element, display = false): Drop {
-  const bar = visibleOne("[data-badge-bar]");
+function evaluate(px: number, py: number, w: number, h: number, layer: Element, ignore?: Element, display = false, skipBar = false): Drop {
+  const bar = skipBar ? null : visibleOne("[data-badge-bar]");
   if (bar) {
     const b = bar.getBoundingClientRect();
     if (px >= b.left && px <= b.right && py >= b.top && py <= b.bottom) return { kind: "bar" };
@@ -164,6 +168,7 @@ export function BadgeProvider({
   onSynced,
   onOpenStore = () => undefined,
   displays = [],
+  canDisplays = false,
   onDisplaysChanged,
   children,
 }: {
@@ -179,6 +184,8 @@ export function BadgeProvider({
   onOpenStore?: () => void;
   /** pins da loja que a pessoa tem */
   displays?: string[];
+  /** o dono pode colocar displays neste mural (mural pessoal dele) */
+  canDisplays?: boolean;
   /** um display foi colocado, mudou de lugar ou foi editado: hora de reler o mural */
   onDisplaysChanged?: () => void;
   children: ReactNode;
@@ -190,7 +197,7 @@ export function BadgeProvider({
   const [selId, setSelId] = useState<string | null>(null);
   const hoverTimer = useRef<number | null>(null);
   // pins da loja: diálogo de opções (novo ou edição) e o modo em que o mural escurece para a pessoa arrastar o pin ao lugar que quiser
-  const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; style: string; id?: string; initial?: DisplayPayload } | null>(null);
+  const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; style: string; id?: string; initial?: DisplayPayload; /** espaço livre clicado: o display entra no centro dele */ slot?: number } | null>(null);
   const [dialogBusy, setDialogBusy] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
@@ -547,6 +554,37 @@ export function BadgeProvider({
     setDialogError(null);
     setDialog({ mode: "new", product, style });
   }, []);
+  // display escolhido na aba "Displays" do compositor: entra no centro do espaço livre clicado (sem mural escuro); relógio, frase e versículo
+  // não pedem nada, o clima abre antes a escolha da cidade
+  const placeDisplayAtSlot = useCallback((id: string, slot: number) => {
+    const { product, style } = splitDisplayId(id);
+    if (product === "weather") {
+      setDialogError(null);
+      setDialog({ mode: "new", product, style, slot });
+      return;
+    }
+    void placeAtSlot(product, product === "clock" ? { product, style, tz: "local" } : { product, style }, slot);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  async function placeAtSlot(product: string, data: DisplayPayload, slot: number) {
+    const layer = visibleLayer();
+    const slotEl = [...document.querySelectorAll<HTMLElement>("[data-slot]")].find((el) => visible(el) && Number(el.dataset.slot) === slot);
+    if (!layer || !slotEl) return live.current.notify("Não foi possível colocar o display agora.");
+    const lr = layer.getBoundingClientRect();
+    const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
+    const sc = lr.width / (layer.offsetWidth || lr.width);
+    const w = baseEmOf(1001) * em * sc * (DISPLAY_SCALE / 100);
+    const h = w / 2;
+    const r = slotEl.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    // centro do espaço; se os vizinhos estiverem ocupados, desliza meio espaço (ou um) para o lado até achar onde cabe
+    for (const dx of [0, r.width * 0.5, -r.width * 0.5, r.width, -r.width]) {
+      const d = evaluate(cx + dx, cy, w, h, layer, undefined, true, true);
+      if (d.kind === "ok" && (d.slots ?? []).includes(slot)) return placeDisplay(product, data, d.x, d.y, d.slots ?? [], d.rect);
+    }
+    live.current.notify("Não há espaço livre ao redor para colocar este display aqui. Tente outro espaço.");
+  }
   const openDetail = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);
     if (!b?.data) return;
@@ -568,6 +606,14 @@ export function BadgeProvider({
     if (!dialog) return;
     if (dialog.mode === "new") {
       setDialog(null);
+      if (dialog.slot !== undefined) {
+        const { text: _t, ref: _r, product: _p, ...clean } = data;
+        void _t;
+        void _r;
+        void _p;
+        void placeAtSlot(dialog.product, { ...clean, product: dialog.product } as DisplayPayload, dialog.slot);
+        return;
+      }
       setPlacing({ product: dialog.product, data }); // o mural escurece e o pin aparece no centro
       return;
     }
@@ -637,7 +683,7 @@ export function BadgeProvider({
     [removeById],
   );
   removeOverRef.current = removeOver;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (

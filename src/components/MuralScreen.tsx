@@ -30,7 +30,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   const [open, setOpen] = useState(false);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
-  const { badges } = useBadges();
+  const { badges, displays, canDisplays, placeDisplayAtSlot, openStore } = useBadges();
   // espaços cobertos por pins da loja não recebem pins
   const coveredSlots = badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : []));
   const [sending, setSending] = useState(false);
@@ -79,6 +79,7 @@ export function MuralScreen({ composer, ...view }: Props) {
           capacity={capacity}
           taken={[...takenSlots(view.items, capacity), ...coveredSlots]}
           fixedSlot={slot}
+          displays={canDisplays ? { ids: displays, onPick: (id) => (setOpen(false), slot !== null && placeDisplayAtSlot(id, slot)), onStore: () => (setOpen(false), openStore()) } : null}
           used={view.items.length}
           triedAlready={composer.triedAlready}
           signAs={composer.signAs}

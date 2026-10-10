@@ -883,7 +883,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
       <ReactionsProvider value={isOwner || isMember ? { onChanged: () => void loadBoard() } : null}>
         <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
-        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned).map((p) => p.id)} onDisplaysChanged={() => void loadBoard()}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}

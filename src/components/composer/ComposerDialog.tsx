@@ -13,6 +13,7 @@ import { FormatPicker } from "./FormatPicker";
 import { FullNotice } from "./FullNotice";
 import { SEND_ERROR_TEXT } from "@/lib/pins";
 import { SlotPicker } from "./SlotPicker";
+import { DisplayChooser } from "../badges/DisplayChooser";
 import { DrawForm } from "./DrawForm";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
@@ -36,6 +37,8 @@ type Props = {
   signAs?: string | null;
   /** motivo de o último envio não ter dado certo (aparece junto do botão, dentro da janela) */
   error?: string | null;
+  /** só o dono, no próprio mural: os displays que ele tem (aba Displays do espaço livre clicado) */
+  displays?: { ids: string[]; onPick: (id: string) => void; onStore: () => void } | null;
 };
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
@@ -184,6 +187,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const [format, setFormat] = useState<MessageType | null>(null);
+  const [tab, setTab] = useState<"pins" | "displays">("pins");
   const wide = !!format && format !== "draw"; // com prévia: duas colunas no desktop
 
   useEffect(() => {
@@ -195,7 +199,10 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
 
   // ao fechar, a próxima abertura recomeça pela escolha do formato
   useEffect(() => {
-    if (!open) setFormat(null);
+    if (!open) {
+      setFormat(null);
+      setTab("pins");
+    }
   }, [open]);
 
   return (
@@ -227,7 +234,26 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             </button>
           </div>
           <div className="overflow-y-auto px-5 py-5">
-            <Body {...rest} onClose={onClose} format={format} onFormat={setFormat} />
+            {/* dono clicando num espaço livre do próprio mural: duas abas, Pins (padrão) e Displays (os que ele já comprou) */}
+            {!format && rest.displays && rest.fixedSlot != null && (
+              <div role="tablist" aria-label="O que colocar neste espaço" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+                {(
+                  [
+                    ["pins", "Pins"],
+                    ["displays", "Displays"],
+                  ] as const
+                ).map(([id, text]) => (
+                  <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-white"}`}>
+                    {text}
+                  </button>
+                ))}
+              </div>
+            )}
+            {!format && tab === "displays" && rest.displays && rest.fixedSlot != null ? (
+              <DisplayChooser ids={rest.displays.ids} onPick={rest.displays.onPick} onStore={rest.displays.onStore} />
+            ) : (
+              <Body {...rest} onClose={onClose} format={format} onFormat={setFormat} />
+            )}
           </div>
         </div>
       )}

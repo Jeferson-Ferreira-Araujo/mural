@@ -1,11 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { createPortal } from "react-dom";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
-import { DisplayCard, displayName, splitDisplayId } from "../widgets";
-import { sampleFor } from "./StoreModal";
 
 
 /**
@@ -14,8 +10,7 @@ import { sampleFor } from "./StoreModal";
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
-  const [pickOpen, setPickOpen] = useState(false);
-  const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew, displays, pickDisplay, placing } = useBadges();
+  const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -77,70 +72,6 @@ export function BadgeBar({ className = "" }: { className?: string }) {
           );
         })}
       </ul>
-      {/* displays (versículo, frase, relógio, clima): um botão só, como a Loja; com mais de um, abre a lista para escolher */}
-      {displays.length > 0 && (
-        <>
-          <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-          <button
-            type="button"
-            disabled={placing}
-            onClick={() => (displays.length === 1 ? pickDisplay(displays[0]) : setPickOpen(true))}
-            aria-label={displays.length === 1 ? `${displayName(displays[0])}: toque para colocar no mural` : "Seus displays: escolher qual colocar no mural"}
-            title="Displays"
-            className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-[#f2e8d3] text-[#3b2616] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#fbf6ea] active:scale-95 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
-          >
-            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              {/* cartãozinho com sol e horizonte, como os displays do mural */}
-              <rect x="3" y="5.5" width="18" height="13" rx="3.5" />
-              <circle cx="8.6" cy="10.4" r="1.7" fill="currentColor" stroke="none" />
-              <path d="M3.8 16.2l4.6-3.4 3.2 2.3 3-2.2 5.6 4" />
-            </svg>
-            <span className="text-[11px] leading-none font-bold">Displays</span>
-          </button>
-        </>
-      )}
-      {pickOpen && createPortal(
-        <div className="fixed inset-0 z-[390] grid place-items-center bg-black/55 p-4" onClick={() => setPickOpen(false)}>
-          <div role="dialog" aria-label="Escolher um display" onClick={(e) => e.stopPropagation()} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-[#fbf6ea] p-4 text-[#2a1c12] shadow-[0_1rem_3rem_rgba(0,0,0,.5)]">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-title text-lg font-semibold">Qual display colocar?</h2>
-              <button type="button" aria-label="Fechar" onClick={() => setPickOpen(false)} className="grid size-8 cursor-pointer place-items-center rounded-lg hover:bg-black/5">
-                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
-            {/* cada display aparece com a prévia do cartão, como na loja */}
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {displays.map((p) => (
-                <li key={p}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPickOpen(false);
-                      pickDisplay(p);
-                    }}
-                    className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70 text-left transition hover:border-[#d98a2b] hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-                  >
-                    <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
-                      <span className="text-[9px]">
-                        <span className="relative block">
-                          <DisplayCard data={sampleFor(splitDisplayId(p).product, splitDisplayId(p).style)} />
-                        </span>
-                      </span>
-                    </span>
-                    <span className="p-3">
-                      <span className="block font-title text-base font-semibold">{displayName(p)}</span>
-                      <span className="mt-0.5 block text-xs text-[#6b5440]">Toque para escolher o estilo e colocar no mural</span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>,
-        document.body,
-      )}
       </div>
     </section>
   );
