@@ -122,7 +122,10 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     const dy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
     // outro widget da loja no caminho não vale; botton comum não impede: ele volta para a barra (como acontece com pins de aparelho)
     const dOthers = [...layer.children].filter((c) => c !== ignore && (c as HTMLElement).dataset.badgeKind === "display").map((c) => c.getBoundingClientRect());
-    if (dOthers.some((o) => dx + (w * 0.8) / 2 > o.left + o.width * 0.1 && dx - (w * 0.8) / 2 < o.right - o.width * 0.1 && dy + (h * 0.8) / 2 > o.top + o.height * 0.1 && dy - (h * 0.8) / 2 < o.bottom - o.height * 0.1)) return { kind: "badge" };
+    // um display nunca fica sobre outro: vale o retângulo inteiro de cada um (só uma tolerância mínima de 1%)
+    const tx = w * 0.01;
+    const ty = h * 0.01;
+    if (dOthers.some((o) => dx + w / 2 - tx > o.left && dx - w / 2 + tx < o.right && dy + h / 2 - ty > o.top && dy - h / 2 + ty < o.bottom)) return { kind: "badge" };
     const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
     const { slots, taken } = slotsUnder(rect);
     if (taken.length) return { kind: "occupied" };
