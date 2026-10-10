@@ -148,7 +148,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             ) : undefined
           }
         >
-          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain />
+          <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
         {locked && lockPanel && (
           <div className="absolute inset-0 z-30 grid place-items-center overflow-y-auto bg-black/30 p-4">

@@ -1,6 +1,12 @@
 import { BOARD_CAPACITY } from "./plans";
 import type { BoardItem } from "./types";
 
+/**
+ * EXPERIMENTO — mural livre: sem a grade de espaços livres visível; o usuário clica onde quiser na cortiça e o pin entra ali
+ * (respeitando as regras: não sobrepor pin nem display). Para voltar aos espaços livres de antes, troque para false.
+ */
+export const FREE_MURAL = true;
+
 /** Colunas × linhas do quadro: 28 espaços = 7 × 4 (quadro de 15 = 5 × 3, o formato antigo). */
 export function gridFor(capacity: number) {
   const cols = capacity > 15 ? 7 : 5;

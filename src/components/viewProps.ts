@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { PinPlace } from "./composer/types";
 import type { MuralStats, SiteStats } from "@/lib/mural";
 import type { BoardId } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
@@ -54,7 +55,7 @@ export type ViewProps = {
   /** Avisos do proprietário, etc. (opcional). */
   notice?: (tone: Tone) => ReactNode;
   /** Botão "Deixar uma mensagem"; null = escondido (ex.: visão do dono). */
-  onCompose: ((slot?: number) => void) | null;
+  onCompose: ((slot?: number, place?: PinPlace) => void) | null;
   onNotify: (msg: string) => void;
   /** Logado: ícones do cabeçalho (pesquisar murais e menu da conta). */
   account?: AccountApi;

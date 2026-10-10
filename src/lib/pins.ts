@@ -71,6 +71,9 @@ export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string |
     p_content: content,
     p_opens_at: payload.capsuleAt ?? null,
     p_signed: true,
+    p_ox: payload.place?.ox ?? 0,
+    p_oy: payload.place?.oy ?? 0,
+    p_cov: payload.place?.cov ?? [],
   });
   if (!error) return { ok: true };
   const m = error.message;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { PinPlace } from "./composer/types";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
 import { Modal } from "./account/Modal";
@@ -33,6 +34,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   const { badges, displays, canDisplays, placeDisplayAtSlot, openStore } = useBadges();
   // espaços cobertos por pins da loja não recebem pins
   const coveredSlots = [...badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])), ...view.items.flatMap((it) => ("fcov" in it && it.fcov ? it.fcov : []))];
+  const [place, setPlace] = useState<PinPlace | null>(null); // mural livre: ponto escolhido ao clicar
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [needAccount, setNeedAccount] = useState(false);
@@ -44,7 +46,7 @@ export function MuralScreen({ composer, ...view }: Props) {
       ? null
       : composer.mode === "soon"
         ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
-        : async (s?: number) => {
+        : async (s?: number, pl?: PinPlace) => {
             // visitante sem conta: antes de começar, avisa que publicar exige conta
             if (composer.mode === "demo" && !composer.signAs && composer.signupHref) {
               setNeedAccount(true);
@@ -56,6 +58,7 @@ export function MuralScreen({ composer, ...view }: Props) {
               return;
             }
             setSlot(typeof s === "number" ? s : null);
+            setPlace(pl ?? null);
             setOpen(true);
           };
 
@@ -91,7 +94,7 @@ export function MuralScreen({ composer, ...view }: Props) {
             setSending(true);
             setSendError(null);
             try {
-              const err = await composer.onSend(p);
+              const err = await composer.onSend(place ? { ...p, place } : p);
               if (err) {
                 setSendError(err); // dentro da janela: o aviso da página fica atrás dela
                 return;

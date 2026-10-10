@@ -57,7 +57,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
             <div className="mx-auto w-[min(94vw,36rem)] space-y-3">
               <div className="h-[68dvh] overflow-hidden rounded-2xl border border-white/15 shadow-[0_0.8rem_2rem_rgba(0,0,0,.45)]">
                 <PannableBoard ambient={look.image}>
-                  <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} contain />
+                  <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} onNotify={onNotify} contain />
                 </PannableBoard>
               </div>
             </div>
