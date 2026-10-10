@@ -47,6 +47,25 @@ export const useBadges = () => useContext(BadgeCtx);
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
 type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; /** inclinação do botton já colocado: o arraste mostra o botton como ele é */ rot?: number; back?: { x: number; y: number } };
 
+/** Espaços do quadro que um retângulo (em px) cobre: qualquer pedaço visível já conta. `taken` = os que já têm pin. */
+const COVER_MIN = 0.03; // fração da área do espaço
+function slotsUnder(rect: { left: number; right: number; top: number; bottom: number }): { slots: number[]; taken: number[] } {
+  const slots: number[] = [];
+  const taken: number[] = [];
+  for (const el of document.querySelectorAll<HTMLElement>("[data-slot]")) {
+    if (!(el.getBoundingClientRect().width > 0 && el.offsetParent !== null)) continue;
+    const r = el.getBoundingClientRect();
+    const ix = Math.min(r.right, rect.right) - Math.max(r.left, rect.left);
+    const iy = Math.min(r.bottom, rect.bottom) - Math.max(r.top, rect.top);
+    if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= COVER_MIN) {
+      const n = Number(el.dataset.slot);
+      slots.push(n);
+      if (el.hasAttribute("data-pin-id")) taken.push(n);
+    }
+  }
+  return { slots, taken };
+}
+
 const visible = (el: Element | null) => !!el && el.getBoundingClientRect().width > 0 && (el as HTMLElement).offsetParent !== null;
 const visibleOne = (sel: string) => [...document.querySelectorAll(sel)].find(visible) ?? null;
 const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), Math.max(a, b));
@@ -97,19 +116,8 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     const dOthers = [...layer.children].filter((c) => c !== ignore && (c as HTMLElement).dataset.badgeKind === "display").map((c) => c.getBoundingClientRect());
     if (dOthers.some((o) => dx + (w * 0.8) / 2 > o.left + o.width * 0.1 && dx - (w * 0.8) / 2 < o.right - o.width * 0.1 && dy + (h * 0.8) / 2 > o.top + o.height * 0.1 && dy - (h * 0.8) / 2 < o.bottom - o.height * 0.1)) return { kind: "badge" };
     const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
-    const slots: number[] = [];
-    let taken = false;
-    for (const el of document.querySelectorAll<HTMLElement>("[data-slot]")) {
-      if (!visible(el)) continue;
-      const r = el.getBoundingClientRect();
-      const ix = Math.min(r.right, rect.right) - Math.max(r.left, rect.left);
-      const iy = Math.min(r.bottom, rect.bottom) - Math.max(r.top, rect.top);
-      if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= 0.12) {
-        slots.push(Number(el.dataset.slot));
-        if (el.hasAttribute("data-pin-id")) taken = true;
-      }
-    }
-    if (taken) return { kind: "occupied" };
+    const { slots, taken } = slotsUnder(rect);
+    if (taken.length) return { kind: "occupied" };
     return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }
   if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
@@ -570,6 +578,27 @@ export function BadgeProvider({
     }
     live.current.onDisplaysChanged?.();
   }
+
+  // o dono confere (ao abrir o mural e quando algo muda) se cada widget já tem registrados todos os espaços que cobre: só ACRESCENTA os que faltam,
+  // então a conferência nunca desfaz nada e não fica oscilando entre aparelhos
+  useEffect(() => {
+    if (!editable) return;
+    const t = window.setTimeout(() => {
+      for (const b of live.current.badges) {
+        if (b.kind !== "display" || b.id.startsWith("tmp-")) continue;
+        const el = visibleOne(`[data-badge-id="${b.id}"]`) as HTMLElement | null;
+        if (!el) continue;
+        const { slots, taken } = slotsUnder(el.getBoundingClientRect());
+        const have = new Set(b.slots ?? []);
+        const missing = slots.filter((s) => !have.has(s) && !taken.includes(s));
+        if (!missing.length) continue;
+        const next = [...have, ...missing].sort((a, c) => a - c);
+        setBadges((l) => l.map((x) => (x.id === b.id ? { ...x, slots: next } : x)));
+        void updateDisplayLayout(getBrowserSupabase(), b.id, b.x, b.y, b.scale ?? DISPLAY_SCALE, next).then(() => live.current.onDisplaysChanged?.());
+      }
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [badges, editable, setBadges]);
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
