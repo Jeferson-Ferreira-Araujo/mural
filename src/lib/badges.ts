@@ -102,8 +102,8 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-/** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1004 e ficam em qualquer lugar do mural, não em um espaço. */
-export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004 };
+/** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1006 e ficam em qualquer lugar do mural, não em um espaço. */
+export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006 };
 export const isDisplayKey = (key: number) => key >= 1000;
 export const displayProductOf = (key: number) => Object.entries(DISPLAY_KEYS).find(([, k]) => k === key)?.[0];
 /** Largura base de um display (em em do quadro), contra 3 de um botton comum. */
@@ -130,7 +130,7 @@ export async function addBadge(sb: SupabaseClient, muralId: string, key: number,
   return { error: m.includes("badge_sold_out") ? "sold_out" : m.includes("badge_not_owned") ? "not_owned" : m.includes("badge_limit") ? "limit" : "error" };
 }
 
-export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null };
+export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; dates?: { date: string; label: string; yearly: boolean }[] };
 
 export async function addDisplay(sb: SupabaseClient, muralId: string, product: string, data: Record<string, unknown>, x: number, y: number, slots: number[]): Promise<{ id: string } | { error: "taken" | "limit" | "not_owned" | "error" }> {
   const { data: res, error } = await sb.rpc("add_display", { p_mural_id: muralId, p_product: product, p_data: data, p_x: x, p_y: y, p_slots: slots });

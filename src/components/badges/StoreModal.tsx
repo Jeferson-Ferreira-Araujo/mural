@@ -73,6 +73,13 @@ export function sampleFor(product: string, style?: string): DisplayData {
       return { product, style: st, text: "Disciplina de hoje é o resultado de amanhã." };
     case "clock":
       return { product, style: st, tz: "America/Sao_Paulo" };
+    case "calendar": {
+      const n = new Date();
+      const iso = (d: number) => `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
+    }
+    case "cookie":
+      return { product, style: st };
     default:
       return { product: "weather", style: st, city: "São Paulo", lat: 0, lon: 0 };
   }

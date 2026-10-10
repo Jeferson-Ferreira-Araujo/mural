@@ -553,7 +553,7 @@ export function BadgeProvider({
   // o display é um produto "categoria:estilo" já comprado: texto (versículo, frase) vai direto para o mural; relógio e clima pedem horário/cidade
   const pickDisplay = useCallback((id: string) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "bible" || product === "motivation" || product === "clock") {
+    if (product === "bible" || product === "motivation" || product === "clock" || product === "cookie") {
       // o relógio sempre usa a hora do aparelho de quem está vendo: nada a perguntar
       setPlacing({ product, data: product === "clock" ? { product, style, tz: "local" } : { product, style } });
       return;
@@ -565,7 +565,7 @@ export function BadgeProvider({
   // não pedem nada, o clima abre antes a escolha da cidade
   const placeDisplayAtSlot = useCallback((id: string, slot: number) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "weather") {
+    if (product === "weather" || product === "calendar") {
       setDialogError(null);
       setDialog({ mode: "new", product, style, slot });
       return;
@@ -797,7 +797,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const TRACK = 90; // mesmo comprimento da barra de inclinação
   const Hh = 124;
   // versículo, frase e relógio não têm o que editar (o estilo é o comprado): só ampliar e tirar
-  const canEdit = isDisp && badge.data?.product === "weather";
+  const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar");
   const Ha = canEdit ? 108 : isDisp ? 76 : 42;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;

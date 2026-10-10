@@ -1,11 +1,13 @@
 "use client";
 
+import { CalendarWidget, type CalDate } from "./CalendarWidget";
 import { ClockWidget } from "./ClockWidget";
+import { CookieWidget } from "./CookieWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
-export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null };
+export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
 
 /** Os estilos de cada pin da loja (o primeiro é o padrão). */
 export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: string }[]> = {
@@ -22,6 +24,14 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "analog", name: "Analógico", hint: "Clássico e elegante." },
     { id: "pixel", name: "Pixel", hint: "Divertido e nostálgico." },
   ],
+  calendar: [
+    { id: "paper", name: "Parede", hint: "Calendário de papel." },
+    { id: "modern", name: "Moderno", hint: "Escuro e limpo." },
+  ],
+  cookie: [
+    { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
+    { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
+  ],
   weather: [
     { id: "sky", name: "Sky", hint: "Visual leve e colorido." },
     { id: "nature", name: "Nature", hint: "Paisagem dinâmica." },
@@ -37,6 +47,8 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "weather", label: "Clima", single: "Clima" },
   { id: "motivation", label: "Frases", single: "Frase" },
   { id: "bible", label: "Versículos", single: "Versículo" },
+  { id: "calendar", label: "Calendários", single: "Calendário" },
+  { id: "cookie", label: "Biscoito da sorte", single: "Biscoito" },
 ];
 export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
@@ -60,6 +72,10 @@ export function DisplayCard({ data }: { data: DisplayData }) {
       return <TextWidget style={data.style} text={data.text} reference={data.ref} frame={data.frame} label="Frase do dia" />;
     case "clock":
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
+    case "calendar":
+      return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
+    case "cookie":
+      return <CookieWidget style={data.style} frame={data.frame} />;
     default:
       return <WeatherWidget style={data.style} city={data.city} lat={data.lat} lon={data.lon} frame={data.frame} />;
   }
