@@ -170,7 +170,7 @@ export function AuthForm() {
                 setError(null);
               }}
               placeholder="voce@email.com"
-              className={inputClass}
+              className={`${inputClass} md:!px-3 md:!text-[0.9rem]`}
             />
           )}
         </Field>
