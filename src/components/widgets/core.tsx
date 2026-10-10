@@ -61,7 +61,7 @@ export const Corner = ({ side, children }: { side: "left" | "right"; children: R
 // ---------- hora ----------
 /** Fusos que o dono pode escolher (o servidor aceita só estes) e o nome mostrado. */
 export const CLOCK_ZONES: { id: string; label: string }[] = [
-  { id: "local", label: "Horário de quem está vendo" },
+  { id: "local", label: "Hora do aparelho (automática)" },
   { id: "America/Sao_Paulo", label: "Brasília" },
   { id: "America/Manaus", label: "Manaus" },
   { id: "America/Noronha", label: "Fernando de Noronha" },

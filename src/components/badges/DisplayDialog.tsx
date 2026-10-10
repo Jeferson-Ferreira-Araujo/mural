@@ -24,7 +24,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
 export function DisplayDialog({ open, product, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const [style, setStyle] = useState("");
   const [frame, setFrame] = useState<FrameColor>("gold");
-  const [tz, setTz] = useState("America/Sao_Paulo");
+  const [tz, setTz] = useState("local");
   const [city, setCity] = useState<PlaceHit | null>(null);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<PlaceHit[]>([]);
@@ -36,7 +36,7 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
     if (!open) return;
     setStyle(initial?.style ?? defaultStyle(product));
     setFrame((initial?.frame as FrameColor) ?? "gold");
-    setTz(initial?.tz ?? "America/Sao_Paulo");
+    setTz(initial?.tz ?? "local");
     setCity(initial?.city && typeof initial.lat === "number" && typeof initial.lon === "number" ? { name: initial.city, address: "", lat: initial.lat, lon: initial.lon } : null);
     setQuery("");
     setHits([]);
