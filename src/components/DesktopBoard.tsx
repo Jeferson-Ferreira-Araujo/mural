@@ -34,7 +34,7 @@ export function DesktopBoard(props: ViewProps) {
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       {/* o mural ocupa a largura que a proporção 3:2 pede para caber inteiro na altura; o que sobrar vira a barra bege */}
-      <div style={{ width: "min(calc(100% - clamp(290px, 23vw, 360px)), 150dvh)" }} className={`relative shrink-0 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
+      <div style={{ width: "min(calc(100% - clamp(340px, 27vw, 440px)), 150dvh)" }} className={`relative shrink-0 overflow-hidden transition-opacity duration-300 ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
