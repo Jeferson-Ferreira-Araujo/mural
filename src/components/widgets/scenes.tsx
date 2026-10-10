@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+import { createContext, useContext, useId, type ReactNode } from "react";
+
+/** Prefixo único de cada paisagem: o mural existe em duas versões no DOM (desktop e celular) e ids repetidos faziam o degradê apontar para a versão escondida (fundo transparente). */
+const Uid = createContext("");
 
 /** Paisagens dos widgets (tela 200 × 100). Cada uma preenche o cartão inteiro. */
 export type SceneId = "dawn" | "day" | "dusk" | "night" | "mountains" | "beach" | "lake" | "pixel" | "rain" | "cloudy" | "snow" | "fog" | "storm" | "parchment" | "floral" | "forest";
@@ -49,15 +52,18 @@ const Grad = ({ id, stops, vertical = true }: { id: string; stops: [number, stri
   </linearGradient>
 );
 
-const Sky = ({ id, stops, children }: { id: string; stops: [number, string][]; children?: ReactNode }) => (
-  <>
-    <defs>
-      <Grad id={id} stops={stops} />
-    </defs>
-    <rect width="200" height="100" fill={`url(#${id})`} />
-    {children}
-  </>
-);
+const Sky = ({ id, stops, children }: { id: string; stops: [number, string][]; children?: ReactNode }) => {
+  const gid = useContext(Uid) + id;
+  return (
+    <>
+      <defs>
+        <Grad id={gid} stops={stops} />
+      </defs>
+      <rect width="200" height="100" fill={`url(#${gid})`} />
+      {children}
+    </>
+  );
+};
 
 const Moon = ({ x, y, r = 8 }: { x: number; y: number; r?: number }) => (
   <>
@@ -84,6 +90,16 @@ const Skyline = ({ fill }: { fill: string }) => (
 );
 
 export function Scene({ id }: { id: SceneId }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  return (
+    <Uid.Provider value={uid}>
+      <SceneInner id={id} />
+    </Uid.Provider>
+  );
+}
+
+function SceneInner({ id }: { id: SceneId }) {
+  const u = useContext(Uid);
   switch (id) {
     case "dawn":
       return (
@@ -251,17 +267,17 @@ export function Scene({ id }: { id: SceneId }) {
       return (
         <>
           <defs>
-            <linearGradient id="s-parch" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id={u + "s-parch"} x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="#f7e9c4" />
               <stop offset="1" stopColor="#e6cc96" />
             </linearGradient>
-            <radialGradient id="s-parch-v" cx="0.5" cy="0.5" r="0.75">
+            <radialGradient id={u + "s-parch-v"} cx="0.5" cy="0.5" r="0.75">
               <stop offset="0.6" stopColor="#000" stopOpacity="0" />
               <stop offset="1" stopColor="#7a5a20" stopOpacity=".28" />
             </radialGradient>
           </defs>
-          <rect width="200" height="100" fill="url(#s-parch)" />
-          <rect width="200" height="100" fill="url(#s-parch-v)" />
+          <rect width="200" height="100" fill={`url(#${u}s-parch)`} />
+          <rect width="200" height="100" fill={`url(#${u}s-parch-v)`} />
           {/* folhas no canto esquerdo */}
           <g fill="#4f7a3a" opacity=".92">
             <path d="M6 96 C4 76 14 62 30 58 C30 76 22 90 6 96 Z" />
