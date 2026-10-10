@@ -66,7 +66,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={look.image} controlPos={account?.atHome ? "right-[2.2vw] top-[4.6rem]" : "right-[2.2vw] top-5"} hideControls={locked}>
+        <PannableBoard ambient={look.image} controlPos="left-[2.2vw] bottom-5" hideControls={locked}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} contain>
           {locked &&
             (lockForm ? (
