@@ -25,9 +25,9 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">Pinz</h1>
-      {/* vendo o mural de outra pessoa: voltar ao seu e pesquisar, na mesma linha (sem fundo) */}
+      {/* vendo o mural de outra pessoa: seta para voltar ao seu mural (sem fundo), antes do logo */}
       {account?.onHome && !account.atHome && (
-        <div className="mb-[0.8em] flex items-center justify-between gap-[0.6em]">
+        <div className="mb-[0.8em] flex items-center">
           <button
             type="button"
             onClick={account.onHome}
@@ -38,48 +38,52 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
             </svg>
             Voltar para meu Mural
           </button>
-          <div className="flex items-center gap-[0.4em]">
-            <button
-              type="button"
-              onClick={account.onSearch}
-              aria-label="Pesquisar Usuário"
-              className="inline-flex cursor-pointer items-center gap-[0.45em] rounded-xl border border-[#d9c9ad] bg-white/60 px-[0.8em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-            >
-              <svg viewBox="0 0 24 24" className="size-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
-                <circle cx="11" cy="11" r="6.5" />
-                <path d="m20 20-4.2-4.2" />
-              </svg>
-              Pesquisar
-            </button>
-            {/* notificações chegam em tempo real: o sino fica sempre à vista */}
-            {account.notifications && (
-              <button
-                type="button"
-                onClick={account.notifications.onOpen}
-                aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"}
-                title="Notificações"
-                className="relative grid size-[2.5em] cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-              >
-                <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
-                  <path d="M10 20a2.2 2.2 0 0 0 4 0" />
-                </svg>
-                {!!account.notifications.count && (
-                  <span aria-hidden className="absolute -top-[0.3em] -right-[0.3em] grid min-w-[1.4em] place-items-center rounded-md bg-[#d98a2b] px-[0.3em] text-[0.7em] leading-[1.7] font-bold text-white">
-                    {account.notifications.count}
-                  </span>
-                )}
-              </button>
-            )}
-          </div>
         </div>
       )}
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
-      <div className={`flex flex-col gap-[1.4em] ${menu ? "" : "my-auto"}`}>
+      <div className={`flex flex-col gap-[1.4em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
         <Brand className="h-[clamp(6.4rem,17dvh,13rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
+
+      {/* vendo o mural de outra pessoa: pesquisa e notificações ficam abaixo do logo (o logo é sempre o primeiro item, só a seta de voltar vem antes) */}
+      {account?.onHome && !account.atHome && (
+        <div className="flex items-center justify-center gap-[0.4em]">
+          <button
+            type="button"
+            onClick={account.onSearch}
+            aria-label="Pesquisar Usuário"
+            className="inline-flex cursor-pointer items-center gap-[0.45em] rounded-xl border border-[#d9c9ad] bg-white/60 px-[0.8em] py-[0.55em] text-[0.9em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+          >
+            <svg viewBox="0 0 24 24" className="size-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m20 20-4.2-4.2" />
+            </svg>
+            Pesquisar
+          </button>
+          {/* notificações chegam em tempo real: o sino fica sempre à vista */}
+          {account.notifications && (
+            <button
+              type="button"
+              onClick={account.notifications.onOpen}
+              aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"}
+              title="Notificações"
+              className="relative grid size-[2.5em] cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+            >
+              <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
+                <path d="M10 20a2.2 2.2 0 0 0 4 0" />
+              </svg>
+              {!!account.notifications.count && (
+                <span aria-hidden className="absolute -top-[0.3em] -right-[0.3em] grid min-w-[1.4em] place-items-center rounded-md bg-[#d98a2b] px-[0.3em] text-[0.7em] leading-[1.7] font-bold text-white">
+                  {account.notifications.count}
+                </span>
+              )}
+            </button>
+          )}
+        </div>
+      )}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
 
