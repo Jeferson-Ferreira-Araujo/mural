@@ -72,7 +72,9 @@ body {
     transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(1) rotate(var(--rot, 0deg));
   }
 }
+/* o deslocamento do dono (--ox, --oy) vai na propriedade `translate`, fora da lista de transições: soltar o pin não anima */
 .pinned {
+  translate: var(--ox, 0px) var(--oy, 0px);
   transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--rot, 0deg));
   transform-origin: 50% 8%;
   transition:

@@ -158,9 +158,9 @@ export function BoardCanvas({
     const w = full.right - full.left;
     const h = full.bottom - full.top;
     const lr = layer.getBoundingClientRect();
-    // limites do mural: a cortiça com uma folga pequena (fotos em pé e cartões grandes podem ficar rente à borda)
-    const padX = lr.width * 0.02;
-    const padY = lr.height * 0.02;
+    // limites do mural: a cortiça, com uma margem de 3% para dentro (o pin nunca fica sobre a moldura de madeira)
+    const padX = -lr.width * 0.03;
+    const padY = -lr.height * 0.03;
     const bounds = { left: lr.left - padX, right: lr.right + padX, top: lr.top - padY, bottom: lr.bottom + padY };
     if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: "O pin é grande demais para ficar aqui." };
     const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
@@ -354,8 +354,11 @@ export function BoardCanvas({
                               {
                                 zIndex: 2 + ((i * 7) % 5),
                                 "--rot": `${tilt}deg`,
-                                "--dx": `${dx + (item.ox ?? 0)}em`, // o dono pode ter deslocado o pin
-                                "--dy": `${dy + (item.oy ?? 0)}em`,
+                                "--dx": `${dx}em`,
+                                "--dy": `${dy}em`,
+                                // deslocamento dado pelo dono: usa a propriedade "translate", que não tem transição (o pin aparece direto onde foi solto)
+                                "--ox": `${item.ox ?? 0}em`,
+                                "--oy": `${item.oy ?? 0}em`,
                                 animationDelay: `${0.05 + i * 0.06}s`,
                               } as CSSProperties
                             }
