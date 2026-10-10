@@ -1,13 +1,13 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { typeLabel, isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { boardById } from "@/lib/boards";
 import { gridFor, layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, type PlanId } from "@/lib/plans";
 import { MessageView } from "../messages/MessageView";
 import { EmptySlot } from "./SlotMarker";
-import { PinDetail } from "./PinDetail";
+import { PinDetail, type DetailEntry } from "./PinDetail";
 import { BadgeLayer } from "../badges/BadgeLayer";
 import { useBadges } from "../badges/BadgeContext";
 import { PHYSICAL_TYPES } from "@/lib/badges";
@@ -108,6 +108,33 @@ export function BoardCanvas({
   const { removeOver, badges } = useBadges();
   // espaços cobertos por pins da loja (relógio, clima…): ficam sem receber post-its, fotos e vídeos
   const covered = new Set(badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])));
+  // fila do detalhe: pins e widgets na ordem em que aparecem no mural (o widget entra no lugar do(s) espaço(s) que cobre)
+  const detailList: DetailEntry[] = (() => {
+    const keyed: { k: number; e: DetailEntry }[] = placed.map((it) => ({ k: it.slot ?? 0, e: it }));
+    for (const b of badges) {
+      if (b.kind !== "display" || !b.data) continue;
+      const k = b.slots && b.slots.length ? Math.min(...b.slots) : Math.floor((b.y / 100) * rows) * cols + Math.floor((b.x / 100) * cols);
+      keyed.push({ k: k - 0.5, e: { id: b.id, widget: true, data: b.data } });
+    }
+    return keyed.sort((a, c) => a.k - c.k).map((x) => x.e);
+  })();
+  const detailIndexOf = (id: string) => detailList.findIndex((e) => e.id === id);
+  // tocar num widget da loja abre o detalhe na mesma fila das setas (só o quadro que está à vista responde)
+  const detailRef = useRef(detailList);
+  detailRef.current = detailList;
+  useEffect(() => {
+    if (!dense) return;
+    const h = (e: Event) => {
+      if (!root.current || root.current.offsetParent === null) return;
+      const id = (e as CustomEvent<{ id: string }>).detail?.id;
+      const i = detailRef.current.findIndex((x) => x.id === id);
+      if (i < 0) return;
+      e.preventDefault();
+      setDetail(i);
+    };
+    window.addEventListener("pinz:open-widget", h);
+    return () => window.removeEventListener("pinz:open-widget", h);
+  }, [dense]);
   const root = useRef<HTMLElement>(null);
   const drag = usePinDrag(
     mod
@@ -215,11 +242,11 @@ export function BoardCanvas({
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => !drag.wasDrag() && setDetail(placed.indexOf(item))}
+                              onClick={() => !drag.wasDrag() && setDetail(detailIndexOf(item.id))}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
                                   e.preventDefault();
-                                  setDetail(placed.indexOf(item));
+                                  setDetail(detailIndexOf(item.id));
                                 }
                               }}
                               aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em segredo" : typeLabel[item.type]}`}
@@ -243,7 +270,7 @@ export function BoardCanvas({
               </div>
               {children}
             </main>
-      {dense && <PinDetail items={placed} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} board={look.id} />}
+      {dense && <PinDetail items={detailList} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} board={look.id} />}
     </>
   );
 }

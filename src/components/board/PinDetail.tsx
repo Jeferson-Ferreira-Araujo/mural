@@ -14,6 +14,7 @@ import { useFeatureFlags } from "@/lib/features";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
+import { DisplayCard, type DisplayData } from "../widgets";
 import { getBrowserSupabase } from "@/lib/supabase";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
@@ -90,7 +91,11 @@ const Trash = () => (
  * Detalhe de um Pinz: no mural com muitos espaços os cards ficam pequenos (só dá para "bater o olho"),
  * então um clique no pin abre o mesmo card em tamanho de leitura, com setas para passar para o vizinho.
  */
-export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: BoardItem[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
+/** Widget da loja (relógio, clima, frase…) na fila do detalhe: passa-se de um pin para o widget com as mesmas setas. */
+export type WidgetEntry = { id: string; widget: true; data: DisplayData };
+export type DetailEntry = BoardItem | WidgetEntry;
+
+export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: DetailEntry[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
   const mod = useModeration();
@@ -152,7 +157,25 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     return () => window.removeEventListener("keydown", onKey);
   }, [open, index, items.length, onIndex]);
 
-  const item = index !== null ? items[index] : null;
+  const entry = index !== null ? items[index] : null;
+  const widget = entry && "widget" in entry ? entry : null; // este item da fila é um widget da loja
+  const item: BoardItem | null = entry && !widget ? (entry as BoardItem) : null;
+  const [wCopied, setWCopied] = useState(false);
+  const wText = widget?.data.text ? `“${widget.data.text}”${widget.data.ref ? ` — ${widget.data.ref}` : ""}` : null;
+  async function shareWidgetText() {
+    if (!wText) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text: `${wText}\n\nVia Pinz · pinz.digital` });
+        return;
+      }
+      await navigator.clipboard.writeText(`${wText}\n\nVia Pinz · pinz.digital`);
+      setWCopied(true);
+      window.setTimeout(() => setWCopied(false), 2500);
+    } catch {
+      /* compartilhamento cancelado */
+    }
+  }
 
   // bottons que estão sobre este pin no mural: aparecem no detalhe na mesma posição (relativa ao pin) e no mesmo tamanho proporcional
   const itemId = item && !isSealed(item) && !isHidden(item) ? item.id : null;
@@ -210,6 +233,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   }
   // tamanho do pin em "em" (altura e largura): a fonte é calculada para o pin ocupar o máximo possível da área livre
   const fit = (() => {
+    if (widget) return { h: 13, w: 25.5 }; // widgets: 24 em de largura por 12 de altura
     if (!item || isSealed(item) || isHidden(item)) return { h: 21, w: 16 };
     if (item.type === "photo") {
       const r = Math.min(2, Math.max(0.5, item.ratio ?? 1));
@@ -235,7 +259,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       aria-label="Ver mensagem em detalhe"
       className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
-      {open && item && index !== null && (
+      {open && entry && index !== null && (
         <div className="flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
@@ -243,7 +267,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 <ShareIcon />
               </button>
             )}
-            {mod && !isSealed(item) && !isHidden(item) && !item.mine && item.pending && ( // só enquanto aguarda aprovação: depois de aprovado, o dono usa Excluir PIN
+            {mod && item && !isSealed(item) && !isHidden(item) && !item.mine && item.pending && ( // só enquanto aguarda aprovação: depois de aprovado, o dono usa Excluir PIN
               <button
                 type="button"
                 disabled={busy}
@@ -274,12 +298,18 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
             {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
             <div className="relative min-w-0 flex-1 self-stretch [container-type:size]">
-            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h}), calc(100cqw / ${fit.w}))` }} key={item.id}>
+            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h}), calc(100cqw / ${fit.w}))` }} key={entry.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <div className="relative">
-                  <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
-                  <BadgesOver list={over} />
+                  {widget ? (
+                    <DisplayCard data={widget.data} />
+                  ) : item ? (
+                    <>
+                      <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+                      <BadgesOver list={over} />
+                    </>
+                  ) : null}
                 </div>
               </DetailProvider>
             </div>
@@ -288,6 +318,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <ChevronRight />
             </button>
           </div>
+          {widget && wText && (
+            <button type="button" onClick={() => void shareWidgetText()} className={`${ghost} flex items-center justify-center gap-2`}>
+              {wCopied ? "Texto copiado!" : "Compartilhar o texto"}
+            </button>
+          )}
           {react && flags.reactions === true && item && !isSealed(item) && !isHidden(item) && !item.pending && <ReactionBar key={item.id} messageId={item.id} current={item.reaction} onChanged={react.onChanged} />}
           {item && !isSealed(item) && !isHidden(item) && item.pending && (
             <p role="status" className="flex items-center gap-2 rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
