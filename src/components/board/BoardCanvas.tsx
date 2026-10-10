@@ -151,26 +151,66 @@ export function BoardCanvas({
    * O pin pertence ao espaço que ele mais cobre e cobre os vizinhos cujo miolo (70% centrais) ele toca; os espaços das margens continuam livres.
    * `id` = o pin que está sendo movido (ignorado nas conferências) e `home` = o espaço onde ele está hoje (o retângulo natural dele).
    */
-  const solve = (full: Box, em: number, id?: string, home?: { slot: number; cx: number; cy: number }): { error: string } | { slot: number; ox: number; oy: number; cov: number[] } => {
+  const solve = (full: Box, em: number, id?: string, home?: { slot: number; cx: number; cy: number }): { error: string } | { slot: number; ox: number; oy: number; cov: number[]; box: Box } => {
     const wrap = root.current;
     const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
     if (!wrap || !layer) return { error: "Não foi possível posicionar agora." };
     const w = full.right - full.left;
     const h = full.bottom - full.top;
     const lr = layer.getBoundingClientRect();
-    if (full.left < lr.left - 4 || full.right > lr.right + 4 || full.top < lr.top - 4 || full.bottom > lr.bottom + 4) return { error: "O pin precisa ficar dentro do mural." };
-    // pequena folga: encostar de leve nas bordas dos vizinhos não conta como sobrepor
-    const t = 0.06;
-    const R = { left: full.left + w * t, right: full.right - w * t, top: full.top + h * t, bottom: full.bottom - h * t };
-    const hit = (b: DOMRect) => R.left < b.right && R.right > b.left && R.top < b.bottom && R.bottom > b.top;
+    // limites do mural: a cortiça com uma folga pequena (fotos em pé e cartões grandes podem ficar rente à borda)
+    const padX = lr.width * 0.02;
+    const padY = lr.height * 0.02;
+    const bounds = { left: lr.left - padX, right: lr.right + padX, top: lr.top - padY, bottom: lr.bottom + padY };
+    if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: "O pin é grande demais para ficar aqui." };
     const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
+    // quem atrapalha: os outros pins e os displays (o retângulo real de cada um)
+    const obstacles: { box: DOMRect; what: string }[] = [];
     for (const other of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
-      if (other.dataset.pinId === id || !vis(other)) continue;
-      if (hit(other.getBoundingClientRect())) return { error: "Não dá para soltar aqui: o pin ficaria sobre outro pin." };
+      if (other.dataset.pinId !== id && vis(other)) obstacles.push({ box: other.getBoundingClientRect(), what: "outro pin" });
     }
     for (const d of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
-      if (vis(d) && hit(d.getBoundingClientRect())) return { error: "Não dá para soltar aqui: o pin ficaria sobre um display." };
+      if (vis(d)) obstacles.push({ box: d.getBoundingClientRect(), what: "um display" });
     }
+    // o pin se ajusta sozinho: se passou da borda ou invadiu um vizinho, desliza o mínimo para o lado (até uma distância razoável)
+    const t = 0.06; // folga: encostar de leve nas bordas dos vizinhos não conta como sobrepor
+    const shrink = (r: Box): Box => ({ left: r.left + w * t, right: r.right - w * t, top: r.top + h * t, bottom: r.bottom - h * t });
+    const inside = (r: Box) => {
+      let dx = 0;
+      let dy = 0;
+      if (r.left < bounds.left) dx = bounds.left - r.left;
+      else if (r.right > bounds.right) dx = bounds.right - r.right;
+      if (r.top < bounds.top) dy = bounds.top - r.top;
+      else if (r.bottom > bounds.bottom) dy = bounds.bottom - r.bottom;
+      return { left: r.left + dx, right: r.right + dx, top: r.top + dy, bottom: r.bottom + dy };
+    };
+    // soltou longe demais do mural: não adianta ajustar
+    const cx0 = (full.left + full.right) / 2;
+    const cy0 = (full.top + full.bottom) / 2;
+    if (cx0 < bounds.left - w * 0.6 || cx0 > bounds.right + w * 0.6 || cy0 < bounds.top - h * 0.6 || cy0 > bounds.bottom + h * 0.6) return { error: "O pin precisa ficar dentro do mural." };
+    full = inside(full);
+    const startBox = full; // daqui em diante só conta o quanto o pin precisou escorregar para não invadir os vizinhos
+    let blocked = "";
+    for (let n = 0; n < 10; n++) {
+      const R = shrink(full);
+      const o = obstacles.find((x) => R.left < x.box.right && R.right > x.box.left && R.top < x.box.bottom && R.bottom > x.box.top);
+      if (!o) {
+        blocked = "";
+        break;
+      }
+      blocked = o.what;
+      // empurra pelo lado em que a invasão é menor
+      const moves = [
+        { dx: o.box.left - R.right - 1, dy: 0 },
+        { dx: o.box.right - R.left + 1, dy: 0 },
+        { dx: 0, dy: o.box.top - R.bottom - 1 },
+        { dx: 0, dy: o.box.bottom - R.top + 1 },
+      ].sort((p, q) => Math.abs(p.dx) + Math.abs(p.dy) - (Math.abs(q.dx) + Math.abs(q.dy)));
+      const m = moves[0];
+      full = inside({ left: full.left + m.dx, right: full.right + m.dx, top: full.top + m.dy, bottom: full.bottom + m.dy });
+    }
+    if (blocked) return { error: `Não dá para soltar aqui: o pin ficaria sobre ${blocked}.` };
+    if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * 0.6) return { error: "Não cabe aqui: tente um lugar mais livre." };
     type Touch = { slot: number; area: number; cx: number; cy: number };
     const touched: Touch[] = [];
     const area = (r: Box, box: Box) => {
@@ -204,7 +244,7 @@ export function BoardCanvas({
     const ox = Math.round((((full.left + full.right) / 2 - anchor.cx) / em) * 100) / 100;
     const oy = Math.round((((full.top + full.bottom) / 2 - anchor.cy) / em) * 100) / 100;
     if (Math.abs(ox) > 400 || Math.abs(oy) > 400) return { error: "O pin precisa ficar dentro do mural." };
-    return { slot: anchor.slot, ox, oy, cov: touched.filter((x) => x.slot !== anchor.slot).map((x) => x.slot).slice(0, 8) };
+    return { slot: anchor.slot, ox, oy, cov: touched.filter((x) => x.slot !== anchor.slot).map((x) => x.slot).slice(0, 8), box: full };
   };
 
   // o dono leva o pin para onde quiser: ele passa a pertencer ao espaço onde fica (o espaço de onde saiu volta a aparecer)
@@ -220,7 +260,7 @@ export function BoardCanvas({
     const sol = solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em });
     if ("error" in sol) return m.notify(sol.error);
     // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima
-    if (isSealed(item) || (PHYSICAL_TYPES as readonly string[]).includes(item.type ?? "")) removeOver(full);
+    if (isSealed(item) || (PHYSICAL_TYPES as readonly string[]).includes(item.type ?? "")) removeOver(sol.box);
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
   };
 
