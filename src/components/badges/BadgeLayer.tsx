@@ -16,6 +16,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   beginRef.current = begin;
   const selectRef = useRef(select);
   selectRef.current = select;
+  const openRef = useRef(ctx.openDetail);
+  openRef.current = ctx.openDetail;
   const display = isDisplayKey(b.key) || b.kind === "display";
   const scaleRef = useRef<number>(b.scale ?? (display ? DISPLAY_SCALE : DEFAULT_SCALE));
   scaleRef.current = b.scale ?? (display ? DISPLAY_SCALE : DEFAULT_SCALE);
@@ -26,6 +28,10 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !editable) return;
+    // computador: duplo clique abre o detalhe do widget
+    const dbl = () => {
+      if (display) openRef.current(b.id);
+    };
     const down = (ev: PointerEvent) => {
       lastType.current = ev.pointerType;
       tapStart.current = { x: ev.clientX, y: ev.clientY, t: performance.now() };
@@ -67,9 +73,11 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     };
     el.addEventListener("pointerdown", down);
     el.addEventListener("pointerup", up);
+    el.addEventListener("dblclick", dbl);
     return () => {
       el.removeEventListener("pointerdown", down);
       el.removeEventListener("pointerup", up);
+      el.removeEventListener("dblclick", dbl);
     };
   }, [editable, b.id, b.key, display]);
 
@@ -81,7 +89,9 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         ref={ref}
         data-badge-id={b.id}
         data-badge-kind="display"
-        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
+        // quem vê o mural (não é o dono): tocar no widget abre o detalhe
+        {...(!editable ? { role: "button", tabIndex: 0, "aria-label": "Ver o pin em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
+        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : "pointer-events-auto cursor-pointer"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >
         {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[1em]" />}

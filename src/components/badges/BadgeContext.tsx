@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { DisplayCard, WIDGET_W } from "../widgets";
+import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
 
@@ -38,10 +39,12 @@ type Ctx = {
   editDisplay: (id: string) => void;
   /** posicionando um display (o mural fica escuro) */
   placing: boolean;
+  /** abre o detalhe (widget grande) de um pin da loja já colocado */
+  openDetail: (id: string) => void;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
@@ -191,6 +194,7 @@ export function BadgeProvider({
   const [dialogBusy, setDialogBusy] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
+  const [detail, setDetail] = useState<DisplayPayload | null>(null); // detalhe (widget grande) aberto
   const live = useRef({ muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged });
   live.current = { muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged };
   const cleanup = useRef<(() => void) | null>(null);
@@ -536,6 +540,13 @@ export function BadgeProvider({
     setDialogError(null);
     setDialog({ mode: "new", product });
   }, []);
+  const openDetail = useCallback((id: string) => {
+    const b = live.current.badges.find((x) => x.id === id);
+    if (!b?.data) return;
+    setSelId(null);
+    setHoverId(null);
+    setDetail(b.data);
+  }, []);
   const editDisplay = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);
     if (!b?.data) return;
@@ -617,7 +628,7 @@ export function BadgeProvider({
     [removeById],
   );
   removeOverRef.current = removeOver;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
@@ -635,8 +646,9 @@ export function BadgeProvider({
           onSubmit={(d) => void submitDialog(d as DisplayPayload)}
         />
       )}
+      {detail && <DisplayDetail data={detail} onClose={() => setDetail(null)} />}
       {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots, rect) => void placeDisplay(placing.product, placing.data, x, y, slots, rect)} notify={notify} />}
-      {controlsId && <BadgeControls onEdit={editDisplay} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {controlsId && <BadgeControls onEdit={editDisplay} onDetail={openDetail} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && isDisplayKey(ghost.key) && (
         <div
           aria-hidden
@@ -683,7 +695,7 @@ export function BadgeProvider({
  * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onEdit, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; onDetail: (id: string) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
   const keyRef = useRef(badge?.key);
   keyRef.current = badge?.key;
@@ -720,7 +732,7 @@ function BadgeControls({ id, badge, onEdit, onScale, onScaleEnd, onRemove, onKee
   // pílula do tamanho (à direita; à esquerda se não couber)
   const W = 40;
   const TRACK = 90; // mesmo comprimento da barra de inclinação
-  const Hh = 146;
+  const Hh = isDisp ? 184 : 146;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
   const off = Math.max(g.R + 8, SW / 2 + 8);
@@ -782,7 +794,14 @@ function BadgeControls({ id, badge, onEdit, onScale, onScaleEnd, onRemove, onKee
         <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label="Tamanho do botton: para cima maior, para baixo menor" />
         <span aria-hidden className="size-1.5 rounded-full bg-white/80" title="Menor" />
         {isDisp && (
-          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o pin: contorno, horário ou cidade" title="Editar" className="mt-auto grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o pin em tamanho grande" title="Ver em tamanho grande" className="mt-auto grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+            </svg>
+          </button>
+        )}
+        {isDisp && (
+          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o pin: contorno, horário ou cidade" title="Editar" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />
             </svg>
