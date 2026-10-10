@@ -264,14 +264,11 @@ export function BoardCanvas({
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
   };
 
-  // mural livre: no desktop, clique duplo num ponto vazio da cortiça; no celular, segurar o dedo ali. Abre o compositor já com a posição escolhida
+  // mural livre: clique duplo (desktop) ou toque duplo (celular) num ponto vazio da cortiça. Abre o compositor já com a posição escolhida
   // (sem passar pela grade de espaços livres)
   const ptype = useRef("mouse");
-  const hold = useRef<{ x: number; y: number; timer: number } | null>(null);
-  const cancelHold = () => {
-    if (hold.current) window.clearTimeout(hold.current.timer);
-    hold.current = null;
-  };
+  const tap = useRef<{ x: number; y: number; t: number; down: { x: number; y: number } } | null>(null);
+  const lastTap = useRef<{ x: number; y: number; t: number } | null>(null);
   const tryPlace = (target: HTMLElement, x: number, y: number) => {
     if (!FREE_MURAL || !onCompose || !unlocked || !hasSelection) return;
     if (target.closest("[data-pin-id],[data-badge-id],[data-badge-controls],[data-badge-bar],button,a,dialog,[role='button']") || drag.wasDrag()) return;
@@ -286,24 +283,28 @@ export function BoardCanvas({
     if ("error" in sol) return say(sol.error);
     onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
   };
+  // celular: dois toques seguidos (e rápidos) num ponto vazio criam o pin; arrastar com o dedo move o quadro e o zoom é pelo botão ou pela pinça
   const boardPointerDown = (e: React.PointerEvent) => {
     ptype.current = e.pointerType;
-    cancelHold();
-    if (e.pointerType === "mouse" || !e.isPrimary) return;
-    const target = e.target as HTMLElement;
-    const x = e.clientX;
-    const y = e.clientY;
-    hold.current = {
-      x,
-      y,
-      timer: window.setTimeout(() => {
-        hold.current = null;
-        tryPlace(target, x, y);
-      }, 500),
-    };
+    if (e.pointerType === "mouse") return;
+    tap.current = e.isPrimary ? { x: e.clientX, y: e.clientY, t: performance.now(), down: { x: e.clientX, y: e.clientY } } : null;
+    if (!e.isPrimary) lastTap.current = null; // dois dedos = pinça
   };
   const boardPointerMove = (e: React.PointerEvent) => {
-    if (hold.current && Math.hypot(e.clientX - hold.current.x, e.clientY - hold.current.y) > 10) cancelHold(); // mexeu o dedo: é o gesto de mover o quadro
+    if (tap.current && Math.hypot(e.clientX - tap.current.down.x, e.clientY - tap.current.down.y) > 10) tap.current = null; // mexeu o dedo: é o gesto de mover o quadro
+  };
+  const boardPointerUp = (e: React.PointerEvent) => {
+    const tp = tap.current;
+    tap.current = null;
+    if (!tp || e.pointerType === "mouse" || performance.now() - tp.t > 350) return; // só toques curtos contam
+    const now = performance.now();
+    const lt = lastTap.current;
+    if (lt && now - lt.t < 400 && Math.hypot(e.clientX - lt.x, e.clientY - lt.y) < 36) {
+      lastTap.current = null;
+      tryPlace(e.target as HTMLElement, e.clientX, e.clientY);
+    } else {
+      lastTap.current = { x: e.clientX, y: e.clientY, t: now };
+    }
   };
   const boardDoubleClick = (e: React.MouseEvent) => {
     if (ptype.current !== "mouse") return;
@@ -405,8 +406,8 @@ export function BoardCanvas({
                   onDoubleClick={boardDoubleClick}
                   onPointerDown={boardPointerDown}
                   onPointerMove={boardPointerMove}
-                  onPointerUp={cancelHold}
-                  onPointerCancel={cancelHold}
+                  onPointerUp={boardPointerUp}
+                  onPointerCancel={() => (tap.current = null)}
                   style={{ left: `${CORK.left}%`, top: `${CORK.top + 2}%`, width: `${CORK.width}%`, height: `${CORK.height - 2.5}%`, fontSize: `max(5px, ${baseEm}cqw)` }}
                 >
                   <div
