@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
+import { DisplayCard } from "../widgets";
+import { sampleFor } from "./StoreModal";
 
 const DISPLAY_LABEL: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
 /** Miniatura de cada display: cores da paisagem e um sinal. */
@@ -102,7 +104,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
       )}
       {pickOpen && createPortal(
         <div className="fixed inset-0 z-[390] grid place-items-center bg-black/55 p-4" onClick={() => setPickOpen(false)}>
-          <div role="dialog" aria-label="Escolher um display" onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-4 text-[#2a1c12] shadow-[0_1rem_3rem_rgba(0,0,0,.5)]">
+          <div role="dialog" aria-label="Escolher um display" onClick={(e) => e.stopPropagation()} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-[#fbf6ea] p-4 text-[#2a1c12] shadow-[0_1rem_3rem_rgba(0,0,0,.5)]">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="font-title text-lg font-semibold">Qual display colocar?</h2>
               <button type="button" aria-label="Fechar" onClick={() => setPickOpen(false)} className="grid size-8 cursor-pointer place-items-center rounded-lg hover:bg-black/5">
@@ -111,7 +113,8 @@ export function BadgeBar({ className = "" }: { className?: string }) {
                 </svg>
               </button>
             </div>
-            <ul className="grid gap-2">
+            {/* cada display aparece com a prévia do cartão, como na loja */}
+            <ul className="grid gap-3 sm:grid-cols-2">
               {displays.map((p) => (
                 <li key={p}>
                   <button
@@ -120,14 +123,19 @@ export function BadgeBar({ className = "" }: { className?: string }) {
                       setPickOpen(false);
                       pickDisplay(p);
                     }}
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-2.5 text-left transition hover:bg-white active:scale-[0.99]"
+                    className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70 text-left transition hover:border-[#d98a2b] hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
                   >
-                    <span className="grid size-12 shrink-0 place-items-center rounded-[10px] p-[2px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]" style={{ background: "linear-gradient(145deg,#f6e2b0,#b88a3a)" }}>
-                      <span className="grid size-full place-items-center rounded-[8px] text-[10px] leading-none font-bold text-[#2a3a4a]" style={{ background: `linear-gradient(180deg, ${TILE[p]?.[0] ?? "#4fa8ee"}, ${TILE[p]?.[1] ?? "#d9f0ff"})` }}>
-                        {TILE[p]?.[2]}
+                    <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
+                      <span className="text-[9px]">
+                        <span className="relative block">
+                          <DisplayCard data={sampleFor(p)} />
+                        </span>
                       </span>
                     </span>
-                    <span className="font-semibold">{DISPLAY_LABEL[p] ?? p}</span>
+                    <span className="p-3">
+                      <span className="block font-title text-base font-semibold">{DISPLAY_LABEL[p] ?? p}</span>
+                      <span className="mt-0.5 block text-xs text-[#6b5440]">Toque para escolher o estilo e colocar no mural</span>
+                    </span>
                   </button>
                 </li>
               ))}

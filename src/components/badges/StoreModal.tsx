@@ -63,7 +63,7 @@ function Confetti() {
 }
 
 /** Amostra de cada pin da loja, como aparece no mural. */
-function sampleFor(id: string): DisplayData {
+export function sampleFor(id: string): DisplayData {
   switch (id) {
     case "bible":
       return { product: "bible", style: "classic", text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" };
