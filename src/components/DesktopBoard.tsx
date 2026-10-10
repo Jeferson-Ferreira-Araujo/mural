@@ -58,8 +58,8 @@ export function DesktopBoard(props: ViewProps) {
             )}
           </div>
           <div className="pointer-events-auto flex items-center gap-2">
-            {/* só no próprio mural: no de outra pessoa, a pesquisa fica na coluna bege e o sino não aparece */}
-            {account?.atHome && <AccountActions account={account} tone="dark" menu={false} />}
+            {/* pesquisar usuários e notificações: no canto superior direito, no mural do dono e no de visitas */}
+            {account && <AccountActions account={account} tone="dark" menu={false} />}
           </div>
         </nav>
 
