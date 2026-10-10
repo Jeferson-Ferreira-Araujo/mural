@@ -327,27 +327,23 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       )}
 
       {!hideControls && (
-        // dois botões: só o que vale agora (+ com o mural inteiro; − aproximado) é clicável; o outro fica apagado
-        <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className={`absolute ${controlPos} z-20 inline-flex h-11 items-center overflow-hidden rounded-xl bg-[#17110c]/85 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur`}>
-          {([["in", "Aproximar o mural", "M12 6v12M6 12h12"], ["out", "Afastar o mural", "M6 12h12"]] as const).map(([k, label, d]) => {
-            const active = (k === "in") === zoomedOut;
-            return (
-              <button
-                key={k}
-                type="button"
-                disabled={!active}
-                onClick={toggleZoom}
-                aria-label={label}
-                title={label}
-                className={`grid h-full w-11 place-items-center transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#f7f0dd] ${active ? "cursor-pointer hover:bg-white/10 active:scale-90" : "cursor-default opacity-35"}`}
-              >
-                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
-                  <path d={d} />
-                </svg>
-              </button>
-            );
-          })}
-        </div>
+        <button
+          type="button"
+          data-zoom-controls
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={toggleZoom}
+          aria-label={zoomedOut ? "Aproximar o mural" : "Afastar o mural"}
+          title={zoomedOut ? "Aproximar" : "Afastar"}
+          className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+        >
+          <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            {/* lupa: "+" para aproximar, "−" para ver tudo */}
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m20 20-4.2-4.2" />
+            {zoomedOut ? <path d="M11 8v6M8 11h6" /> : <path d="M8 11h6" />}
+          </svg>
+          {zoomedOut ? "Aproximar" : "Afastar"}
+        </button>
       )}
     </div>
   );
