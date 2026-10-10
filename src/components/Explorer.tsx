@@ -448,10 +448,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         return true;
       },
       notify,
-      nudge: async (id: string, ox: number, oy: number, cov: number[]) => {
+      nudge: async (id: string, slot: number, ox: number, oy: number, cov: number[]) => {
         moveSeq.current++;
-        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ox, oy, fcov: cov } : i)));
-        const { error } = await getBrowserSupabase().rpc("nudge_pin", { p_id: id, p_ox: ox, p_oy: oy, p_cov: cov });
+        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, slot, ox, oy, fcov: cov } : i)));
+        const { error } = await getBrowserSupabase().rpc("place_pin", { p_id: id, p_slot: slot, p_ox: ox, p_oy: oy, p_cov: cov });
         moveSeq.current++;
         if (error) {
           notify(error.message.includes("slot_taken") ? "Não dá para soltar aqui: o lugar acabou de ser ocupado." : "Não foi possível mover o pin agora.");

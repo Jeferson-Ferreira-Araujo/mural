@@ -139,20 +139,17 @@ export function BoardCanvas({
     return () => window.removeEventListener("pinz:open-widget", h);
   }, [dense]);
   const root = useRef<HTMLElement>(null);
-  // o dono desloca um pin um pouco para o lado: ele continua no espaço dele (que é onde os outros o encontram); só vale sem ficar
-  // sobre outro pin nem sobre um display. Os espaços vazios que o pin passa a cobrir deixam de receber pins (como os displays).
+  // o dono leva o pin para onde quiser: ele passa a pertencer ao espaço onde fica (o espaço de onde saiu volta a aparecer) e cobre os espaços
+  // vizinhos que tocar (que somem, como acontece com os displays). Não vale ficar sobre outro pin, sobre um display nem sobre espaço coberto.
   const nudge = (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => {
     const wrap = root.current;
     const m = mod;
     const item = items.find((i) => i.id === id);
     const el = wrap?.querySelector<HTMLElement>(`[data-pin-id="${id}"]`);
     const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
-    if (!wrap || !m || !item || !el || !layer) return;
+    if (!wrap || !m || !item || !el || !layer || typeof item.slot !== "number") return;
     if (Math.hypot(mv.dx, mv.dy) < 4) return; // foi só um clique
     const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * mv.k; // tamanho de 1em na tela (com o zoom)
-    const ox = Math.round(((item.ox ?? 0) + mv.dx / em) * 100) / 100;
-    const oy = Math.round(((item.oy ?? 0) + mv.dy / em) * 100) / 100;
-    if (Math.abs(ox) > 14 || Math.abs(oy) > 14) return m.notify("O pin só pode ficar perto do espaço dele.");
     const w = mv.rect.right - mv.rect.left;
     const h = mv.rect.bottom - mv.rect.top;
     const lr = layer.getBoundingClientRect();
@@ -170,20 +167,37 @@ export function BoardCanvas({
     for (const d of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
       if (vis(d) && hit(d.getBoundingClientRect())) return m.notify("Não dá para soltar aqui: o pin ficaria sobre um display.");
     }
-    const cov: number[] = [];
+    // espaços que o pin toca: o de origem (seu retângulo natural = onde o pin está menos o deslocamento) e os vizinhos
+    type Touch = { slot: number; area: number; cx: number; cy: number };
+    const touched: Touch[] = [];
+    const homeCx = (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em;
+    const homeCy = (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em;
+    const area = (r: { left: number; right: number; top: number; bottom: number }, box: { left: number; right: number; top: number; bottom: number }) => {
+      const ix = Math.min(r.right, box.right) - Math.max(r.left, box.left);
+      const iy = Math.min(r.bottom, box.bottom) - Math.max(r.top, box.top);
+      return ix > 0 && iy > 0 ? ix * iy : 0;
+    };
+    const home = { left: homeCx - 7 * em, right: homeCx + 7 * em, top: homeCy - 6.5 * em, bottom: homeCy + 6.5 * em }; // o espaço vazio tem 14em × 13em
+    const homeA = area(full, home);
+    if (homeA / (14 * em * 13 * em) >= 0.03) touched.push({ slot: item.slot, area: homeA, cx: homeCx, cy: homeCy });
     for (const cell of wrap.querySelectorAll<HTMLElement>("[data-slot]")) {
       if (cell.dataset.pinId === id || !vis(cell)) continue;
       const r = cell.getBoundingClientRect();
-      const ix = Math.min(r.right, R.right) - Math.max(r.left, R.left);
-      const iy = Math.min(r.bottom, R.bottom) - Math.max(r.top, R.top);
-      if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= 0.03) {
-        if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return m.notify(cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display.");
-        cov.push(Number(cell.dataset.slot));
-      }
+      const a = area(full, r);
+      if (a / (r.width * r.height) < 0.03) continue;
+      if (cell.hasAttribute("data-pin-id")) return m.notify("Não dá para soltar aqui: o pin ficaria sobre outro pin.");
+      if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return m.notify(cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display.");
+      touched.push({ slot: Number(cell.dataset.slot), area: a, cx: (r.left + r.right) / 2, cy: (r.top + r.bottom) / 2 });
     }
+    if (!touched.length) return m.notify("O pin precisa ficar sobre o mural.");
+    // o pin pertence ao espaço que ele mais cobre; os outros que toca ficam cobertos por ele
+    const anchor = touched.reduce((a, b) => (b.area > a.area ? b : a));
+    const ox = Math.round(((full.left + full.right) / 2 - anchor.cx) / em * 100) / 100;
+    const oy = Math.round(((full.top + full.bottom) / 2 - anchor.cy) / em * 100) / 100;
+    if (Math.abs(ox) > 400 || Math.abs(oy) > 400) return;
     // pin de aparelho (vídeo, áudio, voz, local, cápsula) não pode ficar com botton por cima
     if (isSealed(item) || (PHYSICAL_TYPES as readonly string[]).includes(item.type ?? "")) removeOver(full);
-    void m.nudge(id, ox, oy, cov.slice(0, 8));
+    void m.nudge(id, anchor.slot, ox, oy, touched.filter((x) => x.slot !== anchor.slot).map((x) => x.slot).slice(0, 8));
   };
   const drag = usePinDrag(
     mod

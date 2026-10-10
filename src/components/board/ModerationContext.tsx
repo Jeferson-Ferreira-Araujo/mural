@@ -16,8 +16,8 @@ export type Moderation = {
   move: (id: string, slot: number) => Promise<boolean>;
   /** aviso curto na tela */
   notify: (msg: string) => void;
-  /** desloca o pin um pouco para o lado (ox, oy em "em" do quadro); cov = espaços vizinhos que ele passa a cobrir */
-  nudge: (id: string, ox: number, oy: number, cov: number[]) => Promise<boolean>;
+  /** leva o pin para onde o dono soltou: passa a pertencer ao espaço `slot` (deslocado ox, oy em "em" do quadro) e cobre os espaços de `cov` */
+  nudge: (id: string, slot: number, ox: number, oy: number, cov: number[]) => Promise<boolean>;
   report: (id: string, r: { reason: ReportReason; details: string; block: boolean }) => Promise<boolean>;
 };
 
