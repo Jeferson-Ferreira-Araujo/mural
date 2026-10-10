@@ -37,7 +37,11 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
 
   const limits = useCallback(() => {
     const { w, h } = size.current;
-    const minS = Math.min(w / WORLD_W, h / WORLD_H);
+    // "mural inteiro": se a área é só um pouco mais larga/estreita que o quadro (3:2), o quadro preenche tudo e perde, no máximo, 10% de largura
+    // (só as bordas da imagem, fora da cortiça); com diferença maior, o quadro aparece inteiro com margens (celular em pé, janelas muito estreitas)
+    const contain = Math.min(w / WORLD_W, h / WORLD_H);
+    const cover = Math.max(w / WORLD_W, h / WORLD_H);
+    const minS = 1 - contain / cover <= 0.1 ? cover : contain;
     // o máximo é o mesmo tanto que o botão "Aproximar" amplia (~2,4 cartões por tela): mais que isso não deixa
     // celular: ~2,4 cartões por tela; telas largas (desktop): ~5 cartões, senão a ampliação fica enorme
     const perScreen = w >= 700 ? 5 : 2.4;

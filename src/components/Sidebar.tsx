@@ -21,7 +21,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account, menu }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** atalhos da conta (desktop) */ menu?: React.ReactNode; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
   return (
     <aside
-      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] flex-1 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
+      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] flex-1 flex-col overflow-x-hidden overflow-y-auto bg-[#f2e8d3] px-[1.6em] py-[clamp(0.9em,2.6dvh,1.8em)] text-[clamp(14px,1.05vw,16px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">Pinz</h1>
@@ -75,9 +75,9 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </div>
       )}
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
-      <div className={`flex flex-col gap-[1.4em] ${menu ? "" : "my-auto"}`}>
+      <div className={`flex flex-col gap-[clamp(0.7em,2.2dvh,1.4em)] ${menu ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[10.4rem]" />
+        <Brand className="h-[clamp(5.6rem,16dvh,10.4rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural de momentos compartilhados.</p>}
 
