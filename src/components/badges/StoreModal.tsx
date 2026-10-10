@@ -9,6 +9,7 @@ import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
+import { DISPLAY_CATS, defaultStyle } from "../widgets";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -63,16 +64,17 @@ function Confetti() {
 }
 
 /** Amostra de cada pin da loja, como aparece no mural. */
-export function sampleFor(id: string): DisplayData {
-  switch (id) {
+export function sampleFor(product: string, style?: string): DisplayData {
+  const st = style || defaultStyle(product);
+  switch (product) {
     case "bible":
-      return { product: "bible", style: "classic", text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" };
+      return { product, style: st, text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" };
     case "motivation":
-      return { product: "motivation", style: "night", text: "Disciplina de hoje é o resultado de amanhã.", frame: "silver" };
+      return { product, style: st, text: "Disciplina de hoje é o resultado de amanhã." };
     case "clock":
-      return { product: "clock", style: "sunset", tz: "America/Sao_Paulo", frame: "brown" };
+      return { product, style: st, tz: "America/Sao_Paulo" };
     default:
-      return { product: "weather", style: "sky", city: "São Paulo", lat: 0, lon: 0, frame: "blue" };
+      return { product: "weather", style: st, city: "São Paulo", lat: 0, lon: 0 };
   }
 }
 
@@ -120,6 +122,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const products = inventory?.pinProducts ?? [];
+  const [displayCat, setDisplayCat] = useState<string | null>(null); // tipo de display aberto na aba Displays
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
   const [done, setDone] = useState<Done | null>(null);
@@ -316,10 +319,52 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             </ul>
           )}
         </>
-      ) : tab === "formats" ? (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      ) : tab === "formats" && !displayCat ? (
+        // 1º passo: o tipo de display (cada estilo é vendido separadamente, dentro do tipo)
+        <ul className="grid gap-3 sm:grid-cols-2" aria-label="Tipos de display">
+          {DISPLAY_CATS.map((c) => {
+            const items = products.filter((p) => p.id.startsWith(c.id + ":"));
+            const mine = items.filter((p) => p.owned).length;
+            return (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => setDisplayCat(c.id)}
+                  className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70 text-left transition hover:border-[#d98a2b] hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+                >
+                  <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
+                    <span className="pointer-events-none text-[9px]">
+                      <span className="relative block">
+                        <DisplayCard data={sampleFor(c.id)} />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="flex items-center justify-between gap-2 p-3">
+                    <span className="font-title text-base font-semibold">{c.label}</span>
+                    <span className="text-xs font-semibold text-[#6b5440]">
+                      {items.length} {items.length === 1 ? "estilo" : "estilos"}
+                      {mine > 0 ? " · " + mine + (mine === 1 ? " seu" : " seus") : ""}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
           {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">Em breve, novos displays por aqui.</li>}
-          {products.map((p) => {
+        </ul>
+      ) : tab === "formats" ? (
+        <>
+          <div className="mb-3 flex items-center gap-2">
+            <button type="button" onClick={() => setDisplayCat(null)} className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-semibold text-[#4a3826] hover:bg-black/5">
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M19 12H5M11 6l-6 6 6 6" />
+              </svg>
+              Displays
+            </button>
+            <h3 className="font-title text-base font-semibold">{DISPLAY_CATS.find((c) => c.id === displayCat)?.label}</h3>
+          </div>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {products.filter((p) => p.id.startsWith(displayCat + ":")).map((p) => {
             const just = done?.id === `f${p.id}`;
             return (
               <li key={p.id} className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
@@ -328,7 +373,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <div className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-6">
                   <div className="text-[9px]">
                     <div className="relative">
-                      <DisplayCard data={sampleFor(p.id)} />
+                      <DisplayCard data={sampleFor(p.id.split(":")[0], p.id.split(":")[1])} />
                     </div>
                   </div>
                 </div>
@@ -347,7 +392,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   </div>
                   <p className="mt-1 flex-1 text-sm text-[#6b5440]">{p.description}</p>
                   {p.owned ? (
-                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “{p.name}” e arraste o display para onde quiser.</p>
+                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “Displays” e arraste este para onde quiser.</p>
                   ) : (
                     <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: p.name, text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={buyBtn}>
                       {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
@@ -358,6 +403,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             );
           })}
         </ul>
+        </>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[...BOARDS]

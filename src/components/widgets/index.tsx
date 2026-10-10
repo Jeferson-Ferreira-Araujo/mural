@@ -31,6 +31,24 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
   ],
 };
 export const stylesOf = (product: string) => WIDGET_STYLES[product === "bible" || product === "motivation" ? "text" : product] ?? [];
+/** Categorias de display na loja (cada estilo de cada categoria é vendido separadamente). O id do produto é "categoria:estilo". */
+export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
+  { id: "clock", label: "Relógios", single: "Relógio" },
+  { id: "weather", label: "Clima", single: "Clima" },
+  { id: "motivation", label: "Frases", single: "Frase" },
+  { id: "bible", label: "Versículos", single: "Versículo" },
+];
+export const splitDisplayId = (id: string) => {
+  const [product, style = ""] = id.split(":");
+  return { product, style };
+};
+/** "Relógio · Súnset" */
+export const displayName = (id: string) => {
+  const { product, style } = splitDisplayId(id);
+  const cat = DISPLAY_CATS.find((x) => x.id === product);
+  const st = stylesOf(product).find((x) => x.id === style);
+  return `${cat?.single ?? product}${st ? ` · ${st.name}` : ""}`;
+};
 export const defaultStyle = (product: string) => stylesOf(product)[0]?.id ?? "";
 
 /** O widget certo para cada produto da loja (versículo, frase, relógio, clima), no estilo escolhido. */

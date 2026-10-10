@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { createPortal } from "react-dom";
 import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { DisplayCard, WIDGET_W } from "../widgets";
+import { DisplayCard, WIDGET_W, splitDisplayId } from "../widgets";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
@@ -190,7 +190,7 @@ export function BadgeProvider({
   const [selId, setSelId] = useState<string | null>(null);
   const hoverTimer = useRef<number | null>(null);
   // pins da loja: diálogo de opções (novo ou edição) e o modo em que o mural escurece para a pessoa arrastar o pin ao lugar que quiser
-  const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; id?: string; initial?: DisplayPayload } | null>(null);
+  const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; style: string; id?: string; initial?: DisplayPayload } | null>(null);
   const [dialogBusy, setDialogBusy] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
@@ -536,9 +536,15 @@ export function BadgeProvider({
     });
   }, [setBadges]);
 
-  const pickDisplay = useCallback((product: string) => {
+  // o display é um produto "categoria:estilo" já comprado: texto (versículo, frase) vai direto para o mural; relógio e clima pedem horário/cidade
+  const pickDisplay = useCallback((id: string) => {
+    const { product, style } = splitDisplayId(id);
+    if (product === "bible" || product === "motivation") {
+      setPlacing({ product, data: { product, style } });
+      return;
+    }
     setDialogError(null);
-    setDialog({ mode: "new", product });
+    setDialog({ mode: "new", product, style });
   }, []);
   const openDetail = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);
@@ -555,7 +561,7 @@ export function BadgeProvider({
     setSelId(null);
     setHoverId(null);
     setDialogError(null);
-    setDialog({ mode: "edit", product: b.data.product, id, initial: b.data });
+    setDialog({ mode: "edit", product: b.data.product, style: b.data.style ?? "", id, initial: b.data });
   }, []);
   async function submitDialog(data: DisplayPayload) {
     if (!dialog) return;
@@ -640,6 +646,7 @@ export function BadgeProvider({
         <DisplayDialog
           open
           product={dialog.product}
+          style={dialog.style}
           initial={dialog.initial}
           editing={dialog.mode === "edit"}
           busy={dialogBusy}
@@ -735,7 +742,9 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const W = 40;
   const TRACK = 90; // mesmo comprimento da barra de inclinação
   const Hh = 124;
-  const Ha = isDisp ? 108 : 42;
+  // versículo e frase não têm o que editar (o estilo é o comprado): só ampliar e tirar
+  const canEdit = isDisp && (badge.data?.product === "clock" || badge.data?.product === "weather");
+  const Ha = canEdit ? 108 : isDisp ? 76 : 42;
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
   const off = Math.max(g.R + 8, SW / 2 + 8);
@@ -820,7 +829,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
             </svg>
           </button>
         )}
-        {isDisp && (
+        {canEdit && (
           <button type="button" onClick={() => onEdit(id)} aria-label="Editar o display: contorno, horário ou cidade" title="Editar" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />

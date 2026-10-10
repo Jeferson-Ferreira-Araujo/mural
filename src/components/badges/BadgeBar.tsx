@@ -4,12 +4,9 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
-import { DisplayCard } from "../widgets";
+import { DisplayCard, displayName, splitDisplayId } from "../widgets";
 import { sampleFor } from "./StoreModal";
 
-const DISPLAY_LABEL: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
-/** Miniatura de cada display: cores da paisagem e um sinal. */
-const TILE: Record<string, [string, string, string]> = { bible: ["#f9e7ad", "#d9a352", "Sl"], motivation: ["#2b4a8c", "#f3a766", "★"], clock: ["#4fa8ee", "#d9f0ff", "12:30"], weather: ["#7d93a8", "#c6d2dc", "24°"] };
 
 /**
  * Barra de baixo (só para o dono, no próprio mural): os pins decorativos que ele tem, numa faixa que rola na horizontal.
@@ -88,7 +85,7 @@ export function BadgeBar({ className = "" }: { className?: string }) {
             type="button"
             disabled={placing}
             onClick={() => (displays.length === 1 ? pickDisplay(displays[0]) : setPickOpen(true))}
-            aria-label={displays.length === 1 ? `${DISPLAY_LABEL[displays[0]] ?? displays[0]}: toque para colocar no mural` : "Seus displays: escolher qual colocar no mural"}
+            aria-label={displays.length === 1 ? `${displayName(displays[0])}: toque para colocar no mural` : "Seus displays: escolher qual colocar no mural"}
             title="Displays"
             className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-[#f2e8d3] text-[#3b2616] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#fbf6ea] active:scale-95 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
           >
@@ -128,12 +125,12 @@ export function BadgeBar({ className = "" }: { className?: string }) {
                     <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                       <span className="text-[9px]">
                         <span className="relative block">
-                          <DisplayCard data={sampleFor(p)} />
+                          <DisplayCard data={sampleFor(splitDisplayId(p).product, splitDisplayId(p).style)} />
                         </span>
                       </span>
                     </span>
                     <span className="p-3">
-                      <span className="block font-title text-base font-semibold">{DISPLAY_LABEL[p] ?? p}</span>
+                      <span className="block font-title text-base font-semibold">{displayName(p)}</span>
                       <span className="mt-0.5 block text-xs text-[#6b5440]">Toque para escolher o estilo e colocar no mural</span>
                     </span>
                   </button>

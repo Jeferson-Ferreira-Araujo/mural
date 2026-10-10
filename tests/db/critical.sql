@@ -121,15 +121,19 @@ begin
 
   -- 10) pins da loja (widgets): só o dono que comprou coloca; o espaço coberto não recebe pin; cobrir espaço ocupado é recusado
   perform set_config('request.jwt.claims', json_build_object('sub', o, 'role', 'authenticated')::text, true);
-  delete from public.pin_product_inventory where user_id = o and product_id = 'clock';
+  delete from public.pin_product_inventory where user_id = o and product_id like 'clock:%';
   begin perform public.add_display(a.id, 'clock', '{}'::jsonb, 50, 50, array[24]); rep := rep || 'FALHA ' || 'widget sem comprar' || E'
 '; exception when others then rep := rep || case when sqlerrm like '%product_not_owned%' then 'OK    ' else 'FALHA ' end || 'sem comprar, o widget é recusado' || E'
 '; end;
   update public.profiles set credits = 30 where user_id = o;
-  perform public.buy_pin_product('clock');
+  perform public.buy_pin_product('clock:flip');
   perform public.add_display(a.id, 'clock', '{"style":"flip"}'::jsonb, 50, 50, array[24, 25]);
   begin perform public.send_message(nick, a.slug, null, 24, 'postit', '{"text":"x","color":"yellow"}'::jsonb); rep := rep || 'FALHA ' || 'pin em espaço coberto' || E'
 '; exception when others then rep := rep || case when sqlerrm like '%slot_taken%' then 'OK    ' else 'FALHA ' end || 'espaço coberto por widget não recebe pin' || E'
+'; end;
+  -- cada estilo é comprado separadamente: tendo só o flip, o súnset (padrão) continua recusado
+  begin perform public.add_display(a.id, 'clock', '{"style":"sunset"}'::jsonb, 10, 10, '{}'); rep := rep || 'FALHA ' || 'estilo não comprado' || E'
+'; exception when others then rep := rep || case when sqlerrm like '%product_not_owned%' then 'OK    ' else 'FALHA ' end || 'estilo que não foi comprado é recusado' || E'
 '; end;
   begin perform public.add_display(a.id, 'clock', '{"style":"neon"}'::jsonb, 10, 10, '{}'); rep := rep || 'FALHA ' || 'estilo inválido' || E'
 '; exception when others then rep := rep || case when sqlerrm like '%invalid_content%' then 'OK    ' else 'FALHA ' end || 'estilo inválido é recusado' || E'

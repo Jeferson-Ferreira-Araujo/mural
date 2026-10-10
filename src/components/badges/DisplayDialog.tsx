@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import type { FrameColor } from "@/lib/style";
 import { CLOCK_ZONES } from "../widgets/core";
-import { DisplayCard, defaultStyle, stylesOf, type DisplayData } from "../widgets";
+import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import { Modal } from "../account/Modal";
 import { Field, inputClass, primaryButton } from "../ui";
 
-const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
 const SAMPLE: Record<string, Partial<DisplayData>> = {
   bible: { text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" },
   motivation: { text: "Disciplina de hoje é o resultado de amanhã." },
@@ -20,8 +19,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
  * Antes de soltar o pin da loja no mural (ou ao editá-lo): escolher o estilo, a cor do contorno e, no relógio, o horário; no clima, a cidade.
  * `onSubmit` recebe os dados prontos para o servidor.
  */
-export function DisplayDialog({ open, product, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
-  const [style, setStyle] = useState("");
+export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
   const [city, setCity] = useState<PlaceHit | null>(null);
@@ -33,7 +31,6 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
 
   useEffect(() => {
     if (!open) return;
-    setStyle(initial?.style ?? defaultStyle(product));
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setCity(initial?.city && typeof initial.lat === "number" && typeof initial.lon === "number" ? { name: initial.city, address: "", lat: initial.lat, lon: initial.lon } : null);
@@ -41,7 +38,7 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
     setHits([]);
     setSearched(false);
     setErr(null);
-  }, [open, initial, product]);
+  }, [open, initial, product, style]);
 
   async function search() {
     const q = query.trim();
@@ -65,10 +62,9 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
     ...(product === "clock" ? { tz } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
-  const data: DisplayData = { ...base, style: style || defaultStyle(product) };
+  const data: DisplayData = { ...base, style };
   const ready = product !== "weather" || !!city;
-  const title = NAME[product] ?? "Display";
-  const styles = stylesOf(product);
+  const title = displayName(product + ":" + style);
 
   return (
     <Modal open={open} onClose={onClose} title={title} label={title}>
@@ -78,30 +74,6 @@ export function DisplayDialog({ open, product, initial, editing, busy, error, on
             <DisplayCard data={data} />
           </div>
         </div>
-
-        <fieldset>
-          <legend className="mb-1.5 text-sm font-semibold">Estilo</legend>
-          <div role="radiogroup" aria-label="Estilo" className="grid grid-cols-2 gap-2">
-            {styles.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                role="radio"
-                aria-checked={style === s.id}
-                onClick={() => setStyle(s.id)}
-                className={`cursor-pointer rounded-xl border-2 p-1.5 text-left transition ${style === s.id ? "border-[#d9a21b] bg-[#fff6dd] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white/70 hover:bg-[#fff6dd]"}`}
-              >
-                <div className="pointer-events-none overflow-hidden rounded-lg text-[4.4px] sm:text-[5.2px]">
-                  <DisplayCard data={{ ...base, style: s.id }} />
-                </div>
-                <span className="mt-1 block text-xs font-bold">
-                  {i + 1}. {s.name}
-                </span>
-                <span className="block text-[11px] text-[#6b5440]">{s.hint}</span>
-              </button>
-            ))}
-          </div>
-        </fieldset>
 
         {product === "clock" && (
           <Field label="Horário de qual lugar?">
