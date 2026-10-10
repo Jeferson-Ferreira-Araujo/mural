@@ -73,10 +73,13 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       // durante o gesto o quadro vira uma camada da GPU (mover não repinta os cartões); depois solta, e o navegador redesenha nítido
       el.style.willChange = "transform";
       if (promoteTimer.current) window.clearTimeout(promoteTimer.current);
-      promoteTimer.current = window.setTimeout(() => {
-        if (world.current) world.current.style.willChange = "";
-      }, animate ? 360 : 240);
       const out = s <= limits().minS * 1.02;
+      // com o mural inteiro à vista a camada fica como está: soltá-la fazia o navegador redesenhar tudo de uma vez (a "piscada" ao afastar)
+      promoteTimer.current = out
+        ? null
+        : window.setTimeout(() => {
+            if (world.current) world.current.style.willChange = "";
+          }, animate ? 360 : 240);
       if (out !== zoomedOutRef.current) {
         zoomedOutRef.current = out;
         setZoomedOut(out);
