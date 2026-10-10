@@ -431,14 +431,29 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         // a tela muda na hora (troca os dois espaços); o servidor confirma em seguida e, se falhar, recarrega o quadro como estava
         moveSeq.current++;
         setItems((prev) => {
-          const from = prev.find((i) => i.id === id)?.slot;
-          if (typeof from !== "number") return prev;
+          const cur = prev.find((i) => i.id === id);
+          if (!cur) return prev;
+          if (typeof cur.slot !== "number") return prev.map((i) => (i.id === id ? { ...i, slot, fx: undefined, fy: undefined, fcov: undefined } : i)); // vindo de posição solta
+          const from = cur.slot;
           return prev.map((i) => (i.id === id ? { ...i, slot } : i.slot === slot ? { ...i, slot: from } : i));
         });
         const { error } = await getBrowserSupabase().rpc("move_pin", { p_id: id, p_slot: slot });
         moveSeq.current++;
         if (error) {
           notify("Não foi possível mover o pin agora.");
+          await loadBoard();
+          return false;
+        }
+        return true;
+      },
+      notify,
+      moveFree: async (id: string, x: number, y: number, cov: number[]) => {
+        moveSeq.current++;
+        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, slot: null, fx: x, fy: y, fcov: cov } : i)));
+        const { error } = await getBrowserSupabase().rpc("move_pin_free", { p_id: id, p_x: x, p_y: y, p_cov: cov });
+        moveSeq.current++;
+        if (error) {
+          notify(error.message.includes("slot_taken") ? "Não dá para soltar aqui: o lugar acabou de ser ocupado." : "Não foi possível mover o pin agora.");
           await loadBoard();
           return false;
         }

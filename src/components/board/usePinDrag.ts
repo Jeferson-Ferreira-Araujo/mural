@@ -5,13 +5,13 @@ import { useCallback, useRef } from "react";
 /**
  * Arrastar um pin para outro espaço do quadro (só quem cuida do mural). No mouse, começa depois de mover alguns pixels;
  * no toque, segurando o dedo no pin por um instante (arrastar logo de cara continua movendo o quadro).
- * Soltar sobre um espaço vazio move o pin; sobre outro pin, os dois trocam de lugar. `onMove` recebe o id e o espaço de destino.
+ * Soltar sobre um espaço vazio move o pin; sobre outro pin, os dois trocam de lugar; fora de qualquer espaço, o pin fica solto onde foi deixado (`onFree`). `onMove` recebe o id e o espaço de destino.
  */
 const HOLD_MS = 350;
 const MOUSE_PX = 6;
 const TOUCH_SLOP = 8;
 
-export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) {
+export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, onFree?: (id: string, rect: { left: number; right: number; top: number; bottom: number }) => void) {
   const suppress = useRef(false); // logo depois de arrastar, o clique que o navegador gera não deve abrir o detalhe
 
   const start = useCallback(
@@ -30,6 +30,8 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) 
       let target: HTMLElement | null = null;
       let offX = 0;
       let offY = 0;
+      let gw = 0;
+      let gh = 0;
       let timer = 0;
 
       const setTarget = (t: HTMLElement | null) => {
@@ -41,7 +43,13 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) 
       const slotAt = (x: number, y: number) => {
         for (const n of document.elementsFromPoint(x, y)) {
           const s = (n as HTMLElement).closest?.("[data-slot]") as HTMLElement | null;
-          if (s) return s;
+          if (!s) continue;
+          // espaço vazio: só vale perto do centro dele (mais pra fora, o pin fica solto onde foi deixado); espaço com pin: troca de lugar
+          if (!s.hasAttribute("data-pin-id")) {
+            const r = s.getBoundingClientRect();
+            if (Math.abs(x - (r.left + r.width / 2)) > r.width * 0.3 || Math.abs(y - (r.top + r.height / 2)) > r.height * 0.3) continue;
+          }
+          return s;
         }
         return null;
       };
@@ -57,6 +65,8 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) 
         const k = el.offsetWidth ? r.width / el.offsetWidth : 1;
         offX = sx - r.left;
         offY = sy - r.top;
+        gw = r.width;
+        gh = r.height;
         ghost = el.cloneNode(true) as HTMLElement;
         ghost.removeAttribute("data-slot");
         ghost.removeAttribute("data-pin-drag");
@@ -106,12 +116,15 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null) 
         if (ev.pointerId !== pid) return;
         const dest = dragging ? slotAt(ev.clientX, ev.clientY) : null;
         const was = dragging;
+        const gr = ghost ? { left: ev.clientX - offX, top: ev.clientY - offY, right: ev.clientX - offX + gw, bottom: ev.clientY - offY + gh } : null; // onde o pin foi solto (a transição do fantasma ainda pode estar a caminho)
         cleanup();
         if (was) {
           window.setTimeout(() => (suppress.current = false), 450);
           const to = dest ? Number(dest.dataset.slot) : NaN;
           if (Number.isInteger(to) && to !== slot) {
             onMove?.(id, to);
+          } else if (!dest && gr) {
+            onFree?.(id, { left: gr.left, right: gr.right, top: gr.top, bottom: gr.bottom }); // soltou fora de qualquer espaço: pin solto
           }
         }
       }

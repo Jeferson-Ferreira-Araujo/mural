@@ -67,7 +67,7 @@ function slotsUnder(rect: { left: number; right: number; top: number; bottom: nu
     if (ix > 0 && iy > 0 && (ix * iy) / (r.width * r.height) >= COVER_MIN) {
       const n = Number(el.dataset.slot);
       slots.push(n);
-      if (el.hasAttribute("data-pin-id")) taken.push(n);
+      if (el.hasAttribute("data-pin-id") || el.hasAttribute("data-free-cover")) taken.push(n);
     }
   }
   return { slots, taken };
@@ -125,6 +125,11 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     const rect = { left: dx - w / 2, right: dx + w / 2, top: dy - h / 2, bottom: dy + h / 2 };
     const { slots, taken } = slotsUnder(rect);
     if (taken.length) return { kind: "occupied" };
+    // pin solto (arrastado para fora da grade) no caminho: também ocupa
+    for (const fp of document.querySelectorAll<HTMLElement>("[data-free-pin]")) {
+      const b = fp.getBoundingClientRect();
+      if (b.width > 0 && fp.offsetParent !== null && rect.left < b.right && rect.right > b.left && rect.top < b.bottom && rect.bottom > b.top) return { kind: "occupied" };
+    }
     return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }
   if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };

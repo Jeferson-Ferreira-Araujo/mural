@@ -32,7 +32,7 @@ export function MuralScreen({ composer, ...view }: Props) {
   const [slot, setSlot] = useState<number | null>(null);
   const { badges, displays, canDisplays, placeDisplayAtSlot, openStore } = useBadges();
   // espaços cobertos por pins da loja não recebem pins
-  const coveredSlots = badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : []));
+  const coveredSlots = [...badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])), ...view.items.flatMap((it) => ("fcov" in it && it.fcov ? it.fcov : []))];
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [needAccount, setNeedAccount] = useState(false);

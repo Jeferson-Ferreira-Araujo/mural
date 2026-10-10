@@ -10,7 +10,11 @@ type Base = {
   /** Veio de uma Cápsula PINZ que já abriu. */
   fromCapsule?: boolean;
   /** Espaço do quadro em que o pin foi colado (escolhido por quem deixou). Sem isso, ocupa o primeiro livre. */
-  slot?: number;
+  slot?: number | null;
+  /** pin solto fora da grade (arrastado pelo dono): posição do centro, em % do quadro, e os espaços que cobre */
+  fx?: number;
+  fy?: number;
+  fcov?: number[];
   /** Personalização dos cards de texto (escolhida por quem colou o pin). */
   font?: HandId;
   pin?: PinColor;
@@ -53,7 +57,7 @@ export type MessageType = Message["type"];
  * Cápsula ainda fechada. De propósito NÃO tem nenhum campo de conteúdo (nem o formato):
  * o frontend nunca recebe o que está dentro antes da data de abertura.
  */
-export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number };
+export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number | null; fx?: number; fy?: number; fcov?: number[] };
 
 /**
  * Espaço ocupado cujo conteúdo o servidor NÃO enviou: pin aguardando aprovação de outra pessoa ou pin que o dono (PINZ+)
@@ -61,7 +65,11 @@ export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slo
  */
 export type HiddenItem = {
   id: string;
-  slot?: number;
+  slot?: number | null;
+  /** pin solto fora da grade (arrastado pelo dono): posição do centro, em % do quadro, e os espaços que cobre */
+  fx?: number;
+  fy?: number;
+  fcov?: number[];
   hidden: true;
   pending?: boolean;
   /** Fundo de um mural trancado: só o desenho borrado, sem cadeado nem aviso. */
