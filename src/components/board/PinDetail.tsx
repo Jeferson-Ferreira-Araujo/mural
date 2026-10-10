@@ -249,7 +249,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     "grid size-10 shrink-0 cursor-pointer sm:size-12 place-items-center rounded-xl border border-white/20 bg-[#17110c]/70 text-white transition active:scale-95 disabled:pointer-events-none disabled:opacity-25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]";
 
   // botão de compartilhar com o nome ao lado do ícone (o ícone sozinho ficava pequeno)
-  const shareBtn = `${arrow} !w-auto gap-2 px-4 text-sm font-semibold`;
+  const shareBtn = `${arrow} !flex !w-auto flex-row items-center justify-center gap-2 px-4 text-sm font-semibold whitespace-nowrap`;
 
   return (
     <>
