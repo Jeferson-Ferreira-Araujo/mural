@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { useBadges } from "./BadgeContext";
 
 const DISPLAY_LABEL: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase motivacional", clock: "Relógio", weather: "Clima" };
-/** Miniatura de cada pin da loja: cores da paisagem e um sinal. */
+/** Miniatura de cada display: cores da paisagem e um sinal. */
 const TILE: Record<string, [string, string, string]> = { bible: ["#f9e7ad", "#d9a352", "Sl"], motivation: ["#2b4a8c", "#f3a766", "★"], clock: ["#4fa8ee", "#d9f0ff", "12:30"], weather: ["#7d93a8", "#c6d2dc", "24°"] };
 
 /**
@@ -13,6 +15,7 @@ const TILE: Record<string, [string, string, string]> = { bible: ["#f9e7ad", "#d9
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "" }: { className?: string }) {
+  const [pickOpen, setPickOpen] = useState(false);
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew, displays, pickDisplay, placing } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
@@ -75,31 +78,61 @@ export function BadgeBar({ className = "" }: { className?: string }) {
           );
         })}
       </ul>
-      {/* pins da loja (versículo, frase, relógio, clima): tocar abre as opções e depois o pin vai para o lugar que você quiser */}
+      {/* displays (versículo, frase, relógio, clima): um botão só, como a Loja; com mais de um, abre a lista para escolher */}
       {displays.length > 0 && (
         <>
           <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-          <ul className="flex shrink-0 gap-2" aria-label="Seus displays">
-            {displays.map((p) => (
-              <li key={p}>
-                <button
-                  type="button"
-                  disabled={placing}
-                  onClick={() => pickDisplay(p)}
-                  aria-label={`${DISPLAY_LABEL[p] ?? p}: toque para colocar no mural`}
-                  title={DISPLAY_LABEL[p] ?? p}
-                  className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 disabled:opacity-50"
-                >
-                  <span className="grid size-11 place-items-center rounded-[10px] p-[2px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.4)]" style={{ background: "linear-gradient(145deg,#f6e2b0,#b88a3a)" }}>
-                    <span className="grid size-full place-items-center rounded-[8px] text-[10px] leading-none font-bold text-[#2a3a4a]" style={{ background: `linear-gradient(180deg, ${TILE[p]?.[0] ?? "#4fa8ee"}, ${TILE[p]?.[1] ?? "#d9f0ff"})` }}>
-                      {TILE[p]?.[2]}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <button
+            type="button"
+            disabled={placing}
+            onClick={() => (displays.length === 1 ? pickDisplay(displays[0]) : setPickOpen(true))}
+            aria-label={displays.length === 1 ? `${DISPLAY_LABEL[displays[0]] ?? displays[0]}: toque para colocar no mural` : "Seus displays: escolher qual colocar no mural"}
+            title="Displays"
+            className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-white/10 text-white transition hover:bg-white/20 active:scale-95 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
+          >
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="5" width="18" height="12" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+            <span className="text-[11px] leading-none font-bold">Displays</span>
+          </button>
         </>
+      )}
+      {pickOpen && createPortal(
+        <div className="fixed inset-0 z-[390] grid place-items-center bg-black/55 p-4" onClick={() => setPickOpen(false)}>
+          <div role="dialog" aria-label="Escolher um display" onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-4 text-[#2a1c12] shadow-[0_1rem_3rem_rgba(0,0,0,.5)]">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-title text-lg font-semibold">Qual display colocar?</h2>
+              <button type="button" aria-label="Fechar" onClick={() => setPickOpen(false)} className="grid size-8 cursor-pointer place-items-center rounded-lg hover:bg-black/5">
+                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+            <ul className="grid gap-2">
+              {displays.map((p) => (
+                <li key={p}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPickOpen(false);
+                      pickDisplay(p);
+                    }}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-2.5 text-left transition hover:bg-white active:scale-[0.99]"
+                  >
+                    <span className="grid size-12 shrink-0 place-items-center rounded-[10px] p-[2px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)]" style={{ background: "linear-gradient(145deg,#f6e2b0,#b88a3a)" }}>
+                      <span className="grid size-full place-items-center rounded-[8px] text-[10px] leading-none font-bold text-[#2a3a4a]" style={{ background: `linear-gradient(180deg, ${TILE[p]?.[0] ?? "#4fa8ee"}, ${TILE[p]?.[1] ?? "#d9f0ff"})` }}>
+                        {TILE[p]?.[2]}
+                      </span>
+                    </span>
+                    <span className="font-semibold">{DISPLAY_LABEL[p] ?? p}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>,
+        document.body,
       )}
       </div>
     </section>
