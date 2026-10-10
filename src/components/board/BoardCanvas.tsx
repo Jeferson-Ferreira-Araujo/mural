@@ -253,14 +253,15 @@ export function BoardCanvas({
   };
 
   // durante o arraste: aqui o pin pode ser solto? (o contorno do pin fica verde ou vermelho)
-  const nudgeOk = (id: string, mv: { dx: number; dy: number; k: number; rect: Box }) => {
+  const nudgeOk = (id: string, mv: { dx: number; dy: number; k: number; rect: Box }): string | null => {
     const wrap = root.current;
     const item = items.find((i) => i.id === id);
     const el = wrap?.querySelector<HTMLElement>(`[data-pin-id="${id}"]`);
-    if (!wrap || !item || !el || typeof item.slot !== "number") return true;
+    if (!wrap || !item || !el || typeof item.slot !== "number") return null;
     const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * mv.k;
     const full = { left: mv.rect.left + mv.dx, right: mv.rect.right + mv.dx, top: mv.rect.top + mv.dy, bottom: mv.rect.bottom + mv.dy };
-    return !("error" in solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em }));
+    const sol = solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em });
+    return "error" in sol ? sol.error : null;
   };
 
   // o dono leva o pin para onde quiser: ele passa a pertencer ao espaço onde fica (o espaço de onde saiu volta a aparecer)

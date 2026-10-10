@@ -11,7 +11,7 @@ const HOLD_MS = 350;
 const MOUSE_PX = 6;
 const TOUCH_SLOP = 8;
 
-export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, onNudge?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => void, onCheck?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => boolean) {
+export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, onNudge?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => void, onCheck?: (id: string, mv: { dx: number; dy: number; k: number; rect: { left: number; right: number; top: number; bottom: number } }) => string | null) {
   const suppress = useRef(false); // logo depois de arrastar, o clique que o navegador gera não deve abrir o detalhe
 
   const start = useCallback(
@@ -31,6 +31,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
       let offX = 0;
       let offY = 0;
       let gk = 1;
+      let reasonEl: HTMLElement | null = null;
       let g0 = { left: 0, right: 0, top: 0, bottom: 0 };
       let timer = 0;
 
@@ -60,11 +61,29 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
         if (ghost) {
           // fora de qualquer espaço: o pin só será deslocado; o contorno do fantasma mostra se aqui pode (verde) ou não (vermelho)
           if (!over && onCheck) {
-            const ok = onCheck(id, { dx: lx - sx, dy: ly - sy, k: gk, rect: g0 });
-            ghost.style.outline = `0.28em solid ${ok ? "#6fdc8c" : "#ff6b5b"}`;
+            const why = onCheck(id, { dx: lx - sx, dy: ly - sy, k: gk, rect: g0 }); // null = pode; texto = o motivo de não poder
+            ghost.style.outline = `0.28em solid ${why ? "#ff6b5b" : "#6fdc8c"}`;
             ghost.style.outlineOffset = "0.25em";
+            // o motivo aparece junto do pin enquanto ele está vermelho
+            if (why) {
+              if (!reasonEl) {
+                reasonEl = document.createElement("div");
+                Object.assign(reasonEl.style, { position: "fixed", zIndex: "10000", pointerEvents: "none", maxWidth: "min(80vw, 18rem)", padding: "6px 10px", borderRadius: "10px", background: "rgba(23,17,12,.92)", color: "#fff", font: "600 13px/1.25 system-ui, sans-serif", boxShadow: "0 4px 14px rgba(0,0,0,.45)" });
+                document.body.appendChild(reasonEl);
+              }
+              reasonEl.textContent = why.replace(/^Não dá para soltar aqui: /, "Aqui não: ");
+              reasonEl.style.left = `${Math.max(8, Math.min(lx - 80, window.innerWidth - 260))}px`;
+              reasonEl.style.top = `${Math.max(8, ly - offY - 46)}px`;
+            } else if (reasonEl) {
+              reasonEl.remove();
+              reasonEl = null;
+            }
           } else {
             ghost.style.outline = "none";
+            if (reasonEl) {
+              reasonEl.remove();
+              reasonEl = null;
+            }
           }
         }
       };
@@ -105,6 +124,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
         window.removeEventListener("pointerup", onUp);
         window.removeEventListener("pointercancel", onCancel);
         ghost?.remove();
+        reasonEl?.remove();
         el.style.opacity = "";
         setTarget(null);
         document.body.classList.remove("pin-dragging");
