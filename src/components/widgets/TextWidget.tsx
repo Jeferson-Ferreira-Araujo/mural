@@ -10,9 +10,9 @@ export function TextWidget({ style = "classic", text, reference, frame, label }:
   const st: TextStyle = style === "night" || style === "floral" || style === "natural" ? style : "classic";
   const body = text ?? "O texto de hoje aparece aqui.";
   const quote = st !== "natural";
-  // textos longos pedem letra menor para caber no cartão
-  const size = body.length <= 50 ? 1.75 : body.length <= 90 ? 1.45 : body.length <= 140 ? 1.18 : body.length <= 200 ? 0.98 : 0.84;
-  const serif = st === "natural" ? "var(--font-patrick), cursive" : "var(--font-playfair), Georgia, serif";
+  // a letra cresce até ocupar a área útil do cartão (cerca de 21em × 7em): quanto mais longo o texto, menor, mas sempre o maior que cabe
+  const size = Math.min(2.1, Math.max(0.74, Math.sqrt((190 * (reference ? 0.8 : 1)) / (body.length + 6))));
+  const font = "var(--font-jakarta), system-ui, sans-serif";
   return (
     <WidgetFrame frame={frame} label={label} scene={SCENE[st]}>
       {st === "classic" && (
@@ -35,14 +35,14 @@ export function TextWidget({ style = "classic", text, reference, frame, label }:
           <SunIcon />
         </Corner>
       )}
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-[3.2em] pt-[0.3em] pb-[0.6em] text-center">
-        <p className="leading-[1.18] [overflow-wrap:anywhere]" style={{ fontFamily: serif, fontSize: `${size}em`, fontStyle: st === "natural" ? "normal" : "italic", fontWeight: st === "natural" ? 600 : 500 }}>
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-[1.5em] pt-[1.7em] pb-[0.7em] text-center">
+        <p className="leading-[1.26] text-balance [overflow-wrap:anywhere]" style={{ fontFamily: font, fontSize: `${size}em`, fontWeight: 600 }}>
           {quote ? "“" : ""}
           {body}
           {quote ? "”" : ""}
         </p>
         {reference && (
-          <p className="mt-[0.3em] text-[0.8em] leading-tight font-semibold opacity-85" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+          <p className="mt-[0.35em] text-[0.82em] leading-tight font-bold opacity-90" style={{ fontFamily: font }}>
             {reference}
           </p>
         )}
