@@ -351,7 +351,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       </div>
 
       {cornerLeft && (
-        <div onPointerDown={(e) => e.stopPropagation()} className="absolute bottom-3 left-3 z-20">
+        <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className="absolute bottom-3 left-3 z-20">
           {cornerLeft}
         </div>
       )}
