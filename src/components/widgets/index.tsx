@@ -3,6 +3,7 @@
 import { CalendarWidget, type CalDate } from "./CalendarWidget";
 import { ClockWidget } from "./ClockWidget";
 import { CookieWidget } from "./CookieWidget";
+import { DateWidget } from "./DateWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
 
@@ -28,6 +29,10 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "paper", name: "Parede", hint: "Calendário de papel." },
     { id: "modern", name: "Moderno", hint: "Escuro e limpo." },
   ],
+  date: [
+    { id: "page", name: "Folha", hint: "Folha de calendário com a data de hoje." },
+    { id: "night", name: "Noite", hint: "Escuro e limpo." },
+  ],
   cookie: [
     { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
     { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
@@ -49,6 +54,7 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "bible", label: "Versículos", single: "Versículo" },
   { id: "calendar", label: "Calendários", single: "Calendário" },
   { id: "cookie", label: "Biscoito da sorte", single: "Biscoito" },
+  { id: "date", label: "Calendário do dia", single: "Calendário do dia" },
 ];
 export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
@@ -74,6 +80,8 @@ export function DisplayCard({ data }: { data: DisplayData }) {
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     case "calendar":
       return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
+    case "date":
+      return <DateWidget style={data.style} frame={data.frame} />;
     case "cookie":
       return <CookieWidget style={data.style} frame={data.frame} />;
     default:

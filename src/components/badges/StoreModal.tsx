@@ -79,6 +79,7 @@ export function sampleFor(product: string, style?: string): DisplayData {
       return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
     }
     case "cookie":
+    case "date":
       return { product, style: st };
     default:
       return { product: "weather", style: st, city: "São Paulo", lat: 0, lon: 0 };

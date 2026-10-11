@@ -102,8 +102,8 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
-/** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1006 e ficam em qualquer lugar do mural, não em um espaço. */
-export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006 };
+/** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1007 e ficam em qualquer lugar do mural, não em um espaço. */
+export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006, date: 1007 };
 export const isDisplayKey = (key: number) => key >= 1000;
 export const displayProductOf = (key: number) => Object.entries(DISPLAY_KEYS).find(([, k]) => k === key)?.[0];
 /** Largura base de um display (em em do quadro), contra 3 de um botton comum. */

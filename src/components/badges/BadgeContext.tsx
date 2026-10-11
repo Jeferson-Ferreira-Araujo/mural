@@ -557,7 +557,7 @@ export function BadgeProvider({
   // o display é um produto "categoria:estilo" já comprado: texto (versículo, frase) vai direto para o mural; relógio e clima pedem horário/cidade
   const pickDisplay = useCallback((id: string) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "bible" || product === "motivation" || product === "clock" || product === "cookie") {
+    if (product === "bible" || product === "motivation" || product === "clock" || product === "cookie" || product === "date") {
       // o relógio sempre usa a hora do aparelho de quem está vendo: nada a perguntar
       setPlacing({ product, data: product === "clock" ? { product, style, tz: "local" } : { product, style } });
       return;
