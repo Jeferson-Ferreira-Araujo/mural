@@ -10,6 +10,9 @@ import { PasswordHints } from "../PasswordHints";
 import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
+/** Interruptor "Aparecer como visitante" no Perfil: desligado por enquanto (quem já tinha escolhido mantém a escolha; para religar, troque para true). */
+const VISIT_TOGGLE_ENABLED = false;
+
 /** Perfil: foto, nome de usuário e e-mail (só leitura) e troca de senha. */
 export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacySaved, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; /** a privacidade mudou: recarrega os murais da tela */ onPrivacySaved?: () => void; plus?: boolean }) {
   const [pw, setPw] = useState("");
@@ -197,15 +200,17 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         </button>
       </form>
 
-      <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold">Aparecer como visitante</p>
-          <p className="text-xs text-[#6b5440]">Desligado, você some das listas de visitantes e também não vê quem visitou os seus murais.</p>
+      {VISIT_TOGGLE_ENABLED && (
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold">Aparecer como visitante</p>
+            <p className="text-xs text-[#6b5440]">Desligado, você some das listas de visitantes e também não vê quem visitou os seus murais.</p>
+          </div>
+          <button type="button" role="switch" aria-checked={showVisits} aria-label="Aparecer como visitante" onClick={() => void toggleVisits()} className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors ${showVisits ? "bg-[#2f8f4e]" : "bg-[#b9ad9b]"}`}>
+            <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${showVisits ? "translate-x-5" : ""}`} />
+          </button>
         </div>
-        <button type="button" role="switch" aria-checked={showVisits} aria-label="Aparecer como visitante" onClick={() => void toggleVisits()} className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors ${showVisits ? "bg-[#2f8f4e]" : "bg-[#b9ad9b]"}`}>
-          <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${showVisits ? "translate-x-5" : ""}`} />
-        </button>
-      </div>
+      )}
 
       <button type="button" onClick={onSignOut} className="mt-5 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
         Sair da conta
