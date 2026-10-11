@@ -320,8 +320,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                     <DisplayCard data={widget.data} />
                   ) : item ? (
                     <>
+                      {/* no detalhe os bottons não aparecem: só o pin */}
                       <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
-                      <BadgesOver list={over} />
                     </>
                   ) : null}
                 </div>

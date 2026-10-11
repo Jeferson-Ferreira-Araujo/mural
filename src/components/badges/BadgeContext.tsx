@@ -90,22 +90,8 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   const m = 6;
   if (px < lr.left - m || px > lr.right + m || py < lr.top - m || py > lr.bottom + m) return { kind: "out" };
 
-  const onPhysical = (x: number, y: number) =>
-    document.elementsFromPoint(x, y).some((el) => {
-      const pin = el.closest<HTMLElement>("[data-pin-type]");
-      return !!pin; // qualquer pin: o botton fica em volta, nunca por cima
-    });
-  // pins: vale o ponto onde o botom foi solto E o botom inteiro (não pode cobrir nem um pedaço do pin)
-  const physical = [...document.querySelectorAll<HTMLElement>("[data-pin-type]")]
-    .filter((p) => visible(p))
-    .map((p) => p.getBoundingClientRect());
-  const coversPhysical = (x: number, y: number) => {
-    const hw = (w * 0.85) / 2;
-    const hh = (h * 0.85) / 2;
-    return physical.some((r) => x + hw > r.left && x - hw < r.right && y + hh > r.top && y - hh < r.bottom);
-  };
-  // outros botons já colocados (o que está sendo arrastado não conta): não pode ficar um sobre o outro
-  const others = [...layer.children].filter((c) => c !== ignore).map((c) => c.getBoundingClientRect());
+  // outros bottons já colocados (o que está sendo arrastado não conta): não pode ficar um sobre o outro. Pins e displays não contam: o botton pode ficar por cima deles
+  const others = [...layer.children].filter((c) => c !== ignore && (c as HTMLElement).dataset.badgeKind !== "display").map((c) => c.getBoundingClientRect());
   const coversBadge = (x: number, y: number) => {
     const hw = (w * 0.8) / 2;
     const hh = (h * 0.8) / 2;
@@ -138,27 +124,9 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     }
     return { kind: "ok", x: ((dx - lr.left) / lr.width) * 100, y: ((dy - lr.top) / lr.height) * 100, slots, rect };
   }
-  if (onPhysical(px, py) || coversPhysical(clamp(px, lr.left + w / 2, lr.right - w / 2), clamp(py, lr.top + h / 2, lr.bottom - h / 2))) return { kind: "physical" };
-
-  let cx = clamp(px, lr.left + w / 2, lr.right - w / 2);
+  const cx = clamp(px, lr.left + w / 2, lr.right - w / 2);
   const cy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
 
-  // tachinha no caminho: o botom vai um pouco para o lado
-  const gap = Math.max(2, w * 0.08);
-  const tacks = [...document.querySelectorAll("[data-tack]")].filter(visible).map((t) => t.getBoundingClientRect());
-  const hit = (x: number) => tacks.find((t) => x + w / 2 > t.left - gap && x - w / 2 < t.right + gap && cy + h / 2 > t.top - gap && cy - h / 2 < t.bottom + gap);
-  for (let i = 0; i < 8; i++) {
-    const t = hit(cx);
-    if (!t) break;
-    const right = t.right + gap + w / 2;
-    const left = t.left - gap - w / 2;
-    const roomR = right <= lr.right - w / 2;
-    const roomL = left >= lr.left + w / 2;
-    const preferRight = px >= (t.left + t.right) / 2;
-    cx = preferRight ? (roomR ? right : roomL ? left : right) : roomL ? left : roomR ? right : left;
-    cx = clamp(cx, lr.left + w / 2, lr.right - w / 2);
-  }
-  if (cx !== px && (onPhysical(cx, cy) || coversPhysical(cx, cy))) return { kind: "physical" };
   if (coversBadge(cx, cy)) return { kind: "badge" };
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
@@ -682,20 +650,11 @@ export function BadgeProvider({
 
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
-  const removeOver = useCallback(
-    (rect: { left: number; right: number; top: number; bottom: number }, minOverlap = 0.1) => {
-      const mine = new Set(live.current.badges.filter((b) => b.mine !== false && !isDisplayKey(b.key)).map((b) => b.id)); // só bottons comuns voltam para a barra, nunca outros widgets
-      for (const el of document.querySelectorAll<HTMLElement>("[data-badge-id]")) {
-        const id = el.dataset.badgeId;
-        if (!id || !mine.has(id) || !visible(el)) continue;
-        const r = el.getBoundingClientRect();
-        const mx = r.width * minOverlap;
-        const my = r.height * minOverlap; // só conta se o botton cobre um pedaço de verdade
-        if (r.right - mx > rect.left && r.left + mx < rect.right && r.bottom - my > rect.top && r.top + my < rect.bottom) removeById(id);
-      }
-    },
-    [removeById],
-  );
+  // bottons agora podem ficar por cima de pins e displays: nada volta para a barra por estar debaixo de um pin ou display (o gancho continua para quem o chama)
+  const removeOver = useCallback((rect: { left: number; right: number; top: number; bottom: number }, minOverlap?: number) => {
+    void rect;
+    void minOverlap;
+  }, []);
   removeOverRef.current = removeOver;
   const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;

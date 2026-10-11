@@ -131,7 +131,8 @@ export function BadgeLayer() {
   const { badges } = useBadges();
   return (
     <div data-badge-layer className="pointer-events-none absolute inset-0 z-[40]">
-      {badges.map((b) => (
+      {/* displays primeiro (embaixo) e bottons depois (por cima): um botton pode ficar sobre um display */}
+      {[...badges.filter((b) => isDisplayKey(b.key) || b.kind === "display"), ...badges.filter((b) => !(isDisplayKey(b.key) || b.kind === "display"))].map((b) => (
         <PlacedItem key={b.id} b={b} />
       ))}
     </div>
