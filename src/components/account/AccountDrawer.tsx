@@ -19,6 +19,9 @@ import { SharedMurals } from "./SharedMurals";
 
 type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "following" | "visitors" | "install";
 
+/** "Visitantes" no menu da conta: desligado por enquanto (nada é apagado; para religar, troque para true). */
+const VISITORS_ENABLED = false;
+
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
 
@@ -144,16 +147,18 @@ export function AccountDrawer({
                       </svg>
                     }
                   />
-                  <Row
-                    onClick={() => setModal("visitors")}
-                    label="Visitantes"
-                    icon={
-                      <svg {...ic}>
-                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    }
-                  />
+                  {VISITORS_ENABLED && (
+                    <Row
+                      onClick={() => setModal("visitors")}
+                      label="Visitantes"
+                      icon={
+                        <svg {...ic}>
+                          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      }
+                    />
+                  )}
                   <Row
                     onClick={() => setModal("pins")}
                     label="Aprovações"
