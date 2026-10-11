@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { adminClient, mp, paymentsConfigured } from "@/lib/mercadopago";
+import { adminClient, mpEither, paymentsConfigured } from "@/lib/mercadopago";
 import { allow } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -32,9 +32,9 @@ export async function POST(req: Request) {
   if (isAdmin) return fail(403, "admin");
 
   try {
-    if (paymentsConfigured()) {
+    if (await paymentsConfigured()) {
       const { data: sub } = await admin.from("subscriptions").select("mp_preapproval_id").eq("user_id", uid).maybeSingle();
-      if (sub?.mp_preapproval_id) await mp(`/preapproval/${encodeURIComponent(sub.mp_preapproval_id)}`, { method: "PUT", body: { status: "cancelled" } });
+      if (sub?.mp_preapproval_id) await mpEither(`/preapproval/${encodeURIComponent(sub.mp_preapproval_id)}`, { method: "PUT", body: { status: "cancelled" } });
     }
     // desativa: o perfil some para todos (as consultas já ignoram perfis bloqueados) e fica marcado com a data
     const now = new Date().toISOString();

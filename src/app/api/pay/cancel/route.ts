@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { adminClient, mp, paymentsConfigured, syncPreapproval } from "@/lib/mercadopago";
+import { adminClient, mpEither, paymentsConfigured, syncPreapproval } from "@/lib/mercadopago";
 import { allow } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -13,7 +13,7 @@ const fail = (status: number, error: string) => NextResponse.json({ error }, { s
 
 /** Cancela a assinatura PINZ+ da própria conta. O PINZ+ continua até o fim do período já pago. */
 export async function POST(req: Request) {
-  if (!paymentsConfigured()) return fail(503, "unavailable");
+  if (!(await paymentsConfigured())) return fail(503, "unavailable");
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!jwt) return fail(401, "not_authenticated");
   const { data: u, error: authErr } = await createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }).auth.getUser(jwt);
@@ -23,8 +23,8 @@ export async function POST(req: Request) {
 
   const { data: sub } = await adminClient().from("subscriptions").select("mp_preapproval_id, status").eq("user_id", uid).maybeSingle();
   if (!sub?.mp_preapproval_id) return fail(404, "no_subscription");
-  const r = await mp(`/preapproval/${encodeURIComponent(sub.mp_preapproval_id)}`, { method: "PUT", body: { status: "cancelled" } });
+  const r = await mpEither(`/preapproval/${encodeURIComponent(sub.mp_preapproval_id)}`, { method: "PUT", body: { status: "cancelled" } });
   if (!r.ok) return fail(502, "provider_error");
-  await syncPreapproval(sub.mp_preapproval_id);
+  await syncPreapproval(sub.mp_preapproval_id, r.env);
   return NextResponse.json({ ok: true });
 }

@@ -6,7 +6,7 @@
 //
 // ANTES de publicar: `git push` precisa ter dado certo (o servidor faz `git pull` do GitHub; sem push ele publica o código antigo).
 // O servidor roda /opt/mural/deploy.sh = git pull --ff-only em /opt/mural/src + docker compose up -d --build; termina com "deploy ok".
-// Variáveis do servidor (fora do git): /opt/mural/.env (AVATAR_SIGNING_SECRET, GOOGLE_MAPS_API_KEY, MP_ACCESS_TOKEN, SUPABASE_SECRET_KEY).
+// Variáveis do servidor (fora do git): /opt/mural/.env (AVATAR_SIGNING_SECRET, GOOGLE_MAPS_API_KEY, MP_ACCESS_TOKEN (= teste), MP_ACCESS_TOKEN_LIVE e MP_WEBHOOK_SECRET_LIVE (produção; o /admin escolhe o ambiente), SUPABASE_SECRET_KEY).
 const path = require("path");
 let Client;
 try {

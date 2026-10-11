@@ -17,7 +17,7 @@ const fail = (status: number, error: string) => NextResponse.json({ error }, { s
  * Corpo: { product: "plus" } ou { product: "credits:c11" }. Preço e quantidade vêm SEMPRE daqui (lib/plans), nunca do navegador.
  */
 export async function POST(req: Request) {
-  if (!paymentsConfigured()) return fail(503, "unavailable");
+  if (!(await paymentsConfigured())) return fail(503, "unavailable");
 
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!jwt) return fail(401, "not_authenticated");

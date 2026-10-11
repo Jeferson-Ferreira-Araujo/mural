@@ -8,6 +8,7 @@ import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
 import { AnalyticsPanel } from "./AnalyticsPanel";
 import { FeaturesPanel } from "./FeaturesPanel";
+import { PayModeSwitch } from "./PayModeSwitch";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
@@ -460,6 +461,9 @@ export default function Admin() {
             ← Voltar ao site
           </Link>
         </header>
+
+        {/* ambiente dos pagamentos (teste/produção): sempre à vista, qualquer que seja a seção */}
+        <PayModeSwitch onToast={setToast} />
 
         <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-2xl grid-cols-5 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
