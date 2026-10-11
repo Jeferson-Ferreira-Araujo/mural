@@ -175,7 +175,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 <Field label="Hora (opcional)">{(id) => <input id={id} type="time" value={cdTime} onChange={(e) => setCdTime(e.target.value)} className={inputClass} />}</Field>
               </div>
             </div>
-            <p className="text-sm text-[#6b5440]">Mostra quanto falta em dias, horas, minutos e segundos. A hora vale no relógio do aparelho de quem vê. Dá para voltar e editar quando quiser.</p>
           </div>
         )}
 
