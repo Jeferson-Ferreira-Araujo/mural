@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getOwnAvatar, MAX_AVATAR_MB, processAvatar, removeAvatar, uploadAvatar } from "@/lib/avatar";
+import { getOwnAvatar, processAvatar, removeAvatar, uploadAvatar } from "@/lib/avatar";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "./Avatar";
 
@@ -71,7 +71,6 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
           )}
         </div>
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => void pick(e.target.files?.[0])} aria-label="Escolher foto de perfil" />
-        <p className="mt-1.5 text-[11px] text-[#8a7b69]">JPG, PNG ou WebP, até {MAX_AVATAR_MB} MB.</p>
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`mt-1.5 text-sm ${msg.ok ? "text-[#2f6b3a]" : "text-[#a23b2a]"}`}>
             {msg.text}
