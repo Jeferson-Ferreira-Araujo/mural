@@ -65,21 +65,53 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const zoomingTimer = useRef<number | null>(null);
   const rafId = useRef(0);
   const boxRect = useRef<DOMRect | null>(null);
+  const lastS = useRef(0);
+  const outRaf = useRef(0);
   const apply = useCallback(
     (animate = false) => {
       const el = world.current;
       if (!el) return;
       const { x, y, s } = view.current;
+      const prevS = lastS.current;
+      lastS.current = s;
+      // afastar (a escala diminui muito): a camada é preparada um quadro ANTES de a animação começar, para o custo de montá-la não cair no meio do movimento
+      const zoomOut = animate && prevS > 0 && s < prevS * 0.97;
+      if (outRaf.current) {
+        window.clearTimeout(outRaf.current);
+        outRaf.current = 0;
+      }
       el.style.transition = animate ? "transform .24s cubic-bezier(.2,.8,.2,1)" : "none";
       // durante a animação as sombras e filtros saem (são o que mais pesa com dezenas de pins na tela): zoom sem travar
       if (animate) {
         el.classList.add("zooming");
         if (zoomingTimer.current) window.clearTimeout(zoomingTimer.current);
-        zoomingTimer.current = window.setTimeout(() => world.current?.classList.remove("zooming"), 320);
+        zoomingTimer.current = window.setTimeout(() => {
+          const w = world.current;
+          if (!w) return;
+          if (zoomOut) {
+            // fim do afastar: o quadro pequeno é redesenhado já na escala pequena (a camada guardava a escala grande do começo, e redesenhar tudo nela travava);
+            // solta a camada por um quadro e a prende de novo
+            w.classList.remove("zooming");
+            w.style.willChange = "";
+            window.setTimeout(() => {
+              if (world.current) world.current.style.willChange = "transform";
+            }, 34);
+          } else w.classList.remove("zooming");
+        }, 320);
       }
-      el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
+      const write = () => {
+        const v = view.current;
+        el.style.transform = `translate3d(${v.x}px, ${v.y}px, 0) scale(${v.s})`;
+      };
       // durante o gesto o quadro vira uma camada da GPU (mover não repinta os cartões); depois solta, e o navegador redesenha nítido
       el.style.willChange = "transform";
+      if (zoomOut) {
+        // ~2 quadros de folga (e não depende de requestAnimationFrame, que pausa com a aba escondida)
+        outRaf.current = window.setTimeout(() => {
+          outRaf.current = 0;
+          write();
+        }, 34);
+      } else el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
       if (promoteTimer.current) window.clearTimeout(promoteTimer.current);
       const out = s <= limits().minS * 1.02;
       // com o mural inteiro à vista a camada fica como está: soltá-la fazia o navegador redesenhar tudo de uma vez (a "piscada" ao afastar)
