@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
-import { getPublicMural, muralUrl, type MuralStats } from "@/lib/mural";
+import { getPublicMural, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
@@ -68,7 +68,6 @@ export function AccountDrawer({
   onSharedChanged,
   onExportImage,
   inline = false,
-  notifications,
 }: {
   open: boolean;
   onClose: () => void;
@@ -129,15 +128,6 @@ export function AccountDrawer({
     void getPublicMural(getBrowserSupabase(), { nick, slug: mural.slug }).then((m) => setStats(m?.stats ?? null));
   }, [modal, mural, nick]);
 
-  async function copy() {
-    if (!mural) return;
-    try {
-      await navigator.clipboard.writeText(`https://${muralUrl({ nick, slug: mural.slug })}`);
-      onNotify("Link copiado ✓");
-    } catch {
-      onNotify("Não foi possível copiar o link.");
-    }
-  }
   const close = () => setModal(null);
   const app = useInstall(); // "Instalar o app": só aparece onde dá para instalar e ainda não está instalado
 
@@ -200,16 +190,6 @@ export function AccountDrawer({
                       </svg>
                     }
                   />
-                  <Row
-                    onClick={() => void copy()}
-                    label="Copiar link do mural"
-                    hint={muralUrl({ nick, slug: mural.slug })}
-                    icon={
-                      <svg {...ic}>
-                        <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1" />
-                      </svg>
-                    }
-                  />
                 </>
               )}
               {onExportImage && (
@@ -239,23 +219,6 @@ export function AccountDrawer({
                   </svg>
                 }
               />
-              {notifications && (
-                <Row
-                  onClick={() => {
-                    onClose();
-                    notifications.onOpen();
-                  }}
-                  label="Notificações"
-                  hint={notifications.count > 0 ? `${notifications.count} nova${notifications.count > 1 ? "s" : ""}` : "Avisos sobre os seus pins"}
-                  badge={notifications.count}
-                  icon={
-                    <svg {...ic}>
-                      <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
-                      <path d="M10 20a2.2 2.2 0 0 0 4 0" />
-                    </svg>
-                  }
-                />
-              )}
               <Row
                 onClick={onOpenStore}
                 label="Loja"
