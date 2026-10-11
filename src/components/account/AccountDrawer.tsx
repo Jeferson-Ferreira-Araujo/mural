@@ -281,7 +281,7 @@ export function AccountDrawer({
               <Row
                 onClick={() => setModal("purchases")}
                 label="Minhas compras"
-                hint="Pagamentos e uso dos créditos"
+                hint="Pagamentos e assinatura"
                 icon={
                   <svg {...ic}>
                     <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" />

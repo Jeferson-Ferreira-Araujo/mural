@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BADGES } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
 import { SUPPORT_EMAIL } from "@/lib/contact";
-import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxLedger, type TxPayment } from "@/lib/payments";
+import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxPayment } from "@/lib/payments";
 import { Modal } from "./Modal";
 
 const date = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
@@ -31,7 +31,7 @@ export function StatusChip({ status }: { status: string }) {
   return <span className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${tone}`}>{s.text}</span>;
 }
 
-/** "Minhas compras": o que a pessoa já pagou e no que gastou os créditos. */
+/** "Minhas compras": o que a pessoa já pagou (o histórico de uso dos créditos saiu: confundia). */
 export function TransactionsModal({ open, onClose, credits }: { open: boolean; onClose: () => void; credits: number }) {
   const [tx, setTx] = useState<Transactions | null>(null);
   const [failed, setFailed] = useState(false);
@@ -99,24 +99,6 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
             )}
           </section>
 
-          <section aria-label="Uso dos créditos">
-            <h3 className="font-title text-base font-semibold">Uso dos créditos</h3>
-            {tx.ledger.length === 0 ? (
-              <p className="mt-1 text-sm text-[#6b5440]">Nenhum crédito usado ainda.</p>
-            ) : (
-              <ul className="mt-2 divide-y divide-[#e6d8bd] rounded-2xl border border-[#e1d3ba] bg-white/70">
-                {tx.ledger.map((l: TxLedger, i) => (
-                  <li key={i} className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm">
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold">{ledgerLabel(l.reason)}</p>
-                      <p className="text-xs text-[#6b5440]">{date(l.at)}</p>
-                    </div>
-                    <strong className={l.delta > 0 ? "text-[#2f6a3c]" : "text-[#a23b2a]"}>{l.delta > 0 ? `+${l.delta}` : l.delta}</strong>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
           <p className="text-center text-xs text-[#6b5440]">
             Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para{" "}
             <a className="font-semibold underline" href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Dúvida sobre um pagamento")}`}>
