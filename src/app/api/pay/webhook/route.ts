@@ -36,7 +36,8 @@ async function handle(req: Request) {
     }
 
     if (type === "subscription_preapproval" || type === "preapproval") {
-      return (await syncPreapproval(id, env)).ok ? ok() : NextResponse.json({ error: "lookup_failed" }, { status: 502 });
+      const sync = await syncPreapproval(id, env);
+      return sync.ok || sync.notFound ? ok() : NextResponse.json({ error: "lookup_failed" }, { status: 502 });
     }
 
     if (type === "subscription_authorized_payment") {
@@ -44,6 +45,7 @@ async function handle(req: Request) {
       if (!r.ok) return NextResponse.json({ error: "lookup_failed" }, { status: r.status === 404 ? 200 : 502 });
       if (!r.data.preapproval_id) return ok();
       const sync = await syncPreapproval(r.data.preapproval_id, env);
+      if (sync.notFound) return ok();
       if (!sync.ok) return NextResponse.json({ error: "lookup_failed" }, { status: 502 });
       // cada mensalidade fica registrada (aparece no extrato do usuário e no admin)
       if (sync.uid) {

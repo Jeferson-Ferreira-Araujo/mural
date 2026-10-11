@@ -93,9 +93,9 @@ export async function webhookEnv(req: Request, dataId: string | null): Promise<P
 export const isUuid = (s: unknown): s is string => typeof s === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
 /** Atualiza o estado da assinatura PINZ+ no banco a partir do que o Mercado Pago diz agora. */
-export async function syncPreapproval(preapprovalId: string, env?: PayEnv): Promise<{ ok: boolean; uid?: string }> {
+export async function syncPreapproval(preapprovalId: string, env?: PayEnv): Promise<{ ok: boolean; uid?: string; notFound?: boolean }> {
   const r = await mp<{ id?: string; status?: string; external_reference?: string; next_payment_date?: string }>(`/preapproval/${encodeURIComponent(preapprovalId)}`, undefined, env);
-  if (!r.ok) return { ok: false };
+  if (!r.ok) return { ok: false, notFound: r.status === 404 }; // 404: o Mercado Pago não conhece (ex.: aviso de teste do painel)
   const uid = r.data.external_reference;
   if (!isUuid(uid) || !r.data.id) return { ok: true }; // não é uma assinatura nossa: ignora
   const status = r.data.status ?? "pending";
