@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Modal } from "../account/Modal";
-import { DisplayCard, type DisplayData } from "../widgets";
+import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { ghostButton } from "../ui";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima" };
@@ -13,7 +13,8 @@ const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "
  */
 export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
-  const text = data.text ? `“${data.text}”${data.ref ? ` — ${data.ref}` : ""}` : null;
+  const live = withLiveText(data);
+  const text = live.text ? `“${live.text}”${live.ref ? ` — ${live.ref}` : ""}` : null;
 
   async function share() {
     if (!text) return;

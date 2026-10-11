@@ -6,6 +6,7 @@ import { CookieWidget } from "./CookieWidget";
 import { DateWidget } from "./DateWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
+import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
 export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
@@ -72,11 +73,24 @@ export const displayName = (id: string) => {
 };
 export const defaultStyle = (product: string) => stylesOf(product)[0]?.id ?? "";
 
+/** Versículos: a promessa do dia vem da biblioteca local (a mesma para todos, troca à meia-noite de São Paulo, sem rede). */
+function BibleCard({ data }: { data: DisplayData }) {
+  const p = usePromessaDoDia();
+  return <TextWidget style={data.style} text={p.promessa} reference={p.referencia} frame={data.frame} label="Versículo do dia" />;
+}
+
+/** Para compartilhar/ler fora do cartão: o versículo do dia no lugar do que o servidor guardou. */
+export const withLiveText = (data: DisplayData): DisplayData => {
+  if (data.product !== "bible") return data;
+  const p = promessaDoDia();
+  return { ...data, text: p.promessa, ref: p.referencia };
+};
+
 /** O widget certo para cada produto da loja (versículo, frase, relógio, clima), no estilo escolhido. */
 export function DisplayCard({ data }: { data: DisplayData }) {
   switch (data.product) {
     case "bible":
-      return <TextWidget style={data.style} text={data.text} reference={data.ref} frame={data.frame} label="Versículo do dia" />;
+      return <BibleCard data={data} />;
     case "motivation":
       return <TextWidget style={data.style} text={data.text} reference={data.ref} frame={data.frame} label="Frase do dia" />;
     case "clock":

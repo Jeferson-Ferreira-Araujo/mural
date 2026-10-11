@@ -14,7 +14,7 @@ import { useFeatureFlags } from "@/lib/features";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
-import { DisplayCard, type DisplayData } from "../widgets";
+import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { getBrowserSupabase } from "@/lib/supabase";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
@@ -161,7 +161,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const widget = entry && "widget" in entry ? entry : null; // este item da fila é um widget da loja
   const item: BoardItem | null = entry && !widget ? (entry as BoardItem) : null;
   const [wCopied, setWCopied] = useState(false);
-  const wText = widget?.data.text ? `“${widget.data.text}”${widget.data.ref ? ` — ${widget.data.ref}` : ""}` : null;
+  const wLive = widget ? withLiveText(widget.data) : null;
+  const wText = wLive?.text ? `“${wLive.text}”${wLive.ref ? ` — ${wLive.ref}` : ""}` : null;
   async function shareWidgetText() {
     if (!wText) return;
     try {
