@@ -88,11 +88,6 @@ export function SharedMurals({ plus, onChanged, onNotify }: { plus: boolean; onC
 
   return (
     <div className="space-y-5 text-[15px]">
-      <section aria-label="Como funciona" className="rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-3.5 text-sm text-[#4a3826]">
-        <p className="font-semibold text-[#2a1c12]">Como funciona</p>
-        <p className="mt-1">Um mural só de vocês dois: você cria, define a senha e convida uma pessoa PINZ+. Quando ela aceitar, só as duas contas conseguem abrir o mural, sempre com a senha. Os dois podem colar pins.</p>
-      </section>
-
       {invites.length > 0 && (
         <section aria-label="Convites recebidos" className="space-y-2">
           <h3 className="font-title text-base font-semibold">Convites para você</h3>
