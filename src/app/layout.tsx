@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Caveat, Indie_Flower, Kalam, Patrick_Hand, Playfair_Display, Plus_Jakarta_Sans, Reenie_Beanie, Silkscreen } from "next/font/google";
+import { PwaRegister } from "@/components/PwaRegister";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
@@ -21,6 +22,11 @@ export const metadata: Metadata = {
   openGraph: { siteName: "Pinz", type: "website", locale: "pt_BR", images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Pinz" }] },
   twitter: { card: "summary_large_image", images: ["/og.jpg"] },
   robots: { index: false, follow: false },
+  applicationName: "Pinz",
+  // iOS: ao adicionar à tela de início abre em tela cheia, com o ícone do Pinz
+  appleWebApp: { capable: true, title: "Pinz", statusBarStyle: "black-translucent" },
+  icons: { apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -40,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}
         <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1")document.documentElement.dataset.intro="play"}catch(e){}` }} />
         {children}
+        <PwaRegister />
       </body>
     </html>
   );

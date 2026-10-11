@@ -15,7 +15,12 @@ const nextConfig = {
   images: { unoptimized: true },
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // o service worker nunca fica em cache do navegador: uma versão nova vale na próxima abertura
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Content-Type", value: "application/javascript; charset=utf-8" }, { key: "Service-Worker-Allowed", value: "/" }] },
+      { source: "/offline.html", headers: [{ key: "Cache-Control", value: "no-cache" }] },
+    ];
   },
 };
 export default nextConfig;

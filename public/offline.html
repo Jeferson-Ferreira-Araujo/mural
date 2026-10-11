@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3b2616" />
+    <title>Sem conexão | Pinz</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; height: 100%; background: #3b2616; color: #f7f0dd; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+      main { min-height: 100%; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; }
+      img { width: 120px; height: 120px; border-radius: 24px; }
+      h1 { margin: 0; font-size: 1.4rem; }
+      p { margin: 0; max-width: 28em; line-height: 1.45; opacity: 0.85; }
+      button { margin-top: 6px; border: 0; border-radius: 12px; padding: 12px 22px; font: inherit; font-weight: 700; background: #d9a21b; color: #2a1c12; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" alt="" width="120" height="120" />
+      <h1>Você está sem conexão</h1>
+      <p>O Pinz precisa de internet para mostrar os murais. Confira o Wi-Fi ou os dados do celular e tente de novo.</p>
+      <button type="button" onclick="location.reload()">Tentar de novo</button>
+    </main>
+  </body>
+</html>
