@@ -405,7 +405,7 @@ export function AccountDrawer({
                 <div className="min-w-0">
                   <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Sua conta</p>
                   <p className="font-title truncate text-xl font-semibold">{nick}</p>
-                  {mural && <p className="mt-0.5 text-sm text-[#6b5440]">{mural.question ? "🔒 Privado" : "🌐 Público"}</p>}
+                  {mural && <p className="mt-0.5 text-sm text-[#6b5440]">{mural.question ? "🔒 Murais privados" : "🌐 Murais públicos"}</p>}
                 </div>
               </div>
               <button type="button" onClick={onClose} aria-label="Fechar menu" className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
