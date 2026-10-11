@@ -3,7 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
-export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay }: { aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
+export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, danger = false }: { /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -20,11 +20,11 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label={title || label}
-      className={`m-auto max-h-[92dvh] ${xl ? "w-[min(96vw,62rem)]" : wide ? "w-[min(94vw,40rem)]" : "w-[min(94vw,32rem)]"} overflow-hidden rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60`}
+      className={`m-auto max-h-[92dvh] ${xl ? "w-[min(96vw,62rem)]" : wide ? "w-[min(94vw,40rem)]" : "w-[min(94vw,32rem)]"} overflow-hidden rounded-3xl border ${danger ? "border-[#d98a7c] bg-[#fdf1ed] text-[#4a1d14]" : "border-[#e6d8bd] bg-[#fbf6ea] text-[#2f2218]"} p-0 shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60`}
     >
       {open && (
         <div className="relative flex max-h-[92dvh] flex-col">
-          <header className={`flex items-center gap-3 px-5 py-3 ${title || headerLeft ? "justify-between border-b border-[#e6d8bd]" : "justify-end pb-0"}`}>
+          <header className={`flex items-center gap-3 px-5 py-3 ${title || headerLeft ? `justify-between border-b ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}` : "justify-end pb-0"}`}>
             {title && <h2 className="font-title text-lg font-semibold">{title}</h2>}
             {headerLeft}
             {aside && <div className="ml-auto">{aside}</div>}
