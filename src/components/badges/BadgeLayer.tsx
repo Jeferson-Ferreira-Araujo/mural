@@ -94,7 +94,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : "pointer-events-auto cursor-pointer"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >
-        {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[1em]" />}
+        {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem WIDGET_W em de largura na própria fonte: a fonte do contêiner o ajusta à largura w */}
         <div className="pointer-events-none" style={{ fontSize: `${w / WIDGET_W}em` }}>
           {b.data ? <DisplayCard data={b.data} /> : null}
@@ -119,7 +119,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       }}
     >
       {/* área de toque maior no celular: o botton é pequeno para acertar com o dedo */}
-      {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[3em]" />}
+      {editable && <span aria-hidden className="absolute -inset-0 [@media(pointer:coarse)]:-inset-[0.5em]" />}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={badgeSrc(b.key)} alt="" draggable={false} className="pointer-events-none block size-full select-none" />
     </div>
