@@ -239,7 +239,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     if (item.type === "photo") {
       const r = Math.min(2, Math.max(0.5, item.ratio ?? 1));
       const pw = Math.min(12.2, 14 * r);
-      return { h: 4.6 + pw / r + (item.caption ? 3.8 : 0), w: Math.max(pw + 1.8, 8.6) + 1.4 };
+      return { h: 2.9 + pw / r + (item.caption ? 3.4 : 0), w: Math.max(pw + 1, 6.6) + 0.9 }; // moldura fina no detalhe (veja PolaroidPhoto)
     }
     // players e mapa são cartões baixos (14em de largura, ~10em de altura); a legenda é um papelzinho que pende embaixo
     if (item.type === "place" || item.type === "voice" || item.type === "video" || item.type === "music") return { h: 12.5 + ("caption" in item && item.caption ? 5.5 : 0), w: 16 };
