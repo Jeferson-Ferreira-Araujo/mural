@@ -5,7 +5,7 @@ import { Modal } from "../account/Modal";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { ghostButton } from "../ui";
 
-const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima" };
+const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", countdown: "Contador regressivo" };
 
 /**
  * Detalhe de um pin da loja: o widget em tamanho grande, como quem passa por ele no mural quer ler (frase, hora, tempo).

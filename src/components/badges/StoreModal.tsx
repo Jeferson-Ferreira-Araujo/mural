@@ -78,6 +78,11 @@ export function sampleFor(product: string, style?: string): DisplayData {
       const iso = (d: number) => `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
     }
+    case "countdown": {
+      const d = new Date();
+      d.setDate(d.getDate() + 30);
+      return { product, style: st, title: "Viagem dos sonhos", target: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, time: "08:00" };
+    }
     case "cookie":
     case "date":
       return { product, style: st };

@@ -3,13 +3,14 @@
 import { CalendarWidget, type CalDate } from "./CalendarWidget";
 import { ClockWidget } from "./ClockWidget";
 import { CookieWidget } from "./CookieWidget";
+import { CountdownWidget } from "./CountdownWidget";
 import { DateWidget } from "./DateWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
 import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
-export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
+export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
 
 /** Os estilos de cada pin da loja (o primeiro é o padrão). */
 export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: string }[]> = {
@@ -34,6 +35,10 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "page", name: "Folha", hint: "Folha de calendário com a data de hoje." },
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
   ],
+  countdown: [
+    { id: "neon", name: "Neon", hint: "Escuro, com números luminosos." },
+    { id: "light", name: "Claro", hint: "Leve e de papel." },
+  ],
   cookie: [
     { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
     { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
@@ -56,6 +61,7 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "calendar", label: "Calendários", single: "Calendário" },
   { id: "cookie", label: "Biscoito da sorte", single: "Biscoito" },
   { id: "date", label: "Calendário do dia", single: "Calendário do dia" },
+  { id: "countdown", label: "Contador regressivo", single: "Contador regressivo" },
 ];
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
@@ -97,6 +103,8 @@ export function DisplayCard({ data }: { data: DisplayData }) {
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     case "calendar":
       return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
+    case "countdown":
+      return <CountdownWidget style={data.style} title={data.title} target={data.target} time={data.time} frame={data.frame} />;
     case "date":
       return <DateWidget style={data.style} frame={data.frame} />;
     case "cookie":
