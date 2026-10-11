@@ -39,12 +39,11 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     const { w, h } = size.current;
     const minS = Math.min(w / WORLD_W, h / WORLD_H);
     // o máximo é o mesmo tanto que o botão "Aproximar" amplia: mais que isso não deixa
-    // celular: ~2,6 cartões (de 130) por largura de tela, o post-it ocupa cerca de 38% da largura (o zoom que o dono aprovou em 11/out);
+    // celular: ~0,87 cartão (de 130) por largura de tela, o post-it ocupa cerca de 115% da largura (3× o zoom aprovado em 11/out, em que ocupava 38%);
     // telas largas (desktop): ~1,25 cartão, senão a ampliação fica enorme
-    const perScreen = w >= 700 ? 1.25 : 2.6;
+    const perScreen = w >= 700 ? 1.25 : 2.6 / 3;
     const defS = Math.max(minS, w / (130 * perScreen));
-    // celular: a pinça vai até 3× além do "Aproximar"; o botão e o toque duplo continuam parando em defS
-    const maxS = Math.max(minS * 1.001, w >= 700 ? defS : defS * 3);
+    const maxS = Math.max(minS * 1.001, defS);
     return { minS, maxS, defS };
   }, []);
 
