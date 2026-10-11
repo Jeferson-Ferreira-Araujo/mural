@@ -6,6 +6,7 @@ import type { OwnMural } from "@/lib/auth";
 import { getPublicMural, muralUrl, type MuralStats } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { getOwnAvatar } from "@/lib/avatar";
+import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
@@ -17,7 +18,7 @@ import { TransactionsModal } from "./TransactionsModal";
 import { ProfileModal } from "./ProfileModal";
 import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "purchases" | "following" | "visitors";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "purchases" | "following" | "visitors" | "install";
 
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
@@ -139,6 +140,7 @@ export function AccountDrawer({
     }
   }
   const close = () => setModal(null);
+  const app = useInstall(); // "Instalar o app": só aparece onde dá para instalar e ainda não está instalado
 
   const rows = (
     <>
@@ -300,6 +302,24 @@ export function AccountDrawer({
                   }
                 />
               )}
+              {!app.installed && (app.native || app.ios) && (
+                <Row
+                  onClick={() => {
+                    if (app.native) {
+                      onClose();
+                      void app.install();
+                    } else setModal("install");
+                  }}
+                  label="Instalar o app"
+                  hint="Pinz na tela inicial, em tela cheia"
+                  icon={
+                    <svg {...ic}>
+                      <path d="M12 4v10M8 10.5l4 4 4-4" />
+                      <path d="M5 16v2.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V16" />
+                    </svg>
+                  }
+                />
+              )}
               <Row
                 onClick={() => setModal("profile")}
                 label="Perfil"
@@ -324,6 +344,20 @@ export function AccountDrawer({
           <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} canDelete={mural.id !== murals[0]?.id} />
         </Modal>
       )}
+      <Modal open={isOpen && modal === "install"} onClose={close} title="Instalar o Pinz">
+        <ol className="list-decimal space-y-2 pl-5 text-sm text-[#4a3826]">
+          <li>
+            Toque no botão <strong>Compartilhar</strong> do Safari (o quadrado com a seta para cima).
+          </li>
+          <li>
+            Role a lista e toque em <strong>Adicionar à Tela de Início</strong>.
+          </li>
+          <li>
+            Confirme em <strong>Adicionar</strong>. O Pinz fica na sua tela inicial e abre em tela cheia.
+          </li>
+        </ol>
+        <p className="mt-3 text-xs text-[#6b5440]">Se não aparecer a opção, abra o Pinz pelo Safari (outros navegadores do iPhone não instalam apps).</p>
+      </Modal>
       <Modal open={isOpen && modal === "numbers"} onClose={close} title="Números do mural">
         <dl className="grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
           {(
