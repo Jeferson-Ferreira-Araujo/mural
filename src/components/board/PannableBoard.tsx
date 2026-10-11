@@ -43,7 +43,8 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     // telas largas (desktop): ~1,25 cartão, senão a ampliação fica enorme
     const perScreen = w >= 700 ? 1.25 : 2.6;
     const defS = Math.max(minS, w / (130 * perScreen));
-    const maxS = Math.max(minS * 1.001, defS);
+    // celular: a pinça vai até 3× além do "Aproximar"; o botão e o toque duplo continuam parando em defS
+    const maxS = Math.max(minS * 1.001, w >= 700 ? defS : defS * 3);
     return { minS, maxS, defS };
   }, []);
 
@@ -166,10 +167,10 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
 
   const doubleTapZoom = useCallback(
     (cx: number, cy: number) => {
-      const { maxS, defS, minS } = limits();
+      const { defS, minS } = limits();
       const s = view.current.s;
       // perto do máximo: volta ao padrão; senão, amplia onde tocou
-      const target = s >= maxS * 0.85 ? (s > defS * 1.05 ? defS : minS) : Math.min(maxS, Math.max(s * 2.2, defS * 1.8));
+      const target = s >= defS * 0.85 ? (s > defS * 1.05 ? defS : minS) : Math.min(defS, Math.max(s * 2.2, defS * 1.8));
       zoomTo(target, cx, cy, true);
     },
     [limits, zoomTo],
