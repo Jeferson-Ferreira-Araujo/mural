@@ -107,7 +107,6 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
 
   return (
     <Modal open={open} onClose={onClose} title="Planos">
-      <p className="mb-4 text-center text-sm text-[#6b5440]">Quem visita o seu mural nunca paga: os limites valem só para você, dono do mural.</p>
       <Carousel label="Planos">
         <PlanCard id="free" current={plan === "free"} />
         <PlanCard id="full" current={plan === "full"} footer={plusFooter} />
