@@ -9,7 +9,7 @@ import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
-import { DISPLAY_CATS, defaultStyle } from "../widgets";
+import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -129,7 +129,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
-  const products = inventory?.pinProducts ?? [];
+  const products = (inventory?.pinProducts ?? []).filter((p) => isDisplayOn(p.id.split(":")[0]));
   const [displayCat, setDisplayCat] = useState<string | null>(null); // tipo de display aberto na aba Displays
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
@@ -330,7 +330,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       ) : tab === "formats" && !displayCat ? (
         // 1º passo: o tipo de display (cada estilo é vendido separadamente, dentro do tipo)
         <ul className="grid gap-3 sm:grid-cols-2" aria-label="Tipos de display">
-          {DISPLAY_CATS.map((c) => {
+          {DISPLAY_CATS.filter((c) => isDisplayOn(c.id)).map((c) => {
             const items = products.filter((p) => p.id.startsWith(c.id + ":"));
             const mine = items.filter((p) => p.owned).length;
             return (

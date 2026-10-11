@@ -56,6 +56,9 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "cookie", label: "Biscoito da sorte", single: "Biscoito" },
   { id: "date", label: "Calendário do dia", single: "Calendário do dia" },
 ];
+/** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
+export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
+export const isDisplayOn = (product: string) => !DISABLED_DISPLAYS.has(product);
 export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
   return { product, style };
