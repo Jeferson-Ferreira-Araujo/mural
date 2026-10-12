@@ -114,7 +114,9 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* o quadro: arrastar, pinçar, toque duplo */}
       <div className="relative min-h-0 flex-1">
         {/* escolher o mural: sempre no canto superior direito (o esquerdo é do Novo mural no seu perfil, ou do Seguir ao visitar) */}
-        <div className="absolute top-3 right-3 z-30">
+        <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
+          {/* conta FREE no próprio mural: contador de pins e explicação do limite, na mesma linha do botão de murais */}
+          {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass />}
           <MuralNameMenu
             title={info.title}
             label={account?.onNewMural ? "Meus murais" : "Murais"}
@@ -125,8 +127,6 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             triggerClassName="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
           />
         </div>
-        {/* conta FREE no próprio mural: contador de pins e explicação do limite (não há "Novo mural" nesse plano) */}
-        {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-[3.75rem] right-3 z-20" />}
         {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
         {/* PINZ+: Compartilhar sobe para o canto superior esquerdo (o "novo mural" agora é a 1ª opção do menu Meus murais) */}
         {shareTop && share && onNotify && !follow && (
