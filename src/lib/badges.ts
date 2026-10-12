@@ -104,7 +104,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 
 /** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1007 e ficam em qualquer lugar do mural, não em um espaço. */
-export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006, date: 1007, countdown: 1008, daycount: 1009, book: 1010, top3: 1011 };
+export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006, date: 1007, countdown: 1008, daycount: 1009, book: 1010, top3: 1011, song: 1012 };
 export const isDisplayKey = (key: number) => key >= 1000;
 export const displayProductOf = (key: number) => Object.entries(DISPLAY_KEYS).find(([, k]) => k === key)?.[0];
 /** Largura base de um display (em em do quadro), contra 3 de um botton comum. */
@@ -134,7 +134,7 @@ export async function addBadge(sb: SupabaseClient, muralId: string, key: number,
   return { error: m.includes("badge_sold_out") ? "sold_out" : m.includes("badge_not_owned") ? "not_owned" : m.includes("badge_limit") ? "limit" : "error" };
 }
 
-export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; dates?: { date: string; label: string; yearly: boolean }[]; /** contador regressivo: nome, data (AAAA-MM-DD) e hora (HH:MM) */ title?: string; target?: string; time?: string; /** contador de dias: data de início (AAAA-MM-DD) */ since?: string; /** leitura de livro: capa (endereço), páginas no total, páginas lidas e como mostrar */ cover?: string; pages?: number; read?: number; view?: string; /** top 3: os três itens */ items?: string[] };
+export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; dates?: { date: string; label: string; yearly: boolean }[]; /** contador regressivo: nome, data (AAAA-MM-DD) e hora (HH:MM) */ title?: string; target?: string; time?: string; /** contador de dias: data de início (AAAA-MM-DD) */ since?: string; /** leitura de livro: capa (endereço), páginas no total, páginas lidas e como mostrar */ cover?: string; pages?: number; read?: number; view?: string; /** top 3: os três itens */ items?: string[]; /** música favorita: faixa do Spotify e artista */ track?: string; artist?: string };
 
 export async function addDisplay(sb: SupabaseClient, muralId: string, product: string, data: Record<string, unknown>, x: number, y: number, slots: number[]): Promise<{ id: string } | { error: "taken" | "limit" | "not_owned" | "error" }> {
   const { data: res, error } = await sb.rpc("add_display", { p_mural_id: muralId, p_product: product, p_data: data, p_x: x, p_y: y, p_slots: slots });

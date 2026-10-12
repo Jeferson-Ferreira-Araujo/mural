@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { shapeOfStyle } from "@/lib/displayShape";
 import { Modal } from "../account/Modal";
+import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { ghostButton } from "../ui";
 
-const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", countdown: "Contador regressivo", daycount: "Contador de dias" };
+const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", song: "Música favorita", countdown: "Contador regressivo", daycount: "Contador de dias" };
 
 /**
  * Detalhe de um pin da loja: o widget em tamanho grande, como quem passa por ele no mural quer ler (frase, hora, tempo).
@@ -42,7 +43,9 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
         <div className="flex justify-center overflow-hidden rounded-2xl bg-[#e9d8b6]/60 px-2 py-6">
           {/* o widget tem 24 em de largura: a fonte do contêiner o leva a quase toda a largura da janela */}
           <div style={{ fontSize: shapeOfStyle(data.style) === "square" ? "calc(min(66vw, 24rem) / 12)" : shapeOfStyle(data.style) === "tall" ? "calc(min(54vw, 18rem) / 12)" : "calc(min(82vw, 31rem) / 24)" }}>
-            <DisplayCard data={data} />
+            <DetailProvider value>
+              <DisplayCard data={data} />
+            </DetailProvider>
           </div>
         </div>
         {text && (

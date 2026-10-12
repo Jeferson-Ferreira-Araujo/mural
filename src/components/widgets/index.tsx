@@ -10,12 +10,13 @@ import { DaysWidget } from "./DaysWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
 import { SHARED_SKIN_INFO } from "./skins";
+import { SongWidget } from "./SongWidget";
 import { Top3Widget } from "./Top3Widget";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
-export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** top 3 */ items?: string[]; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
+export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** top 3 */ items?: string[]; /** música favorita */ track?: string; artist?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
 
 /** Os estilos de cada pin da loja (o primeiro é o padrão). */
 export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: string }[]> = {
@@ -71,6 +72,11 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
     { id: "neon", name: "Neon", hint: "Roxo e rosa luminosos." },
   ],
+  song: [
+    { id: "vinyl", name: "Vinil", hint: "Escuro, com o disco." },
+    { id: "classic", name: "Clássico", hint: "Papel claro." },
+    { id: "neon", name: "Neon", hint: "Roxo e rosa luminosos." },
+  ],
   cookie: [
     { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
     { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
@@ -97,6 +103,7 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "daycount", label: "Contador de dias", single: "Contador de dias" },
   { id: "book", label: "Leitura de livro", single: "Leitura" },
   { id: "top3", label: "Top 3", single: "Top 3" },
+  { id: "song", label: "Música favorita", single: "Música favorita" },
 ];
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
@@ -138,6 +145,8 @@ export function DisplayCard({ data, preview = false }: { data: DisplayData; /** 
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     case "calendar":
       return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
+    case "song":
+      return <SongWidget style={data.style} track={data.track} title={data.title} artist={data.artist} cover={data.cover} frame={data.frame} />;
     case "top3":
       return <Top3Widget style={data.style} title={data.title} items={data.items} frame={data.frame} />;
     case "book":
