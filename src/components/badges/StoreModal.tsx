@@ -337,7 +337,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <ul className="grid gap-3 sm:grid-cols-2" aria-label="Tipos de display">
           {DISPLAY_CATS.filter((c) => isDisplayOn(c.id)).map((c) => {
             const items = products.filter((p) => p.id.startsWith(c.id + ":"));
-            const mine = items.filter((p) => p.owned).length;
             return (
               <li key={c.id}>
                 <button
@@ -356,7 +355,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <span className="font-title text-base font-semibold">{c.label}</span>
                     <span className="text-xs font-semibold text-[#6b5440]">
                       {items.length} {items.length === 1 ? "estilo" : "estilos"}
-                      {mine > 0 ? " · " + mine + (mine === 1 ? " seu" : " seus") : ""}
                     </span>
                   </span>
                 </button>
