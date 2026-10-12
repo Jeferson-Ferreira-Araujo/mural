@@ -1,5 +1,6 @@
 "use client";
 
+import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import type { SceneId } from "./scenes";
 import { describe, useWeather, WeatherGlyph, WidgetFrame, type WeatherKind } from "./core";
 
@@ -19,11 +20,39 @@ function sceneFor(style: string, kind: WeatherKind, night: boolean): SceneId {
   return style === "nature" ? "lake" : "beach";
 }
 
-/** Clima: cinco estilos. O tempo agora na cidade escolhida pelo dono, sempre atualizado. */
+/** Clima quadrado (12 × 12 em): o desenho do tempo em cima, a temperatura grande no meio e a cidade e o tempo embaixo. */
+function WeatherSquare({ st, scene, kind, night, temp, label, cityName, d, frame }: { st: string; scene: SceneId; kind: WeatherKind; night: boolean; temp: string; label: string; cityName: string; d: ReturnType<typeof describe> | null; frame?: string | null }) {
+  const pixel = st === "pixel";
+  const font = pixel ? "var(--font-silk), monospace" : undefined;
+  const glyphKind: WeatherKind = st === "rain" ? (d && d.kind !== "clear" && d.kind !== "partly" ? d.kind : "rain") : kind;
+  return (
+    <WidgetFrame frame={frame} label="Clima" scene={scene} shape="square">
+      <div className="absolute inset-0 flex flex-col items-center justify-between px-[1em] pt-[1em] pb-[1.1em] text-center">
+        <span className="size-[4.2em] text-white">
+          <WeatherGlyph kind={glyphKind} night={st === "rain" ? false : night} />
+        </span>
+        <p className="tabular-nums" style={{ fontSize: pixel ? "4.2em" : "5em", fontWeight: 700, fontFamily: font, lineHeight: 1 }}>
+          {pixel && temp.endsWith("°") ? (<>{temp.slice(0, -1)}<span style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>°</span></>) : temp}
+        </p>
+        <div className="w-full leading-tight">
+          <p className="truncate font-semibold" style={{ fontSize: "1.2em" }}>
+            {cityName}
+          </p>
+          <p className="opacity-95" style={{ fontSize: "0.95em" }}>
+            {label}
+          </p>
+        </div>
+      </div>
+    </WidgetFrame>
+  );
+}
+
+/** Clima: cinco estilos, em formato retangular ou quadrado. O tempo agora na cidade escolhida pelo dono, sempre atualizado. */
 export function WeatherWidget({ style = "sky", city, lat, lon, frame }: { style?: string; city?: string; lat?: number; lon?: number; frame?: string | null }) {
   const { now } = useWeather(lat, lon);
   const d = now && now !== "error" ? describe(now.symbol) : null;
-  const st = style === "nature" || style === "pixel" || style === "rain" || style === "night" ? style : "sky";
+  const b = baseStyle(style);
+  const st = b === "nature" || b === "pixel" || b === "rain" || b === "night" ? b : "sky";
   const kind: WeatherKind = d?.kind ?? "clear";
   const night = st === "night" || (d?.night ?? false);
   const scene = sceneFor(st, kind, night);
@@ -32,6 +61,8 @@ export function WeatherWidget({ style = "sky", city, lat, lon, frame }: { style?
   const pixel = st === "pixel";
   const font = pixel ? "var(--font-silk), monospace" : undefined;
   const cityName = city ?? "Cidade";
+
+  if (shapeOfStyle(style) === "square") return <WeatherSquare st={st} scene={scene} kind={kind} night={night} temp={temp} label={label} cityName={cityName} d={d} frame={frame} />;
 
   // rain: a cidade em cima, à esquerda; a temperatura grande embaixo; nuvem com gotas à direita
   if (st === "rain") {

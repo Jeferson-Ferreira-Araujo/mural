@@ -11,6 +11,7 @@ import { DetailProvider } from "./ListEditContext";
 import { ReactionBar } from "./ReactionBar";
 import { useReactionsAccess } from "./ReactionsContext";
 import { useFeatureFlags } from "@/lib/features";
+import { shapeOfStyle } from "@/lib/displayShape";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
@@ -234,7 +235,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   }
   // tamanho do pin em "em" (altura e largura): a fonte é calculada para o pin ocupar o máximo possível da área livre
   const fit = (() => {
-    if (widget) return { h: 13, w: 25.5 }; // widgets: 24 em de largura por 12 de altura
+    if (widget) return shapeOfStyle(widget.data.style) === "square" ? { h: 13, w: 13 } : { h: 13, w: 25.5 }; // widgets: 24 em de largura por 12 de altura (o quadrado, 12 por 12)
     if (!item || isSealed(item) || isHidden(item)) return { h: 21, w: 16 };
     if (item.type === "photo") {
       const r = Math.min(2, Math.max(0.5, item.ratio ?? 1));

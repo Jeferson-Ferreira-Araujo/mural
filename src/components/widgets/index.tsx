@@ -8,6 +8,8 @@ import { DateWidget } from "./DateWidget";
 import { DaysWidget } from "./DaysWidget";
 import { TextWidget } from "./TextWidget";
 import { WeatherWidget } from "./WeatherWidget";
+import { SHARED_SKIN_INFO } from "./skins";
+import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
@@ -28,21 +30,34 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "analog", name: "Analógico", hint: "Clássico e elegante." },
     { id: "pixel", name: "Pixel", hint: "Divertido e nostálgico." },
   ],
+  // os de números e imagens têm cinco estilos, cada um em formato retangular (o id) e quadrado ("q-" + id)
   calendar: [
     { id: "paper", name: "Parede", hint: "Calendário de papel." },
     { id: "modern", name: "Moderno", hint: "Escuro e limpo." },
+    { id: "mint", ...SHARED_SKIN_INFO.mint },
+    { id: "rose", ...SHARED_SKIN_INFO.rose },
+    { id: "mono", ...SHARED_SKIN_INFO.mono },
   ],
   date: [
     { id: "page", name: "Folha", hint: "Folha de calendário com a data de hoje." },
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
+    { id: "mint", ...SHARED_SKIN_INFO.mint },
+    { id: "rose", ...SHARED_SKIN_INFO.rose },
+    { id: "mono", ...SHARED_SKIN_INFO.mono },
   ],
   countdown: [
     { id: "neon", name: "Neon", hint: "Escuro, com números luminosos." },
     { id: "light", name: "Claro", hint: "Leve e de papel." },
+    { id: "dusk", ...SHARED_SKIN_INFO.dusk },
+    { id: "mint", ...SHARED_SKIN_INFO.mint },
+    { id: "mono", ...SHARED_SKIN_INFO.mono },
   ],
   daycount: [
     { id: "warm", name: "Quente", hint: "Claro e caloroso." },
-    { id: "dusk", name: "Entardecer", hint: "Cores do fim de tarde." },
+    { id: "dusk", ...SHARED_SKIN_INFO.dusk },
+    { id: "mint", ...SHARED_SKIN_INFO.mint },
+    { id: "night", ...SHARED_SKIN_INFO.night },
+    { id: "mono", ...SHARED_SKIN_INFO.mono },
   ],
   cookie: [
     { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
@@ -76,12 +91,12 @@ export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
   return { product, style };
 };
-/** "Relógio · Súnset" */
+/** "Relógio · Súnset" (o quadrado leva "(quadrado)") */
 export const displayName = (id: string) => {
   const { product, style } = splitDisplayId(id);
   const cat = DISPLAY_CATS.find((x) => x.id === product);
-  const st = stylesOf(product).find((x) => x.id === style);
-  return `${cat?.single ?? product}${st ? ` · ${st.name}` : ""}`;
+  const st = stylesOf(product).find((x) => x.id === baseStyle(style));
+  return `${cat?.single ?? product}${st ? ` · ${st.name}` : ""}${shapeOfStyle(style) === "square" ? " (quadrado)" : ""}`;
 };
 export const defaultStyle = (product: string) => stylesOf(product)[0]?.id ?? "";
 

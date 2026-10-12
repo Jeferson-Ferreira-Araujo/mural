@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, type PlacedBadge } from "@/lib/badges";
-import { DisplayCard, WIDGET_W } from "../widgets";
+import { badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, ratioOfBadge, type PlacedBadge } from "@/lib/badges";
+import { NATURAL_W, shapeOfStyle } from "@/lib/displayShape";
+import { DisplayCard } from "../widgets";
 import { useBadges } from "./BadgeContext";
 
 const HOLD_MS = 380; // tempo de segurar um widget no celular para movê-lo
@@ -83,7 +84,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
 
   const def = badgeDef(b.key);
   if (display) {
-    const w = (baseEmOf(b.key) * (b.scale ?? DISPLAY_SCALE)) / 100; // largura do display, em em do quadro
+    const w = (baseEmOfBadge(b.key, b.data) * (b.scale ?? DISPLAY_SCALE)) / 100; // largura do display, em em do quadro (o quadrado é menor)
+    const shape = shapeOfStyle(b.data?.style);
     return (
       <div
         ref={ref}
@@ -92,11 +94,11 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
         {...(!editable ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
         className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : "pointer-events-auto cursor-pointer"}`}
-        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: 2, transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
+        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
-        {/* o widget tem WIDGET_W em de largura na própria fonte: a fonte do contêiner o ajusta à largura w */}
-        <div className="pointer-events-none" style={{ fontSize: `${w / WIDGET_W}em` }}>
+        {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
+        <div className="pointer-events-none" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
           {b.data ? <DisplayCard data={b.data} /> : null}
         </div>
       </div>

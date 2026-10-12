@@ -4,9 +4,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { spotLight } from "@/lib/spot";
 import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
-import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { DisplayCard, WIDGET_W, splitDisplayId } from "../widgets";
+import { BOARD_EM, NATURAL_W, RATIO, shapeOfStyle } from "@/lib/displayShape";
+import { DisplayCard, splitDisplayId } from "../widgets";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
@@ -218,8 +219,9 @@ export function BadgeProvider({
           const lr = layer.getBoundingClientRect();
           const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
           const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const w = baseEmOf(src.key) * em * scale * ((src.kind === "placed" ? (src.scale ?? (displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE)) : displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE) / 100);
-          size = { w, h: w / ratioOfKey(src.key) };
+          const srcData = src.kind === "placed" ? live.current.badges.find((x) => x.id === src.id)?.data : undefined;
+          const w = baseEmOfBadge(src.key, srcData) * em * scale * ((src.kind === "placed" ? (src.scale ?? (displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE)) : displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE) / 100);
+          size = { w, h: w / ratioOfBadge(src.key, srcData) };
         }
         origin = sourceCenter();
         if (src.kind === "placed") setDraggingId(src.id);
@@ -457,8 +459,8 @@ export function BadgeProvider({
         const r = el.getBoundingClientRect();
         const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
         const sc = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-        const w = (baseEmOf(b.key) * em * sc * pct) / 100;
-        const h = w / ratioOfKey(b.key);
+        const w = (baseEmOfBadge(b.key, b.data) * em * sc * pct) / 100;
+        const h = w / ratioOfBadge(b.key, b.data);
         const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el, isDisp);
         if (drop.kind === "occupied") {
           back();
@@ -552,8 +554,9 @@ export function BadgeProvider({
     const lr = layer.getBoundingClientRect();
     const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
     const sc = lr.width / (layer.offsetWidth || lr.width);
-    const w = baseEmOf(1001) * em * sc * (DISPLAY_SCALE / 100);
-    const h = w / 2;
+    const sh = shapeOfStyle(data.style);
+    const w = BOARD_EM[sh] * em * sc * (DISPLAY_SCALE / 100);
+    const h = w / RATIO[sh];
     const r = slotEl.getBoundingClientRect();
     const cx = r.left + r.width / 2;
     const cy = r.top + r.height / 2;
@@ -728,6 +731,8 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
   const keyRef = useRef(badge?.key);
   keyRef.current = badge?.key;
+  const dataRef = useRef(badge?.data);
+  dataRef.current = badge?.data;
   useEffect(() => {
     let raf = 0;
     const tick = () => {
@@ -740,8 +745,8 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
         const lr = layer?.getBoundingClientRect();
         const em = layer ? parseFloat(getComputedStyle(layer).fontSize) || 10 : 10;
         const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
-        const w = baseEmOf(keyRef.current ?? 0) * em * sc * (MAX_SCALE / 100);
-        const h = w / ratioOfKey(keyRef.current ?? 0);
+        const w = baseEmOfBadge(keyRef.current ?? 0, dataRef.current) * em * sc * (MAX_SCALE / 100);
+        const h = w / ratioOfBadge(keyRef.current ?? 0, dataRef.current);
         next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round((Math.hypot(w, h) / 2) * 0.82) };
       }
       setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.R === next.R ? p : next));
@@ -901,8 +906,9 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
     const lr = layer.getBoundingClientRect();
     const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
     const sc = lr.width / (layer.offsetWidth || lr.width);
-    const w = baseEmOf(1001) * em * sc * (DISPLAY_SCALE / 100);
-    setSize({ w, h: w / 2 });
+    const sh = shapeOfStyle(data.style);
+    const w = BOARD_EM[sh] * em * sc * (DISPLAY_SCALE / 100);
+    setSize({ w, h: w / RATIO[sh] });
     setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 });
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
     window.addEventListener("keydown", onKey);
@@ -951,7 +957,7 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
   };
 
   const ring = state === "ok" ? "#6fdc8c" : "#ff8a7a";
-  const cardStyle: CSSProperties = { fontSize: size.w / WIDGET_W + "px", outline: dragging ? "3px solid " + ring : "none", outlineOffset: "4px", borderRadius: "1.4em" };
+  const cardStyle: CSSProperties = { fontSize: size.w / NATURAL_W[shapeOfStyle(data.style)] + "px", outline: dragging ? "3px solid " + ring : "none", outlineOffset: "4px", borderRadius: "1.4em" };
 
   return createPortal(
     <div className="fixed inset-0 z-[380]" role="dialog" aria-label="Posicionar o display no mural">

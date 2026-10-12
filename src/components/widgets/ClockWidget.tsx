@@ -1,5 +1,6 @@
 "use client";
 
+import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Corner, ClockIcon, CLOCK_ZONES, isNightHour, MoonIcon, sceneForHour, SunIcon, useNow, WidgetFrame, type Now } from "./core";
 import { Skyline } from "./scenes";
 
@@ -31,7 +32,144 @@ function Flip({ v }: { v: string }) {
   );
 }
 
-/** Relógio: cinco estilos. A hora passa sozinha (atualiza a cada poucos segundos). */
+/** Relógio quadrado (12 × 12 em): os mesmos cinco estilos, com a hora em cima e a data embaixo. */
+function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: Now | null; time: string; wd: string; place: string | null | undefined; hour: number; frame?: string | null }) {
+  const dm = n ? `${n.day} ${n.monthShort.charAt(0).toUpperCase()}${n.monthShort.slice(1)}` : "";
+  const secDeg = ((n?.second ?? 0) / 60) * 360;
+  const minDeg = ((n?.minute ?? 0) + (n?.second ?? 0) / 60) * 6;
+  const hourDeg = (((n?.hour ?? 0) % 12) + (n?.minute ?? 0) / 60) * 30;
+
+  if (st === "flip") {
+    return (
+      <WidgetFrame frame={frame} label="Relógio" shape="square">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.9em]" style={{ background: "linear-gradient(145deg,#1d1d20,#0b0b0d)", color: "#f4f4f4" }}>
+          <div className="flex gap-[0.6em]">
+            <Flip v={n?.hh ?? "--"} />
+            <Flip v={n?.mm ?? "--"} />
+          </div>
+          <div className="text-center leading-[1.15] uppercase" style={{ color: "#e8e8e8" }}>
+            <p className="text-[1.35em] font-semibold tracking-wide">
+              {wd.replace(/\./g, "")} · {dm}
+            </p>
+            {place && <p className="mt-[0.25em] text-[0.7em] opacity-60">{place}</p>}
+          </div>
+        </div>
+      </WidgetFrame>
+    );
+  }
+
+  if (st === "minimal" || st === "analog") {
+    const analog = st === "analog";
+    return (
+      <WidgetFrame frame={frame} label="Relógio" shape="square">
+        <div className="absolute inset-0" style={{ background: analog ? "linear-gradient(145deg,#12301f,#0a1f14)" : "linear-gradient(145deg,#f4e6c6,#e3c993)", color: analog ? "#f1e6c8" : "#3a2a12" }}>
+          <Leaves dark={analog} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.7em] px-[1em]">
+            {analog ? (
+              <svg viewBox="-50 -50 100 100" className="size-[8.2em] shrink-0" aria-label={time}>
+                <circle r="47" fill="#0d2a1b" stroke="#c9a96a" strokeWidth="2.5" />
+                <circle r="43" fill="none" stroke="#c9a96a" strokeWidth="0.6" opacity=".6" />
+                {Array.from({ length: 12 }, (_, i) => (
+                  <line key={i} x1="0" y1="-41" x2="0" y2={i % 3 === 0 ? -35 : -38} stroke="#e8d9ae" strokeWidth={i % 3 === 0 ? 1.8 : 1} transform={`rotate(${i * 30})`} />
+                ))}
+                {[
+                  ["12", 0, -28],
+                  ["3", 28, 3.5],
+                  ["6", 0, 32],
+                  ["9", -28, 3.5],
+                ].map(([t, x, y]) => (
+                  <text key={t as string} x={x as number} y={y as number} textAnchor="middle" fontSize="10" fill="#f1e6c8" style={{ fontFamily: "var(--font-playfair), serif" }}>
+                    {t}
+                  </text>
+                ))}
+                <line x1="0" y1="4" x2="0" y2="-22" stroke="#f1e6c8" strokeWidth="2.6" strokeLinecap="round" transform={`rotate(${hourDeg})`} />
+                <line x1="0" y1="5" x2="0" y2="-33" stroke="#f1e6c8" strokeWidth="1.8" strokeLinecap="round" transform={`rotate(${minDeg})`} />
+                <line x1="0" y1="8" x2="0" y2="-36" stroke="#e0a63a" strokeWidth="0.9" strokeLinecap="round" transform={`rotate(${secDeg})`} />
+                <circle r="2.4" fill="#e0a63a" />
+              </svg>
+            ) : (
+              <p className="tabular-nums" style={{ fontSize: "4em", fontWeight: 300, lineHeight: 1, letterSpacing: "-0.02em" }} suppressHydrationWarning>
+                {time}
+              </p>
+            )}
+            <div className="text-center leading-tight" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+              <p className="text-[1.35em] font-medium" suppressHydrationWarning>
+                {wd}, {dm}
+              </p>
+              {place && <p className="mt-[0.2em] text-[0.62em] opacity-70">{place}</p>}
+            </div>
+          </div>
+        </div>
+      </WidgetFrame>
+    );
+  }
+
+  if (st === "pixel") {
+    return (
+      <WidgetFrame frame={frame} label="Relógio" shape="square">
+        <div className="absolute inset-0 overflow-hidden" style={{ background: "linear-gradient(180deg,#0a0f2e 0%,#1d2160 55%,#6a3a78 85%,#d9784a 100%)", color: "#fff" }}>
+          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden shapeRendering="crispEdges">
+            {[
+              [60, 14],
+              [80, 30],
+              [100, 12],
+              [120, 20],
+              [140, 38],
+              [90, 34],
+              [70, 50],
+            ].map(([x, y], i) => (
+              <g key={i} fill="#fff">
+                <rect x={x} y={y} width="2" height="2" />
+                <rect x={x - 2} y={y} width="6" height="2" opacity=".5" />
+              </g>
+            ))}
+            <Skyline fill="#140f2e" />
+            <g fill="#ffd36a" opacity=".85">
+              {[56, 76, 100, 124, 140].map((x, i) => (
+                <rect key={x} x={x} y={78 + (i % 3) * 5} width="2" height="2" />
+              ))}
+            </g>
+          </svg>
+          <span className="absolute top-[0.8em] right-[0.9em] size-[1.7em] opacity-95">
+            <svg viewBox="0 0 24 24" className="size-full" aria-hidden shapeRendering="crispEdges">
+              <path d="M14 3.5A5.2 5.2 0 1 0 19 11a4.2 4.2 0 0 1-5-7.5Z" fill="#f4efd6" />
+            </svg>
+          </span>
+          <div className="absolute inset-x-0 top-[2em] text-center">
+            <p className="tabular-nums" style={{ fontFamily: "var(--font-silk), monospace", fontSize: "2.9em", fontWeight: 700, lineHeight: 1, letterSpacing: "0.02em", textShadow: "0.06em 0.06em 0 #2a1f6a" }} suppressHydrationWarning>
+              {time}
+            </p>
+            <p style={{ fontFamily: "var(--font-silk), monospace", fontSize: "1em", marginTop: "0.7em", letterSpacing: "0.1em", textTransform: "uppercase", textShadow: "0.08em 0.08em 0 #2a1f6a" }} suppressHydrationWarning>
+              {wd} {dm}
+            </p>
+          </div>
+        </div>
+      </WidgetFrame>
+    );
+  }
+
+  // sunset (padrão): paisagem dinâmica
+  const scene = sceneForHour(hour);
+  return (
+    <WidgetFrame frame={frame} label="Relógio" scene={scene} shape="square">
+      <Corner side="left">
+        <ClockIcon />
+      </Corner>
+      <Corner side="right">{isNightHour(hour) ? <MoonIcon /> : <SunIcon />}</Corner>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pt-[0.8em]">
+        <p className="tabular-nums" style={{ fontSize: "3.6em", fontWeight: 700, lineHeight: 1, letterSpacing: "-0.02em" }} suppressHydrationWarning>
+          {time}
+        </p>
+        <p className="mt-[0.45em] text-[1.25em] font-medium opacity-95" suppressHydrationWarning>
+          {dateLine(n)}
+        </p>
+        {place && <p className="mt-[0.2em] text-[0.7em] opacity-80">{place}</p>}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+/** Relógio: cinco estilos, em formato retangular ou quadrado. A hora passa sozinha (atualiza a cada poucos segundos). */
 export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame }: { style?: string; tz?: string; frame?: string | null }) {
   const zone = CLOCK_ZONES.some((z) => z.id === tz) ? tz : "America/Sao_Paulo";
   const n = useNow(zone, 1000);
@@ -40,6 +178,8 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
   const time = n ? `${n.hh}:${n.mm}` : "--:--";
   const wd = n?.weekdayShort ?? "";
   const dm = n ? `${n.day} ${n.monthShort}` : "";
+
+  if (shapeOfStyle(style) === "square") return <ClockSquare st={baseStyle(style)} n={n} time={time} wd={wd} place={place} hour={hour} frame={frame} />;
 
   if (style === "flip") {
     return (

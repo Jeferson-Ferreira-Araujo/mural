@@ -49,7 +49,7 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
   const label = future ? (n === 1 ? "dia para começar" : "dias para começar") : n === 1 ? "dia" : "dias";
   const from = m ? `${m[3]}/${m[2]}/${m[1]}` : "";
   const len = String(n).length;
-  const size = square ? (len >= 5 ? 3.8 : len === 4 ? 4.8 : len === 3 ? 6 : 7.2) : len >= 5 ? 3.6 : len === 4 ? 4.4 : 5.4;
+  const size = square ? (len >= 5 ? 3.3 : len === 4 ? 4.1 : len === 3 ? 5 : 6.2) : len >= 5 ? 3.6 : len === 4 ? 4.4 : 5.4;
 
   return (
     <WidgetFrame frame={frame} label="Contador de dias" shape={shape}>
@@ -62,7 +62,7 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
             <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
               {n}
             </span>
-            <span className="mt-[0.2em] text-[1.5em] leading-tight font-bold">{label}</span>
+            <span className="mt-[0.2em] text-[1.3em] leading-tight font-bold">{label}</span>
           </div>
         ) : (
           <div className="flex min-h-0 flex-1 items-baseline justify-center gap-[0.3em] pt-[0.1em]">

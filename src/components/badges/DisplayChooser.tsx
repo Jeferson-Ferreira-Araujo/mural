@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, DisplayCard, displayName, splitDisplayId } from "../widgets";
 import { sampleFor } from "./StoreModal";
 
@@ -11,6 +12,7 @@ import { sampleFor } from "./StoreModal";
  */
 export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick: (id: string) => void; onStore: () => void }) {
   const [cat, setCat] = useState<string | null>(null);
+  const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada estilo (retangular por padrão)
 
   // as categorias que a pessoa tem, na ordem de sempre da loja, cada uma com os seus modelos
   const groups = DISPLAY_CATS.map((c) => ({ ...c, ids: ids.filter((id) => splitDisplayId(id).product === c.id) })).filter((g) => g.ids.length > 0);
@@ -58,17 +60,39 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
           <h3 className="font-title text-base font-semibold">{open.label}</h3>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2" aria-label={open.label}>
-          {open.ids.map((id) => {
-            const { product, style } = splitDisplayId(id);
+          {[...new Set(open.ids.map((id) => baseStyle(splitDisplayId(id).style)))].map((base) => {
+            // um cartão por estilo; se a pessoa tem os dois formatos, escolhe aqui
+            const product = open.id;
+            const shapes = (["wide", "square"] as const).filter((sh) => open.ids.includes(`${product}:${withShape(base, sh)}`));
+            const key = `${product}:${base}`;
+            const shape = shapes.includes(shapePick[key] ?? "wide") ? (shapePick[key] ?? "wide") : shapes[0];
+            const id = `${product}:${withShape(base, shape)}`;
             return (
-              <li key={id}>
-                <button type="button" onClick={() => onPick(id)} className={card}>
-                  {preview(id, product, style)}
-                  <span className="block p-3">
-                    <span className="block font-title text-base font-semibold">{displayName(id)}</span>
-                    <span className="mt-0.5 block text-xs text-[#6b5440]">Toque para colocar neste espaço</span>
+              <li key={key} className={card.replace("cursor-pointer ", "")}>
+                <button type="button" onClick={() => onPick(id)} className="flex w-full cursor-pointer flex-col text-left">
+                  <span className="grid min-h-[11rem] w-full place-items-center bg-[#e9d8b6]/70 px-4 py-5">
+                    <span className="pointer-events-none text-[9px]">
+                      <span className="relative block">
+                        <DisplayCard data={sampleFor(product, withShape(base, shape))} />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="block px-3 pt-3">
+                    <span className="block font-title text-base font-semibold">{displayName(`${product}:${base}`)}</span>
+                    <span className="mt-0.5 block text-xs text-[#6b5440]">{shapes.length === 1 && shape === "square" ? "Quadrado · " : ""}Toque para colocar neste espaço</span>
                   </span>
                 </button>
+                {shapes.length > 1 ? (
+                  <div role="radiogroup" aria-label="Formato" className="m-3 mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                    {shapes.map((sh) => (
+                      <button key={sh} type="button" role="radio" aria-checked={shape === sh} onClick={() => setShapePick((m) => ({ ...m, [key]: sh }))} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                        {SHAPE_LABEL[sh]}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="block pb-3" />
+                )}
               </li>
             );
           })}
