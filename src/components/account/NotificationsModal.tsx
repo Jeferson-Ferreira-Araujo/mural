@@ -20,9 +20,11 @@ export function NotificationsModal({ open, onClose, items }: { open: boolean; on
               <p className="text-[15px] leading-snug">{notificationText(n)}</p>
               <p className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-[#8a7b69]">
                 <span>{when(n.createdAt)}</span>
-                <a href={n.kind === "follow" ? `/${n.data.actor}` : `/${n.data.muralNick}/${n.data.muralSlug}`} className="font-semibold text-[#4a3826] underline">
-                  {n.kind === "follow" ? "Ver o perfil" : "Ver o mural"}
-                </a>
+                {n.kind !== "reward" && (
+                  <a href={n.kind === "follow" ? `/${n.data.actor}` : `/${n.data.muralNick}/${n.data.muralSlug}`} className="font-semibold text-[#4a3826] underline">
+                    {n.kind === "follow" ? "Ver o perfil" : "Ver o mural"}
+                  </a>
+                )}
               </p>
             </li>
           ))}

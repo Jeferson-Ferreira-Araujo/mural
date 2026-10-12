@@ -31,7 +31,7 @@ import { FirstTimeTip } from "./account/FirstTimeTip";
 import { OnboardingModal } from "./account/OnboardingModal";
 import { Tour } from "./tour/Tour";
 import { getOnboarding, TOUR_EVENT } from "@/lib/onboarding";
-import { claimReward, REWARD_EVENT } from "@/lib/rewards";
+import { claimReward, registerRefVisit, REWARD_EVENT } from "@/lib/rewards";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -406,6 +406,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           if (l.notifOpen) setNotifs(list);
           const latest = list.find((n) => !n.read);
           if (latest) l.notify(notificationText(latest));
+          if (latest?.kind === "reward") void reloadInventory();
         });
       })
       .subscribe();
@@ -413,6 +414,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       void sb.removeChannel(ch);
     };
   }, [myUid, reloadUnread]);
+
+  // abriu um link compartilhado por alguém (?ref=…): o servidor paga o crédito a quem compartilhou
+  useEffect(() => {
+    if (sessionLoading) return;
+    void registerRefVisit(getVisitorId());
+  }, [sessionLoading]);
 
   // o autor excluiu o próprio pin no detalhe: recarrega o quadro
   useEffect(() => {

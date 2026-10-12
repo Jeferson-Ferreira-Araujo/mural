@@ -13,7 +13,7 @@ import { ReactionBar } from "./ReactionBar";
 import { useReactionsAccess } from "./ReactionsContext";
 import { useFeatureFlags } from "@/lib/features";
 import { shapeOfStyle } from "@/lib/displayShape";
-import { claimReward } from "@/lib/rewards";
+import { withRef } from "@/lib/rewards";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
@@ -171,13 +171,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     if (!wText) return;
     try {
       if (navigator.share) {
-        await navigator.share({ text: `${wText}\n\nVia Pinz · pinz.digital` });
-        void claimReward("share_pin");
+        await navigator.share({ text: `${wText}\n\nVia Pinz · ${await withRef("https://pinz.digital/", "p")}` });
         return;
       }
-      await navigator.clipboard.writeText(`${wText}\n\nVia Pinz · pinz.digital`);
+      await navigator.clipboard.writeText(`${wText}\n\nVia Pinz · ${await withRef("https://pinz.digital/", "p")}`);
       setWCopied(true);
-      void claimReward("share_pin");
       window.setTimeout(() => setWCopied(false), 2500);
     } catch {
       /* compartilhamento cancelado */
@@ -232,9 +230,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     setShareMsg(null);
     try {
       const blob = await cardToPng(cardRef.current);
-      const res = await deliverImage(blob, "pinz-pin", "Crie seu mural agora, acesse: https://pinz.digital");
+      const res = await deliverImage(blob, "pinz-pin", `Crie seu mural agora, acesse: ${await withRef("https://pinz.digital/", "p")}`);
       if (res === "downloaded") setShareMsg("Imagem salva! Agora é só postar.");
-      if (res !== "canceled") void claimReward("share_pin");
     } catch {
       setShareMsg("Não foi possível gerar a imagem agora.");
     } finally {

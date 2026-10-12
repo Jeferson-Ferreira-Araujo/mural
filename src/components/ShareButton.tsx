@@ -1,6 +1,6 @@
 "use client";
 
-import { claimReward } from "@/lib/rewards";
+import { withRef } from "@/lib/rewards";
 
 type Props = {
   title: string;
@@ -14,22 +14,21 @@ type Props = {
   iconOnly?: boolean;
   /** texto ao lado do ícone (quando não é só o ícone); padrão: "Compartilhar" */
   label?: string;
-  /** compartilhar o mural conta como tarefa de recompensa */
+  /** o link leva o código da conta: quando outra pessoa o abre, a recompensa é paga */
   reward?: boolean;
 };
 
 export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false, label = "Compartilhar", reward = false }: Props) {
   async function share() {
-    const url = path ? `${window.location.origin}${path}` : window.location.href;
+    const base = path ? `${window.location.origin}${path}` : window.location.href;
+    const url = reward ? await withRef(base, "m") : base;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url });
-        if (reward) void claimReward("share_mural");
         return;
       }
       await navigator.clipboard.writeText(url);
       onNotify("Link copiado!");
-      if (reward) void claimReward("share_mural");
     } catch {
       /* compartilhamento cancelado pelo usuário */
     }
