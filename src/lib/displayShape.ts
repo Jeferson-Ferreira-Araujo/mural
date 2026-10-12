@@ -16,7 +16,7 @@ export const baseStyle = (style?: string | null): string => (style ?? "").replac
 export const withShape = (style: string, shape: Shape): string => (shape === "square" ? SQUARE_PREFIX + baseStyle(style) : shape === "tall" ? TALL_PREFIX + baseStyle(style) : baseStyle(style));
 
 /** Produtos que têm as duas versões, retangular e quadrada. */
-export const SHAPED_PRODUCTS: ReadonlySet<string> = new Set(["clock", "weather", "calendar", "date", "countdown", "daycount"]);
+export const SHAPED_PRODUCTS: ReadonlySet<string> = new Set(["clock", "weather", "calendar", "date", "countdown", "daycount", "top3"]);
 export const hasShapes = (product: string) => SHAPED_PRODUCTS.has(product);
 
 /** Largura do desenho do widget na própria fonte (em em): o retangular é 24 × 12, o quadrado 12 × 12 e o vertical 12 × 18. */

@@ -21,6 +21,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   countdown: {},
   daycount: {},
   book: {},
+  top3: {},
 };
 
 const isoPlus = (days: number) => {
@@ -38,6 +39,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
   // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
+  const [t3Title, setT3Title] = useState(""); // top 3: tema e três itens
+  const [t3Items, setT3Items] = useState<string[]>(["", "", ""]);
   const [bkTitle, setBkTitle] = useState("");
   const [bkPages, setBkPages] = useState("");
   const [bkRead, setBkRead] = useState("");
@@ -64,6 +67,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
+    setT3Title(initial?.title ?? "");
+    setT3Items([0, 1, 2].map((i) => initial?.items?.[i] ?? ""));
     setBkTitle(initial?.title ?? "");
     setBkPages(initial?.pages ? String(initial.pages) : "");
     setBkRead(initial?.read !== undefined ? String(initial.read) : "");
@@ -122,11 +127,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "book"
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
+    ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
   async function submit() {
     if (product !== "book") return onSubmit(data);
@@ -287,6 +293,21 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {product === "top3" && (
+          <div className="space-y-3">
+            <Field label="Tema do seu top 3">
+              {(id) => <input id={id} value={t3Title} onChange={(e) => setT3Title(e.target.value)} maxLength={30} placeholder="Ex: Minhas comidas favoritas" className={inputClass} autoComplete="off" />}
+            </Field>
+            {([0, 1, 2] as const).map((i) => (
+              <Field key={i} label={`${i + 1}º lugar`}>
+                {(id) => (
+                  <input id={id} value={t3Items[i]} onChange={(e) => setT3Items((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={30} placeholder={["Ex: Lasanha", "Ex: Pizza", "Ex: Sorvete"][i]} className={inputClass} autoComplete="off" />
+                )}
+              </Field>
+            ))}
           </div>
         )}
 
