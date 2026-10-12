@@ -61,7 +61,6 @@ export function AccountDrawer({
   pendingCount,
   credits,
   isAdmin = false,
-  onOpenStore,
   onChanged,
   onDeleted,
   onSignOut,
@@ -85,7 +84,6 @@ export function AccountDrawer({
   credits: number;
   /** conta de administrador: mostra o atalho da página de administração */
   isAdmin?: boolean;
-  onOpenStore: () => void;
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
   onDeleted: () => void;
@@ -223,17 +221,6 @@ export function AccountDrawer({
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
-                  </svg>
-                }
-              />
-              <Row
-                onClick={onOpenStore}
-                label="Loja"
-                hint={`Bottons, temas e murais · ${credits} créditos`}
-                icon={
-                  <svg {...ic}>
-                    <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
-                    <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8" />
                   </svg>
                 }
               />

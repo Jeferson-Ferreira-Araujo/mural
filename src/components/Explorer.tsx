@@ -877,10 +877,6 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         onSharedChanged={() => void reloadShared()}
         credits={inventory?.credits ?? 0}
         isAdmin={isAdmin}
-        onOpenStore={() => {
-          setDrawer({ open: false });
-          setStoreOpen(true);
-        }}
         onPending={setPendingCount}
         onNotify={notify}
         onChanged={() => {
@@ -981,10 +977,6 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
             onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}
             isAdmin={isAdmin}
-            onOpenStore={() => {
-              setDrawer({ open: false });
-              setStoreOpen(true);
-            }}
             onPending={setPendingCount}
             onNotify={notify}
             onChanged={() => {
