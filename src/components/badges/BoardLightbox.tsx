@@ -14,7 +14,12 @@ export function BoardLightbox({ image, name, onClose }: { image: string | null; 
   return (
     <dialog
       ref={ref}
-      onClose={onClose}
+      // o React repassa o "close" desta janela às janelas de fora (a Loja): sem parar aqui, fechar a imagem fechava a Loja inteira
+      onClose={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+      onCancel={(e) => e.stopPropagation()}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

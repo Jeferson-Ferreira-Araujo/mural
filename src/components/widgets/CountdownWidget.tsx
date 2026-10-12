@@ -1,9 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
+import { SHARED_SKINS, type Skin } from "./skins";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Estilos do contador regressivo: neon e claro são os de origem; os outros vêm dos estilos compartilhados. */
+const SKINS: Record<string, Skin> = {
+  neon: { bg: "linear-gradient(150deg,#101733,#070b1a)", ink: "#eaf1ff", sub: "#8fa3d6", num: "#6fe3ff", box: "rgba(255,255,255,.06)", edge: "rgba(111,227,255,.28)", glow: "0 0 0.5em rgba(111,227,255,.55)", accent: "#ff6ad5", onAccent: "#ffffff" },
+  light: { bg: "linear-gradient(160deg,#fffaf0,#f1e4c6)", ink: "#2f2218", sub: "#6b5440", num: "#2f2218", box: "rgba(255,255,255,.7)", edge: "rgba(120,80,20,.22)", glow: "none", accent: "#c33a32", onAccent: "#ffffff" },
+  dusk: SHARED_SKINS.dusk,
+  mint: SHARED_SKINS.mint,
+  mono: SHARED_SKINS.mono,
+};
 
 /** O alvo (data e hora marcadas) no relógio do aparelho de quem vê. Entrada inválida vira null. */
 function targetOf(date?: string, time?: string): Date | null {
@@ -27,11 +38,13 @@ function useTick(): number | null {
 
 /**
  * Contador regressivo até uma data: nome do evento e dias, horas, minutos e segundos que faltam.
- * Chegando a hora mostra "Chegou o dia!"; depois do dia, há quanto tempo foi. Dois estilos: neon (escuro) e claro.
+ * Chegando a hora mostra "Chegou o dia!"; depois do dia, há quanto tempo foi. Cinco estilos, em formato retangular ou quadrado.
  */
 export function CountdownWidget({ style = "neon", title, target, time, frame }: { style?: string; title?: string; target?: string; time?: string; frame?: string | null }) {
   const now = useTick();
-  const light = style === "light";
+  const shape = shapeOfStyle(style);
+  const square = shape === "square";
+  const skin = SKINS[baseStyle(style)] ?? SKINS.neon;
   const at = targetOf(target, time);
   const name = (title ?? "").trim() || "Seu evento";
 
@@ -49,20 +62,17 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
     [pad(minutes), "min"],
     [pad(seconds), "seg"],
   ];
-
-  const skin = light
-    ? { bg: "linear-gradient(160deg,#fffaf0,#f1e4c6)", ink: "#2f2218", sub: "#6b5440", num: "#2f2218", box: "rgba(255,255,255,.7)", edge: "rgba(120,80,20,.22)", glow: "none", accent: "#c33a32" }
-    : { bg: "linear-gradient(150deg,#101733,#070b1a)", ink: "#eaf1ff", sub: "#8fa3d6", num: "#6fe3ff", box: "rgba(255,255,255,.06)", edge: "rgba(111,227,255,.28)", glow: "0 0 0.5em rgba(111,227,255,.55)", accent: "#ff6ad5" };
+  const big = square ? 2.6 : 2.9;
 
   return (
-    <WidgetFrame frame={frame} label="Contador regressivo">
-      <div className="absolute inset-0 flex flex-col px-[1.2em] pt-[0.9em] pb-[1em]" style={{ background: skin.bg, color: skin.ink }}>
-        <p className="truncate text-center text-[1.45em] leading-tight font-bold" title={name}>
+    <WidgetFrame frame={frame} label="Contador regressivo" shape={shape}>
+      <div className={`absolute inset-0 flex flex-col ${square ? "px-[1em] pt-[1em] pb-[1em]" : "px-[1.2em] pt-[0.9em] pb-[1em]"}`} style={{ background: skin.bg, color: skin.ink }}>
+        <p className={`truncate text-center leading-tight font-bold ${square ? "text-[1.5em]" : "text-[1.45em]"}`} title={name}>
           {name}
         </p>
         {arrived ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
-            <p className="text-[2.6em] leading-none font-extrabold" style={{ color: skin.accent, textShadow: skin.glow }}>
+            <p className={`leading-none font-extrabold ${square ? "text-[2.4em]" : "text-[2.6em]"}`} style={{ color: skin.accent, textShadow: skin.glow }}>
               {ago >= 1 ? "Já passou" : "Chegou o dia!"}
             </p>
             {ago >= 1 && (
@@ -72,17 +82,21 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
             )}
           </div>
         ) : (
-          <div className="grid min-h-0 flex-1 grid-cols-4 gap-[0.5em] pt-[0.55em]">
-            {cells.map(([n, label], i) => (
-              <div key={label} className="flex min-w-0 flex-col items-center justify-center rounded-[0.6em]" style={{ background: skin.box, boxShadow: `inset 0 0 0 0.06em ${skin.edge}` }}>
-                <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${i === 0 && n.length >= 4 ? 1.9 : i === 0 && n.length === 3 ? 2.4 : 2.9}em`, color: skin.num, textShadow: skin.glow }}>
-                  {n}
-                </span>
-                <span className="mt-[0.25em] text-[0.85em] font-semibold tracking-wide uppercase" style={{ color: skin.sub }}>
-                  {label}
-                </span>
-              </div>
-            ))}
+          <div className={`grid min-h-0 flex-1 gap-[0.5em] ${square ? "grid-cols-2 pt-[0.7em]" : "grid-cols-4 pt-[0.55em]"}`}>
+            {cells.map(([n, label], i) => {
+              const len = i === 0 ? n.length : 0;
+              const size = len >= 4 ? big * 0.66 : len === 3 ? big * 0.83 : big;
+              return (
+                <div key={label} className="flex min-w-0 flex-col items-center justify-center rounded-[0.6em]" style={{ background: skin.box, boxShadow: `inset 0 0 0 0.06em ${skin.edge}` }}>
+                  <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
+                    {n}
+                  </span>
+                  <span className="mt-[0.25em] text-[0.85em] font-semibold tracking-wide uppercase" style={{ color: skin.sub }}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

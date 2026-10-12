@@ -1,20 +1,28 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { NATURAL_W, shapeOfStyle, type Shape } from "@/lib/displayShape";
 import { INK, Scene, type SceneId } from "./scenes";
 
 /** Largura de um widget, em em da própria fonte; a altura é a metade (formato 2:1). */
 export const WIDGET_W = 24;
 
-/** Cartão do display, sem contorno colorido (menos personalização): só cantos arredondados e sombra. `frame` fica aceito por compatibilidade, mas não é mais usado. */
-export function WidgetFrame({ label, scene, children }: { frame?: string | null; label: string; scene?: SceneId; children: ReactNode }) {
+/** O formato do cartão a partir do estilo do widget ("q-…" = quadrado). */
+export const shapeOf = (style?: string | null): Shape => shapeOfStyle(style);
+
+/**
+ * Cartão do display, sem contorno colorido (menos personalização): só cantos arredondados e sombra. `frame` fica aceito por compatibilidade, mas não é mais usado.
+ * `shape`: retangular (24 × 12 em, o padrão) ou quadrado (12 × 12 em). A paisagem de fundo (200 × 100) é cortada ao centro no quadrado, sem esticar.
+ */
+export function WidgetFrame({ label, scene, shape = "wide", children }: { frame?: string | null; label: string; scene?: SceneId; shape?: Shape; children: ReactNode }) {
   const ink = scene ? INK[scene] : null;
+  const square = shape === "square";
   return (
-    <div className="relative" style={{ width: `${WIDGET_W}em` }}>
-      <article aria-label={label} className="relative aspect-[2/1] w-full rounded-[1.1em]" style={{ boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45)" }}>
+    <div className="relative" style={{ width: `${NATURAL_W[shape]}em` }}>
+      <article aria-label={label} className={`relative w-full rounded-[1.1em] ${square ? "aspect-square" : "aspect-[2/1]"}`} style={{ boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45)" }}>
         <div className="relative size-full overflow-hidden rounded-[1.1em]" style={{ color: ink?.color, textShadow: ink?.shadow, boxShadow: "inset 0 0 0.6em rgba(0,0,0,.35)" }}>
           {scene && (
-            <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="absolute inset-0 size-full" aria-hidden>
+            <svg viewBox="0 0 200 100" preserveAspectRatio={square ? "xMidYMid slice" : "none"} className="absolute inset-0 size-full" aria-hidden>
               <Scene id={scene} />
             </svg>
           )}

@@ -15,7 +15,10 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
   return (
     <dialog
       ref={ref}
-      onClose={onClose}
+      // só o "close" desta própria janela conta: o React repassa o de uma janela aninhada (ex.: imagem ampliada na Loja), que não pode fechar esta
+      onClose={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

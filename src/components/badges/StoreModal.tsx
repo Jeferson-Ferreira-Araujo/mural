@@ -9,6 +9,7 @@ import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
+import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
@@ -141,6 +142,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const products = (inventory?.pinProducts ?? []).filter((p) => isDisplayOn(p.id.split(":")[0]));
   const [displayCat, setDisplayCat] = useState<string | null>(null); // tipo de display aberto na aba Displays
+  const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada cartão de estilo (retangular por padrão)
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
   const [done, setDone] = useState<Done | null>(null);
@@ -380,54 +382,64 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             <h3 className="font-title text-base font-semibold">{DISPLAY_CATS.find((c) => c.id === displayCat)?.label}</h3>
           </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {products.filter((p) => p.id.startsWith(displayCat + ":")).map((p) => {
-            const just = done?.id === `f${p.id}`;
-            return (
-              <li key={p.id} className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
-                {just && <Confetti key={done.at} />}
-                {/* amostra do pin: o cartão como aparece no mural */}
-                <div className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-6">
-                  <div className="text-[9px]">
-                    <div className="relative">
-                      <DisplayCard data={sampleFor(p.id.split(":")[0], p.id.split(":")[1])} />
+          {(() => {
+            // um cartão por estilo; o formato (retangular ou quadrado) é escolhido no próprio cartão
+            const inCat = products.filter((p) => p.id.startsWith(displayCat + ":"));
+            const bases = [...new Set(inCat.map((p) => baseStyle(p.id.split(":")[1])))];
+            return bases.map((base) => {
+              const key = `${displayCat}:${base}`;
+              const shapes = (["wide", "square"] as const).filter((sh) => inCat.some((p) => p.id === `${displayCat}:${withShape(base, sh)}`));
+              const shape = shapes.includes(shapePick[key] ?? "wide") ? (shapePick[key] ?? "wide") : shapes[0];
+              const p = inCat.find((x) => x.id === `${displayCat}:${withShape(base, shape)}`);
+              if (!p) return null;
+              const just = done?.id === `f${p.id}`;
+              const name = p.name.replace(/ \(quadrado\)$/i, "");
+              return (
+                <li key={key} className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                  {just && <Confetti key={done.at} />}
+                  {/* amostra do pin: o cartão como aparece no mural, no formato escolhido */}
+                  <div className="grid min-h-[11.5rem] place-items-center bg-[#e9d8b6]/70 px-4 py-6">
+                    <div className="text-[9px]">
+                      <div className="relative">
+                        <DisplayCard data={sampleFor(displayCat ?? "", p.id.split(":")[1])} />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">Novo</span>
-                <div className="flex flex-1 flex-col p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-title text-base font-semibold">{p.name}</p>
-                    {p.owned ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">✓ Comprado</span>
-                    ) : (
-                      <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${p.price} créditos`}>
-                        <Coin className="size-5" />
-                        {p.price}
-                      </p>
+                  <div className="flex flex-1 flex-col p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-title text-base font-semibold">{name}</p>
+                      {p.owned ? (
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">✓ Comprado</span>
+                      ) : (
+                        <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${p.price} créditos`}>
+                          <Coin className="size-5" />
+                          {p.price}
+                        </p>
+                      )}
+                    </div>
+                    {shapes.length > 1 && (
+                      <div role="radiogroup" aria-label="Formato" className="mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                        {shapes.map((sh) => (
+                          <button key={sh} type="button" role="radio" aria-checked={shape === sh} onClick={() => setShapePick((m) => ({ ...m, [key]: sh }))} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                            {SHAPE_LABEL[sh]}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {!p.owned && (
+                      <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
+                        {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
+                      </button>
                     )}
                   </div>
-                  <p className="mt-1 flex-1 text-sm text-[#6b5440]">{p.description}</p>
-                  {p.owned ? (
-                    <p className="mt-2 text-xs text-[#6b5440]">Na barra de baixo do seu mural, toque em “Displays” e arraste este para onde quiser.</p>
-                  ) : (
-                    <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: p.name, text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={buyBtn}>
-                      {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
-                    </button>
-                  )}
-                </div>
-              </li>
-            );
-          })}
+                </li>
+              );
+            });
+          })()}
         </ul>
         </>
 ) : (
         <>
-          {/* mural maior: não se amplia um mural que já existe; compra-se um mural novo de 42 espaços ao criá-lo */}
-          {inventory.plus && (
-            <p className="mb-4 rounded-2xl border border-[#e1d3ba] bg-white/70 px-4 py-3 text-sm text-[#4a3826]">
-              <strong>Mural com 42 espaços:</strong> ao criar um mural novo (botão “Novo mural”), escolha o tamanho 42 espaços por <Coin className="inline size-4 align-text-bottom" /> {inventory.slotsPrice ?? 25} créditos.
-            </p>
-          )}
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[...BOARDS]
             // os que ainda não são seus primeiro; entre eles (e entre os seus) os lançamentos mais novos vêm antes

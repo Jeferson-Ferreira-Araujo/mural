@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
+import { SHARED_SKINS, type Skin } from "./skins";
+
+/** Estilos do contador de dias: quente e entardecer são os de origem; os outros vêm dos estilos compartilhados. */
+const SKINS: Record<string, Skin> = {
+  warm: { bg: "linear-gradient(155deg,#fff4dc,#f7cf92)", ink: "#3b2616", sub: "#7a5530", num: "#b5471f", box: "rgba(255,255,255,.6)", edge: "rgba(120,80,20,.2)", glow: "none", accent: "#b5471f", onAccent: "#ffffff" },
+  dusk: SHARED_SKINS.dusk,
+  mint: SHARED_SKINS.mint,
+  night: SHARED_SKINS.night,
+  mono: SHARED_SKINS.mono,
+};
 
 /** Hoje, no aparelho de quem vê (null até a tela montar, para não divergir do servidor); confere a cada minuto, então vira sozinho à meia-noite. */
 function useToday(): Date | null {
@@ -18,11 +29,13 @@ const dayOf = (y: number, m: number, d: number) => Date.UTC(y, m - 1, d) / 86_40
 
 /**
  * Contador de dias: quantos dias já se passaram desde uma data (tempo juntos, sem fumar, de casa nova…), com o nome e a data de início.
- * Se a data ainda não chegou, mostra quantos dias faltam para começar. Dois estilos: quente (claro) e entardecer (cores fortes).
+ * Se a data ainda não chegou, mostra quantos dias faltam para começar. Cinco estilos, em formato retangular ou quadrado.
  */
 export function DaysWidget({ style = "warm", title, since, frame }: { style?: string; title?: string; since?: string; frame?: string | null }) {
   const today = useToday();
-  const dusk = style === "dusk";
+  const shape = shapeOfStyle(style);
+  const square = shape === "square";
+  const skin = SKINS[baseStyle(style)] ?? SKINS.warm;
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(since ?? "");
   const name = (title ?? "").trim() || "Nosso tempo";
 
@@ -35,26 +48,30 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
   }
   const label = future ? (n === 1 ? "dia para começar" : "dias para começar") : n === 1 ? "dia" : "dias";
   const from = m ? `${m[3]}/${m[2]}/${m[1]}` : "";
-  const size = String(n).length >= 5 ? 3.6 : String(n).length === 4 ? 4.4 : 5.4;
-
-  const skin = dusk
-    ? { bg: "linear-gradient(155deg,#2c2160,#8a3f7a 55%,#ee8a6a)", ink: "#ffffff", sub: "rgba(255,255,255,.82)", num: "#ffe9b8", glow: "0 0.05em 0.35em rgba(40,10,60,.45)" }
-    : { bg: "linear-gradient(155deg,#fff4dc,#f7cf92)", ink: "#3b2616", sub: "#7a5530", num: "#b5471f", glow: "none" };
+  const len = String(n).length;
+  const size = square ? (len >= 5 ? 3.8 : len === 4 ? 4.8 : len === 3 ? 6 : 7.2) : len >= 5 ? 3.6 : len === 4 ? 4.4 : 5.4;
 
   return (
-    <WidgetFrame frame={frame} label="Contador de dias">
-      <div className="absolute inset-0 flex flex-col items-center px-[1.3em] pt-[0.9em] pb-[0.8em] text-center" style={{ background: skin.bg, color: skin.ink }}>
+    <WidgetFrame frame={frame} label="Contador de dias" shape={shape}>
+      <div className={`absolute inset-0 flex flex-col items-center text-center ${square ? "px-[1em] pt-[1.1em] pb-[1em]" : "px-[1.3em] pt-[0.9em] pb-[0.8em]"}`} style={{ background: skin.bg, color: skin.ink }}>
         <p className="w-full truncate text-[1.45em] leading-tight font-bold" title={name}>
           {name}
         </p>
-        <div className="flex min-h-0 flex-1 items-baseline justify-center gap-[0.3em] pt-[0.1em]">
-          <span className="self-center leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
-            {n}
-          </span>
-          <span className="self-center text-[1.5em] leading-tight font-bold" style={{ color: skin.ink }}>
-            {label}
-          </span>
-        </div>
+        {square ? (
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+            <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
+              {n}
+            </span>
+            <span className="mt-[0.2em] text-[1.5em] leading-tight font-bold">{label}</span>
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1 items-baseline justify-center gap-[0.3em] pt-[0.1em]">
+            <span className="self-center leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
+              {n}
+            </span>
+            <span className="self-center text-[1.5em] leading-tight font-bold">{label}</span>
+          </div>
+        )}
         {from && (
           <p className="text-[0.95em] font-semibold" style={{ color: skin.sub }}>
             {future ? "começa em" : "desde"} {from}

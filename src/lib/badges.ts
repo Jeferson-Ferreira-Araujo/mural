@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { MuralRef } from "./mural";
+import { BOARD_EM, RATIO, shapeOfStyle } from "./displayShape";
 import type { MessageType } from "./types";
 
 /** Pins decorativos (botons) que o dono coloca no próprio mural. Imagens em /public/img/badges (b01.webp...), recortadas da grade enviada. */
@@ -110,6 +111,9 @@ export const displayProductOf = (key: number) => Object.entries(DISPLAY_KEYS).fi
 export const DISPLAY_EM = 14;
 export const DISPLAY_SCALE = 100;
 export const baseEmOf = (key: number) => (isDisplayKey(key) ? DISPLAY_EM : BADGE_EM);
+/** Como baseEmOf/ratioOfKey, mas um display quadrado (estilo "q-…") é menor e tem proporção 1:1. */
+export const baseEmOfBadge = (key: number, data?: { style?: string | null } | null) => (isDisplayKey(key) ? BOARD_EM[shapeOfStyle(data?.style)] : BADGE_EM);
+export const ratioOfBadge = (key: number, data?: { style?: string | null } | null) => (isDisplayKey(key) ? RATIO[shapeOfStyle(data?.style)] : (badgeDef(key)?.ratio ?? 1));
 export const ratioOfKey = (key: number) => (isDisplayKey(key) ? 2 : (badgeDef(key)?.ratio ?? 1)); // widgets: largura 2 × altura 1
 
 export type PlacedBadge = { id: string; key: number; /** botton comum ou display da loja */ kind?: "badge" | "display"; /** dados do display (o texto do dia já vem pronto do servidor) */ data?: DisplayPayload | null; /** espaços do quadro que o display cobre (ficam sem receber pins) */ slots?: number[]; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
