@@ -195,6 +195,21 @@ body {
   display: none;
 }
 
+/* bottons (na barra e no mural): segurar o dedo não abre o menu do navegador (salvar imagem, copiar…) */
+[data-badge-bar] img,
+[data-badge-id] img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+[data-badge-bar] button,
+[data-badge-id] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* arrastando um pin decorativo (BadgeProvider) */
 body.badge-dragging,
 body.badge-dragging * {

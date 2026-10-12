@@ -361,6 +361,16 @@ export function BadgeProvider({
 
   useEffect(() => () => cleanup.current?.(), []);
 
+  // segurar o dedo num botton (na barra ou no mural) e demorar para arrastar abria o menu do navegador (salvar imagem): aqui ele é bloqueado
+  useEffect(() => {
+    const block = (e: Event) => {
+      const t = e.target;
+      if (document.body.classList.contains("badge-dragging") || (t instanceof Element && t.closest("[data-badge-bar], [data-badge-id]"))) e.preventDefault();
+    };
+    document.addEventListener("contextmenu", block, true);
+    return () => document.removeEventListener("contextmenu", block, true);
+  }, []);
+
   const hover = useCallback((id: string | null) => {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
     if (id) setHoverId(id);
