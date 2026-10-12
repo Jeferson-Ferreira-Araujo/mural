@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Pinz",
     short_name: "Pinz",
-    description: "Crie o seu mural no Pinz e receba recados de quem realmente te conhece.",
+    description: "O Pinz é um mural digital para colecionar momentos: receba recados, fotos, músicas e vídeos de quem você ama.",
     lang: "pt-BR",
     start_url: "/",
     scope: "/",

@@ -6,7 +6,7 @@ import { SITE_HOST } from "@/lib/mural";
 
 const SITE = `https://${SITE_HOST}`;
 const TITLE = "Pinz - Seu mural de momentos compartilhados";
-const DESCRIPTION = "Crie o seu mural no Pinz e receba recados, fotos, músicas e vídeos de quem realmente te conhece. Só entra quem responde à sua pergunta.";
+const DESCRIPTION = "O Pinz é um mural digital para colecionar momentos: receba recados, fotos, músicas e vídeos de quem você ama e decore do seu jeito.";
 
 // Única página pública indexável (com Termos e Privacidade): quem procura "Pinz" no Google encontra o site; os murais continuam fora.
 export const metadata: Metadata = {
