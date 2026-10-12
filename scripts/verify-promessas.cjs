@@ -1,5 +1,5 @@
 /**
- * Confere src/data/promessas.json contra a Almeida 1911 (damarals/biblias): cada texto tem de ser IDÊNTICO ao(s) versículo(s) da referência.
+ * Confere src/data/promessas.json contra a Almeida 1911 (damarals/biblias): o arquivo scripts/promessas-almeida1911.json tem de ser IDÊNTICO ao(s) versículo(s) da referência.
  * Uso: node scripts/verify-promessas.cjs [caminho/ALM1911.json]   (sem argumento, baixa do GitHub)
  */
 const fs = require("fs");
@@ -8,7 +8,9 @@ const NAMES = ["Gênesis","Êxodo","Levítico","Números","Deuteronômio","Josu�
 (async () => {
   const arg = process.argv[2];
   const bible = JSON.parse(arg ? fs.readFileSync(arg, "utf8") : await (await fetch("https://github.com/damarals/biblias/releases/latest/download/ALM1911.json")).text());
-  const list = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "src", "data", "promessas.json"), "utf8"));
+  const list = JSON.parse(fs.readFileSync(path.join(__dirname, "promessas-almeida1911.json"), "utf8"));
+  const shown = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "src", "data", "promessas.json"), "utf8"));
+  const { fix } = require("./modernize-promessas.cjs");
   const errs = [];
   const texts = new Set(), refs = new Set();
   let maxLen = 0, over220 = 0;
@@ -28,8 +30,9 @@ const NAMES = ["Gênesis","Êxodo","Levítico","Números","Deuteronômio","Josu�
     maxLen = Math.max(maxLen, it.promessa.length);
     if (it.promessa.length > 220) over220++;
   }
+  list.forEach((it, i) => { if (!shown[i] || shown[i].referencia !== it.referencia || shown[i].promessa !== fix(it.promessa)) errs.push("src/data/promessas.json fora de dia com a atualização de ortografia: " + it.referencia); });
   console.log(`promessas: ${list.length} | únicas: ${texts.size} | maior texto: ${maxLen} caracteres | acima de 220: ${over220}`);
   if (list.length < 366) errs.push("menos de 366 promessas");
   if (errs.length) { console.error(errs.join("\n")); process.exit(1); }
-  console.log("OK: todos os textos são idênticos à Almeida 1911, sem duplicações.");
+  console.log("OK: scripts/promessas-almeida1911.json é idêntico à Almeida 1911, sem duplicações, e src/data/promessas.json é o mesmo texto com a ortografia atual.");
 })();
