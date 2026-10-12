@@ -99,7 +99,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
         <div className="pointer-events-none" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
-          {b.data ? <DisplayCard data={b.data} /> : null}
+          {b.data ? <DisplayCard data={b.data} badgeId={b.id} /> : null}
         </div>
       </div>
     );

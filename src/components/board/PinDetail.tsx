@@ -331,7 +331,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <DetailProvider value>
                 <div className="relative">
                   {widget ? (
-                    <DisplayCard data={widget.data} />
+                    <DisplayCard data={widget.data} badgeId={widget.id} />
                   ) : item ? (
                     <>
                       {/* no detalhe os bottons não aparecem: só o pin */}

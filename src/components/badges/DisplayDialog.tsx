@@ -24,6 +24,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   book: {},
   top3: {},
   song: {},
+  poll: {},
 };
 
 const isoPlus = (days: number) => {
@@ -42,6 +43,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
   // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
   // música favorita: busca por nome (ou link do Spotify) e a faixa escolhida
+  const [plTitle, setPlTitle] = useState(""); // enquete: pergunta e opções
+  const [plOptions, setPlOptions] = useState<string[]>(["Sim", "Não"]);
   const [spQuery, setSpQuery] = useState("");
   const [spHits, setSpHits] = useState<SongHit[]>([]);
   const [spSearching, setSpSearching] = useState(false);
@@ -75,6 +78,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
+    setPlTitle(initial?.title ?? "");
+    setPlOptions(initial?.options && initial.options.length >= 2 ? initial.options.slice(0, 4) : ["Sim", "Não"]);
     setSpQuery("");
     setSpHits([]);
     setSpNote(null);
@@ -164,11 +169,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       : {}),
     ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
     ...(product === "song" ? { title: spChosen?.title || "Garota de Ipanema", artist: spChosen?.artist ?? (spChosen ? "" : "Tom Jobim"), ...(spChosen ? { track: spChosen.track } : {}), ...(spChosen?.cover ? { cover: spChosen.cover } : {}) } : {}),
+    ...(product === "poll" ? { title: plTitle.trim() || "Você gosta de pizza com abacaxi?", options: plOptions.map((o, i) => o.trim() || ["Sim", "Não", "Talvez", "Depende"][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "song" ? !!spChosen : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "poll" ? plTitle.trim().length > 0 && plOptions.length >= 2 && plOptions.every((o) => o.trim().length > 0) : product === "song" ? !!spChosen : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
   async function submit() {
     if (product !== "book") return onSubmit(data);
@@ -399,6 +405,35 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 <p className="mt-1.5 text-[11px] text-[#8a7b69]">Quem abrir o mural toca a música pelo player do Spotify.</p>
               </div>
             )}
+          </div>
+        )}
+
+        {product === "poll" && (
+          <div className="space-y-3">
+            <Field label="Pergunta da enquete">
+              {(id) => <input id={id} value={plTitle} onChange={(e) => setPlTitle(e.target.value)} maxLength={90} placeholder="Ex: Você gosta de pizza com abacaxi?" className={inputClass} autoComplete="off" />}
+            </Field>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">Opções de resposta (de 2 a 4)</p>
+              {plOptions.map((o, i) => (
+                <div key={i} className="flex gap-2">
+                  <input value={o} onChange={(e) => setPlOptions((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={40} aria-label={`Opção ${i + 1}`} placeholder={i === 0 ? "Ex: Sim" : i === 1 ? "Ex: Não" : "Outra opção"} className={inputClass} autoComplete="off" />
+                  {plOptions.length > 2 && (
+                    <button type="button" aria-label={`Tirar a opção ${i + 1}`} onClick={() => setPlOptions((l) => l.filter((_, j) => j !== i))} className="grid size-11 shrink-0 cursor-pointer place-items-center rounded-xl text-[#a23b2a] hover:bg-black/5">
+                      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+                        <path d="M6 6l12 12M18 6L6 18" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+              {plOptions.length < 4 && (
+                <button type="button" onClick={() => setPlOptions((l) => [...l, ""])} className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-dashed border-[#c9b48a] px-3 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-white/70">
+                  + Adicionar opção
+                </button>
+              )}
+            </div>
+            {editing && <p className="text-xs text-[#8a7b69]">Mudar as opções zera os votos. Só mudar a pergunta mantém os votos.</p>}
           </div>
         )}
 

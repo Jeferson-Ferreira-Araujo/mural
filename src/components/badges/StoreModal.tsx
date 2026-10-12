@@ -80,6 +80,8 @@ export function sampleFor(product: string, style?: string): DisplayData {
       const iso = (d: number) => `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
     }
+    case "poll":
+      return { product, style: st, title: "Você gosta de pizza com abacaxi?", options: ["Sim", "Não"] };
     case "song":
       return { product, style: st, title: "Garota de Ipanema", artist: "Tom Jobim" };
     case "top3":

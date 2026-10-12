@@ -1,5 +1,6 @@
 "use client";
 
+import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isDisplayOn } from "./widgets";
 import { buildPool, randomMural } from "@/data/mock";
@@ -896,6 +897,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
+      <PollAccess.Provider value={{ token }}>
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
       <ReactionsProvider value={isOwner || isMember ? { onChanged: () => void loadBoard() } : null}>
@@ -961,6 +963,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       </ReactionsProvider>
       </ModerationProvider>
       </BoardLoadingProvider>
+      </PollAccess.Provider>
       {logged && myNick && !nickPending && (
         <>
           <AccountDrawer
