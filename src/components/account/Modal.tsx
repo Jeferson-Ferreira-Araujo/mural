@@ -1,10 +1,12 @@
 "use client";
 
+import { useBackClose } from "@/lib/backStack";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
 export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, danger = false }: { /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
+  useBackClose(open, onClose); // o botão voltar (Android) fecha esta janela em vez de sair da página
   useEffect(() => {
     const d = ref.current;
     if (!d) return;

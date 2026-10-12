@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { NATURAL_W, shapeOfStyle, type Shape } from "@/lib/displayShape";
 import { INK, Scene, type SceneId } from "./scenes";
 
@@ -30,6 +30,40 @@ export function WidgetFrame({ label, scene, shape = "wide", children }: { frame?
         </div>
       </article>
     </div>
+  );
+}
+
+/**
+ * Texto de uma linha: se cabe, fica parado e centralizado; se for comprido demais para o espaço, vira uma placa que rola
+ * (usado nos displays quadrados, onde não há largura para o nome inteiro).
+ */
+export function Marquee({ text, className = "", style }: { text: string; className?: string; style?: CSSProperties }) {
+  const box = useRef<HTMLSpanElement>(null);
+  const one = useRef<HTMLSpanElement>(null);
+  const [roll, setRoll] = useState(false);
+  useEffect(() => {
+    const el = box.current;
+    const t = one.current;
+    if (!el || !t) return;
+    const check = () => setRoll(t.scrollWidth > el.clientWidth + 1);
+    check();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(check) : null;
+    ro?.observe(el);
+    return () => ro?.disconnect();
+  }, [text]);
+  return (
+    <span ref={box} title={text} className={`block w-full overflow-hidden whitespace-nowrap ${roll ? "" : "text-center"} ${className}`} style={style}>
+      <span className={`pinz-marquee inline-flex ${roll ? "" : "w-full justify-center"}`} style={roll ? { animation: `pinz-marquee ${Math.max(6, text.length * 0.38)}s linear infinite` } : undefined}>
+        <span ref={one} className={roll ? "pr-[2.2em]" : ""}>
+          {text}
+        </span>
+        {roll && (
+          <span aria-hidden className="pr-[2.2em]">
+            {text}
+          </span>
+        )}
+      </span>
+    </span>
   );
 }
 
@@ -111,19 +145,19 @@ export const sceneForHour = (h: number): SceneId => (h >= 5 && h < 8 ? "dawn" : 
 export const isNightHour = (h: number) => h < 5 || h >= 19;
 
 // ---------- clima ----------
-export type WeatherNow = { temp: number; symbol: string };
+export type WeatherNow = { temp: number; symbol: string; /** nome do lugar (só quando a posição é de quem vê) */ place?: string };
 
 const inflight = new Map<string, Promise<WeatherNow | null>>();
 const memo = new Map<string, { at: number; data: WeatherNow }>();
 
 /** Busca o tempo agora (o servidor guarda por 20 minutos); vários widgets da mesma cidade dividem a mesma chamada. */
-export function loadWeather(lat: number, lon: number): Promise<WeatherNow | null> {
-  const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+export function loadWeather(lat: number, lon: number, withPlace = false): Promise<WeatherNow | null> {
+  const key = `${lat.toFixed(2)},${lon.toFixed(2)}${withPlace ? "+p" : ""}`;
   const hit = memo.get(key);
   if (hit && Date.now() - hit.at < 10 * 60_000) return Promise.resolve(hit.data);
   let p = inflight.get(key);
   if (!p) {
-    p = fetch(`/api/weather?lat=${lat}&lon=${lon}`)
+    p = fetch(`/api/weather?lat=${lat}&lon=${lon}${withPlace ? "&place=1" : ""}`)
       .then((r) => (r.ok ? (r.json() as Promise<WeatherNow>) : null))
       .then((d) => {
         if (d) memo.set(key, { at: Date.now(), data: d });
@@ -153,21 +187,37 @@ export function describe(symbol: string): { kind: WeatherKind; label: string; ni
 }
 
 /** O tempo da cidade (ou um exemplo na prévia, antes de escolher a cidade), atualizado a cada 15 minutos. */
-export function useWeather(lat?: number, lon?: number): { now: WeatherNow | null | "error"; sample: boolean } {
+export function useWeather(lat?: number, lon?: number, withPlace = false): { now: WeatherNow | null | "error"; sample: boolean } {
   const sample = lat === undefined || lon === undefined || (lat === 0 && lon === 0);
   const [now, setNow] = useState<WeatherNow | null | "error">(null);
   useEffect(() => {
     if (sample || lat === undefined || lon === undefined) return;
     let alive = true;
-    const run = () => void loadWeather(lat, lon).then((d) => alive && setNow(d ?? "error"));
+    const run = () => void loadWeather(lat, lon, withPlace).then((d) => alive && setNow(d ?? "error"));
     run();
     const t = window.setInterval(run, 15 * 60_000);
     return () => {
       alive = false;
       window.clearInterval(t);
     };
-  }, [lat, lon, sample]);
+  }, [lat, lon, sample, withPlace]);
   return { now: sample ? { temp: 24, symbol: "partlycloudy_day" } : now, sample };
+}
+
+/**
+ * Véu de cor sobre a paisagem conforme a temperatura: frio puxa para o azul, calor para o laranja e o vermelho; o ameno (18 a 25°) fica como está.
+ * Devolve o fundo (CSS) do véu, ou null se não há o que pintar.
+ */
+export function tempTint(temp: number | null): string | null {
+  if (temp === null) return null;
+  const veil = (rgb: string, a: number) => `radial-gradient(130% 100% at 85% 0%, rgba(${rgb},${a}) 0%, rgba(${rgb},${(a * 0.45).toFixed(2)}) 55%, rgba(${rgb},0) 100%)`;
+  if (temp <= 0) return veil("150,200,255", 0.5);
+  if (temp <= 10) return veil("100,160,255", 0.38);
+  if (temp <= 17) return veil("120,175,235", 0.22);
+  if (temp <= 25) return null;
+  if (temp <= 30) return veil("255,176,70", 0.22);
+  if (temp <= 35) return veil("255,122,40", 0.34);
+  return veil("255,64,40", 0.46);
 }
 
 /** Desenho do tempo (sol, nuvem, chuva…) para os cantos dos widgets de clima. */

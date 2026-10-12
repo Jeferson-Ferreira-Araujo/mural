@@ -98,7 +98,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       <div className="space-y-4">
         <div className="flex justify-center overflow-hidden rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-2 py-5">
           <div className="text-[min(11px,2.2vw)]">
-            <DisplayCard data={data} />
+            <DisplayCard data={data} preview />
           </div>
         </div>
 
@@ -242,7 +242,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
         {(product === "bible" || product === "motivation") && <p className="text-sm text-[#6b5440]">Na prévia vai um exemplo. O texto muda sozinho todo dia, à meia-noite.</p>}
         {product === "clock" && <p className="text-sm text-[#6b5440]">A hora passa sozinha, com a data de hoje.</p>}
-        {product === "weather" && <p className="text-sm text-[#6b5440]">O tempo agora na cidade escolhida, sempre atualizado.</p>}
+        {product === "weather" && <p className="text-sm text-[#6b5440]">Quem vê o mural vê o tempo do lugar onde está (se permitir a localização). Sem permissão, vale esta cidade.</p>}
 
         {(err || error) && (
           <p role="alert" className="text-sm text-[#a23b2a]">

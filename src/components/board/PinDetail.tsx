@@ -1,5 +1,6 @@
 "use client";
 
+import { useBackClose } from "@/lib/backStack";
 import { useEffect, useRef } from "react";
 import { isHidden, isSealed, type BoardItem } from "@/lib/types";
 import { useState } from "react";
@@ -99,6 +100,7 @@ export type DetailEntry = BoardItem | WidgetEntry;
 export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: DetailEntry[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
+  useBackClose(open, onClose); // voltar (Android) fecha o detalhe em vez de sair do mural
   const mod = useModeration();
   const react = useReactionsAccess();
   const { badges: placedBadges } = useBadges();

@@ -1,5 +1,6 @@
 "use client";
 
+import { useBackClose } from "@/lib/backStack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
 import { formatInfo, type Message, type MessageType } from "@/lib/types";
@@ -186,6 +187,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
+  useBackClose(open, onClose); // voltar (Android) fecha esta janela em vez de sair do mural
   const [format, setFormat] = useState<MessageType | null>(null);
   const [tab, setTab] = useState<"pins" | "displays">("pins");
   const wide = !!format && format !== "draw"; // com prévia: duas colunas no desktop

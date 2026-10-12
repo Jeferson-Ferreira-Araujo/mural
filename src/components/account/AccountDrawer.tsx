@@ -1,5 +1,6 @@
 "use client";
 
+import { useBackClose } from "@/lib/backStack";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
@@ -109,6 +110,7 @@ export function AccountDrawer({
   const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
   const [modal, setModal] = useState<ModalId | null>(null);
   const isOpen = inline || open;
+  useBackClose(open && !inline, onClose); // voltar (Android) fecha o menu
   const [stats, setStats] = useState<MuralStats | null>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
   useEffect(() => {

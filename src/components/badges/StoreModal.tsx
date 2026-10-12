@@ -9,6 +9,7 @@ import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
+import { useBackClose } from "@/lib/backStack";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 
@@ -146,6 +147,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
   const [done, setDone] = useState<Done | null>(null);
+  // voltar (Android) desfaz uma etapa da Loja por vez: primeiro o mural ampliado, depois o tipo de display aberto; só então fecha a Loja (a janela já cuida disso)
+  useBackClose(!!viewBoard, () => setViewBoard(null));
+  useBackClose(!!displayCat, () => setDisplayCat(null));
   // o saldo do cabeçalho só aparece quando o saldo grande (no bloco de créditos) sai da vista
   const [bigEl, setBigEl] = useState<HTMLElement | null>(null);
   const [bigVisible, setBigVisible] = useState(true);
@@ -354,7 +358,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                     <span className="pointer-events-none text-[9px]">
                       <span className="relative block">
-                        <DisplayCard data={sampleFor(c.id)} />
+                        <DisplayCard data={sampleFor(c.id)} preview />
                       </span>
                     </span>
                   </span>
@@ -401,7 +405,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <div className="grid min-h-[11.5rem] place-items-center bg-[#e9d8b6]/70 px-4 py-6">
                     <div className="text-[9px]">
                       <div className="relative">
-                        <DisplayCard data={sampleFor(displayCat ?? "", p.id.split(":")[1])} />
+                        <DisplayCard data={sampleFor(displayCat ?? "", p.id.split(":")[1])} preview />
                       </div>
                     </div>
                   </div>

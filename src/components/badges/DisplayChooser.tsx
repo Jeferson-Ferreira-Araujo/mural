@@ -38,7 +38,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
     <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
       <span className="pointer-events-none text-[9px]">
         <span className="relative block">
-          <DisplayCard data={sampleFor(product, style)} key={id} />
+          <DisplayCard data={sampleFor(product, style)} key={id} preview />
         </span>
       </span>
     </span>
@@ -73,7 +73,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
                   <span className="grid min-h-[11rem] w-full place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                     <span className="pointer-events-none text-[9px]">
                       <span className="relative block">
-                        <DisplayCard data={sampleFor(product, withShape(base, shape))} />
+                        <DisplayCard data={sampleFor(product, withShape(base, shape))} preview />
                       </span>
                     </span>
                   </span>

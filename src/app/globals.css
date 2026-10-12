@@ -250,3 +250,18 @@ body.pin-dragging * {
   cursor: grabbing !important;
   user-select: none;
 }
+
+/* placa de texto que rola (displays quadrados com nome comprido): o texto, duplicado, anda metade da largura e recomeça sem pulo */
+@keyframes pinz-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pinz-marquee {
+    animation: none !important;
+  }
+}

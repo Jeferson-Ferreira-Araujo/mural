@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
-import { WidgetFrame } from "./core";
+import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 
 /** Estilos do contador de dias: quente e entardecer são os de origem; os outros vêm dos estilos compartilhados. */
@@ -54,9 +54,13 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
   return (
     <WidgetFrame frame={frame} label="Contador de dias" shape={shape}>
       <div className={`absolute inset-0 flex flex-col items-center text-center ${square ? "px-[1em] pt-[1.1em] pb-[1em]" : "px-[1.3em] pt-[0.9em] pb-[0.8em]"}`} style={{ background: skin.bg, color: skin.ink }}>
-        <p className="w-full truncate text-[1.45em] leading-tight font-bold" title={name}>
-          {name}
-        </p>
+        {square ? (
+          <Marquee text={name} className="text-[1.4em] leading-tight font-bold" />
+        ) : (
+          <p className="w-full truncate text-[1.45em] leading-tight font-bold" title={name}>
+            {name}
+          </p>
+        )}
         {square ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
             <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>

@@ -114,7 +114,7 @@ export const withLiveText = (data: DisplayData): DisplayData => {
 };
 
 /** O widget certo para cada produto da loja (versículo, frase, relógio, clima), no estilo escolhido. */
-export function DisplayCard({ data }: { data: DisplayData }) {
+export function DisplayCard({ data, preview = false }: { data: DisplayData; /** prévia (loja, formulário, escolha): o clima usa só a cidade escolhida, sem pedir a localização de quem vê */ preview?: boolean }) {
   switch (data.product) {
     case "bible":
       return <BibleCard data={data} />;
@@ -133,7 +133,7 @@ export function DisplayCard({ data }: { data: DisplayData }) {
     case "cookie":
       return <CookieWidget style={data.style} frame={data.frame} />;
     default:
-      return <WeatherWidget style={data.style} city={data.city} lat={data.lat} lon={data.lon} frame={data.frame} />;
+      return <WeatherWidget style={data.style} city={data.city} lat={data.lat} lon={data.lon} frame={data.frame} preview={preview} />;
   }
 }
 

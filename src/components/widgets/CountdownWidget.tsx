@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
-import { WidgetFrame } from "./core";
+import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -62,14 +62,18 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
     [pad(minutes), "min"],
     [pad(seconds), "seg"],
   ];
-  const big = square ? 2.6 : 2.9;
+  const big = square ? 2.05 : 2.9;
 
   return (
     <WidgetFrame frame={frame} label="Contador regressivo" shape={shape}>
-      <div className={`absolute inset-0 flex flex-col ${square ? "px-[1em] pt-[1em] pb-[1em]" : "px-[1.2em] pt-[0.9em] pb-[1em]"}`} style={{ background: skin.bg, color: skin.ink }}>
-        <p className={`truncate text-center leading-tight font-bold ${square ? "text-[1.5em]" : "text-[1.45em]"}`} title={name}>
-          {name}
-        </p>
+      <div className={`absolute inset-0 flex flex-col ${square ? "px-[1em] pt-[0.9em] pb-[0.9em]" : "px-[1.2em] pt-[0.9em] pb-[1em]"}`} style={{ background: skin.bg, color: skin.ink }}>
+        {square ? (
+          <Marquee text={name} className="text-[1.4em] leading-tight font-bold" />
+        ) : (
+          <p className="truncate text-center text-[1.45em] leading-tight font-bold" title={name}>
+            {name}
+          </p>
+        )}
         {arrived ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
             <p className={`leading-none font-extrabold ${square ? "text-[2.4em]" : "text-[2.6em]"}`} style={{ color: skin.accent, textShadow: skin.glow }}>
@@ -82,7 +86,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
             )}
           </div>
         ) : (
-          <div className={`grid min-h-0 flex-1 gap-[0.5em] ${square ? "grid-cols-2 pt-[0.7em]" : "grid-cols-4 pt-[0.55em]"}`}>
+          <div className={`grid min-h-0 flex-1 gap-[0.5em] ${square ? "grid-cols-2 gap-y-[0.45em] pt-[0.6em]" : "grid-cols-4 pt-[0.55em]"}`}>
             {cells.map(([n, label], i) => {
               const len = i === 0 ? n.length : 0;
               const size = len >= 4 ? big * 0.66 : len === 3 ? big * 0.83 : big;
@@ -91,7 +95,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
                   <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: `${size}em`, color: skin.num, textShadow: skin.glow }}>
                     {n}
                   </span>
-                  <span className="mt-[0.25em] text-[0.85em] font-semibold tracking-wide uppercase" style={{ color: skin.sub }}>
+                  <span className={`font-semibold tracking-wide uppercase ${square ? "mt-[0.2em] text-[0.7em]" : "mt-[0.25em] text-[0.85em]"}`} style={{ color: skin.sub }}>
                     {label}
                   </span>
                 </div>

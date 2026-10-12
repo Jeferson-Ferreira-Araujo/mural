@@ -1,10 +1,12 @@
 "use client";
 
+import { useBackClose } from "@/lib/backStack";
 import { useEffect, useRef } from "react";
 import { SearchBox } from "../SearchBox";
 
 /** Pesquisa de murais (ícone do cabeçalho): abre uma janela com o campo de busca. */
 export function SearchDialog({ open, onClose, onSelect }: { open: boolean; onClose: () => void; onSelect: (nick: string) => void }) {
+  useBackClose(open, onClose);
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
