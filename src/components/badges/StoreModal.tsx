@@ -201,7 +201,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         // com a loja rolada (saldo grande fora da vista), o saldo passa para o cabeçalho: dá para ver os créditos sendo gastos
         bigVisible ? undefined : <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
           <Coin className="size-6" />
-          <strong key={done?.at ?? 0} className="inline-block text-base tabular-nums" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
+          <strong key={done?.at ?? 0} translate="no" className="notranslate inline-block text-base tabular-nums" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
             {credits}
           </strong>
           {done && done.spent > 0 && (
@@ -220,7 +220,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             <div className="leading-tight">
               <p className="text-xs font-semibold tracking-wide text-[#8a6a1c] uppercase">Seus créditos</p>
               <p className="relative">
-                <strong key={done?.at ?? 0} className="font-title inline-block text-3xl sm:text-4xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                <strong key={done?.at ?? 0} translate="no" className="notranslate font-title inline-block text-3xl sm:text-4xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
                   {credits}
                 </strong>
                 {done && done.spent > 0 && (
