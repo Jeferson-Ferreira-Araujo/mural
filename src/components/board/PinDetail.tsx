@@ -448,7 +448,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               disabled={busy}
               onClick={() => {
                 setConfirmDelete(false);
-                void run(() => (mod ? mod.moderate(item.id, false) : deleteOwn(item.id)), true);
+                void run(() => (mod ? mod.remove(item.id) : deleteOwn(item.id)), true);
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
             >

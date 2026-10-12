@@ -485,6 +485,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       plan: (isMember ? "full" : (own.find((m) => m.slug === slug)?.plan ?? "free")) as "free" | "full",
       moderate: async (id: string, approve: boolean, secret = false) =>
         afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
+      remove: async (id: string) => afterModeration(await moderatePin(getBrowserSupabase(), id, false, false), "Pin apagado."),
       move: async (id: string, slot: number) => {
         // a tela muda na hora (troca os dois espaços); o servidor confirma em seguida e, se falhar, recarrega o quadro como estava
         moveSeq.current++;

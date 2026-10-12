@@ -11,6 +11,8 @@ import type { ReportReason } from "./PinsManager";
 export type Moderation = {
   plan: PlanId;
   moderate: (id: string, approve: boolean, secret?: boolean) => Promise<boolean>;
+  /** apaga um pin que o dono já aprovou (mesma operação de recusar, com o aviso certo: "Pin apagado.") */
+  remove: (id: string) => Promise<boolean>;
   setSecret: (id: string, secret: boolean) => Promise<boolean>;
   /** muda o pin de espaço (arrastando); se o espaço estiver ocupado, os dois trocam de lugar */
   move: (id: string, slot: number) => Promise<boolean>;
