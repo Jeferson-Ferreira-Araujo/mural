@@ -63,7 +63,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
           {[...new Set(open.ids.map((id) => baseStyle(splitDisplayId(id).style)))].map((base) => {
             // um cartão por estilo; se a pessoa tem os dois formatos, escolhe aqui
             const product = open.id;
-            const shapes = (["wide", "square"] as const).filter((sh) => open.ids.includes(`${product}:${withShape(base, sh)}`));
+            const shapes = (["wide", "square", "tall"] as const).filter((sh) => open.ids.includes(`${product}:${withShape(base, sh)}`));
             const key = `${product}:${base}`;
             const shape = shapes.includes(shapePick[key] ?? "wide") ? (shapePick[key] ?? "wide") : shapes[0];
             const id = `${product}:${withShape(base, shape)}`;

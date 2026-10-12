@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { InappropriateCover, uploadBookCover } from "@/lib/bookCover";
+import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import type { FrameColor } from "@/lib/style";
 import { CLOCK_ZONES } from "../widgets/core";
@@ -18,6 +20,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   cookie: {},
   countdown: {},
   daycount: {},
+  book: {},
 };
 
 const isoPlus = (days: number) => {
@@ -34,6 +37,16 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
+  // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
+  const [bkTitle, setBkTitle] = useState("");
+  const [bkPages, setBkPages] = useState("");
+  const [bkRead, setBkRead] = useState("");
+  const [bkView, setBkView] = useState<"count" | "bar" | "both">("both");
+  const [bkCover, setBkCover] = useState<string | null>(null);
+  const [bkFile, setBkFile] = useState<File | null>(null);
+  const [bkPreview, setBkPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const bkInput = useRef<HTMLInputElement>(null);
   const [dcTitle, setDcTitle] = useState(""); // contador de dias: nome e data de início
   const [dcSince, setDcSince] = useState("");
   const [cdTitle, setCdTitle] = useState(""); // contador regressivo: nome, data e hora
@@ -51,6 +64,13 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
+    setBkTitle(initial?.title ?? "");
+    setBkPages(initial?.pages ? String(initial.pages) : "");
+    setBkRead(initial?.read !== undefined ? String(initial.read) : "");
+    setBkView(initial?.view === "count" || initial?.view === "bar" ? initial.view : "both");
+    setBkCover(initial?.cover ?? null);
+    setBkFile(null);
+    setUploading(false);
     setDcTitle(initial?.title ?? "");
     setDcSince(initial?.since ?? "");
     setCdTitle(initial?.title ?? "");
@@ -62,6 +82,19 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setSearched(false);
     setErr(null);
   }, [open, initial, product, style]);
+
+  useEffect(() => {
+    if (!bkFile) return setBkPreview(null);
+    const u = URL.createObjectURL(bkFile);
+    setBkPreview(u);
+    return () => URL.revokeObjectURL(u);
+  }, [bkFile]);
+  function pickCover(f?: File) {
+    if (!f) return;
+    if (!f.type.startsWith("image/")) return setErr("Escolha um arquivo de imagem.");
+    setErr(null);
+    setBkFile(f);
+  }
 
   async function search() {
     const q = query.trim();
@@ -86,11 +119,31 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "calendar" ? { dates: dates.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d.date)) } : {}),
     // na prévia, enquanto não preencheu, aparece um exemplo (30 dias adiante)
     ...(product === "countdown" ? { title: cdTitle.trim() || "Seu evento", target: /^\d{4}-\d{2}-\d{2}$/.test(cdDate) ? cdDate : isoPlus(30), time: cdTime || "00:00" } : {}),
+    ...(product === "book"
+      ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
+      : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
+  // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
+  async function submit() {
+    if (product !== "book") return onSubmit(data);
+    setErr(null);
+    const { cover: _c, ...rest } = data;
+    void _c;
+    if (!bkFile) return onSubmit({ ...rest, ...(bkCover ? { cover: bkCover } : {}) });
+    setUploading(true);
+    try {
+      const up = await uploadBookCover(getBrowserSupabase(), bkFile);
+      onSubmit({ ...rest, cover: up.url, approval: up.approval } as DisplayData);
+    } catch (e) {
+      setErr(e instanceof InappropriateCover ? "Essa imagem não pôde ser usada. Escolha outra foto de capa." : e instanceof Error ? e.message : "Não foi possível enviar a capa agora.");
+    } finally {
+      setUploading(false);
+    }
+  }
   const title = displayName(product + ":" + style);
 
   return (
@@ -184,6 +237,59 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
           </div>
         )}
 
+        {product === "book" && (
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="grid h-28 w-[4.7rem] shrink-0 place-items-center overflow-hidden rounded-lg border border-dashed border-[#c9b48a] bg-white/60">
+                {bkPreview || bkCover ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={bkPreview ?? bkCover ?? ""} alt="Capa escolhida" className="size-full object-cover" />
+                ) : (
+                  <span className="px-1 text-center text-[11px] leading-tight text-[#6b5440]">Sem capa</span>
+                )}
+              </div>
+              <div className="min-w-0 flex-1 space-y-2">
+                <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label="Escolher a foto da capa" />
+                <button type="button" onClick={() => bkInput.current?.click()} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-3 py-2 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+                  {bkPreview || bkCover ? "Trocar a capa" : "Escolher a foto da capa"}
+                </button>
+                {(bkPreview || bkCover) && (
+                  <button type="button" onClick={() => { setBkFile(null); setBkCover(null); }} className="ml-2 cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
+                    Tirar
+                  </button>
+                )}
+              </div>
+            </div>
+            <Field label="Nome do livro (opcional)">
+              {(id) => <input id={id} value={bkTitle} onChange={(e) => setBkTitle(e.target.value)} maxLength={40} placeholder="Ex: O Pequeno Príncipe" className={inputClass} autoComplete="off" />}
+            </Field>
+            <div className="flex gap-2">
+              <div className="min-w-0 flex-1">
+                <Field label="Páginas lidas">{(id) => <input id={id} type="number" inputMode="numeric" min={0} max={10000} value={bkRead} onChange={(e) => setBkRead(e.target.value)} className={inputClass} />}</Field>
+              </div>
+              <div className="min-w-0 flex-1">
+                <Field label="Total de páginas">{(id) => <input id={id} type="number" inputMode="numeric" min={1} max={10000} value={bkPages} onChange={(e) => setBkPages(e.target.value)} className={inputClass} />}</Field>
+              </div>
+            </div>
+            <div>
+              <p className="mb-1.5 text-sm font-semibold">Como mostrar o progresso</p>
+              <div role="radiogroup" aria-label="Como mostrar o progresso" className="grid grid-cols-3 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                {(
+                  [
+                    ["count", "Páginas"],
+                    ["bar", "Barra"],
+                    ["both", "Os dois"],
+                  ] as const
+                ).map(([v, label]) => (
+                  <button key={v} type="button" role="radio" aria-checked={bkView === v} onClick={() => setBkView(v)} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${bkView === v ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {product === "daycount" && (
           <div className="space-y-3">
             <Field label="Nome (o que está contando)">
@@ -249,8 +355,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
             {err ?? error}
           </p>
         )}
-        <button type="button" disabled={busy || !ready} onClick={() => onSubmit(data)} className={primaryButton}>
-          {busy ? "Salvando…" : editing ? "Salvar" : "Escolher o lugar"}
+        <button type="button" disabled={busy || uploading || !ready} onClick={() => void submit()} className={primaryButton}>
+          {uploading ? "Enviando a capa…" : busy ? "Salvando…" : editing ? "Salvar" : "Escolher o lugar"}
         </button>
       </div>
     </Modal>

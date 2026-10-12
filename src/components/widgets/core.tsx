@@ -16,10 +16,11 @@ export const shapeOf = (style?: string | null): Shape => shapeOfStyle(style);
  */
 export function WidgetFrame({ label, scene, shape = "wide", children }: { frame?: string | null; label: string; scene?: SceneId; shape?: Shape; children: ReactNode }) {
   const ink = scene ? INK[scene] : null;
-  const square = shape === "square";
+  const aspect = shape === "square" ? "aspect-square" : shape === "tall" ? "aspect-[2/3]" : "aspect-[2/1]";
+  const square = shape !== "wide"; // a paisagem de fundo é cortada ao centro nos formatos que não são o retangular
   return (
     <div className="relative" style={{ width: `${NATURAL_W[shape]}em` }}>
-      <article aria-label={label} className={`relative w-full rounded-[1.1em] ${square ? "aspect-square" : "aspect-[2/1]"}`} style={{ boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45)" }}>
+      <article aria-label={label} className={`relative w-full rounded-[1.1em] ${aspect}`} style={{ boxShadow: "0 0.3em 0.8em rgba(30,12,0,.45)" }}>
         <div className="relative size-full overflow-hidden rounded-[1.1em]" style={{ color: ink?.color, textShadow: ink?.shadow, boxShadow: "inset 0 0 0.6em rgba(0,0,0,.35)" }}>
           {scene && (
             <svg viewBox="0 0 200 100" preserveAspectRatio={square ? "xMidYMid slice" : "none"} className="absolute inset-0 size-full" aria-hidden>
