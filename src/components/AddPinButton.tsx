@@ -13,6 +13,7 @@ export function AddPinButton({ className = "" }: { className?: string }) {
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent(COMPOSE_AUTO_EVENT))}
       aria-label="Colocar um pin ou um display no mural"
+      data-tour="add"
       title="Colocar um pin ou display"
       className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
     >

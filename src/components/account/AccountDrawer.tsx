@@ -10,6 +10,7 @@ import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
+import { TOUR_EVENT } from "@/lib/onboarding";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
 import { FollowingModal, VisitorsModal } from "./PeopleModals";
@@ -225,6 +226,19 @@ export function AccountDrawer({
                 }
               />
               <Row
+                onClick={() => {
+                  onClose();
+                  window.setTimeout(() => window.dispatchEvent(new CustomEvent(TOUR_EVENT)), 300);
+                }}
+                label="Tour pelo Pinz"
+                icon={
+                  <svg {...ic}>
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+                  </svg>
+                }
+              />
+              <Row
                 onClick={() => setModal("plans")}
                 label="Planos"
                 hint={`Seu plano: ${account.plan === "full" ? "PINZ+" : "FREE"}`}
@@ -332,7 +346,7 @@ export function AccountDrawer({
   if (inline) {
     return (
       <CompactCtx.Provider value>
-        <nav aria-label="Menu da conta" className="space-y-1.5">
+        <nav aria-label="Menu da conta" data-tour="menu" className="space-y-1.5">
           {rows}
         </nav>
         <button type="button" onClick={onSignOut} className="mt-2 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">

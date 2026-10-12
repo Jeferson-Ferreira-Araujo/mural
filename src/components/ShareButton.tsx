@@ -32,6 +32,7 @@ export function ShareButton({ title, text, path, onNotify, className = "", iconO
     <button
       type="button"
       onClick={share}
+      data-tour="share"
       aria-label={iconOnly ? title : undefined}
       title={iconOnly ? title : undefined}
       className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl text-sm font-semibold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${iconOnly ? "size-11" : "px-4 py-2"} ${className}`}

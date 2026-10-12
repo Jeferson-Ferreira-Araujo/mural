@@ -48,7 +48,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
   const item = "flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-[#2a1c12] transition hover:bg-[#f3e7cc] active:bg-[#ecdcb5]";
   return (
     <div ref={box} className={`relative min-w-0 ${className}`}>
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-haspopup="menu" aria-expanded={open} aria-label={label ? "Ver meus murais" : `${title}: ver outros murais`} className={triggerClassName ?? "flex max-w-full cursor-pointer items-center gap-1.5"}>
+      <button type="button" onClick={() => setOpen((o) => !o)} data-tour="murals" aria-haspopup="menu" aria-expanded={open} aria-label={label ? "Ver meus murais" : `${title}: ver outros murais`} className={triggerClassName ?? "flex max-w-full cursor-pointer items-center gap-1.5"}>
         {name}
         <svg viewBox="0 0 24 24" className={`size-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m6 9 6 6 6-6" />

@@ -383,6 +383,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   return (
     <div
       ref={box}
+      data-tour="board"
       onPointerDown={onPointerDown}
       onClickCapture={onClickCapture}
       className="relative size-full touch-none overflow-hidden bg-[#3b2616] select-none"
@@ -408,6 +409,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           data-zoom-controls
           onPointerDown={(e) => e.stopPropagation()}
           onClick={toggleZoom}
+          data-tour="zoom"
           aria-label={zoomedOut ? "Aproximar o mural" : "Afastar o mural"}
           title={zoomedOut ? "Aproximar" : "Afastar"}
           className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}

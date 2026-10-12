@@ -28,6 +28,9 @@ import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
+import { OnboardingModal } from "./account/OnboardingModal";
+import { Tour } from "./tour/Tour";
+import { getOnboarding, TOUR_EVENT } from "@/lib/onboarding";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -69,6 +72,9 @@ const EXPORT_IMAGE_ENABLED = false;
 export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: string } }) {
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
+  const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
+  const [tourOpen, setTourOpen] = useState(false);
+  const onbChecked = useRef<string | null>(null);
   const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
   const [myNick, setMyNick] = useState<string | null>(null); // nickname de quem está logado (assinatura do pin)
   const [selected, setSelected] = useState<PublicMural | null>(null);
@@ -172,6 +178,28 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     };
   }, [countNick]);
   const followNick = logged && !!myNick && selected && selected.nickname.toLowerCase() !== myNick.toLowerCase() && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
+  // conta nova: no primeiro acesso ao próprio mural aparecem as boas-vindas (foto, data de nascimento, tour); o banco guarda que já passou
+  const uid = session?.user.id;
+  useEffect(() => {
+    if (!uid || !isOwner || !unlocked || nickPending || companyWelcome || onbChecked.current === uid) return;
+    let alive = true;
+    let t = 0;
+    void getOnboarding(getBrowserSupabase()).then((o) => {
+      if (!alive || !o) return;
+      onbChecked.current = uid;
+      if (!o.done) t = window.setTimeout(() => setOnbOpen(true), 700);
+    });
+    return () => {
+      alive = false;
+      window.clearTimeout(t);
+    };
+  }, [uid, isOwner, unlocked, nickPending, companyWelcome]);
+  // o tour abre pelo fim das boas-vindas e pelo item do menu
+  useEffect(() => {
+    const open = () => setTourOpen(true);
+    window.addEventListener(TOUR_EVENT, open);
+    return () => window.removeEventListener(TOUR_EVENT, open);
+  }, []);
   useEffect(() => {
     setFollowingState(false);
     if (!followNick) return;
@@ -1001,7 +1029,9 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         suggested={myNick ?? ""}
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
-      <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company={companyWelcome} />
+      {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
+      <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} />
+      <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       <Toast message={toast} />
     </div>
   );

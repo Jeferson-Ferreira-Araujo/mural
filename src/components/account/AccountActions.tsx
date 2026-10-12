@@ -14,7 +14,7 @@ export function AccountActions({ account, tone = "light", className = "", menu =
     <div className={`flex items-center gap-1.5 ${className}`}>
       {/* desktop: o sino de notificações fica à esquerda do botão de pesquisar (no celular ele está no cabeçalho) */}
       {!menu && account.notifications && (
-        <button type="button" onClick={account.notifications.onOpen} aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"} title="Notificações" className={`${base} ${look}`}>
+        <button type="button" onClick={account.notifications.onOpen} data-tour="bell" aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"} title="Notificações" className={`${base} ${look}`}>
           <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
             <path d="M10 20a2.2 2.2 0 0 0 4 0" />
@@ -26,14 +26,14 @@ export function AccountActions({ account, tone = "light", className = "", menu =
           )}
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Pesquisar usuários" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
+      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
         Pesquisar usuários
       </button>
-      {menu && <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
+      {menu && <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
@@ -62,7 +62,7 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
           </svg>
         </button>
       )}
-      <button type="button" onClick={account.onSearch} aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
+      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
         <svg {...iconSvg} strokeWidth={2.4}>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
@@ -77,7 +77,7 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
   return (
     <div className="flex items-center gap-1.5">
       {bell && (
-        <button type="button" onClick={bell.onOpen} aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title="Notificações" className={iconBtn}>
+        <button type="button" onClick={bell.onOpen} data-tour="bell" aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title="Notificações" className={iconBtn}>
           <svg {...iconSvg} className="size-5.5">
             <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
             <path d="M10 20a2.2 2.2 0 0 0 4 0" />
@@ -89,7 +89,7 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
           )}
         </button>
       )}
-    <button type="button" onClick={account.onMenu} aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
+    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
       <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
