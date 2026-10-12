@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { AddPinButton } from "./AddPinButton";
 import { boardById } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
@@ -57,6 +57,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
   const [followersOpen, setFollowersOpen] = useState(false);
+  const swipeTarget = useRef<{ from: string; to: string } | null>(null);
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
@@ -134,6 +135,14 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         )}
         <PannableBoard
           hideControls={locked}
+          onSwipe={muralSwitch && muralSwitch.items.length > 1 ? (dir) => {
+            // parte do último mural pedido (a tela pode ainda não ter trocado se o dedo seguiu arrastando)
+            const from = swipeTarget.current?.from === muralSwitch.current ? swipeTarget.current.to : muralSwitch.current;
+            const i = Math.max(0, muralSwitch.items.findIndex((m) => m.slug === from));
+            const to = muralSwitch.items[(i + dir + muralSwitch.items.length) % muralSwitch.items.length].slug;
+            swipeTarget.current = { from: muralSwitch.current, to };
+            muralSwitch.onSelect(to);
+          } : undefined}
           ambient={look.image}
           cornerLeft={
             canAdd || (share && onNotify && !account?.onNewMural) ? (

@@ -8,6 +8,7 @@ export const WORLD_H = 800;
 
 const DRAG_PX = 6; // abaixo disso é toque, não arrasto
 const DOUBLE_TAP_MS = 300;
+const SWIPE_PX = 90; // arrastar tanto além da borda lateral troca de mural
 const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primeiro de um toque duplo
 
 /**
@@ -15,8 +16,10 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false }: { children: ReactNode; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe }: { children: ReactNode; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); continua trocando enquanto o dedo segue arrastando */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
+  const swipeRef = useRef(onSwipe);
+  swipeRef.current = onSwipe;
   const world = useRef<HTMLDivElement>(null);
   const view = useRef({ x: 0, y: 0, s: 1 });
   const size = useRef({ w: 0, h: 0 });
@@ -223,7 +226,17 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       const dy = p.y - pan.current.py;
       if (!dragged.current && Math.hypot(dx, dy) > DRAG_PX) dragged.current = true;
       if (dragged.current) {
-        view.current = clampView(pan.current.vx + dx, pan.current.vy + dy, view.current.s);
+        const want = pan.current.vx + dx;
+        const next = clampView(want, pan.current.vy + dy, view.current.s);
+        const over = want - next.x; // quanto o dedo passou da borda lateral
+        if (swipeRef.current && Math.abs(over) > SWIPE_PX && Math.abs(dx) > Math.abs(dy)) {
+          swipeRef.current(over < 0 ? 1 : -1);
+          pan.current = { px: p.x, py: p.y, vx: next.x, vy: next.y }; // recomeça daqui: arrastar mais um pouco troca de novo
+          view.current = next;
+          scheduleApply();
+          return;
+        }
+        view.current = next;
         scheduleApply();
       }
     },
