@@ -3,6 +3,8 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
+/** Nome fixo do login guardado no navegador (era derivado do endereço do projeto): mudar o domínio do Supabase não desconecta ninguém. */
+const AUTH_STORAGE_KEY = "sb-npylmcjxcosoytuhjrxu-auth-token";
 const REMEMBER_KEY = "pinz:remember";
 const EMAIL_KEY = "pinz:email";
 
@@ -60,7 +62,7 @@ let browserClient: SupabaseClient | null = null;
 export function getBrowserSupabase(): SupabaseClient {
   if (!browserClient) {
     browserClient = createClient(url, key, {
-      auth: { flowType: "pkce", persistSession: true, storage: sessionStore, autoRefreshToken: true, detectSessionInUrl: false },
+      auth: { flowType: "pkce", persistSession: true, storageKey: AUTH_STORAGE_KEY, storage: sessionStore, autoRefreshToken: true, detectSessionInUrl: false },
     });
   }
   return browserClient;
