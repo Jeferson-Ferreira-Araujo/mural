@@ -419,7 +419,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-title text-base font-semibold">{name}</p>
                       {p.owned ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">✓ Comprado</span>
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{p.price === 0 ? "✓ Grátis" : "✓ Comprado"}</span>
                       ) : (
                         <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${p.price} créditos`}>
                           <Coin className="size-5" />
