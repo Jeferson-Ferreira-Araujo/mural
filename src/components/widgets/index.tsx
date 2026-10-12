@@ -3,7 +3,6 @@
 import { CalendarWidget, type CalDate } from "./CalendarWidget";
 import { ClockWidget } from "./ClockWidget";
 import { BookWidget } from "./BookWidget";
-import { RecWidget } from "./RecWidget";
 import { CookieWidget } from "./CookieWidget";
 import { CountdownWidget } from "./CountdownWidget";
 import { DateWidget } from "./DateWidget";
@@ -15,7 +14,7 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
-export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** recomendação: tipo e recado */ kind?: string; note?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
+export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
 
 /** Os estilos de cada pin da loja (o primeiro é o padrão). */
 export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: string }[]> = {
@@ -66,11 +65,6 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
     { id: "wood", name: "Estante", hint: "Madeira e dourado." },
   ],
-  rec: [
-    { id: "paper", name: "Clássico", hint: "Papel claro." },
-    { id: "night", name: "Noite", hint: "Escuro e limpo." },
-    { id: "cinema", name: "Cinema", hint: "Preto e dourado." },
-  ],
   cookie: [
     { id: "classic", name: "Clássico", hint: "Biscoito dourado." },
     { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
@@ -96,7 +90,6 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "countdown", label: "Contador regressivo", single: "Contador regressivo" },
   { id: "daycount", label: "Contador de dias", single: "Contador de dias" },
   { id: "book", label: "Leitura de livro", single: "Leitura" },
-  { id: "rec", label: "Recomendação", single: "Recomendação" },
 ];
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
@@ -138,8 +131,6 @@ export function DisplayCard({ data, preview = false }: { data: DisplayData; /** 
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     case "calendar":
       return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
-    case "rec":
-      return <RecWidget style={data.style} kind={data.kind} title={data.title} note={data.note} cover={data.cover} frame={data.frame} />;
     case "book":
       return <BookWidget style={data.style} title={data.title} cover={data.cover} pages={data.pages} read={data.read} view={data.view} frame={data.frame} />;
     case "daycount":

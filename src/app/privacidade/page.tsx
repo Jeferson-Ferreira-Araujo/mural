@@ -50,9 +50,6 @@ export default function Privacidade() {
           <li>Google: login com o Google e mapas e busca de lugares (Google Maps).</li>
           <li>MET Norway (api.met.no): previsão do tempo do display de Clima, a partir da posição arredondada.</li>
           <li>OpenStreetMap (Nominatim): nome da cidade da posição de quem permite a localização.</li>
-          <li>
-            <a href="https://openlibrary.org" target="_blank" rel="noopener noreferrer">Open Library</a> e <a href="https://www.tvmaze.com" target="_blank" rel="noopener noreferrer">TVmaze</a> (capas de livros e de séries, licença CC BY-SA no caso do TVmaze): ao buscar a capa de uma recomendação, o servidor do Pinz envia o texto buscado a esses serviços; as capas são mostradas direto dos servidores deles.
-          </li>
           <li>Resend: envio dos e-mails da conta.</li>
           <li>Cloudflare: proteção e entrega do site.</li>
           <li>Mercado Pago: pagamentos da assinatura e dos créditos. Os dados do cartão ou do Pix são informados direto no Mercado Pago; o Pinz não os recebe nem os guarda, só o resultado do pagamento.</li>

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { InappropriateCover, uploadBookCover } from "@/lib/bookCover";
-import { REC_KIND_LABEL, REC_SEARCHABLE, searchRecs, type RecHit, type RecKind } from "@/lib/recSearch";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import type { FrameColor } from "@/lib/style";
@@ -22,7 +21,6 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   countdown: {},
   daycount: {},
   book: {},
-  rec: {},
 };
 
 const isoPlus = (days: number) => {
@@ -40,14 +38,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
   // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
-  // recomendação: tipo, nome, recado e busca de capa (a capa usa os mesmos estados da foto do livro)
-  const [rcKind, setRcKind] = useState<RecKind>("book");
-  const [rcTitle, setRcTitle] = useState("");
-  const [rcNote, setRcNote] = useState("");
-  const [rcQuery, setRcQuery] = useState("");
-  const [rcHits, setRcHits] = useState<RecHit[]>([]);
-  const [rcSearching, setRcSearching] = useState(false);
-  const [rcSearched, setRcSearched] = useState(false);
   const [bkTitle, setBkTitle] = useState("");
   const [bkPages, setBkPages] = useState("");
   const [bkRead, setBkRead] = useState("");
@@ -74,12 +64,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
-    setRcKind(initial?.kind === "movie" || initial?.kind === "series" || initial?.kind === "doc" ? initial.kind : "book");
-    setRcTitle(initial?.title ?? "");
-    setRcNote(initial?.note ?? "");
-    setRcQuery("");
-    setRcHits([]);
-    setRcSearched(false);
     setBkTitle(initial?.title ?? "");
     setBkPages(initial?.pages ? String(initial.pages) : "");
     setBkRead(initial?.read !== undefined ? String(initial.read) : "");
@@ -112,22 +96,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setBkFile(f);
   }
 
-  async function searchRec() {
-    const q = rcQuery.trim();
-    if (q.length < 2) return setErr("Digite pelo menos 2 letras do nome.");
-    if (!REC_SEARCHABLE.has(rcKind)) return;
-    setErr(null);
-    setRcSearching(true);
-    try {
-      setRcHits(await searchRecs(rcKind as "book" | "series", q));
-      setRcSearched(true);
-    } catch {
-      setErr("Não foi possível buscar agora. Tente de novo em instantes.");
-    } finally {
-      setRcSearching(false);
-    }
-  }
-
   async function search() {
     const q = query.trim();
     if (q.length < 3) return setErr("Digite pelo menos 3 letras do nome da cidade.");
@@ -154,15 +122,14 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "book"
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
-    ...(product === "rec" ? { kind: rcKind, title: rcTitle.trim() || "Sua recomendação", ...(rcNote.trim() ? { note: rcNote.trim() } : {}), ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "rec" ? rcTitle.trim().length > 0 : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
   async function submit() {
-    if (product !== "book" && product !== "rec") return onSubmit(data);
+    if (product !== "book") return onSubmit(data);
     setErr(null);
     const { cover: _c, ...rest } = data;
     void _c;
@@ -267,97 +234,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 <Field label="Hora (opcional)">{(id) => <input id={id} type="time" value={cdTime} onChange={(e) => setCdTime(e.target.value)} className={inputClass} />}</Field>
               </div>
             </div>
-          </div>
-        )}
-
-        {product === "rec" && (
-          <div className="space-y-3">
-            <div>
-              <p className="mb-1.5 text-sm font-semibold">O que você recomenda?</p>
-              <div role="radiogroup" aria-label="Tipo de recomendação" className="grid grid-cols-4 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
-                {(["book", "movie", "series", "doc"] as const).map((k) => (
-                  <button key={k} type="button" role="radio" aria-checked={rcKind === k} onClick={() => { setRcKind(k); setRcHits([]); setRcSearched(false); }} className={`cursor-pointer rounded-lg px-1 py-1.5 text-[11px] font-bold transition-colors sm:text-xs ${rcKind === k ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
-                    {REC_KIND_LABEL[k]}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {REC_SEARCHABLE.has(rcKind) && (
-              <div>
-                <label htmlFor="rec-search" className="mb-1.5 block text-sm font-semibold">
-                  Buscar a capa {rcKind === "book" ? "do livro" : "da série"}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    id="rec-search"
-                    value={rcQuery}
-                    onChange={(e) => setRcQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        void searchRec();
-                      }
-                    }}
-                    placeholder={rcKind === "book" ? "Ex: O Pequeno Príncipe" : "Ex: Breaking Bad"}
-                    className={inputClass}
-                    maxLength={80}
-                    autoComplete="off"
-                  />
-                  <button type="button" onClick={() => void searchRec()} disabled={rcSearching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
-                    {rcSearching ? "Buscando…" : "Buscar"}
-                  </button>
-                </div>
-                {rcSearched && rcHits.length === 0 && !err && <p className="mt-2 text-sm text-[#6b5440]">Nada encontrado com capa. Tente outro nome ou envie a foto da capa.</p>}
-                {rcHits.length > 0 && (
-                  <ul className="mt-2 max-h-56 space-y-1.5 overflow-y-auto">
-                    {rcHits.map((h, i) => (
-                      <li key={i}>
-                        <button type="button" onClick={() => { setRcTitle(h.title); setBkCover(h.cover); setBkFile(null); setRcHits([]); setRcSearched(false); }} className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-2 text-left hover:bg-white">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={h.cover} alt="" referrerPolicy="no-referrer" loading="lazy" className="h-14 w-10 shrink-0 rounded object-cover" />
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm font-semibold">{h.title}</span>
-                            {h.sub && <span className="block truncate text-xs text-[#6b5440]">{h.sub}</span>}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className="mt-1.5 text-[11px] text-[#8a7b69]">Capas: {rcKind === "book" ? "Open Library" : "TVmaze"}.</p>
-              </div>
-            )}
-
-            <Field label={`Nome ${rcKind === "book" ? "do livro" : rcKind === "series" ? "da série" : rcKind === "movie" ? "do filme" : "do documentário"}`}>
-              {(id) => <input id={id} value={rcTitle} onChange={(e) => setRcTitle(e.target.value)} maxLength={60} className={inputClass} autoComplete="off" />}
-            </Field>
-
-            <div className="flex items-center gap-3">
-              <div className="grid h-20 w-[3.4rem] shrink-0 place-items-center overflow-hidden rounded-lg border border-dashed border-[#c9b48a] bg-white/60">
-                {bkPreview || bkCover ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={bkPreview ?? bkCover ?? ""} alt="Capa escolhida" referrerPolicy="no-referrer" className="size-full object-cover" />
-                ) : (
-                  <span className="px-1 text-center text-[10px] leading-tight text-[#6b5440]">Sem capa</span>
-                )}
-              </div>
-              <div className="min-w-0 space-y-1.5">
-                <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label="Escolher a foto da capa" />
-                <button type="button" onClick={() => bkInput.current?.click()} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-3 py-2 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                  {bkPreview || bkCover ? "Enviar outra foto" : "Enviar a foto da capa"}
-                </button>
-                {(bkPreview || bkCover) && (
-                  <button type="button" onClick={() => { setBkFile(null); setBkCover(null); }} className="ml-2 cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
-                    Tirar
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <Field label="Um recado (opcional)">
-              {(id) => <input id={id} value={rcNote} onChange={(e) => setRcNote(e.target.value)} maxLength={90} placeholder="Ex: Assisti em uma noite só!" className={inputClass} autoComplete="off" />}
-            </Field>
           </div>
         )}
 

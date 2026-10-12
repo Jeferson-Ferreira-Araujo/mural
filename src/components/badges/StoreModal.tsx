@@ -80,8 +80,6 @@ export function sampleFor(product: string, style?: string): DisplayData {
       const iso = (d: number) => `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
     }
-    case "rec":
-      return { product, style: st, kind: "series", title: "Breaking Bad", note: "Não consegui parar!" };
     case "book":
       return { product, style: st, title: "O Pequeno Príncipe", pages: 96, read: 42, view: "both" };
     case "daycount": {
