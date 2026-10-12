@@ -17,6 +17,7 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   calendar: {},
   cookie: {},
   countdown: {},
+  daycount: {},
 };
 
 const isoPlus = (days: number) => {
@@ -33,6 +34,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
+  const [dcTitle, setDcTitle] = useState(""); // contador de dias: nome e data de início
+  const [dcSince, setDcSince] = useState("");
   const [cdTitle, setCdTitle] = useState(""); // contador regressivo: nome, data e hora
   const [cdDate, setCdDate] = useState("");
   const [cdTime, setCdTime] = useState("");
@@ -48,6 +51,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
+    setDcTitle(initial?.title ?? "");
+    setDcSince(initial?.since ?? "");
     setCdTitle(initial?.title ?? "");
     setCdDate(initial?.target ?? "");
     setCdTime(initial?.time && initial.time !== "00:00" ? initial.time : "");
@@ -81,10 +86,11 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "calendar" ? { dates: dates.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d.date)) } : {}),
     // na prévia, enquanto não preencheu, aparece um exemplo (30 dias adiante)
     ...(product === "countdown" ? { title: cdTitle.trim() || "Seu evento", target: /^\d{4}-\d{2}-\d{2}$/.test(cdDate) ? cdDate : isoPlus(30), time: cdTime || "00:00" } : {}),
+    ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : true;
   const title = displayName(product + ":" + style);
 
   return (
@@ -175,6 +181,15 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 <Field label="Hora (opcional)">{(id) => <input id={id} type="time" value={cdTime} onChange={(e) => setCdTime(e.target.value)} className={inputClass} />}</Field>
               </div>
             </div>
+          </div>
+        )}
+
+        {product === "daycount" && (
+          <div className="space-y-3">
+            <Field label="Nome (o que está contando)">
+              {(id) => <input id={id} value={dcTitle} onChange={(e) => setDcTitle(e.target.value)} maxLength={30} placeholder="Ex: Juntos há, Sem fumar, Casa nova" className={inputClass} autoComplete="off" />}
+            </Field>
+            <Field label="Desde quando?">{(id) => <input id={id} type="date" value={dcSince} onChange={(e) => setDcSince(e.target.value)} className={inputClass} />}</Field>
           </div>
         )}
 
