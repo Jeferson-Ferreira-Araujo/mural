@@ -16,11 +16,18 @@ const norm = (r: Raw, keepMine: number | null): PollState | null => (r && Array.
 /**
  * Enquete ao vivo: busca o resultado, escuta as mudanças em tempo real (cada voto novo chega a todos que estão com a enquete à vista)
  * e confere de novo a cada 15 s por segurança. `vote` troca o voto na hora (a tela muda antes do servidor responder).
- * Um voto por pessoa: logada, vale a conta; sem conta, vale este aparelho.
+ * Um voto por conta. Quem não tem conta (ou não entrou) vê o resultado, mas para votar precisa entrar: `logged` diz se pode votar.
  */
 export function usePoll(badgeId: string | undefined, enabled: boolean, optionCount: number) {
   const { token } = useContext(PollAccess);
   const [state, setState] = useState<PollState | null>(null);
+  const [logged, setLogged] = useState(false);
+  useEffect(() => {
+    const sb = getBrowserSupabase();
+    void sb.auth.getSession().then(({ data }) => setLogged(!!data.session));
+    const { data: sub } = sb.auth.onAuthStateChange((_e, session) => setLogged(!!session));
+    return () => sub.subscription.unsubscribe();
+  }, []);
   const mine = useRef<number | null>(null);
   mine.current = state?.mine ?? null;
 
@@ -51,7 +58,7 @@ export function usePoll(badgeId: string | undefined, enabled: boolean, optionCou
 
   const vote = useCallback(
     async (option: number) => {
-      if (!badgeId || option < 0 || option >= optionCount) return false;
+      if (!badgeId || !logged || option < 0 || option >= optionCount) return false;
       const before = state;
       // na hora: tira o voto anterior (se havia) e põe o novo
       setState((cur) => {
@@ -69,8 +76,8 @@ export function usePoll(badgeId: string | undefined, enabled: boolean, optionCou
       setState(s);
       return true;
     },
-    [badgeId, token, optionCount, state],
+    [badgeId, token, optionCount, state, logged],
   );
 
-  return { state, vote };
+  return { state, vote, logged };
 }

@@ -14,6 +14,7 @@ export default function Privacidade() {
           <li>Conta: e-mail, nome de usuário (apelido) e, se você enviar, a foto de perfil. Se entrar com o Google, recebemos o e-mail e o nome da conta Google.</li>
           <li>Conteúdo: os pins que você publica (textos, listas, fotos, desenhos, áudios, vídeos, músicas e locais), a pergunta e a resposta que protegem seu mural e a senha do mural compartilhado (guardada de forma criptografada).</li>
           <li>Visitas e seguidores: quando você entra com a sua conta e visita o mural de outra pessoa, o @ e a foto de perfil aparecem na lista de visitantes dela (sem data). Quem você segue fica numa lista só sua, e quem segue você aparece apenas como um número.</li>
+          <li>Enquetes: ao votar numa enquete, guardamos a opção que você escolheu ligada à sua conta (um voto por pessoa); o dono do mural vê só o total e as porcentagens, nunca quem votou em quê.</li>
           <li>Localização (só quando você permite): se o mural tiver um display de Clima, o navegador ou o celular pergunta se pode usar a sua localização para mostrar o tempo de onde você está. Veja a seção “Localização”.</li>
           <li>Uso: notificações da sua conta, contagem de visualizações do mural e registros técnicos de segurança, como o endereço IP, para evitar abuso.</li>
         </ul>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { loginUrl } from "@/lib/auth";
 import { baseStyle } from "@/lib/displayShape";
 import { usePoll } from "@/lib/poll";
 import { useInDetail } from "../board/ListEditContext";
@@ -14,7 +15,7 @@ const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string;
 };
 
 /**
- * Enquete (quadrada): a pergunta e de 2 a 4 opções com a porcentagem de cada uma, ao vivo. No mural mostra o resultado;
+ * Enquete (quadrada): a pergunta e duas respostas com a porcentagem de cada uma, ao vivo. No mural mostra o resultado;
  * ao tocar no display abre o detalhe, onde as opções viram botões para votar (dá para trocar o voto).
  */
 export function PollWidget({ style = "q-paper", title, options, badgeId, frame }: { style?: string; title?: string; options?: string[]; badgeId?: string; frame?: string | null }) {
@@ -24,14 +25,16 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
   const question = (title ?? "").trim() || "Sua pergunta aqui?";
   // sem id (prévia na loja e no formulário): resultado de exemplo
   const demo = !badgeId;
-  const { state, vote } = usePoll(badgeId, !demo, opts.length);
+  const { state, vote, logged } = usePoll(badgeId, !demo, opts.length);
   const counts = demo ? opts.map((_, i) => [14, 6, 3, 2][i] ?? 1) : (state?.counts ?? opts.map(() => 0));
   const total = demo ? counts.reduce((a, b) => a + b, 0) : (state?.total ?? 0);
   const mine = demo ? null : (state?.mine ?? null);
   const [err, setErr] = useState(false);
+  const [askLogin, setAskLogin] = useState(false); // tentou votar sem conta: mostra o caminho para entrar ou criar a conta
 
   async function pick(i: number) {
     setErr(false);
+    if (!logged) return setAskLogin(true);
     if (!(await vote(i))) setErr(true);
   }
 
@@ -75,11 +78,28 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
             );
           })}
         </div>
+        {askLogin && (
+          <div role="alertdialog" aria-label="Entre para votar" className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-[0.6em] rounded-[1.1em] px-[1em] text-center" style={{ background: "rgba(10,10,15,.88)", color: "#fff" }}>
+            <p className="text-[1.05em] leading-tight font-extrabold">Para votar você precisa de uma conta</p>
+            <p className="text-[0.78em] leading-snug opacity-85">É rápido e gratuito. Depois de entrar, você volta para esta enquete.</p>
+            <div className="mt-[0.2em] flex w-full gap-[0.5em]">
+              <a href={loginUrl(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/", false)} className="flex-1 rounded-[0.6em] bg-[#d9a21b] py-[0.55em] text-[0.9em] font-extrabold text-[#2a1c12]">
+                Entrar
+              </a>
+              <a href={loginUrl(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/", true)} className="flex-1 rounded-[0.6em] bg-white/15 py-[0.55em] text-[0.9em] font-extrabold text-white">
+                Criar conta
+              </a>
+            </div>
+            <button type="button" onClick={() => setAskLogin(false)} className="cursor-pointer text-[0.78em] font-semibold underline opacity-80">
+              Agora não
+            </button>
+          </div>
+        )}
         <p className="mt-[0.45em] flex items-center justify-between text-[0.66em] font-semibold" style={{ color: sk.sub }} aria-live="polite">
           <span>
             {total} {total === 1 ? "voto" : "votos"}
           </span>
-          <span>{err ? "Não foi possível votar agora" : demo ? "" : inDetail ? (mine !== null ? "Toque para trocar o voto" : "Toque numa opção") : mine !== null ? "Você já votou" : "Toque para votar"}</span>
+          <span>{err ? "Não foi possível votar agora" : demo ? "" : inDetail ? (!logged ? "Entre para votar" : mine !== null ? "Toque para trocar o voto" : "Toque numa opção") : mine !== null ? "Você já votou" : "Toque para votar"}</span>
         </p>
       </div>
     </WidgetFrame>
