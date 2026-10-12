@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { checkSignup } from "@/lib/reserved";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { saveOnboarding, PROFILE_STEP_DONE_KEY } from "@/lib/onboarding";
 import { primaryButton, NicknameField, useNicknameStatus } from "../ui";
+import { AvatarUploader } from "../AvatarUploader";
+import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, isUnder13, toIso } from "./BirthField";
 
 const ERROR: Record<string, string> = {
   nickname_taken: "Esse nome de usuário já está em uso.",
@@ -13,6 +16,7 @@ const ERROR: Record<string, string> = {
 
 /**
  * Quem entrou por login social (Google etc.) ainda não escolheu o nome de usuário: aparece esta janela, que não fecha até a pessoa escolher.
+ * Numa tela só: nome de usuário (obrigatório), foto de perfil e data de nascimento (opcionais).
  * `suggested` é o nome automático criado a partir do e-mail.
  */
 export function NicknameSetup({ open, suggested, onDone }: { open: boolean; suggested: string; onDone: (nickname: string) => void }) {
@@ -20,6 +24,7 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
   const [nick, setNick] = useState(suggested);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [birth, setBirth] = useState("");
   const free = useNicknameStatus(nick);
   const [reserved, setReserved] = useState<"checking" | "ok" | "denied">("ok");
   // nome de empresa: só passa quem entrou com e-mail do domínio da marca (o servidor confere de novo ao salvar)
@@ -52,14 +57,23 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy || !ok) return;
-    setBusy(true);
     setError(null);
+    const iso = birth ? toIso(birth) : null;
+    if (birth && !iso) return setError(BIRTH_FORMAT_HINT);
+    if (iso && isUnder13(iso)) return setError(BIRTH_ERROR.too_young); // confere antes de salvar o nome (que depois não muda)
+    setBusy(true);
     const { data, error: err } = await getBrowserSupabase().rpc("claim_nickname", { p_nick: nick });
     setBusy(false);
     if (err || typeof data !== "string") {
       const key = Object.keys(ERROR).find((k) => err?.message.includes(k));
       return setError(key ? ERROR[key] : "Não foi possível salvar agora. Tente de novo.");
     }
+    const sb = getBrowserSupabase();
+    if (iso) await saveOnboarding(sb, iso, false); // a data é opcional: se falhar, o nome já salvo segue valendo
+    try {
+      const uid = (await sb.auth.getUser()).data.user?.id;
+      if (uid) localStorage.setItem(PROFILE_STEP_DONE_KEY(uid), "1");
+    } catch {}
     onDone(data);
   }
 
@@ -67,14 +81,16 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
     <dialog
       ref={ref}
       onCancel={(e) => e.preventDefault()} // Esc não fecha: a escolha é obrigatória
-      aria-label="Escolha seu nome de usuário"
-      className="m-auto w-[min(94vw,28rem)] rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/70"
+      aria-label="Complete o seu perfil"
+      className="m-auto max-h-[94dvh] w-[min(94vw,28rem)] overflow-y-auto rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/70"
     >
       {open && (
         <form onSubmit={submit} noValidate className="space-y-4 p-6">
-          <h2 className="font-title text-xl font-semibold">Escolha seu nome de usuário</h2>
-          <p className="text-[15px] text-[#4a3826]">É assim que as pessoas vão te encontrar e abrir o seu mural. Depois de salvo, não dá para mudar.</p>
+          <h2 className="font-title text-xl font-semibold">Complete o seu perfil</h2>
+          <p className="text-[15px] text-[#4a3826]">Escolha o seu nome de usuário: é assim que as pessoas vão te encontrar e abrir o seu mural. Depois de salvo, não dá para mudar.</p>
           <NicknameField value={nick} onChange={(v) => { setNick(v); setError(null); }} state={nick === suggested ? "ok" : state} autoFocus />
+          <AvatarUploader nickname={nick || suggested} />
+          <BirthField value={birth} onChange={(v) => { setBirth(v); setError(null); }} />
           {error && (
             <p role="alert" className="text-sm text-[#a23b2a]">
               {error}

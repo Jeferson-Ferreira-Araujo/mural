@@ -1059,7 +1059,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} />
+      <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       <Toast message={toast} />
     </div>

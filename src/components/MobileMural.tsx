@@ -53,6 +53,7 @@ type Props = {
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
+  const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
   const canAdd = !!account?.atHome && unlocked && !locked && hasSelection && !!onCompose; // dono no próprio mural: botão "+ pin"
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
@@ -125,10 +126,10 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           />
         </div>
         {/* conta FREE no próprio mural: contador de pins e explicação do limite (não há "Novo mural" nesse plano) */}
-        {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-3 left-3 z-20" />}
+        {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass className="absolute top-[3.75rem] right-3 z-20" />}
         {follow && <FollowButton follow={follow} glass className="absolute top-3 left-3 z-20" />}
         {/* PINZ+: Compartilhar sobe para o canto superior esquerdo (o "novo mural" agora é a 1ª opção do menu Meus murais) */}
-        {account?.onNewMural && share && onNotify && !follow && (
+        {shareTop && share && onNotify && !follow && (
           <div className="absolute top-3 left-3 z-20">
             <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
           </div>
@@ -145,10 +146,10 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           } : undefined}
           ambient={look.image}
           cornerLeft={
-            canAdd || (share && onNotify && !account?.onNewMural) ? (
+            canAdd || (share && onNotify && !shareTop) ? (
               <div className="flex items-center gap-2">
                 {canAdd && <AddPinButton />}
-                {share && onNotify && !account?.onNewMural && (
+                {share && onNotify && !shareTop && (
                   <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
                 )}
               </div>

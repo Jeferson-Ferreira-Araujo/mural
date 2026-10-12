@@ -6,6 +6,9 @@ export const TOUR_EVENT = "pinz:start-tour";
 /** Evento (só no menu do administrador): reabre as boas-vindas para testar. */
 export const ONBOARDING_EVENT = "pinz:start-onboarding";
 
+/** Marca no aparelho que a tela de perfil (nome, foto e data) já foi feita junto com a escolha do nome de usuário: as boas-vindas abrem direto no convite do tour. */
+export const PROFILE_STEP_DONE_KEY = (uid: string) => `pinz:profile-step:${uid}`;
+
 export type Onboarding = { done: boolean; birth: string | null };
 
 /** Se a conta já passou pelas boas-vindas (foto, data de nascimento e convite para o tour) e a data de nascimento salva. */
