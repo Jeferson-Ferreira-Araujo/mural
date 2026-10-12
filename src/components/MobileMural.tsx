@@ -14,6 +14,7 @@ import { BadgeBar } from "./badges/BadgeBar";
 import { ShareButton } from "./ShareButton";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { FollowButton } from "./FollowButton";
+import { PlanBadge } from "./board/PlanBadge";
 import { PlanLimit } from "./PlanLimit";
 import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
@@ -82,7 +83,10 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       <div className="relative z-20 flex shrink-0 items-center gap-3 bg-[#e8dcc2] px-4 py-2 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.2)]">
         <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={`Ver o perfil de @${info.owner}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition active:scale-[0.98] disabled:cursor-default">
           <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11 shrink-0" />
-          <span className="block min-w-0 truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
+          <span className="flex min-w-0 flex-col items-start gap-1">
+            <span className="block max-w-full min-w-0 truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
+            {info.plus && <PlanBadge plan="full" className="!px-2 !py-0.5 !text-[10px]" />}
+          </span>
         </button>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
