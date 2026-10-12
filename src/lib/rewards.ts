@@ -49,17 +49,28 @@ export async function withRef(url: string, t: "m" | "p"): Promise<string> {
   return u.toString();
 }
 
-/** Quem abriu um link compartilhado (?ref=…&t=…) avisa o servidor, que paga o crédito a quem compartilhou. Uma vez por link e por aparelho; só roda no navegador (robôs de pré-visualização não contam). */
-export async function registerRefVisit(visitorId: string, sb: SupabaseClient = getBrowserSupabase()): Promise<void> {
+const REF_KEY = "pinz:ref";
+
+/** Quem chega por um link compartilhado (?ref=…&t=…) tem o código guardado no aparelho: se criar uma conta, a recompensa vai para quem compartilhou. */
+export function rememberRef(): void {
   try {
     const q = new URLSearchParams(window.location.search);
     const code = q.get("ref");
     const t = q.get("t");
-    if (!code || (t !== "m" && t !== "p")) return;
-    const key = `pinz:ref:${code}:${t}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, "1");
-    await sb.rpc("register_ref_visit", { p_code: code, p_task: t === "m" ? "share_mural" : "share_pin", p_visitor: visitorId });
+    if (code && /^[0-9a-f]{8}$/.test(code) && (t === "m" || t === "p")) localStorage.setItem(REF_KEY, JSON.stringify({ code, t }));
+  } catch {
+    /* sem armazenamento: não guarda */
+  }
+}
+
+/** Conta nova que veio por um link: o servidor confere (conta criada há pouco, ainda sem indicação, não é o próprio dono) e paga a quem compartilhou. O código guardado é usado uma vez. */
+export async function claimStoredReferral(sb: SupabaseClient = getBrowserSupabase()): Promise<void> {
+  try {
+    const raw = localStorage.getItem(REF_KEY);
+    if (!raw) return;
+    localStorage.removeItem(REF_KEY);
+    const { code, t } = JSON.parse(raw) as { code: string; t: "m" | "p" };
+    await sb.rpc("claim_referral", { p_code: code, p_task: t === "m" ? "share_mural" : "share_pin" });
   } catch {
     /* sem rede ou sem armazenamento: não faz nada */
   }

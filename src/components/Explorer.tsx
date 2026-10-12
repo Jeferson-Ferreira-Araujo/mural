@@ -31,7 +31,7 @@ import { FirstTimeTip } from "./account/FirstTimeTip";
 import { OnboardingModal } from "./account/OnboardingModal";
 import { Tour } from "./tour/Tour";
 import { getOnboarding, TOUR_EVENT } from "@/lib/onboarding";
-import { claimReward, registerRefVisit, REWARD_EVENT } from "@/lib/rewards";
+import { claimReward, claimStoredReferral, rememberRef, REWARD_EVENT } from "@/lib/rewards";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -415,11 +415,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     };
   }, [myUid, reloadUnread]);
 
-  // abriu um link compartilhado por alguém (?ref=…): o servidor paga o crédito a quem compartilhou
+  // chegou por um link compartilhado (?ref=…): guarda o código; quando a conta nova existir, o servidor paga a recompensa a quem compartilhou
   useEffect(() => {
-    if (sessionLoading) return;
-    void registerRefVisit(getVisitorId());
-  }, [sessionLoading]);
+    rememberRef();
+  }, []);
+  useEffect(() => {
+    if (session?.user.id) void claimStoredReferral();
+  }, [session?.user.id]);
 
   // o autor excluiu o próprio pin no detalhe: recarrega o quadro
   useEffect(() => {
