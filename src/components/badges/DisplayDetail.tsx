@@ -15,7 +15,10 @@ const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "
 export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
   const live = withLiveText(data);
-  const text = live.text ? `“${live.text}”${live.ref ? ` — ${live.ref}` : ""}` : null;
+  const pages = Math.max(1, data.pages ?? 1);
+  const readN = Math.min(pages, Math.max(0, data.read ?? 0));
+  const bookText = data.product === "book" ? `Estou lendo${data.title ? ` “${data.title}”` : " um livro"}: ${readN} de ${pages} páginas (${Math.round((readN / pages) * 100)}%).` : null;
+  const text = live.text ? `“${live.text}”${live.ref ? ` — ${live.ref}` : ""}` : bookText;
 
   async function share() {
     if (!text) return;

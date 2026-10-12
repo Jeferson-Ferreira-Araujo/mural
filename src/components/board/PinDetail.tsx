@@ -219,6 +219,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   useEffect(() => {
     setShowSecret(false);
   }, [item?.id, secretOn]);
+  // leitura de livro: o dono também compartilha o display como imagem (o nome parado, sem letreiro)
+  const bookShare = !!mod && !!widget && widget.data.product === "book";
   const shareable = !!mod && !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
 
   async function sharePin() {
@@ -283,6 +285,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <button type="button" aria-label="Compartilhar o texto" title="Compartilhar o texto" onClick={() => void shareWidgetText()} className={shareBtn}>
                 <ShareIcon />
                 {wCopied ? "Copiado!" : "Compartilhar"}
+              </button>
+            )}
+            {bookShare && (
+              <button type="button" disabled={sharing} aria-label="Compartilhar este display" title="Compartilhar este display" onClick={() => void sharePin()} className={shareBtn}>
+                <ShareIcon />
+                Compartilhar
               </button>
             )}
             {mod && item && !isSealed(item) && !isHidden(item) && !item.mine && item.pending && ( // só enquanto aguarda aprovação: depois de aprovado, o dono usa Excluir PIN
@@ -392,7 +400,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         </div>
       )}
     </dialog>
-    {open && shareable && item && !isSealed(item) && !isHidden(item) && (
+    {open && ((shareable && item && !isSealed(item) && !isHidden(item)) || bookShare) && (
       <div
         ref={cardRef}
         aria-hidden
@@ -404,10 +412,16 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`/img/blur/${board}.webp`} alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "relative", marginBottom: 118 }}>
-          <div style={{ position: "relative" }}>
-            <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined, reaction: undefined }} revealSecret />
-            <BadgesOver list={over} />
-          </div>
+          {bookShare && widget ? (
+            <div style={{ position: "relative", fontSize: 28 }}>
+              <DisplayCard data={widget.data} />
+            </div>
+          ) : item ? (
+            <div style={{ position: "relative" }}>
+              <MessageView message={{ ...item, pending: false, ownerHidden: false, canEdit: false, signedBy: undefined, reaction: undefined }} revealSecret />
+              <BadgesOver list={over} />
+            </div>
+          ) : null}
         </div>
         {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
         <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "row", alignItems: "center", gap: 16, padding: "12px 18px 12px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>

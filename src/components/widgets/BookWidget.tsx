@@ -1,7 +1,7 @@
 "use client";
 
 import { baseStyle } from "@/lib/displayShape";
-import { Marquee, WidgetFrame } from "./core";
+import { WidgetFrame } from "./core";
 
 export type BookView = "count" | "bar" | "both";
 
@@ -53,7 +53,12 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
         </div>
         </div>
 
-        {name && <Marquee text={name} className="mt-[0.55em] text-[1.05em] leading-tight font-bold" />}
+        {/* o nome fica parado (nada de letreiro, que sairia pela metade na imagem de compartilhar): quebra em até duas linhas, e letra um pouco menor se for comprido */}
+        {name && (
+          <p className="mt-[0.55em] line-clamp-2 w-full text-center leading-[1.15] font-bold [overflow-wrap:anywhere]" style={{ fontSize: `${name.length > 30 ? 0.82 : name.length > 20 ? 0.92 : 1.05}em` }} title={name}>
+            {name}
+          </p>
+        )}
 
         <div className="mt-[0.5em] w-full">
           {(mode === "bar" || mode === "both") && (
