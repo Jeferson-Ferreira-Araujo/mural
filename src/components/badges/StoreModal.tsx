@@ -301,6 +301,12 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 return (
                   <li key={b.key} className={`relative flex flex-col items-center rounded-2xl border p-2.5 text-center transition-colors ${just ? "border-[#3aa655] bg-[#effbf1] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba] bg-white/70"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
                     {just && <Confetti key={done.at} />}
+                    {!just && (
+                      <span className="absolute top-1.5 right-1.5 z-10 inline-flex items-center gap-0.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-px pr-1.5 pl-1 text-[11px] font-extrabold text-[#5a3d00] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.2)]" aria-hidden>
+                        <Coin className="size-3.5" />
+                        {cost}
+                      </span>
+                    )}
                     {newKeys.has(b.key) && <span className="absolute top-1.5 left-1.5 z-10 rounded-full bg-[#e8554a] px-1.5 py-px text-[9px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.3)]">Novo</span>}
                     <div className="grid h-16 w-full place-items-center">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -333,13 +339,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         {busy === `p${b.key}` ? (
                           "Comprando…"
                         ) : (
-                          <>
-                            Comprar
-                            <span className="inline-flex items-center gap-0.5">
-                              <Coin className="size-3.5" />
-                              {cost}
-                            </span>
-                          </>
+                          "Comprar"
                         )}
                       </button>
                     )}
