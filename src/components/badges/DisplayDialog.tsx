@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { InappropriateCover, uploadBookCover } from "@/lib/bookCover";
-import { isSpotifyTrackLink, SearchUnavailable, searchSongs, songFromLink, type SongHit } from "@/lib/songSearch";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import type { FrameColor } from "@/lib/style";
@@ -23,7 +22,6 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   daycount: {},
   book: {},
   top3: {},
-  song: {},
   poll: {},
 };
 
@@ -42,14 +40,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
   // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
-  // música favorita: busca por nome (ou link do Spotify) e a faixa escolhida
-  const [plTitle, setPlTitle] = useState(""); // enquete: pergunta e opções
+  const [plTitle, setPlTitle] = useState(""); // enquete: pergunta e as duas respostas
   const [plOptions, setPlOptions] = useState<string[]>(["Sim", "Não"]);
-  const [spQuery, setSpQuery] = useState("");
-  const [spHits, setSpHits] = useState<SongHit[]>([]);
-  const [spSearching, setSpSearching] = useState(false);
-  const [spNote, setSpNote] = useState<string | null>(null);
-  const [spChosen, setSpChosen] = useState<SongHit | null>(null);
   const [t3Title, setT3Title] = useState(""); // top 3: tema e três itens
   const [t3Items, setT3Items] = useState<string[]>(["", "", ""]);
   const [bkTitle, setBkTitle] = useState("");
@@ -80,10 +72,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
     setPlTitle(initial?.title ?? "");
     setPlOptions(initial?.options && initial.options.length >= 2 ? initial.options.slice(0, 2) : ["Sim", "Não"]);
-    setSpQuery("");
-    setSpHits([]);
-    setSpNote(null);
-    setSpChosen(initial?.track ? { track: initial.track, title: initial.title ?? "", artist: initial.artist ?? "", cover: initial.cover ?? null } : null);
     setT3Title(initial?.title ?? "");
     setT3Items([0, 1, 2].map((i) => initial?.items?.[i] ?? ""));
     setBkTitle(initial?.title ?? "");
@@ -118,29 +106,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setBkFile(f);
   }
 
-  async function searchSong() {
-    const q = spQuery.trim();
-    if (q.length < 2) return setSpNote("Digite o nome da música.");
-    setSpNote(null);
-    setSpSearching(true);
-    try {
-      if (isSpotifyTrackLink(q)) {
-        const one = await songFromLink(q);
-        if (one) setSpChosen(one);
-        else setSpNote("Não encontramos essa música. Confira o link.");
-        setSpHits([]);
-      } else {
-        const hits = await searchSongs(q);
-        setSpHits(hits);
-        if (hits.length === 0) setSpNote("Nada encontrado. Tente o nome com o artista.");
-      }
-    } catch (e) {
-      setSpNote(e instanceof SearchUnavailable ? "A busca por nome ainda não está ativa. No Spotify, toque em Compartilhar > Copiar link da música e cole o link aqui." : "Não foi possível buscar agora. Tente de novo em instantes.");
-    } finally {
-      setSpSearching(false);
-    }
-  }
-
   async function search() {
     const q = query.trim();
     if (q.length < 3) return setErr("Digite pelo menos 3 letras do nome da cidade.");
@@ -168,13 +133,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
     ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
-    ...(product === "song" ? { title: spChosen?.title || "Garota de Ipanema", artist: spChosen?.artist ?? (spChosen ? "" : "Tom Jobim"), ...(spChosen ? { track: spChosen.track } : {}), ...(spChosen?.cover ? { cover: spChosen.cover } : {}) } : {}),
     ...(product === "poll" ? { title: plTitle.trim() || "Você gosta de pizza com abacaxi?", options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || ["Sim", "Não"][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
-  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "poll" ? plTitle.trim().length > 0 && [0, 1].every((i) => (plOptions[i] ?? "").trim().length > 0) : product === "song" ? !!spChosen : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
+  const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "poll" ? plTitle.trim().length > 0 && [0, 1].every((i) => (plOptions[i] ?? "").trim().length > 0) : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
   async function submit() {
     if (product !== "book") return onSubmit(data);
@@ -335,76 +299,6 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 ))}
               </div>
             </div>
-          </div>
-        )}
-
-        {product === "song" && (
-          <div className="space-y-3">
-            {spChosen ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-2.5">
-                {spChosen.cover ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={spChosen.cover} alt="" referrerPolicy="no-referrer" className="size-12 shrink-0 rounded-lg object-cover" />
-                ) : (
-                  <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#e4d3ae] text-xl">♪</span>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{spChosen.title}</p>
-                  {spChosen.artist && <p className="truncate text-sm text-[#6b5440]">{spChosen.artist}</p>}
-                </div>
-                <button type="button" onClick={() => { setSpChosen(null); setSpHits([]); }} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-                  Trocar
-                </button>
-              </div>
-            ) : (
-              <div>
-                <label htmlFor="song-q" className="mb-1.5 block text-sm font-semibold">
-                  Nome da música (ou link do Spotify)
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    id="song-q"
-                    value={spQuery}
-                    onChange={(e) => setSpQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        void searchSong();
-                      }
-                    }}
-                    placeholder="Ex: Garota de Ipanema"
-                    className={inputClass}
-                    maxLength={300}
-                    autoComplete="off"
-                  />
-                  <button type="button" onClick={() => void searchSong()} disabled={spSearching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
-                    {spSearching ? "Buscando…" : "Buscar"}
-                  </button>
-                </div>
-                {spNote && <p className="mt-2 text-sm text-[#6b5440]">{spNote}</p>}
-                {spHits.length > 0 && (
-                  <ul className="mt-2 max-h-60 space-y-1.5 overflow-y-auto">
-                    {spHits.map((h) => (
-                      <li key={h.track}>
-                        <button type="button" onClick={() => { setSpChosen(h); setSpNote(null); }} className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 p-2 text-left hover:bg-white">
-                          {h.cover ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={h.cover} alt="" referrerPolicy="no-referrer" loading="lazy" className="size-11 shrink-0 rounded-md object-cover" />
-                          ) : (
-                            <span className="grid size-11 shrink-0 place-items-center rounded-md bg-[#e4d3ae]">♪</span>
-                          )}
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm font-semibold">{h.title}</span>
-                            {h.artist && <span className="block truncate text-xs text-[#6b5440]">{h.artist}</span>}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className="mt-1.5 text-[11px] text-[#8a7b69]">Quem abrir o mural toca a música pelo player do Spotify.</p>
-              </div>
-            )}
           </div>
         )}
 

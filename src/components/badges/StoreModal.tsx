@@ -82,8 +82,6 @@ export function sampleFor(product: string, style?: string): DisplayData {
     }
     case "poll":
       return { product, style: st, title: "Você gosta de pizza com abacaxi?", options: ["Sim", "Não"] };
-    case "song":
-      return { product, style: st, title: "Garota de Ipanema", artist: "Tom Jobim" };
     case "top3":
       return { product, style: st, title: "Comidas favoritas", items: ["Lasanha", "Pizza", "Sorvete"] };
     case "book":

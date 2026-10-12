@@ -7,7 +7,7 @@ import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { ghostButton } from "../ui";
 
-const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", song: "Música favorita", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
+const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
 
 /**
  * Detalhe de um pin da loja: o widget em tamanho grande, como quem passa por ele no mural quer ler (frase, hora, tempo).

@@ -564,7 +564,7 @@ export function BadgeProvider({
   // não pedem nada, o clima abre antes a escolha da cidade
   const placeDisplayAtSlot = useCallback((id: string, slot: number) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "song" || product === "poll") {
+    if (product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "poll") {
       setDialogError(null);
       setDialog({ mode: "new", product, style, slot });
       return;
@@ -783,7 +783,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
   const TRACK = 90; // mesmo comprimento da barra de inclinação
   const Hh = 124;
   // versículo, frase e relógio não têm o que editar (o estilo é o comprado): só ampliar e tirar
-  const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar" || badge.data?.product === "countdown" || badge.data?.product === "daycount" || badge.data?.product === "book" || badge.data?.product === "top3" || badge.data?.product === "song" || badge.data?.product === "poll");
+  const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar" || badge.data?.product === "countdown" || badge.data?.product === "daycount" || badge.data?.product === "book" || badge.data?.product === "top3" || badge.data?.product === "poll");
   const isBook = isDisp && badge.data?.product === "book";
   const Ha = (canEdit ? 108 : isDisp ? 76 : 42) + (isBook ? 78 : 0);
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
