@@ -385,6 +385,31 @@ export function BadgeProvider({
   }, [selId]);
 
   /** Tira o botton do mural (volta para a barra): o mesmo que arrastar para a barra. */
+  // display de leitura: +/- páginas direto nos controles; a tela muda na hora e o servidor recebe depois de uma pausa
+  const pagesTimer = useRef<Record<string, number>>({});
+  const changePages = useCallback(
+    (id: string, delta: number) => {
+      const b = live.current.badges.find((x) => x.id === id);
+      if (!b?.data || b.data.product !== "book") return;
+      const total = b.data.pages ?? 0;
+      const next = Math.min(total, Math.max(0, (b.data.read ?? 0) + delta));
+      if (next === (b.data.read ?? 0)) return;
+      setBadges((l) => l.map((x) => (x.id === id && x.data ? { ...x, data: { ...x.data, read: next } } : x)));
+      window.clearTimeout(pagesTimer.current[id]);
+      pagesTimer.current[id] = window.setTimeout(() => {
+        const cur = live.current.badges.find((x) => x.id === id);
+        if (!cur?.data || id.startsWith("tmp-")) return;
+        const { text: _t, ref: _r, product: _p, ...clean } = cur.data;
+        void _t;
+        void _r;
+        void _p;
+        void updateDisplayData(getBrowserSupabase(), id, clean).then((ok) => {
+          if (!ok) live.current.notify("Não foi possível salvar as páginas agora.");
+        });
+      }, 600);
+    },
+    [setBadges],
+  );
   const removeById = useCallback((id: string) => {
     const { badges: cur, notify } = live.current;
     const prev = cur;
@@ -680,7 +705,7 @@ export function BadgeProvider({
       )}
       {detail && <DisplayDetail data={detail} onClose={() => setDetail(null)} />}
       {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots, rect) => void placeDisplay(placing.product, placing.data, x, y, slots, rect)} notify={notify} />}
-      {controlsId && <BadgeControls onEdit={editDisplay} onDetail={openDetail} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {controlsId && <BadgeControls onEdit={editDisplay} onDetail={openDetail} onPages={changePages} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && isDisplayKey(ghost.key) && (
         <div
           aria-hidden
@@ -727,29 +752,19 @@ export function BadgeProvider({
  * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; onDetail: (id: string) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
-  const [g, setG] = useState<{ cx: number; cy: number; R: number } | null>(null);
-  const keyRef = useRef(badge?.key);
-  keyRef.current = badge?.key;
-  const dataRef = useRef(badge?.data);
-  dataRef.current = badge?.data;
+function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; onDetail: (id: string) => void; /** display de leitura: mais ou menos páginas lidas, sem abrir a edição */ onPages: (id: string, delta: number) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+  const [g, setG] = useState<{ cx: number; cy: number; Rx: number; Ry: number } | null>(null);
   useEffect(() => {
     let raf = 0;
     const tick = () => {
       const el = visibleOne(`[data-badge-id="${id}"]`) as HTMLElement | null;
       const r = el?.getBoundingClientRect();
-      let next: { cx: number; cy: number; R: number } | null = null;
+      let next: { cx: number; cy: number; Rx: number; Ry: number } | null = null;
       if (el && r && r.width > 0) {
-        // o centro não muda ao girar nem ao mudar de tamanho; o raio é o do botton no tamanho MÁXIMO (independe do tamanho atual)
-        const layer = el.closest("[data-badge-layer]") as HTMLElement | null;
-        const lr = layer?.getBoundingClientRect();
-        const em = layer ? parseFloat(getComputedStyle(layer).fontSize) || 10 : 10;
-        const sc = layer && lr && layer.offsetWidth ? lr.width / layer.offsetWidth : 1;
-        const w = baseEmOfBadge(keyRef.current ?? 0, dataRef.current) * em * sc * (MAX_SCALE / 100);
-        const h = w / ratioOfBadge(keyRef.current ?? 0, dataRef.current);
-        next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), R: Math.round((Math.hypot(w, h) / 2) * 0.82) };
+        // os botões ficam junto do botton: metade da largura e da altura que ele ocupa na tela agora (já com a inclinação); seguem o botton se ele crescer ou girar
+        next = { cx: Math.round(r.left + r.width / 2), cy: Math.round(r.top + r.height / 2), Rx: Math.round(r.width / 2 + 4), Ry: Math.round(r.height / 2 + 4) };
       }
-      setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.R === next.R ? p : next));
+      setG((p) => (p && next && p.cx === next.cx && p.cy === next.cy && p.Rx === next.Rx && p.Ry === next.Ry ? p : next));
       raf = requestAnimationFrame(tick);
     };
     tick();
@@ -769,10 +784,11 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   const Hh = 124;
   // versículo, frase e relógio não têm o que editar (o estilo é o comprado): só ampliar e tirar
   const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar" || badge.data?.product === "countdown" || badge.data?.product === "daycount" || badge.data?.product === "book");
-  const Ha = canEdit ? 108 : isDisp ? 76 : 42;
+  const isBook = isDisp && badge.data?.product === "book";
+  const Ha = (canEdit ? 108 : isDisp ? 76 : 42) + (isBook ? 78 : 0);
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela
   const SW = 140;
-  const off = Math.max(g.R + 8, SW / 2 + 8);
+  const off = Math.max(g.Rx + 8, SW / 2 + 8);
   const sizeRight = g.cx + off + W <= vw - 4;
   const pLeft = sizeRight ? g.cx + off : Math.max(4, g.cx - off - W);
   const pTop = Math.min(Math.max(g.cy - Hh / 2, 44), vh - Hh - 8);
@@ -786,10 +802,10 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
   // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
   const SH = 50;
   const sLeft = Math.min(Math.max(g.cx - SW / 2, 4), vw - SW - 4);
-  const under = g.cy + g.R + 6;
+  const under = g.cy + g.Ry + 6;
   const touchesPill = sLeft < pLeft + W && sLeft + SW > pLeft && under < pTop + Hh && under + SH > pTop;
   const lowest = touchesPill ? pTop + Hh + 6 : under;
-  const sTop = lowest + SH <= vh - 8 ? lowest : Math.max(8, Math.min(g.cy - g.R, pTop) - 6 - SH);
+  const sTop = lowest + SH <= vh - 8 ? lowest : Math.max(8, Math.min(g.cy - g.Ry, pTop) - 6 - SH);
 
   return createPortal(
     <>
@@ -847,6 +863,17 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
         className="fixed z-[350] flex touch-none flex-col items-center justify-center gap-0.5 rounded-full bg-[#17110c]/92 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
         style={{ left: aLeft, top: aTop, width: W, height: Ha }}
       >
+        {isBook && (
+          <>
+            {/* páginas lidas: toque soma/tira uma; segurando, anda rápido */}
+            <PagesStep dir={1} onStep={(d) => onPages(id, d)} />
+            <span className="text-[11px] leading-none font-extrabold tabular-nums" aria-live="polite" title="Páginas lidas">
+              {badge.data?.read ?? 0}
+            </span>
+            <PagesStep dir={-1} onStep={(d) => onPages(id, d)} />
+            <span aria-hidden className="my-0.5 h-px w-5 bg-white/25" />
+          </>
+        )}
         {isDisp && (
           <button type="button" onClick={() => onDetail(id)} aria-label="Ver o display em tamanho grande" title="Ver em tamanho grande" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -882,6 +909,49 @@ function BadgeControls({ id, badge, onEdit, onDetail, onScale, onScaleEnd, onRem
       </button>
     </>,
     document.body,
+  );
+}
+
+/** Botão de mais ou menos páginas: um toque muda uma página; segurando, repete cada vez mais rápido. */
+function PagesStep({ dir, onStep }: { dir: 1 | -1; onStep: (d: number) => void }) {
+  const timer = useRef<number | null>(null);
+  const stop = () => {
+    if (timer.current !== null) {
+      window.clearTimeout(timer.current);
+      window.clearInterval(timer.current);
+      timer.current = null;
+    }
+  };
+  useEffect(() => stop, []);
+  const start = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    stop();
+    onStep(dir);
+    let n = 0;
+    timer.current = window.setTimeout(() => {
+      timer.current = window.setInterval(() => {
+        n++;
+        onStep(dir * (n > 12 ? 10 : n > 6 ? 3 : 1));
+      }, 90);
+    }, 380);
+  };
+  return (
+    <button
+      type="button"
+      aria-label={dir > 0 ? "Mais uma página lida" : "Menos uma página lida"}
+      title={dir > 0 ? "Mais páginas" : "Menos páginas"}
+      onPointerDown={start}
+      onPointerUp={stop}
+      onPointerLeave={stop}
+      onPointerCancel={stop}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onStep(dir))}
+      className="grid size-7 cursor-pointer touch-none place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/25 active:scale-90"
+    >
+      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
+        <path d={dir > 0 ? "M12 5v14M5 12h14" : "M5 12h14"} />
+      </svg>
+    </button>
   );
 }
 
