@@ -30,7 +30,7 @@ import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
 import { OnboardingModal } from "./account/OnboardingModal";
 import { Tour } from "./tour/Tour";
-import { getOnboarding, TOUR_EVENT } from "@/lib/onboarding";
+import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { claimReward, claimStoredReferral, rememberRef, REWARD_EVENT } from "@/lib/rewards";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
@@ -198,8 +198,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // o tour abre pelo fim das boas-vindas e pelo item do menu
   useEffect(() => {
     const open = () => setTourOpen(true);
+    const onb = () => setOnbOpen(true);
     window.addEventListener(TOUR_EVENT, open);
-    return () => window.removeEventListener(TOUR_EVENT, open);
+    window.addEventListener(ONBOARDING_EVENT, onb);
+    return () => {
+      window.removeEventListener(TOUR_EVENT, open);
+      window.removeEventListener(ONBOARDING_EVENT, onb);
+    };
   }, []);
   useEffect(() => {
     setFollowingState(false);

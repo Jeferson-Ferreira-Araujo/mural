@@ -10,7 +10,7 @@ import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
-import { TOUR_EVENT } from "@/lib/onboarding";
+import { ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
 import { FollowingModal, VisitorsModal } from "./PeopleModals";
@@ -260,6 +260,21 @@ export function AccountDrawer({
                   </svg>
                 }
               />
+              {isAdmin && (
+                <Row
+                  onClick={() => {
+                    onClose();
+                    window.setTimeout(() => window.dispatchEvent(new CustomEvent(ONBOARDING_EVENT)), 300);
+                  }}
+                  label="Testar as boas-vindas"
+                  hint="Só para administradores"
+                  icon={
+                    <svg {...ic}>
+                      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100" />
+                    </svg>
+                  }
+                />
+              )}
               {isAdmin && (
                 <Row
                   onClick={() => window.location.assign("/admin")}

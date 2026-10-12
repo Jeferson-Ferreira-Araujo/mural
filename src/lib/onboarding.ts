@@ -3,6 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 /** Evento que abre o tour (do fim das boas-vindas e do item "Tour pelo Pinz" do menu). */
 export const TOUR_EVENT = "pinz:start-tour";
 
+/** Evento (só no menu do administrador): reabre as boas-vindas para testar. */
+export const ONBOARDING_EVENT = "pinz:start-onboarding";
+
 export type Onboarding = { done: boolean; birth: string | null };
 
 /** Se a conta já passou pelas boas-vindas (foto, data de nascimento e convite para o tour) e a data de nascimento salva. */
