@@ -6,7 +6,7 @@ import { msUntilMidnight, promiseIndex } from "./promessasDia";
 
 export type Promessa = { promessa: string; referencia: string };
 
-/** Biblioteca de promessas (Almeida 1911, texto literal), já na ordem do ciclo anual. Veja scripts/build-promessas.cjs. */
+/** Biblioteca de promessas (Almeida Revista e Atualizada, texto literal), já na ordem do ciclo anual. Veja scripts/build-promessas.cjs. */
 export const PROMESSAS: readonly Promessa[] = data;
 
 /** A promessa de um dia (hoje, por padrão), no calendário de São Paulo. */

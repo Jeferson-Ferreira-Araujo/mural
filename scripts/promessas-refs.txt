@@ -1,4 +1,4 @@
-# Referências (abreviações da ALM1911 do repositório damarals/biblias). Uma por linha; trechos com hífen = versículos seguidos.
+# Referências (abreviações da ARA do repositório damarals/biblias). Uma por linha; trechos com hífen = versículos seguidos.
 Gn 8:22
 Gn 9:11
 Gn 9:15
