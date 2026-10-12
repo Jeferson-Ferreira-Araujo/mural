@@ -354,6 +354,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <ul className="grid gap-3 sm:grid-cols-2" aria-label="Tipos de display">
           {DISPLAY_CATS.filter((c) => isDisplayOn(c.id)).map((c) => {
             const items = products.filter((p) => p.id.startsWith(c.id + ":"));
+            const styles = new Set(items.map((p) => baseStyle(p.id.split(":")[1]))).size; // estilos diferentes (retangular e quadrado do mesmo estilo contam uma vez)
             return (
               <li key={c.id}>
                 <button
@@ -371,7 +372,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <span className="flex items-center justify-between gap-2 p-3">
                     <span className="font-title text-base font-semibold">{c.label}</span>
                     <span className="text-xs font-semibold text-[#6b5440]">
-                      {items.length} {items.length === 1 ? "estilo" : "estilos"}
+                      {styles} {styles === 1 ? "estilo" : "estilos"}
                     </span>
                   </span>
                 </button>

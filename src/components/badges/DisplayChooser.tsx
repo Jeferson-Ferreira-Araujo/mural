@@ -15,7 +15,10 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada estilo (retangular por padrão)
 
   // as categorias que a pessoa tem, na ordem de sempre da loja, cada uma com os seus modelos
-  const groups = DISPLAY_CATS.map((c) => ({ ...c, ids: ids.filter((id) => splitDisplayId(id).product === c.id) })).filter((g) => g.ids.length > 0);
+  const groups = DISPLAY_CATS.map((c) => {
+    const own = ids.filter((id) => splitDisplayId(id).product === c.id);
+    return { ...c, ids: own, styles: new Set(own.map((id) => baseStyle(splitDisplayId(id).style))).size }; // styles: modelos diferentes (retangular e quadrado do mesmo estilo contam um)
+  }).filter((g) => g.ids.length > 0);
   // só uma categoria? vai direto aos modelos, sem a etapa extra
   const open = groups.length === 1 ? groups[0] : (groups.find((g) => g.id === cat) ?? null);
   useEffect(() => {
@@ -111,7 +114,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
             <span className="flex items-center justify-between gap-2 p-3">
               <span className="font-title text-base font-semibold">{g.label}</span>
               <span className="text-xs font-semibold text-[#6b5440]">
-                {g.ids.length} {g.ids.length === 1 ? "modelo" : "modelos"}
+                {g.styles} {g.styles === 1 ? "modelo" : "modelos"}
               </span>
             </span>
           </button>
