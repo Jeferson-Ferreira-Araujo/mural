@@ -31,6 +31,7 @@ import { FirstTimeTip } from "./account/FirstTimeTip";
 import { OnboardingModal } from "./account/OnboardingModal";
 import { Tour } from "./tour/Tour";
 import { getOnboarding, TOUR_EVENT } from "@/lib/onboarding";
+import { claimReward, REWARD_EVENT } from "@/lib/rewards";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -220,7 +221,10 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     if (!ok) {
       setFollowingState(!next);
       notify("Não foi possível agora. Tente de novo.");
-    } else notify(next ? `Você segue @${followNick}. Ele fica em Seguindo, no menu.` : `Você deixou de seguir @${followNick}.`);
+    } else {
+      notify(next ? `Você segue @${followNick}. Ele fica em Seguindo, no menu.` : `Você deixou de seguir @${followNick}.`);
+      if (next) void claimReward("follow");
+    }
   }, [followNick, followBusy, following, notify]);
   const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
@@ -247,6 +251,16 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     }
     void reloadInventory();
   }, [session, reloadInventory]);
+  // recompensa ganha (de qualquer tela): avisa e atualiza o saldo
+  useEffect(() => {
+    const h = (e: Event) => {
+      const d = (e as CustomEvent<{ title: string; credits: number }>).detail;
+      notify(`+${d.credits} crédito${d.credits > 1 ? "s" : ""}: ${d.title}`);
+      void reloadInventory();
+    };
+    window.addEventListener(REWARD_EVENT, h);
+    return () => window.removeEventListener(REWARD_EVENT, h);
+  }, [notify, reloadInventory]);
   const [sharedInvites, setSharedInvites] = useState(0);
   const reloadShared = useCallback(async () => {
     const l = await listSharedMurals(getBrowserSupabase());
@@ -591,6 +605,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     if (!nick || !slug || (!token && !isOwner)) return SEND_ERROR_TEXT.not_unlocked;
     const res = await sendPin(getBrowserSupabase(), { nick, slug }, isOwner ? null : token, p, session?.user.id);
     if (res.ok) {
+      if (!isOwner) void claimReward("pin_other");
       await loadBoard();
       return;
     }

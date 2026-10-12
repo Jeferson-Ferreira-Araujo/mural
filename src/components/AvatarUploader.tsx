@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getOwnAvatar, processAvatar, removeAvatar, uploadAvatar } from "@/lib/avatar";
+import { claimReward } from "@/lib/rewards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "./Avatar";
 
@@ -31,6 +32,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
       const blob = await processAvatar(file);
       setUrl(await uploadAvatar(getBrowserSupabase(), blob));
       setMsg({ ok: true, text: "Foto salva! Ela já aparece no seu mural." });
+      void claimReward("avatar");
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "Não foi possível enviar a foto." });
     } finally {

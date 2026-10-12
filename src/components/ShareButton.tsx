@@ -1,5 +1,7 @@
 "use client";
 
+import { claimReward } from "@/lib/rewards";
+
 type Props = {
   title: string;
   /** frase do convite que acompanha o link */
@@ -12,18 +14,22 @@ type Props = {
   iconOnly?: boolean;
   /** texto ao lado do ícone (quando não é só o ícone); padrão: "Compartilhar" */
   label?: string;
+  /** compartilhar o mural conta como tarefa de recompensa */
+  reward?: boolean;
 };
 
-export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false, label = "Compartilhar" }: Props) {
+export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false, label = "Compartilhar", reward = false }: Props) {
   async function share() {
     const url = path ? `${window.location.origin}${path}` : window.location.href;
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url });
+        if (reward) void claimReward("share_mural");
         return;
       }
       await navigator.clipboard.writeText(url);
       onNotify("Link copiado!");
+      if (reward) void claimReward("share_mural");
     } catch {
       /* compartilhamento cancelado pelo usuário */
     }

@@ -55,7 +55,7 @@ export function DesktopBoard(props: ViewProps) {
             {hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
-              <ShareButton iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+              <ShareButton reward iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
           </div>
           <div className="pointer-events-auto flex items-center gap-2">

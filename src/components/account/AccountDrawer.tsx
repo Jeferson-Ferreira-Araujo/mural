@@ -17,9 +17,10 @@ import { FollowingModal, VisitorsModal } from "./PeopleModals";
 import { PinsModal } from "./PinsModal";
 import { PlansModal } from "./PlansModal";
 import { ProfileModal } from "./ProfileModal";
+import { RewardsModal } from "./RewardsModal";
 import { SharedMurals } from "./SharedMurals";
 
-type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "following" | "visitors" | "install";
+type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "following" | "visitors" | "install" | "rewards";
 
 /** "Visitantes" no menu da conta: desligado por enquanto (nada é apagado; para religar, troque para true). */
 const VISITORS_ENABLED = false;
@@ -226,6 +227,17 @@ export function AccountDrawer({
                 }
               />
               <Row
+                onClick={() => setModal("rewards")}
+                label="Ganhe créditos"
+                hint="Tarefas que dão créditos na hora"
+                icon={
+                  <svg {...ic}>
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="M12 7.5v9M9.5 10c0-1 1.1-1.800 2.500-1.800s2.500.8 2.500 1.800-1.100 1.600-2.500 1.900-2.500.9-2.500 1.900 1.100 1.800 2.500 1.800 2.500-.8 2.500-1.800" />
+                  </svg>
+                }
+              />
+              <Row
                 onClick={() => {
                   onClose();
                   window.setTimeout(() => window.dispatchEvent(new CustomEvent(TOUR_EVENT)), 300);
@@ -337,6 +349,7 @@ export function AccountDrawer({
       <Modal open={isOpen && modal === "shared"} onClose={close} title="Mural compartilhado">
         <SharedMurals plus={account.plan === "full"} onChanged={() => onSharedChanged?.()} onNotify={onNotify} />
       </Modal>
+      <RewardsModal open={isOpen && modal === "rewards"} onClose={close} />
       <PlansModal open={isOpen && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
       <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} onPrivacySaved={onChanged} plus={account.plan === "full"} />
     </>

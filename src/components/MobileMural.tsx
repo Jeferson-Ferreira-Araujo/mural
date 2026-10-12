@@ -130,7 +130,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* PINZ+: Compartilhar sobe para o canto superior esquerdo (o "novo mural" agora é a 1ª opção do menu Meus murais) */}
         {account?.onNewMural && share && onNotify && !follow && (
           <div className="absolute top-3 left-3 z-20">
-            <ShareButton title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+            <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
           </div>
         )}
         <PannableBoard
@@ -149,7 +149,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
               <div className="flex items-center gap-2">
                 {canAdd && <AddPinButton />}
                 {share && onNotify && !account?.onNewMural && (
-                  <ShareButton title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+                  <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
                 )}
               </div>
             ) : undefined
