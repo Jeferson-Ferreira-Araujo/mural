@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 
 /**
  * Localização de quem está vendo o mural (para o display de Clima mostrar o tempo do lugar onde a pessoa está).
- * O navegador (ou o celular) pergunta a permissão uma vez; se a pessoa negar, não perguntamos de novo por 7 dias e vale a cidade escolhida pelo dono.
+ * O navegador (ou o celular) pergunta a permissão uma única vez. Se a pessoa negar, nunca mais perguntamos (vale a cidade escolhida pelo dono) até ela
+ * excluir a conta; se permitir, o navegador lembra e não pergunta de novo. Para mudar de ideia, só nas configurações do navegador ou do celular.
  * A posição fica só neste aparelho (30 minutos) e vai ao servidor apenas arredondada (~1 km) para buscar o tempo.
  */
 export type Coords = { lat: number; lon: number };
@@ -14,7 +15,6 @@ type State = { status: GeoStatus; coords: Coords | null };
 const COORDS_KEY = "pinz:geo";
 const DENIED_KEY = "pinz:geo-denied";
 const COORDS_TTL = 30 * 60_000;
-const DENIED_TTL = 7 * 86_400_000;
 
 let state: State = { status: "idle", coords: null };
 let started: Promise<void> | null = null;
@@ -35,6 +35,16 @@ function readJson<T>(store: Storage | undefined, key: string): T | null {
   }
 }
 
+/** A pessoa excluiu a conta: esquece a escolha de localização deste aparelho (da próxima vez o navegador pergunta de novo). */
+export function forgetGeoChoice() {
+  try {
+    window.localStorage.removeItem(DENIED_KEY);
+    window.sessionStorage.removeItem(COORDS_KEY);
+  } catch {
+    /* sem armazenamento: nada a esquecer */
+  }
+}
+
 /** Começa (uma vez por página) a descobrir onde a pessoa está: guardado, permissão do navegador ou pergunta. */
 function start(): Promise<void> {
   if (started) return started;
@@ -42,17 +52,17 @@ function start(): Promise<void> {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) return set({ status: "unavailable", coords: null });
     const saved = readJson<{ at: number; lat: number; lon: number }>(window.sessionStorage, COORDS_KEY);
     if (saved && Date.now() - saved.at < COORDS_TTL) return set({ status: "ok", coords: { lat: saved.lat, lon: saved.lon } });
-    const denied = readJson<number>(window.localStorage, DENIED_KEY);
-    if (denied && Date.now() - denied < DENIED_TTL) return set({ status: "denied", coords: null });
+    let perm: PermissionStatus | undefined;
     try {
-      const perm = await navigator.permissions?.query({ name: "geolocation" as PermissionName });
-      if (perm?.state === "denied") {
-        window.localStorage.setItem(DENIED_KEY, String(Date.now()));
-        return set({ status: "denied", coords: null });
-      }
+      perm = await navigator.permissions?.query({ name: "geolocation" as PermissionName });
     } catch {
-      /* sem a API de permissões (ex.: Safari antigo): pergunta direto */
+      /* sem a API de permissões (ex.: Safari antigo): vale só a escolha guardada */
     }
+    if (perm?.state === "granted") window.localStorage.removeItem(DENIED_KEY); // liberou depois nas configurações: volta a valer
+    else if (perm?.state === "denied") {
+      window.localStorage.setItem(DENIED_KEY, String(Date.now()));
+      return set({ status: "denied", coords: null });
+    } else if (readJson<number>(window.localStorage, DENIED_KEY)) return set({ status: "denied", coords: null }); // já negou uma vez: nunca mais pergunta
     set({ status: "asking", coords: null });
     await new Promise<void>((resolve) => {
       navigator.geolocation.getCurrentPosition(

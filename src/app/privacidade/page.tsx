@@ -31,7 +31,7 @@ export default function Privacidade() {
 
       <section>
         <h2>Localização</h2>
-        <p>O display de Clima mostra o tempo do lugar onde você está, e só se você permitir. A permissão é pedida pelo próprio navegador ou celular, e você pode negá-la ou retirá-la quando quiser nas configurações do aparelho. Se negar, o display mostra o tempo da cidade escolhida pelo dono do mural, e não pedimos de novo por 7 dias.</p>
+        <p>O display de Clima mostra o tempo do lugar onde você está, e só se você permitir. A permissão é pedida pelo próprio navegador ou celular, e você pode negá-la ou retirá-la quando quiser nas configurações do aparelho. Se negar, o display mostra o tempo da cidade escolhida pelo dono do mural, e não pedimos de novo: a sua escolha fica guardada neste aparelho até você excluir a conta (ou limpar os dados do navegador).</p>
         <ul className="mt-2">
           <li>Sua posição fica guardada apenas no seu aparelho, por até 30 minutos. Não ligamos a posição à sua conta e não a guardamos no banco de dados.</li>
           <li>Para buscar o tempo, o servidor do Pinz recebe a posição arredondada (cerca de 1 km) e a repassa ao serviço de previsão do tempo; para mostrar o nome da cidade, repassa também ao serviço de mapas. O servidor guarda a resposta por alguns minutos (o tempo) ou por um dia (o nome da cidade), junto da posição arredondada, sem identificar você.</li>

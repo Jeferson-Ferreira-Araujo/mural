@@ -1,5 +1,6 @@
 "use client";
 
+import { forgetGeoChoice } from "@/lib/geo";
 import { useState, type FormEvent } from "react";
 import { passwordProblem } from "@/lib/password";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -86,6 +87,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       body: JSON.stringify({ confirm: "EXCLUIR" }),
     }).catch(() => null);
     if (res?.ok) {
+      forgetGeoChoice(); // conta excluída: a escolha de localização deste aparelho também
       await sb.auth.signOut();
       window.location.assign("/");
       return;
