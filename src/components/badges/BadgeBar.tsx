@@ -1,6 +1,7 @@
 "use client";
 
 import { BADGES, badgeSrc } from "@/lib/badges";
+import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
 
 
@@ -72,6 +73,13 @@ export function BadgeBar({ className = "" }: { className?: string }) {
           );
         })}
       </ul>
+        <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+        {/* à direita: ganhar créditos (tarefas e conquistas) */}
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_REWARDS_EVENT))} data-tour="rewards" aria-label="Ganhar créditos" title="Ganhar créditos" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/img/moeda.webp" alt="" aria-hidden draggable={false} className="pointer-events-none size-5 select-none object-contain" />
+          <span className="text-[11px] leading-none font-bold">Ganhar</span>
+        </button>
       </div>
     </section>
   );

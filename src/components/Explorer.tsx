@@ -31,7 +31,8 @@ import { FirstTimeTip } from "./account/FirstTimeTip";
 import { OnboardingModal } from "./account/OnboardingModal";
 import { Tour } from "./tour/Tour";
 import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
-import { claimReward, claimStoredReferral, rememberRef, REWARD_EVENT } from "@/lib/rewards";
+import { claimReward, claimStoredReferral, OPEN_REWARDS_EVENT, rememberRef, REWARD_EVENT } from "@/lib/rewards";
+import { RewardsModal } from "./account/RewardsModal";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -75,6 +76,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const logged = !!session;
   const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
   const [tourOpen, setTourOpen] = useState(false);
+  const [rewardsOpen, setRewardsOpen] = useState(false); // janela "Ganhe créditos" aberta pelo botão da barra de bottons
   const onbChecked = useRef<string | null>(null);
   const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
   const [myNick, setMyNick] = useState<string | null>(null); // nickname de quem está logado (assinatura do pin)
@@ -199,9 +201,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   useEffect(() => {
     const open = () => setTourOpen(true);
     const onb = () => setOnbOpen(true);
+    const rw = () => setRewardsOpen(true);
     window.addEventListener(TOUR_EVENT, open);
     window.addEventListener(ONBOARDING_EVENT, onb);
+    window.addEventListener(OPEN_REWARDS_EVENT, rw);
     return () => {
+      window.removeEventListener(OPEN_REWARDS_EVENT, rw);
       window.removeEventListener(TOUR_EVENT, open);
       window.removeEventListener(ONBOARDING_EVENT, onb);
     };
@@ -1062,6 +1067,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
       <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
+      <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />
       <Toast message={toast} />
     </div>
   );

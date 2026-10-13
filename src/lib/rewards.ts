@@ -4,6 +4,9 @@ import { getBrowserSupabase } from "./supabase";
 /** Evento global: um crédito de recompensa entrou (detail: { title, credits }). A tela mostra o aviso e atualiza o saldo. */
 export const REWARD_EVENT = "pinz:reward";
 
+/** Evento: abre a janela "Ganhe créditos" (botão da barra de bottons). */
+export const OPEN_REWARDS_EVENT = "pinz:open-rewards";
+
 export type RewardTask = { id: string; title: string; hint: string; credits: number; done: boolean; ready: boolean };
 export type RewardId = "avatar" | "share_mural" | "share_pin" | "pin_other" | "follow";
 
