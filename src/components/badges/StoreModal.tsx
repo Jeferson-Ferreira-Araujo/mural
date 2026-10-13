@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
 import { BOARDS, NEW_BOARDS } from "@/lib/boards";
@@ -10,6 +10,7 @@ import { startCheckout } from "@/lib/payments";
 import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 import { useBackClose } from "@/lib/backStack";
+import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 
@@ -104,6 +105,47 @@ export function sampleFor(product: string, style?: string): DisplayData {
   }
 }
 
+/** Reinicia uma animação CSS de um elemento (sem trocar a `key`, que deixava números antigos empilhados na tela). */
+function replay(el: HTMLElement | null, animation: string) {
+  if (!el) return;
+  el.style.animation = "none";
+  void el.offsetWidth;
+  el.style.animation = animation;
+}
+
+/** O saldo: um único número, que "pula" um pouco a cada compra. */
+function Balance({ value, at, className }: { value: number; at: number; className: string }) {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (at) replay(ref.current, "buy-pop 0.6s ease");
+  }, [at]);
+  return (
+    <strong ref={ref} translate="no" className={`notranslate ${className}`}>
+      {value}
+    </strong>
+  );
+}
+
+/** "−N" que sobe e some ao lado do saldo, na hora da compra. */
+function Spent({ at, spent, className }: { at: number; spent: number; className: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (!at || spent <= 0) return;
+    setShow(true);
+    const t = window.setTimeout(() => setShow(false), 1700);
+    return () => window.clearTimeout(t);
+  }, [at, spent]);
+  useEffect(() => {
+    if (show) replay(ref.current, "float-up 1.6s ease-out forwards");
+  }, [show, at]);
+  return show ? (
+    <span ref={ref} aria-hidden className={className}>
+      −{spent}
+    </span>
+  ) : null;
+}
+
 type Done = { id: string; title: string; text: string; img?: string; spent: number; at: number };
 
 /** Moeda do Pinz (public/img/moeda.webp). O tamanho vem do `className`. */
@@ -132,10 +174,15 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   // os lançamentos mais recentes (maiores números) ganham o selo "Novo"
   const newKeys = new Set([...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT).map((b) => b.key));
   const isOwned = (key: number) => !!(byKey.get(key)?.starter || byKey.get(key)?.owned);
+  const [done, setDone] = useState<Done | null>(null);
+  // quem acabou de ser comprado fica no mesmo lugar enquanto a comemoração (cartão verde) está na tela: a ordem só muda depois
+  const ownedSnap = useRef<Set<number>>(new Set());
+  if (!done) ownedSnap.current = new Set(all.filter((b) => isOwned(b.key)).map((b) => b.key));
+  const sortOwned = (key: number) => (done ? ownedSnap.current.has(key) : isOwned(key));
   // ordem: os que ainda não são seus primeiro; os novos antes (mais novo primeiro); depois os demais na ordem de sempre
   const shown = (filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter)).slice().sort((a, b) => {
-    const oa = isOwned(a.key);
-    const ob = isOwned(b.key);
+    const oa = sortOwned(a.key);
+    const ob = sortOwned(b.key);
     if (oa !== ob) return oa ? 1 : -1;
     const na = newKeys.has(a.key);
     const nb = newKeys.has(b.key);
@@ -152,7 +199,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada cartão de estilo (retangular por padrão)
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
-  const [done, setDone] = useState<Done | null>(null);
   // voltar (Android) desfaz uma etapa da Loja por vez: primeiro o mural ampliado, depois o tipo de display aberto; só então fecha a Loja (a janela já cuida disso)
   useBackClose(!!viewBoard, () => setViewBoard(null));
   useBackClose(!!displayCat, () => setDisplayCat(null));
@@ -181,13 +227,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       if (item.kind === "badge" || item.kind === "unit") setQty((q) => ({ ...q, [item.key]: 1 })); // depois de comprar, volta para 1 unidade
     }
   }
-  async function buyCredits(id: string) {
-    setBusy(`credits:${id}`);
-    const err = await startCheckout(`credits:${id}`);
-    if (err) {
-      window.alert(err);
-      setBusy(null);
-    }
+  function buyCredits(id: string) {
+    window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: `credits:${id}` } })); // a janela de pagamento (Pix ou cartão) abre por cima da loja
   }
   const can = (cost: number) => credits >= cost;
 
@@ -201,14 +242,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         // com a loja rolada (saldo grande fora da vista), o saldo passa para o cabeçalho: dá para ver os créditos sendo gastos
         bigVisible ? undefined : <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
           <Coin className="size-6" />
-          <strong key={done?.at ?? 0} translate="no" className="notranslate inline-block text-base tabular-nums" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
-            {credits}
-          </strong>
-          {done && done.spent > 0 && (
-            <span key={done.at} aria-hidden className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
-              −{done.spent}
-            </span>
-          )}
+          <Balance value={credits} at={done?.at ?? 0} className="inline-block text-base tabular-nums" />
+          <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" />
         </p>
       }
     >
@@ -220,14 +255,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             <div className="leading-tight">
               <p className="text-xs font-semibold tracking-wide text-[#8a6a1c] uppercase">Seus créditos</p>
               <p className="relative">
-                <strong key={done?.at ?? 0} translate="no" className="notranslate font-title inline-block text-3xl sm:text-4xl" style={done ? { animation: "buy-pop 0.6s ease" } : undefined}>
-                  {credits}
-                </strong>
-                {done && done.spent > 0 && (
-                  <span key={done.at} aria-hidden className="pointer-events-none absolute -top-1 left-full ml-2 text-base font-bold text-[#c0392b]" style={{ animation: "float-up 1.6s ease-out forwards" }}>
-                    −{done.spent}
-                  </span>
-                )}
+                <Balance value={credits} at={done?.at ?? 0} className="font-title inline-block text-3xl sm:text-4xl" />
+                <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute -top-1 left-full ml-2 text-base font-bold text-[#c0392b]" />
               </p>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, type PlanId } from "@/lib/plans";
-import { cancelSubscription, fetchSubscription, startCheckout, type Subscription } from "@/lib/payments";
+import { cancelSubscription, fetchSubscription, PAY_EVENT, startCheckout, type Subscription } from "@/lib/payments";
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
@@ -72,6 +72,10 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   }, [open]);
 
   async function buy(product: string) {
+    if (product.startsWith("credits:")) {
+      window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product } })); // créditos: a janela de pagamento (Pix ou cartão) abre por cima
+      return;
+    }
     setBusy(product);
     setMsg(null);
     const err = await startCheckout(product);

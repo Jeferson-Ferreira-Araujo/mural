@@ -12,7 +12,8 @@ function Back() {
   useEffect(() => {
     const result = q.get("produto") === "plus" ? "plus" : (q.get("status") ?? "pendente");
     const key = ["ok", "pendente", "falhou", "plus"].includes(result) ? result : "pendente";
-    router.replace(`${takePayReturn() ?? "/"}?pg=${key}`);
+    const pid = q.get("payment_id") ?? q.get("collection_id"); // o número do pagamento: a tela confere a situação real ao voltar
+    router.replace(`${takePayReturn() ?? "/"}?pg=${key}${pid && /^d{4,20}$/.test(pid) ? `&pid=${pid}` : ""}`);
   }, [q, router]);
   return (
     <AuthShell>

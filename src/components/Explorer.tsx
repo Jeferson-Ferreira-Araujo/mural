@@ -33,6 +33,8 @@ import { Tour } from "./tour/Tour";
 import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { claimReward, claimStoredReferral, OPEN_REWARDS_EVENT, rememberRef, REWARD_EVENT } from "@/lib/rewards";
 import { RewardsModal } from "./account/RewardsModal";
+import { PayModal } from "./account/PayModal";
+import { PAY_EVENT, pixStatus } from "@/lib/payments";
 import { NewMuralModal } from "./account/NewMuralModal";
 import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
@@ -76,6 +78,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const logged = !!session;
   const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
   const [tourOpen, setTourOpen] = useState(false);
+  const [payProduct, setPayProduct] = useState<string | null>(null); // pacote de créditos em pagamento (Pix ou cartão)
   const [rewardsOpen, setRewardsOpen] = useState(false); // janela "Ganhe créditos" aberta pelo botão da barra de bottons
   const onbChecked = useRef<string | null>(null);
   const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
@@ -202,11 +205,14 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const open = () => setTourOpen(true);
     const onb = () => setOnbOpen(true);
     const rw = () => setRewardsOpen(true);
+    const pay = (e: Event) => setPayProduct((e as CustomEvent<{ product?: string }>).detail?.product ?? null);
+    window.addEventListener(PAY_EVENT, pay);
     window.addEventListener(TOUR_EVENT, open);
     window.addEventListener(ONBOARDING_EVENT, onb);
     window.addEventListener(OPEN_REWARDS_EVENT, rw);
     return () => {
       window.removeEventListener(OPEN_REWARDS_EVENT, rw);
+      window.removeEventListener(PAY_EVENT, pay);
       window.removeEventListener(TOUR_EVENT, open);
       window.removeEventListener(ONBOARDING_EVENT, onb);
     };
@@ -567,9 +573,20 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const u = new URL(window.location.href);
     const pg = u.searchParams.get("pg");
     if (!pg || !(pg in PAY_RESULTS)) return;
+    const pid = u.searchParams.get("pid");
     u.searchParams.delete("pg");
+    u.searchParams.delete("pid");
     window.history.replaceState(null, "", u.pathname + u.search + u.hash);
     setPayResult(pg);
+    // voltou com o pagamento "em análise": confere a situação de verdade (o crédito pode já ter entrado)
+    if (pg === "pendente" && pid) {
+      void pixStatus(pid).then((st) => {
+        if (st === "approved") {
+          setPayResult("ok");
+          void reloadInventory();
+        }
+      });
+    }
     if (pg !== "plus") setStoreOpen(true);
   }, []);
   // pagamento aprovado: o crédito chega pelo aviso do Mercado Pago em poucos segundos; atualiza o saldo até aparecer
@@ -1068,6 +1085,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />
+      <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => void reloadInventory()} />
       <Toast message={toast} />
     </div>
   );

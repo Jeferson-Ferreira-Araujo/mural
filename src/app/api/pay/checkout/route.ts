@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   const r = await mp<{ init_point?: string }>("/checkout/preferences", {
     method: "POST",
     body: {
-      items: [{ id: pack.id, title: `Pinz — ${pack.credits} créditos`, quantity: 1, unit_price: pack.cents / 100, currency_id: "BRL" }],
+      items: [{ id: pack.id, title: `Pinz — ${pack.credits} créditos`, description: "Créditos para usar no Pinz (pinz.digital)", picture_url: `${SITE_URL}/img/moeda.webp`, quantity: 1, unit_price: pack.cents / 100, currency_id: "BRL" }],
       external_reference: `${uid}:${pack.id}`,
       notification_url: `${SITE_URL}/api/pay/webhook`,
       back_urls: { success: `${SITE_URL}/pagamento?produto=creditos&status=ok`, pending: `${SITE_URL}/pagamento?produto=creditos&status=pendente`, failure: `${SITE_URL}/pagamento?produto=creditos&status=falhou` },

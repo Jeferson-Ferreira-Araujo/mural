@@ -89,3 +89,30 @@ export const PAY_STATUS: Record<string, { text: string; tone: "ok" | "wait" | "b
   refunded: { text: "Reembolsado", tone: "bad" },
   charged_back: { text: "Estornado", tone: "bad" },
 };
+
+/** Evento: abre a janela de pagamento de um pacote de créditos (detail: { product: "credits:<id>" }). */
+export const PAY_EVENT = "pinz:pay";
+
+export type PixCharge = { id: string; qr: string; qrBase64: string | null; expires: string };
+
+/** Cria uma cobrança Pix: devolve o código (copia e cola), o QR code e quando expira, ou a mensagem de erro. */
+export async function startPix(product: string): Promise<PixCharge | { error: string }> {
+  const r = await post("/api/pay/pix", { product });
+  if (r.ok && typeof r.data.id === "string" && typeof r.data.qr === "string") {
+    return { id: r.data.id, qr: r.data.qr, qrBase64: typeof r.data.qrBase64 === "string" ? r.data.qrBase64 : null, expires: String(r.data.expires ?? "") };
+  }
+  return { error: MESSAGE[String(r.data.error)] ?? "Não foi possível gerar o Pix agora. Tente de novo." };
+}
+
+/** Situação de um pagamento da própria conta (approved, pending, rejected, cancelled…). */
+export async function pixStatus(id: string): Promise<string> {
+  const jwt = await token();
+  if (!jwt) return "unknown";
+  try {
+    const res = await fetch(`/api/pay/status?id=${encodeURIComponent(id)}`, { headers: { Authorization: `Bearer ${jwt}` }, cache: "no-store" });
+    const d = (await res.json().catch(() => ({}))) as { status?: string };
+    return res.ok ? String(d.status ?? "unknown") : "unknown";
+  } catch {
+    return "unknown";
+  }
+}
