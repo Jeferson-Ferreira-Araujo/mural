@@ -16,7 +16,7 @@ import type { ViewProps } from "./viewProps";
  * - Tela inicial e mural trancado: logo, busca/pergunta no centro; "Acessar meu mural" e "Criar novo mural" no rodapé.
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
-export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, opening = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch, share, follow, onNotify }: ViewProps) {
+export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, opening = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch, share, follow, onNotify, boardPending }: ViewProps) {
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
@@ -30,7 +30,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
   if (opening) return <div aria-busy className="min-h-dvh bg-[#140c06]" />;
 
   // tela inicial de quem ainda não entrou: o mural de exemplo completo, com Entrar e Criar conta no topo
-  if (landing && !account) return <MobileLanding items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} panel={panel} />;
+  if (landing && !account) return <MobileLanding items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} panel={panel} boardPending={boardPending} />;
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração
 

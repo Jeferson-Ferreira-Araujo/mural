@@ -21,9 +21,13 @@ function Chevron() {
   );
 }
 
-export function MobileLanding({ items, plan, board, capacity, hasSelection, unlocked, locked, onCompose, onNotify, panel }: Pick<ViewProps, "items" | "plan" | "board" | "capacity" | "hasSelection" | "unlocked" | "locked" | "onCompose" | "onNotify"> & { panel: (tone: "dark" | "light", part?: "form") => ReactNode }) {
+export function MobileLanding({ items, plan, board, capacity, hasSelection, unlocked, locked, onCompose, onNotify, panel, boardPending }: Pick<ViewProps, "items" | "plan" | "board" | "capacity" | "hasSelection" | "unlocked" | "locked" | "onCompose" | "onNotify" | "boardPending"> & { panel: (tone: "dark" | "light", part?: "form") => ReactNode }) {
   const look = boardById(board);
   const [open, setOpen] = useState(false);
+  // o quadro só aparece depois de montado e com o fundo sorteado: antes disso a página do servidor mostrava um pedaço do primeiro quadro, ampliado, no canto
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const ready = mounted && !boardPending;
   const ref = useRef<HTMLDialogElement>(null);
   useBackClose(open, () => setOpen(false));
 
@@ -40,7 +44,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   };
   
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
+    <div className={`fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e] transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}>
       {/* fundo: a mesma névoa colorida do mural (a foto do quadro bem desfocada), igual por trás do logo, do mural e do rodapé */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={look.image} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-3xl" />
