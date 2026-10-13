@@ -7,6 +7,7 @@ import { Brand } from "./Brand";
 import { AccountActions } from "./account/AccountActions";
 import { MuralSwitcher } from "./MuralSwitcher";
 import { MobileMural } from "./MobileMural";
+import { MobileLanding } from "./MobileLanding";
 import type { ViewProps } from "./viewProps";
 
 /**
@@ -27,6 +28,9 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
 
   // abrindo um mural pelo endereço: tela escura e vazia até ele chegar (sem piscar a tela de busca)
   if (opening) return <div aria-busy className="min-h-dvh bg-[#140c06]" />;
+
+  // tela inicial de quem ainda não entrou: o mural de exemplo completo, com Entrar e Criar conta no topo
+  if (landing && !account) return <MobileLanding items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} panel={panel} />;
 
   const demoBoard = !landing && hasSelection && unlocked && !locked; // sem muralInfo = demonstração
 
