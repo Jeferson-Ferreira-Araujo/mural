@@ -173,17 +173,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const all = BADGES.filter((b) => byKey.has(b.key) && (!STORE_DUPLICATES.has(b.key) || byKey.get(b.key)!.owned));
   // os lançamentos mais recentes (maiores números) ganham o selo "Novo"
   const newKeys = new Set([...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT).map((b) => b.key));
-  const isOwned = (key: number) => !!(byKey.get(key)?.starter || byKey.get(key)?.owned);
   const [done, setDone] = useState<Done | null>(null);
-  // quem acabou de ser comprado fica no mesmo lugar enquanto a comemoração (cartão verde) está na tela: a ordem só muda depois
-  const ownedSnap = useRef<Set<number>>(new Set());
-  if (!done) ownedSnap.current = new Set(all.filter((b) => isOwned(b.key)).map((b) => b.key));
-  const sortOwned = (key: number) => (done ? ownedSnap.current.has(key) : isOwned(key));
-  // ordem: os que ainda não são seus primeiro; os novos antes (mais novo primeiro); depois os demais na ordem de sempre
+  // ordem: os novos antes (mais novo primeiro); depois os demais na ordem de sempre. Comprar não muda a posição do botton na lista
   const shown = (filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter)).slice().sort((a, b) => {
-    const oa = sortOwned(a.key);
-    const ob = sortOwned(b.key);
-    if (oa !== ob) return oa ? 1 : -1;
     const na = newKeys.has(a.key);
     const nb = newKeys.has(b.key);
     if (na !== nb) return na ? -1 : 1;
