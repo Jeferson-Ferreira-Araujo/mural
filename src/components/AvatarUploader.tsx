@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getOwnAvatar, processAvatar, removeAvatar, uploadAvatar } from "@/lib/avatar";
-import { claimReward } from "@/lib/rewards";
+import { claimReward, getRewards } from "@/lib/rewards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "./Avatar";
 
@@ -16,11 +16,16 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const [reward, setReward] = useState<number | null>(null); // créditos que a foto ainda vai dar (some depois de ganhos)
 
   useEffect(() => {
     void getOwnAvatar(getBrowserSupabase()).then((a) => {
       setUrl(a.url);
       setReady(true);
+    });
+    void getRewards().then((l) => {
+      const t = l?.find((x) => x.id === "avatar");
+      if (t && !t.done) setReward(t.credits);
     });
   }, []);
 
@@ -32,7 +37,11 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
       const blob = await processAvatar(file);
       setUrl(await uploadAvatar(getBrowserSupabase(), blob));
       setMsg({ ok: true, text: "Foto salva! Ela já aparece no seu mural." });
-      void claimReward("avatar");
+      const won = await claimReward("avatar");
+      if (won) {
+        setMsg({ ok: true, text: `Foto salva! Você ganhou ${won.credits} créditos.` });
+        setReward(null);
+      }
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "Não foi possível enviar a foto." });
     } finally {
@@ -73,6 +82,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
           )}
         </div>
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => void pick(e.target.files?.[0])} aria-label="Escolher foto de perfil" />
+        {reward !== null && !msg && <p className="mt-1.5 text-sm font-semibold text-[#8a6a1c]">🎁 Ganhe {reward} créditos ao enviar a sua foto.</p>}
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`mt-1.5 text-sm ${msg.ok ? "text-[#2f6b3a]" : "text-[#a23b2a]"}`}>
             {msg.text}
