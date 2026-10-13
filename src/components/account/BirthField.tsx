@@ -62,7 +62,6 @@ export function BirthField({ value, onChange }: { value: string; onChange: (v: s
           </div>
         )}
       </Field>
-      <p className="mt-1 text-xs text-[#6b5440]">Só você vê. Não aparece para ninguém.</p>
     </div>
   );
 }
