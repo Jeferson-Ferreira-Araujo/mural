@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { CREDIT_PACKS } from "@/lib/plans";
+import { applyPayment, parseRef } from "@/lib/payCatalog";
 import { adminClient, envConfigured, isUuid, mp, syncPreapproval, webhookEnv } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -25,14 +25,13 @@ async function handle(req: Request) {
     if (type === "payment") {
       const r = await mp<{ id?: number; status?: string; external_reference?: string; transaction_amount?: number; currency_id?: string }>(`/v1/payments/${id}`, undefined, env);
       if (!r.ok) return NextResponse.json({ error: "lookup_failed" }, { status: r.status === 404 ? 200 : 502 });
-      // cobranças da assinatura também geram "payment": a referência delas é só o id da conta (sem ":"), tratadas pelo aviso da assinatura
-      const [uid, packId] = String(r.data.external_reference ?? "").split(":");
-      const pack = CREDIT_PACKS.find((p) => p.id === packId);
-      if (!isUuid(uid) || !pack) return ok();
-      // o valor pago tem que ser exatamente o preço do pacote
-      if (r.data.currency_id !== "BRL" || Math.round((r.data.transaction_amount ?? 0) * 100) !== pack.cents) return ok();
-      const { error } = await adminClient().rpc("pay_credits_apply", { p_user: uid, p_payment: String(r.data.id ?? id), p_credits: pack.credits, p_cents: pack.cents, p_status: r.data.status ?? "pending" });
-      return error ? NextResponse.json({ error: "db" }, { status: 500 }) : ok();
+      // cobranças da assinatura mensal também geram "payment": a referência delas é só o id da conta (sem ":"), tratadas pelo aviso da assinatura
+      const parsed = parseRef(r.data.external_reference);
+      if (!parsed) return ok();
+      // o valor pago tem que ser exatamente o preço do item
+      if (r.data.currency_id !== "BRL" || Math.round((r.data.transaction_amount ?? 0) * 100) !== parsed.item.cents) return ok();
+      const applied = await applyPayment(parsed, String(r.data.id ?? id), r.data.status ?? "pending");
+      return applied ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
     }
 
     if (type === "subscription_preapproval" || type === "preapproval") {

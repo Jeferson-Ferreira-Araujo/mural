@@ -1,57 +1,106 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { CREDIT_PACKS, PLUS_PRICE_CENTS } from "@/lib/plans";
+import { useCallback, useEffect, useState } from "react";
+import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "@/lib/plans";
 import { pixStatus, startPix, type PixCharge } from "@/lib/payments";
 import { getMpPublicKey, loadMpSdk, payCard, paySubscription } from "@/lib/cardPay";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
-type Step = "choose" | "pix" | "card" | "review" | "done" | "expired";
+type Step = "plans" | "gift" | "choose" | "pix" | "card" | "review" | "done" | "expired";
+
+const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+/** Vantagens do PINZ+ (mostradas antes de pedir qualquer dado de pagamento). */
+const BENEFITS = [
+  "Todos os espaços do mural (28, em vez de 15)",
+  "Até 10 murais",
+  "Pins de desenho, música, vídeo, voz e local",
+  "Pins em segredo (borrados) para os visitantes",
+  "Mural compartilhado entre duas pessoas",
+  "Texto de boas-vindas personalizado no mural vazio",
+  "Selo e borda dourada no seu perfil",
+];
+
+const GIFT_ERROR: Record<string, string> = {
+  not_found: "Não encontramos essa pessoa. Confira o nome de usuário.",
+  self: "O presente só vale para outra pessoa.",
+  already_plus: "Essa pessoa já assina o PINZ+.",
+  lifetime: "Essa pessoa já tem o PINZ+ vitalício.",
+};
 
 /**
- * Pagamento de créditos dentro do Pinz: escolhe Pix ou cartão. O Pix mostra o QR code e o "copia e cola" aqui mesmo,
- * confere o pagamento a cada poucos segundos e confirma na tela assim que cair (sem sair do Pinz). O cartão abre o Mercado Pago.
+ * Pagamento dentro do Pinz. Créditos: Pix ou cartão. PINZ+: primeiro mostra as vantagens e os planos (mensal, anual, vitalício) e o presente de 1 mês para outra pessoa;
+ * depois o pagamento. O Pix mostra o QR code e o "copia e cola" aqui mesmo e confirma na tela assim que cair; o cartão usa o formulário seguro do Mercado Pago.
  */
-export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o crédito entrou: atualiza o saldo da tela */ onPaid: () => void }) {
-  const pack = product?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === product.slice(8)) : undefined;
-  const plus = product === "plus"; // assinatura mensal do PINZ+ (só cartão)
-  const cents = plus ? PLUS_PRICE_CENTS : (pack?.cents ?? 0);
-  const valid = plus || !!pack;
+export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o pagamento foi confirmado: atualiza saldo e plano da tela */ onPaid: () => void }) {
   const [step, setStep] = useState<Step>("choose");
+  const [target, setTarget] = useState<string | null>(null); // o que está sendo pago: "credits:<id>", "plus" (mensal), "plus_annual", "plus_life" ou "gift"
+  const [recipient, setRecipient] = useState(""); // presente: nome de usuário de quem recebe
+  const [giftInput, setGiftInput] = useState("");
+  const [giftBusy, setGiftBusy] = useState(false);
   const [charge, setCharge] = useState<PixCharge | null>(null);
   const [busy, setBusy] = useState<"pix" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [left, setLeft] = useState(0); // segundos até o código expirar
-  const paid = useRef(false);
+  const fromPlans = product === "plus";
 
   useEffect(() => {
     if (!product) return;
-    setStep(product === "plus" ? "card" : "choose");
+    setStep(product === "plus" ? "plans" : "choose");
+    setTarget(product === "plus" ? null : product);
+    setRecipient("");
+    setGiftInput("");
     setCharge(null);
     setBusy(null);
     setError(null);
     setCopied(false);
-    paid.current = false;
   }, [product]);
 
+  const pack = target?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === target.slice(8)) : undefined;
+  const info = (() => {
+    if (pack) return { cents: pack.cents, label: `Pinz · ${pack.credits} créditos`, suffix: "", done: `+${pack.credits} créditos já estão na sua conta.`, title: "Pagamento" };
+    if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · mensal", suffix: "/mês", done: "O seu mural agora é PINZ+. Aproveite!", title: "Assinar o PINZ+" };
+    if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: "PINZ+ · anual", suffix: "/ano", done: "O seu mural agora é PINZ+ por 1 ano. Aproveite!", title: "PINZ+ anual" };
+    if (target === "plus_life") return { cents: PLUS_LIFETIME_CENTS, label: "PINZ+ · vitalício", suffix: "", done: "O seu mural agora é PINZ+ para sempre. Aproveite!", title: "PINZ+ vitalício" };
+    if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: `Presente para @${recipient} · 1 mês de PINZ+`, suffix: "", done: `@${recipient} já tem 1 mês de PINZ+ e foi avisado.`, title: "Presentear com PINZ+" };
+    return null;
+  })();
+  const price = info ? brl(info.cents) + info.suffix : "";
+  const plusTarget = target === "plus";
+
   const createPix = useCallback(async () => {
-    if (!product) return;
+    if (!target) return;
     setBusy("pix");
     setError(null);
-    const r = await startPix(product);
+    const r = await startPix(target, target === "gift" ? recipient : undefined);
     setBusy(null);
     if ("error" in r) return setError(r.error);
     setCharge(r);
     setStep("pix");
-  }, [product]);
+  }, [target, recipient]);
+
+  async function checkGift() {
+    const nick = giftInput.trim().replace(/^@/, "");
+    if (!nick) return setError("Digite o nome de usuário da pessoa.");
+    setGiftBusy(true);
+    setError(null);
+    const { data, error: err } = await getBrowserSupabase().rpc("gift_recipient", { p_nick: nick });
+    setGiftBusy(false);
+    const d = data as { ok?: boolean; nickname?: string; reason?: string } | null;
+    if (err || !d) return setError("Não foi possível conferir agora. Tente de novo.");
+    if (!d.ok) return setError(GIFT_ERROR[String(d.reason)] ?? GIFT_ERROR.not_found);
+    setRecipient(d.nickname ?? nick);
+    setTarget("gift");
+    setStep("choose");
+  }
 
   // cartão: o formulário seguro do Mercado Pago aparece aqui dentro; o servidor só recebe o código do cartão
   const [cardState, setCardState] = useState<"loading" | "ready" | "failed">("loading");
   useEffect(() => {
-    if (step !== "card" || !valid || !product) return;
+    if (step !== "card" || !info || !target) return;
     let alive = true;
     let controller: { unmount: () => void } | null = null;
     setCardState("loading");
@@ -65,8 +114,8 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
       try {
         const bricks = new MP(key, { locale: "pt-BR" }).bricks();
         const ctl = await bricks.create("cardPayment", "pinz-card-brick", {
-          initialization: { amount: cents / 100, payer: { email } },
-          customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: (plus ? "Assinar " : "Pagar ") + price } } },
+          initialization: { amount: info.cents / 100, payer: { email } },
+          customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: (plusTarget ? "Assinar " : "Pagar ") + price } } },
           callbacks: {
             onReady: () => alive && setCardState("ready"),
             onError: () => alive && setError("Não foi possível carregar o formulário do cartão."),
@@ -75,10 +124,9 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 void (async () => {
                   setError(null);
                   const card = { token: d.token, paymentMethodId: d.payment_method_id, issuerId: d.issuer_id ?? null, identification: d.payer?.identification ?? null };
-                  const res = plus ? await paySubscription(card) : await payCard(product, card);
+                  const res = plusTarget ? await paySubscription(card) : await payCard(target, card, target === "gift" ? recipient : undefined);
                   if (res.status === "approved") {
                     resolve();
-                    paid.current = true;
                     setStep("done");
                     onPaid();
                   } else if (res.status === "in_process" || res.status === "pending") {
@@ -105,9 +153,9 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
       } catch {}
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, product]);
+  }, [step, target, recipient]);
 
-  // espera o pagamento: pergunta ao servidor a cada 3 s e mostra o tempo que falta
+  // espera o pagamento do Pix: pergunta ao servidor a cada 3 s e mostra o tempo que falta
   useEffect(() => {
     if (step !== "pix" || !charge) return;
     const end = new Date(charge.expires).getTime();
@@ -121,7 +169,6 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
       const st = await pixStatus(charge.id);
       if (!alive) return;
       if (st === "approved") {
-        paid.current = true;
         setStep("done");
         onPaid();
       } else if (st === "rejected" || st === "cancelled") setStep("expired");
@@ -147,11 +194,36 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
-  const price = valid ? (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) + (plus ? "/mês" : "") : "";
+  const open = !!product && (fromPlans || !!pack);
+  const title = step === "plans" || step === "gift" ? "PINZ+" : (info?.title ?? "PINZ+");
+  const ghost = "mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5";
+
+  const planCard = (id: "plus" | "plus_annual" | "plus_life", name: string, cents: number, suffix: string, note: string, badge?: string) => (
+    <button
+      key={id}
+      type="button"
+      onClick={() => {
+        setTarget(id);
+        setError(null);
+        setStep(id === "plus" ? "card" : "choose");
+      }}
+      className="relative flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] px-4 py-3 text-left transition hover:bg-[#fff1cc] active:scale-[0.99]"
+    >
+      {badge && <span className="absolute -top-2.5 right-3 rounded-full bg-[#3aa655] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white uppercase">{badge}</span>}
+      <span>
+        <span className="block text-base font-extrabold">{name}</span>
+        <span className="block text-xs text-[#6b5440]">{note}</span>
+      </span>
+      <span className="shrink-0 text-right">
+        <span className="block text-lg font-extrabold">{brl(cents)}</span>
+        <span className="block text-xs font-semibold text-[#6b5440]">{suffix}</span>
+      </span>
+    </button>
+  );
 
   return (
-    <Modal open={valid} onClose={onClose} title={step === "done" ? "" : plus ? "Assinar o PINZ+" : "Pagamento"}>
-      {valid && (
+    <Modal open={open} onClose={onClose} title={step === "done" ? "" : title}>
+      {open && (
         <div className="text-[#2f2218]">
           {step === "done" ? (
             <div role="status" className="pb-2 text-center">
@@ -160,18 +232,86 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <path d="m5 12.5 4.5 4.5L19 7.5" />
                 </svg>
               </span>
-              <h2 className="font-title mt-4 text-2xl font-semibold">{plus ? "PINZ+ ativado!" : "Pagamento confirmado!"}</h2>
-              <p className="mt-1 text-[#4a3826]">{plus ? "O seu mural agora é PINZ+. Aproveite!" : `+${pack?.credits} créditos já estão na sua conta.`}</p>
+              <h2 className="font-title mt-4 text-2xl font-semibold">{target === "gift" ? "Presente enviado!" : target?.startsWith("plus") ? "PINZ+ ativado!" : "Pagamento confirmado!"}</h2>
+              <p className="mt-1 text-[#4a3826]">{info?.done}</p>
               <button type="button" onClick={onClose} className={`${primaryButton} mt-6`}>
                 Continuar
               </button>
             </div>
+          ) : step === "plans" ? (
+            <div>
+              <p className="font-title text-xl font-semibold">Tudo do PINZ+</p>
+              <ul className="mt-2 space-y-1.5 text-[15px]">
+                {BENEFITS.map((t) => (
+                  <li key={t} className="flex gap-2">
+                    <span aria-hidden className="font-bold text-[#2f6a3c]">
+                      ✓
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">Escolha o seu plano</p>
+              <div className="space-y-3.5">
+                {planCard("plus", "Mensal", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser.")}
+                {planCard("plus_annual", "Anual", PLUS_ANNUAL_CENTS, "por ano", `Equivale a ${brl(Math.round(PLUS_ANNUAL_CENTS / 12))} por mês. Pix ou cartão, sem renovação automática.`, `Economize ${Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100)}%`)}
+                {planCard("plus_life", "Vitalício", PLUS_LIFETIME_CENTS, "pagamento único", "Pague uma vez e use para sempre. Pix ou cartão.")}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setError(null);
+                  setStep("gift");
+                }}
+                className="mt-4 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-left transition hover:bg-white active:scale-[0.99]"
+              >
+                <span>
+                  <span className="block text-base font-extrabold">🎁 Presentear alguém</span>
+                  <span className="block text-xs text-[#6b5440]">1 mês de PINZ+ para outro usuário. Só vale para outra pessoa.</span>
+                </span>
+                <span className="shrink-0 text-lg font-extrabold">{brl(PLUS_GIFT_CENTS)}</span>
+              </button>
+            </div>
+          ) : step === "gift" ? (
+            <div>
+              <p className="font-title text-xl font-semibold">Presentear com 1 mês de PINZ+</p>
+              <p className="mt-1 text-sm text-[#4a3826]">Quem recebe ganha 30 dias de PINZ+ na hora e é avisado. Vale só para outro usuário, por {brl(PLUS_GIFT_CENTS)}.</p>
+              <label htmlFor="gift-nick" className="mt-4 block text-sm font-semibold">
+                Nome de usuário da pessoa
+              </label>
+              <input
+                id="gift-nick"
+                value={giftInput}
+                onChange={(e) => {
+                  setGiftInput(e.target.value);
+                  setError(null);
+                }}
+                onKeyDown={(e) => e.key === "Enter" && void checkGift()}
+                placeholder="@usuario"
+                autoComplete="off"
+                autoCapitalize="none"
+                className="mt-1 w-full rounded-xl border border-[#d9c9ad] bg-white px-3 py-3 text-base outline-none focus:border-[#d98a2b]"
+              />
+              {error && (
+                <p role="alert" className="mt-2 text-sm text-[#a23b2a]">
+                  {error}
+                </p>
+              )}
+              <button type="button" disabled={giftBusy} onClick={() => void checkGift()} className={`${primaryButton} mt-4`}>
+                {giftBusy ? "Conferindo…" : "Continuar"}
+              </button>
+              <button type="button" onClick={() => setStep("plans")} className={ghost}>
+                Voltar
+              </button>
+            </div>
           ) : (
             <>
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#ecd9a0] bg-[#fff4cc] px-4 py-3">
-                <p className="font-title text-lg font-semibold">{plus ? "PINZ+ · assinatura mensal" : `Pinz · ${pack?.credits} créditos`}</p>
-                <p className="text-lg font-bold">{price}</p>
-              </div>
+              {info && (
+                <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#ecd9a0] bg-[#fff4cc] px-4 py-3">
+                  <p className="font-title text-lg leading-tight font-semibold">{info.label}</p>
+                  <p className="shrink-0 text-lg font-bold">{price}</p>
+                </div>
+              )}
 
               {step === "choose" && (
                 <div className="mt-4 space-y-2.5">
@@ -182,6 +322,11 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <button type="button" disabled={busy !== null} onClick={() => setStep("card")} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
                     Cartão de crédito ou débito
                   </button>
+                  {fromPlans && (
+                    <button type="button" onClick={() => setStep(target === "gift" ? "gift" : "plans")} className={ghost}>
+                      Voltar
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -194,10 +339,10 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     </p>
                   )}
                   <div id="pinz-card-brick" />
-                  <button type="button" onClick={() => (plus ? onClose() : setStep("choose"))} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
-                    {plus ? "Cancelar" : "Voltar"}
+                  <button type="button" onClick={() => setStep(plusTarget ? "plans" : "choose")} className={ghost}>
+                    Voltar
                   </button>
-                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plus ? " Renova todo mês; cancele quando quiser em Planos." : ""}</p>
+                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plusTarget ? " Renova todo mês; cancele quando quiser em Planos." : ""}</p>
                 </div>
               )}
 
@@ -207,7 +352,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     ⏳
                   </p>
                   <p className="font-title mt-2 text-xl font-semibold">Pagamento em análise</p>
-                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, {plus ? "o seu mural vira PINZ+" : "seus créditos entram"} sozinho.</p>
+                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, o PINZ+ ou os créditos entram sozinhos.</p>
                   <button type="button" onClick={onClose} className={`${primaryButton} mt-5`}>
                     Continuar
                   </button>

@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { CREDIT_PACKS } from "@/lib/plans";
-import { adminClient, isUuid, mp, paymentsConfigured } from "@/lib/mercadopago";
+import { applyPayment, parseRef } from "@/lib/payCatalog";
+import { mp, paymentsConfigured } from "@/lib/mercadopago";
 import { allow } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -14,7 +14,7 @@ const fail = (status: number, error: string) => NextResponse.json({ error }, { s
 
 /**
  * Situação de um pagamento da própria conta (a tela do Pix pergunta a cada poucos segundos).
- * Só devolve pagamentos que pertencem a quem pergunta. Se já estiver aprovado, garante o crédito agora (a mesma conta do webhook, que nunca soma duas vezes).
+ * Só devolve pagamentos que pertencem a quem pergunta. Se já estiver aprovado, garante o efeito agora (a mesma conta do webhook, que nunca soma duas vezes).
  */
 export async function GET(req: Request) {
   if (!(await paymentsConfigured())) return fail(503, "unavailable");
@@ -29,12 +29,11 @@ export async function GET(req: Request) {
   if (!/^\d{4,20}$/.test(id)) return fail(400, "invalid_id");
   const r = await mp<{ id?: number; status?: string; external_reference?: string; transaction_amount?: number; currency_id?: string }>(`/v1/payments/${id}`);
   if (!r.ok) return NextResponse.json({ status: "unknown" });
-  const [owner, packId] = String(r.data.external_reference ?? "").split(":");
-  if (!isUuid(owner) || owner !== uid) return fail(403, "forbidden");
+  const parsed = parseRef(r.data.external_reference);
+  if (!parsed || parsed.buyer !== uid) return fail(403, "forbidden");
   const status = r.data.status ?? "pending";
-  const pack = CREDIT_PACKS.find((p) => p.id === packId);
-  if (status === "approved" && pack && r.data.currency_id === "BRL" && Math.round((r.data.transaction_amount ?? 0) * 100) === pack.cents) {
-    await adminClient().rpc("pay_credits_apply", { p_user: uid, p_payment: String(r.data.id ?? id), p_credits: pack.credits, p_cents: pack.cents, p_status: "approved" });
+  if (status === "approved" && r.data.currency_id === "BRL" && Math.round((r.data.transaction_amount ?? 0) * 100) === parsed.item.cents) {
+    await applyPayment(parsed, String(r.data.id ?? id), "approved");
   }
   return NextResponse.json({ status });
 }

@@ -101,11 +101,13 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
         {busy === "cancel" ? "Cancelando…" : "Cancelar assinatura"}
       </button>
     </div>
+  ) : sub?.status === "once" && sub.active ? (
+    <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? "PINZ+ vitalício · para sempre" : `PINZ+ ativo até ${fmtDate(sub.paidUntil)}`}</p>
   ) : sub?.status === "cancelled" && sub.active ? (
     <p className="mt-4 text-sm font-semibold text-[#6b5440]">Assinatura cancelada · PINZ+ até {fmtDate(sub.paidUntil)}</p>
   ) : plan === "free" ? (
     <button type="button" disabled={busy !== null} onClick={() => void buy("plus")} className={btn}>
-      {busy === "plus" ? "Abrindo o pagamento…" : "Assinar o PINZ+ por R$ 9,90/mês"}
+      {busy === "plus" ? "Abrindo o pagamento…" : "Ver os planos do PINZ+"}
     </button>
   ) : undefined;
 

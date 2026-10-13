@@ -59,6 +59,11 @@ export const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === "tr
 /** Máximo de murais pessoais no PINZ+ (o banco usa o mesmo número em create_mural: troque nos dois). */
 export const PLUS_MAX_MURALS = 10;
 
+/** PINZ+ anual (365 dias) e vitalício, compra única, em centavos; presente de 1 mês para outra pessoa (mais barato que a mensalidade). Troque aqui para mudar os preços. */
+export const PLUS_ANNUAL_CENTS = 9900;
+export const PLUS_LIFETIME_CENTS = 24900;
+export const PLUS_GIFT_CENTS = 790;
+
 /** Mensalidade do PINZ+, em centavos (o servidor usa este valor, nunca o que o navegador manda). */
 export const PLUS_PRICE_CENTS = 990;
 

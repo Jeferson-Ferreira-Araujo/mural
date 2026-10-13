@@ -422,7 +422,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
           if (l.notifOpen) setNotifs(list);
           const latest = list.find((n) => !n.read);
           if (latest) l.notify(notificationText(latest));
-          if (latest?.kind === "reward") void reloadInventory();
+          if (latest?.kind === "reward" || latest?.kind === "gift") void reloadInventory();
+          if (latest?.kind === "gift") {
+            void reloadOwn(); // o presente de PINZ+ muda o plano do mural
+            if (nick && slug) void getPublicMural(sb, { nick, slug }).then((m) => m && setSelected(m));
+          }
         });
       })
       .subscribe();

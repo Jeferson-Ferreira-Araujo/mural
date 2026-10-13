@@ -33,6 +33,8 @@ export async function POST(req: Request) {
 
   const { data: sub } = await adminClient().from("subscriptions").select("status").eq("user_id", uid).maybeSingle();
   if (sub?.status === "authorized") return fail(409, "already_subscribed");
+  const { data: once } = await adminClient().from("subscriptions").select("status, paid_until").eq("user_id", uid).maybeSingle();
+  if (once?.status === "once" && once.paid_until && new Date(once.paid_until).getTime() > Date.now()) return fail(409, "already_plus_once"); // anual ou vitalício ainda valendo
 
   const r = await mp<{ id?: string; status?: string; message?: string }>("/preapproval", {
     method: "POST",

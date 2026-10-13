@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { CREDIT_PACKS } from "@/lib/plans";
+import { applyPayment, giftRecipient, itemForProduct, refFor } from "@/lib/payCatalog";
 import { adminClient, mp, paymentsConfigured, SITE_URL } from "@/lib/mercadopago";
 import { allow } from "@/lib/rateLimit";
 
@@ -25,8 +25,8 @@ function reason(detail: string): string {
 
 /**
  * Cartão dentro do Pinz: recebe só o CÓDIGO do cartão gerado pelo Mercado Pago no navegador (o número, a validade e o CVV nunca passam por aqui)
- * e cria o pagamento. Preço e quantidade vêm SEMPRE de lib/plans. O crédito entra na hora, pela mesma conta do aviso (webhook), que nunca soma duas vezes.
- * Corpo: { product, token, paymentMethodId, issuerId?, identification?: { type, number } }
+ * e cria o pagamento. Preço e o que se compra vêm SEMPRE de lib/payCatalog. O efeito entra na hora, pela mesma conta do aviso (webhook), que nunca soma duas vezes.
+ * Corpo: { product, token, paymentMethodId, issuerId?, identification?, recipient? (só no presente) }
  */
 export async function POST(req: Request) {
   if (!(await paymentsConfigured())) return fail(503, "unavailable");
@@ -38,10 +38,9 @@ export async function POST(req: Request) {
   if (authErr || !uid || !email) return fail(401, "not_authenticated");
   if (!allow(`card:${uid}`, 6, 60_000)) return fail(429, "rate_limited");
 
-  const b = (await req.json().catch(() => ({}))) as { product?: string; token?: string; paymentMethodId?: string; issuerId?: string | number; identification?: { type?: string; number?: string } };
-  const product = String(b.product ?? "");
-  const pack = product.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === product.slice(8)) : undefined;
-  if (!pack) return fail(400, "invalid_product");
+  const b = (await req.json().catch(() => ({}))) as { product?: string; token?: string; paymentMethodId?: string; issuerId?: string | number; identification?: { type?: string; number?: string }; recipient?: string };
+  const item = itemForProduct(String(b.product ?? ""));
+  if (!item) return fail(400, "invalid_product");
   const token = String(b.token ?? "");
   const method = String(b.paymentMethodId ?? "");
   if (!/^[A-Za-z0-9]{20,64}$/.test(token) || !/^[a-z0-9_]{2,30}$/.test(method)) return fail(400, "invalid_card");
@@ -49,17 +48,28 @@ export async function POST(req: Request) {
   const idType = String(b.identification?.type ?? "");
   const idNumber = String(b.identification?.number ?? "").replace(/\D/g, "");
 
-  const r = await mp<{ id?: number; status?: string; status_detail?: string; message?: string; transaction_amount?: number; currency_id?: string }>("/v1/payments", {
+  let recipientId: string | undefined;
+  if (item.kind === "plus") {
+    const { data: sub } = await adminClient().from("subscriptions").select("status").eq("user_id", uid).maybeSingle();
+    if (sub?.status === "authorized") return fail(409, "already_subscribed");
+  }
+  if (item.kind === "gift") {
+    const g = await giftRecipient(uid, String(b.recipient ?? ""));
+    if (g.reason || !g.id) return fail(409, `gift_${g.reason ?? "not_found"}`);
+    recipientId = g.id;
+  }
+
+  const r = await mp<{ id?: number; status?: string; status_detail?: string; message?: string }>("/v1/payments", {
     method: "POST",
     body: {
-      transaction_amount: pack.cents / 100,
+      transaction_amount: item.cents / 100,
       token,
-      description: `Pinz — ${pack.credits} créditos`,
+      description: item.title,
       installments: 1,
       payment_method_id: method,
       ...(/^\d{1,8}$/.test(issuer) ? { issuer_id: Number(issuer) } : {}),
       payer: { email, ...(idType && idNumber ? { identification: { type: idType.slice(0, 10), number: idNumber.slice(0, 20) } } : {}) },
-      external_reference: `${uid}:${pack.id}`,
+      external_reference: refFor(uid, item, recipientId),
       notification_url: `${SITE_URL}/api/pay/webhook`,
       statement_descriptor: "PINZ",
     },
@@ -67,8 +77,6 @@ export async function POST(req: Request) {
   if (!r.ok || !r.data.id) return NextResponse.json({ status: "rejected", message: reason(String(r.data.message ?? "")) }, { status: r.status === 400 ? 200 : 502 });
 
   const status = r.data.status ?? "pending";
-  if (status === "approved") {
-    await adminClient().rpc("pay_credits_apply", { p_user: uid, p_payment: String(r.data.id), p_credits: pack.credits, p_cents: pack.cents, p_status: "approved" });
-  }
+  if (status === "approved") await applyPayment({ buyer: uid, item, recipient: recipientId }, String(r.data.id), "approved");
   return NextResponse.json({ status, id: String(r.data.id), message: status === "rejected" ? reason(String(r.data.status_detail ?? "")) : null });
 }

@@ -1,6 +1,6 @@
 import { getBrowserSupabase } from "./supabase";
 
-export type Subscription = { status: "pending" | "authorized" | "paused" | "cancelled"; paidUntil: string | null; active: boolean } | null;
+export type Subscription = { status: "pending" | "authorized" | "paused" | "cancelled" | "once"; paidUntil: string | null; active: boolean } | null;
 
 async function token(): Promise<string | null> {
   const { data } = await getBrowserSupabase().auth.getSession();
@@ -23,6 +23,15 @@ const MESSAGE: Record<string, string> = {
   already_subscribed: "Você já tem uma assinatura PINZ+ ativa.",
   rate_limited: "Muitas tentativas. Tente de novo em instantes.",
   unavailable: "O pagamento ainda não está disponível.",
+};
+
+/** Erros de compra única (PINZ+ anual, vitalício e presente). */
+export const PAY_ERROR: Record<string, string> = {
+  already_subscribed: "Você já assina o PINZ+ mensal. Cancele a assinatura em Planos antes de comprar outro plano.",
+  gift_self: "O presente só vale para outra pessoa.",
+  gift_not_found: "Não encontramos essa pessoa.",
+  gift_already_plus: "Essa pessoa já assina o PINZ+.",
+  gift_lifetime: "Essa pessoa já tem o PINZ+ vitalício.",
 };
 
 const RETURN_KEY = "pinz:payReturn";
@@ -96,12 +105,12 @@ export const PAY_EVENT = "pinz:pay";
 export type PixCharge = { id: string; qr: string; qrBase64: string | null; expires: string };
 
 /** Cria uma cobrança Pix: devolve o código (copia e cola), o QR code e quando expira, ou a mensagem de erro. */
-export async function startPix(product: string): Promise<PixCharge | { error: string }> {
-  const r = await post("/api/pay/pix", { product });
+export async function startPix(product: string, recipient?: string): Promise<PixCharge | { error: string }> {
+  const r = await post("/api/pay/pix", { product, ...(recipient ? { recipient } : {}) });
   if (r.ok && typeof r.data.id === "string" && typeof r.data.qr === "string") {
     return { id: r.data.id, qr: r.data.qr, qrBase64: typeof r.data.qrBase64 === "string" ? r.data.qrBase64 : null, expires: String(r.data.expires ?? "") };
   }
-  return { error: MESSAGE[String(r.data.error)] ?? "Não foi possível gerar o Pix agora. Tente de novo." };
+  return { error: PAY_ERROR[String(r.data.error)] ?? MESSAGE[String(r.data.error)] ?? "Não foi possível gerar o Pix agora. Tente de novo." };
 }
 
 /** Situação de um pagamento da própria conta (approved, pending, rejected, cancelled…). */

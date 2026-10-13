@@ -5,6 +5,7 @@ import { BADGES } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
 import { SUPPORT_EMAIL } from "@/lib/contact";
 import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxPayment } from "@/lib/payments";
+import { PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS } from "@/lib/plans";
 import { Modal } from "./Modal";
 
 const date = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
@@ -23,7 +24,7 @@ export function ledgerLabel(reason: string): string {
   return reason;
 }
 
-export const payTitle = (p: Pick<TxPayment, "kind" | "credits">) => (p.kind === "plus" ? "Assinatura PINZ+ (mensalidade)" : `${p.credits ?? ""} créditos`);
+export const payTitle = (p: Pick<TxPayment, "kind" | "credits"> & { cents?: number }) => (p.kind === "plus" ? (p.cents === PLUS_ANNUAL_CENTS ? "PINZ+ anual" : p.cents === PLUS_LIFETIME_CENTS ? "PINZ+ vitalício" : p.cents === PLUS_GIFT_CENTS ? "Presente: 1 mês de PINZ+" : "Assinatura PINZ+ (mensalidade)") : `${p.credits ?? ""} créditos`);
 
 export function StatusChip({ status }: { status: string }) {
   const s = PAY_STATUS[status] ?? { text: status, tone: "wait" as const };
@@ -84,7 +85,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
                 {tx.payments.map((p) => (
                   <li key={p.ref} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2.5 text-sm">
                     <div className="min-w-0">
-                      <p className="font-semibold">{payTitle(p)}</p>
+                      <p className="font-semibold">{payTitle({ ...p, cents: p.cents })}</p>
                       <p className="text-xs text-[#6b5440]">
                         {date(p.at)} · Nº {p.ref}
                       </p>
