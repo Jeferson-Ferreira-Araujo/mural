@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CREDIT_PACKS } from "@/lib/plans";
-import { pixStatus, startCheckout, startPix, type PixCharge } from "@/lib/payments";
+import { pixStatus, startPix, type PixCharge } from "@/lib/payments";
+import { getMpPublicKey, loadMpSdk, payCard } from "@/lib/cardPay";
+import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
-type Step = "choose" | "pix" | "done" | "expired";
+type Step = "choose" | "pix" | "card" | "review" | "done" | "expired";
 
 /**
  * Pagamento de créditos dentro do Pinz: escolhe Pix ou cartão. O Pix mostra o QR code e o "copia e cola" aqui mesmo,
@@ -16,7 +18,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   const pack = product?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === product.slice(8)) : undefined;
   const [step, setStep] = useState<Step>("choose");
   const [charge, setCharge] = useState<PixCharge | null>(null);
-  const [busy, setBusy] = useState<"pix" | "card" | null>(null);
+  const [busy, setBusy] = useState<"pix" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [left, setLeft] = useState(0); // segundos até o código expirar
@@ -43,16 +45,63 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
     setStep("pix");
   }, [product]);
 
-  async function card() {
-    if (!product) return;
-    setBusy("card");
+  // cartão: o formulário seguro do Mercado Pago aparece aqui dentro; o servidor só recebe o código do cartão
+  const [cardState, setCardState] = useState<"loading" | "ready" | "failed">("loading");
+  useEffect(() => {
+    if (step !== "card" || !pack || !product) return;
+    let alive = true;
+    let controller: { unmount: () => void } | null = null;
+    setCardState("loading");
     setError(null);
-    const err = await startCheckout(product); // sucesso: a página vai para o Mercado Pago
-    if (err) {
-      setError(err);
-      setBusy(null);
-    }
-  }
+    void (async () => {
+      const [key, ok, session] = await Promise.all([getMpPublicKey(), loadMpSdk(), getBrowserSupabase().auth.getSession()]);
+      const email = session.data.session?.user.email;
+      const MP = (window as unknown as { MercadoPago?: new (k: string, o: { locale: string }) => { bricks: () => { create: (t: string, id: string, o: unknown) => Promise<{ unmount: () => void }> } } }).MercadoPago;
+      if (!alive) return;
+      if (!key || !ok || !MP || !email) return setCardState("failed");
+      try {
+        const bricks = new MP(key, { locale: "pt-BR" }).bricks();
+        const ctl = await bricks.create("cardPayment", "pinz-card-brick", {
+          initialization: { amount: pack.cents / 100, payer: { email } },
+          customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: "Pagar " + price } } },
+          callbacks: {
+            onReady: () => alive && setCardState("ready"),
+            onError: () => alive && setError("Não foi possível carregar o formulário do cartão."),
+            onSubmit: (d: { token: string; payment_method_id: string; issuer_id?: string | number; payer?: { identification?: { type?: string; number?: string } } }) =>
+              new Promise<void>((resolve, reject) => {
+                void (async () => {
+                  setError(null);
+                  const res = await payCard(product, { token: d.token, paymentMethodId: d.payment_method_id, issuerId: d.issuer_id ?? null, identification: d.payer?.identification ?? null });
+                  if (res.status === "approved") {
+                    resolve();
+                    paid.current = true;
+                    setStep("done");
+                    onPaid();
+                  } else if (res.status === "in_process" || res.status === "pending") {
+                    resolve();
+                    setStep("review");
+                  } else {
+                    setError(res.message ?? "O pagamento foi recusado. Tente outro cartão.");
+                    reject();
+                  }
+                })();
+              }),
+          },
+        });
+        if (!alive) ctl.unmount();
+        else controller = ctl;
+      } catch {
+        if (alive) setCardState("failed");
+      }
+    })();
+    return () => {
+      alive = false;
+      try {
+        controller?.unmount();
+      } catch {}
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, product]);
 
   // espera o pagamento: pergunta ao servidor a cada 3 s e mostra o tempo que falta
   useEffect(() => {
@@ -126,8 +175,37 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} flex items-center justify-center gap-2`}>
                     {busy === "pix" ? "Gerando o Pix…" : "Pix · confirma na hora"}
                   </button>
-                  <button type="button" disabled={busy !== null} onClick={() => void card()} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
-                    {busy === "card" ? "Abrindo…" : "Cartão"}
+                  <button type="button" disabled={busy !== null} onClick={() => setStep("card")} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
+                    Cartão de crédito ou débito
+                  </button>
+                </div>
+              )}
+
+              {step === "card" && (
+                <div className="mt-4">
+                  {cardState === "loading" && <p className="py-4 text-center text-sm text-[#6b5440]">Carregando o formulário seguro…</p>}
+                  {cardState === "failed" && (
+                    <p role="alert" className="py-3 text-center text-sm text-[#a23b2a]">
+                      Não foi possível abrir o formulário do cartão agora. Tente de novo ou pague com Pix.
+                    </p>
+                  )}
+                  <div id="pinz-card-brick" />
+                  <button type="button" onClick={() => setStep("choose")} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
+                    Voltar
+                  </button>
+                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.</p>
+                </div>
+              )}
+
+              {step === "review" && (
+                <div role="status" className="mt-4 text-center">
+                  <p aria-hidden className="text-4xl">
+                    ⏳
+                  </p>
+                  <p className="font-title mt-2 text-xl font-semibold">Pagamento em análise</p>
+                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, seus créditos entram sozinhos na conta.</p>
+                  <button type="button" onClick={onClose} className={`${primaryButton} mt-5`}>
+                    Continuar
                   </button>
                 </div>
               )}
