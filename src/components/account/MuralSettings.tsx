@@ -5,11 +5,14 @@ import type { OwnMural } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
+import { PAY_EVENT } from "@/lib/payments";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 
 /** Editar o mural: tipo (fundo), nome e excluir. Público/privado e a pergunta de segurança são do PERFIL (Perfil → Privacidade). */
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
   const [title, setTitle] = useState(mural.title);
+  const plus = mural.plan === "full";
+  const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
   const strip = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
   const [busy, setBusy] = useState(false);
@@ -21,7 +24,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
 
   useEffect(() => {
     setTitle(mural.title);
-  }, [mural.id, mural.title]);
+    setWelcome(mural.welcome_message ?? "");
+  }, [mural.id, mural.title, mural.welcome_message]);
 
   useEffect(() => {
     const sb = getBrowserSupabase();
@@ -75,6 +79,15 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         return;
       }
       setCurrentBoard(board);
+    }
+    // mensagem de boas-vindas (PINZ+): vazia apaga
+    if (plus && welcome.trim() !== (mural.welcome_message ?? "").trim()) {
+      const { error: ew } = await sb.rpc("set_welcome_message", { p_mural_id: mural.id, p_text: welcome });
+      if (ew) {
+        setBusy(false);
+        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a mensagem de boas-vindas. Ela pode ter até 280 letras." });
+        return;
+      }
     }
     setBusy(false);
     onSaved();
@@ -154,6 +167,31 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         </fieldset>
 
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+
+        <div>
+          <label htmlFor="mural-welcome" className="mb-1 flex items-center justify-between gap-2 text-sm font-semibold">
+            <span>Mensagem de boas-vindas</span>
+            {!plus && <span className="rounded-md bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2300] uppercase">PINZ+</span>}
+          </label>
+          <textarea
+            id="mural-welcome"
+            value={welcome}
+            onChange={(e) => setWelcome(e.target.value.slice(0, 280))}
+            disabled={!plus}
+            rows={4}
+            maxLength={280}
+            placeholder={plus ? "Um recado que aparece para quem entrar no seu mural (depois de acertar a resposta)" : "Disponível no PINZ+"}
+            className={`${inputClass} resize-none`}
+          />
+          <div className="mt-1 flex items-center justify-between text-xs text-[#8a7b69]">
+            {plus ? <span>Aparece como uma janela quando a pessoa entra. Deixe vazio para não mostrar.</span> : (
+              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))} className="cursor-pointer font-semibold text-[#4a3826] underline">
+                Assinar o PINZ+
+              </button>
+            )}
+            {plus && <span className="tabular-nums">{welcome.length}/280</span>}
+          </div>
+        </div>
 
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>

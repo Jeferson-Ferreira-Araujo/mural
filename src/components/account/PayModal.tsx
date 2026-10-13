@@ -19,8 +19,7 @@ const BENEFITS = [
   "Pins de desenho, música, vídeo, voz e local",
   "Pins em segredo (borrados) para os visitantes",
   "Mural compartilhado entre duas pessoas",
-  "Texto de boas-vindas personalizado no mural vazio",
-  "Selo e borda dourada no seu perfil",
+  "Mensagem de boas-vindas para quem entra no seu mural",
 ];
 
 const GIFT_ERROR: Record<string, string> = {

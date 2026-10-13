@@ -92,7 +92,6 @@ export function BoardCanvas({
   /** aviso curto (mural livre: por que o pin não cabe onde a pessoa clicou) */
   onNotify?: (msg: string) => void;
   hint?: boolean;
-  /** Texto do bilhete do mural vazio (personalizado pelo dono PINZ+). */
   /** Quadro inteiro visível (celular deitado), em vez de preencher o espaço cortando as bordas. */
   contain?: boolean;
   children?: ReactNode;
@@ -623,6 +622,15 @@ export function BoardCanvas({
 
                 </div>
               </div>
+              {/* mural sem nenhum pin: bilhete padrão no meio (o mesmo em qualquer plano, sem edição) */}
+              {hasSelection && unlocked && !locked && items.length === 0 && (
+                <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
+                  <div className="-rotate-2 rounded-[0.3em] bg-[#fbe36a] px-[1.4em] py-[1.1em] text-center text-[#3a2a08] shadow-[0_0.5em_1.2em_rgba(0,0,0,.35)]" style={{ fontSize: "2.1cqw", maxWidth: "26em" }}>
+                    <p className="font-title text-[1.25em] leading-tight font-semibold">Nenhum pin por aqui ainda</p>
+                    <p className="mt-[0.3em] text-[1em] leading-snug">Seja o primeiro a colocar!</p>
+                  </div>
+                </div>
+              )}
               {children}
             </main>
       {dense && <PinDetail items={detailList} index={detail} onIndex={setDetail} onClose={() => setDetail(null)} board={look.id} />}

@@ -33,6 +33,7 @@ import { Tour } from "./tour/Tour";
 import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { claimReward, claimStoredReferral, OPEN_REWARDS_EVENT, rememberRef, REWARD_EVENT } from "@/lib/rewards";
 import { RewardsModal } from "./account/RewardsModal";
+import { Modal } from "./account/Modal";
 import { PayModal } from "./account/PayModal";
 import { PAY_EVENT, pixStatus } from "@/lib/payments";
 import { NewMuralModal } from "./account/NewMuralModal";
@@ -79,6 +80,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
   const [tourOpen, setTourOpen] = useState(false);
   const [payProduct, setPayProduct] = useState<string | null>(null); // pacote de créditos em pagamento (Pix ou cartão)
+  const [welcomeText, setWelcomeText] = useState<string | null>(null); // mensagem de boas-vindas do mural PINZ+ (janela, sem botões)
   const [rewardsOpen, setRewardsOpen] = useState(false); // janela "Ganhe créditos" aberta pelo botão da barra de bottons
   const onbChecked = useRef<string | null>(null);
   const [nickPending, setNickPending] = useState(false); // entrou por login social e ainda não escolheu o nome de usuário
@@ -184,6 +186,27 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     };
   }, [countNick]);
   const followNick = logged && !!myNick && selected && selected.nickname.toLowerCase() !== myNick.toLowerCase() && !isOwner && !isShared && unlocked ? selected.nickname : null; // só depois de entrar no mural (privado trancado não mostra nada)
+  // mural PINZ+ com mensagem de boas-vindas: aparece uma vez por visita, assim que a pessoa entra (acerta a resposta)
+  useEffect(() => {
+    if (!unlocked || !selected || isOwner || isShared || selected.plan !== "full" || !nick || !slug) return;
+    const key = `pinz:welcome:${nick}/${slug}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+    } catch {}
+    let alive = true;
+    void getBrowserSupabase()
+      .rpc("get_welcome", { p_nick: nick, p_slug: slug, p_token: token })
+      .then(({ data }) => {
+        if (!alive || typeof data !== "string" || !data) return;
+        try {
+          sessionStorage.setItem(key, "1");
+        } catch {}
+        setWelcomeText(data);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [unlocked, selected, isOwner, isShared, nick, slug, token]);
   // conta nova: no primeiro acesso ao próprio mural aparecem as boas-vindas (foto, data de nascimento, tour); o banco guarda que já passou
   const uid = session?.user.id;
   useEffect(() => {
@@ -1088,6 +1111,12 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
       <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
+      <Modal open={!!welcomeText} onClose={() => setWelcomeText(null)} title="">
+        <div className="px-1 pb-3 text-center">
+          <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Mensagem de @{selected?.nickname}</p>
+          <p className="font-title mt-3 text-xl leading-snug [overflow-wrap:anywhere] whitespace-pre-wrap">{welcomeText}</p>
+        </div>
+      </Modal>
       <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />
       <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => {
           void reloadInventory();
