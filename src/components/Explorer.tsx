@@ -4,6 +4,7 @@ import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isDisplayOn } from "./widgets";
 import { buildPool, randomMural } from "@/data/mock";
+import { decorLayout } from "@/data/decorDisplays";
 import {
   checkGrantClient,
   clearGrant,
@@ -908,10 +909,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   // Revelado: o mural real, com os pins gravados no banco e o plano do próprio mural.
   // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
   const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
+  const [decorBadges, setDecorBadges] = useState<PlacedBadge[]>([]); // displays de enfeite do mural de exemplo da tela de login
   // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
-    setDecor(randomMural(Date.now()));
+    const d = decorLayout(randomMural(Date.now()));
+    setDecor(d.items);
+    setDecorBadges(d.badges);
     setDecorBoard(BOARDS[Math.floor(Math.random() * BOARDS.length)].id);
   }, []);
   // endereço de um mural (/nick/slug): enquanto ele abre, a lousa fica escondida (nada de mostrar outro quadro por meio segundo)
@@ -1005,7 +1009,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
       <ReactionsProvider value={isOwner || isMember ? { onChanged: () => void loadBoard() } : null}>
         <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
-        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product)))} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={selected ? badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product))) : decorBadges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
