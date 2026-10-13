@@ -15,6 +15,8 @@ import { ShareButton } from "./ShareButton";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { FollowButton } from "./FollowButton";
 import { PlanBadge } from "./board/PlanBadge";
+import { PAY_EVENT } from "@/lib/payments";
+import { PAYMENTS_ENABLED } from "@/lib/plans";
 import { PlanLimit } from "./PlanLimit";
 import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
@@ -83,13 +85,23 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* de quem é o mural + quantos PINZ */}
       <div className="relative z-20 flex shrink-0 items-center gap-3 bg-[#e8dcc2] px-4 py-2 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.2)]">
-        <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={`Ver o perfil de @${info.owner}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition active:scale-[0.98] disabled:cursor-default">
-          <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11 shrink-0" />
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={`Ver o perfil de @${info.owner}`} className="shrink-0 cursor-pointer transition active:scale-95 disabled:cursor-default">
+            <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11" />
+          </button>
           <span className="flex min-w-0 flex-col items-start gap-1">
-            <span className="block max-w-full min-w-0 truncate text-base leading-tight font-bold text-[#2a1c12]">@{info.owner}</span>
+            <button type="button" onClick={info.onProfile} disabled={!info.onProfile} className="block max-w-full min-w-0 cursor-pointer truncate text-left text-base leading-tight font-bold text-[#2a1c12] transition active:scale-[0.98] disabled:cursor-default">
+              @{info.owner}
+            </button>
             {info.plus && <PlanBadge plan="full" className="!px-2 !py-0.5 !text-[10px]" />}
+            {/* conta FREE no próprio mural: atalho para assinar o PINZ+ mensal */}
+            {account?.atHome && plan === "free" && PAYMENTS_ENABLED && (
+              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))} className="cursor-pointer rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2.5 py-0.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-[#3a2300] uppercase shadow-[0_0.1rem_0.4rem_rgba(150,90,0,.35)] transition active:scale-95">
+                Assinar PINZ+
+              </button>
+            )}
           </span>
-        </button>
+        </div>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
           <button type="button" onClick={() => setFollowersOpen(true)} aria-label="Ver os seguidores" className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">

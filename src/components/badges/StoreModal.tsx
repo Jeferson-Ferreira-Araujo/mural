@@ -283,6 +283,21 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </ul>
       </section>
 
+      {/* conta FREE: atalho para assinar o PINZ+ mensal */}
+      {inventory && !inventory.plus && PAYMENTS_ENABLED && (
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))}
+          className="mb-5 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-4 py-3 text-left text-[#3a2300] shadow-[0_0.2rem_0.7rem_rgba(150,90,0,.35)] transition active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+        >
+          <span>
+            <span className="block text-base font-extrabold">Assinar PINZ+</span>
+            <span className="block text-xs font-semibold opacity-80">Todos os espaços, mais murais e mais tipos de pin</span>
+          </span>
+          <span className="shrink-0 rounded-lg bg-[#3a2300] px-3 py-1.5 text-sm font-bold text-[#fff4cc]">R$ 9,90/mês</span>
+        </button>
+      )}
+
       <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
