@@ -31,20 +31,13 @@ export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => 
     void load();
   }, [open, load]);
 
-  const done = tasks?.filter((t) => t.done).length ?? 0;
-  const total = tasks?.reduce((n, t) => n + t.credits, 0) ?? 0;
-  const won = tasks?.filter((t) => t.done).reduce((n, t) => n + t.credits, 0) ?? 0;
-
   return (
     <Modal open={open} onClose={onClose} title="Ganhe créditos">
       {tasks === null ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
       ) : (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Faça as tarefas e ganhe créditos na hora. Cada uma vale uma vez.</p>
-          <p className="mt-2 flex items-center gap-1.5 text-sm font-bold">
-            {done} de {tasks.length} feitas · <Coin className="size-4" /> {won} de {total}
-          </p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">Faça as tarefas e ganhe créditos na hora.</p>
           <ul className="mt-3 space-y-2">
             {tasks.map((t) => (
               <li key={t.id} className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 ${t.done ? "border-[#bfe0c7] bg-[#eef8f0]" : "border-[#e1d3ba] bg-white/70"}`}>
