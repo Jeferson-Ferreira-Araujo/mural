@@ -30,22 +30,16 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
     authIntent.mode = mode;
     setOpen(true);
   };
-  const btn = "inline-flex h-10 cursor-pointer items-center rounded-xl px-4 text-sm font-semibold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+  const btn = "inline-flex h-12 cursor-pointer items-center rounded-xl px-4 text-base font-bold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
-      <header className="relative z-30 flex h-14 shrink-0 items-center justify-between gap-2 bg-[#f2e8d3] px-3 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.25)]">
-        <h1 className="sr-only">Pinz</h1>
-        <Brand className="h-10" />
-        <div className="flex items-center gap-2">
-          <button type="button" onClick={() => show("login")} className={`${btn} border border-[#d9c9ad] bg-white/70 text-[#2f2218] hover:bg-white`}>
-            Entrar
-          </button>
-          <button type="button" onClick={() => show("signup")} className={`${btn} bg-[#1f232b] text-white hover:bg-[#2c313b]`}>
-            Criar conta
-          </button>
-        </div>
-      </header>
+      <h1 className="sr-only">Pinz</h1>
+
+      {/* o logo, grande, no topo (sem cabeçalho) */}
+      <div className="relative z-20 flex shrink-0 justify-center bg-[#2a1a0e] pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
+        <Brand className="h-[clamp(6.5rem,19dvh,10rem)]" />
+      </div>
 
       {/* o mural de exemplo, inteiro: arrasta, pinça e aproxima como um mural de verdade */}
       <div className="relative min-h-0 flex-1">
@@ -54,16 +48,18 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
         </PannableBoard>
       </div>
 
-      {/* apresentação e atalho para criar a conta */}
+      {/* o texto de apresentação e, no rodapé, Entrar e Criar conta */}
       <section className="relative z-30 shrink-0 rounded-t-3xl bg-[#f2e8d3] px-5 pt-4 pb-[max(1.1rem,env(safe-area-inset-bottom))] text-center text-[#2f2218] shadow-[0_-0.4rem_1.4rem_rgba(0,0,0,.4)]">
         <h2 className="font-title text-xl leading-tight font-semibold">Seu mural de momentos compartilhados</h2>
         <p className="mt-1 text-sm text-[#6b5440]">Receba recados, fotos, músicas e vídeos de quem você ama e decore do seu jeito.</p>
-        <button type="button" onClick={() => show("signup")} className="mt-3 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] shadow-[0_0.25rem_0.8rem_rgba(150,90,0,.35)] transition hover:bg-[#e6ae22] active:scale-[0.99]">
-          Criar meu mural grátis
-        </button>
-        <button type="button" onClick={() => show("login")} className="mt-1 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#4a3826] hover:bg-black/5">
-          Já tenho conta
-        </button>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <button type="button" onClick={() => show("login")} className={`${btn} justify-center border border-[#d9c9ad] bg-white/80 text-[#2f2218] hover:bg-white`}>
+            Entrar
+          </button>
+          <button type="button" onClick={() => show("signup")} className={`${btn} justify-center bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.25rem_0.8rem_rgba(150,90,0,.35)] hover:bg-[#e6ae22]`}>
+            Criar conta
+          </button>
+        </div>
       </section>
 
       <dialog
