@@ -52,3 +52,18 @@ export function loadMpSdk(): Promise<boolean> {
   }
   return sdk;
 }
+
+/** Assina o PINZ+ (cobrança mensal no cartão) dentro do Pinz: manda só o código do cartão. */
+export async function paySubscription(card: { token: string; paymentMethodId: string; issuerId?: string | number | null; identification?: { type?: string; number?: string } | null }): Promise<CardResult> {
+  const { data } = await getBrowserSupabase().auth.getSession();
+  const jwt = data.session?.access_token;
+  if (!jwt) return { status: "error", message: "Entre na sua conta para continuar." };
+  try {
+    const res = await fetch("/api/pay/subscribe", { method: "POST", headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" }, body: JSON.stringify(card) });
+    const d = (await res.json().catch(() => ({}))) as { status?: string; message?: string | null; error?: string };
+    if (typeof d.status === "string") return { status: d.status as CardResult["status"], message: d.message ?? null };
+    return { status: "error", message: d.error === "already_subscribed" ? "Você já tem uma assinatura PINZ+ ativa." : d.error === "rate_limited" ? "Muitas tentativas. Tente de novo em instantes." : "Não foi possível concluir a assinatura agora. Tente de novo." };
+  } catch {
+    return { status: "error", message: "Sem conexão. Tente de novo." };
+  }
+}

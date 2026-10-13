@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PAYMENTS_ENABLED, PLANS } from "@/lib/plans";
-import { startCheckout } from "@/lib/payments";
+import { PAY_EVENT } from "@/lib/payments";
 import { Modal } from "./account/Modal";
 
 /**
@@ -12,17 +12,10 @@ import { Modal } from "./account/Modal";
 export function PlanLimit({ used, glass = false, className = "" }: { used: number; glass?: boolean; className?: string }) {
   const max = PLANS.free.slots;
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
 
-  async function subscribe() {
-    setBusy(true);
-    setErr(null);
-    const e = await startCheckout("plus");
-    if (e) {
-      setErr(e);
-      setBusy(false);
-    }
+  function subscribe() {
+    setOpen(false);
+    window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } })); // a janela de assinatura (cartão) abre no próprio Pinz
   }
 
   return (
@@ -61,18 +54,13 @@ export function PlanLimit({ used, glass = false, className = "" }: { used: numbe
               ))}
             </ul>
           </div>
-          {err && (
-            <p role="alert" className="text-[#a23b2a]">
-              {err}
-            </p>
-          )}
           <button
             type="button"
-            disabled={busy || !PAYMENTS_ENABLED}
-            onClick={() => void subscribe()}
+            disabled={!PAYMENTS_ENABLED}
+            onClick={subscribe}
             className="w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {!PAYMENTS_ENABLED ? "PINZ+ em breve" : busy ? "Abrindo o pagamento…" : "Assinar o PINZ+ por R$ 9,90/mês"}
+            {!PAYMENTS_ENABLED ? "PINZ+ em breve" : "Assinar o PINZ+ por R$ 9,90/mês"}
           </button>
           {PAYMENTS_ENABLED && <p className="text-center text-xs text-[#6b5440]">Cobrado todo mês no Mercado Pago · cancele quando quiser.</p>}
         </div>

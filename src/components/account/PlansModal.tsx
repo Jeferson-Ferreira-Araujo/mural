@@ -72,8 +72,8 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   }, [open]);
 
   async function buy(product: string) {
-    if (product.startsWith("credits:")) {
-      window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product } })); // créditos: a janela de pagamento (Pix ou cartão) abre por cima
+    if (product.startsWith("credits:") || product === "plus") {
+      window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product } })); // créditos ou PINZ+: a janela de pagamento abre por cima
       return;
     }
     setBusy(product);

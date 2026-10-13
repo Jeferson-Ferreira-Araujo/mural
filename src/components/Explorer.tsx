@@ -1085,7 +1085,11 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
       <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />
-      <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => void reloadInventory()} />
+      <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => {
+          void reloadInventory();
+          void reloadOwn(); // PINZ+: o plano do mural muda
+          if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
+        }} />
       <Toast message={toast} />
     </div>
   );

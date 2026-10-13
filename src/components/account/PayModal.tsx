@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CREDIT_PACKS } from "@/lib/plans";
+import { CREDIT_PACKS, PLUS_PRICE_CENTS } from "@/lib/plans";
 import { pixStatus, startPix, type PixCharge } from "@/lib/payments";
-import { getMpPublicKey, loadMpSdk, payCard } from "@/lib/cardPay";
+import { getMpPublicKey, loadMpSdk, payCard, paySubscription } from "@/lib/cardPay";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
@@ -16,6 +16,9 @@ type Step = "choose" | "pix" | "card" | "review" | "done" | "expired";
  */
 export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o crédito entrou: atualiza o saldo da tela */ onPaid: () => void }) {
   const pack = product?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === product.slice(8)) : undefined;
+  const plus = product === "plus"; // assinatura mensal do PINZ+ (só cartão)
+  const cents = plus ? PLUS_PRICE_CENTS : (pack?.cents ?? 0);
+  const valid = plus || !!pack;
   const [step, setStep] = useState<Step>("choose");
   const [charge, setCharge] = useState<PixCharge | null>(null);
   const [busy, setBusy] = useState<"pix" | null>(null);
@@ -26,7 +29,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   useEffect(() => {
     if (!product) return;
-    setStep("choose");
+    setStep(product === "plus" ? "card" : "choose");
     setCharge(null);
     setBusy(null);
     setError(null);
@@ -48,7 +51,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   // cartão: o formulário seguro do Mercado Pago aparece aqui dentro; o servidor só recebe o código do cartão
   const [cardState, setCardState] = useState<"loading" | "ready" | "failed">("loading");
   useEffect(() => {
-    if (step !== "card" || !pack || !product) return;
+    if (step !== "card" || !valid || !product) return;
     let alive = true;
     let controller: { unmount: () => void } | null = null;
     setCardState("loading");
@@ -62,8 +65,8 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
       try {
         const bricks = new MP(key, { locale: "pt-BR" }).bricks();
         const ctl = await bricks.create("cardPayment", "pinz-card-brick", {
-          initialization: { amount: pack.cents / 100, payer: { email } },
-          customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: "Pagar " + price } } },
+          initialization: { amount: cents / 100, payer: { email } },
+          customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: (plus ? "Assinar " : "Pagar ") + price } } },
           callbacks: {
             onReady: () => alive && setCardState("ready"),
             onError: () => alive && setError("Não foi possível carregar o formulário do cartão."),
@@ -71,7 +74,8 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               new Promise<void>((resolve, reject) => {
                 void (async () => {
                   setError(null);
-                  const res = await payCard(product, { token: d.token, paymentMethodId: d.payment_method_id, issuerId: d.issuer_id ?? null, identification: d.payer?.identification ?? null });
+                  const card = { token: d.token, paymentMethodId: d.payment_method_id, issuerId: d.issuer_id ?? null, identification: d.payer?.identification ?? null };
+                  const res = plus ? await paySubscription(card) : await payCard(product, card);
                   if (res.status === "approved") {
                     resolve();
                     paid.current = true;
@@ -143,11 +147,11 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
-  const price = pack ? (pack.cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "";
+  const price = valid ? (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) + (plus ? "/mês" : "") : "";
 
   return (
-    <Modal open={!!pack} onClose={onClose} title={step === "done" ? "" : "Pagamento"}>
-      {pack && (
+    <Modal open={valid} onClose={onClose} title={step === "done" ? "" : plus ? "Assinar o PINZ+" : "Pagamento"}>
+      {valid && (
         <div className="text-[#2f2218]">
           {step === "done" ? (
             <div role="status" className="pb-2 text-center">
@@ -156,8 +160,8 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <path d="m5 12.5 4.5 4.5L19 7.5" />
                 </svg>
               </span>
-              <h2 className="font-title mt-4 text-2xl font-semibold">Pagamento confirmado!</h2>
-              <p className="mt-1 text-[#4a3826]">+{pack.credits} créditos já estão na sua conta.</p>
+              <h2 className="font-title mt-4 text-2xl font-semibold">{plus ? "PINZ+ ativado!" : "Pagamento confirmado!"}</h2>
+              <p className="mt-1 text-[#4a3826]">{plus ? "O seu mural agora é PINZ+. Aproveite!" : `+${pack?.credits} créditos já estão na sua conta.`}</p>
               <button type="button" onClick={onClose} className={`${primaryButton} mt-6`}>
                 Continuar
               </button>
@@ -165,7 +169,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
           ) : (
             <>
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#ecd9a0] bg-[#fff4cc] px-4 py-3">
-                <p className="font-title text-lg font-semibold">Pinz · {pack.credits} créditos</p>
+                <p className="font-title text-lg font-semibold">{plus ? "PINZ+ · assinatura mensal" : `Pinz · ${pack?.credits} créditos`}</p>
                 <p className="text-lg font-bold">{price}</p>
               </div>
 
@@ -190,10 +194,10 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     </p>
                   )}
                   <div id="pinz-card-brick" />
-                  <button type="button" onClick={() => setStep("choose")} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
-                    Voltar
+                  <button type="button" onClick={() => (plus ? onClose() : setStep("choose"))} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
+                    {plus ? "Cancelar" : "Voltar"}
                   </button>
-                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.</p>
+                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plus ? " Renova todo mês; cancele quando quiser em Planos." : ""}</p>
                 </div>
               )}
 
@@ -203,7 +207,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     ⏳
                   </p>
                   <p className="font-title mt-2 text-xl font-semibold">Pagamento em análise</p>
-                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, seus créditos entram sozinhos na conta.</p>
+                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, {plus ? "o seu mural vira PINZ+" : "seus créditos entram"} sozinho.</p>
                   <button type="button" onClick={onClose} className={`${primaryButton} mt-5`}>
                     Continuar
                   </button>
