@@ -16,7 +16,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe }: { children: ReactNode; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false }: { children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
   const swiped = useRef(false); // já trocou de mural nesta arrastada
@@ -386,7 +386,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       data-tour="board"
       onPointerDown={onPointerDown}
       onClickCapture={onClickCapture}
-      className="relative size-full touch-none overflow-hidden bg-[#3b2616] select-none"
+      className={`relative size-full touch-none overflow-hidden select-none ${bare ? "" : "bg-[#3b2616]"}`}
       style={{ touchAction: "none" }}
     >
       {ambient && (

@@ -40,10 +40,11 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   };
   
   return (
-    <div
-      className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]"
-      style={{ backgroundImage: `linear-gradient(rgba(20,10,4,.55), rgba(20,10,4,.35) 40%, rgba(20,10,4,.6)), url(${look.image})`, backgroundSize: "cover", backgroundPosition: "center" }}
-    >
+    <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
+      {/* fundo: a mesma névoa colorida do mural (a foto do quadro bem desfocada), igual por trás do logo, do mural e do rodapé */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={look.image} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#140a04]/70 via-transparent to-[#140a04]/60" />
       <h1 className="sr-only">Pinz</h1>
 
       {/* logo grande, frase de mão e apoio, no topo */}
@@ -63,7 +64,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
       <div className="relative min-h-0 flex-1">
-        <PannableBoard ambient={look.image}>
+        <PannableBoard bare>
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
       </div>
