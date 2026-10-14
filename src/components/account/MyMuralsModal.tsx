@@ -39,6 +39,20 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
   const editing = murals.find((m) => m.id === editId) ?? null;
   const toDelete = murals.find((m) => m.id === confirmId) ?? null;
 
+  // muda a ordem: o primeiro da lista é o mural principal (o que abre primeiro e que não pode ser apagado)
+  async function move(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    if (busy || j < 0 || j >= murals.length) return;
+    const ids = murals.map((m) => m.id);
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    setBusy(true);
+    setErr(null);
+    const { error } = await getBrowserSupabase().rpc("set_mural_order", { p_ids: ids });
+    setBusy(false);
+    if (error) return setErr("Não foi possível mudar a ordem agora. Tente de novo.");
+    onChanged();
+  }
+
   async function remove() {
     if (!toDelete || busy) return;
     setBusy(true);
@@ -127,11 +141,30 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
               </button>
             </div>
           )}
+          {err && !confirmId && (
+            <p role="alert" className="mb-2 text-sm text-[#a23b2a]">
+              {err}
+            </p>
+          )}
           <ul className="space-y-2.5">
             {murals.map((m, i) => {
               const b = boardById(boards[m.id]);
               return (
                 <li key={m.id} className="flex items-stretch gap-2 rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 transition hover:bg-white">
+                  {murals.length > 1 && (
+                    <div className="flex shrink-0 flex-col justify-center gap-1.5">
+                      <button type="button" onClick={() => void move(i, -1)} disabled={busy || i === 0} aria-label={`Subir ${m.title}`} title="Subir" className="grid size-8 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-30">
+                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="m6 15 6-6 6 6" />
+                        </svg>
+                      </button>
+                      <button type="button" onClick={() => void move(i, 1)} disabled={busy || i === murals.length - 1} aria-label={`Descer ${m.title}`} title="Descer" className="grid size-8 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-30">
+                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                   <button type="button" onClick={() => setEditId(m.id)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left" aria-label={`Editar ${m.title}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-24 shrink-0 rounded-lg object-cover" />
