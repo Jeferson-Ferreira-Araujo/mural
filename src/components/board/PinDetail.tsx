@@ -273,10 +273,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
         if (e.target === e.currentTarget) onClose();
       }}
       aria-label="Ver mensagem em detalhe"
-      className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-y-auto overflow-x-clip bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-hidden bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && entry && index !== null && (
-        <div className="relative flex h-[min(96dvh,60rem)] flex-col items-center gap-3">
+        <div className="relative flex h-[min(94dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
               <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={shareBtn}>
@@ -330,7 +330,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
             {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
             <div className="relative min-w-0 flex-1 self-stretch [container-type:size]">
-            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h}), calc(100cqw / ${fit.w}))` }} key={entry.id}>
+            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h + 2.8}), calc(100cqw / ${fit.w}))` }} key={entry.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <div className="relative">

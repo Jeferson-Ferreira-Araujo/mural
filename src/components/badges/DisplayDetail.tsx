@@ -69,7 +69,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
       <div className="space-y-4">
         <div className="flex justify-center overflow-hidden rounded-2xl bg-[#e9d8b6]/60 px-2 py-6">
           {/* o widget tem 24 em de largura: a fonte do contêiner o leva a quase toda a largura da janela */}
-          <div style={{ fontSize: shapeOfStyle(data.style) === "square" ? "calc(min(66vw, 24rem) / 12)" : shapeOfStyle(data.style) === "tall" ? "calc(min(54vw, 18rem) / 12)" : "calc(min(82vw, 31rem) / 24)" }}>
+          <div style={{ fontSize: shapeOfStyle(data.style) === "square" ? "calc(min(66vw, 24rem, 40dvh) / 12)" : shapeOfStyle(data.style) === "tall" ? "calc(min(54vw, 18rem, 30dvh) / 12)" : "calc(min(82vw, 31rem, 80dvh) / 24)" }}>
             <DetailProvider value>
               {hidden && !reveal ? <SecretCover style={data.style} /> : <DisplayCard data={data} badgeId={data.id} />}
             </DetailProvider>
