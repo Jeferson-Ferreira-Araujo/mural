@@ -129,7 +129,7 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   const cy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
 
   if (coversBadge(cx, cy)) return { kind: "badge" };
-  // botton só fica sobre foto, post-it e papel: nunca sobre mapa, vídeo, música, voz, desenho, cápsula nem display
+  // botton só fica sobre foto, post-it, papel (texto e lista) e desenho: nunca sobre mapa, vídeo, música, voz, cápsula nem display
   const br = { left: cx - w / 2, right: cx + w / 2, top: cy - h / 2, bottom: cy + h / 2 };
   const share = (o: { left: number; right: number; top: number; bottom: number }) => {
     const iw = Math.min(br.right, o.right) - Math.max(br.left, o.left);
@@ -311,7 +311,7 @@ export function BadgeProvider({
           return;
         }
         if (drop.kind === "physical") {
-          notify("Botton só pode ficar sobre fotos, post-its e papéis. Em mapas, vídeos, músicas, vozes, desenhos e displays não vale: coloque em volta.");
+          notify("Botton só pode ficar sobre fotos, post-its, papéis e desenhos. Em mapas, vídeos, músicas, vozes e displays não vale: coloque em volta.");
           return sendBack(at);
         }
         if (drop.kind === "badge") {

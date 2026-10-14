@@ -101,8 +101,8 @@ export const FREE_BADGES: readonly number[] = [1, 2, 4, 5, 9, 12, 13, 17, 22, 25
 export const MAX_BADGES = 200; // teto técnico de bottons por mural
 
 /** Pinz "físicos" (aparelhos e cápsulas): não aceitam botom por cima. Os de papel (post-it, texto, lista, foto) aceitam. */
-/** Pins sobre os quais um botton pode ficar: foto, post-it e papel (texto e lista). Em mapa, vídeo, música, voz, desenho, cápsula e display não vale. */
-export const BADGE_OK_TYPES: ReadonlySet<string> = new Set(["photo", "postit", "text", "list"]);
+/** Pins sobre os quais um botton pode ficar: foto, post-it, papel (texto e lista) e desenho. Em mapa, vídeo, música, voz, cápsula e display não vale. */
+export const BADGE_OK_TYPES: ReadonlySet<string> = new Set(["photo", "postit", "text", "list", "draw"]);
 
 export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
 

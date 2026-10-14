@@ -1,6 +1,6 @@
 import { sampleFor } from "@/components/badges/StoreModal";
 import { WIDGET_STYLES } from "@/components/widgets";
-import { BADGE_EM, BADGE_OK_TYPES, BADGES, type PlacedBadge } from "@/lib/badges";
+import { BADGE_EM, BADGES, type PlacedBadge } from "@/lib/badges";
 import { hasShapes, withShape } from "@/lib/displayShape";
 import { isMessage, type BoardItem } from "@/lib/types";
 
@@ -17,6 +17,9 @@ const HANDLES = [
   "bia_santos61", "caio_freitas38", "duda_ramos47", "enzo_falcao90", "flavia_ceu14", "gui_teixeira77", "helena_mar23", "igor_prado68", "julia_flor05", "leo_barros41",
   "malu_arruda36", "nico_vidal59", "olivia_sol18", "pedro_lago72", "quel_viana29", "rubens_paz84", "sofia_brito10", "tati_melo95", "vini_costa02", "wesley_dantas63",
 ];
+
+/** No mural de exemplo os bottons ficam só sobre foto, post-it e papel de texto (nunca sobre lista nem desenho, mesmo sendo permitido nos murais reais). */
+const DECOR_OK_TYPES: ReadonlySet<string> = new Set(["photo", "postit", "text"]);
 
 const COLS = 7;
 const ROWS = 4;
@@ -149,7 +152,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     const row = Math.floor(sp.slots[0] / COLS);
     return { l: (Math.min(...cols) / COLS) * 100, r: ((Math.max(...cols) + 1) / COLS) * 100, t: (row / ROWS) * 100, b: ((row + 1) / ROWS) * 100 };
   });
-  // o tipo do pin de cada espaço: o botton só pode tocar fotos, post-its e papéis
+  // o tipo do pin de cada espaço: o botton só pode tocar fotos, post-its e papéis de texto
   const typeAt = new Map<number, string>();
   for (const p of pins) if (typeof p.slot === "number") typeAt.set(p.slot, isMessage(p) ? p.type : "capsule");
   const touchesOnlyOk = (x: number, y: number, w: number, h: number) => {
@@ -160,7 +163,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     for (let rr = Math.max(0, r0); rr <= Math.min(ROWS - 1, r1); rr++) {
       for (let cc = Math.max(0, c0); cc <= Math.min(COLS - 1, c1); cc++) {
         const t = typeAt.get(rr * COLS + cc);
-        if (t !== undefined && !BADGE_OK_TYPES.has(t)) return false;
+        if (t !== undefined && !DECOR_OK_TYPES.has(t)) return false;
       }
     }
     return true;
@@ -177,7 +180,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     const x = Math.min(96 - w / 2, Math.max(4 + w / 2, p.x + (Math.random() * 2 - 1)));
     const y = Math.min(94 - h / 2, Math.max(6 + h / 2, p.y + (Math.random() * 2 - 1)));
     if (displayAreas.some((d) => x + w / 2 > d.l && x - w / 2 < d.r && y + h / 2 > d.t && y - h / 2 < d.b)) continue; // botton nunca fica sobre display
-    if (!touchesOnlyOk(x, y, w, h)) continue; // botton nunca fica sobre mapa, vídeo, música, voz, desenho ou cápsula
+    if (!touchesOnlyOk(x, y, w, h)) continue; // botton nunca fica sobre lista, desenho, mapa, vídeo, música, voz ou cápsula (no mural de exemplo)
     if (placed.some((o) => Math.abs(o.x - x) < ((o.w + w) / 2) * 1.2 && Math.abs(o.y - y) < ((o.h + h) / 2) * 1.2)) continue;
     placed.push({ x, y, w, h });
     buttons.push({ id: `decor-b${buttons.length}`, key: def.key, kind: "badge", x, y, scale, rotation: Math.round(Math.random() * 30 - 15), mine: false });
