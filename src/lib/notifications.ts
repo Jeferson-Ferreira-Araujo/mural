@@ -1,18 +1,18 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { reactionEmoji } from "./reactions";
 
-export type ListCheckedData = { actor: string; muralNick: string; muralSlug: string; muralTitle: string; listTitle: string; items: { text: string; done: boolean }[] };
-export type ReactionData = { actor: string; emoji: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string };
-export type PinNewData = { actor: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string; pending?: boolean };
-export type PinApprovedData = { actor: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string };
+export type ListCheckedData = { avatar?: string | null; actor: string; muralNick: string; muralSlug: string; muralTitle: string; listTitle: string; items: { text: string; done: boolean }[] };
+export type ReactionData = { avatar?: string | null; actor: string; emoji: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string };
+export type PinNewData = { avatar?: string | null; actor: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string; pending?: boolean };
+export type PinApprovedData = { avatar?: string | null; actor: string; muralNick: string; muralSlug: string; muralTitle?: string; messageId: string };
 export type Notification =
   | { id: string; kind: "list_checked"; data: ListCheckedData; read: boolean; createdAt: string }
   | { id: string; kind: "reaction"; data: ReactionData; read: boolean; createdAt: string }
   | { id: string; kind: "pin_new"; data: PinNewData; read: boolean; createdAt: string }
   | { id: string; kind: "pin_approved"; data: PinApprovedData; read: boolean; createdAt: string }
-  | { id: string; kind: "follow"; data: { actor: string }; read: boolean; createdAt: string }
-  | { id: string; kind: "gift"; data: { actor?: string; days?: number }; read: boolean; createdAt: string }
-  | { id: string; kind: "reward"; data: { task: string; credits: number; title: string; actor?: string }; read: boolean; createdAt: string };
+  | { id: string; kind: "follow"; data: { actor: string; avatar?: string | null }; read: boolean; createdAt: string }
+  | { id: string; kind: "gift"; data: { actor?: string; avatar?: string | null; days?: number }; read: boolean; createdAt: string }
+  | { id: string; kind: "reward"; data: { task: string; credits: number; title: string; actor?: string; avatar?: string | null }; read: boolean; createdAt: string };
 
 export async function fetchNotifications(sb: SupabaseClient): Promise<Notification[]> {
   const { data, error } = await sb.rpc("list_notifications", { p_limit: 30 });
