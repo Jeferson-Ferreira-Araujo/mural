@@ -2,7 +2,7 @@ import type { HiddenItem, Message } from "@/lib/types";
 import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
 
-const LOREM = "Lorem ipsum dolor sit amet consectetur";
+const LOREM = "——— ———— —— ————— ——— ———— ——";
 
 /**
  * Cartão com texto de enchimento (nunca o conteúdo de verdade) para desenhar o pin em blur.
@@ -16,19 +16,19 @@ function placeholderFor(h: HiddenItem): Message | null {
     case "text":
       return { id: h.id, type: "text", variant: h.variant ?? "letter", text: `${LOREM} ${LOREM}`, ...style };
     case "list":
-      return { id: h.id, type: "list", title: "Lorem ipsum", items: [{ text: "Lorem ipsum", done: false }, { text: "Dolor sit amet", done: true }, { text: "Consectetur", done: false }], ...style };
+      return { id: h.id, type: "list", title: "————— ———", items: [{ text: "———— ———", done: false }, { text: "—— ————— ——", done: true }, { text: "———— ——", done: false }], ...style };
     case "photo":
       return { id: h.id, type: "photo", caption: "", scene: "hills", ratio: h.ratio, ...style };
     case "draw":
       return { id: h.id, type: "draw", caption: "", ...style };
     case "music":
-      return { id: h.id, type: "music", title: "Lorem ipsum", artist: "Dolor sit", caption: "", playerColor: h.playerColor };
+      return { id: h.id, type: "music", title: "————— ———", artist: "———— ——", caption: "", playerColor: h.playerColor };
     case "video":
       return { id: h.id, type: "video", caption: "", playerColor: h.playerColor };
     case "voice":
       return { id: h.id, type: "voice", caption: "", playerColor: h.playerColor };
     case "place":
-      return { id: h.id, type: "place", name: "Lorem ipsum", address: "", lat: 0, lon: 0, caption: "", playerColor: h.playerColor, blank: true } as Message;
+      return { id: h.id, type: "place", name: "————— ———", address: "", lat: 0, lon: 0, caption: "", playerColor: h.playerColor, blank: true } as Message;
     default:
       return null;
   }
