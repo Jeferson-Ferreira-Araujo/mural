@@ -46,14 +46,6 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
     { id: "m4", type: "photo", scene: "hills", caption: "Parceiro de sempre! 🐾" },
     { id: "m5", type: "postit", color: "pink", text: "♡ Você tem um coração gigante e isso faz o mundo ser mais leve. Nunca mude!" },
     // --- a partir daqui, formatos PINZ+ ---
-    {
-      id: "m6",
-      type: "music",
-      title: "Aquela Música",
-      artist: "Charlie Brown Jr.",
-      caption: "Essa música é a nossa!",
-      duration: "3:45",
-    },
     { id: "m7", type: "video", caption: "Esse dia foi inesquecível!", duration: "0:24" },
     { id: "cap1", sealed: true, opensAt: new Date(nowMs + 18 * DAY + 4 * HOUR + 37 * MIN + 20_000).toISOString() },
     // --- de volta aos formatos FREE ---
@@ -89,7 +81,6 @@ function extraPool(): BoardItem[] {
     { id: "x5", type: "list", title: "Obrigado por:", items: [{ text: "Cada conselho", done: true }, { text: "As caronas", done: true }, { text: "O café da manhã", done: true }] },
     { id: "x6", type: "text", variant: "notebook", text: "Anotei aqui: você é a pessoa mais engraçada que eu conheço. Nunca perca isso." },
     { id: "x7", type: "postit", color: "pink", text: "Parabéns pelo seu dia! Você merece tudo de bom 🎂" },
-    { id: "x8", type: "music", title: "Trilha do Verão", artist: "Banda do Bairro", caption: "Toca sempre que lembro de você", duration: "4:02" },
     { id: "x9", type: "postit", color: "green", text: "Saudade das nossas tardes sem pressa." },
     { id: "x10", type: "voice", caption: "Ouve até o final, tem surpresa!", duration: "0:41" },
     { id: "x11", type: "video", caption: "Olha como a gente era novo!", duration: "0:18" },
