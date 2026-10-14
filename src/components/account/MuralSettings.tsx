@@ -18,6 +18,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [board, setBoard] = useState("");
   const [currentBoard, setCurrentBoard] = useState("");
@@ -90,6 +91,20 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       }
     }
     setBusy(false);
+    onSaved();
+  }
+
+  async function reset() {
+    setBusy(true);
+    const { error } = await getBrowserSupabase().rpc("reset_mural", { p_id: mural.id });
+    setBusy(false);
+    setConfirmReset(false);
+    if (error) {
+      setMsg({ ok: false, text: "Não foi possível resetar o mural. Tente de novo." });
+      return;
+    }
+    setMsg({ ok: true, text: "Mural resetado. Todos os recados foram apagados." });
+    window.dispatchEvent(new Event("pinz:reload-board"));
     onSaved();
   }
 
@@ -203,8 +218,30 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         </button>
       </form>
 
+      {/* resetar: apaga todos os recados do mural (os bottons e displays ficam) */}
+      <div className="mt-6 border-t border-[#e1d3ba] pt-4">
+        {confirmReset ? (
+          <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
+            <p className="text-sm font-semibold text-[#6b2a1c]">Resetar este mural?</p>
+            <p className="mt-1 text-sm text-[#6b2a1c]">Todos os recados (pins) serão perdidos. Isso não pode ser desfeito.</p>
+            <div className="mt-3 flex gap-2">
+              <button type="button" onClick={reset} disabled={busy} className="cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8a3123] disabled:opacity-60">
+                {busy ? "Resetando…" : "Sim, resetar"}
+              </button>
+              <button type="button" onClick={() => setConfirmReset(false)} disabled={busy} className={`${ghostButton} !px-4 !py-2 text-sm`}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setConfirmReset(true)} className="w-full cursor-pointer rounded-xl border border-[#e3b3a8] bg-white/60 px-4 py-3 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
+            Resetar mural
+          </button>
+        )}
+      </div>
+
       {/* o primeiro mural nunca pode ser excluído: nesse caso a área nem aparece */}
-      <div className={`mt-6 border-t border-[#e1d3ba] pt-4 ${canDelete ? "" : "hidden"}`}>
+      <div className={`mt-4 ${canDelete ? "" : "hidden"}`}>
         {!canDelete ? null : confirmDelete ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
             <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
