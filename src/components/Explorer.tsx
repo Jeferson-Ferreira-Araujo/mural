@@ -926,9 +926,27 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
     const d = decorLayout(randomMural(Date.now()));
-    setDecor(d.items);
-    setDecorBadges(d.badges);
-    setDecorBoard(BOARDS[Math.floor(Math.random() * BOARDS.length)].id);
+    const pick = BOARDS[Math.floor(Math.random() * BOARDS.length)];
+    let done = false;
+    const show = () => {
+      if (done) return;
+      done = true;
+      setDecor(d.items);
+      setDecorBadges(d.badges);
+      setDecorBoard(pick.id);
+    };
+    // o quadro só aparece depois que a imagem sorteada carregou: o navegador mantinha na tela o quadro da primeira pintura (cortiça) até a nova imagem chegar
+    const img = new Image();
+    img.onload = show;
+    img.onerror = show;
+    img.src = pick.image;
+    const t = window.setTimeout(show, 3000); // rede lenta: não deixa a tela vazia para sempre
+    return () => {
+      done = true;
+      window.clearTimeout(t);
+      img.onload = null;
+      img.onerror = null;
+    };
   }, []);
   // endereço de um mural (/nick/slug): enquanto ele abre, a lousa fica escondida (nada de mostrar outro quadro por meio segundo)
   const boardPendingNow = (!selected && (initialRef ? !openFailed : !decorBoard)) || (!!selected && resolving);
