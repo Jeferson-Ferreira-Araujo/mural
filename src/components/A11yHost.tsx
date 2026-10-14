@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { A11Y_DEFAULT, A11Y_OPEN_EVENT, applyA11y, colorMatrix, loadA11y, saveA11y, type A11y, type ColorMode } from "@/lib/a11y";
+import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./account/Modal";
 
 const COLOR_OPTIONS: { id: ColorMode; label: string; hint: string }[] = [
@@ -33,6 +34,7 @@ function Switch({ on, label, hint, onChange }: { on: boolean; label: string; hin
 export function A11yHost() {
   const [s, setS] = useState<A11y>(A11Y_DEFAULT);
   const [open, setOpen] = useState(false);
+  const synced = useRef<string | null>(null); // conta cuja escolha já foi buscada
   const cur = useRef<A11y>(A11Y_DEFAULT); // a escolha mais recente (dois toques seguidos não se desfazem)
 
   useEffect(() => {
@@ -42,7 +44,33 @@ export function A11yHost() {
     applyA11y(v);
     const o = () => setOpen(true);
     window.addEventListener(A11Y_OPEN_EVENT, o);
-    return () => window.removeEventListener(A11Y_OPEN_EVENT, o);
+    // com conta: a escolha guardada no perfil vale em qualquer aparelho; se a conta ainda não tem uma, sobe a deste aparelho
+    const sb = getBrowserSupabase();
+    const sync = (uid: string | undefined) => {
+      if (!uid || synced.current === uid) return;
+      synced.current = uid;
+      void sb.rpc("get_a11y").then(({ data, error }) => {
+        if (error) return;
+        if (data && typeof data === "object") {
+          const v = { ...A11Y_DEFAULT, ...(data as Partial<A11y>) };
+          cur.current = v;
+          setS(v);
+          saveA11y(v);
+          applyA11y(v);
+        } else if (JSON.stringify(cur.current) !== JSON.stringify(A11Y_DEFAULT)) {
+          void sb.rpc("set_a11y", { p_data: cur.current });
+        }
+      });
+    };
+    void sb.auth.getSession().then(({ data }) => sync(data.session?.user.id));
+    const { data: sub } = sb.auth.onAuthStateChange((_e, session) => {
+      if (!session) synced.current = null;
+      else sync(session.user.id);
+    });
+    return () => {
+      window.removeEventListener(A11Y_OPEN_EVENT, o);
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   function commit(next: A11y) {
@@ -50,6 +78,7 @@ export function A11yHost() {
     setS(next);
     saveA11y(next);
     applyA11y(next);
+    if (synced.current) void getBrowserSupabase().rpc("set_a11y", { p_data: next }); // logado: guarda na conta
   }
   const patch = (p: Partial<A11y>) => commit({ ...cur.current, ...p });
 
@@ -68,7 +97,7 @@ export function A11yHost() {
 
       <Modal open={open} onClose={() => setOpen(false)} title="Acessibilidade">
         <div className="space-y-5 text-[#2f2218]">
-          <p className="text-sm text-[#4a3826]">Queremos que o Pinz seja uma ótima experiência para todos. Por isso, criamos estas opções. A sua escolha fica guardada neste aparelho.</p>
+          <p className="text-sm text-[#4a3826]">Queremos que o Pinz seja uma ótima experiência para todos. Por isso, criamos estas opções. A sua escolha fica guardada neste aparelho e, se você tiver conta, vale em qualquer lugar onde entrar.</p>
 
           <section aria-label="Daltonismo">
             <h3 className="font-title text-base font-semibold">Daltonismo</h3>
