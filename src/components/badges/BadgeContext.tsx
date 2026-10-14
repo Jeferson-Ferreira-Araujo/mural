@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { spotLight } from "@/lib/spot";
 import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
-import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setDisplayHidden, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARD_EM, NATURAL_W, RATIO, shapeOfStyle } from "@/lib/displayShape";
 import { DisplayCard, splitDisplayId } from "../widgets";
@@ -48,10 +48,14 @@ type Ctx = {
   canDisplays: boolean;
   /** coloca o display (id "tipo:estilo") no centro de um espaço livre do mural */
   placeDisplayAtSlot: (id: string, slot: number) => void;
+  /** tira o display do mural (detalhe) */
+  removeDisplay: (id: string) => void;
+  /** liga/desliga o segredo do display (PINZ+); devolve se deu certo */
+  setDisplaySecret: (id: string, hidden: boolean) => Promise<boolean>;
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
@@ -450,6 +454,13 @@ export function BadgeProvider({
     });
   }, [setBadges]);
 
+  const setDisplaySecret = useCallback(async (id: string, hidden: boolean) => {
+    const ok = await setDisplayHidden(getBrowserSupabase(), id, hidden);
+    if (ok) setBadges((l) => l.map((b) => (b.id === id ? { ...b, hidden } : b)));
+    else live.current.notify(hidden ? "Segredo é do PINZ+." : "Não foi possível mudar agora.");
+    return ok;
+  }, [setBadges]);
+
   /** Inclina na tela enquanto a barra é arrastada (ainda sem salvar). */
   const tilt = useCallback((id: string, deg: number) => {
     const snap = [0, 90, -90, 180, -180].find((t) => Math.abs(deg - t) <= 4);
@@ -709,7 +720,7 @@ export function BadgeProvider({
     void minOverlap;
   }, []);
   removeOverRef.current = removeOver;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, removeById, setDisplaySecret]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (

@@ -92,14 +92,23 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-id={b.id}
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
-        {...(!editable ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
-        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : "pointer-events-auto cursor-pointer"}`}
+        {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
+        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : b.hidden ? "" : "pointer-events-auto cursor-pointer"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
         <div className="pointer-events-none" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
-          {b.data ? <DisplayCard data={b.data} badgeId={b.id} /> : null}
+          {b.hidden && !editable ? (
+            // display em segredo: quem visita vê só uma tampa borrada (os dados nem chegam ao aparelho)
+            <div className="grid place-items-center rounded-[1.2em] border border-white/40 bg-[#e9d8b6]/60 shadow-[0_0.2em_0.8em_rgba(30,12,0,.3)] backdrop-blur-md" style={{ width: `${NATURAL_W[shape]}em`, height: `${shape === "tall" ? 18 : 12}em` }}>
+              <svg viewBox="0 0 24 24" className="size-[3.2em] text-[#4a3826]/70" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
+              </svg>
+            </div>
+          ) : b.data ? (
+            <DisplayCard data={b.data} badgeId={b.id} />
+          ) : null}
         </div>
       </div>
     );

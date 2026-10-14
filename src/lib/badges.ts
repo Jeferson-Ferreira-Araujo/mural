@@ -119,7 +119,13 @@ export const baseEmOfBadge = (key: number, data?: { style?: string | null } | nu
 export const ratioOfBadge = (key: number, data?: { style?: string | null } | null) => (isDisplayKey(key) ? RATIO[shapeOfStyle(data?.style)] : (badgeDef(key)?.ratio ?? 1));
 export const ratioOfKey = (key: number) => (isDisplayKey(key) ? 2 : (badgeDef(key)?.ratio ?? 1)); // widgets: largura 2 × altura 1
 
-export type PlacedBadge = { id: string; key: number; /** botton comum ou display da loja */ kind?: "badge" | "display"; /** dados do display (o texto do dia já vem pronto do servidor) */ data?: DisplayPayload | null; /** espaços do quadro que o display cobre (ficam sem receber pins) */ slots?: number[]; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean };
+export type PlacedBadge = { id: string; key: number; /** botton comum ou display da loja */ kind?: "badge" | "display"; /** dados do display (o texto do dia já vem pronto do servidor) */ data?: DisplayPayload | null; /** espaços do quadro que o display cobre (ficam sem receber pins) */ slots?: number[]; /** tamanho em % do tamanho de sempre: 100 (o menor) a 200 (o dobro) */ scale?: number; /** inclinação em graus: negativo = anti-horário, positivo = horário */ rotation?: number; /** centro, em % da área útil do quadro */ x: number; y: number; /** mural compartilhado: false = foi a outra pessoa quem colocou (só quem colocou mexe) */ mine?: boolean; /** display em segredo: visitantes veem só uma tampa borrada (os dados nem chegam a eles) */ hidden?: boolean };
+
+/** Liga ou desliga o segredo de um display (PINZ+). */
+export async function setDisplayHidden(sb: SupabaseClient, id: string, hidden: boolean): Promise<boolean> {
+  const { error } = await sb.rpc("set_display_hidden", { p_id: id, p_hidden: hidden });
+  return !error;
+}
 
 /** Botons do mural (null = sem acesso). */
 export async function fetchBadges(sb: SupabaseClient, ref: MuralRef, token: string | null): Promise<PlacedBadge[] | null> {

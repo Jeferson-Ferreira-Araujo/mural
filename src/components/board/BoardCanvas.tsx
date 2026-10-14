@@ -115,14 +115,14 @@ export function BoardCanvas({
     }
   }
   const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
-  const { removeOver, badges } = useBadges();
+  const { removeOver, badges, editable: badgesEditable } = useBadges();
   // espaços cobertos por pins da loja (relógio, clima…): ficam sem receber post-its, fotos e vídeos
   const covered = new Set(badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])));
   // fila do detalhe: pins e widgets na ordem em que aparecem no mural (o widget entra no lugar do(s) espaço(s) que cobre)
   const detailList: DetailEntry[] = (() => {
     const keyed: { k: number; e: DetailEntry }[] = placed.map((it) => ({ k: it.slot ?? 0, e: it }));
     for (const b of badges) {
-      if (b.kind !== "display" || !b.data) continue;
+      if (b.kind !== "display" || !b.data || (b.hidden && !badgesEditable)) continue;
       const k = b.slots && b.slots.length ? Math.min(...b.slots) : Math.floor((b.y / 100) * rows) * cols + Math.floor((b.x / 100) * cols);
       keyed.push({ k: k - 0.5, e: { id: b.id, widget: true, data: b.data } });
     }

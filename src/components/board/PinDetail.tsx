@@ -103,7 +103,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   useBackClose(open, onClose); // voltar (Android) fecha o detalhe em vez de sair do mural
   const mod = useModeration();
   const react = useReactionsAccess();
-  const { badges: placedBadges } = useBadges();
+  const { badges: placedBadges, editable: badgesEditable, removeDisplay, setDisplaySecret } = useBadges();
   const [over, setOver] = useState<Over[]>([]);
   const flags = useFeatureFlags();
   const [busy, setBusy] = useState(false);
@@ -220,7 +220,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     setShowSecret(false);
   }, [item?.id, secretOn]);
   // leitura de livro: o dono também compartilha o display como imagem (o nome parado, sem letreiro)
-  const bookShare = !!mod && !!widget && widget.data.product === "book";
+  // o dono compartilha qualquer display como imagem; os de frase/versículo já têm o botão de compartilhar o texto
+  const ownWidget = badgesEditable && !!widget;
+  const widgetHidden = !!widget && !!placedBadges.find((b) => b.id === widget.id)?.hidden;
+  const bookShare = ownWidget && !wText;
   const shareable = !!mod && !!item && !isSealed(item) && !isHidden(item) && !item.ownerHidden && !item.pending;
 
   async function sharePin() {
@@ -362,6 +365,23 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               Excluir meu PIN
             </button>
           )}
+          {ownWidget && widget && (
+            <div className="flex w-full flex-wrap justify-center gap-2" role="group" aria-label="Opções deste display">
+              <button type="button" disabled={busy} aria-label="Excluir display" title="Excluir display" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
+                <Trash />
+                <span className="hidden sm:inline">Excluir display</span>
+              </button>
+              <button
+                type="button"
+                disabled={busy || mod?.plan !== "full"}
+                title={mod?.plan === "full" ? "" : "Segredo é do PINZ+"}
+                onClick={() => void run(() => setDisplaySecret(widget.id, !widgetHidden), false)}
+                className={ghost}
+              >
+                {mod?.plan !== "full" ? "Segredo (PINZ+)" : widgetHidden ? "Desabilitar segredo" : "Habilitar segredo"}
+              </button>
+            </div>
+          )}
           {mod && item && !isSealed(item) && !isHidden(item) && (
             <div className="flex w-full flex-col items-center gap-2" role="group" aria-label="Moderar este pin">
               <div className="flex w-full flex-wrap justify-center gap-2">
@@ -450,6 +470,29 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 void run(() => (mod ? mod.remove(item.id) : deleteOwn(item.id)), true);
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
+            >
+              Excluir
+            </button>
+          </div>
+        </div>
+      </Modal>
+    )}
+    {ownWidget && widget && (
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir display" label="Excluir display">
+        <div className="space-y-4">
+          <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este display do mural? Você pode colocá-lo de novo depois.</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setConfirmDelete(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmDelete(false);
+                removeDisplay(widget.id);
+                onClose();
+              }}
+              className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022]"
             >
               Excluir
             </button>
