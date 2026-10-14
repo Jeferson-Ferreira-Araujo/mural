@@ -1,3 +1,4 @@
+import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { Brand } from "./Brand";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import type { ViewProps } from "./viewProps";
@@ -93,6 +94,18 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </ul>
       )}
 
+      {/* acessibilidade: daltonismo, texto maior, contraste… (fica guardado neste aparelho) */}
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))}
+        className="mx-auto mt-[1.2em] flex cursor-pointer items-center gap-[0.5em] rounded-xl px-[0.8em] py-[0.5em] text-[0.82em] font-semibold text-[#6b5440] transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
+      >
+        <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="4.5" r="1.8" />
+          <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
+        </svg>
+        Acessibilidade
+      </button>
     </aside>
   );
 }

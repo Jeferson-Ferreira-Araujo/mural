@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, Indie_Flower, Kalam, Patrick_Hand, Playfair_Display, Plus_Jakarta_Sans, Reenie_Beanie, Silkscreen } from "next/font/google";
+import { Atkinson_Hyperlegible, Caveat, Indie_Flower, Kalam, Patrick_Hand, Playfair_Display, Plus_Jakarta_Sans, Reenie_Beanie, Silkscreen } from "next/font/google";
+import { A11yHost } from "@/components/A11yHost";
 import { PwaRegister } from "@/components/PwaRegister";
+import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
 
@@ -13,6 +15,8 @@ const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
 const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--font-kalam" });
 const patrick = Patrick_Hand({ subsets: ["latin"], weight: "400", variable: "--font-patrick" });
 const indie = Indie_Flower({ subsets: ["latin"], weight: "400", variable: "--font-indie" });
+// fonte de leitura fácil (Acessibilidade): só é baixada quando a pessoa liga essa opção
+const atkinson = Atkinson_Hyperlegible({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-atkinson", preload: false });
 const reenie = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
 
 export const metadata: Metadata = {
@@ -40,12 +44,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${jakarta.variable} ${playfair.variable} ${silkscreen.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable}`}
+      className={`${jakarta.variable} ${playfair.variable} ${silkscreen.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable} ${atkinson.variable}`}
     >
       <body>
         {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}
         <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1")document.documentElement.dataset.intro="play"}catch(e){}` }} />
+        {/* acessibilidade: o tamanho do texto, a fonte e o contraste escolhidos já valem na primeira pintura */}
+        <script dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT }} />
         {children}
+        <A11yHost />
         <PwaRegister />
       </body>
     </html>

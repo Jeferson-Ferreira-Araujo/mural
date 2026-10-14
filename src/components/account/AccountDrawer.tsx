@@ -11,6 +11,7 @@ import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
+import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
 import { FollowingModal, VisitorsModal } from "./PeopleModals";
@@ -306,6 +307,20 @@ export function AccountDrawer({
                   }
                 />
               )}
+              <Row
+                onClick={() => {
+                  onClose();
+                  window.setTimeout(() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT)), 300);
+                }}
+                label="Acessibilidade"
+                hint="Daltonismo, texto maior e contraste"
+                icon={
+                  <svg {...ic}>
+                    <circle cx="12" cy="4.5" r="1.8" />
+                    <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
+                  </svg>
+                }
+              />
               <Row
                 onClick={() => setModal("profile")}
                 label="Perfil"

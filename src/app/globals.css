@@ -280,3 +280,41 @@ body.pin-dragging * {
     animation: none !important;
   }
 }
+
+
+/* ---------- acessibilidade (ver src/lib/a11y.ts) ---------- */
+/* fonte de leitura fácil: troca a letra de toda a interface e dos pins */
+html[data-a11y-font="1"],
+html[data-a11y-font="1"] body,
+html[data-a11y-font="1"] body * {
+  font-family: var(--font-atkinson), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif !important;
+  font-variant-ligatures: none;
+}
+/* mais espaço entre letras, palavras e linhas */
+html[data-a11y-spacing="1"] body,
+html[data-a11y-spacing="1"] body * {
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.12em !important;
+}
+html[data-a11y-spacing="1"] body p,
+html[data-a11y-spacing="1"] body li,
+html[data-a11y-spacing="1"] body label {
+  line-height: 1.65 !important;
+}
+/* menos animações */
+html[data-a11y-calm="1"] *,
+html[data-a11y-calm="1"] *::before,
+html[data-a11y-calm="1"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+/* contraste alto: bordas e foco mais marcados */
+html[data-a11y-contrast="1"] :focus-visible {
+  outline: 3px solid #000 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px #fff !important;
+}

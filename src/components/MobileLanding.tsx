@@ -7,6 +7,7 @@ import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
 import { authIntent } from "./AuthForm";
+import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import type { ViewProps } from "./viewProps";
 
 /**
@@ -50,6 +51,12 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       <img src={look.image} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#140a04]/70 via-transparent to-[#140a04]/60" />
       <h1 className="sr-only">Pinz</h1>
+      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label="Acessibilidade" title="Acessibilidade" className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-full bg-[#17110c]/70 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur transition active:scale-95">
+        <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="4.5" r="1.8" />
+          <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
+        </svg>
+      </button>
 
       {/* logo grande, frase de mão e apoio, no topo */}
       <header className="relative z-20 shrink-0 px-5 pt-[max(0.6rem,env(safe-area-inset-top))] text-center">
