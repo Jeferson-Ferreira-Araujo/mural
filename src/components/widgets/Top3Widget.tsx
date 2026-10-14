@@ -16,6 +16,15 @@ const MEDALS = [
   { bg: "linear-gradient(145deg,#eab98a,#b76e35)", ink: "#3e2008" },
 ];
 
+/** Faíscas decorativas ao lado do tema: três riscos que saem do título, iguais nos dois lados (espelhados). */
+function Spark({ side, color, size }: { side: "left" | "right"; color: string; size: number }) {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" className="shrink-0" style={{ width: `${size}em`, height: `${size}em`, transform: side === "left" ? "scaleX(-1)" : undefined }} fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round">
+      <path d="M6 8 L12 4 M8 13 L16 12 M7 18 L13 21" />
+    </svg>
+  );
+}
+
 /**
  * Top 3: o tema que a pessoa digitou (ex.: "Minhas comidas favoritas") e os três itens, de 1º a 3º lugar.
  * Textos parados, em até duas linhas. Três estilos, em formato retangular ou quadrado; o 1º lugar ganha destaque dourado com coroa.
@@ -32,14 +41,10 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
   return (
     <WidgetFrame frame={frame} label="Top 3" shape={shape}>
       <div className={`absolute inset-0 flex flex-col ${square ? "px-[0.8em] pt-[0.8em] pb-[0.85em]" : "px-[1.1em] pt-[0.75em] pb-[0.85em]"}`} style={{ background: sk.bg, color: sk.ink }}>
-        {/* cabeçalho: troféu num círculo, o tema em destaque e um grifo embaixo */}
-        <div className="flex items-center gap-[0.55em]">
-          <span aria-hidden className={`grid shrink-0 place-items-center rounded-full ${square ? "size-[2.1em]" : "size-[2.5em]"}`} style={{ background: sk.row, boxShadow: `inset 0 0 0 0.07em ${sk.edge}, 0 0.12em 0.35em rgba(0,0,0,.18)` }}>
-            <svg viewBox="0 0 24 24" className={square ? "size-[1.2em]" : "size-[1.45em]"} fill="none" stroke={sk.title} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H5v1a3 3 0 0 0 3 3M16 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7" />
-            </svg>
-          </span>
-          <div className="relative min-w-0 flex-1 text-center">
+        {/* cabeçalho: o tema em destaque, com um grifo embaixo e faíscas dos dois lados */}
+        <div className="flex items-center justify-center gap-[0.4em]">
+          <Spark side="left" color={gold} size={square ? 1.2 : 1.5} />
+          <div className="min-w-0 flex-1 text-center">
             <p className={`line-clamp-2 leading-[1.05] font-black [overflow-wrap:anywhere] ${square ? "text-[1.2em]" : "text-[1.55em]"}`} style={{ color: sk.title, textShadow: sk.glow }} title={theme}>
               {theme}
             </p>
@@ -47,10 +52,7 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
               <path d="M2 5 Q 50 0 98 3" fill="none" stroke={gold} strokeWidth="3.4" strokeLinecap="round" />
             </svg>
           </div>
-          {/* faíscas */}
-          <svg aria-hidden viewBox="0 0 24 24" className={`shrink-0 ${square ? "size-[1.1em]" : "size-[1.4em]"}`} fill="none" stroke={gold} strokeWidth="2.4" strokeLinecap="round">
-            <path d="M8 6l-3-3M13 4V1M18 8l3-2M7 14l-4 1" />
-          </svg>
+          <Spark side="right" color={gold} size={square ? 1.2 : 1.5} />
         </div>
         <ol className={`mt-[0.5em] grid min-h-0 flex-1 grid-rows-3 ${square ? "gap-[0.4em]" : "gap-[0.45em]"}`}>
           {list.map((text, i) => (
@@ -61,11 +63,11 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
             >
               <span className="relative shrink-0">
                 {i === 0 && (
-                  <svg aria-hidden viewBox="0 0 24 14" className="absolute -top-[0.7em] -left-[0.2em] z-10 w-[1.2em]" fill={gold} stroke="#b97a0a" strokeWidth="1" strokeLinejoin="round" style={{ transform: "rotate(-14deg)" }}>
+                  <svg aria-hidden viewBox="0 0 24 14" className="absolute -top-[0.62em] left-1/2 z-10 w-[1.1em] -translate-x-1/2" fill={gold} stroke="#b97a0a" strokeWidth="1" strokeLinejoin="round">
                     <path d="M2 12 L1 3 L7 7 L12 1 L17 7 L23 3 L22 12 Z" />
                   </svg>
                 )}
-                <span aria-label={`${i + 1}º lugar`} className={`grid place-items-center rounded-full font-black ${square ? "size-[1.9em] text-[1.05em]" : "size-[2.2em] text-[1.25em]"}`} style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.1em rgba(255,255,255,.55), inset 0 -0.12em 0.2em rgba(0,0,0,.22), 0 0.15em 0.3em rgba(0,0,0,.3)", textShadow: "0 0.05em 0 rgba(255,255,255,.45)" }}>
+                <span aria-label={`${i + 1}º lugar`} className={`flex items-center justify-center rounded-full leading-none font-black tabular-nums ${square ? "size-[1.9em] text-[1.05em]" : "size-[2.2em] text-[1.25em]"}`} style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
                   {i + 1}
                 </span>
               </span>
