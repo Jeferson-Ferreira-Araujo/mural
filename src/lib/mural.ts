@@ -194,6 +194,13 @@ export function uniqueSlug(title: string, existing: string[]): string {
 
 export type ProfileHit = { nickname: string; murals: number; avatar?: string | null; /** conta PINZ+ */ plus?: boolean };
 
+/** Os murais que a pessoa mais abriu (só ela vê essa lista). */
+export async function myTopProfiles(sb: SupabaseClient, limit = 5): Promise<ProfileHit[]> {
+  const { data, error } = await sb.rpc("my_top_profiles", { p_limit: limit });
+  if (error || !Array.isArray(data)) return [];
+  return data as ProfileHit[];
+}
+
 /** Busca pessoas pelo nickname (só quem tem mural). */
 export async function searchProfiles(sb: SupabaseClient, query: string): Promise<ProfileHit[]> {
   const { data, error } = await sb.rpc("search_profiles", { p_query: query });

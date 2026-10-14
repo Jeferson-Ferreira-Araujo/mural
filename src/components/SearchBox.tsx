@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState, type KeyboardEvent } from "react";
 import { Avatar } from "./Avatar";
-import { cleanNickname, searchProfiles, type ProfileHit } from "@/lib/mural";
+import { cleanNickname, myTopProfiles, searchProfiles, type ProfileHit } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { Tone } from "./viewProps";
 
@@ -15,6 +15,7 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
   const [searched, setSearched] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
+  const [top, setTop] = useState<ProfileHit[]>([]); // os murais que a pessoa mais abre
 
   const clean = cleanNickname(q.replace(/^@/, ""));
 
@@ -28,7 +29,11 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
     const t = setTimeout(async () => {
       const res = await searchProfiles(getBrowserSupabase(), clean);
       if (cancelled) return;
-      setHits(res);
+      const rank = (n: string) => {
+        const k = top.findIndex((t) => t.nickname === n);
+        return k < 0 ? 99 : k;
+      };
+      setHits([...res].sort((a, b) => rank(a.nickname) - rank(b.nickname))); // sort estável: os mais acessados vêm antes, o resto fica na ordem da busca
       setSearched(true);
       setActive(-1);
     }, 250);
@@ -36,7 +41,11 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
       cancelled = true;
       clearTimeout(t);
     };
-  }, [clean]);
+  }, [clean, top]);
+
+  function loadTop() {
+    void myTopProfiles(getBrowserSupabase()).then(setTop);
+  }
 
   function pick(nick: string) {
     setQ("");
@@ -47,23 +56,25 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "ArrowDown" && hits.length) {
+    if (e.key === "ArrowDown" && shown.length) {
       e.preventDefault();
       setOpen(true);
-      setActive((a) => (a + 1) % hits.length);
-    } else if (e.key === "ArrowUp" && hits.length) {
+      setActive((a) => (a + 1) % shown.length);
+    } else if (e.key === "ArrowUp" && shown.length) {
       e.preventDefault();
-      setActive((a) => (a <= 0 ? hits.length - 1 : a - 1));
+      setActive((a) => (a <= 0 ? shown.length - 1 : a - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const target = hits[active] ?? (hits.length === 1 ? hits[0] : undefined);
+      const target = shown[active] ?? (shown.length === 1 ? shown[0] : undefined);
       if (target) pick(target.nickname);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
   }
 
-  const showList = open && clean.length >= 2 && searched;
+  const showTop = open && clean.length < 2 && top.length > 0;
+  const showList = (open && clean.length >= 2 && searched) || showTop;
+  const shown = showTop ? top : hits;
 
   return (
     <div className="relative">
@@ -88,7 +99,10 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
             setQ(e.target.value);
             setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            loadTop();
+          }}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           onKeyDown={onKeyDown}
           autoComplete="off"
@@ -107,12 +121,17 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
           role="listbox"
           className="absolute inset-x-0 z-30 mt-[0.4em] max-h-[16em] overflow-auto rounded-[0.8em] border border-[#d9c9ad] bg-[#fbf6ea] p-[0.35em] text-[#2f2218] shadow-[0_0.8em_2em_rgba(30,12,0,.35)]"
         >
-          {hits.length === 0 ? (
+          {showTop && (
+            <li role="presentation" className="px-[0.8em] pt-[0.4em] pb-[0.3em] text-[0.72em] font-bold tracking-wide text-[#8a7b69] uppercase">
+              Mais acessados
+            </li>
+          )}
+          {shown.length === 0 ? (
             <li role="presentation" className="px-[0.9em] py-[0.8em] text-[0.9em] text-[#6b5440]">
               Nenhuma pessoa encontrada.
             </li>
           ) : (
-            hits.map((h, i) => (
+            shown.map((h, i) => (
               <li key={h.nickname} role="presentation">
                 <button
                   id={`${id}-opt-${i}`}
