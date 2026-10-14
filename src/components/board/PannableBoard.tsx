@@ -5,6 +5,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNo
 /** O "mundo" do quadro (proporção 3:2 da imagem). O conteúdo é desenhado nesse tamanho e depois movido/ampliado por transform. */
 export const WORLD_W = 1200;
 export const WORLD_H = 800;
+/** Duração do zoom dos botões Aproximar/Afastar (ms): mais longa e com entrada e saída suaves, para o movimento ficar fluido. */
+const ZOOM_MS = 460;
 
 const DRAG_PX = 6; // abaixo disso é toque, não arrasto
 const DOUBLE_TAP_MS = 300;
@@ -84,7 +86,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         window.clearTimeout(outRaf.current);
         outRaf.current = 0;
       }
-      el.style.transition = animate ? "transform .24s cubic-bezier(.2,.8,.2,1)" : "none";
+      el.style.transition = animate ? `transform ${ZOOM_MS}ms cubic-bezier(.45,.05,.2,1)` : "none";
       // durante a animação as sombras e filtros saem (são o que mais pesa com dezenas de pins na tela): zoom sem travar
       if (animate) {
         el.classList.add("zooming");
@@ -101,7 +103,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
               if (world.current) world.current.style.willChange = "transform";
             }, 34);
           } else w.classList.remove("zooming");
-        }, 320);
+        }, ZOOM_MS + 80);
       }
       const write = () => {
         const v = view.current;
@@ -123,7 +125,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         ? null
         : window.setTimeout(() => {
             if (world.current) world.current.style.willChange = "";
-          }, animate ? 360 : 240);
+          }, animate ? ZOOM_MS + 120 : 240);
       if (out !== zoomedOutRef.current) {
         zoomedOutRef.current = out;
         setZoomedOut(out);
