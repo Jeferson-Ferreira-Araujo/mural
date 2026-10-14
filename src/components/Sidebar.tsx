@@ -47,6 +47,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         <Brand className="h-[clamp(6.4rem,17dvh,13rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural digital</p>}
+      {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
 
