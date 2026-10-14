@@ -82,7 +82,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
 
       {/* rodapé: criar o mural, entrar e o que o Pinz oferece */}
       <section className="relative z-30 shrink-0 rounded-t-[2rem] bg-[#f6efe0] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-[#2f2218] shadow-[0_-0.5rem_1.6rem_rgba(0,0,0,.45)]">
-        <button type="button" onClick={() => show("signup")} className="flex h-14 w-full cursor-pointer items-center gap-3 rounded-2xl bg-[#d9a21b] px-3 text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(150,90,0,.4)] transition hover:bg-[#e6ae22] active:scale-[0.99]">
+        <button type="button" onClick={() => show("signup")} className="flex h-14 w-full cursor-pointer items-center gap-3 rounded-2xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-3 text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(190,110,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-[0.99]">
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2a1c12] text-[#f6efe0]">
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" aria-hidden>
               <path d="M12 5v14M5 12h14" />
