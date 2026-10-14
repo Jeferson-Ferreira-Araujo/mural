@@ -85,8 +85,6 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "sky", name: "Sky", hint: "Visual leve e colorido." },
     { id: "nature", name: "Nature", hint: "Paisagem dinâmica." },
     { id: "pixel", name: "Pixel Weather", hint: "Estilo retrô e divertido." },
-    { id: "rain", name: "Chuva", hint: "Visual imersivo." },
-    { id: "night", name: "Night", hint: "Estilo noturno automático." },
   ],
 };
 export const stylesOf = (product: string) => WIDGET_STYLES[product === "bible" || product === "motivation" ? "text" : product] ?? [];
