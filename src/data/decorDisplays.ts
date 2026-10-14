@@ -168,10 +168,23 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     }
     return true;
   };
+  // o miolo de cada espaço (o meio do pin, onde fica o texto ou a foto): o botton não pode cobri-lo
+  const coversCenter = (x: number, y: number, w: number, h: number) => {
+    for (let rr = 0; rr < ROWS; rr++) {
+      for (let cc = 0; cc < COLS; cc++) {
+        const cx = ((cc + 0.5) / COLS) * 100;
+        const cy = ((rr + 0.5) / ROWS) * 100;
+        if (Math.abs(cx - x) < w / 2 + 100 / COLS / 5 && Math.abs(cy - y) < h / 2 + 100 / ROWS / 5) return true;
+      }
+    }
+    return false;
+  };
   const placed: { x: number; y: number; w: number; h: number }[] = [];
   const buttons: PlacedBadge[] = [];
   const keys = shuffle(BADGES);
-  for (const p of shuffle(points)) {
+  // várias passadas pelos pontos (com outro tamanho a cada tentativa): os que cairiam no centro de um pin são descartados e o total chega a 15
+  const tries = [...shuffle(points), ...shuffle(points), ...shuffle(points), ...shuffle(points)];
+  for (const p of tries) {
     if (buttons.length >= 15) break;
     const def = keys[buttons.length];
     const scale = pick(SCALES);
@@ -180,6 +193,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     const x = Math.min(96 - w / 2, Math.max(4 + w / 2, p.x + (Math.random() * 2 - 1)));
     const y = Math.min(94 - h / 2, Math.max(6 + h / 2, p.y + (Math.random() * 2 - 1)));
     if (displayAreas.some((d) => x + w / 2 > d.l && x - w / 2 < d.r && y + h / 2 > d.t && y - h / 2 < d.b)) continue; // botton nunca fica sobre display
+    if (coversCenter(x, y, w, h / 1.6)) continue; // botton não tampa o miolo de um pin: atrapalha a leitura
     if (!touchesOnlyOk(x, y, w, h)) continue; // botton nunca fica sobre lista, desenho, mapa, vídeo, música, voz ou cápsula (no mural de exemplo)
     if (placed.some((o) => Math.abs(o.x - x) < ((o.w + w) / 2) * 1.2 && Math.abs(o.y - y) < ((o.h + h) / 2) * 1.2)) continue;
     placed.push({ x, y, w, h });
