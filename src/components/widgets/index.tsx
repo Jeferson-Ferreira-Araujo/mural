@@ -82,9 +82,9 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "red", name: "Vermelho", hint: "Vinho e dourado." },
   ],
   weather: [
-    { id: "sky", name: "Sky", hint: "Visual leve e colorido." },
-    { id: "nature", name: "Nature", hint: "Paisagem dinâmica." },
-    { id: "pixel", name: "Pixel Weather", hint: "Estilo retrô e divertido." },
+    { id: "nature", name: "Natural", hint: "Paisagem que muda com o tempo." },
+    { id: "pixel", name: "Pixel Art", hint: "Estilo retrô e divertido." },
+    { id: "tech", name: "Tecnológico", hint: "Painel escuro com brilho neon." },
   ],
 };
 export const stylesOf = (product: string) => WIDGET_STYLES[product === "bible" || product === "motivation" ? "text" : product] ?? [];

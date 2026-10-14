@@ -4,7 +4,7 @@ import { createContext, useContext, useId, type ReactNode } from "react";
 const Uid = createContext("");
 
 /** Paisagens dos widgets (tela 200 × 100). Cada uma preenche o cartão inteiro. */
-export type SceneId = "dawn" | "day" | "dusk" | "night" | "mountains" | "beach" | "lake" | "pixel" | "rain" | "cloudy" | "snow" | "fog" | "storm" | "parchment" | "floral" | "forest";
+export type SceneId = "dawn" | "day" | "dusk" | "night" | "mountains" | "beach" | "lake" | "pixel" | "rain" | "cloudy" | "snow" | "fog" | "storm" | "parchment" | "floral" | "forest" | "tech";
 
 /** Cor do texto sobre cada paisagem (clara onde o fundo é escuro). */
 export const INK: Record<SceneId, { color: string; shadow: string }> = {
@@ -24,6 +24,7 @@ export const INK: Record<SceneId, { color: string; shadow: string }> = {
   parchment: { color: "#3a2a12", shadow: "0 0.04em 0.15em rgba(255,244,214,.6)" },
   floral: { color: "#5a1f3a", shadow: "0 0.04em 0.15em rgba(255,235,242,.7)" },
   forest: { color: "#fff6dc", shadow: "0 0.05em 0.25em rgba(5,30,10,.65)" },
+  tech: { color: "#c8f6ff", shadow: "0 0 0.5em rgba(0,220,255,.5)" },
 };
 
 const STARS = Array.from({ length: 46 }, (_, i) => ({ x: (i * 53 + 17) % 197, y: (i * 37 + 5) % 58, r: 0.4 + ((i * 7) % 5) * 0.14 }));
@@ -175,6 +176,23 @@ function SceneInner({ id }: { id: SceneId }) {
             <rect x="136" y="67" width="3" height="4" fill="#ffd36a" />
           </g>
         </Sky>
+      );
+    case "tech":
+      // painel tecnológico: fundo azul-marinho com grade fina e brilho ciano
+      return (
+        <g>
+          <Sky id="s-tech" stops={[[0, "#06101f"], [1, "#0d2440"]]}>
+            {[25, 50, 75, 100, 125, 150, 175].map((x) => (
+              <line key={`v${x}`} x1={x} y1="0" x2={x} y2="100" stroke="#5cf0ff" strokeOpacity=".07" strokeWidth=".6" />
+            ))}
+            {[25, 50, 75].map((y) => (
+              <line key={`h${y}`} x1="0" y1={y} x2="200" y2={y} stroke="#5cf0ff" strokeOpacity=".07" strokeWidth=".6" />
+            ))}
+            <circle cx="168" cy="50" r="40" fill="#18c8e8" opacity=".1" />
+            <circle cx="168" cy="50" r="26" fill="none" stroke="#5cf0ff" strokeOpacity=".35" strokeWidth=".8" strokeDasharray="3 3" />
+            <path d="M0 99.4 H200" stroke="#5cf0ff" strokeOpacity=".5" strokeWidth="1.2" />
+          </Sky>
+        </g>
       );
     case "pixel":
       return (
