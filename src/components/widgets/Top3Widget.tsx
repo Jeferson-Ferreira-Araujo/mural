@@ -67,8 +67,11 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
                     <path d="M2 12 L1 3 L7 7 L12 1 L17 7 L23 3 L22 12 Z" />
                   </svg>
                 )}
-                <span aria-label={`${i + 1}º lugar`} className={`flex size-full items-center justify-center rounded-full leading-none font-black tabular-nums ${square ? "text-[1.05em]" : "text-[1.25em]"}`} style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
-                  {i + 1}
+                {/* o número tem o tamanho do próprio círculo (cqh) e desce um pouco: os algarismos ficam acima do centro da linha de texto */}
+                <span aria-label={`${i + 1}º lugar`} className="block size-full rounded-full [container-type:size]" style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
+                  <span className="grid size-full place-items-center font-black tabular-nums" style={{ fontSize: "50cqh", lineHeight: 1, paddingTop: "0.06em" }}>
+                    {i + 1}
+                  </span>
                 </span>
               </span>
               <span className={`line-clamp-2 min-w-0 flex-1 leading-tight font-extrabold [overflow-wrap:anywhere] ${square ? "text-[0.98em]" : "text-[1.2em]"}`} style={{ color: text ? sk.ink : sk.sub }}>
