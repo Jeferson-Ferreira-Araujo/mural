@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { spotLight } from "@/lib/spot";
 import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
-import { addBadge, addDisplay, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
+import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARD_EM, NATURAL_W, RATIO, shapeOfStyle } from "@/lib/displayShape";
 import { DisplayCard, splitDisplayId } from "../widgets";
@@ -129,6 +129,21 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   const cy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
 
   if (coversBadge(cx, cy)) return { kind: "badge" };
+  // botton só fica sobre foto, post-it e papel: nunca sobre mapa, vídeo, música, voz, desenho, cápsula nem display
+  const br = { left: cx - w / 2, right: cx + w / 2, top: cy - h / 2, bottom: cy + h / 2 };
+  const share = (o: { left: number; right: number; top: number; bottom: number }) => {
+    const iw = Math.min(br.right, o.right) - Math.max(br.left, o.left);
+    const ih = Math.min(br.bottom, o.bottom) - Math.max(br.top, o.top);
+    return iw > 0 && ih > 0 ? (iw * ih) / (w * h) : 0; // quanto do botton cobre o outro item
+  };
+  for (const ch of layer.children) {
+    if (ch !== ignore && (ch as HTMLElement).dataset.badgeKind === "display" && share(ch.getBoundingClientRect()) > 0.15) return { kind: "physical" };
+  }
+  for (const fp of document.querySelectorAll<HTMLElement>("[data-pin-id]")) {
+    if (fp.getBoundingClientRect().width <= 0 || fp.offsetParent === null) continue;
+    if (BADGE_OK_TYPES.has(fp.dataset.pinType ?? "")) continue;
+    if (share(fp.getBoundingClientRect()) > 0.15) return { kind: "physical" };
+  }
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
 
@@ -296,7 +311,7 @@ export function BadgeProvider({
           return;
         }
         if (drop.kind === "physical") {
-          notify("Não dá para colocar um botton sobre um pin: coloque em volta dele.");
+          notify("Botton só pode ficar sobre fotos, post-its e papéis. Em mapas, vídeos, músicas, vozes, desenhos e displays não vale: coloque em volta.");
           return sendBack(at);
         }
         if (drop.kind === "badge") {
@@ -503,7 +518,7 @@ export function BadgeProvider({
         }
         if (drop.kind === "physical") {
           back();
-          return notify("Não há espaço para aumentar: o botton cobriria um pin.");
+          return notify("Não há espaço para aumentar: o botton cobriria um pin ou display onde ele não pode ficar.");
         }
         if (drop.kind === "badge") {
           back();
