@@ -70,7 +70,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
             <path d="m20 6-7 3M19 14l-6-1.500" />
           </svg>
         </p>
-        <p className="mx-auto mt-1 max-w-[22rem] text-[13px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>
+        <p className="mx-auto mt-1 max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
