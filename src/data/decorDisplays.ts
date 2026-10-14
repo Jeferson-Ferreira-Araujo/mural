@@ -137,12 +137,18 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     };
   });
   // 15 bottons de tamanhos variados, nas emendas dos espaços (cantos e meios das bordas), sem um tocar no outro; as regras do mural valem
-  // (um botton pode ficar sobre um pin ou display, nunca sobre outro botton, e sempre dentro do quadro)
+  // (um botton pode ficar sobre um pin, nunca sobre display nem sobre outro botton, e sempre dentro do quadro)
   const points: { x: number; y: number }[] = [];
   for (let rr = 0; rr <= ROWS; rr++) for (let cc = 0; cc <= COLS; cc++) points.push({ x: (cc / COLS) * 100, y: (rr / ROWS) * 100 });
   for (let rr = 0; rr <= ROWS; rr++) for (let cc = 0; cc < COLS; cc++) points.push({ x: ((cc + 0.5) / COLS) * 100, y: (rr / ROWS) * 100 });
   for (let rr = 0; rr < ROWS; rr++) for (let cc = 0; cc <= COLS; cc++) points.push({ x: (cc / COLS) * 100, y: ((rr + 0.5) / ROWS) * 100 });
   const SCALES = [100, 100, 120, 120, 140, 140, 160, 180, 200];
+  // área de cada display (os espaços que ele cobre, em % do quadro): nenhum botton encosta nela
+  const displayAreas = spots.map((sp) => {
+    const cols = sp.slots.map((x) => x % COLS);
+    const row = Math.floor(sp.slots[0] / COLS);
+    return { l: (Math.min(...cols) / COLS) * 100, r: ((Math.max(...cols) + 1) / COLS) * 100, t: (row / ROWS) * 100, b: ((row + 1) / ROWS) * 100 };
+  });
   const placed: { x: number; y: number; w: number; h: number }[] = [];
   const buttons: PlacedBadge[] = [];
   const keys = shuffle(BADGES);
@@ -154,6 +160,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
     const h = (w / def.ratio) * 1.6; // altura em % do quadro (o quadro é mais largo que alto)
     const x = Math.min(96 - w / 2, Math.max(4 + w / 2, p.x + (Math.random() * 2 - 1)));
     const y = Math.min(94 - h / 2, Math.max(6 + h / 2, p.y + (Math.random() * 2 - 1)));
+    if (displayAreas.some((d) => x + w / 2 > d.l && x - w / 2 < d.r && y + h / 2 > d.t && y - h / 2 < d.b)) continue; // botton nunca fica sobre display
     if (placed.some((o) => Math.abs(o.x - x) < ((o.w + w) / 2) * 1.2 && Math.abs(o.y - y) < ((o.h + h) / 2) * 1.2)) continue;
     placed.push({ x, y, w, h });
     buttons.push({ id: `decor-b${buttons.length}`, key: def.key, kind: "badge", x, y, scale, rotation: Math.round(Math.random() * 30 - 15), mine: false });
