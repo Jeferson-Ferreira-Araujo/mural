@@ -126,7 +126,7 @@ export default function CriarMural() {
           <>
             <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
             <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
-              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Mural do Jeferson" className={inputClass} autoFocus />}
+              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Mural Jeferson" className={inputClass} autoFocus />}
             </Field>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">

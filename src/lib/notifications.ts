@@ -31,7 +31,7 @@ export async function markAllRead(sb: SupabaseClient): Promise<void> {
 /** "@fulano marcou “Malas” e desmarcou “Passagens” na lista “Viagem”" / "@fulano reagiu ❤️ ao seu pin no mural de @beltrano" */
 export function notificationText(n: Notification): string {
   if (n.kind === "pin_new") return `@${n.data.actor} deixou um PINZ no mural “${n.data.muralTitle ?? n.data.muralNick}”${n.data.pending ? " · aguardando a sua aprovação" : ""}`;
-  if (n.kind === "pin_approved") return `@${n.data.actor} aprovou o seu PINZ no mural dele`;
+  if (n.kind === "pin_approved") return `@${n.data.actor} aprovou o seu PINZ`;
   if (n.kind === "gift") return `🎁 ${n.data.actor ? `@${n.data.actor}` : "Alguém"} te presenteou com 1 mês de PINZ+!`;
   if (n.kind === "reward") return `+${n.data.credits} crédito${n.data.credits > 1 ? "s" : ""}: ${n.data.actor ? `@${n.data.actor}` : "alguém"} criou uma conta pelo link que você compartilhou`;
   if (n.kind === "follow") return `@${n.data.actor} começou a seguir você`;
