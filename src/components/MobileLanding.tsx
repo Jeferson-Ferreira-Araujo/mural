@@ -61,7 +61,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       {/* logo grande, frase de mão e apoio, no topo */}
       <header className="relative z-20 shrink-0 px-5 pt-[max(0.6rem,env(safe-area-inset-top))] text-center">
         <Brand className="mx-auto h-[clamp(5.5rem,16dvh,8.5rem)]" />
-        <p className="mt-1 flex items-center justify-center gap-2 font-[family-name:var(--font-kalam)] text-[clamp(1.35rem,5.6vw,1.9rem)] leading-tight text-[#fff7e6] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.7)]">
+        <p className="mt-1 flex items-center justify-center gap-2 font-[family-name:var(--font-kalam)] text-[clamp(1.6rem,6.6vw,2.2rem)] leading-tight text-[#fff7e6] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.7)]">
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m4 6 7 3M5 14l6-1.500" />
           </svg>
