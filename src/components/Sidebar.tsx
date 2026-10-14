@@ -1,4 +1,3 @@
-import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { Brand } from "./Brand";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import type { ViewProps } from "./viewProps";
@@ -22,7 +21,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account, menu }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** atalhos da conta (desktop) */ menu?: React.ReactNode; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
   return (
     <aside
-      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[30em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.8em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
+      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[30em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">Pinz</h1>
@@ -42,9 +41,9 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </div>
       )}
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
-      <div className={`flex flex-col gap-[1.4em] ${menu || account ? "" : "my-auto"}`}>
+      <div className={`flex flex-col gap-[0.9em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[clamp(6.4rem,17dvh,13rem)]" />
+        <Brand className="h-[clamp(4.8rem,13dvh,10.5rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural digital</p>}
       {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>}
@@ -71,7 +70,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
 
       {/* os números do site aparecem só na tela inicial de login (sem conta e sem mural aberto) */}
       {siteStats && !compact && !account && (
-        <ul className="mt-[1.4em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[1.1em] text-[#2f2218]" aria-label="Pinz em números">
+        <ul className="mt-[0.9em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[0.7em] text-[#2f2218]" aria-label="Pinz em números">
           <Stat
             value={siteStats.murals}
             label="murais"
@@ -95,18 +94,6 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
         </ul>
       )}
 
-      {/* acessibilidade: daltonismo, texto maior, contraste… (fica guardado neste aparelho) */}
-      <button
-        type="button"
-        onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))}
-        className="mx-auto mt-[1.2em] flex cursor-pointer items-center gap-[0.5em] rounded-xl px-[0.8em] py-[0.5em] text-[0.82em] font-semibold text-[#6b5440] transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
-      >
-        <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <circle cx="12" cy="4.5" r="1.8" />
-          <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
-        </svg>
-        Acessibilidade
-      </button>
     </aside>
   );
 }
