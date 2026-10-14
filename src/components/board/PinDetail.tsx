@@ -17,6 +17,7 @@ import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
 import { useBadges } from "../badges/BadgeContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
+import { SecretCover } from "../badges/SecretCover";
 import { getBrowserSupabase } from "@/lib/supabase";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
@@ -321,7 +322,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {shareMsg}
             </p>
           )}
-          {item && !isSealed(item) && !isHidden(item) && item.ownerHidden && revealBtn()}
+          {((item && !isSealed(item) && !isHidden(item) && item.ownerHidden) || (ownWidget && widgetHidden)) && revealBtn()}
           {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
           <div className="flex min-h-0 w-full flex-1 items-center justify-center px-12 sm:px-16">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
@@ -334,7 +335,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <DetailProvider value>
                 <div className="relative">
                   {widget ? (
-                    <DisplayCard data={widget.data} badgeId={widget.id} />
+                    widgetHidden && !showSecret ? <SecretCover style={widget.data.style} /> : <DisplayCard data={widget.data} badgeId={widget.id} />
                   ) : item ? (
                     <>
                       {/* no detalhe os bottons não aparecem: só o pin */}
@@ -375,7 +376,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 type="button"
                 disabled={busy || mod?.plan !== "full"}
                 title={mod?.plan === "full" ? "" : "Segredo é do PINZ+"}
-                onClick={() => void run(() => setDisplaySecret(widget.id, !widgetHidden), false)}
+                onClick={() => {
+                  setShowSecret(false);
+                  void run(() => setDisplaySecret(widget.id, !widgetHidden), false);
+                }}
                 className={ghost}
               >
                 {mod?.plan !== "full" ? "Segredo (PINZ+)" : widgetHidden ? "Desabilitar segredo" : "Habilitar segredo"}

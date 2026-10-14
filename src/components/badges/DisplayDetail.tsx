@@ -8,6 +8,7 @@ import { shapeOfStyle } from "@/lib/displayShape";
 import { Modal } from "../account/Modal";
 import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
+import { SecretCover } from "./SecretCover";
 import { ghostButton } from "../ui";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
@@ -23,6 +24,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [reveal, setReveal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const hidden = !!badges.find((b) => b.id === data.id)?.hidden;
   const own = editable && !!data.id;
@@ -69,10 +71,15 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
           {/* o widget tem 24 em de largura: a fonte do contêiner o leva a quase toda a largura da janela */}
           <div style={{ fontSize: shapeOfStyle(data.style) === "square" ? "calc(min(66vw, 24rem) / 12)" : shapeOfStyle(data.style) === "tall" ? "calc(min(54vw, 18rem) / 12)" : "calc(min(82vw, 31rem) / 24)" }}>
             <DetailProvider value>
-              <DisplayCard data={data} badgeId={data.id} />
+              {hidden && !reveal ? <SecretCover style={data.style} /> : <DisplayCard data={data} badgeId={data.id} />}
             </DetailProvider>
           </div>
         </div>
+        {own && hidden && (
+          <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} className={`${ghostButton} w-full`}>
+            {reveal ? "Esconder PIN" : "Revelar PIN"}
+          </button>
+        )}
         {text ? (
           <button type="button" onClick={() => void share()} className={`${ghostButton} w-full`}>
             {copied ? "Texto copiado!" : "Compartilhar o texto"}
@@ -100,6 +107,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
               title={!mod || mod.plan === "full" ? "" : "Segredo é do PINZ+"}
               onClick={async () => {
                 setBusy(true);
+                setReveal(false);
                 await setDisplaySecret(data.id!, !hidden);
                 setBusy(false);
               }}
