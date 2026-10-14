@@ -26,6 +26,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [vp, setVp] = useState({ w: 0, h: 0 });
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
   const card = useRef<HTMLDivElement>(null);
+  const [waiting, setWaiting] = useState(false); // a pessoa fez a ação e o tour espera ela fechar a janela que abriu
   useBackClose(open, onClose);
 
   // ao abrir: só os passos que existem nesta tela
@@ -34,6 +35,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
     setSteps(TOUR_STEPS.filter((s) => !s.sel || findVisible(s.sel)));
     setI(0);
     setPos(null);
+    setWaiting(false);
   }, [open]);
 
   const step = steps[i];
@@ -77,6 +79,49 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   const next = useCallback(() => (i >= steps.length - 1 ? onClose() : setI(i + 1)), [i, steps.length, onClose]);
   const prev = useCallback(() => setI((n) => Math.max(0, n - 1)), []);
 
+  // passo interativo: a pessoa faz a ação de verdade e o tour segue sozinho
+  useEffect(() => {
+    if (!open || !step?.act || waiting) return;
+    const target = () => (step.sel ? findVisible(step.sel) : null);
+    if (step.act === "click") {
+      const onClick = (e: MouseEvent) => {
+        const el = target();
+        if (!el || !(e.target instanceof Node) || !el.contains(e.target)) return;
+        // deixa o clique fazer o que faz (abrir a janela, aproximar…) e só então decide
+        window.setTimeout(() => (step.pause ? setWaiting(true) : next()), 450);
+      };
+      document.addEventListener("click", onClick, true);
+      return () => document.removeEventListener("click", onClick, true);
+    }
+    // arrastar um botton: termina quando o arraste começou e acabou
+    let started = false;
+    const check = () => {
+      const on = document.body.classList.contains("badge-dragging");
+      if (on) started = true;
+      else if (started) window.setTimeout(next, 400);
+    };
+    const mo = new MutationObserver(check);
+    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => mo.disconnect();
+  }, [open, step, waiting, next]);
+
+  // depois da ação que abre uma janela: espera ela abrir e fechar (se nada abrir, segue)
+  useEffect(() => {
+    if (!open || !waiting) return;
+    let saw = false;
+    const t0 = Date.now();
+    const timer = window.setInterval(() => {
+      const openDialog = document.querySelector("dialog[open]");
+      if (openDialog) saw = true;
+      else if (saw || Date.now() - t0 > 1800) {
+        window.clearInterval(timer);
+        setWaiting(false);
+        next();
+      }
+    }, 350);
+    return () => window.clearInterval(timer);
+  }, [open, waiting, next]);
+
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => {
@@ -89,14 +134,29 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   }, [open, next, prev, onClose]);
 
   if (!open || !step) return null;
+  if (waiting) return null; // a janela que a pessoa abriu fica por cima; o tour volta quando ela fechar
   const last = i === steps.length - 1;
   const btn = "cursor-pointer rounded-xl px-4 py-2.5 text-sm font-bold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
   return (
-    <div className="fixed inset-0 z-[2000]" role="dialog" aria-modal="true" aria-label="Tour pelo Pinz">
-      {/* bloqueia toques no mural durante o tour */}
-      <div className="absolute inset-0" onClick={(e) => e.stopPropagation()} />
-      {rect ? (
+    <div className="pointer-events-none fixed inset-0 z-[2000]" role="dialog" aria-modal="true" aria-label="Tour pelo Pinz">
+      {/* bloqueia toques no mural durante o tour; nos passos interativos só o destaque fica livre para tocar */}
+      {step.act && rect ? (
+        <>
+          {[
+            { left: 0, top: 0, width: vp.w, height: Math.max(0, rect.top - PAD) },
+            { left: 0, top: rect.bottom + PAD, width: vp.w, height: Math.max(0, vp.h - rect.bottom - PAD) },
+            { left: 0, top: rect.top - PAD, width: Math.max(0, rect.left - PAD), height: rect.height + PAD * 2 },
+            { left: rect.right + PAD, top: rect.top - PAD, width: Math.max(0, vp.w - rect.right - PAD), height: rect.height + PAD * 2 },
+          ].map((p, k) => (
+            <div key={k} className="pointer-events-auto absolute bg-[#0a0602]/72 transition-all duration-300" style={p} onClick={(e) => e.stopPropagation()} />
+          ))}
+          <div aria-hidden className="pointer-events-none absolute animate-pulse rounded-2xl ring-4 ring-[#f2c230]" style={{ left: rect.left - PAD, top: rect.top - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 }} />
+        </>
+      ) : (
+        <div className="pointer-events-auto absolute inset-0" onClick={(e) => e.stopPropagation()} />
+      )}
+      {step.act && rect ? null : rect ? (
         <div
           aria-hidden
           className="pointer-events-none absolute rounded-2xl ring-2 ring-[#f2c230] transition-all duration-300"
@@ -107,7 +167,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
       )}
       <div
         ref={card}
-        className="absolute w-[min(92vw,22rem)] rounded-2xl border border-[#e6d8bd] bg-[#fbf6ea] p-4 text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.55)]"
+        className="pointer-events-auto absolute w-[min(92vw,22rem)] rounded-2xl border border-[#e6d8bd] bg-[#fbf6ea] p-4 text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.55)]"
         style={{ left: pos?.left ?? 0, top: pos?.top ?? 0, visibility: pos ? "visible" : "hidden" }}
       >
         <div className="mb-2 h-1 overflow-hidden rounded-full bg-[#e6d8bd]" aria-hidden>
@@ -118,6 +178,12 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         </p>
         <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{step.title}</h2>
         <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{step.text}</p>
+        {step.act && step.hint && (
+          <p className="mt-2 flex items-center gap-2 rounded-lg bg-[#fff3cf] px-2.5 py-1.5 text-[13px] font-bold text-[#6b4a05]">
+            <span aria-hidden className="text-base">👆</span>
+            {step.hint}
+          </p>
+        )}
         {step.chips && (
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
             {step.chips.map((c) => (
@@ -139,8 +205,8 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
               Voltar
             </button>
           )}
-          <button type="button" onClick={next} autoFocus className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]`}>
-            {last ? "Concluir" : "Próximo"}
+          <button type="button" onClick={next} autoFocus className={`${btn} ${step.act ? "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-white" : "bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]"}`}>
+            {last ? "Concluir" : step.act ? "Pular passo" : "Próximo"}
           </button>
         </div>
       </div>
