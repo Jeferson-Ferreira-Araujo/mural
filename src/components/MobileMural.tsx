@@ -109,7 +109,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
               {!!info.topFollowers?.length && (
                 <span className="flex -space-x-2" aria-hidden>
                   {info.topFollowers.map((p) => (
-                    <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-6 ring-2 ring-[#e8dcc2]" />
+                    <Avatar key={p.nickname} src={p.avatar} name={p.nickname} className="size-6 !border ring-1 ring-[#e8dcc2]" />
                   ))}
                 </span>
               )}
