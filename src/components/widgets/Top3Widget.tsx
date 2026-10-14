@@ -58,16 +58,16 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
           {list.map((text, i) => (
             <li
               key={i}
-              className="relative flex min-h-0 items-center gap-[0.7em] rounded-[1em] px-[0.5em]"
+              className="relative flex min-h-0 items-center gap-[0.7em] rounded-[1em] py-[0.38em] pr-[0.6em] pl-[0.38em]"
               style={{ background: i === 0 ? `linear-gradient(95deg, rgba(255,222,120,.55), ${sk.row} 70%)` : sk.row, boxShadow: `inset 0 0 0 0.07em ${i === 0 ? "rgba(240,179,35,.7)" : sk.edge}, 0 0.1em 0.3em rgba(0,0,0,.12)` }}
             >
-              <span className="relative shrink-0">
+              <span className="relative aspect-square shrink-0 self-stretch">
                 {i === 0 && (
                   <svg aria-hidden viewBox="0 0 24 14" className="absolute -top-[0.62em] left-1/2 z-10 w-[1.1em] -translate-x-1/2" fill={gold} stroke="#b97a0a" strokeWidth="1" strokeLinejoin="round">
                     <path d="M2 12 L1 3 L7 7 L12 1 L17 7 L23 3 L22 12 Z" />
                   </svg>
                 )}
-                <span aria-label={`${i + 1}º lugar`} className={`flex items-center justify-center rounded-full leading-none font-black tabular-nums ${square ? "size-[1.9em] text-[1.05em]" : "size-[2.2em] text-[1.25em]"}`} style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
+                <span aria-label={`${i + 1}º lugar`} className={`flex size-full items-center justify-center rounded-full leading-none font-black tabular-nums ${square ? "text-[1.05em]" : "text-[1.25em]"}`} style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
                   {i + 1}
                 </span>
               </span>
