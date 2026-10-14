@@ -99,26 +99,6 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
           <span className="flex-1 text-center text-base font-bold">Já tenho conta — Entrar</span>
           <Chevron />
         </button>
-        <ul className="mt-3 grid grid-cols-3 divide-x divide-[#d9c9ad] text-[#4a3826]">
-          {(
-            [
-              ["Compartilhe", "momentos", "M4 5h16v14H4V5Zm0 10 4-4 4 4 3-3 5 5M9 9.500h.01"],
-              ["Receba recados", "de quem você ama", "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7 1.500a2.500 2.500 0 1 0 0-5M3.500 19c.6-3 2.700-4.600 5.500-4.600s4.900 1.600 5.500 4.600M15 14.600c2.500-.4 4.600.9 5.300 4"],
-              ["Personalize", "do seu jeito", "M12 3a9 9 0 1 0 0 18c1.500 0 2-1 1.500-2-.5-1 .2-2 1.300-2H17a4 4 0 0 0 4-4c0-5-4-10-9-10ZM7.500 11h.01M10 7.500h.01M14.500 7.500h.01M17 11h.01"],
-            ] as const
-          ).map(([a, b2, d]) => (
-            <li key={a} className="flex items-center justify-center gap-1 px-0.5 text-[10.5px] leading-tight">
-              <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d={d} />
-              </svg>
-              <span className="text-left">
-                {a}
-                <br />
-                {b2}
-              </span>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <dialog
