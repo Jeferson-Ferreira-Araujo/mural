@@ -33,16 +33,16 @@ function WeatherSquare({ st, scene, kind, night, temp, label, cityName, d, frame
   return (
     <WidgetFrame frame={frame} label="Clima" scene={scene} shape="square">
       {tint && <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: tint }} />}
-      <div className="absolute inset-0 flex flex-col items-center justify-between px-[1em] pt-[1em] pb-[1.1em] text-center" style={tech ? { fontFamily: MONO, textTransform: "uppercase", letterSpacing: "0.06em" } : undefined}>
-        <span className={`size-[4.2em] ${tech ? "text-[#5cf0ff]" : "text-white"}`}>
+      <div className="absolute inset-0 flex flex-col items-center justify-between px-[1em] pt-[0.8em] pb-[0.9em] text-center" style={tech ? { fontFamily: MONO, textTransform: "uppercase", letterSpacing: "0.06em" } : undefined}>
+        <span className={`${tech ? "size-[3.4em] text-[#5cf0ff]" : "size-[4.2em] text-white"}`}>
           <WeatherGlyph kind={glyphKind} night={st === "rain" ? false : night} />
         </span>
-        <p className="tabular-nums" style={{ fontSize: pixel ? "4.2em" : "5em", fontWeight: 700, fontFamily: font, lineHeight: 1 }}>
+        <p className="tabular-nums" style={{ fontSize: pixel ? "4.2em" : tech ? "3.9em" : "5em", fontWeight: 700, fontFamily: font, lineHeight: 1 }}>
           {pixel && temp.endsWith("°") ? (<>{temp.slice(0, -1)}<span style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>°</span></>) : temp}
         </p>
         <div className="w-full leading-tight">
-          <Marquee text={cityName} className="font-semibold" style={{ fontSize: "1.2em" }} />
-          <p className="opacity-95" style={{ fontSize: "0.95em" }}>
+          <Marquee text={cityName} className="font-semibold" style={{ fontSize: tech ? "0.95em" : "1.2em" }} />
+          <p className="opacity-95" style={{ fontSize: tech ? "0.78em" : "0.95em" }}>
             {label}
           </p>
         </div>
