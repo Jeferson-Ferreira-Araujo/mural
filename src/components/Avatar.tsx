@@ -4,7 +4,7 @@ const COLORS = ["#d98a2b", "#5aa5ff", "#e0657a", "#4fae6a", "#9a6bd6", "#d2a21c"
 export function Avatar({ src, name, className = "size-10", plus = false }: { src?: string | null; name: string; className?: string; /** conta PINZ+: borda dourada em volta da foto */ plus?: boolean }) {
   const color = COLORS[[...name].reduce((n, c) => n + c.charCodeAt(0), 0) % COLORS.length];
   const frame = plus
-    ? "shrink-0 rounded-full border-[0.16em] border-[#f2b81c] shadow-[0_0_0_0.07em_#a86a00,0_0.1em_0.5em_rgba(220,150,0,.55)]"
+    ? "shrink-0 rounded-full border-[0.09em] border-[#f2b81c] shadow-[0_0_0_0.04em_#a86a00,0_0.1em_0.4em_rgba(220,150,0,.45)]"
     : "shrink-0 rounded-full border-2 border-white/70 shadow-[0_0.1em_0.4em_rgba(0,0,0,.3)]";
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
