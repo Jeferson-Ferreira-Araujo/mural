@@ -53,6 +53,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
 import { fetchNotifications, markAllRead, notificationText, unreadCount, type Notification } from "@/lib/notifications";
 import { NotificationsModal } from "./account/NotificationsModal";
+import { GiftModal, giftSeen, markGiftSeen, type GiftNote } from "./account/GiftModal";
 import { NicknameSetup } from "./account/NicknameSetup";
 import { PAY_RESULTS, PaymentResultModal } from "./account/PaymentResultModal";
 import { fetchSharedLayout, listSharedMurals, unlockShared } from "@/lib/shared";
@@ -329,6 +330,16 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     const t = setInterval(() => void reloadUnread(), 60_000);
     return () => clearInterval(t);
   }, [session, reloadUnread]);
+  // presente de PINZ+: a janela aparece ao vivo (sinal do servidor) ou no próximo login, uma vez por presente
+  const [giftNote, setGiftNote] = useState<GiftNote | null>(null);
+  const showGift = useCallback((list: Notification[]) => {
+    const g = list.find((n) => n.kind === "gift" && !giftSeen(n.id) && Date.now() - new Date(n.createdAt).getTime() < 14 * 86_400_000);
+    if (g && g.kind === "gift") setGiftNote({ id: g.id, actor: g.data.actor, avatar: g.data.avatar });
+  }, []);
+  useEffect(() => {
+    if (!session) return;
+    void fetchNotifications(getBrowserSupabase()).then(showGift);
+  }, [session?.user.id, showGift]); // eslint-disable-line react-hooks/exhaustive-deps
   const openNotifications = useCallback(async () => {
     setNotifOpen(true);
     setNotifs(null);
@@ -444,6 +455,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         if (l.isOwner) void l.loadBoard();
         void fetchNotifications(sb).then((list) => {
           if (l.notifOpen) setNotifs(list);
+          showGift(list);
           const latest = list.find((n) => !n.read);
           if (latest) l.notify(notificationText(latest));
           if (latest?.kind === "reward" || latest?.kind === "gift") void reloadInventory();
@@ -457,7 +469,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
     return () => {
       void sb.removeChannel(ch);
     };
-  }, [myUid, reloadUnread]);
+  }, [myUid, reloadUnread, showGift]);
 
   // chegou por um link compartilhado (?ref=…): guarda o código; quando a conta nova existir, o servidor paga a recompensa a quem compartilhou
   useEffect(() => {
@@ -1107,6 +1119,13 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         </>
       )}
       <NotificationsModal open={notifOpen} onClose={() => setNotifOpen(false)} items={notifs} />
+      <GiftModal
+        gift={giftNote}
+        onClose={() => {
+          if (giftNote) markGiftSeen(giftNote.id);
+          setGiftNote(null);
+        }}
+      />
       <NicknameSetup
         open={logged && nickPending && !!myNick}
         suggested={myNick ?? ""}
