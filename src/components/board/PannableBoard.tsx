@@ -412,7 +412,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           data-tour="zoom"
           aria-label={zoomedOut ? "Aproximar o mural" : "Afastar o mural"}
           title={zoomedOut ? "Aproximar" : "Afastar"}
-          className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#17110c]/85 px-4 text-sm font-semibold text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+          className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-4 text-sm font-semibold text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
           <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             {/* lupa: "+" para aproximar, "−" para ver tudo */}
