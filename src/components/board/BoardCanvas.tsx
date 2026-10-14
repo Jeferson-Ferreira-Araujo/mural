@@ -625,9 +625,9 @@ export function BoardCanvas({
               {/* mural sem nenhum pin e sem nenhum display: bilhete padrão no meio (o mesmo em qualquer plano, sem edição) */}
               {hasSelection && unlocked && !locked && items.length === 0 && !badges.some((b) => b.kind === "display") && (
                 <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
-                  <div className="-rotate-2 rounded-[0.3em] bg-[#fbe36a] px-[1.4em] py-[1.1em] text-center text-[#3a2a08] shadow-[0_0.5em_1.2em_rgba(0,0,0,.35)]" style={{ fontSize: "2.1cqw", maxWidth: "26em" }}>
-                    <p className="font-title text-[1.25em] leading-tight font-semibold">Nenhum pin por aqui ainda</p>
-                    <p className="mt-[0.3em] text-[1em] leading-snug">Seja o primeiro a colocar!</p>
+                  {/* a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
+                  <div className="-rotate-2" style={{ fontSize: "2.1cqw" }}>
+                    <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: "Nenhum pin por aqui ainda. Seja o primeiro a colocar!" }} />
                   </div>
                 </div>
               )}
