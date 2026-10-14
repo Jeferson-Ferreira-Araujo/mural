@@ -43,7 +43,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
       <div className={`flex flex-col gap-[0.9em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[clamp(4.8rem,13dvh,10.5rem)]" />
+        <Brand className="h-[clamp(4.2rem,11dvh,10rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural digital</p>}
       {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>}

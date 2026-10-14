@@ -324,3 +324,30 @@ html[data-a11y-contrast="1"] :focus-visible {
 [data-panning] * {
   cursor: grabbing !important;
 }
+
+/* computador com a janela baixa: o formulário de entrada da coluna esquerda fica mais enxuto, para tudo caber sem rolar */
+@media (min-width: 1024px) and (max-height: 980px) {
+  aside section[aria-label="Entrar ou criar conta"] {
+    padding: 0.65rem 0.8rem 0.75rem;
+  }
+  aside section[aria-label="Entrar ou criar conta"] > div:nth-child(2) {
+    margin-top: 0.55rem;
+  }
+  aside section[aria-label="Entrar ou criar conta"] > form {
+    margin-top: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  aside section[aria-label="Entrar ou criar conta"] > form > * {
+    margin: 0 !important;
+  }
+  aside section[aria-label="Entrar ou criar conta"] input:not([type="checkbox"]) {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  aside section[aria-label="Entrar ou criar conta"] > form button[type="submit"] {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+}
