@@ -957,15 +957,15 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
   }, [wantsBackdrop, nick, slug]);
   const revealed = unlocked && !!selected;
 
-  // abertura animada: só na tela inicial, para quem ainda não entrou, uma vez por visita
+  // abertura animada: só na tela de login (sem mural aberto por link), para quem ainda não entrou, uma vez por visita
   const [playIntro, setPlayIntro] = useState(false);
   const introChecked = useRef(false);
   useEffect(() => {
     if (introChecked.current || sessionLoading) return;
     introChecked.current = true;
-    if (!logged && !introSeen()) setPlayIntro(true);
+    if (!logged && !initialRef && !introSeen()) setPlayIntro(true);
     else introSkip();
-  }, [sessionLoading, logged]);
+  }, [sessionLoading, logged, initialRef]);
 
   // quem está logado não tem tela inicial: vai direto para o próprio mural (a busca fica no cabeçalho)
   const goHome = logged && !initialRef && !selected && !choices && !loading && !isFinalizing();

@@ -59,9 +59,9 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       </button>
 
       {/* logo grande, frase de mão e apoio, no topo */}
-      <header className="relative z-20 shrink-0 px-5 pt-[max(0.6rem,env(safe-area-inset-top))] text-center">
-        <Brand className="mx-auto h-[clamp(5.5rem,16dvh,8.5rem)]" />
-        <p className="mt-1 flex items-center justify-center gap-2 font-[family-name:var(--font-kalam)] text-[clamp(1.6rem,6.6vw,2.2rem)] leading-tight text-[#fff7e6] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.7)]">
+      <header className="relative z-20 flex min-h-0 flex-1 flex-col items-center justify-evenly px-5 pt-[max(0.6rem,env(safe-area-inset-top))] pb-2 text-center">
+        <Brand className="mx-auto h-[clamp(4.5rem,22dvh,12rem)]" />
+        <p className="flex items-center justify-center gap-2 font-[family-name:var(--font-kalam)] text-[clamp(1.6rem,6.6vw,2.2rem)] leading-tight text-[#fff7e6] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.7)]">
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m4 6 7 3M5 14l6-1.500" />
           </svg>
@@ -70,11 +70,11 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
             <path d="m20 6-7 3M19 14l-6-1.500" />
           </svg>
         </p>
-        <p className="mx-auto mt-1 max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>
+        <p className="mx-auto max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
-      <div className="relative min-h-0 flex-1">
+      <div className="relative w-full shrink-0 max-h-[52dvh]" style={{ aspectRatio: "3 / 2" }}>
         <PannableBoard bare>
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
