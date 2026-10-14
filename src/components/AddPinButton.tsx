@@ -15,7 +15,7 @@ export function AddPinButton({ className = "" }: { className?: string }) {
       aria-label="Colocar um pin ou um display no mural"
       data-tour="add"
       title="Colocar um pin ou display"
-      className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-[#d9a21b] text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] transition hover:bg-[#e6ae22] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
+      className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
     >
       <svg viewBox="0 0 28 28" className="size-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         {/* tachinha */}
