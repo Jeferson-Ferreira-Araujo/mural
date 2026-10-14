@@ -69,6 +69,18 @@ function Signature({ name, reaction }: { name?: string; reaction?: string }) {
   );
 }
 
+/**
+ * Pin em segredo (visão do dono): troca as letras do texto por outras (mesmo tamanho e mesmas palavras), então, mesmo que o desfoque falhe por um instante
+ * (por exemplo, no meio de um zoom), nada do que foi escrito dá para ler.
+ */
+const scrambleText = (t: string) => t.replace(/[A-Za-zÀ-ÿ]/g, (ch, i) => String.fromCharCode(97 + ((ch.charCodeAt(0) * 7 + i * 13) % 26)));
+function scrambled(m: Message): Message {
+  const o = { ...m } as Record<string, unknown>;
+  for (const k of ["text", "caption", "title", "artist", "name", "address", "signedBy"]) if (typeof o[k] === "string") o[k] = scrambleText(o[k] as string);
+  if (Array.isArray(o.items)) o.items = (o.items as { text?: string }[]).map((it) => (typeof it?.text === "string" ? { ...it, text: scrambleText(it.text) } : it));
+  return o as unknown as Message;
+}
+
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
   const inDetail = useInDetail();
@@ -127,8 +139,8 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
       return (
         <div aria-label="Pin em segredo" role="img" className="relative select-none">
           <div inert aria-hidden className="pointer-events-none relative" style={{ filter: "blur(0.38em) saturate(0.9)" }}>
-            <Content m={m} />
-            <Signature name={m.signedBy} reaction={m.reaction} />
+            <Content m={scrambled(m)} />
+            <Signature name={m.signedBy ? scrambleText(m.signedBy) : m.signedBy} reaction={m.reaction} />
           </div>
           <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
             <span className="flex flex-col items-center gap-[0.45em]">
