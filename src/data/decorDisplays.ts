@@ -1,8 +1,8 @@
 import { sampleFor } from "@/components/badges/StoreModal";
 import { WIDGET_STYLES } from "@/components/widgets";
-import { BADGES, type PlacedBadge } from "@/lib/badges";
+import { BADGE_EM, BADGES, type PlacedBadge } from "@/lib/badges";
 import { hasShapes, withShape } from "@/lib/displayShape";
-import type { BoardItem } from "@/lib/types";
+import { isMessage, type BoardItem } from "@/lib/types";
 
 /**
  * Displays de enfeite do mural de exemplo da tela de login. A cada carregamento sorteia quais displays aparecem, em que estilo e formato
@@ -10,6 +10,14 @@ import type { BoardItem } from "@/lib/types";
  * Cada um cobre alguns espaços (os pins de exemplo desses espaços saem) e não responde a toques.
  * Não há clima nem livro aqui de propósito: o clima pediria a localização de quem só abriu a tela de login e o livro precisa de uma capa.
  */
+/** Nomes de usuário inventados (com números no fim, para não coincidir com gente de verdade) que assinam os pins do mural de exemplo. */
+const HANDLES = [
+  "ana_luiza92", "bruno_rocha07", "carol_lima21", "dudu_alves88", "fer_matos15", "gabi_souza33", "hugo_pires04", "isa_camargo19", "joao_vitor66", "kau_ribeiro12",
+  "lari_gomes58", "mateus_cruz71", "nanda_reis27", "otavio_lins09", "paula_dias44", "rafa_moura30", "sara_neves82", "thiago_luz16", "vivi_castro53", "yuri_batista25",
+  "bia_santos61", "caio_freitas38", "duda_ramos47", "enzo_falcao90", "flavia_ceu14", "gui_teixeira77", "helena_mar23", "igor_prado68", "julia_flor05", "leo_barros41",
+  "malu_arruda36", "nico_vidal59", "olivia_sol18", "pedro_lago72", "quel_viana29", "rubens_paz84", "sofia_brito10", "tati_melo95", "vini_costa02", "wesley_dantas63",
+];
+
 const COLS = 7;
 const ROWS = 4;
 const HOW_MANY = 7;
@@ -110,7 +118,8 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
 
   const covered = new Set(spots.flatMap((s) => s.slots));
   const free = Array.from({ length: COLS * ROWS }, (_, i) => i).filter((i) => !covered.has(i));
-  const pins = items.slice(0, free.length).map((it, i) => ({ ...it, slot: free[i] }) as BoardItem);
+  const names = shuffle(HANDLES);
+  const pins = items.slice(0, free.length).map((it, i) => ({ ...it, slot: free[i], ...(isMessage(it) ? { signedBy: names[i % names.length] } : {}) }) as BoardItem);
   const badges: PlacedBadge[] = spots.map((s, i) => {
     const { x, y } = center(s.slots);
     return {
@@ -127,29 +136,27 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
       mine: false,
     };
   });
-  // bottons espalhados, nos cantos entre os espaços (longe dos displays e um do outro): poucos, para não poluir
-  const corners: { r: number; c: number }[] = [];
-  for (let rr = 1; rr < ROWS; rr++) {
-    for (let cc = 1; cc < COLS; cc++) {
-      const around = [(rr - 1) * COLS + cc - 1, (rr - 1) * COLS + cc, rr * COLS + cc - 1, rr * COLS + cc];
-      if (around.every((x) => !covered.has(x))) corners.push({ r: rr, c: cc });
-    }
+  // 15 bottons de tamanhos variados, nas emendas dos espaços (cantos e meios das bordas), sem um tocar no outro; as regras do mural valem
+  // (um botton pode ficar sobre um pin ou display, nunca sobre outro botton, e sempre dentro do quadro)
+  const points: { x: number; y: number }[] = [];
+  for (let rr = 0; rr <= ROWS; rr++) for (let cc = 0; cc <= COLS; cc++) points.push({ x: (cc / COLS) * 100, y: (rr / ROWS) * 100 });
+  for (let rr = 0; rr <= ROWS; rr++) for (let cc = 0; cc < COLS; cc++) points.push({ x: ((cc + 0.5) / COLS) * 100, y: (rr / ROWS) * 100 });
+  for (let rr = 0; rr < ROWS; rr++) for (let cc = 0; cc <= COLS; cc++) points.push({ x: (cc / COLS) * 100, y: ((rr + 0.5) / ROWS) * 100 });
+  const SCALES = [100, 100, 120, 120, 140, 140, 160, 180, 200];
+  const placed: { x: number; y: number; w: number; h: number }[] = [];
+  const buttons: PlacedBadge[] = [];
+  const keys = shuffle(BADGES);
+  for (const p of shuffle(points)) {
+    if (buttons.length >= 15) break;
+    const def = keys[buttons.length];
+    const scale = pick(SCALES);
+    const w = ((BADGE_EM * scale) / 100) * 1.02; // largura em % do quadro (1 em ≈ 1% da largura)
+    const h = (w / def.ratio) * 1.6; // altura em % do quadro (o quadro é mais largo que alto)
+    const x = Math.min(96 - w / 2, Math.max(4 + w / 2, p.x + (Math.random() * 2 - 1)));
+    const y = Math.min(94 - h / 2, Math.max(6 + h / 2, p.y + (Math.random() * 2 - 1)));
+    if (placed.some((o) => Math.abs(o.x - x) < ((o.w + w) / 2) * 1.2 && Math.abs(o.y - y) < ((o.h + h) / 2) * 1.2)) continue;
+    placed.push({ x, y, w, h });
+    buttons.push({ id: `decor-b${buttons.length}`, key: def.key, kind: "badge", x, y, scale, rotation: Math.round(Math.random() * 30 - 15), mine: false });
   }
-  const chosenCorners: { r: number; c: number }[] = [];
-  for (const k of shuffle(corners)) {
-    if (chosenCorners.length >= 6) break;
-    if (chosenCorners.every((o) => Math.max(Math.abs(o.r - k.r), Math.abs(o.c - k.c)) >= 2)) chosenCorners.push(k);
-  }
-  const pins2 = shuffle(BADGES).slice(0, chosenCorners.length);
-  const buttons: PlacedBadge[] = chosenCorners.map((k, i) => ({
-    id: `decor-b${i}`,
-    key: pins2[i].key,
-    kind: "badge",
-    x: (k.c / COLS) * 100 + (Math.random() * 3 - 1.5),
-    y: (k.r / ROWS) * 100 + (Math.random() * 3 - 1.5),
-    scale: 100 + Math.round(Math.random() * 40),
-    rotation: Math.round(Math.random() * 30 - 15),
-    mine: false,
-  }));
   return { items: pins, badges: [...badges, ...buttons] };
 }
