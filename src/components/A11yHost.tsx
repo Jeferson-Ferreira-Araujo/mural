@@ -68,7 +68,7 @@ export function A11yHost() {
 
       <Modal open={open} onClose={() => setOpen(false)} title="Acessibilidade">
         <div className="space-y-5 text-[#2f2218]">
-          <p className="text-sm text-[#4a3826]">Ajuste o Pinz para ler e enxergar melhor. A escolha fica guardada neste aparelho.</p>
+          <p className="text-sm text-[#4a3826]">Queremos que o Pinz seja uma ótima experiência para todos. Por isso, criamos estas opções. A sua escolha fica guardada neste aparelho.</p>
 
           <section aria-label="Daltonismo">
             <h3 className="font-title text-base font-semibold">Daltonismo</h3>
