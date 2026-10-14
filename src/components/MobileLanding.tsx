@@ -65,12 +65,12 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m4 6 7 3M5 14l6-1.500" />
           </svg>
-          <span>Seu mural de momentos compartilhados.</span>
+          <span>Seu mural digital</span>
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m20 6-7 3M19 14l-6-1.500" />
           </svg>
         </p>
-        <p className="mx-auto mt-1 max-w-[22rem] text-[13px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Receba recados, fotos, músicas e vídeos de quem você ama e decore do seu jeito.</p>
+        <p className="mx-auto mt-1 max-w-[22rem] text-[13px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Receba recados, fotos, vídeos e decore do seu jeito.</p>
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
