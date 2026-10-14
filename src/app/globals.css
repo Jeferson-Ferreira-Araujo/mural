@@ -318,3 +318,9 @@ html[data-a11y-contrast="1"] :focus-visible {
   outline-offset: 2px !important;
   box-shadow: 0 0 0 5px #fff !important;
 }
+
+/* arrastando o quadro com o mouse: a mãozinha fechada em tudo, mesmo sobre pins e displays */
+[data-panning],
+[data-panning] * {
+  cursor: grabbing !important;
+}

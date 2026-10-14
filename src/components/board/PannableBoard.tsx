@@ -227,7 +227,10 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       }
       const dx = p.x - pan.current.px;
       const dy = p.y - pan.current.py;
-      if (!dragged.current && Math.hypot(dx, dy) > DRAG_PX) dragged.current = true;
+      if (!dragged.current && Math.hypot(dx, dy) > DRAG_PX) {
+        dragged.current = true;
+        if (e.pointerType === "mouse" && box.current) box.current.dataset.panning = "1"; // mão fechada enquanto arrasta (ver globals.css)
+      }
       if (dragged.current) {
         if (swiped.current) return; // depois de trocar, o resto da arrastada não faz nada
         const want = pan.current.vx + dx;
@@ -258,6 +261,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         return;
       }
       if (pointers.current.size > 0) return;
+      if (box.current) delete box.current.dataset.panning;
       if (e.type !== "pointercancel" && !dragged.current && e.pointerType !== "mouse") {
         // toque: dois seguidos e perto um do outro = ampliar onde tocou
         const now = performance.now();
