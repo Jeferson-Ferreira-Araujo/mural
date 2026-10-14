@@ -28,7 +28,8 @@ export function DesktopBoard(props: ViewProps) {
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
   const newMural = account?.onNewMural; // PINZ+: botão "Novo mural" abaixo do passador de murais
-  const canAdd = hasSelection && !locked && unlocked && !!account?.atHome; // dono no próprio mural: botão "+ pin"
+  const canAdd = hasSelection && !locked && unlocked && !!props.onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
+  const visitor = !account?.atHome;
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616] portrait:flex-col">
@@ -93,7 +94,7 @@ export function DesktopBoard(props: ViewProps) {
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
           {canAdd && (
             <div className="pointer-events-none flex w-[9.5rem] shrink-0 items-end">
-              <AddPinButton />
+              <AddPinButton visitor={visitor} />
             </div>
           )}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">

@@ -56,7 +56,7 @@ type Props = {
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
   const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
-  const canAdd = !!account?.atHome && unlocked && !locked && hasSelection && !!onCompose; // dono no próprio mural: botão "+ pin"
+  const canAdd = unlocked && !locked && hasSelection && !!onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
   const look = boardById(board);
   const { editable: editBadges } = useBadges();
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -160,7 +160,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           cornerLeft={
             canAdd || (share && onNotify && !shareTop) ? (
               <div className="flex items-center gap-2">
-                {canAdd && <AddPinButton />}
+                {canAdd && <AddPinButton visitor={!account?.atHome} />}
                 {share && onNotify && !shareTop && (
                   <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
                 )}
