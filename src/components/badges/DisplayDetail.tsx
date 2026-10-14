@@ -77,7 +77,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
         </div>
         {own && hidden && (
           <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} className={`${ghostButton} w-full`}>
-            {reveal ? "Esconder PIN" : "Revelar PIN"}
+            {reveal ? "Esconder display" : "Revelar display"}
           </button>
         )}
         {text ? (

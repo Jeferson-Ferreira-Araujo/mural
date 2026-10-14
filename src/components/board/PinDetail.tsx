@@ -117,7 +117,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const revealBtn = () => (
     <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
       {showSecret ? <EyeClosed /> : <EyeOpen />}
-      {showSecret ? "Esconder PIN" : "Revelar PIN"}
+      {showSecret ? (widget ? "Esconder display" : "Esconder PIN") : widget ? "Revelar display" : "Revelar PIN"}
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
