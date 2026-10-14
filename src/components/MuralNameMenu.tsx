@@ -43,7 +43,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
   const hasMenu = others.length > 0 || sharedList.length > 0 || !!onCreate;
   const name = <span className="block min-w-0 truncate">{label ?? title}</span>;
   if (!hasMenu) return label ? null : <span className={`min-w-0 ${className}`}>{name}</span>;
-  const listed = label ? (sw?.items ?? []) : others;
+  const listed = sw?.items ?? []; // sempre todos os murais, na mesma ordem: o aberto só ganha o "✓ aberto" (a lista não muda ao trocar de mural)
 
   const item = "flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-[#2a1c12] transition hover:bg-[#f3e7cc] active:bg-[#ecdcb5]";
   return (
