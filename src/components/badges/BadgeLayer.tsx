@@ -99,8 +99,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
         <div className="pointer-events-none" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
-          {b.hidden && !editable ? (
-            // display em segredo: quem visita vê só uma tampa borrada (os dados nem chegam ao aparelho)
+          {b.hidden ? (
+            // display em segredo: a tampa borrada para todos (o dono vê o conteúdo no detalhe); quem visita nem recebe os dados
             <div className="grid place-items-center rounded-[1.2em] border border-white/40 bg-[#e9d8b6]/60 shadow-[0_0.2em_0.8em_rgba(30,12,0,.3)] backdrop-blur-md" style={{ width: `${NATURAL_W[shape]}em`, height: `${shape === "tall" ? 18 : 12}em` }}>
               <svg viewBox="0 0 24 24" className="size-[3.2em] text-[#4a3826]/70" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />

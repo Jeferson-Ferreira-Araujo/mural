@@ -1,5 +1,5 @@
 import { reactionEmoji } from "@/lib/reactions";
-import { isHidden, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { isHidden, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
 import { HiddenPin } from "./HiddenPin";
@@ -69,18 +69,6 @@ function Signature({ name, reaction }: { name?: string; reaction?: string }) {
   );
 }
 
-/**
- * Pin em segredo (visão do dono): troca as letras do texto por outras (mesmo tamanho e mesmas palavras), então, mesmo que o desfoque falhe por um instante
- * (por exemplo, no meio de um zoom), nada do que foi escrito dá para ler.
- */
-const scrambleText = (t: string) => t.replace(/[A-Za-zÀ-ÿ]/g, (ch, i) => String.fromCharCode(97 + ((ch.charCodeAt(0) * 7 + i * 13) % 26)));
-function scrambled(m: Message): Message {
-  const o = { ...m } as Record<string, unknown>;
-  for (const k of ["text", "caption", "title", "artist", "name", "address", "signedBy"]) if (typeof o[k] === "string") o[k] = scrambleText(o[k] as string);
-  if (Array.isArray(o.items)) o.items = (o.items as { text?: string }[]).map((it) => (typeof it?.text === "string" ? { ...it, text: scrambleText(it.text) } : it));
-  return o as unknown as Message;
-}
-
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
   const inDetail = useInDetail();
@@ -136,24 +124,10 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
   // visão do dono: pin em segredo mostra o texto e a assinatura, mas borrados, até ele pedir para ver no detalhe do pin
   if (m.ownerHidden && !m.pending) {
     if (!revealSecret) {
-      return (
-        <div aria-label="Pin em segredo" role="img" className="relative select-none">
-          <div inert aria-hidden className="pointer-events-none relative" style={{ filter: "blur(0.38em) saturate(0.9)" }}>
-            <Content m={scrambled(m)} />
-            <Signature name={m.signedBy ? scrambleText(m.signedBy) : m.signedBy} reaction={m.reaction} />
-          </div>
-          <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
-            <span className="flex flex-col items-center gap-[0.45em]">
-              <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
-                <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor">
-                  <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
-                </svg>
-              </span>
-              <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
-            </span>
-          </span>
-        </div>
-      );
+      // o mesmo cartão que os visitantes veem (texto de enchimento, foto e mapa genéricos): nenhum dado verdadeiro do pin fica na tela, nem por um instante durante o zoom
+      const t = m.type;
+      const hid: HiddenItem = { id: m.id, hidden: true, type: t, color: "color" in m ? m.color : undefined, variant: "variant" in m ? m.variant : undefined, playerColor: "playerColor" in m ? m.playerColor : undefined, ratio: "ratio" in m ? m.ratio : undefined, font: m.font, pin: m.pin, tape: m.tape, pos: m.pos };
+      return <HiddenPin item={hid} />;
     }
     m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
   }
