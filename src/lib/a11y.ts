@@ -5,8 +5,8 @@
 export type ColorMode = "none" | "protan" | "deutan" | "tritan" | "mono";
 export type A11y = {
   color: ColorMode;
-  /** 0 = normal, 1 = grande, 2 = muito grande */
-  text: 0 | 1 | 2;
+  /** 0 = normal, 1 = grande */
+  text: 0 | 1;
   contrast: boolean;
   /** fonte desenhada para ser lida com facilidade (Atkinson Hyperlegible) */
   font: boolean;
@@ -26,6 +26,7 @@ export function loadA11y(): A11y {
     const base = { ...A11Y_DEFAULT, ...(v ?? {}) };
     // sem escolha guardada, quem pediu "reduzir movimento" no aparelho já começa com menos animações
     if (!v && typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches) base.calm = true;
+    if (base.text > 1) base.text = 1; // o antigo "muito grande" virou "grande"
     return base;
   } catch {
     return { ...A11Y_DEFAULT };
@@ -40,7 +41,7 @@ export function saveA11y(s: A11y) {
   }
 }
 
-const TEXT_SIZE = ["100%", "118%", "136%"] as const;
+const TEXT_SIZE = ["100%", "118%"] as const;
 
 /** Põe a escolha na página: atributos no <html> (que o CSS lê), o tamanho do texto e o filtro de cores. */
 export function applyA11y(s: A11y) {
@@ -84,4 +85,4 @@ export function colorMatrix(kind: "protan" | "deutan" | "tritan" | "mono"): stri
 }
 
 /** Script que roda antes da primeira pintura: o texto, a fonte e os atributos já nascem como a pessoa escolheu (sem a tela "pular"). */
-export const A11Y_INIT_SCRIPT = `try{var a=JSON.parse(localStorage.getItem("${A11Y_KEY}")||"null");if(a){var d=document.documentElement;if(a.font)d.dataset.a11yFont="1";if(a.spacing)d.dataset.a11ySpacing="1";if(a.calm)d.dataset.a11yCalm="1";if(a.contrast)d.dataset.a11yContrast="1";d.style.fontSize=["100%","118%","136%"][a.text||0]||"100%"}}catch(e){}`;
+export const A11Y_INIT_SCRIPT = `try{var a=JSON.parse(localStorage.getItem("${A11Y_KEY}")||"null");if(a){var d=document.documentElement;if(a.font)d.dataset.a11yFont="1";if(a.spacing)d.dataset.a11ySpacing="1";if(a.calm)d.dataset.a11yCalm="1";if(a.contrast)d.dataset.a11yContrast="1";d.style.fontSize=["100%","118%"][a.text||0]||"100%"}}catch(e){}`;
