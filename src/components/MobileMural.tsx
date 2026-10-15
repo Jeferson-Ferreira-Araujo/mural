@@ -183,8 +183,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
 
       {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
       {editBadges && (
-        <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 bg-[#f2e8d3] px-4 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] shadow-[0_-0.2rem_0.8rem_rgba(0,0,0,.25)]">
-          {editBadges && <BadgeBar hideRewards className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
+        <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 px-4 pt-2 pb-[max(0.9rem,env(safe-area-inset-bottom))]">
+          {editBadges && <BadgeBar hideRewards className="w-full !bg-[#2a1c12]/80" />}
         </footer>
       )}
     </div>
