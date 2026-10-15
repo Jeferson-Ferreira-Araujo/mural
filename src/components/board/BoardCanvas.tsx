@@ -260,7 +260,12 @@ export function BoardCanvas({
       const a = area(full, rc);
       if (a / size(rc) < 0.03) continue;
       if (cell.hasAttribute("data-pin-id")) return { error: "Não dá para soltar aqui: o pin ficaria sobre outro pin." };
-      if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) return { error: cell.hasAttribute("data-cover-by") ? "Não dá para soltar aqui: o pin ficaria sobre outro pin." : "Não dá para soltar aqui: esse lugar está coberto por um display." };
+      if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) {
+        if (cell.hasAttribute("data-cover-by")) return { error: "Não dá para soltar aqui: o pin ficaria sobre outro pin." };
+        // espaço reservado por um display: quem vale é o retângulo REAL do display (conferido acima, em "obstacles"); a lista de espaços que ele guardou
+        // pode passar da área que ele ocupa de verdade (display movido ou redimensionado) e barrava lugares onde não há display nenhum
+        continue;
+      }
       touched.push({ slot: Number(cell.dataset.slot), area: a, cx: (r.left + r.right) / 2, cy: (r.top + r.bottom) / 2 });
     }
     if (!touched.length) {
