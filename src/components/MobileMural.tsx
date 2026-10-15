@@ -21,6 +21,7 @@ import { PlanLimit } from "./PlanLimit";
 import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
+import { useFeatureFlags } from "@/lib/features";
 import { useBadges } from "./badges/BadgeContext";
 
 type Props = {
@@ -58,6 +59,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
   const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
   const canAdd = unlocked && !locked && hasSelection && !!onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
   const look = boardById(board);
+  const flags = useFeatureFlags();
+  const swipeOn = flags.mural_swipe === true; // trocar de mural arrastando: desligado por padrão (o administrador liga em Recursos)
   const { editable: editBadges } = useBadges();
   const [followersOpen, setFollowersOpen] = useState(false);
   const swipeTarget = useRef<{ from: string; to: string } | null>(null);
@@ -149,7 +152,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         <PannableBoard
           hideControls={locked}
           startZoomed={!locked}
-          onSwipe={muralSwitch && muralSwitch.items.length > 1 ? (dir) => {
+          onSwipe={swipeOn && muralSwitch && muralSwitch.items.length > 1 ? (dir) => {
             // parte do último mural pedido (a tela pode ainda não ter trocado se o dedo seguiu arrastando)
             const from = swipeTarget.current?.from === muralSwitch.current ? swipeTarget.current.to : muralSwitch.current;
             const i = Math.max(0, muralSwitch.items.findIndex((m) => m.slug === from));
