@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { createSharedMural, SHARED_ERROR_TEXT } from "@/lib/shared";
 import { getProfileSummary, reportProfile, type ProfileReportReason, type ProfileSummary } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -62,6 +63,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null); // o cartão de visita (imagem) que vai no compartilhamento
   const [err, setErr] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [password, setPassword] = useState("");
@@ -116,18 +119,33 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   const profileUrl = () => `${window.location.origin}/${data?.nickname ?? nick}`;
 
   async function shareProfile() {
+    if (sharing || !data) return;
     const url = profileUrl();
+    const text = `Veja o perfil de @${data.nickname} no Pinz: ${url}`;
+    setSharing(true);
     try {
-      if (navigator.share) {
-        await navigator.share({ title: `Perfil de @${data?.nickname} no Pinz`, text: `Veja o perfil de @${data?.nickname} no Pinz!`, url });
+      if (cardRef.current) {
+        const blob = await cardToPng(cardRef.current);
+        const res = await deliverImage(blob, `pinz-${data.nickname}`, text);
+        if (res === "downloaded") onNotify("Imagem salva! Agora é só compartilhar.");
         return;
       }
-      await navigator.clipboard.writeText(url);
-      onNotify("Link copiado!");
+    } catch {
+      /* sem imagem: cai no link */
+    } finally {
+      setSharing(false);
+    }
+    try {
+      if (navigator.share) await navigator.share({ title: `Perfil de @${data.nickname} no Pinz`, text: `Veja o perfil de @${data.nickname} no Pinz!`, url });
+      else {
+        await navigator.clipboard.writeText(url);
+        onNotify("Link copiado!");
+      }
     } catch {
       /* compartilhamento cancelado */
     }
   }
+
   return (
     <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">Voltar</button> : undefined}>
       {!data ? (
@@ -178,7 +196,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           )}
 
           <div className="space-y-2.5 border-t border-[#e6d8bd] pt-4">
-            <Action tone="purple" title="Compartilhar perfil" hint="Mostre seu perfil para mais pessoas" onClick={() => void shareProfile()}>
+            <Action tone="purple" title={sharing ? "Preparando a imagem…" : "Compartilhar perfil"} hint="Envia um cartão de visita com a sua foto e o link do perfil" onClick={() => void shareProfile()}>
               <svg {...icon}>
                 <circle cx="18" cy="5" r="2.6" />
                 <circle cx="6" cy="12" r="2.6" />
@@ -271,6 +289,45 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             {busy ? "Enviando…" : "Enviar denúncia"}
           </button>
         </form>
+      )}
+      {open && data && view === "summary" && (
+        <div ref={cardRef} aria-hidden inert className="pointer-events-none" style={{ position: "fixed", left: -100000, top: 0, width: 540, height: 675, background: "#3b2616", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", fontFamily: "var(--font-jakarta), system-ui, sans-serif" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/img/blur/cortica.webp" alt="" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ position: "relative", width: 440, background: "#fbf3e1", borderRadius: 36, padding: "40px 28px 28px", boxShadow: "0 18px 40px rgba(0,0,0,.45)", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", color: "#2f2218" }}>
+            {data.avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={data.avatar} alt="" crossOrigin="anonymous" width={190} height={190} style={{ width: 190, height: 190, borderRadius: 999, objectFit: "cover", border: `${data.plus ? 9 : 6}px solid ${data.plus ? "#f2b81c" : "#ffffff"}` }} />
+            ) : (
+              <div style={{ width: 190, height: 190, borderRadius: 999, background: "#d98a2b", color: "#fff", fontSize: 96, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "6px solid #fff" }}>{data.nickname.slice(0, 1).toUpperCase()}</div>
+            )}
+            <div style={{ marginTop: 18, fontSize: 44, fontWeight: 700, lineHeight: 1.1, wordBreak: "break-word" }}>{`@${data.nickname}`}</div>
+            {data.plus && <div style={{ marginTop: 12, background: "#f2b81c", color: "#2a1c12", fontWeight: 800, fontSize: 22, padding: "6px 18px", borderRadius: 14 }}>PINZ+</div>}
+            {showStats && (
+              <div style={{ marginTop: 22, display: "flex", gap: 14, width: "100%" }}>
+                {([
+                  ...(data.followers != null ? [{ v: data.followers.toLocaleString("pt-BR"), l: data.followers === 1 ? "seguidor" : "seguidores", bg: "#fbe4e2" }] : []),
+                  { v: data.views.toLocaleString("pt-BR"), l: "visualizações", bg: "#e0ecf8" },
+                  { v: data.placed.toLocaleString("pt-BR"), l: "PINZ colocados", bg: "#e3f1de" },
+                ] as { v: string; l: string; bg: string }[])
+                  .map(({ v, l, bg }) => (
+                    <div key={l} style={{ flex: 1, background: bg, borderRadius: 18, padding: "14px 6px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1 }}>{v}</div>
+                      <div style={{ marginTop: 6, fontSize: 15, color: "#6b5440" }}>{l}</div>
+                    </div>
+                  ))}
+              </div>
+            )}
+            <div style={{ marginTop: 24, display: "flex", alignItems: "center", gap: 12, width: "100%", justifyContent: "center", borderTop: "2px dashed #d9c9ad", paddingTop: 18 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 52 }} />
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: 15, color: "#4a3826", fontWeight: 600 }}>Crie seu mural e compartilhe momentos!</div>
+                <div style={{ fontSize: 18, fontWeight: 800 }}>pinz.digital</div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </Modal>
   );

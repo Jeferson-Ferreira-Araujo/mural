@@ -64,7 +64,7 @@ export function AccountMenuButton({ account, tone = "light", className = "" }: {
   );
 }
 
-const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl text-[#2a1c12] transition hover:bg-black/5 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
 
 /** Cabeçalho do mural no celular: à esquerda o menu (e o atalho para o seu mural quando você está no de outra pessoa); à direita a lupa (busca) e o sino. O logo fica no meio (quem usa). */
