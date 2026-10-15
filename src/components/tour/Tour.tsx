@@ -31,6 +31,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [host, setHost] = useState<HTMLElement | null>(null);
   const [vp, setVp] = useState({ w: 0, h: 0 });
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const [acted, setActed] = useState(false); // passo com escolha: a pessoa já fez a tarefa e pode tocar em Próximo
   const [waiting, setWaiting] = useState(false); // a pessoa fez a ação e o tour espera ela fechar a janela que abriu
   const card = useRef<HTMLDivElement>(null);
   const scrolled = useRef("");
@@ -48,6 +49,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   }, [open]);
 
   const step = steps[i];
+  useEffect(() => setActed(!!step?.readyAtStart), [step?.id, step?.readyAtStart]);
   const measure = useCallback(() => {
     setVp((v) => (v.w === window.innerWidth && v.h === window.innerHeight ? v : { w: window.innerWidth, h: window.innerHeight }));
     const dlg = document.querySelector<HTMLElement>("dialog[open]");
@@ -114,6 +116,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         const el = target();
         if (!el || !(e.target instanceof Node) || !el.contains(e.target)) return;
         // deixa o clique fazer o que faz (abrir a janela, aproximar…) e só então decide
+        if (step.manual) return setActed(true); // escolha: não segue sozinho
         window.setTimeout(() => (step.pause ? setWaiting(true) : next()), 450);
       };
       document.addEventListener("click", onClick, true);
@@ -125,7 +128,9 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
       const el = target();
       if (!el || e.target !== el) return;
       window.clearTimeout(timer);
-      if (((el as HTMLTextAreaElement | HTMLInputElement).value ?? "").trim().length >= 3) timer = window.setTimeout(next, 1400);
+      const enough = ((el as HTMLTextAreaElement | HTMLInputElement).value ?? "").trim().length >= 3;
+      if (step.manual) return setActed(enough);
+      if (enough) timer = window.setTimeout(next, 1400);
     };
     document.addEventListener("input", onInput, true);
     return () => {
@@ -234,9 +239,9 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
               Voltar
             </button>
           )}
-          {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque */}
-          {!step.act && (
-            <button type="button" onClick={next} autoFocus className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]`}>
+          {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque; os de escolha esperam a pessoa tocar em Próximo */}
+          {(!step.act || step.manual) && (
+            <button type="button" onClick={next} disabled={!!step.manual && !acted} autoFocus={!step.act} className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-40`}>
               {last ? "Concluir" : "Próximo"}
             </button>
           )}
