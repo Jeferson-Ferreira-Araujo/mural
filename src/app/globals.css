@@ -351,3 +351,41 @@ html[data-a11y-contrast="1"] :focus-visible {
     padding-bottom: 0.6rem;
   }
 }
+
+/* menu da conta (gaveta): entra e sai deslizando pela esquerda */
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes drawer-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes drawer-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.drawer-slide[open] {
+  animation: drawer-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.drawer-slide[open]::backdrop {
+  animation: drawer-fade 0.28s ease;
+}
+.drawer-slide.drawer-out {
+  animation: drawer-out 0.22s ease-in forwards;
+}
+.drawer-slide.drawer-out::backdrop {
+  animation: drawer-fade 0.22s ease reverse forwards;
+}

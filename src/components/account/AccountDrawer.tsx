@@ -219,6 +219,7 @@ export function AccountDrawer({
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
   const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
   const [modal, setModal] = useState<ModalId | null>(null);
+  const [closing, setClosing] = useState(false); // durante a animação de saída o conteúdo continua na gaveta
   const [slot, setSlot] = useState<HTMLElement | null>(null); // onde o painel aberto aparece (parte de baixo da gaveta)
   const isOpen = inline || open;
   useBackClose(open && !inline, onClose); // voltar (Android) fecha o menu
@@ -231,8 +232,21 @@ export function AccountDrawer({
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (open && !d.open) d.showModal();
-    if (!open && d.open) d.close();
+    if (open && !d.open) {
+      d.classList.remove("drawer-out");
+      d.showModal();
+    }
+    if (!open && d.open) {
+      // sai deslizando para a esquerda e só então fecha
+      d.classList.add("drawer-out");
+      setClosing(true);
+      const t = window.setTimeout(() => {
+        d.classList.remove("drawer-out");
+        setClosing(false);
+        if (d.open) d.close();
+      }, 220);
+      return () => window.clearTimeout(t);
+    }
   }, [open]);
 
   useEffect(() => {
@@ -545,42 +559,30 @@ export function AccountDrawer({
           if (e.target === e.currentTarget) onClose();
         }}
         aria-label="Menu da conta"
-        className="fixed inset-y-0 right-auto left-0 m-0 mr-auto h-dvh max-h-none w-[min(26rem,100vw)] max-w-none overflow-hidden rounded-none border-r border-[#e6d8bd] bg-[#f7efdc] p-0 text-[#2f2218] shadow-[1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-r-3xl"
+        className="fixed inset-y-0 right-auto left-0 m-0 mr-auto drawer-slide h-dvh max-h-none w-[min(26rem,calc(100vw-3.5rem))] max-w-none overflow-hidden rounded-none border-r border-[#e6d8bd] bg-[#f7efdc] p-0 text-[#2f2218] shadow-[1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-r-3xl"
       >
-        {open && (
+        {(open || closing) && (
           <div className="flex h-dvh flex-col">
-            {/* cabeçalho: faixa de cortiça com o cartão de papel da conta, a foto com a coroa do PINZ+ e o logo */}
-            <header
-              className="relative shrink-0 px-4 pt-4 pb-5"
-              style={{
-                backgroundColor: "#b98a55",
-                backgroundImage: "radial-gradient(rgba(60,35,10,.28) 1px, transparent 1.6px), radial-gradient(rgba(255,235,200,.22) 1px, transparent 1.6px), linear-gradient(160deg, #c99a63, #a87846)",
-                backgroundSize: "7px 7px, 11px 11px, auto",
-                backgroundPosition: "0 0, 3px 4px, 0 0",
-              }}
-            >
-              <button type="button" onClick={onClose} aria-label="Fechar menu" className="absolute top-3 right-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full bg-white/95 text-[#2f2218] shadow-[0_2px_8px_rgba(0,0,0,.3)] transition hover:bg-white active:scale-95">
-                <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+            {/* cabeçalho simples: foto, nome e selo, sem fundo próprio */}
+            <header className="relative flex shrink-0 items-center gap-4 px-5 pt-5 pb-3">
+              <Avatar src={avatar} name={nick} plus={account.plan === "full"} className="size-[4.4rem] shrink-0" />
+              <div className="min-w-0 flex-1 pr-8">
+                <p className="text-xs font-semibold tracking-[0.12em] text-[#8a7b69] uppercase">Sua conta</p>
+                <p className="font-title text-[1.7rem] leading-tight font-semibold [overflow-wrap:anywhere]">{nick}</p>
+                {account.plan === "full" && <PlanBadge plan="full" className="mt-1" />}
+              </div>
+              <button type="button" onClick={onClose} aria-label="Fechar menu" className="absolute top-3 right-3 grid size-9 cursor-pointer place-items-center rounded-lg text-[#6b5440] transition hover:bg-black/5 hover:text-[#2f2218] active:scale-95">
+                <svg aria-hidden viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
                   <path d="M6 6l12 12M18 6 6 18" />
                 </svg>
               </button>
-              <div className="paper-grain relative mt-5 flex items-center gap-3 rounded-[1.6rem] bg-[#fbf3e1] px-4 py-4 shadow-[0_6px_16px_rgba(60,35,10,.35)]">
-                <span className="relative shrink-0">
-                  <Avatar src={avatar} name={nick} plus={account.plan === "full"} className="size-[4.6rem]" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold tracking-[0.12em] text-[#8a7b69] uppercase">Sua conta</p>
-                  <p className="font-title text-[1.7rem] leading-tight font-semibold [overflow-wrap:anywhere]">{nick}</p>
-                  {account.plan === "full" && <PlanBadge plan="full" className="mt-1" />}
-                </div>
-              </div>
             </header>
 
-            <nav aria-label="Menu da conta" className={`-mt-3 flex-1 space-y-2.5 overflow-y-auto rounded-t-[1.6rem] bg-[#f7efdc] px-4 py-4 ${modal ? "hidden" : ""}`}>
+            <nav aria-label="Menu da conta" className={`flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 ${modal ? "hidden" : ""}`}>
               {rows}
             </nav>
             {/* o painel do atalho aberto ocupa o lugar do menu, com a seta de voltar */}
-            <div ref={setSlot} className={`relative min-h-0 flex-1 overflow-hidden border-t border-[#e6d8bd] bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
+            <div ref={setSlot} className={`relative min-h-0 flex-1 overflow-hidden bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
 
             <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
               <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />
