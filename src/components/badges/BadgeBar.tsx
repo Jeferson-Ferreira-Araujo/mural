@@ -68,7 +68,7 @@ export function BadgeBar({ className = "", centerSlot }: { className?: string; /
         })}
       </ul>
   );
-  return (
+  const block = (
     <section data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* arrastando um botton que já está no mural: avisa onde soltar para devolvê-lo */}
       {draggingId && (
@@ -83,14 +83,7 @@ export function BadgeBar({ className = "", centerSlot }: { className?: string; /
         </div>
       )}
       {centerSlot ? (
-        <div className="flex flex-col gap-2.5">
-          {strip}
-          <div className="flex items-center justify-between gap-3 px-1">
-            {storeBtn}
-            {centerSlot}
-            {rewardsBtn}
-          </div>
-        </div>
+        strip
       ) : (
         <div className="flex items-center gap-2">
           {storeBtn}
@@ -102,4 +95,19 @@ export function BadgeBar({ className = "", centerSlot }: { className?: string; /
       )}
     </section>
   );
+
+  // celular: o bloco só com os bottons em cima e, separados dele, os três botões (Loja, + pin no centro e Ganhar) embaixo
+  if (centerSlot) {
+    return (
+      <>
+        {block}
+        <div className="flex w-full items-center justify-between gap-3 px-2">
+          {storeBtn}
+          {centerSlot}
+          {rewardsBtn}
+        </div>
+      </>
+    );
+  }
+  return block;
 }
