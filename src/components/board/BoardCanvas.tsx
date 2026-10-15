@@ -514,7 +514,11 @@ export function BoardCanvas({
                             data-slot={i}
                             data-pin-id={item.id}
                             // terminada a entrada, tira a classe: um pin movido de lugar no DOM (os vizinhos mudam de posição na lista) não pode repetir a animação
-                            onAnimationEnd={(e) => e.target === e.currentTarget && e.currentTarget.classList.remove("enter")}
+                            onAnimationEnd={(e) => {
+                              if (e.target !== e.currentTarget) return;
+                              e.currentTarget.classList.remove("enter");
+                              entering.current.delete(item.id); // um pin que muda de espaço é recriado no DOM: sem isto a entrada tocava de novo
+                            }}
                             {...(mod ? { "data-pin-drag": "", onPointerDown: (e: React.PointerEvent) => drag.start(e, item.id, i) } : {})}
                             data-pin-type={isSealed(item) ? "capsule" : (item.type ?? "")}
                             style={
