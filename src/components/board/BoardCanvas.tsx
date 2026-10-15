@@ -10,6 +10,7 @@ import { EmptySlot } from "./SlotMarker";
 import { PinDetail, type DetailEntry } from "./PinDetail";
 import { BadgeLayer } from "../badges/BadgeLayer";
 import { useBadges } from "../badges/BadgeContext";
+import { useBoardLoading } from "./BoardLoadingContext";
 import { PHYSICAL_TYPES } from "@/lib/badges";
 import { useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
@@ -116,6 +117,7 @@ export function BoardCanvas({
   }
   const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
   const { removeOver, badges, editable: badgesEditable } = useBadges();
+  const loading = useBoardLoading(); // os pins ainda estão chegando: mostra "Carregando mural…" em vez do bilhete de mural vazio
   // espaços cobertos por pins da loja (relógio, clima…): ficam sem receber post-its, fotos e vídeos
   const covered = new Set(badges.flatMap((b) => (b.kind === "display" ? (b.slots ?? []) : [])));
   // fila do detalhe: pins e widgets na ordem em que aparecem no mural (o widget entra no lugar do(s) espaço(s) que cobre)
@@ -632,7 +634,15 @@ export function BoardCanvas({
                 </div>
               </div>
               {/* mural sem nenhum pin e sem nenhum display: bilhete padrão no meio (o mesmo em qualquer plano, sem edição) */}
-              {hasSelection && unlocked && !locked && items.length === 0 && !badges.some((b) => b.kind === "display") && (
+              {hasSelection && unlocked && !locked && loading && (
+                <div role="status" className="pointer-events-none absolute inset-0 z-[3] grid place-items-center">
+                  <div className="flex items-center gap-3 rounded-2xl bg-[#17110c]/85 px-5 py-3 text-[1.9cqw] font-semibold text-white shadow-[0_0.4em_1.2em_rgba(0,0,0,.45)]" style={{ minWidth: "min(70%, 18em)", justifyContent: "center" }}>
+                    <span aria-hidden className="size-[1.2em] animate-spin rounded-full border-[0.2em] border-white/30 border-t-white" />
+                    Carregando mural…
+                  </div>
+                </div>
+              )}
+              {hasSelection && unlocked && !locked && !loading && items.length === 0 && !badges.some((b) => b.kind === "display") && (
                 <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
                   {/* a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
                   <div className="-rotate-2" style={{ fontSize: "2.1cqw" }}>
