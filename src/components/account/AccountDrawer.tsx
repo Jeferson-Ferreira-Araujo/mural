@@ -9,7 +9,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
-import { Brand } from "../Brand";
+import { PlanBadge } from "../board/PlanBadge";
 import { Modal } from "./Modal";
 import { ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
@@ -558,33 +558,20 @@ export function AccountDrawer({
                 backgroundPosition: "0 0, 3px 4px, 0 0",
               }}
             >
-              <button type="button" onClick={onClose} aria-label="Fechar menu" className="absolute top-3 right-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full bg-white/95 text-2xl leading-none text-[#2f2218] shadow-[0_2px_8px_rgba(0,0,0,.3)] transition hover:bg-white active:scale-95">
-                ×
+              <button type="button" onClick={onClose} aria-label="Fechar menu" className="absolute top-3 right-3 z-10 grid size-10 cursor-pointer place-items-center rounded-full bg-white/95 text-[#2f2218] shadow-[0_2px_8px_rgba(0,0,0,.3)] transition hover:bg-white active:scale-95">
+                <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6 6 18" />
+                </svg>
               </button>
               <div className="paper-grain relative mt-5 flex items-center gap-3 rounded-[1.6rem] bg-[#fbf3e1] px-4 py-4 shadow-[0_6px_16px_rgba(60,35,10,.35)]">
                 <span className="relative shrink-0">
                   <Avatar src={avatar} name={nick} plus={account.plan === "full"} className="size-[4.6rem]" />
-                  {account.plan === "full" && (
-                    <svg aria-hidden viewBox="0 0 24 14" className="absolute -top-2.5 -right-1 z-10 w-8 rotate-[12deg]" fill="#f2b81c" stroke="#a86a00" strokeWidth="1.2" strokeLinejoin="round">
-                      <path d="M2 12 L1 3 L7 7 L12 1 L17 7 L23 3 L22 12 Z" />
-                    </svg>
-                  )}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold tracking-[0.12em] text-[#8a7b69] uppercase">Sua conta</p>
-                  <p className="font-title truncate text-[1.7rem] leading-tight font-semibold">{nick}</p>
-                  {mural && (
-                    <p className="mt-0.5 flex items-center gap-1.5 text-sm text-[#6b5440]">
-                      <svg aria-hidden viewBox="0 0 24 24" className="size-4 text-[#d98a2b]" fill="currentColor">
-                        {mural.question ? <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" /> : <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 2c.9 1.1 1.7 2.8 2 5H10c.3-2.2 1.100-3.900 2-5Zm-2.600.5C8.600 6.700 8.100 8.200 8 10H5.100a7 7 0 0 1 4.300-4.500ZM5.100 14H8c.1 1.800.6 3.300 1.400 4.500A7 7 0 0 1 5.100 14Zm4.900 0h4c-.3 2.200-1.100 3.900-2 5-.9-1.100-1.700-2.800-2-5Zm6 0h2.900a7 7 0 0 1-4.300 4.500c.8-1.200 1.300-2.700 1.400-4.500Zm0-4c-.1-1.800-.6-3.300-1.400-4.500A7 7 0 0 1 18.900 10H16Z" />}
-                      </svg>
-                      {mural.question ? "Murais privados" : "Murais públicos"}
-                    </p>
-                  )}
+                  <p className="font-title text-[1.7rem] leading-tight font-semibold [overflow-wrap:anywhere]">{nick}</p>
+                  {account.plan === "full" && <PlanBadge plan="full" className="mt-1" />}
                 </div>
-                <span className="shrink-0 rotate-[5deg]" aria-hidden>
-                  <Brand className="h-16" />
-                </span>
               </div>
             </header>
 
