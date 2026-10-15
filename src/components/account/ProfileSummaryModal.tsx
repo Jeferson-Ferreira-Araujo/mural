@@ -7,7 +7,6 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { Avatar } from "../Avatar";
-import QRCode from "qrcode";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
@@ -36,7 +35,7 @@ const Stat = ({ value, label, tone, children }: { value: string; label: string; 
   );
 };
 
-/** Linha de ação (compartilhar, copiar link, QR Code…): ícone, título e descrição. */
+/** Linha de ação do perfil: ícone, título e descrição. */
 const Action = ({ title, hint, onClick, tone, children }: { title: string; hint: string; onClick: () => void; tone: "purple" | "blue" | "pink"; children: ReactNode }) => {
   const t = { purple: "bg-[#e9e3f7] text-[#7a5bc8]", blue: "bg-[#dcebf9] text-[#2f78c9]", pink: "bg-[#fbe0e6] text-[#d9546a]" }[tone];
   return (
@@ -61,8 +60,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
  */
 export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify }: { open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
   const [data, setData] = useState<ProfileSummary | null>(null);
-  const [view, setView] = useState<"summary" | "shared" | "report" | "qr">("summary");
-  const [qr, setQr] = useState<string | null>(null);
+  const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -114,7 +112,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     onClose();
   }
 
-  const heading = view === "shared" ? "Mural compartilhado" : view === "report" ? "Denunciar perfil" : view === "qr" ? "QR Code" : "Perfil";
+  const heading = view === "shared" ? "Mural compartilhado" : view === "report" ? "Denunciar perfil" : "Perfil";
   const profileUrl = () => `${window.location.origin}/${data?.nickname ?? nick}`;
 
   async function shareProfile() {
@@ -130,60 +128,15 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       /* compartilhamento cancelado */
     }
   }
-  async function copyLink() {
-    try {
-      await navigator.clipboard.writeText(profileUrl());
-      onNotify("Link do perfil copiado!");
-    } catch {
-      onNotify("Não foi possível copiar agora.");
-    }
-  }
-  async function openQr() {
-    setErr(null);
-    try {
-      setQr(await QRCode.toDataURL(profileUrl(), { width: 640, margin: 2, color: { dark: "#2f2218", light: "#ffffff" } }));
-      setView("qr");
-    } catch {
-      onNotify("Não foi possível gerar o QR Code agora.");
-    }
-  }
-
   return (
-    <Modal open={open} onClose={onClose} title={view === "summary" ? "" : heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">Voltar</button> : undefined}>
+    <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">Voltar</button> : undefined}>
       {!data ? (
         <p className="py-8 text-center text-sm text-[#6b5440]">Carregando…</p>
       ) : view === "summary" ? (
         <div className="space-y-4">
-          {/* título com grifo amarelo, na linha do botão de fechar */}
-          <div className="relative -mt-11 mb-1 pr-12">
-            <h3 className="font-title relative inline-block text-4xl leading-none font-semibold">
-              Perfil
-              <svg aria-hidden viewBox="0 0 120 10" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-2 w-[110%]">
-                <path d="M2 6 Q 40 1 118 4" fill="none" stroke="#f2b81c" strokeWidth="4" strokeLinecap="round" />
-              </svg>
-            </h3>
-          </div>
-
-          {/* foto grande sobre uma pincelada amarela, com rabiscos de enfeite */}
-          <div className="relative mx-auto flex h-[15rem] items-center justify-center">
-            <svg aria-hidden viewBox="0 0 400 240" className="absolute inset-0 size-full">
-              <path d="M30 150C40 120 80 112 130 108 190 96 280 70 360 86 372 112 330 134 300 148 240 168 150 186 80 192 44 196 24 178 30 150Z" fill="#f8e7a8" opacity=".85" />
-            </svg>
-            {data.plus && (
-              <svg aria-hidden viewBox="0 0 64 64" className="absolute top-3 left-2 size-16 text-[#a77a1f]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 46 12 24l12 9 8-14 8 14 12-9-4 22Z" />
-                <path d="M14 8l-3-5M5 18 0 15M3 30l-4 1" transform="translate(8 4)" />
-              </svg>
-            )}
-            <svg aria-hidden viewBox="0 0 80 80" className="absolute top-2 right-1 size-20 text-[#a77a1f]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M44 8 72 14 52 36Z" />
-              <path d="M44 8 50 27 52 36M44 8 36 24l14 3" />
-              <path d="M40 44c-6 2-10-4-6-8s10-2 10 4c0 8-12 12-22 6" strokeDasharray="3 4" />
-            </svg>
-            <svg aria-hidden viewBox="0 0 24 24" className="absolute right-4 bottom-4 size-7 text-[#a77a1f]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
-              <path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2Z" />
-            </svg>
-            <Avatar src={data.avatar} name={data.nickname} plus={data.plus} className={`relative z-10 size-40 ${data.plus ? "!border-[0.35rem]" : "!border-4"}`} />
+          {/* foto grande com a moldura dourada do PINZ+ */}
+          <div className="flex justify-center pt-1">
+            <Avatar src={data.avatar} name={data.nickname} plus={data.plus} className={`size-40 ${data.plus ? "!border-[0.35rem]" : "!border-4"}`} />
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center">
@@ -233,19 +186,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                 <path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3" />
               </svg>
             </Action>
-            <Action tone="blue" title="Copiar link" hint="Copie o link do perfil" onClick={() => void copyLink()}>
-              <svg {...icon} strokeWidth="2.2">
-                <path d="M10 14a4.500 4.500 0 0 0 6.400 0l3-3a4.500 4.500 0 0 0-6.400-6.400l-1 1M14 10a4.500 4.500 0 0 0-6.400 0l-3 3a4.500 4.500 0 0 0 6.400 6.400l1-1" />
-              </svg>
-            </Action>
-            <Action tone="pink" title="QR Code" hint="Compartilhe o perfil com um QR Code" onClick={() => void openQr()}>
-              <svg {...icon}>
-                <rect x="3.500" y="3.500" width="7" height="7" rx="1.200" />
-                <rect x="13.500" y="3.500" width="7" height="7" rx="1.200" />
-                <rect x="3.500" y="13.500" width="7" height="7" rx="1.200" />
-                <path d="M14 14h2.500v2.500H14zM18.500 14H21M14 19h2.500M18.500 18.500H21V21h-2.500z" />
-              </svg>
-            </Action>
             {logged && !self && (
               <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
                 Solicitar mural compartilhado
@@ -257,19 +197,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               </button>
             )}
           </div>
-        </div>
-      ) : view === "qr" ? (
-        <div className="flex flex-col items-center gap-3 text-center">
-          <p className="text-sm text-[#4a3826]">Aponte a câmera para abrir o perfil de <strong>@{data.nickname}</strong>.</p>
-          {qr && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={qr} alt={`QR Code do perfil de @${data.nickname}`} className="size-64 rounded-2xl border border-[#e6d8bd] bg-white p-2" />
-          )}
-          {qr && (
-            <a href={qr} download={`pinz-${data.nickname}-qrcode.png`} className={`${primaryButton} !w-auto px-6`}>
-              Salvar imagem
-            </a>
-          )}
         </div>
       ) : view === "shared" ? (
         <form onSubmit={sendShared} noValidate className="space-y-4">
