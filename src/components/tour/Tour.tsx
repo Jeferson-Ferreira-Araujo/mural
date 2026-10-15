@@ -234,9 +234,12 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
               Voltar
             </button>
           )}
-          <button type="button" onClick={next} autoFocus={!step.act} className={`${btn} ${step.act ? "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-white" : "bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]"}`}>
-            {last ? "Concluir" : step.act ? "Pular passo" : "Próximo"}
-          </button>
+          {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque */}
+          {!step.act && (
+            <button type="button" onClick={next} autoFocus className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]`}>
+              {last ? "Concluir" : "Próximo"}
+            </button>
+          )}
         </div>
       </div>
     </div>
