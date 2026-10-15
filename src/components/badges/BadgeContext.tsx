@@ -231,17 +231,37 @@ export function BadgeProvider({
         const r = sourceEl.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       };
+      // tamanho do objeto na tela, na escala ATUAL do quadro (o zoom pode mudar durante o arraste: o objeto segurado acompanha)
+      let lastScale = 0;
+      let lastPt = { x: 0, y: 0 };
+      let raf = 0;
+      const refreshSize = () => {
+        if (!layer) return;
+        const lr = layer.getBoundingClientRect();
+        const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
+        const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
+        lastScale = scale;
+        const srcData = src.kind === "placed" ? live.current.badges.find((x) => x.id === src.id)?.data : undefined;
+        const w = baseEmOfBadge(src.key, srcData) * em * scale * ((src.kind === "placed" ? (src.scale ?? (displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE)) : displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE) / 100);
+        size = { w, h: w / ratioOfBadge(src.key, srcData) };
+      };
+      const tick = () => {
+        if (!active) return;
+        if (layer) {
+          const lr = layer.getBoundingClientRect();
+          const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
+          if (Math.abs(scale - lastScale) > 0.001) {
+            refreshSize();
+            setGhost({ key: src.key, x: lastPt.x, y: lastPt.y, w: size.w, h: size.h, state: stateAt(lastPt.x, lastPt.y), rot: rotOf() });
+          }
+        }
+        raf = requestAnimationFrame(tick);
+      };
       const activate = () => {
         active = true;
         layer = visibleOne("[data-badge-layer]");
-        if (layer) {
-          const lr = layer.getBoundingClientRect();
-          const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
-          const scale = lr.width / ((layer as HTMLElement).offsetWidth || lr.width);
-          const srcData = src.kind === "placed" ? live.current.badges.find((x) => x.id === src.id)?.data : undefined;
-          const w = baseEmOfBadge(src.key, srcData) * em * scale * ((src.kind === "placed" ? (src.scale ?? (displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE)) : displayDrag ? DISPLAY_SCALE : DEFAULT_SCALE) / 100);
-          size = { w, h: w / ratioOfBadge(src.key, srcData) };
-        }
+        refreshSize();
+        raf = requestAnimationFrame(tick);
         origin = sourceCenter();
         if (src.kind === "placed") setDraggingId(src.id);
         else setDraggingNew(true);
@@ -265,6 +285,8 @@ export function BadgeProvider({
           activate();
         }
         ev.preventDefault();
+        lastPt = { x: ev.clientX, y: ev.clientY };
+        refreshSize();
         setGhost({ key: src.key, x: ev.clientX, y: ev.clientY, w: size.w, h: size.h, state: stateAt(ev.clientX, ev.clientY), rot: rotOf() });
       };
       const onUp = (ev: PointerEvent) => {
@@ -290,6 +312,7 @@ export function BadgeProvider({
         window.removeEventListener("pointercancel", onCancel);
         window.removeEventListener("keydown", onKey);
         cleanup.current = null;
+        cancelAnimationFrame(raf);
         document.body.classList.remove("badge-dragging");
         setDraggingId(null);
         setDraggingNew(false);

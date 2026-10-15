@@ -34,6 +34,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
       let reasonEl: HTMLElement | null = null;
       let g0 = { left: 0, right: 0, top: 0, bottom: 0 };
       let timer = 0;
+      let raf = 0;
 
       const setTarget = (t: HTMLElement | null) => {
         if (t === target) return;
@@ -54,14 +55,27 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
         }
         return null;
       };
+      // o zoom do quadro pode mudar durante o arraste (roda do mouse, Afastar): o pin que se segura acompanha a escala atual do quadro
+      const sync = () => {
+        const r = el.getBoundingClientRect();
+        const k = el.offsetWidth ? r.width / el.offsetWidth : gk;
+        if (Math.abs(k - gk) > 0.001) {
+          offX *= k / gk; // o ponto do pin que está na mão continua o mesmo
+          offY *= k / gk;
+          gk = k;
+          if (ghost) ghost.dataset.k = String(k);
+        }
+        g0 = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+      };
       const place = () => {
+        sync();
         if (ghost) ghost.style.transform = `translate(${lx - offX}px, ${ly - offY}px) scale(${ghost.dataset.k})`;
         const over = slotAt(lx, ly);
         setTarget(over);
         if (ghost) {
           // fora de qualquer espaço: o pin só será deslocado; o contorno do fantasma mostra se aqui pode (verde) ou não (vermelho)
           if (!over && onCheck) {
-            const why = onCheck(id, { dx: lx - sx, dy: ly - sy, k: gk, rect: g0 }); // null = pode; texto = o motivo de não poder
+            const why = onCheck(id, { dx: lx - offX - g0.left, dy: ly - offY - g0.top, k: gk, rect: g0 }); // null = pode; texto = o motivo de não poder
             ghost.style.outline = `0.28em solid ${why ? "#ff6b5b" : "#6fdc8c"}`;
             ghost.style.outlineOffset = "0.25em";
             // o motivo aparece junto do pin enquanto ele está vermelho
@@ -118,9 +132,19 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
         document.body.appendChild(ghost);
         el.style.opacity = "0.3";
         place();
+        // acompanha mudanças de zoom mesmo com o mouse parado
+        const tick = () => {
+          if (!dragging) return;
+          const r = el.getBoundingClientRect();
+          const k = el.offsetWidth ? r.width / el.offsetWidth : gk;
+          if (Math.abs(k - gk) > 0.001) place();
+          raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
       };
       const cleanup = () => {
         window.clearTimeout(timer);
+        cancelAnimationFrame(raf);
         window.removeEventListener("pointermove", onMoveWin);
         window.removeEventListener("pointerup", onUp);
         window.removeEventListener("pointercancel", onCancel);
@@ -148,6 +172,9 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
         if (ev.pointerId !== pid) return;
         const dest = dragging ? slotAt(ev.clientX, ev.clientY) : null;
         const was = dragging;
+        if (was) sync();
+        const dx = ev.clientX - offX - g0.left;
+        const dy = ev.clientY - offY - g0.top;
         cleanup();
         if (was) {
           window.setTimeout(() => (suppress.current = false), 450);
@@ -156,7 +183,7 @@ export function usePinDrag(onMove: ((id: string, slot: number) => void) | null, 
             onMove?.(id, to);
           } else {
             // soltou no próprio espaço ou fora de qualquer outro: o pin só é deslocado um pouco (continua no espaço dele)
-            onNudge?.(id, { dx: ev.clientX - sx, dy: ev.clientY - sy, k: gk, rect: g0 });
+            onNudge?.(id, { dx, dy, k: gk, rect: g0 });
           }
         }
       }
