@@ -41,104 +41,14 @@ const TINTS: Record<Tint, { bg: string; fg: string }> = {
   gold: { bg: "#fbebc2", fg: "#b9831a" },
 };
 
-/** Ilustrações pequenas do lado direito de cada atalho (só desenho, sem imagens de fora). */
-const Polaroid = ({ rot, children, className = "" }: { rot: number; children: ReactNode; className?: string }) => (
-  <span className={`absolute block rounded-[2px] bg-white p-[2px] pb-[6px] shadow-[0_2px_5px_rgba(60,35,10,.35)] ${className}`} style={{ transform: `rotate(${rot}deg)` }}>
-    {children}
-  </span>
-);
-const ArtMurals = () => (
-  <span aria-hidden className="relative block h-12 w-[4.2rem]">
-    <Polaroid rot={-9} className="top-1 left-0 w-9">
-      <span className="block aspect-square bg-gradient-to-b from-[#4a6a8a] to-[#9ac0a0]" />
-    </Polaroid>
-    <Polaroid rot={6} className="top-0 left-4 w-10">
-      <span className="block aspect-square bg-gradient-to-b from-[#f3a65a] via-[#d9606b] to-[#4c3a6e]" />
-    </Polaroid>
-    <span className="absolute top-0 left-[3.1rem] size-2.5 rounded-full bg-[#e0443a] shadow-[0_1px_2px_rgba(0,0,0,.4)]" />
-  </span>
-);
-const PersonGlyph = () => (
-  <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
-    <circle cx="12" cy="9" r="4" />
-    <path d="M4 21c.6-4 4-6 8-6s7.4 2 8 6Z" />
-  </svg>
-);
-const ArtShared = () => (
-  <span aria-hidden className="relative block h-12 w-[4.4rem]">
-    <span className="absolute top-2 left-0 grid size-9 place-items-center rounded-full bg-[#f2dcb4] text-[#b9833a]">
-      <PersonGlyph />
-    </span>
-    <span className="absolute top-3 left-7 grid size-9 place-items-center rounded-full bg-[#ecd2a8] text-[#a8743a]">
-      <PersonGlyph />
-    </span>
-    <svg viewBox="0 0 24 24" className="absolute top-0 left-6 size-5 text-[#e0443a]" fill="currentColor">
-      <path d="M12 21s-7.5-4.6-9.5-9.2C1 8 3.2 5 6.2 5c2 0 3.3 1 3.8 2.2C10.5 6 11.8 5 13.8 5 16.8 5 19 8 17.5 11.8 15.5 16.4 12 21 12 21Z" />
-    </svg>
-  </span>
-);
-const ArtBars = () => (
-  <span aria-hidden className="flex h-12 w-[4.2rem] items-end justify-center gap-1 border-b border-[#d9c9ad] pb-px">
-    {(
-      [
-        ["#f2b84a", 14],
-        ["#ee7fc0", 22],
-        ["#7aa6e6", 30],
-        ["#58cbb0", 40],
-      ] as const
-    ).map(([c, h]) => (
-      <span key={c} className="w-3 rounded-t-[3px]" style={{ background: c, height: h }} />
-    ))}
-  </span>
-);
-const ArtFollowing = () => (
-  <span aria-hidden className="relative block h-12 w-[4.2rem]">
-    <Polaroid rot={-7} className="top-1 left-1 w-9">
-      <span className="grid aspect-square place-items-end justify-center overflow-hidden bg-[#c9b49a]">
-        <span className="size-5 rounded-full bg-[#6b4a3a]" />
-      </span>
-    </Polaroid>
-    <Polaroid rot={8} className="top-0 left-6 w-9">
-      <span className="grid aspect-square place-items-end justify-center overflow-hidden bg-[#a9bccf]">
-        <span className="size-5 rounded-full bg-[#4a5a6a]" />
-      </span>
-    </Polaroid>
-  </span>
-);
-const ArtCoin = () => (
-  <span aria-hidden className="inline-flex items-center gap-1 rounded-xl bg-[#f6c64a] px-3 py-2 text-sm font-black text-[#5a3b05] shadow-[inset_0_1px_0_rgba(255,255,255,.6)]">
-    +
-    <span className="grid size-6 place-items-center rounded-full bg-[#b9831a] text-[13px] text-white">P</span>
-  </span>
-);
-const ArtMap = () => (
-  <span aria-hidden className="relative block h-12 w-[4.2rem] rotate-[-4deg] rounded-[3px] bg-[#f3e6c8] shadow-[0_2px_5px_rgba(60,35,10,.3)]">
-    <svg viewBox="0 0 64 48" className="absolute inset-0 size-full" fill="none">
-      <path d="M6 34c8-14 14 4 22-8s14 6 24-10" stroke="#8a5a2a" strokeWidth="1.6" strokeDasharray="3 3" strokeLinecap="round" />
-      <path d="M50 8c-4 0-7 3-7 7 0 5 7 11 7 11s7-6 7-11c0-4-3-7-7-7Z" fill="#e0443a" />
-      <circle cx="50" cy="15" r="2.4" fill="#fff" />
-    </svg>
-  </span>
-);
-const ArtWelcome = () => (
-  <span aria-hidden className="relative grid h-11 w-[4.2rem] place-items-center overflow-hidden rounded-[4px] bg-gradient-to-br from-[#8a5a2a] to-[#4a2f14] shadow-[0_2px_5px_rgba(60,35,10,.35)]">
-    <span className="absolute inset-1 rounded-[2px] bg-[repeating-linear-gradient(90deg,#d8b98a_0_6px,#c79e66_6px_12px)] opacity-60" />
-    <span className="relative grid size-6 place-items-center rounded-full bg-white text-[#2f2218]">
-      <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor">
-        <path d="M8 5v14l11-7Z" />
-      </svg>
-    </span>
-  </span>
-);
-
-function Row({ icon, label, hint, badge, onClick, tint = "orange", art, pill }: { icon: ReactNode; label: string; hint?: string; badge?: number; onClick: () => void; /** cor do ícone */ tint?: Tint; /** desenho do lado direito (só na gaveta) */ art?: ReactNode; /** etiqueta do lado direito (plano atual…) */ pill?: ReactNode }) {
+function Row({ icon, label, hint, badge, onClick, tint = "orange" }: { icon: ReactNode; label: string; hint?: string; /** quantidade pendente: vira um selo vermelho no canto superior direito do cartão (some quando é zero) */ badge?: number; onClick: () => void; /** cor do ícone */ tint?: Tint }) {
   const compact = useContext(CompactCtx);
   const t = TINTS[tint];
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3.5 px-3.5 py-3"}`}
+      className={`relative flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3.5 px-3.5 py-3"}`}
     >
       <span className={`grid shrink-0 place-items-center ${compact ? "size-8 rounded-xl" : "size-12 rounded-2xl"}`} style={{ background: t.bg, color: t.fg }} aria-hidden>
         {icon}
@@ -147,9 +57,11 @@ function Row({ icon, label, hint, badge, onClick, tint = "orange", art, pill }: 
         <span className={`block leading-tight font-bold ${compact ? "text-[14px]" : "text-[17px]"}`}>{label}</span>
         {hint && <span className={`block leading-snug text-[#6b5440] ${compact ? "truncate text-xs" : "mt-0.5 text-[13px]"}`}>{hint}</span>}
       </span>
-      {!compact && art}
-      {!compact && pill}
-      {badge !== undefined && (badge > 0 ? <span className="rounded-lg bg-[#d98a2b] px-2.5 py-0.5 text-sm font-bold text-white">{badge}</span> : !compact && <span className="grid min-w-9 place-items-center rounded-xl bg-[#efe6d3] px-2 py-1.5 text-base font-bold text-[#6b5440]">0</span>)}
+      {!!badge && (
+        <span aria-label={`${badge} pendente${badge > 1 ? "s" : ""}`} className="absolute -top-2 -right-1.5 grid min-w-6 place-items-center rounded-full bg-[#e0382d] px-1.5 py-0.5 text-xs leading-4 font-extrabold text-white shadow-[0_2px_5px_rgba(120,20,10,.45)] ring-2 ring-[#f7efdc]">
+          {badge > 99 ? "99+" : badge}
+        </span>
+      )}
       <svg viewBox="0 0 24 24" className="size-4 shrink-0 text-[#8a7b69]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="m9 6 6 6-6 6" />
       </svg>
@@ -270,7 +182,6 @@ export function AccountDrawer({
                     label="Meus murais"
                     hint="Gerencie, personalize e acesse seus murais."
                     tint="orange"
-                    art={<ArtMurals />}
                     icon={
                       <svg {...ic}>
                         <rect x="4" y="3.5" width="16" height="11" rx="1.5" />
@@ -310,7 +221,6 @@ export function AccountDrawer({
                     hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PINZ+)"}
                     badge={sharedInvites}
                     tint="pink"
-                    art={<ArtShared />}
                     icon={
                       <svg {...ic}>
                         <circle cx="9" cy="8.5" r="3" />
@@ -325,7 +235,6 @@ export function AccountDrawer({
                     label="Números do mural"
                     hint="Veja estatísticas e interações."
                     tint="green"
-                    art={<ArtBars />}
                     icon={
                       <svg {...ic}>
                         <path d="M5 20V10M12 20V4M19 20v-7" />
@@ -357,7 +266,6 @@ export function AccountDrawer({
                 label="Seguindo"
                 hint="Murais de quem você segue."
                 tint="yellow"
-                art={<ArtFollowing />}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -369,7 +277,6 @@ export function AccountDrawer({
                 label="Ganhe créditos"
                 hint="Tarefas que dão créditos na hora."
                 tint="gold"
-                art={<ArtCoin />}
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
@@ -385,7 +292,6 @@ export function AccountDrawer({
                 label="Tour pelo Pinz"
                 hint="Descubra todas as funcionalidades."
                 tint="blue"
-                art={<ArtMap />}
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
@@ -398,7 +304,6 @@ export function AccountDrawer({
                 label="Planos"
                 hint={`Seu plano atual: ${account.plan === "full" ? "PINZ+" : "FREE"}.`}
                 tint="purple"
-                pill={<span className={`inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-sm font-extrabold ${account.plan === "full" ? "bg-[#6c4fc2] text-white" : "bg-[#e9e2d2] text-[#6b5440]"}`}>{account.plan === "full" ? "👑 PINZ+" : "FREE"}</span>}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -414,7 +319,6 @@ export function AccountDrawer({
                   label="Testar as boas-vindas"
                   hint="Veja como é a experiência de novo."
                   tint="green"
-                  art={<ArtWelcome />}
                   icon={
                     <svg {...ic}>
                       <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100" />
