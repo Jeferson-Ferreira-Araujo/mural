@@ -1,18 +1,55 @@
 "use client";
 
 import { useBackClose } from "@/lib/backStack";
-import { useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+
+/**
+ * Onde as janelas do menu da conta aparecem quando o menu é a gaveta: em vez de uma janela por cima, o conteúdo ocupa a parte de baixo da gaveta
+ * (abaixo do cabeçalho), com uma seta para voltar ao menu. Sem esse contexto (por exemplo, na coluna do computador), é a janela de sempre.
+ */
+export const EmbedCtx = createContext<HTMLElement | null>(null);
+
+const ArrowBack = () => (
+  <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m15 5-7 7 7 7" />
+  </svg>
+);
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
 export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, danger = false }: { /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const slot = useContext(EmbedCtx);
   useBackClose(open, onClose); // o botão voltar (Android) fecha esta janela em vez de sair da página
   useEffect(() => {
+    if (slot) return; // embutido: não usa a janela nativa
     const d = ref.current;
     if (!d) return;
     if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
-  }, [open]);
+  }, [open, slot]);
+
+  // dentro da gaveta: o conteúdo ocupa a parte de baixo, com a seta de voltar ao menu principal
+  if (slot) {
+    if (!open) return null;
+    return createPortal(
+      <div role="region" aria-label={title || label} className={`absolute inset-0 flex flex-col ${danger ? "bg-[#fdf1ed] text-[#4a1d14]" : "bg-[#f7efdc] text-[#2f2218]"}`}>
+        <header className={`flex shrink-0 items-center gap-2 border-b px-3 py-2.5 ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}`}>
+          {headerLeft ?? (
+            <button type="button" onClick={onClose} aria-label="Voltar ao menu" title="Voltar ao menu" className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-black/5 active:scale-95">
+              <ArrowBack />
+            </button>
+          )}
+          {title && <h2 className="font-title min-w-0 flex-1 truncate text-lg font-semibold">{title}</h2>}
+          {!title && <span className="flex-1" />}
+          {aside && <div className="shrink-0">{aside}</div>}
+        </header>
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        {overlay}
+      </div>,
+      slot,
+    );
+  }
 
   return (
     <dialog

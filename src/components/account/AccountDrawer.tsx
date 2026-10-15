@@ -10,7 +10,7 @@ import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { PlanBadge } from "../board/PlanBadge";
-import { Modal } from "./Modal";
+import { EmbedCtx, Modal } from "./Modal";
 import { ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { MuralSettings } from "./MuralSettings";
@@ -219,6 +219,7 @@ export function AccountDrawer({
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
   const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
   const [modal, setModal] = useState<ModalId | null>(null);
+  const [slot, setSlot] = useState<HTMLElement | null>(null); // onde o painel aberto aparece (parte de baixo da gaveta)
   const isOpen = inline || open;
   useBackClose(open && !inline, onClose); // voltar (Android) fecha o menu
   const [stats, setStats] = useState<MuralStats | null>(null);
@@ -575,11 +576,13 @@ export function AccountDrawer({
               </div>
             </header>
 
-            <nav aria-label="Menu da conta" className="-mt-3 flex-1 space-y-2.5 overflow-y-auto rounded-t-[1.6rem] bg-[#f7efdc] px-4 py-4">
+            <nav aria-label="Menu da conta" className={`-mt-3 flex-1 space-y-2.5 overflow-y-auto rounded-t-[1.6rem] bg-[#f7efdc] px-4 py-4 ${modal ? "hidden" : ""}`}>
               {rows}
             </nav>
+            {/* o painel do atalho aberto ocupa o lugar do menu, com a seta de voltar */}
+            <div ref={setSlot} className={`relative -mt-3 min-h-0 flex-1 overflow-hidden rounded-t-[1.6rem] bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
 
-            <footer className="relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4">
+            <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
               <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />
               <button type="button" onClick={onSignOut} className="relative z-10 mx-auto flex w-[80%] cursor-pointer items-center justify-center gap-3 rounded-2xl border border-[#f1c8c1] bg-[#fbe5e0] px-4 py-3.5 text-base font-bold text-[#b3261e] shadow-[0_2px_6px_rgba(120,40,30,.12)] transition hover:bg-[#fbd9d2] active:scale-[0.99]">
                 <svg aria-hidden viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -601,7 +604,7 @@ export function AccountDrawer({
         )}
       </dialog>
 
-      {modals}
+      <EmbedCtx.Provider value={slot}>{modals}</EmbedCtx.Provider>
     </>
   );
 }
