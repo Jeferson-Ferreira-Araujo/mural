@@ -53,7 +53,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
   }
 
   return (
-    <Modal open={open} onClose={() => finish(false)} title={step === "profile" ? `Olá, ${nick}!` : "Quer fazer um tour?"}>
+    <Modal open={open} onClose={() => finish(false)} title={step === "profile" ? `Olá, ${nick}!` : "Vamos colocar o seu primeiro pin?"}>
       {step === "profile" ? (
         <>
           <p className="text-[15px] leading-snug text-[#4a3826]">Complete o seu perfil para as pessoas reconhecerem você.</p>
@@ -81,9 +81,9 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
         </>
       ) : (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Um passo a passo curtinho, de cerca de 1 minuto, mostrando cada função do Pinz.</p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">Eu vou te guiar, tocando junto com você, para colar o seu primeiro pin no seu mural. Leva cerca de 1 minuto.</p>
           <button type="button" onClick={() => finish(true)} className={`${primaryButton} mt-5`}>
-            Fazer o tour
+            Começar
           </button>
           <button type="button" onClick={() => finish(false)} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
             Agora não

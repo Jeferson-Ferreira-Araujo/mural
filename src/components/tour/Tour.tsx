@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useBackClose } from "@/lib/backStack";
 import { TOUR_STEPS, type TourStep } from "./steps";
 
 const PAD = 8;
+const GIVE_UP_MS = 6000;
 
 /** Primeiro elemento visível que casa com o seletor (o celular e o desktop podem ter o mesmo atalho; só um aparece). */
 function findVisible(sel: string): HTMLElement | null {
@@ -16,45 +18,69 @@ function findVisible(sel: string): HTMLElement | null {
 }
 
 /**
- * Tour guiado: escurece a tela, destaca um elemento por vez e mostra um cartão curto. Passos cujo elemento não está na tela são pulados.
- * No celular o cartão fica em cima ou embaixo (do lado oposto ao destaque); no computador, ao lado do destaque.
+ * Tour guiado e interativo: escurece a tela, destaca um elemento por vez e mostra um cartão curto. Nos passos com ação, a pessoa toca de verdade
+ * no elemento destacado (ou digita nele) e o tour segue sozinho. Passos cujo elemento só aparece depois (dentro da janela de pins, por exemplo)
+ * esperam o elemento surgir. Quando há uma janela aberta, o tour é desenhado dentro dela (a janela fica acima de tudo e deixaria o tour escondido).
  */
 export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [i, setI] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
+  const [found, setFound] = useState(false);
+  const [giveUp, setGiveUp] = useState(false);
+  const [host, setHost] = useState<HTMLElement | null>(null);
   const [vp, setVp] = useState({ w: 0, h: 0 });
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
-  const card = useRef<HTMLDivElement>(null);
   const [waiting, setWaiting] = useState(false); // a pessoa fez a ação e o tour espera ela fechar a janela que abriu
+  const card = useRef<HTMLDivElement>(null);
+  const scrolled = useRef("");
   useBackClose(open, onClose);
 
-  // ao abrir: só os passos que existem nesta tela
+  // ao abrir: os passos fixos que existem nesta tela (os que dependem de uma janela esperam o elemento aparecer)
   useEffect(() => {
     if (!open) return;
-    setSteps(TOUR_STEPS.filter((s) => !s.sel || findVisible(s.sel)));
+    setSteps(TOUR_STEPS.filter((s) => !s.sel || s.flow || findVisible(s.sel)));
     setI(0);
     setPos(null);
     setWaiting(false);
+    setGiveUp(false);
+    scrolled.current = "";
   }, [open]);
 
   const step = steps[i];
   const measure = useCallback(() => {
     setVp((v) => (v.w === window.innerWidth && v.h === window.innerHeight ? v : { w: window.innerWidth, h: window.innerHeight }));
+    const dlg = document.querySelector<HTMLElement>("dialog[open]");
+    setHost((h) => (h === dlg ? h : dlg));
     const el = step?.sel ? findVisible(step.sel) : null;
+    setFound(!!el);
     setRect(el ? el.getBoundingClientRect() : null);
+    // elemento dentro de uma janela com rolagem: leva até ele (uma vez por passo)
+    if (el && step && scrolled.current !== step.id) {
+      scrolled.current = step.id;
+      if (el.closest("dialog")) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
   }, [step]);
 
   useLayoutEffect(() => {
     if (!open) return;
     measure();
-    const t = window.setInterval(measure, 300); // o mural pode se mexer (animações, carregamento)
+    const t = window.setInterval(measure, 250); // o mural e as janelas se mexem (animações, carregamento)
     window.addEventListener("resize", measure);
     return () => {
       window.clearInterval(t);
       window.removeEventListener("resize", measure);
     };
   }, [open, measure]);
+
+  // passo que espera o elemento aparecer: se ele não vier (a janela foi fechada), mostra o cartão com a opção de voltar
+  const waitingEl = !!step?.sel && !!step.flow && !found;
+  useEffect(() => {
+    setGiveUp(false);
+    if (!open || !waitingEl) return;
+    const t = window.setTimeout(() => setGiveUp(true), GIVE_UP_MS);
+    return () => window.clearTimeout(t);
+  }, [open, waitingEl, step?.id]);
 
   // posição do cartão
   useLayoutEffect(() => {
@@ -81,7 +107,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
 
   // passo interativo: a pessoa faz a ação de verdade e o tour segue sozinho
   useEffect(() => {
-    if (!open || !step?.act || waiting) return;
+    if (!open || !step?.act || waiting || !found) return;
     const target = () => (step.sel ? findVisible(step.sel) : null);
     if (step.act === "click") {
       const onClick = (e: MouseEvent) => {
@@ -93,19 +119,22 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
       document.addEventListener("click", onClick, true);
       return () => document.removeEventListener("click", onClick, true);
     }
-    // arrastar um botton: termina quando o arraste começou e acabou
-    let started = false;
-    const check = () => {
-      const on = document.body.classList.contains("badge-dragging");
-      if (on) started = true;
-      else if (started) window.setTimeout(next, 400);
+    // digitar: segue quando a pessoa escreveu algo e parou um instante
+    let timer = 0;
+    const onInput = (e: Event) => {
+      const el = target();
+      if (!el || e.target !== el) return;
+      window.clearTimeout(timer);
+      if (((el as HTMLTextAreaElement | HTMLInputElement).value ?? "").trim().length >= 3) timer = window.setTimeout(next, 1400);
     };
-    const mo = new MutationObserver(check);
-    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    return () => mo.disconnect();
-  }, [open, step, waiting, next]);
+    document.addEventListener("input", onInput, true);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("input", onInput, true);
+    };
+  }, [open, step, waiting, found, next]);
 
-  // depois da ação que abre uma janela: espera ela abrir e fechar (se nada abrir, segue)
+  // depois da ação que abre ou fecha uma janela: espera ela abrir e fechar (se nada abrir, segue)
   useEffect(() => {
     if (!open || !waiting) return;
     let saw = false;
@@ -126,21 +155,20 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
     if (!open) return;
     const k = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") next();
-      else if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
-  }, [open, next, prev, onClose]);
+  }, [open, onClose]);
 
   if (!open || !step) return null;
   if (waiting) return null; // a janela que a pessoa abriu fica por cima; o tour volta quando ela fechar
+  if (waitingEl && !giveUp) return null; // o elemento deste passo ainda não apareceu
   const last = i === steps.length - 1;
   const btn = "cursor-pointer rounded-xl px-4 py-2.5 text-sm font-bold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
-  return (
+  const content = (
     <div className="pointer-events-none fixed inset-0 z-[2000]" role="dialog" aria-modal="true" aria-label="Tour pelo Pinz">
-      {/* bloqueia toques no mural durante o tour; nos passos interativos só o destaque fica livre para tocar */}
+      {/* bloqueia toques durante o tour; nos passos interativos só o destaque fica livre para tocar */}
       {step.act && rect ? (
         <>
           {[
@@ -178,12 +206,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         </p>
         <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{step.title}</h2>
         <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{step.text}</p>
-        {step.act && step.hint && (
-          <p className="mt-2 flex items-center gap-2 rounded-lg bg-[#fff3cf] px-2.5 py-1.5 text-[13px] font-bold text-[#6b4a05]">
-            <span aria-hidden className="text-base">👆</span>
-            {step.hint}
-          </p>
-        )}
+        {giveUp && waitingEl && <p className="mt-2 text-[13px] font-semibold text-[#8c3022]">Não encontrei esta parte na tela. Se você fechou a janela, toque em Voltar e siga de novo.</p>}
         {step.chips && (
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
             {step.chips.map((c) => (
@@ -193,10 +216,16 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
             ))}
           </ul>
         )}
+        {step.act && step.hint && !giveUp && (
+          <p className="mt-2 flex items-center gap-2 rounded-lg bg-[#fff3cf] px-2.5 py-1.5 text-[13px] font-bold text-[#6b4a05]">
+            <span aria-hidden className="text-base">👆</span>
+            {step.hint}
+          </p>
+        )}
         <div className="mt-3.5 flex items-center gap-2">
           {!last && (
             <button type="button" onClick={onClose} className={`${btn} px-2 text-[#6b5440] underline-offset-2 hover:underline`}>
-              Pular
+              Pular tour
             </button>
           )}
           <span className="flex-1" />
@@ -205,11 +234,14 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
               Voltar
             </button>
           )}
-          <button type="button" onClick={next} autoFocus className={`${btn} ${step.act ? "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-white" : "bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]"}`}>
+          <button type="button" onClick={next} autoFocus={!step.act} className={`${btn} ${step.act ? "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-white" : "bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22]"}`}>
             {last ? "Concluir" : step.act ? "Pular passo" : "Próximo"}
           </button>
         </div>
       </div>
     </div>
   );
+
+  // com uma janela aberta, o tour vai para dentro dela (a janela ocupa a camada mais alta do navegador)
+  return createPortal(content, host ?? document.body);
 }

@@ -84,6 +84,7 @@ export function FormatPicker({ formats, onPick }: { formats: readonly MessageTyp
           <li key={f}>
                         <button
               type="button"
+              data-tour={f === "postit" ? "fmt-postit" : undefined}
               onClick={() => onPick(f)}
               className={card}
             >

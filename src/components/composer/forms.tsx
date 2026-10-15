@@ -52,7 +52,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
   useEffect(() => onChange({ type: "postit", color, text: text.trim() || "Seu recado aparece aqui", font, ...(pin ? { pin } : {}) }, { empty: !text.trim() }), [color, text, font, pin, onChange]);
   return (
     <div className="space-y-4">
-      <fieldset>
+      <fieldset data-tour="postit-color">
         <legend className="mb-1.5 text-sm font-semibold">Cor do post-it</legend>
         <div className="flex gap-2" role="radiogroup" aria-label="Cor do post-it">
           {POSTIT_COLORS.map((c) => (
@@ -72,7 +72,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
       <PinColorPicker value={pin ?? defaultPin} onChange={setPin} />
       <FontPicker value={font} onChange={setFont} />
       <Field label="Seu recado" hint={<Counter value={text} max={90} />}>
-        {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={90} rows={3} placeholder="Escreva um recado curtinho…" className={area} />}
+        {(id) => <textarea id={id} data-tour="postit-text" value={text} onChange={(e) => setText(e.target.value)} maxLength={90} rows={3} placeholder="Escreva um recado curtinho…" className={area} />}
       </Field>
     </div>
   );

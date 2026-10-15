@@ -177,7 +177,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
           {error}
         </p>
       )}
-      <button type="submit" disabled={!canSend} className={primaryButton}>
+      <button type="submit" data-tour="compose-send" disabled={!canSend} className={primaryButton}>
         {sending ? "Colando…" : capsule.enabled ? "Fechar a cápsula e colar no mural" : "Colar no mural"}
       </button>
       </div>
