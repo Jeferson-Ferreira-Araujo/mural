@@ -41,6 +41,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
 
   const show = (mode: "login" | "signup") => {
     authIntent.mode = mode;
+    authIntent.touched = true;
     setOpen(true);
   };
   

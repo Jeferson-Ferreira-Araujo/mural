@@ -14,15 +14,15 @@ import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } fr
 type Mode = "login" | "signup";
 
 /** Qual aba o formulário abre (o celular escolhe Entrar ou Criar conta nos botões do topo da tela inicial). */
-export const authIntent: { mode: Mode } = { mode: "login" };
+export const authIntent: { mode: Mode; /** a pessoa escolheu a aba num dos botões da tela inicial do celular: vale mais que o endereço */ touched?: boolean } = { mode: "login" };
 
 /**
  * Entrar / Criar conta direto na tela inicial: já abre com e-mail e senha; a outra aba cria a conta.
  * Ao entrar, a sessão muda e a tela se atualiza sozinha (quem usa observa `useSession`).
  */
-export function AuthForm() {
+export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entrar) */ initialMode?: Mode } = {}) {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>(() => authIntent.mode);
+  const [mode, setMode] = useState<Mode>(() => (authIntent.touched ? authIntent.mode : (initialMode ?? authIntent.mode)));
   const [nick, setNick] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

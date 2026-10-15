@@ -24,7 +24,7 @@ import {
 import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, useSession, type OwnMural } from "@/lib/auth";
+import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, rememberNext, safeNext, takeNext, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
@@ -76,9 +76,17 @@ const EXPORT_IMAGE_ENABLED = false;
  * Tela principal: busca uma pessoa pelo nickname, mostra a pergunta do mural e, ao acertar,
  * revela o quadro (que fica desfocado até lá). Também abre direto em um mural (`/nickname/mural`).
  */
-export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: string } }) {
+export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
+  // /entrar?next=…: guarda o mural que a pessoa queria abrir; já logada, vai direto para ele
+  useEffect(() => {
+    const next = safeNext(nextPath);
+    if (!next) return;
+    if (sessionLoading) return;
+    if (logged) window.location.replace(takeNext() ?? next);
+    else rememberNext(next);
+  }, [nextPath, logged, sessionLoading]);
   const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
   const [tourOpen, setTourOpen] = useState(false);
   const [payProduct, setPayProduct] = useState<string | null>(null); // pacote de créditos em pagamento (Pix ou cartão)
@@ -832,7 +840,7 @@ export function Explorer({ initialRef }: { initialRef?: { nick: string; slug: st
         <div className="space-y-[1.2em]">
           {/* a busca só aparece sem mural escolhido ("Trocar" volta para ela) */}
           {!selected && logged && <SearchBox onSelect={pickPerson} tone={tone} />}
-          {!logged && !sessionLoading && !initialRef && <AuthForm />}
+          {!logged && !sessionLoading && !initialRef && <AuthForm initialMode={authMode} />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
               Buscando…
