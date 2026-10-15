@@ -164,7 +164,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           cornerLeft={
             canAdd || (share && onNotify && !shareTop) ? (
               <div className="flex items-center gap-2">
-                {canAdd && <AddPinButton visitor={!account?.atHome} />}
+                {canAdd && !editBadges && <AddPinButton visitor={!account?.atHome} />}
                 {share && onNotify && !shareTop && (
                   <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
                 )}
@@ -184,7 +184,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
       {editBadges && (
         <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 bg-[#f2e8d3] px-4 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] shadow-[0_-0.2rem_0.8rem_rgba(0,0,0,.25)]">
-          {editBadges && <BadgeBar className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
+          {editBadges && <BadgeBar className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" centerSlot={canAdd ? <AddPinButton visitor={!account?.atHome} className="!size-16 !rounded-2xl" /> : <span aria-hidden className="size-16" />} />}
         </footer>
       )}
     </div>
