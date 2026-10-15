@@ -1,7 +1,6 @@
 "use client";
 
 import { BADGES, badgeSrc } from "@/lib/badges";
-import type { ReactNode } from "react";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
 
@@ -11,7 +10,7 @@ import { useBadges } from "./BadgeContext";
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
-export function BadgeBar({ className = "", centerSlot }: { className?: string; /** celular: com isto a barra vira um rodapé em duas linhas (bottons em cima; Loja, este botão no centro e Ganhar embaixo) */ centerSlot?: ReactNode }) {
+export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
@@ -82,32 +81,19 @@ export function BadgeBar({ className = "", centerSlot }: { className?: string; /
           Solte o pin no mural
         </div>
       )}
-      {centerSlot ? (
-        strip
-      ) : (
-        <div className="flex items-center gap-2">
-          {storeBtn}
-          <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-          {strip}
-          <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-          {rewardsBtn}
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        {storeBtn}
+        <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+        {strip}
+        {!hideRewards && (
+          <>
+            <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+            {rewardsBtn}
+          </>
+        )}
+      </div>
     </section>
   );
 
-  // celular: o bloco só com os bottons em cima e, separados dele, os três botões (Loja, + pin no centro e Ganhar) embaixo
-  if (centerSlot) {
-    return (
-      <>
-        {block}
-        <div className="flex w-full items-center justify-between gap-3 px-2">
-          {storeBtn}
-          {centerSlot}
-          {rewardsBtn}
-        </div>
-      </>
-    );
-  }
   return block;
 }
