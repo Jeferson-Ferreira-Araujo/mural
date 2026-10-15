@@ -148,6 +148,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         )}
         <PannableBoard
           hideControls={locked}
+          startZoomed={!locked}
           onSwipe={muralSwitch && muralSwitch.items.length > 1 ? (dir) => {
             // parte do último mural pedido (a tela pode ainda não ter trocado se o dedo seguiu arrastando)
             const from = swipeTarget.current?.from === muralSwitch.current ? swipeTarget.current.to : muralSwitch.current;

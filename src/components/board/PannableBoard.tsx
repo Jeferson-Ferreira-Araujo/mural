@@ -18,9 +18,11 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25 }: { /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
+  const startZoomedRef = useRef(startZoomed);
+  startZoomedRef.current = startZoomed;
   const wideRef = useRef(wideZoom);
   wideRef.current = wideZoom;
   const swiped = useRef(false); // já trocou de mural nesta arrastada
@@ -170,9 +172,10 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       size.current = { w: r.width, h: r.height };
       if (!ready.current && r.width > 0) {
         ready.current = true;
-        // começa mostrando o mural inteiro (o botão "Aproximar", a pinça e o toque duplo ampliam)
-        const { minS } = limits();
-        view.current = clampView((r.width - WORLD_W * minS) / 2, (r.height - WORLD_H * minS) / 2, minS);
+        // começa mostrando o mural inteiro (o botão "Aproximar", a pinça e o toque duplo ampliam); no celular, com startZoomed, já abre ampliado e centralizado
+        const { minS, defS } = limits();
+        const s0 = startZoomedRef.current && r.width < 700 ? defS : minS;
+        view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
       } else {
         const { x, y, s } = view.current;
         view.current = clampView(x, y, s);
