@@ -580,7 +580,7 @@ export function AccountDrawer({
               {rows}
             </nav>
             {/* o painel do atalho aberto ocupa o lugar do menu, com a seta de voltar */}
-            <div ref={setSlot} className={`relative -mt-3 min-h-0 flex-1 overflow-hidden rounded-t-[1.6rem] bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
+            <div ref={setSlot} className={`relative min-h-0 flex-1 overflow-hidden border-t border-[#e6d8bd] bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
 
             <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
               <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />

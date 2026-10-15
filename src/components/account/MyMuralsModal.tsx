@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { boardById } from "@/lib/boards";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -40,6 +40,67 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
   const toDelete = murals.find((m) => m.id === confirmId) ?? null;
 
   // muda a ordem: o primeiro da lista é o mural principal (o que abre primeiro e que não pode ser apagado)
+  // arrastar para mudar a ordem: segura a alça do cartão e leva para cima ou para baixo; solta para guardar
+  const [order, setOrder] = useState<string[] | null>(null); // ordem na tela durante o arraste
+  const [drag, setDrag] = useState<{ id: string; grab: number; y: number } | null>(null);
+  const rowRefs = useRef<Record<string, HTMLLIElement | null>>({});
+  const ordered = order ? order.map((id) => murals.find((m) => m.id === id)).filter((m): m is OwnMural => !!m) : murals;
+
+  // o cartão arrastado segue o dedo: o deslocamento compensa a posição que ele ocupa na lista a cada troca
+  useLayoutEffect(() => {
+    if (!drag) return;
+    const el = rowRefs.current[drag.id];
+    if (!el) return;
+    el.style.transform = "";
+    const natural = el.getBoundingClientRect().top;
+    el.style.transform = `translateY(${drag.y - drag.grab - natural}px) scale(1.02)`;
+  }, [drag, order]);
+
+  function startDrag(e: React.PointerEvent, id: string) {
+    if (busy || murals.length < 2 || (e.pointerType === "mouse" && e.button !== 0)) return;
+    const el = rowRefs.current[id];
+    if (!el) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setOrder(murals.map((m) => m.id));
+    setDrag({ id, grab: e.clientY - el.getBoundingClientRect().top, y: e.clientY });
+  }
+  function moveDrag(e: React.PointerEvent) {
+    if (!drag || !order) return;
+    const y = e.clientY;
+    let next = order;
+    const at = order.indexOf(drag.id);
+    // troca de lugar quando o cartão passa do meio do vizinho
+    const mid = (id: string) => {
+      const r = rowRefs.current[id]?.getBoundingClientRect();
+      return r ? r.top + r.height / 2 : 0;
+    };
+    const center = y - drag.grab + (rowRefs.current[drag.id]?.getBoundingClientRect().height ?? 0) / 2;
+    if (at > 0 && center < mid(order[at - 1])) next = order.map((id, k) => (k === at - 1 ? drag.id : k === at ? order[at - 1] : id));
+    else if (at < order.length - 1 && center > mid(order[at + 1])) next = order.map((id, k) => (k === at + 1 ? drag.id : k === at ? order[at + 1] : id));
+    if (next !== order) setOrder(next);
+    setDrag({ ...drag, y });
+  }
+  async function endDrag() {
+    if (!drag || !order) return;
+    const el = rowRefs.current[drag.id];
+    if (el) el.style.transform = "";
+    const ids = order;
+    const changed = ids.some((id, k) => id !== murals[k]?.id);
+    setDrag(null);
+    if (!changed) return setOrder(null);
+    setBusy(true);
+    setErr(null);
+    const { error } = await getBrowserSupabase().rpc("set_mural_order", { p_ids: ids });
+    setBusy(false);
+    if (error) {
+      setOrder(null);
+      return setErr("Não foi possível mudar a ordem agora. Tente de novo.");
+    }
+    onChanged();
+    window.setTimeout(() => setOrder(null), 400); // dá tempo de a lista nova chegar
+  }
+
   async function move(i: number, dir: -1 | 1) {
     const j = i + dir;
     if (busy || j < 0 || j >= murals.length) return;
@@ -147,23 +208,34 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
             </p>
           )}
           <ul className="space-y-2.5">
-            {murals.map((m, i) => {
+            {ordered.map((m, i) => {
               const b = boardById(boards[m.id]);
               return (
-                <li key={m.id} className="flex items-stretch gap-2 rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 transition hover:bg-white">
+                <li key={m.id} ref={(el) => { rowRefs.current[m.id] = el; }} className={`relative flex items-stretch gap-2 rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5 transition-colors hover:bg-white ${drag?.id === m.id ? "z-10 !bg-white shadow-[0_0.6rem_1.4rem_rgba(60,35,10,.35)]" : ""}`}>
                   {murals.length > 1 && (
-                    <div className="flex shrink-0 flex-col justify-center gap-1.5">
-                      <button type="button" onClick={() => void move(i, -1)} disabled={busy || i === 0} aria-label={`Subir ${m.title}`} title="Subir" className="grid size-8 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-30">
-                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <path d="m6 15 6-6 6 6" />
-                        </svg>
-                      </button>
-                      <button type="button" onClick={() => void move(i, 1)} disabled={busy || i === murals.length - 1} aria-label={`Descer ${m.title}`} title="Descer" className="grid size-8 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-30">
-                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <path d="m6 9 6 6 6-6" />
-                        </svg>
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onPointerDown={(e) => startDrag(e, m.id)}
+                      onPointerMove={moveDrag}
+                      onPointerUp={() => void endDrag()}
+                      onPointerCancel={() => void endDrag()}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowUp") (e.preventDefault(), void move(i, -1));
+                        if (e.key === "ArrowDown") (e.preventDefault(), void move(i, 1));
+                      }}
+                      aria-label={`Mudar a ordem de ${m.title}: arraste (ou use as setas do teclado)`}
+                      title="Arraste para mudar a ordem"
+                      className={`grid w-7 shrink-0 touch-none place-items-center rounded-lg text-[#8a7b69] transition hover:bg-black/5 hover:text-[#4a3826] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${drag?.id === m.id ? "cursor-grabbing" : "cursor-grab"}`}
+                    >
+                      <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="currentColor">
+                        <circle cx="9" cy="6" r="1.6" />
+                        <circle cx="15" cy="6" r="1.6" />
+                        <circle cx="9" cy="12" r="1.6" />
+                        <circle cx="15" cy="12" r="1.6" />
+                        <circle cx="9" cy="18" r="1.6" />
+                        <circle cx="15" cy="18" r="1.6" />
+                      </svg>
+                    </button>
                   )}
                   <button type="button" onClick={() => setEditId(m.id)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left" aria-label={`Editar ${m.title}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
