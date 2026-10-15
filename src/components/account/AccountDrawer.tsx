@@ -30,27 +30,15 @@ const VISITORS_ENABLED = false;
 /** Dentro da coluna bege do desktop os atalhos ficam mais compactos. */
 const CompactCtx = createContext(false);
 
-type Tint = "orange" | "purple" | "pink" | "green" | "yellow" | "blue" | "gold";
-const TINTS: Record<Tint, { bg: string; fg: string }> = {
-  orange: { bg: "#f9e5cb", fg: "#c4782a" },
-  purple: { bg: "#e8e2f6", fg: "#6c4fc2" },
-  pink: { bg: "#fbe0e6", fg: "#d9547a" },
-  green: { bg: "#dcf1e1", fg: "#2f8f4e" },
-  yellow: { bg: "#fbefc9", fg: "#c99a14" },
-  blue: { bg: "#dbe9fa", fg: "#2f6fc9" },
-  gold: { bg: "#fbebc2", fg: "#b9831a" },
-};
-
-function Row({ icon, label, hint, badge, onClick, tint = "orange" }: { icon: ReactNode; label: string; hint?: string; /** quantidade pendente: vira um selo vermelho no canto superior direito do cartão (some quando é zero) */ badge?: number; onClick: () => void; /** cor do ícone */ tint?: Tint }) {
+function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: string; hint?: string; /** quantidade pendente: vira um selo vermelho no canto superior direito do cartão (some quando é zero) */ badge?: number; onClick: () => void }) {
   const compact = useContext(CompactCtx);
-  const t = TINTS[tint];
   return (
     <button
       type="button"
       onClick={onClick}
       className={`relative flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3.5 px-3.5 py-3"}`}
     >
-      <span className={`grid shrink-0 place-items-center ${compact ? "size-8 rounded-xl" : "size-12 rounded-2xl"}`} style={{ background: t.bg, color: t.fg }} aria-hidden>
+      <span className={`grid shrink-0 place-items-center bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-8 rounded-xl" : "size-12 rounded-2xl"}`} aria-hidden>
         {icon}
       </span>
       <span className="min-w-0 flex-1">
@@ -181,7 +169,6 @@ export function AccountDrawer({
                     onClick={() => setModal("mymurals")}
                     label="Meus murais"
                     hint="Gerencie, personalize e acesse seus murais."
-                    tint="orange"
                     icon={
                       <svg {...ic}>
                         <rect x="4" y="3.5" width="16" height="11" rx="1.5" />
@@ -206,7 +193,6 @@ export function AccountDrawer({
                     label="Aprovações"
                     hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Nenhum pin aguardando"}
                     badge={pendingCount}
-                    tint="purple"
                     icon={
                       <svg {...ic}>
                         <path d="M5 4h14v12l-4 4H5V4Z" />
@@ -220,7 +206,6 @@ export function AccountDrawer({
                     label="Mural compartilhado"
                     hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PINZ+)"}
                     badge={sharedInvites}
-                    tint="pink"
                     icon={
                       <svg {...ic}>
                         <circle cx="9" cy="8.5" r="3" />
@@ -234,7 +219,6 @@ export function AccountDrawer({
                     onClick={() => setModal("numbers")}
                     label="Números do mural"
                     hint="Veja estatísticas e interações."
-                    tint="green"
                     icon={
                       <svg {...ic}>
                         <path d="M5 20V10M12 20V4M19 20v-7" />
@@ -251,7 +235,6 @@ export function AccountDrawer({
                   }}
                   label="Salvar imagem do mural"
                   hint="Uma imagem em alta qualidade para postar"
-                  tint="pink"
                   icon={
                     <svg {...ic}>
                       <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
@@ -265,7 +248,6 @@ export function AccountDrawer({
                 onClick={() => setModal("following")}
                 label="Seguindo"
                 hint="Murais de quem você segue."
-                tint="yellow"
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -276,7 +258,6 @@ export function AccountDrawer({
                 onClick={() => setModal("rewards")}
                 label="Ganhe créditos"
                 hint="Tarefas que dão créditos na hora."
-                tint="gold"
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
@@ -291,7 +272,6 @@ export function AccountDrawer({
                 }}
                 label="Tour pelo Pinz"
                 hint="Descubra todas as funcionalidades."
-                tint="blue"
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
@@ -303,7 +283,6 @@ export function AccountDrawer({
                 onClick={() => setModal("plans")}
                 label="Planos"
                 hint={`Seu plano atual: ${account.plan === "full" ? "PINZ+" : "FREE"}.`}
-                tint="purple"
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -318,7 +297,6 @@ export function AccountDrawer({
                   }}
                   label="Testar as boas-vindas"
                   hint="Veja como é a experiência de novo."
-                  tint="green"
                   icon={
                     <svg {...ic}>
                       <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100" />
@@ -331,7 +309,6 @@ export function AccountDrawer({
                   onClick={() => window.location.assign("/admin")}
                   label="Administração"
                   hint="Usuários, murais, créditos e bloqueios"
-                  tint="purple"
                   icon={
                     <svg {...ic}>
                       <path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" />
@@ -350,7 +327,6 @@ export function AccountDrawer({
                   }}
                   label="Instalar o app"
                   hint="Pinz na tela inicial, em tela cheia"
-                  tint="green"
                   icon={
                     <svg {...ic}>
                       <path d="M12 4v10M8 10.5l4 4 4-4" />
@@ -366,7 +342,6 @@ export function AccountDrawer({
                 }}
                 label="Acessibilidade"
                 hint="Daltonismo, texto maior e contraste"
-                tint="blue"
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="4.5" r="1.8" />
@@ -378,7 +353,6 @@ export function AccountDrawer({
                 onClick={() => setModal("profile")}
                 label="Perfil"
                 hint="Foto, senha e dados da conta"
-                tint="orange"
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="8" r="3.5" />
@@ -496,15 +470,6 @@ export function AccountDrawer({
                 </svg>
                 Sair da conta
               </button>
-              {/* folhinhas de enfeite nos cantos */}
-              <svg aria-hidden viewBox="0 0 60 50" className="pointer-events-none absolute -bottom-2 -left-2 w-16 opacity-80">
-                <path d="M4 48C6 28 20 14 40 12 38 30 26 44 4 48Z" fill="#3f8a45" />
-                <path d="M4 48C16 36 26 26 40 12" stroke="#2c6a33" strokeWidth="1.4" fill="none" />
-              </svg>
-              <svg aria-hidden viewBox="0 0 60 50" className="pointer-events-none absolute -right-2 -bottom-2 w-16 scale-x-[-1] opacity-80">
-                <path d="M4 48C6 28 20 14 40 12 38 30 26 44 4 48Z" fill="#4f9a4f" />
-                <path d="M4 48C16 36 26 26 40 12" stroke="#2c6a33" strokeWidth="1.4" fill="none" />
-              </svg>
             </footer>
           </div>
         )}
