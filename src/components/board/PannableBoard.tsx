@@ -174,7 +174,8 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         ready.current = true;
         // começa mostrando o mural inteiro (o botão "Aproximar", a pinça e o toque duplo ampliam); no celular, com startZoomed, já abre ampliado e centralizado
         const { minS, defS } = limits();
-        const s0 = startZoomedRef.current && r.width < 700 ? defS : minS;
+        // ampliado = o mural preenche a altura da área (a tela do celular é alta e o mural, largo): aparece o centro, com as bordas cortadas dos lados
+        const s0 = startZoomedRef.current && r.width < 700 ? Math.min(defS, Math.max(minS, r.height / WORLD_H)) : minS;
         view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
       } else {
         const { x, y, s } = view.current;
