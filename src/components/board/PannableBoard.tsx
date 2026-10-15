@@ -21,6 +21,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
 export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
+  const touched = useRef(false); // a pessoa já mexeu no quadro (zoom ou arraste): o zoom inicial não se repete
   const startZoomedRef = useRef(startZoomed);
   startZoomedRef.current = startZoomed;
   const wideRef = useRef(wideZoom);
@@ -150,6 +151,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   /** Muda a ampliação mantendo o ponto (cx, cy) da tela no mesmo lugar do quadro. */
   const zoomTo = useCallback(
     (wanted: number, cx: number, cy: number, animate: boolean) => {
+      touched.current = true;
       const { x, y, s } = view.current;
       // o tamanho é limitado ANTES de calcular a posição: pedir mais que o máximo (ou menos que o mínimo) não pode deslocar o quadro
       const { minS, maxS } = limits();
@@ -188,6 +190,17 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     ro.observe(b);
     return () => ro.disconnect();
   }, [apply, clampView, limits]);
+
+  // o mural pode abrir trancado (inteiro) e destrancar depois: nesse caso o zoom inicial entra quando startZoomed vira verdadeiro, se a pessoa ainda não mexeu
+  useEffect(() => {
+    if (!startZoomed || touched.current || !ready.current) return;
+    const { w, h } = size.current;
+    if (w <= 0 || w >= 700) return;
+    const { minS, defS } = limits();
+    const s0 = Math.min(defS, Math.max(minS, h / WORLD_H));
+    view.current = clampView((w - WORLD_W * s0) / 2, (h - WORLD_H * s0) / 2, s0);
+    apply(false);
+  }, [startZoomed, apply, clampView, limits]);
 
   // roda do mouse amplia (útil em tablets e testes no computador)
   useEffect(() => {
@@ -326,6 +339,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const onPointerDown = (e: React.PointerEvent) => {
     if (inDialog(e.target)) return;
     lastType.current = e.pointerType;
+    touched.current = true;
     // mouse sobre um pin que o dono pode arrastar: quem cuida disso é o próprio pin, o quadro não começa a mover
     if (e.pointerType === "mouse" && e.target instanceof Element && e.target.closest("[data-pin-drag]")) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
