@@ -4,7 +4,7 @@ import { boardById } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
-import { AccountActions } from "./account/AccountActions";
+import { AccountActions, AccountMenuButton } from "./account/AccountActions";
 import { MuralSwitcher } from "./MuralSwitcher";
 import { MobileMural } from "./MobileMural";
 import { MobileLanding } from "./MobileLanding";
@@ -44,7 +44,8 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
         backgroundPosition: `center, center, ${bgX.toFixed(1)}% ${bgY.toFixed(1)}%`,
       }}
     >
-      {account && <AccountActions account={account} tone="dark" className="absolute top-3 right-3 z-20" />}
+      {account && <AccountMenuButton account={account} tone="dark" className="absolute top-3 left-3 z-20" />}
+      {account && <AccountActions account={account} tone="dark" menu={false} className="absolute top-3 right-3 z-20" />}
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col pt-4 pb-6 [font-size:16px]">
         <div className={`flex flex-1 flex-col transition-[gap] duration-500 ${landing ? "justify-center gap-6" : "gap-4"}`}>
           <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">

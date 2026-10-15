@@ -47,13 +47,40 @@ export function AccountActions({ account, tone = "light", className = "", menu =
   );
 }
 
+/** Só o botão do menu da conta (no celular ele fica no canto esquerdo da tela). */
+export function AccountMenuButton({ account, tone = "light", className = "" }: { account: AccountApi; tone?: "light" | "dark"; className?: string }) {
+  const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
+  return (
+    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look} ${className}`}>
+      <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+      {!!account.badge && (
+        <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+          {account.badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
 const iconBtn = "relative grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-white/60 text-[#2a1c12] transition hover:bg-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
 
-/** Cabeçalho do mural no celular: à esquerda a lousa (volta ao seu mural) e a lupa (abre a busca), à direita o menu. O logo fica no meio (quem usa). */
+/** Cabeçalho do mural no celular: à esquerda o menu (e o atalho para o seu mural quando você está no de outra pessoa); à direita a lupa (busca) e o sino. O logo fica no meio (quem usa). */
 export function MobileHeaderLeft({ account }: { account: AccountApi }) {
   return (
     <div className="flex items-center gap-1.5">
+      <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
+        <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        {!!account.badge && (
+          <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
+            {account.badge}
+          </span>
+        )}
+      </button>
       {account.onHome && !account.atHome && (
         <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={iconBtn}>
           <svg {...iconSvg}>
@@ -62,12 +89,6 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
           </svg>
         </button>
       )}
-      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
-        <svg {...iconSvg} strokeWidth={2.4}>
-          <circle cx="11" cy="11" r="6.5" />
-          <path d="m20 20-4.2-4.2" />
-        </svg>
-      </button>
     </div>
   );
 }
@@ -76,6 +97,12 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
   const bell = account.notifications;
   return (
     <div className="flex items-center gap-1.5">
+      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
+        <svg {...iconSvg} strokeWidth={2.4}>
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m20 20-4.2-4.2" />
+        </svg>
+      </button>
       {bell && (
         <button type="button" onClick={bell.onOpen} data-tour="bell" aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title="Notificações" className={iconBtn}>
           <svg {...iconSvg} className="size-5.5">
@@ -89,16 +116,6 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
           )}
         </button>
       )}
-    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
-      <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
-        <path d="M4 7h16M4 12h16M4 17h16" />
-      </svg>
-      {!!account.badge && (
-        <span aria-hidden className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-md bg-[#d98a2b] px-1 text-[11px] leading-5 font-bold text-white">
-          {account.badge}
-        </span>
-      )}
-    </button>
     </div>
   );
 }

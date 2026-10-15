@@ -545,7 +545,7 @@ export function AccountDrawer({
           if (e.target === e.currentTarget) onClose();
         }}
         aria-label="Menu da conta"
-        className="fixed inset-y-0 right-0 left-auto m-0 ml-auto h-dvh max-h-none w-[min(26rem,100vw)] max-w-none overflow-hidden rounded-none border-l border-[#e6d8bd] bg-[#f7efdc] p-0 text-[#2f2218] shadow-[-1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-l-3xl"
+        className="fixed inset-y-0 right-auto left-0 m-0 mr-auto h-dvh max-h-none w-[min(26rem,100vw)] max-w-none overflow-hidden rounded-none border-r border-[#e6d8bd] bg-[#f7efdc] p-0 text-[#2f2218] shadow-[1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-r-3xl"
       >
         {open && (
           <div className="flex h-dvh flex-col">
