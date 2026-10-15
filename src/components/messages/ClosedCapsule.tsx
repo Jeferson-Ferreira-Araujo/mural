@@ -21,14 +21,14 @@ export function ClosedCapsule({ opensAt }: { opensAt: string }) {
   return (
     <article
       aria-label="Cápsula PINZ fechada"
-      className="paper-grain shadow-paper relative h-[13.5em] w-[14em] overflow-hidden bg-[#ecdcb6]"
+      className="paper-grain shadow-paper relative h-[13.5em] w-[14em] bg-[#ecdcb6]"
       style={{ borderRadius: "0.25em" }}
     >
+      {/* o papel (aba e lacre) é cortado nas bordas do envelope; a tachinha fica de fora desse corte para não aparecer cortada */}
+      <div className="absolute inset-0 overflow-hidden" style={{ borderRadius: "0.25em" }}>
       {/* aba do envelope */}
       <span aria-hidden className="absolute inset-x-0 top-0 h-[6.4em] bg-[#dcc58f]" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
       <span aria-hidden className="absolute inset-x-0 top-0 h-[6.4em] opacity-40" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)", background: "linear-gradient(180deg, rgba(255,255,255,.5), transparent 60%)" }} />
-      <Pin tone="blue" className="top-[0.55em] left-[1.1em]" />
-
       {/* lacre de cera */}
       <span
         aria-hidden
@@ -46,6 +46,8 @@ export function ClosedCapsule({ opensAt }: { opensAt: string }) {
           Abre em: {left ?? "…"}
         </p>
       </div>
+      </div>
+      <Pin tone="blue" className="top-[0.55em] left-[1.1em]" />
     </article>
   );
 }
