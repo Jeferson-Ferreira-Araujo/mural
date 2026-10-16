@@ -12,7 +12,7 @@ import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { PlanBadge } from "../board/PlanBadge";
 import { EmbedCtx, Modal } from "./Modal";
-import { ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
+import { TOUR_EVENT } from "@/lib/onboarding";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
@@ -74,6 +74,7 @@ export function AccountDrawer({
   pendingCount,
   credits,
   isAdmin = false,
+  editProfileToken = 0,
   onChanged,
   onDeleted,
   onSignOut,
@@ -97,6 +98,8 @@ export function AccountDrawer({
   credits: number;
   /** conta de administrador: mostra o atalho da página de administração */
   isAdmin?: boolean;
+  /** muda a cada pedido de "Editar perfil" (botão do resumo do perfil): abre o painel de perfil da conta */
+  editProfileToken?: number;
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
   onDeleted: () => void;
@@ -154,6 +157,15 @@ export function AccountDrawer({
   useEffect(() => {
     if (!isOpen) setModal(null);
   }, [isOpen]);
+  const tokenAt = useRef(0);
+  useEffect(() => {
+    if (!editProfileToken) return;
+    tokenAt.current = Date.now();
+  }, [editProfileToken]);
+  useEffect(() => {
+    // só vale logo depois do pedido (a gaveta do celular abre em seguida); uma gaveta aberta mais tarde não abre o perfil sozinha
+    if (isOpen && editProfileToken && Date.now() - tokenAt.current < 2500) setModal("profile");
+  }, [isOpen, editProfileToken]);
 
   useEffect(() => {
     if (modal !== "numbers") return;
@@ -302,24 +314,9 @@ export function AccountDrawer({
               />
               {isAdmin && (
                 <Row
-                  onClick={() => {
-                    onClose();
-                    window.setTimeout(() => window.dispatchEvent(new CustomEvent(ONBOARDING_EVENT)), 300);
-                  }}
-                  label="Testar as boas-vindas"
-                  hint="Veja como é a experiência de novo."
-                  icon={
-                    <svg {...ic}>
-                      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.600 5.600l2.100 2.100M16.300 16.300l2.100 2.100M5.600 18.400l2.100-2.100M16.300 7.700l2.100-2.100" />
-                    </svg>
-                  }
-                />
-              )}
-              {isAdmin && (
-                <Row
                   onClick={() => window.location.assign("/admin")}
-                  label="Administração"
-                  hint="Usuários, murais, créditos e bloqueios"
+                  label="Administrar site"
+                  hint="Usuários, murais, créditos e recursos"
                   icon={
                     <svg {...ic}>
                       <path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" />
@@ -357,17 +354,6 @@ export function AccountDrawer({
                   <svg {...ic}>
                     <circle cx="12" cy="4.5" r="1.8" />
                     <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
-                  </svg>
-                }
-              />
-              <Row
-                onClick={() => setModal("profile")}
-                label="Perfil"
-                hint="Foto, senha e dados da conta"
-                icon={
-                  <svg {...ic}>
-                    <circle cx="12" cy="8" r="3.5" />
-                    <path d="M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5" />
                   </svg>
                 }
               />

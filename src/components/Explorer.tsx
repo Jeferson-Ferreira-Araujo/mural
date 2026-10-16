@@ -162,6 +162,15 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const [own, setOwn] = useState<OwnMural[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
+  const [editProfile, setEditProfile] = useState(0); // muda a cada pedido de "Editar perfil" (vem do resumo do perfil): abre o painel de perfil da conta
+  useEffect(() => {
+    const h = () => {
+      setEditProfile((n) => n + 1);
+      if (window.innerWidth < 700) setDrawer({ open: true }); // no celular o painel mora na gaveta; no desktop, na coluna da esquerda
+    };
+    window.addEventListener("pinz:edit-profile", h);
+    return () => window.removeEventListener("pinz:edit-profile", h);
+  }, []);
   const [searchOpen, setSearchOpen] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
   const [payResult, setPayResult] = useState<string | null>(null); // volta do Mercado Pago: resultado num modal sobre a loja
@@ -1033,6 +1042,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onSharedChanged={() => void reloadShared()}
         credits={inventory?.credits ?? 0}
         isAdmin={isAdmin}
+        editProfileToken={editProfile}
         onPending={setPendingCount}
         onNotify={notify}
         onChanged={() => {
@@ -1133,6 +1143,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             onSharedChanged={() => void reloadShared()}
             credits={inventory?.credits ?? 0}
             isAdmin={isAdmin}
+            editProfileToken={editProfile}
             onPending={setPendingCount}
             onNotify={notify}
             onChanged={() => {

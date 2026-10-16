@@ -160,10 +160,31 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
 
           <div className="flex flex-col items-center gap-2 text-center">
             <p className="font-title text-[2rem] leading-tight font-semibold [overflow-wrap:anywhere]">@{data.nickname}</p>
-            {data.plus && (
-              <span className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-[#f6cb4a] to-[#eaa91a] px-3.5 py-1.5 text-lg font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(150,90,0,.35)]">
-                PINZ+
-              </span>
+            {/* na linha do selo PINZ+ (o selo no centro): o dono vê, colado ao canto direito, o atalho para editar o perfil */}
+            {(data.plus || self) && (
+              <div className="relative flex min-h-10 w-full items-center justify-center">
+                {data.plus && (
+                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-[#f6cb4a] to-[#eaa91a] px-3.5 py-1.5 text-lg font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(150,90,0,.35)]">
+                    PINZ+
+                  </span>
+                )}
+                {self && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:edit-profile")), 250);
+                    }}
+                    className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95 ${data.plus ? "absolute right-0" : "ml-auto"}`}
+                  >
+                    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+                      <path d="m14 8 3 3" />
+                    </svg>
+                    Editar perfil
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
