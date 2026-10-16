@@ -122,10 +122,10 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
       </ul>
   );
   const block = (
-    <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+    <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-black/85 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-sm ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {openCat && openList && (
-        <div role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
+        <div role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-black/90 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-sm ${draggingNew ? "invisible" : ""}`}>
           <p className="mb-1 px-1 text-sm font-bold">{catLabel(openCat)}</p>
           <ul className="flex flex-wrap gap-1" style={{ maxWidth: "26rem" }}>
             {openList.map((b) => {
