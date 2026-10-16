@@ -161,9 +161,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             <p className="font-title text-[2rem] leading-tight font-semibold [overflow-wrap:anywhere]">@{data.nickname}</p>
             {data.plus && (
               <span className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-[#f6cb4a] to-[#eaa91a] px-3.5 py-1.5 text-lg font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(150,90,0,.35)]">
-                <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8l4 4 5-7 5 7 4-4-2 11H5Z" />
-                </svg>
                 PINZ+
               </span>
             )}
