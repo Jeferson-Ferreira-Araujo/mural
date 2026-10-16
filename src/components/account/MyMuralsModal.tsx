@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { OwnMural } from "@/lib/auth";
+import { getOwnNickname, type OwnMural } from "@/lib/auth";
 import { boardById } from "@/lib/boards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./Modal";
@@ -18,6 +18,8 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [flash, setFlash] = useState(false); // "salvo com sucesso" por cima da janela
+  const [nick, setNick] = useState<string | null>(null);
+  const [stamp, setStamp] = useState(0); // muda a cada abertura: a miniatura é buscada de novo
 
   // ao abrir: volta para a lista e lê o tipo (fundo) de cada mural
   useEffect(() => {
@@ -26,6 +28,11 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     setFlash(false);
     setConfirmId(null);
     setErr(null);
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    setStamp(Date.now());
+    void getOwnNickname(getBrowserSupabase()).then(setNick);
   }, [open]);
   useEffect(() => {
     if (!open || murals.length === 0) return;
@@ -240,7 +247,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                   {/* só a imagem do mural (com o cadeado, se tiver pergunta de segurança) e os botões de editar e apagar */}
                   <button type="button" onClick={() => setEditId(m.id)} className="relative min-w-0 flex-1 cursor-pointer text-left" aria-label={`Editar ${m.title}${m.question ? " (com pergunta de segurança)" : ""}`} title={m.title}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
+                    <img src={nick ? `/api/mural-thumb?nick=${encodeURIComponent(nick)}&slug=${encodeURIComponent(m.slug)}&t=${stamp}` : b.image} onError={(e) => { if (e.currentTarget.src !== new URL(b.image, window.location.href).href) e.currentTarget.src = b.image; }} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
                     <span className="mt-1 block max-w-44 truncate text-sm font-bold">{m.title}</span>
                     {m.question && (
                       <span className="absolute top-1.5 left-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.4)]" aria-hidden>
