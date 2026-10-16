@@ -4,7 +4,8 @@ import { useBackClose } from "@/lib/backStack";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
-import { getPublicMural, type MuralStats } from "@/lib/mural";
+import { getPublicMural } from "@/lib/mural";
+import { getProfileSummary } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { getOwnAvatar } from "@/lib/avatar";
 import { useInstall } from "@/lib/install";
@@ -123,7 +124,8 @@ export function AccountDrawer({
   const [slot, setSlot] = useState<HTMLElement | null>(null); // onde o painel aberto aparece (parte de baixo da gaveta)
   const isOpen = inline || open;
   useBackClose(open && !inline, onClose); // voltar (Android) fecha o menu
-  const [stats, setStats] = useState<MuralStats | null>(null);
+  // métricas da conta: visitas, pins nos seus murais e pins que a pessoa colocou nos murais dos outros
+  const [metrics, setMetrics] = useState<{ visits: number | null; inMine: number | null; placed: number | null } | null>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
   useEffect(() => {
     if (open && !inline) void getOwnAvatar(getBrowserSupabase()).then((a) => setAvatar(a.url));
@@ -154,9 +156,18 @@ export function AccountDrawer({
   }, [isOpen]);
 
   useEffect(() => {
-    if (!modal || modal !== "numbers" || !mural) return;
-    void getPublicMural(getBrowserSupabase(), { nick, slug: mural.slug }).then((m) => setStats(m?.stats ?? null));
-  }, [modal, mural, nick]);
+    if (modal !== "numbers") return;
+    let alive = true;
+    const sb = getBrowserSupabase();
+    setMetrics(null);
+    void Promise.all([getProfileSummary(sb, nick), Promise.all(murals.map((m) => getPublicMural(sb, { nick, slug: m.slug })))]).then(([sum, list]) => {
+      if (!alive) return;
+      setMetrics({ visits: sum?.views ?? null, inMine: list.some((m) => m) ? list.reduce((n, m) => n + (m?.stats.messages ?? 0), 0) : null, placed: sum?.placed ?? null });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [modal, murals, nick]);
 
   const close = () => setModal(null);
   const app = useInstall(); // "Instalar o app": só aparece onde dá para instalar e ainda não está instalado
@@ -217,8 +228,8 @@ export function AccountDrawer({
                   )}
                   <Row
                     onClick={() => setModal("numbers")}
-                    label="Números do mural"
-                    hint="Veja estatísticas e interações."
+                    label="Métricas"
+                    hint="Visitas e pins colocados."
                     icon={
                       <svg {...ic}>
                         <path d="M5 20V10M12 20V4M19 20v-7" />
@@ -387,19 +398,18 @@ export function AccountDrawer({
         </ol>
         <p className="mt-3 text-xs text-[#6b5440]">Se não aparecer a opção, abra o Pinz pelo Safari (outros navegadores do iPhone não instalam apps).</p>
       </Modal>
-      <Modal open={isOpen && modal === "numbers"} onClose={close} title="Números do mural">
-        <dl className="grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
+      <Modal open={isOpen && modal === "numbers"} onClose={close} title="Métricas">
+        <dl className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
           {(
             [
-              ["visitaram", stats?.visited],
-              ["tentaram", stats?.tried],
-              ["acertaram", stats?.correct],
-              ["mensagens", stats?.messages],
+              ["visitas nos seus murais", metrics?.visits],
+              ["pins nos seus murais", metrics?.inMine],
+              ["pins que você colocou em murais de outras pessoas", metrics?.placed],
             ] as const
           ).map(([label, v]) => (
-            <div key={label} className="rounded-xl bg-[#f1e7d2]/70 px-1 py-4">
-              <dd className="text-2xl font-semibold">{v ?? "–"}</dd>
-              <dt className="text-xs text-[#6b5440]">{label}</dt>
+            <div key={label} className="rounded-xl bg-[#f1e7d2]/70 px-3 py-4">
+              <dd className="text-3xl font-semibold tabular-nums">{v == null ? "–" : v.toLocaleString("pt-BR")}</dd>
+              <dt className="mt-1 text-sm text-[#6b5440]">{label}</dt>
             </div>
           ))}
         </dl>
