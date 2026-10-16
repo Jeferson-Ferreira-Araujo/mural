@@ -238,7 +238,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                     </button>
                   )}
                   {/* só a imagem do mural (com o cadeado, se tiver pergunta de segurança) e os botões de editar e apagar */}
-                  <button type="button" onClick={() => setEditId(m.id)} className="relative min-w-0 flex-1 cursor-pointer text-left" aria-label={`Editar ${m.title}${m.question ? " (com pergunta de segurança)" : ""}`} title={m.title}>
+                  <button type="button" onClick={() => setEditId(m.id)} className="relative w-44 max-w-[62%] min-w-0 shrink-0 cursor-pointer text-left" aria-label={`Editar ${m.title}${m.question ? " (com pergunta de segurança)" : ""}`} title={m.title}>
                     <span className="mb-1 block h-5 max-w-44 truncate text-sm leading-5 font-bold">{m.title}</span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
@@ -251,7 +251,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                       </span>
                     )}
                   </button>
-                  <div className="flex shrink-0 flex-col items-center justify-center gap-2 pt-6">
+                  <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">
                     <button type="button" onClick={() => setEditId(m.id)} aria-label={`Editar ${m.title}`} title="Editar" className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
                       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
