@@ -53,13 +53,13 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           aria-expanded={partyOpen}
           aria-label={`Bottons de aniversário (${party.length}): abrir a lista`}
           title="Bottons de aniversário"
-          className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-2.5 transition hover:bg-white/10 sm:pt-3 active:scale-95"
+          className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-1.5 transition hover:bg-white/10 sm:pt-3 active:scale-95"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeSrc(party[0].key)} alt="" draggable={false} className="max-h-10 max-w-10 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+          <img src={badgeSrc(party[0].key)} alt="" draggable={false} className="max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
         {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
-        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-0.5 sm:h-5 sm:w-10 sm:-translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
+        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 sm:h-5 sm:w-10 sm:-translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
           <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform sm:h-5 sm:w-5 ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M3 10l5-5 5 5" />
           </svg>
