@@ -79,7 +79,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   const lastS = useRef(0);
   const outRaf = useRef(0);
   const apply = useCallback(
-    (animate = false) => {
+    (animate = false, ms = ZOOM_MS) => {
       const el = world.current;
       if (!el) return;
       const { x, y, s } = view.current;
@@ -91,7 +91,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         window.clearTimeout(outRaf.current);
         outRaf.current = 0;
       }
-      el.style.transition = animate ? `transform ${ZOOM_MS}ms cubic-bezier(.45,.05,.2,1)` : "none";
+      el.style.transition = animate ? `transform ${ms}ms cubic-bezier(.45,.05,.2,1)` : "none";
       // durante a animação as sombras e filtros saem (são o que mais pesa com dezenas de pins na tela): zoom sem travar
       if (animate) {
         el.classList.add("zooming");
@@ -108,7 +108,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
               if (world.current) world.current.style.willChange = "transform";
             }, 34);
           } else w.classList.remove("zooming");
-        }, ZOOM_MS + 80);
+        }, ms + 80);
       }
       const write = () => {
         const v = view.current;
@@ -130,7 +130,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         ? null
         : window.setTimeout(() => {
             if (world.current) world.current.style.willChange = "";
-          }, animate ? ZOOM_MS + 120 : 240);
+          }, animate ? ms + 120 : 240);
       if (out !== zoomedOutRef.current) {
         zoomedOutRef.current = out;
         setZoomedOut(out);
@@ -216,14 +216,13 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     } catch {}
     hintDone.current = true;
     const base = view.current.x;
-    const d = w * 0.2;
     const timers: number[] = [];
-    const go = (at: number, x: number) =>
+    const go = (at: number, x: number, ms: number) =>
       timers.push(
         window.setTimeout(() => {
           if (touched.current || pointers.current.size > 0) return;
           view.current = clampView(x, view.current.y, view.current.s);
-          apply(true);
+          apply(true, ms);
         }, at),
       );
     timers.push(
@@ -235,10 +234,11 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         setHint(true);
       }, 700),
     );
-    go(900, base - d);
-    go(1650, base + d);
-    go(2400, base);
-    timers.push(window.setTimeout(() => setHint(false), 4600));
+    // vai até a ponta de um lado, atravessa até a ponta do outro (mostra que o mural é grande) e volta ao centro
+    go(900, -1e6, 1100);
+    go(2150, 1e6, 1700);
+    go(3950, base, 1100);
+    timers.push(window.setTimeout(() => setHint(false), 5600));
     return () => timers.forEach((t) => window.clearTimeout(t));
   }, [startZoomed, apply, clampView]);
 
