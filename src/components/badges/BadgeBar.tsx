@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
@@ -12,6 +13,21 @@ import { useBadges } from "./BadgeContext";
  */
 export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
+  const [partyOpen, setPartyOpen] = useState(false); // painel dos bottons de aniversário (abre para cima)
+  const box = useRef<HTMLElement>(null);
+  // começou a arrastar um botton do painel: o painel fecha para o mural ficar à vista
+  useEffect(() => {
+    if (draggingNew) setPartyOpen(false);
+  }, [draggingNew]);
+  // tocar fora do painel fecha
+  useEffect(() => {
+    if (!partyOpen) return;
+    const away = (e: PointerEvent) => {
+      if (!box.current?.contains(e.target as Node)) setPartyOpen(false);
+    };
+    window.addEventListener("pointerdown", away, true);
+    return () => window.removeEventListener("pointerdown", away, true);
+  }, [partyOpen]);
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -22,6 +38,30 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     if (la !== lb) return lb - la;
     return (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0);
   });
+  // os bottons de aniversário (82 a 123) viram um grupo só na barra: um botão abre um painel com todos, em vez de uma fileira enorme
+  const isParty = (k: number) => k >= 82 && k <= 123;
+  const plain = mine.filter((b) => !isParty(b.key));
+  const party = mine.filter((b) => isParty(b.key));
+  const partyLeft = party.reduce((n, b) => n + (stock(b.key).left ?? 0), 0);
+  const partyBtn =
+    party.length > 0 ? (
+      <li className="relative shrink-0">
+        <button
+          type="button"
+          onClick={() => setPartyOpen((v) => !v)}
+          aria-expanded={partyOpen}
+          aria-label={`Bottons de aniversário (${party.length}): abrir a lista`}
+          title="Bottons de aniversário"
+          className={`grid h-14 w-14 cursor-pointer place-items-center rounded-xl border-2 transition active:scale-95 ${partyOpen ? "border-[#f2c230] bg-[#f2c230]/25" : "border-[#f2c230]/70 bg-[#f2c230]/10 hover:bg-[#f2c230]/20"}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-11 max-w-11 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+        </button>
+        <span aria-hidden className="pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md bg-[#d98a2b] px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)]">
+          {partyLeft}
+        </span>
+      </li>
+    ) : null;
   const storeBtn = (
         <button type="button" onClick={openStore} data-tour="store" aria-label="Loja de Bottons" title="Loja" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -40,7 +80,8 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   );
   const strip = (
       <ul className="flex min-w-0 flex-1 gap-2.5 overflow-x-auto overscroll-x-contain pt-1.5 pr-1.5 pb-1 [touch-action:pan-x] [scrollbar-color:rgba(255,255,255,.35)_transparent] [scrollbar-width:thin]">
-        {mine.map((b) => {
+        {partyBtn}
+        {plain.map((b) => {
           const st = stock(b.key);
           const out = st.left === 0;
           return (
@@ -68,7 +109,42 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
       </ul>
   );
   const block = (
-    <section data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+    <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+      {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
+      {partyOpen && party.length > 0 && (
+        <div role="dialog" aria-label="Bottons de aniversário" className="absolute right-0 bottom-full left-0 z-30 mb-2 max-h-[46dvh] overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md">
+          <p className="mb-2 flex items-center justify-between text-sm font-bold">
+            <span>🎂 Bottons de aniversário</span>
+            <button type="button" onClick={() => setPartyOpen(false)} aria-label="Fechar" className="grid size-7 cursor-pointer place-items-center rounded-lg text-lg leading-none hover:bg-white/10">
+              ×
+            </button>
+          </p>
+          <ul className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+            {party.map((b) => {
+              const st = stock(b.key);
+              const out = st.left === 0;
+              return (
+                <li key={b.key} className="relative">
+                  <button
+                    type="button"
+                    aria-label={out ? `${b.name ?? b.key}: sem unidades disponíveis` : `${b.name ?? b.key}: arraste para o mural`}
+                    title={b.name}
+                    onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
+                    onDragStart={(e) => e.preventDefault()}
+                    className={`grid aspect-square w-full touch-none place-items-center rounded-xl p-1 transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-full max-w-full select-none ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+                  </button>
+                  <span aria-hidden className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md px-1 text-[10px] leading-[1.15rem] font-bold text-white ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}>
+                    {st.left ?? 0}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
       {/* arrastando um botton que já está no mural: avisa onde soltar para devolvê-lo */}
       {draggingId && (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
