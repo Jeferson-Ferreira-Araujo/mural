@@ -38,7 +38,7 @@ export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: {
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             📌
           </span>
-          <p><strong>Colar um pin:</strong> clique (ou toque) num espaço vazio do mural.</p>
+          <p><strong>Colocar um pin:</strong> clique (ou toque) num espaço vazio do mural.</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">

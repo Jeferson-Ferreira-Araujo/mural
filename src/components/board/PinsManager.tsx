@@ -101,7 +101,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
             </label>
             <label className="flex items-start gap-2 text-sm">
               <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="mt-1 size-4" />
-              <span>Bloquear quem enviou (não poderá mais colar pins neste mural)</span>
+              <span>Bloquear quem enviou (não poderá mais colocar pins neste mural)</span>
             </label>
             <div className="flex gap-2">
               <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
@@ -117,7 +117,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
     </li>
   );
 
-  if (pins.length === 0) return <p className={`text-sm ${muted}`}>Nenhum pin ainda. Quando alguém colar um, ele aparece aqui para você aprovar.</p>;
+  if (pins.length === 0) return <p className={`text-sm ${muted}`}>Nenhum pin ainda. Quando alguém colocar um, ele aparece aqui para você aprovar.</p>;
 
   return (
     <div className="space-y-5">

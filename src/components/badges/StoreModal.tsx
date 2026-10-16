@@ -474,7 +474,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </div>
                     )}
                     {!p.owned && (
-                      <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
+                      <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colocar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
                         {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
                       </button>
                     )}

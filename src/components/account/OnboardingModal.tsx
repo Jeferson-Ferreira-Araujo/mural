@@ -81,7 +81,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
         </>
       ) : (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Eu vou te guiar, tocando junto com você, para colar o seu primeiro pin no seu mural. Leva cerca de 1 minuto.</p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">Eu vou te guiar, tocando junto com você, para colocar o seu primeiro pin no seu mural. Leva cerca de 1 minuto.</p>
           <button type="button" onClick={() => finish(true)} className={`${primaryButton} mt-5`}>
             Começar
           </button>

@@ -93,13 +93,13 @@ export const SEND_ERROR_TEXT: Record<SendFailure, string> = {
   blocked: "Não foi possível enviar um pin para este mural.",
   plan_limit: "Este mural chegou ao limite de pins do plano.",
   too_many_pending: "Você já tem pins aguardando aprovação neste mural. Espere o dono aprovar para enviar mais.",
-  slot_taken: "Alguém acabou de colar um pin nesse espaço. Escolha outro.",
-  rate_limited: "Você colou muitos pins agora há pouco. Tente de novo daqui a pouco.",
+  slot_taken: "Alguém acabou de colocar um pin nesse espaço. Escolha outro.",
+  rate_limited: "Você colocou muitos pins agora há pouco. Tente de novo daqui a pouco.",
   not_unlocked: "Responda a pergunta de novo para continuar.",
   format_not_allowed: "Esse formato não está disponível no momento.",
   upload_failed: "Não foi possível enviar o arquivo. Tente de novo.",
   inappropriate: "Esse arquivo não pode ser publicado: ele parece conter conteúdo impróprio.",
-  error: "Não foi possível colar o pin agora. Tente de novo.",
+  error: "Não foi possível colocar o pin agora. Tente de novo.",
 };
 
 // ---------- dono do mural ----------

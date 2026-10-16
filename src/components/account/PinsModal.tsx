@@ -140,7 +140,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
       {!pins ? (
         <p className="text-sm text-[#6b5440]">Carregando pins…</p>
       ) : list.length === 0 ? (
-        <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colar um pin no seu mural, ele aparece aqui.</p>
+        <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colocar um pin no seu mural, ele aparece aqui.</p>
       ) : (
         <>
           {tab === "pending" && <p className="mb-3 text-center text-xs text-[#6b5440]">Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.</p>}

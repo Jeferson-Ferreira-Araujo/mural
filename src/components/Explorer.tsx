@@ -1080,7 +1080,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               ? {
                   mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
                   onSend: onSendPin,
-                  sentNote: "Pin colado no seu mural! 📌",
+                  sentNote: "Pin colocado no seu mural! 📌",
                   onTried: () => undefined,
                   triedAlready: false,
                   signAs: myNick,
@@ -1089,7 +1089,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               ? {
                   mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                   onSend: onSendPin,
-                  sentNote: isMember ? "Pin colado no mural de vocês! 📌" : "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
+                  sentNote: isMember ? "Pin colocado no mural de vocês! 📌" : "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
                   onTried: () => {
                     setTried(true);
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);

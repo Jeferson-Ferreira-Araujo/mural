@@ -19,7 +19,7 @@ export type ComposerMode =
   /** ainda não existe envio real: avisa "em breve" */
   | { mode: "soon" }
   /** demonstração: abre o compositor e cola a mensagem só no estado local */
-  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado: o pin sai sempre assinado com ele */ signAs?: string | null; /** sem conta: não dá para publicar; a pessoa é avisada e este endereço leva à criação da conta (que volta para este mural) */ signupHref?: string; /** sem conta: endereço do login de quem já tem conta */ loginHref?: string };
+  | { mode: "demo"; /** aviso depois de colar (padrão: "Seu PINZ foi colocado no mural!") */ sentNote?: string; /** devolve um texto de erro se não conseguiu colar (a janela fica aberta) */ onSend: (p: SendPayload) => void | Promise<string | void>; onTried: () => void; triedAlready: boolean; /** antes de abrir o compositor: devolve o aviso se ainda não pode deixar um novo pin */ canOpen?: () => Promise<string | null>; /** nickname de quem está logado: o pin sai sempre assinado com ele */ signAs?: string | null; /** sem conta: não dá para publicar; a pessoa é avisada e este endereço leva à criação da conta (que volta para este mural) */ signupHref?: string; /** sem conta: endereço do login de quem já tem conta */ loginHref?: string };
 
 type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
 
@@ -101,7 +101,7 @@ export function MuralScreen({ composer, ...view }: Props) {
               }
               setOpen(false);
               window.dispatchEvent(new CustomEvent("pinz:expect-new")); // o quadro destaca onde o pin entrou
-              onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colada no mural! 🔒" : "Seu PINZ foi colado no mural! 📌"));
+              onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colocada no mural! 🔒" : "Seu PINZ foi colocado no mural! 📌"));
             } finally {
               setSending(false);
             }
