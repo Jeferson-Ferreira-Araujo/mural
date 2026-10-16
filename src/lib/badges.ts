@@ -89,6 +89,12 @@ export const BADGES: readonly BadgeDef[] = [
   { key: 79, ratio: 1.023, name: "Bola de futebol" },
   { key: 80, ratio: 1.031, name: "Bola de basquete" },
   { key: 81, ratio: 1.092, name: "Troféu" },
+  // de aniversário (presente para quem já é PINZ+ no mês do aniversário; não vão para a loja):
+  { key: 82, ratio: 0.82, name: "Balão de aniversário" },
+  { key: 83, ratio: 1.0, name: "Bolo de aniversário" },
+  { key: 84, ratio: 0.849, name: "Chapéu de festa" },
+  { key: 85, ratio: 1.0, name: "Presente" },
+  { key: 86, ratio: 1.0, name: "Estrela de festa" },
 ];
 
 export const badgeDef = (key: number) => BADGES.find((b) => b.key === key);

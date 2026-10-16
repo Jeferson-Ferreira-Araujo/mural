@@ -341,8 +341,9 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   // presente de PINZ+: a janela aparece ao vivo (sinal do servidor) ou no próximo login, uma vez por presente
   const [giftNote, setGiftNote] = useState<GiftNote | null>(null);
   const showGift = useCallback((list: Notification[]) => {
-    const g = list.find((n) => n.kind === "gift" && !giftSeen(n.id) && Date.now() - new Date(n.createdAt).getTime() < 14 * 86_400_000);
+    const g = list.find((n) => (n.kind === "gift" || n.kind === "birthday") && !giftSeen(n.id) && Date.now() - new Date(n.createdAt).getTime() < 14 * 86_400_000);
     if (g && g.kind === "gift") setGiftNote({ id: g.id, actor: g.data.actor, avatar: g.data.avatar });
+    else if (g && g.kind === "birthday") setGiftNote({ id: g.id, birthday: g.data.gift, until: g.data.until });
   }, []);
   useEffect(() => {
     if (!session) return;
@@ -466,8 +467,8 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           showGift(list);
           const latest = list.find((n) => !n.read);
           if (latest) l.notify(notificationText(latest));
-          if (latest?.kind === "reward" || latest?.kind === "gift") void reloadInventory();
-          if (latest?.kind === "gift") {
+          if (latest?.kind === "reward" || latest?.kind === "gift" || latest?.kind === "birthday") void reloadInventory();
+          if (latest?.kind === "gift" || (latest?.kind === "birthday" && latest.data.gift === "plus")) {
             void reloadOwn(); // o presente de PINZ+ muda o plano do mural
             if (nick && slug) void getPublicMural(sb, { nick, slug }).then((m) => m && setSelected(m));
           }
