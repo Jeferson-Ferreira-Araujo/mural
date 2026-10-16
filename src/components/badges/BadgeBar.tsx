@@ -59,7 +59,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-10 max-w-10 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
         {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
-        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-5 w-10 -translate-x-1/2 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
+        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-5 w-10 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
           <svg viewBox="0 0 16 16" className={`h-5 w-5 transition-transform ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M3 10l5-5 5 5" />
           </svg>
