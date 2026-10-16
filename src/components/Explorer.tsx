@@ -1181,7 +1181,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/entrar"));
             }}
           />
-          {selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
+          {selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
           {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />

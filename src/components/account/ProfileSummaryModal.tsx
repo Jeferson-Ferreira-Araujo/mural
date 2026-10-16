@@ -59,7 +59,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
  * Resumo do perfil (ao tocar na foto/nome de quem é o mural): foto maior, selo PINZ+, seguidores, visualizações,
  * compartilhar o perfil, pedir um mural compartilhado e denunciar. `showStats` = false (mural privado ainda trancado): só foto, nome e selo.
  */
-export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary" }: { /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
+export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary", isOwner = false }: { /** quem está vendo é o dono deste perfil (garante o botão Editar perfil) */ isOwner?: boolean; /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
@@ -89,7 +89,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   // o padrão e os tipos de mural que quem cria (você) já tem
   const ownedBoards = BOARDS.filter((b) => b.id === DEFAULT_BOARD || offers.find((o) => o.id === b.id)?.owned === true);
 
-  const self = data?.self === true;
+  const self = data?.self === true || isOwner;
 
   async function sendShared(e: FormEvent) {
     e.preventDefault();
@@ -167,21 +167,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                   <span className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-[#f6cb4a] to-[#eaa91a] px-3.5 py-1.5 text-lg font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(150,90,0,.35)]">
                     PINZ+
                   </span>
-                )}
-                {self && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:edit-profile", { detail: { panel: "plans" } })), 250);
-                    }}
-                    className={`absolute left-0 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95`}
-                  >
-                    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
-                    </svg>
-                    Ver planos
-                  </button>
                 )}
                 {self && (
                   <button

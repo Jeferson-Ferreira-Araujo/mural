@@ -221,7 +221,9 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
 
   async function start(mode: "environment" | "user") {
     stop();
-    if (!navigator.mediaDevices?.getUserMedia) return fallback.current?.click(); // sem acesso à câmera pelo site: abre a câmera do aparelho
+    // celular/tablet: abre o aplicativo da câmera do aparelho, em tela cheia, e volta com a foto; computador: câmera ao vivo em tela cheia
+    const touch = window.matchMedia?.("(pointer: coarse)").matches;
+    if (touch || !navigator.mediaDevices?.getUserMedia) return fallback.current?.click();
     try {
       const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false });
       stream.current = st;
@@ -276,9 +278,9 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
           Tirar foto agora
         </button>
       ) : (
-        <div className="overflow-hidden rounded-2xl bg-black">
-          <video ref={video} playsInline muted className={`block max-h-[50dvh] w-full object-contain ${facing === "user" ? "-scale-x-100" : ""}`} />
-          <div className="flex items-center justify-between gap-2 bg-black/80 p-2">
+        <div className="fixed inset-0 z-[200] flex flex-col bg-black" role="dialog" aria-label="Câmera">
+          <video ref={video} playsInline muted className={`block min-h-0 w-full flex-1 object-contain ${facing === "user" ? "-scale-x-100" : ""}`} />
+          <div className="flex items-center justify-between gap-2 bg-black/80 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             <button type="button" onClick={() => { stop(); setOn(false); }} className="cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
               Cancelar
             </button>
