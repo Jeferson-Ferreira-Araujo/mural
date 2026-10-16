@@ -42,7 +42,7 @@ export function GiftModal({ gift, onClose }: { gift: GiftNote | null; onClose: (
           ) : bday === "badges" ? (
             <>
               <p className="text-base font-semibold">Parabéns! Você ganhou bottons de aniversário 🎈</p>
-              <p className="text-sm text-[#4a3826]">Balão, bolo, chapéu de festa, presente e estrela já estão na sua barra de bottons. Use no seu mural!</p>
+              <p className="text-sm text-[#4a3826]">Eles já estão na sua barra de bottons. Use no seu mural!</p>
             </>
           ) : (
             <>

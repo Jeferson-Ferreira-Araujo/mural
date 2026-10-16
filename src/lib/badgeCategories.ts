@@ -22,7 +22,7 @@ const GROUPS: Record<BadgeCategoryId, number[]> = {
   games: [7, 50, 51, 52],
   esportes: [77, 79, 80, 81],
   comida: [12, 15, 42, 43, 44, 45, 69, 71],
-  diversos: [6, 14, 23, 35, 66, 73, 82, 83, 84, 85, 86],
+  diversos: [6, 14, 23, 35, 66, 73],
 };
 
 export const BADGE_CATEGORY: Record<number, BadgeCategoryId> = Object.fromEntries(
@@ -36,4 +36,4 @@ export const NEW_BADGES_COUNT = 12;
  * Bottons da loja que são cópias (mesma arte) de um dos 25 primeiros, que já vêm de graça/PINZ+: não aparecem na loja
  * (quem já comprou um deles continua vendo e usando). Correspondência: 26=1, 27=2, 28=4, 31=13, 33=25, 34=9, 36=24, 41=22, 42=15, 50=7, 55=21, 58=17, 66=23.
  */
-export const STORE_DUPLICATES: ReadonlySet<number> = new Set([26, 27, 28, 31, 33, 34, 36, 41, 42, 50, 55, 58, 66, 82, 83, 84, 85, 86]); // 82 a 86: bottons de aniversário (só de presente: aparecem para quem os ganhou)
+export const STORE_DUPLICATES: ReadonlySet<number> = new Set([26, 27, 28, 31, 33, 34, 36, 41, 42, 50, 55, 58, 66]);
