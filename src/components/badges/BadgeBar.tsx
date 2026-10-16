@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BADGES, badgeSrc } from "@/lib/badges";
+import { BADGE_CATEGORY, BADGE_CATEGORIES } from "@/lib/badgeCategories";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
 
@@ -13,23 +14,23 @@ import { useBadges } from "./BadgeContext";
  */
 export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
-  const [partyOpen, setPartyOpen] = useState(false); // painel dos bottons de aniversário (abre para cima)
+  const [openCat, setOpenCat] = useState<string | null>(null); // categoria com o painel aberto (abre para cima)
   const box = useRef<HTMLElement>(null);
   // começou a arrastar um botton do painel: o painel fecha para o mural ficar à vista
   const wasDragging = useRef(false);
   useEffect(() => {
-    if (wasDragging.current && !draggingNew) setPartyOpen(false);
+    if (wasDragging.current && !draggingNew) setOpenCat(null);
     wasDragging.current = draggingNew;
   }, [draggingNew]);
   // tocar fora do painel fecha
   useEffect(() => {
-    if (!partyOpen) return;
+    if (!openCat) return;
     const away = (e: PointerEvent) => {
-      if (!box.current?.contains(e.target as Node)) setPartyOpen(false);
+      if (!box.current?.contains(e.target as Node)) setOpenCat(null);
     };
     window.addEventListener("pointerdown", away, true);
     return () => window.removeEventListener("pointerdown", away, true);
-  }, [partyOpen]);
+  }, [openCat]);
   if (!editable) return null;
   // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
   // quem ficou sem unidades vai para o final (continua visível, só apagado)
@@ -40,32 +41,40 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     if (la !== lb) return lb - la;
     return (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0);
   });
-  // os bottons de aniversário (82 a 123) viram um grupo só na barra: um botão abre um painel com todos, em vez de uma fileira enorme
-  const isParty = (k: number) => k >= 82 && k <= 123;
-  const plain = mine.filter((b) => !isParty(b.key));
-  const party = mine.filter((b) => isParty(b.key));
-  const partyBtn =
-    party.length > 0 ? (
-      <li className="relative shrink-0">
-        <button
-          type="button"
-          onClick={() => setPartyOpen((v) => !v)}
-          aria-expanded={partyOpen}
-          aria-label={`Bottons de aniversário (${party.length}): abrir a lista`}
-          title="Bottons de aniversário"
-          className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-1.5 transition hover:bg-white/10 sm:pt-3 active:scale-95"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeSrc(party[0].key)} alt="" draggable={false} className="max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
-        </button>
-        {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
-        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 sm:h-5 sm:w-10 sm:-translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
-          <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform sm:h-5 sm:w-5 ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M3 10l5-5 5 5" />
-          </svg>
-        </button>
-      </li>
-    ) : null;
+  // quem tem mais de um botton da mesma categoria vê só um botão na barra (com uma setinha): ele abre um painel para cima com todos eles.
+  // A categoria Aniversário vem sempre primeiro; as demais seguem a posição do primeiro botton delas na barra
+  const byCat = new Map<string, typeof mine>();
+  for (const b of mine) {
+    const c = BADGE_CATEGORY[b.key];
+    if (c) byCat.set(c, [...(byCat.get(c) ?? []), b]);
+  }
+  const groups = [...byCat.entries()].filter(([, l]) => l.length > 1);
+  const groupedKeys = new Set(groups.flatMap(([, l]) => l.map((b) => b.key)));
+  const plain = mine.filter((b) => !groupedKeys.has(b.key));
+  const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
+  const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
+  const groupBtn = (cat: string, list: typeof mine) => (
+    <li key={`cat-${cat}`} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpenCat((v) => (v === cat ? null : cat))}
+        aria-expanded={openCat === cat}
+        aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
+        title={catLabel(cat)}
+        className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-1.5 transition hover:bg-white/10 active:scale-95 sm:pt-3"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={badgeSrc(list[0].key)} alt="" draggable={false} className="max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+      </button>
+      {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
+      <button type="button" onClick={() => setOpenCat((v) => (v === cat ? null : cat))} aria-label={`Abrir a lista: ${catLabel(cat)}`} tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)] sm:h-5 sm:w-10">
+        <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform sm:h-5 sm:w-5 ${openCat === cat ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M3 10l5-5 5 5" />
+        </svg>
+      </button>
+    </li>
+  );
+  const openList = ordered.find(([c]) => c === openCat)?.[1] ?? null;
   const storeBtn = (
         <button type="button" onClick={openStore} data-tour="store" aria-label="Loja de Bottons" title="Loja" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -84,7 +93,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   );
   const strip = (
       <ul className="flex min-w-0 flex-1 gap-2.5 overflow-x-auto overscroll-x-contain pt-1.5 pr-1.5 pb-1 [touch-action:pan-x] [scrollbar-color:rgba(255,255,255,.35)_transparent] [scrollbar-width:thin]">
-        {partyBtn}
+        {ordered.map(([c, l]) => groupBtn(c, l))}
         {plain.map((b) => {
           const st = stock(b.key);
           const out = st.left === 0;
@@ -115,10 +124,11 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const block = (
     <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
-      {partyOpen && party.length > 0 && (
-        <div role="dialog" aria-label="Bottons de aniversário" className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
+      {openCat && openList && (
+        <div role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
+          <p className="mb-1 px-1 text-sm font-bold">{catLabel(openCat)}</p>
           <ul className="flex flex-wrap gap-1" style={{ maxWidth: "26rem" }}>
-            {party.map((b) => {
+            {openList.map((b) => {
               const st = stock(b.key);
               const out = st.left === 0;
               return (
