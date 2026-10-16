@@ -1148,6 +1148,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       <NotificationsModal open={notifOpen} onClose={() => setNotifOpen(false)} items={notifs} />
       <GiftModal
         gift={giftNote}
+        name={myNick}
         onClose={() => {
           if (giftNote) markGiftSeen(giftNote.id);
           setGiftNote(null);

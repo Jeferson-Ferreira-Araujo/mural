@@ -389,3 +389,15 @@ html[data-a11y-contrast="1"] :focus-visible {
 .drawer-slide.drawer-out::backdrop {
   animation: drawer-fade 0.22s ease reverse forwards;
 }
+
+/* confete da janela de aniversário */
+@keyframes confetti-fall {
+  from {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(32rem) rotate(540deg);
+    opacity: 0.9;
+  }
+}
