@@ -112,14 +112,14 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {partyOpen && party.length > 0 && (
-        <div role="dialog" aria-label="Bottons de aniversário" className="absolute right-0 bottom-full left-0 z-30 mx-auto mb-2 max-h-[46dvh] max-w-[26rem] overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md">
+        <div role="dialog" aria-label="Bottons de aniversário" className="absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md">
           <p className="mb-2 flex items-center justify-between text-sm font-bold">
             <span>🎂 Bottons de aniversário</span>
             <button type="button" onClick={() => setPartyOpen(false)} aria-label="Fechar" className="grid size-7 cursor-pointer place-items-center rounded-lg text-lg leading-none hover:bg-white/10">
               ×
             </button>
           </p>
-          <ul className="grid grid-cols-4 gap-1">
+          <ul className="flex flex-wrap gap-1" style={{ maxWidth: "26rem" }}>
             {party.map((b) => {
               const st = stock(b.key);
               const out = st.left === 0;
@@ -131,10 +131,10 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
                     title={b.name}
                     onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                     onDragStart={(e) => e.preventDefault()}
-                    className={`grid aspect-square w-full touch-none place-items-center rounded-xl p-1.5 transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
+                    className={`grid h-14 w-14 touch-none place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-full max-w-full select-none ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+                    <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
                   </button>
                   <span aria-hidden className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md px-1 text-[10px] leading-[1.15rem] font-bold text-white ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}>
                     {st.left ?? 0}
