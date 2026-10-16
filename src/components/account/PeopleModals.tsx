@@ -57,20 +57,25 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
   );
 
   return (
-    <Modal open={open} onClose={onClose} title="Seguindo" label="Seguindo e seguidores">
+    <Modal open={open} onClose={onClose} title="Seguidores e seguindo" label="Seguidores e seguindo">
       <div role="tablist" aria-label="Seguindo e seguidores" className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
         {tabBtn("following", "Seguindo", following?.length ?? null)}
         {tabBtn("followers", "Seguidores", followers?.length ?? null)}
       </div>
-      <input
-        type="search"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder={tab === "following" ? "Buscar entre quem você segue" : "Buscar entre seus seguidores"}
-        aria-label="Buscar pelo nome de usuário"
-        autoComplete="off"
-        className="mb-3 w-full rounded-xl border border-[#d9c9ad] bg-white px-3.5 py-2.5 text-[15px] outline-none focus:border-[#d98a2b] focus:ring-2 focus:ring-[#d98a2b]/30"
-      />
+      <div className="relative mb-3">
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          aria-label={tab === "following" ? "Buscar entre quem você segue" : "Buscar entre seus seguidores"}
+          autoComplete="off"
+          className="w-full rounded-xl border border-[#d9c9ad] bg-white py-2.5 pr-11 pl-3.5 text-[15px] outline-none [&::-webkit-search-cancel-button]:appearance-none focus:border-[#d98a2b] focus:ring-2 focus:ring-[#d98a2b]/30"
+        />
+        <svg viewBox="0 0 24 24" className="pointer-events-none absolute top-1/2 right-3.5 size-5 -translate-y-1/2 text-[#8a7b69]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m16 16 4.5 4.5" />
+        </svg>
+      </div>
       {!shown ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
       ) : shown.length === 0 ? (
