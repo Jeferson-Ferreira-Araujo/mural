@@ -202,6 +202,46 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     apply(false);
   }, [startZoomed, apply, clampView, limits]);
 
+  // dica de arrastar: na primeira vez do dia que o mural abre ampliado no celular, o quadro balança de leve para um lado e para o outro
+  // e aparece um aviso discreto (some sozinho ou assim que a pessoa mexe). Vale para qualquer conta, nova ou antiga.
+  const [hint, setHint] = useState(false);
+  const hintDone = useRef(false);
+  useEffect(() => {
+    if (!startZoomed || hintDone.current || touched.current || !ready.current) return;
+    const { w, h } = size.current;
+    if (w <= 0 || w >= 700) return;
+    const today = new Date().toLocaleDateString("sv-SE");
+    try {
+      if (localStorage.getItem("pinz:pan-hint") === today) return;
+    } catch {}
+    hintDone.current = true;
+    const base = view.current.x;
+    const d = w * 0.2;
+    const timers: number[] = [];
+    const go = (at: number, x: number) =>
+      timers.push(
+        window.setTimeout(() => {
+          if (touched.current || pointers.current.size > 0) return;
+          view.current = clampView(x, view.current.y, view.current.s);
+          apply(true);
+        }, at),
+      );
+    timers.push(
+      window.setTimeout(() => {
+        if (touched.current) return;
+        try {
+          localStorage.setItem("pinz:pan-hint", today);
+        } catch {}
+        setHint(true);
+      }, 700),
+    );
+    go(900, base - d);
+    go(1650, base + d);
+    go(2400, base);
+    timers.push(window.setTimeout(() => setHint(false), 4600));
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [startZoomed, apply, clampView]);
+
   // roda do mouse amplia (útil em tablets e testes no computador)
   useEffect(() => {
     const b = box.current;
@@ -340,6 +380,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     if (inDialog(e.target)) return;
     lastType.current = e.pointerType;
     touched.current = true;
+    setHint(false);
     // mouse sobre um pin que o dono pode arrastar: quem cuida disso é o próprio pin, o quadro não começa a mover
     if (e.pointerType === "mouse" && e.target instanceof Element && e.target.closest("[data-pin-drag]")) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -422,6 +463,18 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       <div ref={world} className="absolute top-0 left-0 origin-top-left [container-type:size]" style={{ width: WORLD_W, height: WORLD_H }}>
         {children}
       </div>
+
+      {hint && (
+        <div aria-hidden className="pointer-events-none absolute bottom-20 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-3.5 py-1.5 text-sm font-semibold text-white shadow-[0_0.2rem_0.7rem_rgba(0,0,0,.4)] backdrop-blur-sm transition-opacity">
+          <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10 3 5 8l5 5" />
+          </svg>
+          Arraste para os lados
+          <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m6 3 5 5-5 5" />
+          </svg>
+        </div>
+      )}
 
       {cornerLeft && (
         <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className="absolute bottom-3 left-3 z-20">
