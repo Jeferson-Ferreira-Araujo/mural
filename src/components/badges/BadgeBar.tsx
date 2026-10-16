@@ -42,7 +42,6 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const isParty = (k: number) => k >= 82 && k <= 123;
   const plain = mine.filter((b) => !isParty(b.key));
   const party = mine.filter((b) => isParty(b.key));
-  const partyLeft = party.reduce((n, b) => n + (stock(b.key).left ?? 0), 0);
   const partyBtn =
     party.length > 0 ? (
       <li className="relative shrink-0">
@@ -57,8 +56,11 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-11 max-w-11 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
-        <span aria-hidden className="pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md bg-[#d98a2b] px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)]">
-          {partyLeft}
+        {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton) */}
+        <span aria-hidden className="pointer-events-none absolute -top-2.5 left-1/2 grid h-5 w-7 -translate-x-1/2 place-items-center rounded-md bg-[#f2c230] text-[#2f2218] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)]">
+          <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 10l5-5 5 5" />
+          </svg>
         </span>
       </li>
     ) : null;
