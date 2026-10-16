@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { BADGE_CATEGORY, BADGE_CATEGORIES } from "@/lib/badgeCategories";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
@@ -16,6 +16,21 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   const [openCat, setOpenCat] = useState<string | null>(null); // categoria com o painel aberto (abre para cima)
   const box = useRef<HTMLElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const [anchor, setAnchor] = useState(0); // centro (em px, dentro da barra) do botão de grupo clicado: o painel abre naquela direção
+  const toggleCat = (cat: string, el: HTMLElement) => {
+    const li = el.closest("li")?.getBoundingClientRect();
+    const bx = box.current?.getBoundingClientRect();
+    if (li && bx) setAnchor(li.left + li.width / 2 - bx.left);
+    setOpenCat((v) => (v === cat ? null : cat));
+  };
+  // o painel fica centralizado sobre o botão clicado, sem sair da barra
+  useLayoutEffect(() => {
+    const p = panel.current;
+    const bx = box.current;
+    if (!openCat || !p || !bx) return;
+    p.style.left = `${Math.max(0, Math.min(bx.clientWidth - p.offsetWidth, anchor - p.offsetWidth / 2))}px`;
+  }, [openCat, anchor]);
   // começou a arrastar um botton do painel: o painel fecha para o mural ficar à vista
   const wasDragging = useRef(false);
   useEffect(() => {
@@ -60,7 +75,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     <li key={`cat-${cat}`} className="relative shrink-0">
       <button
         type="button"
-        onClick={() => setOpenCat((v) => (v === cat ? null : cat))}
+        onClick={(e) => toggleCat(cat, e.currentTarget)}
         aria-expanded={openCat === cat}
         aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
         title={catLabel(cat)}
@@ -70,7 +85,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
         <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-9 max-w-9 select-none transition sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
       </button>
       {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
-      <button type="button" onClick={() => setOpenCat((v) => (v === cat ? null : cat))} aria-label={`Abrir a lista: ${catLabel(cat)}`} tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)] sm:h-5 sm:w-10">
+      <button type="button" onClick={(e) => toggleCat(cat, e.currentTarget)} aria-label={`Abrir a lista: ${catLabel(cat)}`} tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)] sm:h-5 sm:w-10">
         <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform sm:h-5 sm:w-5 ${openCat === cat ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M3 10l5-5 5 5" />
         </svg>
@@ -129,7 +144,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {openCat && openList && (
-        <div role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
+        <div ref={panel} role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
           <p className="mb-1 px-1 text-sm font-bold">{catLabel(openCat)}</p>
           <ul className="flex flex-wrap gap-1" style={{ maxWidth: "26rem" }}>
             {openList.map((b) => {
