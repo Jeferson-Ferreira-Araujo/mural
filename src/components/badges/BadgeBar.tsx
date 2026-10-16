@@ -53,7 +53,10 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const plain = mine.filter((b) => !groupedKeys.has(b.key));
   const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
   const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
-  const groupBtn = (cat: string, list: typeof mine) => (
+  const groupBtn = (cat: string, list: typeof mine) => {
+    // sem nenhum disponível (todos já estão no mural): o ícone fica apagado, como os de fora do grupo
+    const out = list.every((b) => stock(b.key).left === 0);
+    return (
     <li key={`cat-${cat}`} className="relative shrink-0">
       <button
         type="button"
@@ -64,7 +67,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
         className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-1.5 transition hover:bg-white/10 active:scale-95 sm:pt-3"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={badgeSrc(list[0].key)} alt="" draggable={false} className="max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+        <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-9 max-w-9 select-none transition sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
       </button>
       {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
       <button type="button" onClick={() => setOpenCat((v) => (v === cat ? null : cat))} aria-label={`Abrir a lista: ${catLabel(cat)}`} tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)] sm:h-5 sm:w-10">
@@ -73,7 +76,8 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
         </svg>
       </button>
     </li>
-  );
+    );
+  };
   const openList = ordered.find(([c]) => c === openCat)?.[1] ?? null;
   const storeBtn = (
         <button type="button" onClick={openStore} data-tour="store" aria-label="Loja de Bottons" title="Loja" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
