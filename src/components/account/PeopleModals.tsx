@@ -18,36 +18,77 @@ function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
   );
 }
 
-/** Seguindo: as pessoas que você segue, com acesso rápido ao mural delas. */
-export function FollowingModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [list, setList] = useState<PersonLite[] | null>(null);
+/** Seguindo e Seguidores (duas abas): quem você segue, com acesso rápido ao mural, e quem segue você; a busca no topo filtra a lista da aba aberta. */
+export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose: () => void; /** seu nome de usuário (para listar os seguidores) */ nick: string }) {
+  const [tab, setTab] = useState<"following" | "followers">("following");
+  const [following, setFollowing_] = useState<PersonLite[] | null>(null);
+  const [followers, setFollowers] = useState<PersonLite[] | null>(null);
+  const [q, setQ] = useState("");
   useEffect(() => {
     if (!open) return;
-    setList(null);
-    void listFollowing(getBrowserSupabase()).then((l) => setList(l ?? []));
-  }, [open]);
+    setTab("following");
+    setQ("");
+    setFollowing_(null);
+    setFollowers(null);
+    const sb = getBrowserSupabase();
+    void listFollowing(sb).then((l) => setFollowing_(l ?? []));
+    void listFollowers(sb, nick).then((l) => setFollowers(l ?? []));
+  }, [open, nick]);
 
-  async function unfollow(nick: string) {
-    setList((l) => (l ?? []).filter((p) => p.nickname !== nick));
-    if (!(await setFollowing(getBrowserSupabase(), nick, false))) void listFollowing(getBrowserSupabase()).then((l) => setList(l ?? []));
+  async function unfollow(n: string) {
+    setFollowing_((l) => (l ?? []).filter((p) => p.nickname !== n));
+    if (!(await setFollowing(getBrowserSupabase(), n, false))) void listFollowing(getBrowserSupabase()).then((l) => setFollowing_(l ?? []));
   }
 
+  const list = tab === "following" ? following : followers;
+  const term = q.trim().toLowerCase().replace(/^@/, "");
+  const shown = list && term ? list.filter((p) => p.nickname.toLowerCase().includes(term)) : list;
+  const tabBtn = (id: "following" | "followers", label: string, n: number | null) => (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={tab === id}
+      onClick={() => setTab(id)}
+      className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold transition ${tab === id ? "bg-white text-[#2a1c12] shadow-[0_0.1rem_0.4rem_rgba(60,35,10,.2)]" : "text-[#6b5440] hover:text-[#2a1c12]"}`}
+    >
+      {label}
+      {n != null && <span className="ml-1.5 font-semibold text-[#8a7b69]">{n}</span>}
+    </button>
+  );
+
   return (
-    <Modal open={open} onClose={onClose} title="Seguindo" label="Seguindo">
-      {!list ? (
+    <Modal open={open} onClose={onClose} title="Seguindo" label="Seguindo e seguidores">
+      <div role="tablist" aria-label="Seguindo e seguidores" className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
+        {tabBtn("following", "Seguindo", following?.length ?? null)}
+        {tabBtn("followers", "Seguidores", followers?.length ?? null)}
+      </div>
+      <input
+        type="search"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={tab === "following" ? "Buscar entre quem você segue" : "Buscar entre seus seguidores"}
+        aria-label="Buscar pelo nome de usuário"
+        autoComplete="off"
+        className="mb-3 w-full rounded-xl border border-[#d9c9ad] bg-white px-3.5 py-2.5 text-[15px] outline-none focus:border-[#d98a2b] focus:ring-2 focus:ring-[#d98a2b]/30"
+      />
+      {!shown ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
-      ) : list.length === 0 ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Você ainda não segue ninguém. Toque em “Seguir” no mural de uma pessoa para ter acesso rápido a ele aqui.</p>
+      ) : shown.length === 0 ? (
+        <p className="py-6 text-center text-sm text-[#6b5440]">
+          {term ? "Ninguém encontrado com esse nome." : tab === "following" ? "Você ainda não segue ninguém. Toque em “Seguir” no mural de uma pessoa para ter acesso rápido a ele aqui." : "Nenhum seguidor para mostrar."}
+        </p>
       ) : (
         <ul className="space-y-2.5">
-          {list.map((p) => (
+          {shown.map((p) => (
             <Row
               key={p.nickname}
               p={p}
               action={
-                <button type="button" onClick={() => void unfollow(p.nickname)} className="shrink-0 cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf]">
-                  Deixar de seguir
-                </button>
+                tab === "following" ? (
+                  <button type="button" onClick={() => void unfollow(p.nickname)} className="shrink-0 cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf]">
+                    Deixar de seguir
+                  </button>
+                ) : undefined
               }
             />
           ))}
