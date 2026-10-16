@@ -205,6 +205,96 @@ function measureRatio(url: string): Promise<number | null> {
   });
 }
 
+/** Câmera na hora: mostra o que a câmera vê e, ao tocar em "Tirar foto", entrega a foto como arquivo. Sem câmera (ou sem permissão), cai no seletor do aparelho. */
+function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onError: (m: string) => void }) {
+  const [on, setOn] = useState(false);
+  const [facing, setFacing] = useState<"environment" | "user">("environment");
+  const video = useRef<HTMLVideoElement>(null);
+  const stream = useRef<MediaStream | null>(null);
+  const fallback = useRef<HTMLInputElement>(null);
+
+  const stop = () => {
+    stream.current?.getTracks().forEach((t) => t.stop());
+    stream.current = null;
+  };
+  useEffect(() => stop, []);
+
+  async function start(mode: "environment" | "user") {
+    stop();
+    if (!navigator.mediaDevices?.getUserMedia) return fallback.current?.click(); // sem acesso à câmera pelo site: abre a câmera do aparelho
+    try {
+      const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false });
+      stream.current = st;
+      setFacing(mode);
+      setOn(true);
+      requestAnimationFrame(() => {
+        if (video.current) {
+          video.current.srcObject = st;
+          void video.current.play().catch(() => {});
+        }
+      });
+    } catch {
+      setOn(false);
+      onError("Não foi possível abrir a câmera. Permita o acesso nas configurações do navegador ou escolha um arquivo.");
+    }
+  }
+
+  function snap() {
+    const v = video.current;
+    if (!v || !v.videoWidth) return;
+    const c = document.createElement("canvas");
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    const g = c.getContext("2d");
+    if (!g) return;
+    if (facing === "user") {
+      g.translate(c.width, 0);
+      g.scale(-1, 1); // selfie: sai do jeito que a pessoa se viu
+    }
+    g.drawImage(v, 0, 0);
+    c.toBlob(
+      (b) => {
+        if (!b) return onError("Não foi possível tirar a foto. Tente de novo.");
+        stop();
+        setOn(false);
+        onPhoto(new File([b], `foto-${Date.now()}.jpg`, { type: "image/jpeg" }));
+      },
+      "image/jpeg",
+      0.92,
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <input ref={fallback} type="file" accept="image/*" capture="environment" hidden onChange={(e) => e.target.files?.[0] && onPhoto(e.target.files[0])} aria-label="Tirar uma foto agora" />
+      {!on ? (
+        <button type="button" onClick={() => void start(facing)} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+            <circle cx="12" cy="13" r="3.5" />
+          </svg>
+          Tirar foto agora
+        </button>
+      ) : (
+        <div className="overflow-hidden rounded-2xl bg-black">
+          <video ref={video} playsInline muted className={`block max-h-[50dvh] w-full object-contain ${facing === "user" ? "-scale-x-100" : ""}`} />
+          <div className="flex items-center justify-between gap-2 bg-black/80 p-2">
+            <button type="button" onClick={() => { stop(); setOn(false); }} className="cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
+              Cancelar
+            </button>
+            <button type="button" onClick={snap} aria-label="Tirar foto" className="grid size-14 cursor-pointer place-items-center rounded-full border-4 border-white bg-white/20 active:scale-95">
+              <span className="size-9 rounded-full bg-white" />
+            </button>
+            <button type="button" onClick={() => void start(facing === "user" ? "environment" : "user")} className="cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
+              Virar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PhotoForm({ onChange }: { onChange: DraftChange }) {
   const [src, setSrc] = useState<string | null>(null);
   const [ratio, setRatio] = useState<number | null>(null);
@@ -233,6 +323,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
       <Field label="Foto">
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
+      <CameraCapture onPhoto={(f) => void pick(f)} onError={setError} />
       {error && <ErrorText>{error}</ErrorText>}
       <TapeColorPicker value={tape} onChange={setTape} />
       <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
