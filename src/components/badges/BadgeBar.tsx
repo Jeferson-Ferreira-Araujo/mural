@@ -53,17 +53,17 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           aria-expanded={partyOpen}
           aria-label={`Bottons de aniversário (${party.length}): abrir a lista`}
           title="Bottons de aniversário"
-          className={`grid h-14 w-14 cursor-pointer place-items-center rounded-xl border-2 transition active:scale-95 ${partyOpen ? "border-[#f2c230] bg-[#f2c230]/25" : "border-[#f2c230]/70 bg-[#f2c230]/10 hover:bg-[#f2c230]/20"}`}
+          className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-3 transition hover:bg-white/10 active:scale-95"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-11 max-w-11 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+          <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-10 max-w-10 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
-        {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton) */}
-        <span aria-hidden className="pointer-events-none absolute -top-2.5 left-1/2 grid h-5 w-7 -translate-x-1/2 place-items-center rounded-md bg-[#f2c230] text-[#2f2218] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)]">
-          <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+        {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
+        <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-5 w-10 -translate-x-1/2 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">
+          <svg viewBox="0 0 16 16" className={`h-5 w-5 transition-transform ${partyOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M3 10l5-5 5 5" />
           </svg>
-        </span>
+        </button>
       </li>
     ) : null;
   const storeBtn = (
