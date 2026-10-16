@@ -338,11 +338,11 @@ export function BadgeProvider({
           return;
         }
         if (drop.kind === "physical") {
-          notify("Botton só pode ficar sobre fotos, post-its, papéis e desenhos. Em mapas, vídeos, músicas, vozes e displays não vale: coloque em volta.");
+          notify("Não é possível colocar sobre pin ou display.");
           return sendBack(at);
         }
         if (drop.kind === "badge") {
-          notify("Não dá para colocar um botton sobre outro botton.");
+          notify("Não é possível colocar sobre pin ou display.");
           return sendBack(at);
         }
         if (drop.kind === "out") {
@@ -350,7 +350,7 @@ export function BadgeProvider({
           return sendBack(at);
         }
         if (drop.kind === "occupied") {
-          notify("Esse lugar já tem um pin. Solte sobre espaços livres do mural.");
+          notify("Não é possível colocar sobre pin ou display.");
           return sendBack(at);
         }
         setGhost(null);
@@ -548,15 +548,15 @@ export function BadgeProvider({
         const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el, isDisp);
         if (drop.kind === "occupied") {
           back();
-          return notify("Não há espaço para aumentar: ele cobriria um pin.");
+          return notify("Não é possível colocar sobre pin ou display.");
         }
         if (drop.kind === "physical") {
           back();
-          return notify("Não há espaço para aumentar: o botton cobriria um pin ou display onde ele não pode ficar.");
+          return notify("Não é possível colocar sobre pin ou display.");
         }
         if (drop.kind === "badge") {
           back();
-          return notify("Não há espaço para aumentar: ele encostaria em outro botton.");
+          return notify("Não é possível colocar sobre pin ou display.");
         }
         if (drop.kind === "ok") {
           nx = drop.x;
@@ -581,7 +581,7 @@ export function BadgeProvider({
           if (d2.rect) removeOverRef.current?.(d2.rect, 0.02);
         } else if (d2.kind === "occupied") {
           back();
-          return notify("Não há espaço para aumentar: ele cobriria um pin.");
+          return notify("Não é possível colocar sobre pin ou display.");
         }
         void lr;
       }
@@ -1076,7 +1076,7 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
       const d = check(x, y);
       if (!d) return;
       if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? [], d.rect);
-      notify(d.kind === "occupied" ? "Esse lugar já tem um pin. Solte sobre espaços livres do mural." : d.kind === "badge" ? "Não dá para colocar um display sobre outro display." : "Solte o display sobre o mural.");
+      notify(d.kind === "occupied" || d.kind === "badge" ? "Não é possível colocar sobre pin ou display." : "Solte o display sobre o mural.");
       const lr = layerRef.current?.getBoundingClientRect();
       if (lr) setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 }); // volta ao centro
       setState("ok");

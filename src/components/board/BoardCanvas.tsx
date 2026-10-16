@@ -235,7 +235,7 @@ export function BoardCanvas({
       const m = moves[0];
       full = inside({ left: full.left + m.dx, right: full.right + m.dx, top: full.top + m.dy, bottom: full.bottom + m.dy });
     }
-    if (blocked) return { error: `Não dá para soltar aqui: o pin ficaria sobre ${blocked}.` };
+    if (blocked) return { error: "Não é possível colocar sobre pin ou display." };
     if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * maxSlide) return { error: "Não cabe aqui: tente um lugar mais livre." }; // arrastando, o pin só escorrega um pouco (fica onde o dedo o deixou); o reencaixe automático pode escorregar mais
     type Touch = { slot: number; area: number; cx: number; cy: number };
     const touched: Touch[] = [];
@@ -261,9 +261,9 @@ export function BoardCanvas({
       const rc = core(r);
       const a = area(full, rc);
       if (a / size(rc) < 0.03) continue;
-      if (cell.hasAttribute("data-pin-id")) return { error: "Não dá para soltar aqui: o pin ficaria sobre outro pin." };
+      if (cell.hasAttribute("data-pin-id")) return { error: "Não é possível colocar sobre pin ou display." };
       if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) {
-        if (cell.hasAttribute("data-cover-by")) return { error: "Não dá para soltar aqui: o pin ficaria sobre outro pin." };
+        if (cell.hasAttribute("data-cover-by")) return { error: "Não é possível colocar sobre pin ou display." };
         // espaço reservado por um display: quem vale é o retângulo REAL do display (conferido acima, em "obstacles"); a lista de espaços que ele guardou
         // pode passar da área que ele ocupa de verdade (display movido ou redimensionado) e barrava lugares onde não há display nenhum
         continue;
