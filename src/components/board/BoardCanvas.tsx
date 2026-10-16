@@ -449,7 +449,8 @@ export function BoardCanvas({
         })
         .sort((a, b) => Math.hypot(a.x - cx0, a.y - cy0) - Math.hypot(b.x - cx0, b.y - cy0));
       for (const p of cells.slice(0, 14)) {
-        const sol = solve({ left: p.x - 4 * em, right: p.x + 4 * em, top: p.y - 4 * em, bottom: p.y + 4 * em }, em);
+        // ainda não se sabe qual pin será (o desenho e a foto são maiores que o texto): reserva o tamanho de um espaço inteiro (14em × 13em), para o pin novo não cair sobre os vizinhos
+        const sol = solve({ left: p.x - 7 * em, right: p.x + 7 * em, top: p.y - 6.5 * em, bottom: p.y + 6.5 * em }, em);
         if (!("error" in sol)) return onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
       }
       say("Não há espaço livre para um pin agora. Dê dois cliques (ou segure) num ponto vazio do mural.");
