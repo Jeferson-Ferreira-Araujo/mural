@@ -9,6 +9,7 @@ export const BADGE_CATEGORIES = [
   { id: "esportes", label: "Esportes" },
   { id: "comida", label: "Comida" },
   { id: "diversos", label: "Diversos" },
+  { id: "aniversario", label: "Aniversário" },
 ] as const;
 
 export type BadgeCategoryId = (typeof BADGE_CATEGORIES)[number]["id"];
@@ -23,6 +24,7 @@ const GROUPS: Record<BadgeCategoryId, number[]> = {
   esportes: [77, 79, 80, 81],
   comida: [12, 15, 42, 43, 44, 45, 69, 71],
   diversos: [6, 14, 23, 35, 66, 73],
+  aniversario: [82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123],
 };
 
 export const BADGE_CATEGORY: Record<number, BadgeCategoryId> = Object.fromEntries(

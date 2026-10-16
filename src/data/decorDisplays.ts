@@ -181,7 +181,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
   };
   const placed: { x: number; y: number; w: number; h: number }[] = [];
   const buttons: PlacedBadge[] = [];
-  const keys = shuffle(BADGES);
+  const keys = shuffle(BADGES.filter((b) => b.key <= 81));
   // várias passadas pelos pontos (com outro tamanho a cada tentativa): os que cairiam no centro de um pin são descartados e o total chega a 15
   const tries = [...shuffle(points), ...shuffle(points), ...shuffle(points), ...shuffle(points)];
   for (const p of tries) {
