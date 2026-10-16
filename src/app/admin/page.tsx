@@ -8,6 +8,7 @@ import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
 import { AnalyticsPanel } from "./AnalyticsPanel";
 import { FeaturesPanel } from "./FeaturesPanel";
+import { TestsPanel } from "./TestsPanel";
 import { PayModeSwitch } from "./PayModeSwitch";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -372,7 +373,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests">("users");
   const [payQ, setPayQ] = useState("");
   const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
@@ -465,7 +466,7 @@ export default function Admin() {
         {/* ambiente dos pagamentos (teste/produção): sempre à vista, qualquer que seja a seção */}
         <PayModeSwitch onToast={setToast} />
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-2xl grid-cols-5 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-3xl grid-cols-3 sm:grid-cols-6 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
@@ -473,6 +474,7 @@ export default function Admin() {
               ["payments", "Pagamentos"],
               ["features", "Recursos"],
               ["analytics", "Analytics"],
+              ["tests", "Testes"],
             ] as const
           ).map(([id, label]) => (
             <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -487,7 +489,9 @@ export default function Admin() {
           </p>
         )}
 
-        {tab === "features" ? (
+        {tab === "tests" ? (
+          <TestsPanel onToast={setToast} />
+        ) : tab === "features" ? (
           <FeaturesPanel onToast={setToast} />
         ) : tab === "analytics" ? (
           <AnalyticsPanel />

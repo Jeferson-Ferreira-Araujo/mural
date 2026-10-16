@@ -248,6 +248,28 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       window.clearTimeout(t);
     };
   }, [uid, isOwner, unlocked, nickPending, companyWelcome]);
+  // testes da página de administração: ela guarda o nome do teste e leva ao mural; aqui a tela escolhida abre
+  useEffect(() => {
+    if (!uid || !isOwner || !unlocked || nickPending) return;
+    let id: string | null = null;
+    try {
+      id = sessionStorage.getItem("pinz:admin-test");
+    } catch {}
+    if (!id) return;
+    const end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString();
+    const t = window.setTimeout(() => {
+      try {
+        sessionStorage.removeItem("pinz:admin-test"); // só some quando o teste de fato abre (se a tela recarregar antes, ele continua valendo)
+      } catch {}
+      if (id === "onboarding") setOnbOpen(true);
+      else if (id === "tour") setTourOpen(true);
+      else if (id === "birthday-plus") setGiftNote({ id: "teste-aniversario", birthday: "plus", until: end });
+      else if (id === "birthday-badges") setGiftNote({ id: "teste-aniversario", birthday: "badges" });
+      else if (id === "gift") setGiftNote({ id: "teste-presente", actor: myNick ?? "alguem", avatar: null });
+      else if (id === "welcome-mural") setWelcomeText("Que bom ter você aqui! Este é um exemplo da mensagem de boas-vindas que aparece para quem entra no mural.");
+    }, 900);
+    return () => window.clearTimeout(t);
+  }, [uid, isOwner, unlocked, nickPending, myNick]);
   // o tour abre pelo fim das boas-vindas e pelo item do menu
   useEffect(() => {
     const open = () => setTourOpen(true);
