@@ -56,7 +56,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-3 transition hover:bg-white/10 active:scale-95"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeSrc(88)} alt="" draggable={false} className="max-h-10 max-w-10 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+          <img src={badgeSrc(party[0].key)} alt="" draggable={false} className="max-h-10 max-w-10 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
         {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
         <button type="button" onClick={() => setPartyOpen((v) => !v)} aria-label="Abrir a lista de bottons de aniversário" tabIndex={-1} className="absolute top-0 left-1/2 grid h-5 w-10 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)]">

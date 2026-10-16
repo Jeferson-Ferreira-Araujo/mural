@@ -91,7 +91,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
                     <img key={k} src={badgeSrc(k)} alt="" draggable={false} className="h-10 w-auto select-none drop-shadow-[0_2px_3px_rgba(0,0,0,.3)]" />
                   ))}
                 </div>
-                <p className="mt-3 text-sm text-[#4a3826]">Eles estão no primeiro botão da sua barra de bottons (o dourado, com o bolo). Toque nele, escolha e arraste para o mural.</p>
+                <p className="mt-3 text-sm text-[#4a3826]">Eles estão no primeiro botão da sua barra de bottons (o que tem a setinha em cima). Toque nele, escolha e arraste para o mural.</p>
               </>
             )}
           </div>
