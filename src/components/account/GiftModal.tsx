@@ -66,7 +66,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
             {bday === "plus" ? (
               <ul className="mt-2 space-y-2 text-[15px]">
                 <li className="flex gap-2">
-                  <span aria-hidden>👑</span>
+                  <span aria-hidden>✨</span>
                   <span>
                     <strong>PINZ+ liberado{until ? ` até ${until}` : " até o fim do mês"}</strong>, de presente.
                   </span>

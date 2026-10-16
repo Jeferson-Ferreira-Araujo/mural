@@ -27,7 +27,7 @@ function Spark({ side, color, size }: { side: "left" | "right"; color: string; s
 
 /**
  * Top 3: o tema que a pessoa digitou (ex.: "Minhas comidas favoritas") e os três itens, de 1º a 3º lugar.
- * Textos parados, em até duas linhas. Três estilos, em formato retangular ou quadrado; o 1º lugar ganha destaque dourado com coroa.
+ * Textos parados, em até duas linhas. Três estilos, em formato retangular ou quadrado; o 1º lugar ganha destaque dourado.
  */
 export function Top3Widget({ style = "podium", title, items, frame }: { style?: string; title?: string; items?: string[]; frame?: string | null }) {
   const shape = shapeOfStyle(style);
