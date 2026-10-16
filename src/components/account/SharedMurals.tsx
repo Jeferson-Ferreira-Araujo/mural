@@ -9,7 +9,7 @@ const iconBtn = "grid size-10 shrink-0 cursor-pointer place-items-center rounded
 const ic = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 
 /**
- * Murais compartilhados entre duas pessoas PINZ+: convites recebidos e a lista dos murais (nome, com quem, e os botões de senha, editar e excluir).
+ * Murais compartilhados entre duas pessoas PINZ+: convites recebidos e a lista dos murais (nome, com quem, e os botões de senha e excluir).
  * Para criar um, a pessoa vai ao perfil da outra ("Solicitar mural compartilhado").
  */
 export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChanged: () => void; onNotify: (m: string) => void }) {
@@ -19,6 +19,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
   const [err, setErr] = useState<string | null>(null);
   const [changing, setChanging] = useState<string | null>(null);
   const [newPw, setNewPw] = useState("");
+  const [confirmId, setConfirmId] = useState<string | null>(null); // mural que a pessoa quer apagar: pede confirmação aqui mesmo, no site
 
   const reload = useCallback(async () => {
     setList(await listSharedMurals(sb));
@@ -41,10 +42,10 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
   }
 
   async function remove(m: SharedMural) {
-    if (!window.confirm(m.status === "pending" ? "Cancelar este convite?" : "Apagar este mural para as duas pessoas? Todos os pins serão perdidos.")) return;
     setBusy(true);
     const ok = await deleteSharedMural(sb, m.id);
     setBusy(false);
+    setConfirmId(null);
     if (!ok) return setErr(SHARED_ERROR_TEXT.error);
     await reload();
   }
@@ -121,22 +122,28 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                       </svg>
                     </button>
                   )}
-                  {m.status === "accepted" && (
-                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Editar ${m.title}`} title={m.locked ? "Bloqueado" : "Editar"} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
-                      <svg {...ic}>
-                        <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
-                        <path d="m14 8 3 3" />
-                      </svg>
-                    </a>
-                  )}
                   {m.mine && (
-                    <button type="button" disabled={busy} onClick={() => void remove(m)} aria-label={`${m.status === "pending" ? "Cancelar o convite de" : "Apagar"} ${m.title}`} title={m.status === "pending" ? "Cancelar convite" : "Apagar"} className={`${iconBtn} !border-[#e3b3a8] !text-[#a23b2a] hover:!bg-[#fbeae5]`}>
+                    <button type="button" disabled={busy} onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`${m.status === "pending" ? "Cancelar o convite de" : "Apagar"} ${m.title}`} title={m.status === "pending" ? "Cancelar convite" : "Apagar"} className={`${iconBtn} !border-[#e3b3a8] !text-[#a23b2a] hover:!bg-[#fbeae5]`}>
                       <svg {...ic}>
                         <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
                       </svg>
                     </button>
                   )}
                 </div>
+                {confirmId === m.id && (
+                  <div role="alertdialog" aria-label={m.status === "pending" ? "Cancelar convite" : "Apagar mural"} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
+                    <p className="text-sm font-semibold text-[#6b2a1d]">{m.status === "pending" ? "Cancelar este convite?" : `Apagar “${m.title}” para as duas pessoas?`}</p>
+                    {m.status !== "pending" && <p className="mt-1 text-sm text-[#6b2a1d]">Todos os pins serão perdidos e não será mais possível acessar esse mural.</p>}
+                    <div className="mt-3 flex gap-2">
+                      <button type="button" disabled={busy} onClick={() => setConfirmId(null)} className={`${ghostButton} flex-1`}>
+                        Voltar
+                      </button>
+                      <button type="button" disabled={busy} onClick={() => void remove(m)} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
+                        {busy ? "Apagando…" : m.status === "pending" ? "Cancelar convite" : "Apagar"}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {changing === m.id && (
                   <div className="mt-3 flex gap-2">
                     <input type="password" autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="Nova senha (mín. 6)" aria-label="Nova senha" className={inputClass} />
