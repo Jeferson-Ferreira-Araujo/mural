@@ -55,6 +55,16 @@ export function DesktopBoard(props: ViewProps) {
             )}
             {hasSelection && !locked && unlocked && account?.atHome && plan === "free" && <PlanLimit used={items.length} />}
             {hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
+            {/* no mural de outra pessoa: convidar para um mural só dos dois (abre o convite no perfil dela) */}
+            {hasSelection && !locked && props.follow && !account?.atHome && (
+              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("pinz:invite-shared"))} className="inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#fbf6ea] px-4 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] transition hover:bg-white active:scale-95">
+                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <circle cx="9" cy="8" r="3.2" />
+                  <path d="M3 20c0-3.3 2.7-5.5 6-5.5M17 9v6M14 12h6" />
+                </svg>
+                Convidar para o mural compartilhado
+              </button>
+            )}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
               <ShareButton reward iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />

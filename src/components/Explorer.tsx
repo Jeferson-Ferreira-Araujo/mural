@@ -176,6 +176,12 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const [newMuralOpen, setNewMuralOpen] = useState(false);
   const [blockedUntil, setBlockedUntil] = useState<number | null>(null); // 3 erros seguidos na pergunta: bloqueado por 30 min (o servidor também recusa)
   const [profileOpen, setProfileOpen] = useState(false); // resumo do perfil de quem é o mural aberto
+  const [profileStart, setProfileStart] = useState<"summary" | "shared">("summary"); // "shared": abre direto no convite para o mural compartilhado (botão do desktop)
+  useEffect(() => {
+    const h = () => (setProfileStart("shared"), setProfileOpen(true));
+    window.addEventListener("pinz:invite-shared", h);
+    return () => window.removeEventListener("pinz:invite-shared", h);
+  }, []);
   const [following, setFollowingState] = useState(false); // sigo a dona/o do mural aberto?
   const [followBusy, setFollowBusy] = useState(false);
   const [followers, setFollowers] = useState<number | null>(null); // seguidores da pessoa dona do mural aberto (só o número)
@@ -1138,7 +1144,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/entrar"));
             }}
           />
-          {selected && !isShared && <ProfileSummaryModal open={profileOpen} onClose={() => setProfileOpen(false)} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
+          {selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
           {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />

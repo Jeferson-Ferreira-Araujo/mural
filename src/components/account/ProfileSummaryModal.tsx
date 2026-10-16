@@ -59,7 +59,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
  * Resumo do perfil (ao tocar na foto/nome de quem é o mural): foto maior, selo PINZ+, seguidores, visualizações,
  * compartilhar o perfil, pedir um mural compartilhado e denunciar. `showStats` = false (mural privado ainda trancado): só foto, nome e selo.
  */
-export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify }: { open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
+export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary" }: { /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
@@ -76,7 +76,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   useEffect(() => {
     if (!open) return;
     setData(null);
-    setView("summary");
+    setView(startView === "shared" && logged ? "shared" : "summary");
     setErr(null);
     setTitle("");
     setPassword("");
@@ -84,6 +84,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setBoard(DEFAULT_BOARD);
     if (logged) void fetchInventory(getBrowserSupabase()).then((inv) => setOffers(inv?.boards ?? []));
     void getProfileSummary(getBrowserSupabase(), nick).then(setData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, nick, logged]);
   // o padrão e os tipos de mural que quem cria (você) já tem
   const ownedBoards = BOARDS.filter((b) => b.id === DEFAULT_BOARD || offers.find((o) => o.id === b.id)?.owned === true);
@@ -193,6 +194,11 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           )}
 
           <div className="space-y-2.5 border-t border-[#e6d8bd] pt-4">
+            {logged && !self && (
+              <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
+                Convidar para o mural compartilhado
+              </button>
+            )}
             <Action tone="purple" title={sharing ? "Preparando a imagem…" : "Compartilhar perfil"} hint="Envia um cartão de visita com a sua foto e o link do perfil" onClick={() => void shareProfile()}>
               <svg {...icon}>
                 <circle cx="18" cy="5" r="2.6" />
@@ -201,11 +207,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                 <path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3" />
               </svg>
             </Action>
-            {logged && !self && (
-              <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
-                Solicitar mural compartilhado
-              </button>
-            )}
             {logged && !self && (
               <button type="button" onClick={() => (setErr(null), setView("report"))} className="w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
                 Denunciar perfil
