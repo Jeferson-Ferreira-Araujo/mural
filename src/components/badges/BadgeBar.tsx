@@ -117,12 +117,6 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {partyOpen && party.length > 0 && (
         <div role="dialog" aria-label="Bottons de aniversário" className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
-          <p className="mb-2 flex items-center justify-between text-sm font-bold">
-            <span>🎂 Bottons de aniversário</span>
-            <button type="button" onClick={() => setPartyOpen(false)} aria-label="Fechar" className="grid size-7 cursor-pointer place-items-center rounded-lg text-lg leading-none hover:bg-white/10">
-              ×
-            </button>
-          </p>
           <ul className="flex flex-wrap gap-1" style={{ maxWidth: "26rem" }}>
             {party.map((b) => {
               const st = stock(b.key);
