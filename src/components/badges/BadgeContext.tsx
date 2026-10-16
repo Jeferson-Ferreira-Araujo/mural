@@ -27,7 +27,7 @@ type Ctx = {
   /** quando o botton foi comprado (segundos), para ordenar a barra; undefined = já era da conta */
   acquiredAt: (key: number) => number | undefined;
   openStore: () => void;
-  begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => void;
+  begin: (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement, anyDirection?: boolean) => void;
   /** mouse sobre um botton (null = saiu): mostra os controles +, − e lixeira ao lado dele */
   hover: (id: string | null) => void;
   /** toque no botton (celular): mostra os controles até tocar em outro lugar */
@@ -207,7 +207,7 @@ export function BadgeProvider({
   const removeOverRef = useRef<((rect: { left: number; right: number; top: number; bottom: number }, minOverlap?: number) => void) | null>(null);
 
   const begin = useCallback(
-    (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement) => {
+    (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement, anyDirection = false) => {
       if (!live.current.editable || e.button > 0) return;
       if (src.kind === "new") {
         const st = live.current.stock(src.key);
@@ -277,7 +277,7 @@ export function BadgeProvider({
         const dx = ev.clientX - start.x;
         const dy = ev.clientY - start.y;
         if (!active) {
-          if (src.kind === "new" && touch) {
+          if (src.kind === "new" && touch && !anyDirection) {
             // na barra, no toque: gesto horizontal rola a barra; para cima/baixo arrasta o botom
             if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) return finish(null, true);
             if (Math.abs(dy) < 8) return;

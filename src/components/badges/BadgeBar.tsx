@@ -16,8 +16,10 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const [partyOpen, setPartyOpen] = useState(false); // painel dos bottons de aniversário (abre para cima)
   const box = useRef<HTMLElement>(null);
   // começou a arrastar um botton do painel: o painel fecha para o mural ficar à vista
+  const wasDragging = useRef(false);
   useEffect(() => {
-    if (draggingNew) setPartyOpen(false);
+    if (wasDragging.current && !draggingNew) setPartyOpen(false);
+    wasDragging.current = draggingNew;
   }, [draggingNew]);
   // tocar fora do painel fecha
   useEffect(() => {
@@ -114,7 +116,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
     <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {partyOpen && party.length > 0 && (
-        <div role="dialog" aria-label="Bottons de aniversário" className="absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md">
+        <div role="dialog" aria-label="Bottons de aniversário" className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
           <p className="mb-2 flex items-center justify-between text-sm font-bold">
             <span>🎂 Bottons de aniversário</span>
             <button type="button" onClick={() => setPartyOpen(false)} aria-label="Fechar" className="grid size-7 cursor-pointer place-items-center rounded-lg text-lg leading-none hover:bg-white/10">
@@ -131,7 +133,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
                     type="button"
                     aria-label={out ? `${b.name ?? b.key}: sem unidades disponíveis` : `${b.name ?? b.key}: arraste para o mural`}
                     title={b.name}
-                    onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
+                    onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget, true)}
                     onDragStart={(e) => e.preventDefault()}
                     className={`grid h-14 w-14 touch-none place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
                   >
