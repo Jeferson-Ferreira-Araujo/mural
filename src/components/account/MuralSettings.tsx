@@ -13,6 +13,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [title, setTitle] = useState(mural.title);
   const plus = mural.plan === "full";
   const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
+  const [welcomeOn, setWelcomeOn] = useState(!!mural.welcome_message?.trim()); // caixa marcada = o campo de texto aparece; desmarcada = sem mensagem (apaga a que existia)
   const strip = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
   const [busy, setBusy] = useState(false);
@@ -26,6 +27,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   useEffect(() => {
     setTitle(mural.title);
     setWelcome(mural.welcome_message ?? "");
+    setWelcomeOn(!!mural.welcome_message?.trim());
   }, [mural.id, mural.title, mural.welcome_message]);
 
   useEffect(() => {
@@ -82,8 +84,9 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       setCurrentBoard(board);
     }
     // mensagem de boas-vindas (PINZ+): vazia apaga
-    if (plus && welcome.trim() !== (mural.welcome_message ?? "").trim()) {
-      const { error: ew } = await sb.rpc("set_welcome_message", { p_mural_id: mural.id, p_text: welcome });
+    const wanted = welcomeOn ? welcome : "";
+    if (plus && wanted.trim() !== (mural.welcome_message ?? "").trim()) {
+      const { error: ew } = await sb.rpc("set_welcome_message", { p_mural_id: mural.id, p_text: wanted });
       if (ew) {
         setBusy(false);
         setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a mensagem de boas-vindas. Ela pode ter até 280 letras." });
@@ -184,28 +187,37 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
 
         <div>
-          <label htmlFor="mural-welcome" className="mb-1 flex items-center justify-between gap-2 text-sm font-semibold">
+          <label className={`flex items-center gap-2.5 text-sm font-semibold ${plus ? "cursor-pointer" : "opacity-80"}`}>
+            <input
+              type="checkbox"
+              checked={plus && welcomeOn}
+              onChange={(e) => {
+                if (!plus) return window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }));
+                setWelcomeOn(e.target.checked);
+              }}
+              className="size-5 cursor-pointer accent-[#d98a2b]"
+            />
             <span>Mensagem de boas-vindas</span>
             {!plus && <span className="rounded-md bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2300] uppercase">PINZ+</span>}
           </label>
-          <textarea
-            id="mural-welcome"
-            value={welcome}
-            onChange={(e) => setWelcome(e.target.value.slice(0, 280))}
-            disabled={!plus}
-            rows={4}
-            maxLength={280}
-            placeholder={plus ? "Um recado que aparece para quem entrar no seu mural (depois de acertar a resposta)" : "Disponível no PINZ+"}
-            className={`${inputClass} resize-none`}
-          />
-          <div className="mt-1 flex items-center justify-between text-xs text-[#8a7b69]">
-            {plus ? <span>Aparece como uma janela quando a pessoa entra. Deixe vazio para não mostrar.</span> : (
-              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))} className="cursor-pointer font-semibold text-[#4a3826] underline">
-                Assinar o PINZ+
-              </button>
-            )}
-            {plus && <span className="tabular-nums">{welcome.length}/280</span>}
-          </div>
+          {plus && welcomeOn && (
+            <div className="mt-2">
+              <textarea
+                id="mural-welcome"
+                aria-label="Mensagem de boas-vindas"
+                value={welcome}
+                onChange={(e) => setWelcome(e.target.value.slice(0, 280))}
+                rows={4}
+                maxLength={280}
+                placeholder="Um recado que aparece para quem entrar no seu mural (depois de acertar a resposta)"
+                className={`${inputClass} resize-none`}
+              />
+              <div className="mt-1 flex items-center justify-between text-xs text-[#8a7b69]">
+                <span>Aparece como uma janela quando a pessoa entra.</span>
+                <span className="tabular-nums">{welcome.length}/280</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {msg && (
