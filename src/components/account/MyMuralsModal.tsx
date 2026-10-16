@@ -237,26 +237,32 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                       </svg>
                     </button>
                   )}
-                  <button type="button" onClick={() => setEditId(m.id)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left" aria-label={`Editar ${m.title}`}>
+                  {/* só a imagem do mural (com o cadeado, se tiver pergunta de segurança) e os botões de editar e apagar */}
+                  <button type="button" onClick={() => setEditId(m.id)} className="relative min-w-0 flex-1 cursor-pointer" aria-label={`Editar ${m.title}${m.question ? " (com pergunta de segurança)" : ""}`} title={m.title}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-24 shrink-0 rounded-lg object-cover" />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-base font-bold">{m.title}</span>
-                        {i === 0 && <span className="shrink-0 rounded-full bg-[#e3f3e7] px-2 py-0.5 text-[11px] font-bold text-[#2f6a3c]">Principal</span>}
+                    <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
+                    {m.question && (
+                      <span className="absolute top-1.5 left-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.4)]" aria-hidden>
+                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="5" y="11" width="14" height="9" rx="2" />
+                          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                        </svg>
                       </span>
-                      <span className="mt-0.5 block text-sm text-[#6b5440]">Tipo: {b.name}</span>
-                      <span className="block text-sm text-[#6b5440]">{m.question ? "🔒 Com pergunta de segurança" : "🌐 Público (sem pergunta)"}</span>
-                    </span>
+                    )}
                   </button>
                   <div className="flex shrink-0 flex-col justify-center gap-1.5">
-                    <button type="button" onClick={() => setEditId(m.id)} className="cursor-pointer rounded-lg bg-[#1f232b] px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
-                      Editar
+                    <button type="button" onClick={() => setEditId(m.id)} aria-label={`Editar ${m.title}`} title="Editar" className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
+                      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+                        <path d="m14 8 3 3" />
+                      </svg>
                     </button>
                     {/* o principal (o primeiro mural) nunca pode ser apagado */}
                     {i > 0 && (
-                      <button type="button" onClick={() => (setErr(null), setConfirmId(m.id))} className="cursor-pointer rounded-lg border border-[#e3b3a8] bg-white px-3.5 py-1.5 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
-                        Apagar
+                      <button type="button" onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`Apagar ${m.title}`} title="Apagar" className="grid size-10 cursor-pointer place-items-center rounded-lg border border-[#e3b3a8] bg-white text-[#a23b2a] transition hover:bg-[#fbeae5]">
+                        <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
+                        </svg>
                       </button>
                     )}
                   </div>
