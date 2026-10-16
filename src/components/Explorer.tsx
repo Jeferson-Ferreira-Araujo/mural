@@ -162,9 +162,11 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const [own, setOwn] = useState<OwnMural[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
+  const [startPanel, setStartPanel] = useState<"profile" | "plans">("profile");
   const [editProfile, setEditProfile] = useState(0); // muda a cada pedido de "Editar perfil" (vem do resumo do perfil): abre o painel de perfil da conta
   useEffect(() => {
-    const h = () => {
+    const h = (e: Event) => {
+      setStartPanel((e as CustomEvent<{ panel?: "profile" | "plans" }>).detail?.panel === "plans" ? "plans" : "profile");
       setEditProfile((n) => n + 1);
       if (window.innerWidth < 700) setDrawer({ open: true }); // no celular o painel mora na gaveta; no desktop, na coluna da esquerda
     };
@@ -1065,6 +1067,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         credits={inventory?.credits ?? 0}
         isAdmin={isAdmin}
         editProfileToken={editProfile}
+        startPanel={startPanel}
         onPending={setPendingCount}
         onNotify={notify}
         onChanged={() => {
@@ -1166,6 +1169,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             credits={inventory?.credits ?? 0}
             isAdmin={isAdmin}
             editProfileToken={editProfile}
+        startPanel={startPanel}
             onPending={setPendingCount}
             onNotify={notify}
             onChanged={() => {

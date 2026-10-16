@@ -75,6 +75,7 @@ export function AccountDrawer({
   credits,
   isAdmin = false,
   editProfileToken = 0,
+  startPanel = "profile",
   onChanged,
   onDeleted,
   onSignOut,
@@ -100,6 +101,8 @@ export function AccountDrawer({
   isAdmin?: boolean;
   /** muda a cada pedido de "Editar perfil" (botão do resumo do perfil): abre o painel de perfil da conta */
   editProfileToken?: number;
+  /** qual painel o pedido acima abre */
+  startPanel?: "profile" | "plans";
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
   onDeleted: () => void;
@@ -164,8 +167,8 @@ export function AccountDrawer({
   }, [editProfileToken]);
   useEffect(() => {
     // só vale logo depois do pedido (a gaveta do celular abre em seguida); uma gaveta aberta mais tarde não abre o perfil sozinha
-    if (isOpen && editProfileToken && Date.now() - tokenAt.current < 2500) setModal("profile");
-  }, [isOpen, editProfileToken]);
+    if (isOpen && editProfileToken && Date.now() - tokenAt.current < 2500) setModal(startPanel);
+  }, [isOpen, editProfileToken, startPanel]);
 
   useEffect(() => {
     if (modal !== "numbers") return;
@@ -299,16 +302,6 @@ export function AccountDrawer({
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
                     <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
-                  </svg>
-                }
-              />
-              <Row
-                onClick={() => setModal("plans")}
-                label="Planos"
-                hint={`Seu plano atual: ${account.plan === "full" ? "PINZ+" : "FREE"}.`}
-                icon={
-                  <svg {...ic}>
-                    <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
                   </svg>
                 }
               />

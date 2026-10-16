@@ -173,6 +173,21 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                     type="button"
                     onClick={() => {
                       onClose();
+                      window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:edit-profile", { detail: { panel: "plans" } })), 250);
+                    }}
+                    className={`absolute left-0 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95`}
+                  >
+                    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+                    </svg>
+                    Ver planos
+                  </button>
+                )}
+                {self && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
                       window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:edit-profile")), 250);
                     }}
                     className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95 ${data.plus ? "absolute right-0" : "ml-auto"}`}
