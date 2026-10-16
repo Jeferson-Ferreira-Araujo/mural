@@ -26,6 +26,8 @@ const EXT: Record<string, string> = {
   "audio/webm": "webm", "audio/mp4": "m4a", "audio/mpeg": "mp3", "audio/ogg": "ogg", "audio/wav": "wav", "audio/x-m4a": "m4a", "audio/aac": "aac",
 };
 
+const MEDIA_ORIGIN = "https://npylmcjxcosoytuhjrxu.supabase.co";
+
 /** Sobe o arquivo (foto, vídeo ou voz) para o armazenamento e devolve o endereço público. O caminho começa com o token de desbloqueio. */
 async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string): Promise<{ url: string; path: string }> {
   const blob = await (await fetch(blobUrl)).blob();
@@ -35,7 +37,8 @@ async function uploadMedia(sb: SupabaseClient, folder: string, blobUrl: string):
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from("pin-media").upload(path, blob, { contentType: type, cacheControl: "31536000" });
   if (error) throw error;
-  return { url: sb.storage.from("pin-media").getPublicUrl(path).data.publicUrl, path };
+  // o banco só aceita mídia com o endereço público do armazenamento (não o domínio próprio do login, que o getPublicUrl devolve em produção)
+  return { url: `${MEDIA_ORIGIN}/storage/v1/object/public/pin-media/${path}`, path };
 }
 
 class InappropriateImage extends Error {}
