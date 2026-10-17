@@ -94,12 +94,12 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
         {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
-        className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : b.hidden ? "" : "pointer-events-auto cursor-pointer"}`}
+        className={`group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : b.hidden ? "" : "pointer-events-auto cursor-zoom-in"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
-        <div className="pointer-events-none" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
+        <div className="pointer-events-none transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:-translate-y-[0.35em] [@media(hover:hover)]:group-hover:scale-[1.025]" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
           {b.hidden ? (
             // display em segredo: o mesmo cartão borrado do pin em segredo (quem visita nem recebe os dados; o dono vê o conteúdo no detalhe)
             <SecretCover style={b.data?.style} />
