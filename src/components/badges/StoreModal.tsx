@@ -165,6 +165,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria
+  const [page, setPage] = useState(0); // página da lista de bottons (15 por página, sem recarregar)
+  const listTop = useRef<HTMLDivElement>(null);
   const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
   const qtyOf = (key: number) => qty[key] ?? 1;
   const credits = inventory?.credits ?? 0;
@@ -181,6 +183,13 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     if (na !== nb) return na ? -1 : 1;
     return na ? b.key - a.key : 0;
   });
+  const PER_PAGE = 15;
+  const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
+  const pageSafe = Math.min(page, pages - 1);
+  const goPage = (n: number) => {
+    setPage(n);
+    window.setTimeout(() => listTop.current?.scrollIntoView({ block: "start", behavior: "smooth" }), 30); // volta ao começo da lista; só ela troca, a loja não recarrega
+  };
   const chips: { id: string; text: string }[] = [
     { id: "all", text: `Todos (${all.length})` },
     ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
@@ -194,15 +203,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   // voltar (Android) desfaz uma etapa da Loja por vez: primeiro o mural ampliado, depois o tipo de display aberto; só então fecha a Loja (a janela já cuida disso)
   useBackClose(!!viewBoard, () => setViewBoard(null));
   useBackClose(!!displayCat, () => setDisplayCat(null));
-  // o saldo do cabeçalho só aparece quando o saldo grande (no bloco de créditos) sai da vista
-  const [bigEl, setBigEl] = useState<HTMLElement | null>(null);
-  const [bigVisible, setBigVisible] = useState(true);
-  useEffect(() => {
-    if (!bigEl) return;
-    const io = new IntersectionObserver(([e]) => setBigVisible(e.isIntersecting), { threshold: 0.2 });
-    io.observe(bigEl);
-    return () => io.disconnect();
-  }, [bigEl]);
   // a comemoração some depois de alguns segundos
   useEffect(() => {
     if (!done) return;
@@ -231,8 +231,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       title="Loja"
       xl
       aside={
-        // com a loja rolada (saldo grande fora da vista), o saldo passa para o cabeçalho: dá para ver os créditos sendo gastos
-        bigVisible ? undefined : <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
+        // os créditos ficam sempre no cabeçalho, ao lado do botão de fechar: dá para ver o saldo sendo gasto
+        <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
           <Coin className="size-6" />
           <Balance value={credits} at={done?.at ?? 0} className="inline-block text-base tabular-nums" />
           <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" />
@@ -241,24 +241,10 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     >
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
       <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
-        <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
-          <div ref={setBigEl} className="flex items-center gap-3">
-            <Coin className="size-12 sm:size-14" />
-            <div className="leading-tight">
-              <p className="text-xs font-semibold tracking-wide text-[#8a6a1c] uppercase">Seus créditos</p>
-              <p className="relative">
-                <Balance value={credits} at={done?.at ?? 0} className="font-title inline-block text-3xl sm:text-4xl" />
-                <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute -top-1 left-full ml-2 text-base font-bold text-[#c0392b]" />
-              </p>
-            </div>
-          </div>
-          <p className="flex items-center gap-1.5 text-xs text-[#6b5440]">
-            <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <rect x="5" y="11" width="14" height="9" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            {PAYMENTS_ENABLED ? "Pagamento seguro no Mercado Pago (Pix ou cartão)" : "Compra de créditos: em breve"}
-          </p>
+        <header className="flex items-center gap-3 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
+          <Coin className="size-9 sm:size-10" />
+          <h3 className="font-title text-2xl font-semibold">Pacotes de crédito</h3>
+          {!PAYMENTS_ENABLED && <span className="text-xs text-[#6b5440]">Compra de créditos: em breve</span>}
         </header>
         <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pt-5 pb-3 [scrollbar-width:none] sm:grid sm:grid-cols-4 sm:overflow-visible sm:p-4 [&::-webkit-scrollbar]:hidden">
           {CREDIT_PACKS.map((p, i) => (
@@ -318,7 +304,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <>
           <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
-              <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => setFilter(c.id)} className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+              <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => (setFilter(c.id), setPage(0))} className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
                 {c.text}
               </button>
             ))}
@@ -326,8 +312,10 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           {shown.length === 0 ? (
             <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum botton nesta categoria ainda.</p>
           ) : (
+            <>
+            <div ref={listTop} className="scroll-mt-2" />
             <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
-              {shown.map((b) => {
+              {shown.slice(pageSafe * PER_PAGE, pageSafe * PER_PAGE + PER_PAGE).map((b) => {
                 const c = byKey.get(b.key)!;
                 const owned = c.starter || c.owned;
                 const n = qtyOf(b.key);
@@ -383,6 +371,20 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 );
               })}
             </ul>
+            {pages > 1 && (
+              <nav aria-label="Páginas de bottons" className="mt-4 flex items-center justify-center gap-3">
+                <button type="button" disabled={pageSafe === 0} onClick={() => goPage(pageSafe - 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
+                  ‹ Anterior
+                </button>
+                <span className="text-sm font-semibold tabular-nums text-[#6b5440]">
+                  {pageSafe + 1} de {pages}
+                </span>
+                <button type="button" disabled={pageSafe >= pages - 1} onClick={() => goPage(pageSafe + 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
+                  Próxima ›
+                </button>
+              </nav>
+            )}
+            </>
           )}
         </>
       ) : tab === "formats" && !displayCat ? (
