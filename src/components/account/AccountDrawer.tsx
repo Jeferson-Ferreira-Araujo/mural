@@ -161,6 +161,25 @@ export function AccountDrawer({
     if (!isOpen) setModal(null);
   }, [isOpen]);
   const [pinsStart, setPinsStart] = useState<"approvals" | "archived">("approvals");
+  // aviso de que há mais opções abaixo: degradê + seta no fim da lista enquanto ainda dá para rolar
+  const navRef = useRef<HTMLElement>(null);
+  const [moreBelow, setMoreBelow] = useState(false);
+  const checkMore = () => {
+    const el = navRef.current;
+    setMoreBelow(!!el && el.scrollHeight - el.clientHeight - el.scrollTop > 12);
+  };
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el || !open || inline) return;
+    checkMore();
+    const t = window.setTimeout(checkMore, 350); // depois da animação de entrada da gaveta
+    const ro = new ResizeObserver(checkMore);
+    ro.observe(el);
+    return () => {
+      window.clearTimeout(t);
+      ro.disconnect();
+    };
+  }, [open, inline, modal]); // eslint-disable-line react-hooks/exhaustive-deps
   const tokenAt = useRef(0);
   useEffect(() => {
     if (!editProfileToken) return;
@@ -463,9 +482,18 @@ export function AccountDrawer({
               </button>
             </header>
 
-            <nav aria-label="Menu da conta" className={`flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 ${modal ? "hidden" : ""}`}>
-              {rows}
-            </nav>
+            <div className={`relative flex min-h-0 flex-1 flex-col ${modal ? "hidden" : ""}`}>
+              <nav ref={navRef} onScroll={checkMore} aria-label="Menu da conta" className="flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 [scrollbar-color:#cdbb97_transparent] [scrollbar-width:thin]">
+                {rows}
+              </nav>
+              {moreBelow && (
+                <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 flex h-14 items-end justify-center bg-gradient-to-t from-[#f7efdc] via-[#f7efdc]/85 to-transparent pb-1 text-[#8a7b69]">
+                  <svg viewBox="0 0 24 24" className="size-6 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              )}
+            </div>
             {/* o painel do atalho aberto ocupa o lugar do menu, com a seta de voltar */}
             <div ref={setSlot} className={`relative min-h-0 flex-1 overflow-hidden bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
 
