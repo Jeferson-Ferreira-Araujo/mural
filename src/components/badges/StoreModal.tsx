@@ -165,7 +165,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria
-  const [page, setPage] = useState(0); // página da lista de bottons (15 por página, sem recarregar)
+  const [page, setPage] = useState(0); // página da lista de bottons (9 por página, sem recarregar)
   const listTop = useRef<HTMLDivElement>(null);
   const [qty, setQty] = useState<Record<number, number>>({}); // quantas unidades o usuário escolheu comprar de cada pin
   const qtyOf = (key: number) => qty[key] ?? 1;
@@ -183,7 +183,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     if (na !== nb) return na ? -1 : 1;
     return na ? b.key - a.key : 0;
   });
-  const PER_PAGE = 15;
+  const PER_PAGE = 9;
   const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
   const pageSafe = Math.min(page, pages - 1);
   const goPage = (n: number) => {
