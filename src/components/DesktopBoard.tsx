@@ -77,7 +77,7 @@ export function DesktopBoard(props: ViewProps) {
                 <circle cx="12" cy="4.5" r="1.8" />
                 <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
               </svg>
-              <span className="hidden xl:inline">Acessibilidade</span>
+              <span>Acessibilidade</span>
             </button>
             {/* pesquisar usuários e notificações: no canto superior direito, no mural do dono e no de visitas */}
             {account && <AccountActions account={account} tone="dark" menu={false} />}
