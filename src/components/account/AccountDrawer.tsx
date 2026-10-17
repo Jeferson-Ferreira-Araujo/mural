@@ -471,12 +471,13 @@ export function AccountDrawer({
 
             <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
               <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />
-              <button type="button" onClick={onSignOut} className="relative z-10 mx-auto flex w-[80%] cursor-pointer items-center justify-center gap-3 rounded-2xl border border-[#f1c8c1] bg-[#fbe5e0] px-4 py-3.5 text-base font-bold text-[#b3261e] shadow-[0_2px_6px_rgba(120,40,30,.12)] transition hover:bg-[#fbd9d2] active:scale-[0.99]">
-                <svg aria-hidden viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <button type="button" onClick={onSignOut} className="relative z-10 mx-auto flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#8a5a50] transition hover:bg-[#f1e3d6] active:scale-[0.99]">
+                <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
                 </svg>
                 Sair da conta
               </button>
+              <p className="mt-2 text-center text-[11px] text-[#a09080]">Desenvolvido por Jeferson Araújo</p>
             </footer>
           </div>
         )}
