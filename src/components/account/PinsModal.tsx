@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { PlanId } from "@/lib/plans";
-import { listArchivedPins, listOwnerPins, moderatePin, reportPin, restoreArchivedPin, setPinHidden, type ArchivedPin } from "@/lib/pins";
+import { listArchivedPins, listOwnerPins, moderatePin, reportPin, restoreArchivedPin, setMuralPinTtl, setPinHidden, type ArchivedPin } from "@/lib/pins";
 import { formatInfo } from "@/lib/types";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { REPORT_REASONS, type OwnerPin, type ReportReason } from "../board/PinsManager";
@@ -54,10 +54,40 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
  * Meus pins, em duas abas: Aprovações (os pins que esperam aprovação, em carrossel, com aprovar, excluir e denunciar) e Pins
  * (os que passaram do prazo de validade do mural e saíram dele: dá para colocar de volta).
  */
-export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals" }: { /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
+export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals", ttlDays = null, onTtlSaved }: { /** validade atual dos pins de outras pessoas neste mural (null = sem prazo) */ ttlDays?: 7 | 15 | 30 | null; /** a validade mudou aqui: atualiza os dados do mural */ onTtlSaved?: () => void; /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
   const [section, setSection] = useState<"approvals" | "archived">("approvals");
   const [archived, setArchived] = useState<ArchivedPin[] | null>(null);
   const [archNote, setArchNote] = useState<string | null>(null);
+  // primeira aprovação neste mural: antes de aprovar, explica a validade dos pins de outras pessoas e deixa escolher (7 dias, 30 dias ou nunca apagar)
+  const askedKey = `pinz:ttl-asked:${muralId}`;
+  const [ask, setAsk] = useState<{ id: string; secret: boolean } | null>(null);
+  const [choice, setChoice] = useState<7 | 30 | null>(7);
+  const needAsk = () => {
+    if (ttlDays) return false;
+    try {
+      return !localStorage.getItem(askedKey);
+    } catch {
+      return false;
+    }
+  };
+  async function approve(id: string, secret: boolean) {
+    if (needAsk()) return setAsk({ id, secret });
+    await run(id, () => moderatePin(getBrowserSupabase(), id, true, secret));
+  }
+  async function confirmAsk() {
+    if (!ask) return;
+    const a = ask;
+    setBusy(a.id);
+    const ok = await setMuralPinTtl(getBrowserSupabase(), muralId, choice);
+    setBusy(null);
+    if (!ok) return setError("Não foi possível salvar a validade agora. Tente de novo.");
+    try {
+      localStorage.setItem(askedKey, "1");
+    } catch {}
+    setAsk(null);
+    onTtlSaved?.();
+    await run(a.id, () => moderatePin(getBrowserSupabase(), a.id, true, a.secret));
+  }
   const [pins, setPins] = useState<OwnerPin[] | null>(null);
   const tab = "pending" as const; // esta tela mostra só o que espera aprovação
   const [busy, setBusy] = useState<string | null>(null);
@@ -123,11 +153,11 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
               Excluir
             </button>
             {full && (
-              <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em segredo (os visitantes veem o pin borrado)" onClick={() => run(p.id, () => moderatePin(sb, p.id, true, true))}>
+              <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em segredo (os visitantes veem o pin borrado)" onClick={() => void approve(p.id, true)}>
                 Aprovar como segredo
               </button>
             )}
-            <button type="button" className={primary} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, true, false))}>
+            <button type="button" className={primary} disabled={busy === p.id} onClick={() => void approve(p.id, false)}>
               Aprovar
             </button>
           </>
@@ -166,6 +196,34 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
           </button>
         ))}
       </div>
+      {ask && (
+        <div role="dialog" aria-label="Validade dos pins" className="mb-4 rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-4 text-[#2f2218]">
+          <p className="font-title text-lg font-semibold">Por quanto tempo os pins ficam no mural?</p>
+          <p className="mt-1 text-sm text-[#4a3826]">Os pins que outras pessoas colocam podem sair do mural depois de um tempo. Eles não são apagados: ficam guardados em Meus pins &gt; Arquivados, e você coloca de volta quando quiser. Seus próprios pins nunca saem. Dá para mudar depois em Editar mural.</p>
+          <div role="radiogroup" aria-label="Validade" className="mt-3 space-y-2">
+            {(
+              [
+                [7, "7 dias"],
+                [30, "30 dias"],
+                [null, "Não apagar: os pins ficam para sempre"],
+              ] as const
+            ).map(([v, label]) => (
+              <label key={String(v)} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-semibold ${choice === v ? "border-[#d9a21b] bg-white" : "border-[#e1d3ba] bg-white/60"}`}>
+                <input type="radio" name="ttl" checked={choice === v} onChange={() => setChoice(v)} className="size-4 accent-[#d98a2b]" />
+                {label}
+              </label>
+            ))}
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button type="button" className={`${btn} flex-1`} onClick={() => setAsk(null)}>
+              Voltar
+            </button>
+            <button type="button" className={`${primary} flex-1`} disabled={busy === ask.id} onClick={() => void confirmAsk()}>
+              Salvar e aprovar
+            </button>
+          </div>
+        </div>
+      )}
       {section === "archived" ? (
         <>
           {archNote && (

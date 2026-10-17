@@ -384,7 +384,7 @@ export function AccountDrawer({
   );
   const modals = (
     <>
-      {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} onRestored={onChanged} startSection={pinsStart} />}
+      {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} onRestored={onChanged} startSection={pinsStart} ttlDays={mural.pin_ttl_days ?? null} onTtlSaved={onChanged} />}
       <VisitorsModal open={isOpen && modal === "visitors"} onClose={close} />
       <FollowingModal open={isOpen && modal === "following"} onClose={close} nick={nick} />
       <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onNewMural={onNewMural} onChanged={onChanged} onDeleted={onDeleted} />
