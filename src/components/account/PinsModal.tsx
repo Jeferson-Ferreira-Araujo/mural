@@ -61,7 +61,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
   // primeira aprovação neste mural: antes de aprovar, explica a validade dos pins de outras pessoas e deixa escolher (7 dias, 30 dias ou nunca apagar)
   const askedKey = `pinz:ttl-asked:${muralId}`;
   const [ask, setAsk] = useState<{ id: string; secret: boolean } | null>(null);
-  const [choice, setChoice] = useState<7 | 30 | null>(7);
+  const [choice, setChoice] = useState<7 | 30 | null>(null); // padrão: não apagar
   const needAsk = () => {
     if (ttlDays) return false;
     try {
@@ -270,7 +270,13 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colocar um pin no seu mural, ele aparece aqui.</p>
       ) : (
         <>
-          {tab === "pending" && <p className="mb-3 text-center text-xs text-[#6b5440]">Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.</p>}
+          {tab === "pending" && (
+            <p className="mb-3 text-center text-xs text-[#6b5440]">
+              Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.
+              <br />
+              Validade dos pins de outras pessoas: <strong>{ttlDays ? `${ttlDays} dias` : "sem prazo (ficam para sempre)"}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
+            </p>
+          )}
           <Carousel label={tab === "pending" ? "Pins para aprovar" : "Pins no mural"}>
             {list.map((p) => (
               <div key={p.id}>{card(p)}</div>
