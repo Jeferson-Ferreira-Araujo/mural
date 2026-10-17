@@ -39,12 +39,12 @@ function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: st
       onClick={onClick}
       className={`relative flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3.5 px-3.5 py-3"}`}
     >
-      <span className={`grid shrink-0 place-items-center bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-8 rounded-xl" : "size-12 rounded-2xl"}`} aria-hidden>
+      <span className={`grid shrink-0 place-items-center bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-8 rounded-xl" : "size-10 rounded-xl"}`} aria-hidden>
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className={`block leading-tight font-bold ${compact ? "text-[14px]" : "text-[17px]"}`}>{label}</span>
-        {hint && <span className={`block leading-snug text-[#6b5440] ${compact ? "truncate text-xs" : "mt-0.5 text-[13px]"}`}>{hint}</span>}
+        <span className={`block leading-tight font-bold ${compact ? "text-[13px]" : "text-[15px]"}`}>{label}</span>
+        {hint && <span className={`block leading-snug text-[#6b5440] ${compact ? "truncate text-[11px]" : "mt-0.5 text-[12px]"}`}>{hint}</span>}
       </span>
       {!!badge && (
         <span aria-label={`${badge} pendente${badge > 1 ? "s" : ""}`} className="absolute -top-2 -right-1.5 grid min-w-6 place-items-center rounded-full bg-[#e0382d] px-1.5 py-0.5 text-xs leading-4 font-extrabold text-white shadow-[0_2px_5px_rgba(120,20,10,.45)] ring-2 ring-[#f7efdc]">
