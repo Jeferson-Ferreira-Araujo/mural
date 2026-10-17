@@ -1,4 +1,5 @@
 import { Brand } from "./Brand";
+import { FitSidebar } from "./FitSidebar";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import type { ViewProps } from "./viewProps";
 
@@ -25,6 +26,8 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">Pinz</h1>
+      {/* em qualquer monitor, a letra da coluna diminui até o conteúdo caber na altura, sem barra de rolagem */}
+      <FitSidebar />
       {/* vendo o mural de outra pessoa: seta para voltar ao seu mural (sem fundo), antes do logo */}
       {account?.onHome && !account.atHome && (
         <div className="mb-[0.8em] flex items-center">
