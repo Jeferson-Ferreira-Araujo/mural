@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
+import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
@@ -13,6 +14,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const [title, setTitle] = useState(mural.title);
   const plus = mural.plan === "full";
   const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
+  const [ttl, setTtl] = useState<PinTtl>(mural.pin_ttl_days ?? null);
   const [welcomeOn, setWelcomeOn] = useState(!!mural.welcome_message?.trim()); // caixa marcada = o campo de texto aparece; desmarcada = sem mensagem (apaga a que existia)
   const strip = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
@@ -28,7 +30,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     setTitle(mural.title);
     setWelcome(mural.welcome_message ?? "");
     setWelcomeOn(!!mural.welcome_message?.trim());
-  }, [mural.id, mural.title, mural.welcome_message]);
+    setTtl(mural.pin_ttl_days ?? null);
+  }, [mural.id, mural.title, mural.welcome_message, mural.pin_ttl_days]);
 
   useEffect(() => {
     const sb = getBrowserSupabase();
@@ -82,6 +85,14 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         return;
       }
       setCurrentBoard(board);
+    }
+    if (ttl !== (mural.pin_ttl_days ?? null)) {
+      const { error: et } = await sb.rpc("set_mural_pin_ttl", { p_mural_id: mural.id, p_days: ttl });
+      if (et) {
+        setBusy(false);
+        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a validade dos pins." });
+        return;
+      }
     }
     // mensagem de boas-vindas (PINZ+): vazia apaga
     const wanted = welcomeOn ? welcome : "";
@@ -179,6 +190,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         </fieldset>
 
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+
+        <PinTtlField value={ttl} onChange={setTtl} />
 
         <div>
           <label className={`flex items-center gap-2.5 text-sm font-semibold ${plus ? "cursor-pointer" : "opacity-80"}`}>

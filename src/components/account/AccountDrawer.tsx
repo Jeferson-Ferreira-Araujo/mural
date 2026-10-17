@@ -102,7 +102,7 @@ export function AccountDrawer({
   /** muda a cada pedido de "Editar perfil" (botão do resumo do perfil): abre o painel de perfil da conta */
   editProfileToken?: number;
   /** qual painel o pedido acima abre */
-  startPanel?: "profile" | "plans";
+  startPanel?: "profile" | "plans" | "archived";
   /** o mural foi editado: recarrega os dados da tela */
   onChanged: () => void;
   onDeleted: () => void;
@@ -160,6 +160,7 @@ export function AccountDrawer({
   useEffect(() => {
     if (!isOpen) setModal(null);
   }, [isOpen]);
+  const [pinsStart, setPinsStart] = useState<"approvals" | "archived">("approvals");
   const tokenAt = useRef(0);
   useEffect(() => {
     if (!editProfileToken) return;
@@ -167,7 +168,10 @@ export function AccountDrawer({
   }, [editProfileToken]);
   useEffect(() => {
     // só vale logo depois do pedido (a gaveta do celular abre em seguida); uma gaveta aberta mais tarde não abre o perfil sozinha
-    if (isOpen && editProfileToken && Date.now() - tokenAt.current < 2500) setModal(startPanel);
+    if (isOpen && editProfileToken && Date.now() - tokenAt.current < 2500) {
+      setPinsStart(startPanel === "archived" ? "archived" : "approvals");
+      setModal(startPanel === "archived" ? "pins" : startPanel);
+    }
   }, [isOpen, editProfileToken, startPanel]);
 
   useEffect(() => {
@@ -226,9 +230,9 @@ export function AccountDrawer({
                     />
                   )}
                   <Row
-                    onClick={() => setModal("pins")}
-                    label="Aprovações"
-                    hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Nenhum pin aguardando"}
+                    onClick={() => (setPinsStart("approvals"), setModal("pins"))}
+                    label="Meus pins"
+                    hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Aprovações e pins guardados"}
                     badge={pendingCount}
                     icon={
                       <svg {...ic}>
@@ -361,7 +365,7 @@ export function AccountDrawer({
   );
   const modals = (
     <>
-      {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} />}
+      {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} onRestored={onChanged} startSection={pinsStart} />}
       <VisitorsModal open={isOpen && modal === "visitors"} onClose={close} />
       <FollowingModal open={isOpen && modal === "following"} onClose={close} nick={nick} />
       <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onNewMural={onNewMural} onChanged={onChanged} onDeleted={onDeleted} />

@@ -155,3 +155,24 @@ export function sendBlockedText(s: SendStatus | null): string | null {
   if (s.reason === "cooldown" || s.reason === "pending") return `Você já deixou 3 PINs neste mural nos últimos 30 minutos. Dá para deixar outro daqui a ${wait(s.retryAfter ?? 1800)}.`;
   return null;
 }
+
+/** Validade dos pins de outras pessoas neste mural (null = sem prazo). */
+export async function setMuralPinTtl(sb: SupabaseClient, muralId: string, days: 7 | 15 | 30 | null): Promise<boolean> {
+  const { error } = await sb.rpc("set_mural_pin_ttl", { p_mural_id: muralId, p_days: days });
+  return !error;
+}
+
+/** Pin que passou do prazo e está guardado (fora do mural) à espera de o dono colocar de volta. */
+export type ArchivedPin = { id: string; type: string; content: Record<string, unknown>; author: string | null; created_at: string; archived_at: string };
+
+export async function listArchivedPins(sb: SupabaseClient, muralId: string): Promise<ArchivedPin[] | null> {
+  const { data, error } = await sb.rpc("list_archived_pins", { p_mural_id: muralId });
+  if (error || !Array.isArray(data)) return null;
+  return data as ArchivedPin[];
+}
+
+export async function restoreArchivedPin(sb: SupabaseClient, id: string): Promise<{ ok: true } | { ok: false; reason: "no_space" | "plan_limit" | "error" }> {
+  const { error } = await sb.rpc("restore_archived_pin", { p_id: id });
+  if (!error) return { ok: true };
+  return { ok: false, reason: error.message.includes("no_space") ? "no_space" : error.message.includes("plan_limit") ? "plan_limit" : "error" };
+}

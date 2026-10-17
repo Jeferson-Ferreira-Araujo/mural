@@ -122,6 +122,14 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                       </svg>
                     </button>
                   )}
+                  {m.status === "accepted" && (
+                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Visualizar ${m.title}`} title={m.locked ? "Bloqueado: os dois precisam ter o PINZ+" : "Visualizar o mural"} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
+                      <svg {...ic}>
+                        <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </a>
+                  )}
                   {m.mine && (
                     <button type="button" disabled={busy} onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`${m.status === "pending" ? "Cancelar o convite de" : "Apagar"} ${m.title}`} title={m.status === "pending" ? "Cancelar convite" : "Apagar"} className={`${iconBtn} !border-[#e3b3a8] !text-[#a23b2a] hover:!bg-[#fbeae5]`}>
                       <svg {...ic}>

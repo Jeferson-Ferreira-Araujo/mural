@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
 import { buyBoard, fetchInventory, type BoardOffer } from "@/lib/badges";
+import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
@@ -23,6 +24,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [credits, setCredits] = useState(0);
   const [slotsPrice, setSlotsPrice] = useState(25); // preço do mural de 42 espaços
   const [size, setSize] = useState<28 | 42>(28);
+  const [ttl, setTtl] = useState<PinTtl>(null);
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     setSlide(0);
     setError(null);
     setSize(28);
+    setTtl(null);
     void load();
   }, [open]);
 
@@ -97,6 +100,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       return;
     }
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
+    if (ttl) await sb.rpc("set_mural_pin_ttl", { p_mural_id: created.id, p_days: ttl });
     window.location.assign(`/${nick}/${created.slug}`); // abre o mural novo
   }
 
@@ -205,6 +209,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           </fieldset>
 
           <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
+          <PinTtlField value={ttl} onChange={setTtl} />
 
           {/* tamanho: 28 espaços (padrão) ou 42, que é comprado com créditos e só existe criando um mural novo */}
           <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">

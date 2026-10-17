@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { PlanId } from "@/lib/plans";
-import { listOwnerPins, moderatePin, reportPin, setPinHidden } from "@/lib/pins";
+import { listArchivedPins, listOwnerPins, moderatePin, reportPin, restoreArchivedPin, setPinHidden, type ArchivedPin } from "@/lib/pins";
 import { formatInfo } from "@/lib/types";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { REPORT_REASONS, type OwnerPin, type ReportReason } from "../board/PinsManager";
@@ -50,8 +50,14 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
   );
 }
 
-/** Aprovações: só os pins que esperam aprovação, em carrossel (um por vez), com aprovar, excluir e denunciar. */
-export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void }) {
+/**
+ * Meus pins, em duas abas: Aprovações (os pins que esperam aprovação, em carrossel, com aprovar, excluir e denunciar) e Pins
+ * (os que passaram do prazo de validade do mural e saíram dele: dá para colocar de volta).
+ */
+export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals" }: { /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
+  const [section, setSection] = useState<"approvals" | "archived">("approvals");
+  const [archived, setArchived] = useState<ArchivedPin[] | null>(null);
+  const [archNote, setArchNote] = useState<string | null>(null);
   const [pins, setPins] = useState<OwnerPin[] | null>(null);
   const tab = "pending" as const; // esta tela mostra só o que espera aprovação
   const [busy, setBusy] = useState<string | null>(null);
@@ -70,9 +76,24 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
     if (open) {
       setError(null);
       setReporting(null);
+      setSection(startSection);
+      setArchNote(null);
       void load();
+      void listArchivedPins(getBrowserSupabase(), muralId).then((l) => setArchived(l ?? []));
     }
-  }, [open, load]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, load, muralId]);
+
+  async function restore(id: string) {
+    setBusy(id);
+    setArchNote(null);
+    const res = await restoreArchivedPin(getBrowserSupabase(), id);
+    if (res.ok) {
+      setArchived((l) => (l ?? []).filter((p) => p.id !== id));
+      onRestored?.();
+    } else setArchNote(res.reason === "no_space" ? "Não há espaço livre no mural para colocar este pin de volta." : res.reason === "plan_limit" ? "O mural chegou ao limite de pins do plano." : "Não foi possível colocar de volta agora. Tente de novo.");
+    setBusy(null);
+  }
 
   const pending = (pins ?? []).filter((p) => p.status === "pending");
   async function run(id: string, action: () => Promise<boolean>) {
@@ -131,7 +152,55 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
   );
 
   return (
-    <Modal open={open} onClose={onClose} title="Aprovações" wide>
+    <Modal open={open} onClose={onClose} title="Meus pins" wide>
+      <div role="tablist" aria-label="Meus pins" className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
+        {(
+          [
+            ["approvals", "Aprovações", pending.length],
+            ["archived", "Arquivados", archived?.length ?? null],
+          ] as const
+        ).map(([id, label, n]) => (
+          <button key={id} type="button" role="tab" aria-selected={section === id} onClick={() => setSection(id)} className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold transition ${section === id ? "bg-white text-[#2a1c12] shadow-[0_0.1rem_0.4rem_rgba(60,35,10,.2)]" : "text-[#6b5440] hover:text-[#2a1c12]"}`}>
+            {label}
+            {n ? <span className="ml-1.5 font-semibold text-[#8a7b69]">{n}</span> : null}
+          </button>
+        ))}
+      </div>
+      {section === "archived" ? (
+        <>
+          {archNote && (
+            <p role="alert" className="mb-3 text-sm text-[#a23b2a]">
+              {archNote}
+            </p>
+          )}
+          {!archived ? (
+            <p className="text-sm text-[#6b5440]">Carregando pins…</p>
+          ) : archived.length === 0 ? (
+            <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin arquivado. Quando você define uma validade para os pins de outras pessoas (em Editar mural), os que passam do prazo saem do mural e ficam aqui, para você colocar de volta quando quiser.</p>
+          ) : (
+            <Carousel label="Pins arquivados">
+              {archived.map((a) => (
+                <div key={a.id} className="text-center">
+                  <div className="grid min-h-[15rem] place-items-center py-3 text-[min(21px,5vw)]">
+                    <MessageView message={{ ...(a.content as object), id: a.id, type: a.type, slot: 0, pending: false, ownerHidden: false, ownerReview: false, signedBy: a.author ?? undefined } as never} />
+                  </div>
+                  <p className="mt-2 text-sm font-semibold">
+                    {formatInfo[a.type as keyof typeof formatInfo]?.label ?? a.type}
+                    {a.author && <span className="font-normal text-[#6b5440]"> · de @{a.author}</span>}
+                  </p>
+                  <p className="text-xs text-[#6b5440]">Saiu do mural em {new Date(a.archived_at).toLocaleDateString("pt-BR")}</p>
+                  <div className="mt-3 flex justify-center">
+                    <button type="button" className={primary} disabled={busy === a.id} onClick={() => void restore(a.id)}>
+                      {busy === a.id ? "Colocando…" : "Colocar de volta no mural"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          )}
+        </>
+      ) : (
+        <>
       {error && (
         <p role="alert" className="mb-3 text-sm text-[#a23b2a]">
           {error}
@@ -149,6 +218,8 @@ export function PinsModal({ open, onClose, muralId, plan, onPending }: { open: b
               <div key={p.id}>{card(p)}</div>
             ))}
           </Carousel>
+        </>
+      )}
         </>
       )}
     </Modal>

@@ -162,11 +162,11 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const [own, setOwn] = useState<OwnMural[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [drawer, setDrawer] = useState<{ open: boolean }>({ open: false });
-  const [startPanel, setStartPanel] = useState<"profile" | "plans">("profile");
+  const [startPanel, setStartPanel] = useState<"profile" | "plans" | "archived">("profile");
   const [editProfile, setEditProfile] = useState(0); // muda a cada pedido de "Editar perfil" (vem do resumo do perfil): abre o painel de perfil da conta
   useEffect(() => {
     const h = (e: Event) => {
-      setStartPanel((e as CustomEvent<{ panel?: "profile" | "plans" }>).detail?.panel === "plans" ? "plans" : "profile");
+      setStartPanel((e as CustomEvent<{ panel?: "profile" | "plans" | "archived" }>).detail?.panel ?? "profile");
       setEditProfile((n) => n + 1);
       if (window.innerWidth < 700) setDrawer({ open: true }); // no celular o painel mora na gaveta; no desktop, na coluna da esquerda
     };
@@ -388,6 +388,31 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     if (!session) return;
     void fetchNotifications(getBrowserSupabase()).then(showGift);
   }, [session?.user.id, showGift]); // eslint-disable-line react-hooks/exhaustive-deps
+  // pins arquivados (passaram da validade do mural): ao entrar no mural, o dono é avisado uma vez por aviso e pode ir direto à lista
+  const [archivedNote, setArchivedNote] = useState<{ id: string; count: number; title: string } | null>(null);
+  const archivedChecked = useRef("");
+  useEffect(() => {
+    if (!session || !isOwner || !unlocked || !slug || archivedChecked.current === `${session.user.id}/${slug}`) return;
+    archivedChecked.current = `${session.user.id}/${slug}`;
+    void fetchNotifications(getBrowserSupabase()).then((list) => {
+      let seen: string[] = [];
+      try {
+        seen = JSON.parse(localStorage.getItem("pinz:archived-seen") ?? "[]");
+      } catch {}
+      const n = list.find((x) => x.kind === "archived" && x.data.muralSlug.toLowerCase() === slug.toLowerCase() && !seen.includes(x.id) && Date.now() - new Date(x.createdAt).getTime() < 3 * 86_400_000);
+      if (n && n.kind === "archived") setArchivedNote({ id: n.id, count: n.data.count, title: n.data.muralTitle ?? n.data.muralSlug });
+    });
+  }, [session, isOwner, unlocked, slug]);
+  const closeArchivedNote = (go: boolean) => {
+    if (archivedNote) {
+      try {
+        const seen: string[] = JSON.parse(localStorage.getItem("pinz:archived-seen") ?? "[]");
+        localStorage.setItem("pinz:archived-seen", JSON.stringify([...seen.slice(-30), archivedNote.id]));
+      } catch {}
+    }
+    setArchivedNote(null);
+    if (go) window.dispatchEvent(new CustomEvent("pinz:edit-profile", { detail: { panel: "archived" } }));
+  };
   const openNotifications = useCallback(async () => {
     setNotifOpen(true);
     setNotifs(null);
@@ -1205,6 +1230,29 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
       <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
+      <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label="Pins arquivados">
+        {archivedNote && (
+          <div className="space-y-4 px-1 pb-2 text-center text-[#2f2218]">
+            <div className="text-4xl" aria-hidden>
+              📦
+            </div>
+            <p className="font-title text-xl leading-snug font-semibold">
+              {archivedNote.count} {archivedNote.count === 1 ? "pin foi arquivado" : "pins foram arquivados"}
+            </p>
+            <p className="text-[15px] text-[#4a3826]">
+              {archivedNote.count === 1 ? "Ele passou" : "Eles passaram"} do prazo de validade do mural “{archivedNote.title}”. Toque abaixo para ver {archivedNote.count === 1 ? "o pin arquivado" : "os pins arquivados"} e, se quiser, colocar de volta no mural.
+            </p>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => closeArchivedNote(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+                Depois
+              </button>
+              <button type="button" onClick={() => closeArchivedNote(true)} className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] hover:bg-[#e6ae22]">
+                Ver arquivados
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
       <Modal open={!!welcomeText} onClose={() => setWelcomeText(null)} title="">
         <div className="px-1 pb-3 text-center">
           <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Mensagem de @{selected?.nickname}</p>
