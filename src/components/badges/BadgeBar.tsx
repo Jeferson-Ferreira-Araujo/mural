@@ -69,43 +69,24 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
   const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
   const groupBtn = (cat: string, list: typeof mine) => {
-    // sem nenhum disponível (todos já estão no mural): a pilha fica apagada, como os bottons de fora do grupo
+    // sem nenhum disponível (todos já estão no mural): o ícone fica apagado, como os bottons de fora do grupo
     const out = list.every((b) => stock(b.key).left === 0);
-    // pilha de bottons (até 3, um por trás do outro): mostra que este botão é um CONJUNTO que abre uma lista, e não um botton para colocar no mural
-    const stack = list.slice(0, 3);
-    const look = [
-      { rot: -11, x: -7, y: -1, s: 0.78 }, // o de trás
-      { rot: 9, x: 7, y: -1, s: 0.82 },
-      { rot: 0, x: 0, y: 2, s: 1 }, // o da frente
-    ].slice(3 - stack.length);
+    const open = openCat === cat;
+    // pasta: moldura fina com uma abinha no topo, com o primeiro botton do grupo dentro. Diz "aqui dentro tem vários" e não parece um botton para colocar no mural
     return (
-      <li key={`cat-${cat}`} className="relative shrink-0">
+      <li key={`cat-${cat}`} className="relative shrink-0 pt-[5px]">
         <button
           type="button"
           onClick={(e) => toggleCat(cat, e.currentTarget)}
-          aria-expanded={openCat === cat}
+          aria-expanded={open}
           aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
           title={`${catLabel(cat)}: ${list.length} bottons`}
-          className={`relative block h-14 w-14 cursor-pointer rounded-xl transition hover:bg-white/10 active:scale-95 ${openCat === cat ? "bg-white/10" : ""}`}
+          className={`relative grid h-[3.3rem] w-14 cursor-pointer place-items-center rounded-xl rounded-tl-none border transition active:scale-95 ${open ? "border-white/70 bg-white/20" : "border-white/35 bg-white/10 hover:bg-white/15"}`}
         >
-          {[...stack].reverse().map((b, k) => {
-            const L = look[k];
-            return (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={b.key}
-                src={badgeSrc(b.key)}
-                alt=""
-                draggable={false}
-                className={`pointer-events-none absolute top-1/2 left-1/2 max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`}
-                style={{ transform: `translate(calc(-50% + ${L.x}px), calc(-50% + ${L.y}px)) rotate(${L.rot}deg) scale(${L.s})`, filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }}
-              />
-            );
-          })}
-          {/* quantos bottons tem no conjunto (diferente do contador de unidades dos bottons soltos) */}
-          <span aria-hidden className="pointer-events-none absolute -right-0.5 -bottom-0.5 grid min-w-[1.3rem] place-items-center rounded-full bg-white px-1 text-[10px] leading-[1.15rem] font-extrabold text-[#2a1c12] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.5)]">
-            +{list.length}
-          </span>
+          {/* a abinha da pasta */}
+          <span aria-hidden className={`pointer-events-none absolute -top-[6px] -left-px h-[6px] w-6 rounded-t-md border border-b-0 ${open ? "border-white/70 bg-white/20" : "border-white/35 bg-[#2b221b]"}`} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-9 max-w-9 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
         </button>
       </li>
     );
