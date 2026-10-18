@@ -149,7 +149,13 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                 ref={strip}
                 role="radiogroup"
                 aria-label="Tipo do mural"
-                onScroll={(e) => setSlide(Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1)))}
+                onScroll={(e) => {
+                  // o tipo que está à vista no carrossel é o escolhido para criar (sem botão de selecionar)
+                  const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
+                  setSlide(i);
+                  const bd = BOARDS[i];
+                  if (bd) setBoard(bd.id);
+                }}
                 className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl shadow-[0_0.5rem_1.4rem_rgba(60,35,10,.25)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {BOARDS.map((bd) => {
@@ -170,18 +176,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                             Comprar <Coin className="size-4" />
                             {priceOf(bd.id)}
                           </button>
-                        ) : on ? (
-                          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#f4c542] px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)]">
-                            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                              <path d="m5 12.5 4.5 4.5L19 7.5" />
-                            </svg>
-                            Selecionado
-                          </span>
-                        ) : (
-                          <button type="button" onClick={() => setBoard(bd.id)} className="shrink-0 cursor-pointer rounded-full bg-white/90 px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-white active:scale-95">
-                            Selecionar
-                          </button>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   );
@@ -249,7 +244,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
               {error}
             </p>
           )}
-          <button type="submit" disabled={busy} className={primaryButton}>
+          <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : "Compre este tipo de mural para criar com ele"} className={primaryButton}>
             {busy ? "Criando…" : size === 42 ? "Criar mural de 42 espaços (" + slotsPrice + " créditos)" : "Criar mural"}
           </button>
         </form>
