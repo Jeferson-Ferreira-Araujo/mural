@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { claimReward, getRewards, type RewardId, type RewardTask } from "@/lib/rewards";
 import { Modal } from "./Modal";
+import { ListSkeleton } from "../Skeleton";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -34,7 +35,7 @@ export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <Modal open={open} onClose={onClose} title="Ganhe créditos">
       {tasks === null ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={3} />
       ) : (
         <>
           <p className="text-[15px] leading-snug text-[#4a3826]">Faça as tarefas e ganhe créditos na hora.</p>

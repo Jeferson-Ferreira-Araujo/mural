@@ -9,6 +9,7 @@ import { REPORT_REASONS, type OwnerPin, type ReportReason } from "../board/PinsM
 import { MessageView } from "../messages/MessageView";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
+import { CardSkeleton } from "../Skeleton";
 
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
@@ -232,7 +233,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
             </p>
           )}
           {!archived ? (
-            <p className="text-sm text-[#6b5440]">Carregando pins…</p>
+            <CardSkeleton label="Carregando os pins" />
           ) : archived.length === 0 ? (
             <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin arquivado. Quando você define uma validade para os pins de outras pessoas (em Editar mural), os que passam do prazo saem do mural e ficam aqui, para você colocar de volta quando quiser.</p>
           ) : (
@@ -265,7 +266,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         </p>
       )}
       {!pins ? (
-        <p className="text-sm text-[#6b5440]">Carregando pins…</p>
+        <CardSkeleton label="Carregando os pins" />
       ) : list.length === 0 ? (
         <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colocar um pin no seu mural, ele aparece aqui.</p>
       ) : (

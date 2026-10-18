@@ -39,7 +39,11 @@ export const viewport: Viewport = {
   themeColor: "#3b2616",
 };
 
+import { preconnect } from "react-dom";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // abre a conexão com o servidor de dados (login, pins, imagens enviadas) já no começo: a primeira busca sai mais rápido
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL) preconnect(process.env.NEXT_PUBLIC_SUPABASE_URL, { crossOrigin: "anonymous" });
   return (
     <html
       lang="pt-BR"

@@ -3,6 +3,7 @@
 import { notificationText, type Notification } from "@/lib/notifications";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
+import { ListSkeleton } from "../Skeleton";
 
 const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
@@ -11,7 +12,7 @@ export function NotificationsModal({ open, onClose, items }: { open: boolean; on
   return (
     <Modal open={open} onClose={onClose} title="Notificações">
       {!items ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={4} label="Carregando as notificações" />
       ) : items.length === 0 ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Nenhuma notificação por enquanto.</p>
       ) : (

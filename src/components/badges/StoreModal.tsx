@@ -13,6 +13,7 @@ import { useBackClose } from "@/lib/backStack";
 import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
+import { GridSkeleton } from "../Skeleton";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -299,7 +300,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       </div>
 
       {!inventory ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando a loja…</p>
+        <GridSkeleton count={9} label="Carregando a loja" />
       ) : tab === "pins" ? (
         <>
           <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">

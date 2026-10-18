@@ -5,6 +5,7 @@ import { listFollowers, listFollowing, listVisitors, setFollowing, type PersonLi
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
+import { ListSkeleton } from "../Skeleton";
 
 function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
   return (
@@ -77,7 +78,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
         </svg>
       </div>
       {!shown ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={5} />
       ) : shown.length === 0 ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">
           {term ? "Ninguém encontrado com esse nome." : tab === "following" ? "Você ainda não segue ninguém. Toque em “Seguir” no mural de uma pessoa para ter acesso rápido a ele aqui." : "Nenhum seguidor para mostrar."}
@@ -114,7 +115,7 @@ export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose
   return (
     <Modal open={open} onClose={onClose} title="Seguidores" label="Seguidores">
       {!list ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={5} />
       ) : list.length === 0 ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum seguidor para mostrar.</p>
       ) : (
@@ -140,7 +141,7 @@ export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () =>
   return (
     <Modal open={open} onClose={onClose} title="Visitantes" label="Visitantes">
       {!data ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={5} />
       ) : data.hidden ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">Você desligou “Aparecer como visitante” no Perfil. Quem desliga também não vê quem visitou os seus murais. Ligue de novo lá para ver a lista.</p>
       ) : (

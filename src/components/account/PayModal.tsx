@@ -7,6 +7,7 @@ import { getMpPublicKey, loadMpSdk, payCard, paySubscription } from "@/lib/cardP
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
+import { Skeleton } from "../Skeleton";
 
 type Step = "plans" | "gift" | "choose" | "pix" | "card" | "review" | "done" | "expired";
 
@@ -331,7 +332,16 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
               {step === "card" && (
                 <div className="mt-4">
-                  {cardState === "loading" && <p className="py-4 text-center text-sm text-[#6b5440]">Carregando o formulário seguro…</p>}
+                  {cardState === "loading" && (
+                    <div role="status" aria-label="Carregando o formulário seguro" className="space-y-3 py-3">
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                      <div className="flex gap-3">
+                        <Skeleton className="h-11 flex-1 rounded-xl" />
+                        <Skeleton className="h-11 flex-1 rounded-xl" />
+                      </div>
+                      <Skeleton className="h-11 w-full rounded-xl" />
+                    </div>
+                  )}
                   {cardState === "failed" && (
                     <p role="alert" className="py-3 text-center text-sm text-[#a23b2a]">
                       Não foi possível abrir o formulário do cartão agora. Tente de novo ou pague com Pix.

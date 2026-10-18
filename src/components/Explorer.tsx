@@ -940,9 +940,10 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           )}
 
           {selected && resolving && (
-            <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-              Carregando…
-            </p>
+            <div role="status" aria-label="Carregando" className="space-y-[0.6em]">
+              <span className={`skeleton block h-[2.4em] w-full rounded-[0.8em] ${dark ? "!bg-white/15 !bg-none" : ""}`} />
+              <span className={`skeleton block h-[2.4em] w-3/4 rounded-[0.8em] ${dark ? "!bg-white/15 !bg-none" : ""}`} />
+            </div>
           )}
           {selected && !resolving && isShared && !isMember && (
             <section aria-label="Mural compartilhado" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>

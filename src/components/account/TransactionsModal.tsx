@@ -7,6 +7,7 @@ import { SUPPORT_EMAIL } from "@/lib/contact";
 import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxPayment } from "@/lib/payments";
 import { PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS } from "@/lib/plans";
 import { Modal } from "./Modal";
+import { ListSkeleton } from "../Skeleton";
 
 const date = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
@@ -53,7 +54,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
       {failed ? (
         <p className="py-6 text-center text-sm text-[#a23b2a]">Não foi possível carregar agora. Tente de novo.</p>
       ) : !tx ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <ListSkeleton rows={4} />
       ) : (
         <div className="space-y-5">
           <div className="grid grid-cols-3 gap-2 text-center">

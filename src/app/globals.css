@@ -401,3 +401,20 @@ html[data-a11y-contrast="1"] :focus-visible {
     opacity: 0.9;
   }
 }
+
+/* esqueleto de carregamento: bloco suave com um brilho que passa */
+@keyframes skeleton-shine {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(100deg, #eadfc8 30%, #f7f0df 50%, #eadfc8 70%);
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.3s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

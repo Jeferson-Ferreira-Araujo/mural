@@ -10,6 +10,7 @@ import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { Avatar } from "../Avatar";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
+import { CardSkeleton } from "../Skeleton";
 
 const REASONS: { id: ProfileReportReason; label: string }[] = [
   { id: "ofensa", label: "Ofensa ou discurso de ódio" },
@@ -150,7 +151,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   return (
     <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">Voltar</button> : undefined}>
       {!data ? (
-        <p className="py-8 text-center text-sm text-[#6b5440]">Carregando…</p>
+        <CardSkeleton label="Carregando o perfil" />
       ) : view === "summary" ? (
         <div className="space-y-4">
           {/* foto grande com a moldura dourada do PINZ+ */}
