@@ -162,9 +162,8 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           } : undefined}
           ambient={boardImageS(look)}
           cornerLeft={
-            canAdd || (share && onNotify && !shareTop) ? (
+            share && onNotify && !shareTop ? (
               <div className="flex items-center gap-2">
-                {canAdd && <AddPinButton visitor={!account?.atHome} />}
                 {share && onNotify && !shareTop && (
                   <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
                 )}
@@ -174,6 +173,12 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         >
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
+        {/* botão flutuante de colocar pin: centralizado, acima da barra de bottons, maior para dar destaque */}
+        {canAdd && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center">
+            <AddPinButton visitor={!account?.atHome} className="!size-16 !rounded-2xl [&>svg]:!size-10" />
+          </div>
+        )}
         {locked && lockPanel && (
           <div className="absolute inset-0 z-30 grid place-items-center overflow-y-auto bg-black/30 p-4">
             <div className="w-[min(92vw,28rem)] text-[15px]">{lockPanel}</div>
