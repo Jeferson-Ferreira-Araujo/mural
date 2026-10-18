@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/board-thumbs.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/board-thumbs.mjs",
     "build": "next build",
     "start": "npx serve out"
   },

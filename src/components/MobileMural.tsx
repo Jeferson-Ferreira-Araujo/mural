@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { AddPinButton } from "./AddPinButton";
-import { boardById } from "@/lib/boards";
+import { boardById, boardImageS } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 import { Avatar } from "./Avatar";
@@ -160,7 +160,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             swipeTarget.current = { from: muralSwitch.current, to };
             muralSwitch.onSelect(to);
           } : undefined}
-          ambient={look.image}
+          ambient={boardImageS(look)}
           cornerLeft={
             canAdd || (share && onNotify && !shareTop) ? (
               <div className="flex items-center gap-2">

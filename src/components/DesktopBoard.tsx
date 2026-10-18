@@ -1,6 +1,6 @@
 "use client";
 
-import { boardById, DEFAULT_BOARD } from "@/lib/boards";
+import { boardById, DEFAULT_BOARD, boardImageS } from "@/lib/boards";
 import { AddPinButton } from "./AddPinButton";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
@@ -17,7 +17,7 @@ import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import type { ViewProps } from "./viewProps";
 
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
-export const BOARD_IMAGE = boardById(DEFAULT_BOARD).image;
+export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve de fundo desfocado: a versão pequena basta
 
 /**
  * Mural físico completo: 28 espaços fixos numa lousa que não cresce (veja `BoardCanvas`).
@@ -41,7 +41,7 @@ export function DesktopBoard(props: ViewProps) {
       <div className={`relative flex min-w-0 flex-[1_1_150dvh] justify-center overflow-hidden transition-opacity duration-300 portrait:min-h-0 portrait:flex-[1_1_0] portrait:items-center ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={look.image} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
+        <img src={boardImageS(look)} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
 
         <div className="relative h-full w-[min(100%,150dvh)] shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2]">
 
@@ -89,7 +89,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={look.image} controlPos="right-[2.2vw] bottom-5" hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
+        <PannableBoard ambient={boardImageS(look)} controlPos="right-[2.2vw] bottom-5" hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain>
           {locked &&
             (lockForm ? (

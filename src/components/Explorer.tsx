@@ -21,7 +21,7 @@ import {
   type SiteStats,
   type UnlockResult,
 } from "@/lib/mural";
-import { BOARDS, boardById } from "@/lib/boards";
+import { BOARDS, boardById, boardImageM } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, rememberNext, safeNext, takeNext, useSession, type OwnMural } from "@/lib/auth";
@@ -1019,7 +1019,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     const img = new Image();
     img.onload = show;
     img.onerror = show;
-    img.src = pick.image;
+    img.src = window.innerWidth < 700 ? boardImageM(pick) : pick.image; // o mesmo arquivo que a tela vai usar (celular: a versão menor)
     const t = window.setTimeout(show, 3000); // rede lenta: não deixa a tela vazia para sempre
     return () => {
       done = true;

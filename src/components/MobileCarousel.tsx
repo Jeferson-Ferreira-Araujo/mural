@@ -1,6 +1,6 @@
 "use client";
 
-import { boardById } from "@/lib/boards";
+import { boardById, boardImageS, boardImageM } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
@@ -39,7 +39,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
       className="relative min-h-dvh overflow-x-hidden bg-[#2a1a0e]"
       style={{
         backgroundImage:
-          `radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(${look.image})`,
+          `radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(${boardImageM(look)})`,
         backgroundSize: "auto, auto, 380%",
         backgroundPosition: `center, center, ${bgX.toFixed(1)}% ${bgY.toFixed(1)}%`,
       }}
@@ -61,7 +61,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
           {demoBoard && (
             <div className="mx-auto w-[min(94vw,36rem)] space-y-3">
               <div className="h-[68dvh] overflow-hidden rounded-2xl border border-white/15 shadow-[0_0.8rem_2rem_rgba(0,0,0,.45)]">
-                <PannableBoard ambient={look.image}>
+                <PannableBoard ambient={boardImageS(look)}>
                   <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} onNotify={onNotify} contain />
                 </PannableBoard>
               </div>

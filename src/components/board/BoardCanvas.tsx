@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { typeLabel, isHidden, isSealed, type BoardItem } from "@/lib/types";
-import { boardById } from "@/lib/boards";
+import { boardById, boardImageM } from "@/lib/boards";
 import { gridFor, layoutSlots } from "@/lib/slots";
 import { BOARD_CAPACITY, type PlanId } from "@/lib/plans";
 import { MessageView } from "../messages/MessageView";
@@ -575,7 +575,11 @@ export function BoardCanvas({
                 inert={locked}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={look.image} alt={`Mural: quadro ${look.name}`} className="absolute inset-0 size-full select-none" draggable={false} />
+                <picture>
+                  {/* celular: a versão menor do quadro (bem mais leve); computador: a original */}
+                  <source media="(max-width: 699px)" srcSet={boardImageM(look)} />
+                  <img src={look.image} alt={`Mural: quadro ${look.name}`} className="absolute inset-0 size-full select-none" draggable={false} />
+                </picture>
 
                 <div
                   className="absolute"
