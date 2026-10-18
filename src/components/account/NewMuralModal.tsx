@@ -7,6 +7,7 @@ import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
+import { useFeatureFlags } from "@/lib/features";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -24,6 +25,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [credits, setCredits] = useState(0);
   const [slotsPrice, setSlotsPrice] = useState(25); // preço do mural de 42 espaços
   const [size, setSize] = useState<28 | 42>(28);
+  const flags = useFeatureFlags();
+  const big = flags.mural_42 === true; // mural de 42 espaços: desligado por padrão (o administrador liga em Recursos)
   const [ttl, setTtl] = useState<PinTtl>(null);
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
@@ -88,11 +91,12 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     e.preventDefault();
     if (busy) return;
     if (!title.trim()) return setError("Preencha o nome do mural.");
-    if (size === 42 && credits < slotsPrice) return setError("Créditos insuficientes para o mural de 42 espaços: faltam " + (slotsPrice - credits) + ".");
+    if (!big && size === 42) setSize(28);
+    if (big && size === 42 && credits < slotsPrice) return setError("Créditos insuficientes para o mural de 42 espaços: faltam " + (slotsPrice - credits) + ".");
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "", p_slots: size } /* o mural novo segue a privacidade do perfil */);
+    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "", p_slots: big ? size : 28 } /* o mural novo segue a privacidade do perfil */);
     const created = data as { slug?: string; id?: string } | null;
     if (err || !created?.slug || !created.id) {
       setBusy(false);
@@ -207,6 +211,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           <PinTtlField value={ttl} onChange={setTtl} />
 
           {/* tamanho: 28 espaços (padrão) ou 42, que é comprado com créditos e só existe criando um mural novo */}
+          {big && (
           <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
             <legend className="mb-2 text-sm font-semibold">Tamanho do mural</legend>
             <div role="radiogroup" aria-label="Tamanho do mural" className="grid grid-cols-2 gap-2">
@@ -238,6 +243,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
               ))}
             </div>
           </fieldset>
+          )}
 
           {error && (
             <p role="alert" className="text-sm text-[#a23b2a]">
