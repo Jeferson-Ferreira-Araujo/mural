@@ -1080,6 +1080,27 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     if (!goHome) return;
     void homeRouteFor(getBrowserSupabase()).then((to) => window.location.replace(to));
   }, [goHome]);
+  // (estes ganchos ficam ANTES do retorno antecipado abaixo: a ordem dos ganchos não pode mudar entre uma pintura e outra)
+  const everProfile = useEver(profileOpen);
+  const everNewMural = useEver(newMuralOpen);
+  const everOnb = useEver(onbOpen);
+  const everTour = useEver(tourOpen);
+  const everRewards = useEver(rewardsOpen);
+  const everPay = useEver(payProduct !== null);
+  // depois da primeira tela, baixa o código das janelas em segundo plano (a primeira abertura fica rápida sem pesar no começo)
+  useEffect(() => {
+    const warm = () => {
+      void import("./account/ProfileSummaryModal");
+      void import("./account/NewMuralModal");
+      void import("./account/PayModal");
+      void import("./account/RewardsModal");
+    };
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    const t = idle ? idle(warm, { timeout: 6000 }) : window.setTimeout(warm, 4000);
+    return () => {
+      if (!idle) window.clearTimeout(t);
+    };
+  }, []);
   if (goHome) {
     return (
       <main className="grid min-h-dvh place-items-center bg-[#2a1a0e]">
@@ -1122,26 +1143,6 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       />
     ) : undefined;
 
-  const everProfile = useEver(profileOpen);
-  const everNewMural = useEver(newMuralOpen);
-  const everOnb = useEver(onbOpen);
-  const everTour = useEver(tourOpen);
-  const everRewards = useEver(rewardsOpen);
-  const everPay = useEver(payProduct !== null);
-  // depois da primeira tela, baixa o código das janelas em segundo plano (a primeira abertura fica rápida sem pesar no começo)
-  useEffect(() => {
-    const warm = () => {
-      void import("./account/ProfileSummaryModal");
-      void import("./account/NewMuralModal");
-      void import("./account/PayModal");
-      void import("./account/RewardsModal");
-    };
-    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-    const t = idle ? idle(warm, { timeout: 6000 }) : window.setTimeout(warm, 4000);
-    return () => {
-      if (!idle) window.clearTimeout(t);
-    };
-  }, []);
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
