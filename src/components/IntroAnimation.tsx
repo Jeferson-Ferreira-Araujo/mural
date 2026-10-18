@@ -166,7 +166,7 @@ export function IntroAnimation() {
 
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
-      <div ref={back} className="absolute inset-0 bg-[#1a0f06]/70 opacity-0 backdrop-blur-[2px]" />
+      <div ref={back} className="absolute inset-0 bg-[#1a0f06]/75 opacity-0" />
       <div ref={note} className="absolute origin-center will-change-transform [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/img/pinz/papel.webp" alt="" draggable={false} className="block size-full select-none" />

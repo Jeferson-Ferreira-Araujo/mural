@@ -29,16 +29,25 @@ import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
-import { OnboardingModal } from "./account/OnboardingModal";
-import { Tour } from "./tour/Tour";
 import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
 import { claimReward, claimStoredReferral, OPEN_REWARDS_EVENT, rememberRef, REWARD_EVENT } from "@/lib/rewards";
-import { RewardsModal } from "./account/RewardsModal";
 import { Modal } from "./account/Modal";
-import { PayModal } from "./account/PayModal";
 import { PAY_EVENT, pixStatus } from "@/lib/payments";
-import { NewMuralModal } from "./account/NewMuralModal";
-import { ProfileSummaryModal } from "./account/ProfileSummaryModal";
+import dynamic from "next/dynamic";
+
+// janelas pesadas: o código só é baixado quando a pessoa abre uma delas pela primeira vez (e é aquecido em segundo plano, depois da primeira tela)
+const OnboardingModal = dynamic(() => import("./account/OnboardingModal").then((m) => m.OnboardingModal), { ssr: false });
+const Tour = dynamic(() => import("./tour/Tour").then((m) => m.Tour), { ssr: false });
+const RewardsModal = dynamic(() => import("./account/RewardsModal").then((m) => m.RewardsModal), { ssr: false });
+const PayModal = dynamic(() => import("./account/PayModal").then((m) => m.PayModal), { ssr: false });
+const NewMuralModal = dynamic(() => import("./account/NewMuralModal").then((m) => m.NewMuralModal), { ssr: false });
+const ProfileSummaryModal = dynamic(() => import("./account/ProfileSummaryModal").then((m) => m.ProfileSummaryModal), { ssr: false });
+/** Fica verdadeiro na primeira vez que `v` é verdadeiro: monta a janela só depois de a pessoa abri-la uma vez. */
+function useEver(v: boolean) {
+  const ever = useRef(false);
+  if (v) ever.current = true;
+  return ever.current;
+}
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
 import { BOARD_CAPACITY, PLUS_MAX_MURALS } from "@/lib/plans";
 import { ModerationProvider } from "./board/ModerationContext";
@@ -1113,6 +1122,26 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       />
     ) : undefined;
 
+  const everProfile = useEver(profileOpen);
+  const everNewMural = useEver(newMuralOpen);
+  const everOnb = useEver(onbOpen);
+  const everTour = useEver(tourOpen);
+  const everRewards = useEver(rewardsOpen);
+  const everPay = useEver(payProduct !== null);
+  // depois da primeira tela, baixa o código das janelas em segundo plano (a primeira abertura fica rápida sem pesar no começo)
+  useEffect(() => {
+    const warm = () => {
+      void import("./account/ProfileSummaryModal");
+      void import("./account/NewMuralModal");
+      void import("./account/PayModal");
+      void import("./account/RewardsModal");
+    };
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    const t = idle ? idle(warm, { timeout: 6000 }) : window.setTimeout(warm, 4000);
+    return () => {
+      if (!idle) window.clearTimeout(t);
+    };
+  }, []);
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
@@ -1213,8 +1242,8 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/entrar"));
             }}
           />
-          {selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
-          {myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
+          {everProfile && selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
+          {everNewMural && myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />
@@ -1235,8 +1264,8 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />
-      <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
+      {everOnb && <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
+      {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
       <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label="Pins arquivados">
         {archivedNote && (
           <div className="space-y-4 px-1 pb-2 text-center text-[#2f2218]">
@@ -1266,12 +1295,12 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           <p className="font-title mt-3 text-xl leading-snug [overflow-wrap:anywhere] whitespace-pre-wrap">{welcomeText}</p>
         </div>
       </Modal>
-      <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />
-      <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => {
+      {everRewards && <RewardsModal open={rewardsOpen} onClose={() => setRewardsOpen(false)} />}
+      {everPay && <PayModal product={payProduct} onClose={() => setPayProduct(null)} onPaid={() => {
           void reloadInventory();
           void reloadOwn(); // PINZ+: o plano do mural muda
           if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
-        }} />
+        }} />}
       <Toast message={toast} />
     </div>
   );

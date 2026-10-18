@@ -41,7 +41,7 @@ export function DesktopBoard(props: ViewProps) {
       <div className={`relative flex min-w-0 flex-[1_1_150dvh] justify-center overflow-hidden transition-opacity duration-300 portrait:min-h-0 portrait:flex-[1_1_0] portrait:items-center ${props.boardPending ? "opacity-0" : "opacity-100"}`}>
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={boardImageS(look)} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-2xl" />
+        <img src={boardImageS(look)} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-md" />
 
         <div className="relative h-full w-[min(100%,150dvh)] shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2]">
 

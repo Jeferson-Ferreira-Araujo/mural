@@ -49,7 +49,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
     <div className={`fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e] transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}>
       {/* fundo: a mesma névoa colorida do mural (a foto do quadro bem desfocada), igual por trás do logo, do mural e do rodapé */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={boardImageS(look)} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-3xl" />
+      <img src={boardImageS(look)} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-md" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#140a04]/70 via-transparent to-[#140a04]/60" />
       <h1 className="sr-only">Pinz</h1>
       <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label="Acessibilidade" title="Acessibilidade" className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-full bg-[#17110c]/70 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur transition active:scale-95">

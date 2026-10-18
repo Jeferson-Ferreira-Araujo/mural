@@ -12,7 +12,7 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
   return (
     <div className="relative grid min-h-dvh grid-cols-[minmax(0,1fr)] place-items-center overflow-x-hidden bg-[#2a1a0e] px-3 py-6 sm:px-4 sm:py-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-xl" />
+      <img src={BOARD_IMAGE} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-md" />
       <span aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_30%,rgba(60,30,8,.2),rgba(14,7,2,.8))]" />
       <div className={`rise relative w-full min-w-0 ${wide ? "max-w-2xl" : "max-w-md"}`}>
         <div className="relative mb-2 flex justify-center">
