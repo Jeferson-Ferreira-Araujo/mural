@@ -69,44 +69,29 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
   const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
   const groupBtn = (cat: string, list: typeof mine) => {
-    // sem nenhum disponível (todos já estão no mural): o conjunto fica apagado, como os bottons de fora do grupo
+    // sem nenhum disponível (todos já estão no mural): o ícone fica apagado, como os bottons de fora do grupo
     const out = list.every((b) => stock(b.key).left === 0);
-    // leque de bottons: o primeiro em destaque no centro; o segundo um pouco inclinado para a esquerda e o terceiro para a direita, aparecendo atrás
-    // (como "vários", sem ficar alinhado). Mostra que este botão é um CONJUNTO que abre uma lista, e não um botton para colocar no mural
-    const fan = [
-      { rot: 0, x: 0, y: 0, s: 1 }, // principal
-      { rot: -16, x: -10, y: 2, s: 0.86 }, // inclinado para a esquerda
-      { rot: 16, x: 10, y: 2, s: 0.86 }, // inclinado para a direita
-    ];
-    const shown = list.slice(0, 3);
+    const open = openCat === cat;
+    // o botton do grupo aparece como os demais, com um pequeno ícone de grade (quatro quadradinhos) no canto: "ver todos" de uma galeria
     return (
       <li key={`cat-${cat}`} className="relative shrink-0">
         <button
           type="button"
           onClick={(e) => toggleCat(cat, e.currentTarget)}
-          aria-expanded={openCat === cat}
+          aria-expanded={open}
           aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
           title={`${catLabel(cat)}: ${list.length} bottons`}
-          className={`relative block h-14 w-14 cursor-pointer rounded-xl transition hover:bg-white/10 active:scale-95 ${openCat === cat ? "bg-white/10" : ""}`}
+          className={`relative grid h-14 w-14 cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 ${open ? "bg-white/10" : ""}`}
         >
-          {/* de trás para a frente: o principal fica por cima */}
-          {[...shown.keys()].reverse().map((k) => {
-            const L = fan[k];
-            return (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={shown[k].key}
-                src={badgeSrc(shown[k].key)}
-                alt=""
-                draggable={false}
-                className={`pointer-events-none absolute top-1/2 left-1/2 max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`}
-                style={{ transform: `translate(calc(-50% + ${L.x}px), calc(-50% + ${L.y}px)) rotate(${L.rot}deg) scale(${L.s})`, filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }}
-              />
-            );
-          })}
-          {/* quantos bottons tem no conjunto (diferente do contador de unidades dos bottons soltos) */}
-          <span aria-hidden className="pointer-events-none absolute -right-0.5 -bottom-0.5 grid min-w-[1.3rem] place-items-center rounded-full bg-white px-1 text-[10px] leading-[1.15rem] font-extrabold text-[#2a1c12] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.5)]">
-            +{list.length}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+          <span aria-hidden className={`pointer-events-none absolute right-0 bottom-0 grid size-[1.15rem] place-items-center rounded-md shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.5)] ${open ? "bg-[#f2c230] text-[#2a1c12]" : "bg-white text-[#2a1c12]"}`}>
+            <svg viewBox="0 0 16 16" className="size-3" fill="currentColor">
+              <rect x="2" y="2" width="5" height="5" rx="1" />
+              <rect x="9" y="2" width="5" height="5" rx="1" />
+              <rect x="2" y="9" width="5" height="5" rx="1" />
+              <rect x="9" y="9" width="5" height="5" rx="1" />
+            </svg>
           </span>
         </button>
       </li>
