@@ -69,28 +69,45 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
   const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
   const groupBtn = (cat: string, list: typeof mine) => {
-    // sem nenhum disponível (todos já estão no mural): o ícone fica apagado, como os de fora do grupo
+    // sem nenhum disponível (todos já estão no mural): a pilha fica apagada, como os bottons de fora do grupo
     const out = list.every((b) => stock(b.key).left === 0);
+    // pilha de bottons (até 3, um por trás do outro): mostra que este botão é um CONJUNTO que abre uma lista, e não um botton para colocar no mural
+    const stack = list.slice(0, 3);
+    const look = [
+      { rot: -11, x: -7, y: -1, s: 0.78 }, // o de trás
+      { rot: 9, x: 7, y: -1, s: 0.82 },
+      { rot: 0, x: 0, y: 2, s: 1 }, // o da frente
+    ].slice(3 - stack.length);
     return (
-    <li key={`cat-${cat}`} className="relative shrink-0">
-      <button
-        type="button"
-        onClick={(e) => toggleCat(cat, e.currentTarget)}
-        aria-expanded={openCat === cat}
-        aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
-        title={catLabel(cat)}
-        className="grid h-14 w-14 cursor-pointer place-items-center rounded-xl pt-1.5 transition hover:bg-white/10 active:scale-95 sm:pt-3"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-9 max-w-9 select-none transition sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
-      </button>
-      {/* setinha para cima: avisa que o botão abre uma lista (e não é só um botton); também abre ao tocar */}
-      <button type="button" onClick={(e) => toggleCat(cat, e.currentTarget)} aria-label={`Abrir a lista: ${catLabel(cat)}`} tabIndex={-1} className="absolute top-0 left-1/2 grid h-4 w-8 -translate-x-1/2 -translate-y-1.5 cursor-pointer place-items-center text-[#f2c230] drop-shadow-[0_1px_2px_rgba(0,0,0,.8)] sm:h-5 sm:w-10">
-        <svg viewBox="0 0 16 16" className={`h-3.5 w-3.5 transition-transform sm:h-5 sm:w-5 ${openCat === cat ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <path d="M3 10l5-5 5 5" />
-        </svg>
-      </button>
-    </li>
+      <li key={`cat-${cat}`} className="relative shrink-0">
+        <button
+          type="button"
+          onClick={(e) => toggleCat(cat, e.currentTarget)}
+          aria-expanded={openCat === cat}
+          aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
+          title={`${catLabel(cat)}: ${list.length} bottons`}
+          className={`relative block h-14 w-14 cursor-pointer rounded-xl transition hover:bg-white/10 active:scale-95 ${openCat === cat ? "bg-white/10" : ""}`}
+        >
+          {[...stack].reverse().map((b, k) => {
+            const L = look[k];
+            return (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={b.key}
+                src={badgeSrc(b.key)}
+                alt=""
+                draggable={false}
+                className={`pointer-events-none absolute top-1/2 left-1/2 max-h-9 max-w-9 select-none sm:max-h-10 sm:max-w-10 ${out ? "opacity-30 grayscale" : ""}`}
+                style={{ transform: `translate(calc(-50% + ${L.x}px), calc(-50% + ${L.y}px)) rotate(${L.rot}deg) scale(${L.s})`, filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }}
+              />
+            );
+          })}
+          {/* quantos bottons tem no conjunto (diferente do contador de unidades dos bottons soltos) */}
+          <span aria-hidden className="pointer-events-none absolute -right-0.5 -bottom-0.5 grid min-w-[1.3rem] place-items-center rounded-full bg-white px-1 text-[10px] leading-[1.15rem] font-extrabold text-[#2a1c12] shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.5)]">
+            +{list.length}
+          </span>
+        </button>
+      </li>
     );
   };
   const openList = ordered.find(([c]) => c === openCat)?.[1] ?? null;
