@@ -1,7 +1,6 @@
 // Gera as versões menores dos fundos do mural, sozinho, a cada build (e no `npm run dev`).
 // Para cada /public/img/quadro-NOME.webp cria:
-//   quadro-NOME-m.webp  (1152 px de largura): o que o celular baixa no mural
-//   quadro-NOME-s.webp  (480 px): fundo desfocado (ambiente) e miniaturas
+//   quadro-NOME-s.webp  (480 px): só para fundo desfocado (ambiente); o mural em si usa sempre a imagem grande
 // Fundo novo? É só colocar o quadro-NOME.webp em public/img: as duas versões nascem no próximo build. Só recria se o original for mais novo.
 import { readdir, stat } from "node:fs/promises";
 import path from "node:path";
@@ -16,7 +15,6 @@ try {
 
 const dir = path.join(process.cwd(), "public", "img");
 const SIZES = [
-  { suffix: "-m", width: 1152, quality: 68 },
   { suffix: "-s", width: 480, quality: 58 },
 ];
 

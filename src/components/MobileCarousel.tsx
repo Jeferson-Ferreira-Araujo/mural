@@ -1,6 +1,6 @@
 "use client";
 
-import { boardById, boardImageS, boardImageM } from "@/lib/boards";
+import { boardById, boardImageS } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
@@ -39,7 +39,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
       className="relative min-h-dvh overflow-x-hidden bg-[#2a1a0e]"
       style={{
         backgroundImage:
-          `radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(${boardImageM(look)})`,
+          `radial-gradient(120% 70% at 50% 35%, rgba(60,30,8,.15), rgba(14,7,2,.82) 80%), linear-gradient(rgba(20,10,4,.5), rgba(20,10,4,.5)), url(${look.image})`,
         backgroundSize: "auto, auto, 380%",
         backgroundPosition: `center, center, ${bgX.toFixed(1)}% ${bgY.toFixed(1)}%`,
       }}

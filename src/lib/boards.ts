@@ -27,10 +27,8 @@ export const BOARDS: readonly BoardInfo[] = [
   { id: "viagens", name: "Viagens", image: "/img/quadro-viagens.webp", cork: { left: 13, top: 9.8, width: 76.8, height: 69.3 }, size: 1 },
 ];
 
-/** Versões menores do fundo, geradas sozinhas por scripts/board-thumbs.mjs a cada build: `m` (celular, 1152 px) e `s` (fundo desfocado e miniaturas, 480 px). */
-const variant = (image: string, suffix: "-m" | "-s") => image.replace(/.webp/, `${suffix}.webp`);
-export const boardImageM = (b: BoardInfo) => variant(b.image, "-m");
-export const boardImageS = (b: BoardInfo) => variant(b.image, "-s");
+/** Versão pequena do fundo (480 px), gerada sozinha por scripts/board-thumbs.mjs a cada build: só para fundos DESFOCADOS (o mural em si usa sempre a imagem grande). */
+export const boardImageS = (b: BoardInfo) => b.image.replace(/.webp/, "-s.webp");
 
 export const DEFAULT_BOARD: BoardId = "cortica";
 
