@@ -111,7 +111,7 @@ body {
 @media (hover: hover) {
   .pinned:hover {
     transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 0.35em)) rotate(calc(var(--rot, 0deg) * 0.4)) scale(1.025);
-    z-index: 40 !important;
+    z-index: 60 !important; /* acima da camada dos bottons e displays (z 40): o pin aumentado passa por cima deles */
   }
   .pinned:hover .shadow-paper {
     box-shadow:
