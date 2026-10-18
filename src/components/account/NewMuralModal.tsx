@@ -108,7 +108,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const price = buying ? priceOf(buying) : 0;
 
   return (
-    <Modal open={open} onClose={onClose} title="" label="Novo mural" wide>
+    <Modal open={open} onClose={onClose} title="Novo mural" label="Novo mural" wide>
       {target ? (
         <div className="space-y-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
