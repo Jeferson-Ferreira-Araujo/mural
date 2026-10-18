@@ -37,21 +37,21 @@ function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: st
     <button
       type="button"
       onClick={onClick}
-      className={`relative flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-2.5 px-3 py-2" : "gap-3.5 px-3.5 py-3"}`}
+      className={`relative flex w-full cursor-pointer items-center rounded-2xl border border-[#ece1c9] bg-[#fffaf0]/90 text-left shadow-[0_1px_0_rgba(255,255,255,.8)_inset,0_2px_6px_rgba(90,60,20,.08)] transition hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "gap-[0.75em] px-[0.85em] py-[0.6em]" : "gap-3.5 px-3.5 py-3"}`}
     >
-      <span className={`grid shrink-0 place-items-center bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-8 rounded-xl" : "size-10 rounded-xl"}`} aria-hidden>
+      <span className={`grid shrink-0 place-items-center bg-[#f1e7d2] text-[#4a3826] ${compact ? "size-[2.6em] rounded-[0.8em] [&>svg]:size-[1.35em]" : "size-10 rounded-xl"}`} aria-hidden>
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className={`block leading-tight font-bold ${compact ? "text-[13px]" : "text-[15px]"}`}>{label}</span>
-        {hint && <span className={`block leading-snug text-[#6b5440] ${compact ? "truncate text-[11px]" : "mt-0.5 text-[12px]"}`}>{hint}</span>}
+        <span className={`block leading-tight font-bold ${compact ? "text-[1.02em]" : "text-[15px]"}`}>{label}</span>
+        {hint && <span className={`block leading-snug text-[#6b5440] ${compact ? "truncate text-[0.82em]" : "mt-0.5 text-[12px]"}`}>{hint}</span>}
       </span>
       {!!badge && (
         <span aria-label={`${badge} pendente${badge > 1 ? "s" : ""}`} className="absolute -top-2 -right-1.5 grid min-w-6 place-items-center rounded-full bg-[#e0382d] px-1.5 py-0.5 text-xs leading-4 font-extrabold text-white shadow-[0_2px_5px_rgba(120,20,10,.45)] ring-2 ring-[#f7efdc]">
           {badge > 99 ? "99+" : badge}
         </span>
       )}
-      <svg viewBox="0 0 24 24" className="size-4 shrink-0 text-[#8a7b69]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+      <svg viewBox="0 0 24 24" className={`shrink-0 text-[#8a7b69] ${compact ? "size-[1.1em]" : "size-4"}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="m9 6 6 6-6 6" />
       </svg>
     </button>
@@ -450,10 +450,10 @@ export function AccountDrawer({
   if (inline) {
     return (
       <CompactCtx.Provider value>
-        <nav aria-label="Menu da conta" data-tour="menu" className="space-y-1.5">
+        <nav aria-label="Menu da conta" data-tour="menu" className="space-y-[0.45em]">
           {rows}
         </nav>
-        <button type="button" onClick={onSignOut} className="mt-2 w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#6b2a1c] transition hover:bg-white">
+        <button type="button" onClick={onSignOut} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
           Sair da conta
         </button>
         {modals}
