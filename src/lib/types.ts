@@ -31,6 +31,8 @@ type Base = {
   reaction?: string;
   /** Lista que quem está vendo pode editar (dono do mural ou autor do pin). Vem do servidor. */
   canEdit?: boolean;
+  /** Pin do mural de exemplo (tela de login): a lista pode ser marcada por qualquer pessoa, só na tela, para ver como funciona. */
+  demo?: boolean;
   /** Fui eu quem deixou este pin (posso excluí-lo). Vem do servidor. */
   mine?: boolean;
   /** Visão do dono: este pin pendente está esperando a aprovação dele. */

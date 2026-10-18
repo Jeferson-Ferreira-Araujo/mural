@@ -734,9 +734,15 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     },
     [loadBoard],
   );
+  const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
   // marcar/desmarcar um item da lista: aparece na hora e o servidor confirma (se falhar, volta)
   const toggleListItem = useCallback(
     async (id: string, index: number) => {
+      // mural de exemplo da tela de login: qualquer pessoa pode marcar os itens (só na tela, nada é salvo), para ver como a lista funciona
+      if (decor.some((it) => it.id === id && "type" in it && it.type === "list")) {
+        setDecor((prev) => prev.map((it) => (it.id === id && "items" in it ? { ...it, items: it.items.map((x, i) => (i === index ? { ...x, done: !x.done } : x)) } : it)));
+        return;
+      }
       const list = items.find((it) => it.id === id && "type" in it && it.type === "list" && "items" in it) as (BoardItem & { title: string; items: { text: string; done: boolean }[] }) | undefined;
       if (!list) return;
       const next = list.items.map((x, i) => (i === index ? { ...x, done: !x.done } : x));
@@ -747,7 +753,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         notify("Não foi possível marcar agora. Tente de novo.");
       }
     },
-    [items, notify],
+    [items, notify, decor],
   );
   const shownItems = isOwner ? items.map((it) => ("pending" in it && it.pending && !("hidden" in it) ? { ...it, ownerReview: true } : it)) : items;
 
@@ -993,7 +999,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
   // Revelado: o mural real, com os pins gravados no banco e o plano do próprio mural.
   // (a ordem aleatória só roda no navegador, depois de montar, para o servidor e o cliente concordarem)
-  const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
+  const decorDemo = useMemo(() => decor.map((it) => ("type" in it && it.type === "list" ? { ...it, demo: true } : it)), [decor]); // listas do exemplo: dá para marcar
   const [decorBadges, setDecorBadges] = useState<PlacedBadge[]>([]); // displays de enfeite do mural de exemplo da tela de login
   // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
@@ -1118,7 +1124,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
-          items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : selected ? lockedLayout : decor}
+          items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : selected ? lockedLayout : decorDemo}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
           showMeter={revealed}
           locked={!!selected && !unlocked}
