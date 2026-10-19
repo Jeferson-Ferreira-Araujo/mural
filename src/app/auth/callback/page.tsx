@@ -30,6 +30,12 @@ export default function AuthCallback() {
       } else {
         const { error: err } = await sb.auth.exchangeCodeForSession(code);
         if (err) {
+          // o próprio cliente pode já ter trocado o código (login com Google): se a sessão existe, o login deu certo
+          const { data } = await sb.auth.getSession();
+          if (data.session) {
+            router.replace(takeNext() ?? (await homeRouteFor(sb)));
+            return;
+          }
           setError("Não foi possível concluir o login. Abra o link no mesmo navegador em que você o pediu, ou peça um novo.");
           return;
         }
