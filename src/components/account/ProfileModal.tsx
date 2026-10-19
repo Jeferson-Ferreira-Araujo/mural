@@ -148,42 +148,9 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         </div>
       </dl>
 
-      <section aria-label="Privacidade dos seus murais" className="mt-5 space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4">
-        <h3 className="font-title text-base font-semibold">Privacidade dos murais</h3>
-        <div role="radiogroup" aria-label="Quem pode abrir os seus murais" className="grid grid-cols-2 gap-2">
-          {(
-            [
-              [false, "🌐 Público"],
-              [true, "🔒 Privado"],
-            ] as const
-          ).map(([val, label]) => (
-            <button
-              key={label}
-              type="button"
-              role="radio"
-              aria-checked={priv === val}
-              onClick={() => setPriv(val)}
-              className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        {priv && (
-          <>
-            <Field label="Pergunta de segurança">{(id) => <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}</Field>
-            <Field label="Resposta">{(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} autoComplete="off" placeholder="Digite a resposta" className={inputClass} />}</Field>
-          </>
-        )}
-        {privErr && (
-          <p role="alert" className="text-sm text-[#a23b2a]">
-            {privErr}
-          </p>
-        )}
-        <button type="button" onClick={() => void savePrivacy()} disabled={privBusy} className={primaryButton}>
-          {privBusy ? "Salvando…" : "Salvar privacidade"}
-        </button>
-      </section>
+      <p className="mt-5 rounded-2xl border border-[#e1d3ba] bg-white/60 p-3 text-sm text-[#4a3826]">
+        A pergunta de segurança agora é <strong>de cada mural</strong>: para mudar, abra <strong>Meus murais</strong> e toque em editar no mural.
+      </p>
 
       <form onSubmit={save} noValidate className="mt-5 space-y-3">
         <h3 className="font-title text-base font-semibold">Mudar senha</h3>

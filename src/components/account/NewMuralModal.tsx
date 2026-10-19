@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
 import { buyBoard, fetchInventory, type BoardOffer } from "@/lib/badges";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
+import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
+import { getProfilePrivacy } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
@@ -28,6 +30,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const flags = useFeatureFlags();
   const big = flags.mural_42 === true; // mural de 42 espaços: desligado por padrão (o administrador liga em Recursos)
   const [ttl, setTtl] = useState<PinTtl>(null);
+  // pergunta de segurança do mural novo: já vem igual à do seu primeiro mural, e dá para mudar
+  const [privacy, setPrivacy] = useState<Privacy>({ priv: false, question: "", answer: "" });
   const [buying, setBuying] = useState<string | null>(null); // tipo que a pessoa quer comprar (pede confirmação)
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +54,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     setError(null);
     setSize(28);
     setTtl(null);
+    setPrivacy({ priv: false, question: "", answer: "" });
+    void getProfilePrivacy(getBrowserSupabase()).then((p) => p && setPrivacy({ priv: p.private, question: p.question, answer: p.answer }));
     void load();
   }, [open]);
 
@@ -93,6 +99,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     if (!title.trim()) return setError("Preencha o nome do mural.");
     if (!big && size === 42) setSize(28);
     if (big && size === 42 && credits < slotsPrice) return setError("Créditos insuficientes para o mural de 42 espaços: faltam " + (slotsPrice - credits) + ".");
+    const perr = privacyError(privacy, false);
+    if (perr) return setError(perr);
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
@@ -104,6 +112,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       return;
     }
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
+    await sb.rpc("set_mural_privacy", { p_mural_id: created.id, p_private: privacy.priv, p_question: privacy.priv ? privacy.question.trim() : "", p_answer: privacy.priv ? privacy.answer.trim() : null });
     if (ttl) await sb.rpc("set_mural_pin_ttl", { p_mural_id: created.id, p_days: ttl });
     window.location.assign(`/${nick}/${created.slug}`); // abre o mural novo
   }
@@ -208,6 +217,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           </fieldset>
 
           <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
+          <PrivacyField value={privacy} onChange={setPrivacy} />
           <PinTtlField value={ttl} onChange={setTtl} />
 
           {/* tamanho: 28 espaços (padrão) ou 42, que é comprado com créditos e só existe criando um mural novo */}

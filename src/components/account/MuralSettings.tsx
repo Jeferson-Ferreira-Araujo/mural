@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
+import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
@@ -15,6 +16,24 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const plus = mural.plan === "full";
   const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
   const [ttl, setTtl] = useState<PinTtl>(mural.pin_ttl_days ?? null);
+  // pergunta de segurança deste mural (cada mural tem a sua)
+  const [privacy, setPrivacy] = useState<Privacy>({ priv: !!mural.question, question: mural.question ?? "", answer: "" });
+  const [privOrig, setPrivOrig] = useState<Privacy | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void getBrowserSupabase()
+      .rpc("get_mural_privacy", { p_mural_id: mural.id })
+      .then(({ data }) => {
+        if (!alive || !data) return;
+        const p = data as { private: boolean; question: string; answer: string };
+        const v = { priv: p.private, question: p.question, answer: p.answer };
+        setPrivacy(v);
+        setPrivOrig(v);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [mural.id]);
   const [welcomeOn, setWelcomeOn] = useState(!!mural.welcome_message?.trim()); // caixa marcada = o campo de texto aparece; desmarcada = sem mensagem (apaga a que existia)
   const strip = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0); // qual fundo está à vista (para os pontinhos)
@@ -85,6 +104,21 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         return;
       }
       setCurrentBoard(board);
+    }
+    // pergunta de segurança do mural: só envia se mudou (quem já tinha entrado precisa responder de novo)
+    if (privOrig && (privacy.priv !== privOrig.priv || privacy.question.trim() !== privOrig.question.trim() || privacy.answer.trim() !== privOrig.answer.trim())) {
+      const perr = privacyError(privacy, privOrig.priv && !!privOrig.answer);
+      if (perr) {
+        setBusy(false);
+        setMsg({ ok: false, text: perr });
+        return;
+      }
+      const { error: ep } = await sb.rpc("set_mural_privacy", { p_mural_id: mural.id, p_private: privacy.priv, p_question: privacy.priv ? privacy.question.trim() : "", p_answer: privacy.priv && privacy.answer.trim() ? privacy.answer.trim() : null });
+      if (ep) {
+        setBusy(false);
+        setMsg({ ok: false, text: "Não foi possível salvar a pergunta de segurança. Confira os campos e tente de novo." });
+        return;
+      }
     }
     if (ttl !== (mural.pin_ttl_days ?? null)) {
       const { error: et } = await sb.rpc("set_mural_pin_ttl", { p_mural_id: mural.id, p_days: ttl });
@@ -190,6 +224,8 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         </fieldset>
 
         <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+
+        <PrivacyField value={privacy} onChange={setPrivacy} />
 
         <PinTtlField value={ttl} onChange={setTtl} />
 
