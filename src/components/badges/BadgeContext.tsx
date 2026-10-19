@@ -859,7 +859,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
   const aTop = Math.min(Math.max(g.cy - Ha / 2, 44), vh - Ha - 8);
 
   // barra de inclinação: pequena, centrada logo abaixo do botton; só desce para baixo da pílula se as duas se encostarem
-  const SH = 50;
+  const SH = 66;
   const sLeft = Math.min(Math.max(g.cx - SW / 2, 4), vw - SW - 4);
   const under = g.cy + g.Ry + 6;
   const touchesPill = sLeft < pLeft + W && sLeft + SW > pLeft && under < pTop + Hh && under + SH > pTop;
@@ -892,7 +892,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
             onTilt(id, 0);
             window.setTimeout(() => onTiltEnd(id), 0);
           }}
-          className="-mt-1 cursor-pointer px-3 pt-0 pb-0.5 text-[10px] leading-none font-semibold text-[#f6c93f] disabled:cursor-default disabled:text-white/40"
+          className="mt-1.5 mb-0.5 min-h-8 cursor-pointer rounded-lg px-4 py-1.5 text-xs leading-none font-semibold text-[#f6c93f] transition hover:bg-white/10 active:bg-white/20 disabled:cursor-default disabled:text-white/40 disabled:hover:bg-transparent"
         >
           Restaurar
         </button>

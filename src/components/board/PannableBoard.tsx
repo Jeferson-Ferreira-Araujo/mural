@@ -202,45 +202,75 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
     apply(false);
   }, [startZoomed, apply, clampView, limits]);
 
-  // dica de arrastar: na primeira vez do dia que o mural abre ampliado no celular, o quadro balança de leve para um lado e para o outro
-  // e aparece um aviso discreto (some sozinho ou assim que a pessoa mexe). Vale para qualquer conta, nova ou antiga.
+  // dica de arrastar: na primeira vez do dia que o mural abre ampliado no celular, o quadro percorre as duas pontas e mostra um aviso discreto
+  // (some sozinho ou assim que a pessoa mexe). Vale para qualquer conta. Conta recém-criada: o site pede a dica de novo (evento "pinz:pan-hint")
+  // assim que as boas-vindas fecham, mesmo que o aparelho já tenha visto a dica hoje; e o mural também volta ao zoom inicial se ainda não foi mexido.
   const [hint, setHint] = useState(false);
   const hintDone = useRef(false);
-  useEffect(() => {
-    if (!startZoomed || hintDone.current || touched.current || !ready.current) return;
-    const { w, h } = size.current;
-    if (w <= 0 || w >= 700) return;
-    const today = new Date().toLocaleDateString("sv-SE");
-    try {
-      if (localStorage.getItem("pinz:pan-hint") === today) return;
-    } catch {}
-    hintDone.current = true;
-    const base = view.current.x;
-    const timers: number[] = [];
-    const go = (at: number, x: number, ms: number) =>
-      timers.push(
+  const hintTimers = useRef<number[]>([]);
+  const startHint = useCallback(
+    (force: boolean) => {
+      if (!startZoomedRef.current || hintDone.current || touched.current || !ready.current) return;
+      const { w, h } = size.current;
+      if (w <= 0 || w >= 700) return;
+      const today = new Date().toLocaleDateString("sv-SE");
+      try {
+        if (!force && localStorage.getItem("pinz:pan-hint") === today) return;
+      } catch {}
+      hintDone.current = true;
+      if (force) {
+        // volta ao zoom e ao centro, para a dica partir do ponto certo
+        const { minS, defS } = limits();
+        const s0 = Math.min(defS, Math.max(minS, h / WORLD_H));
+        view.current = clampView((w - WORLD_W * s0) / 2, (h - WORLD_H * s0) / 2, s0);
+        apply(true);
+      }
+      const base = view.current.x;
+      const go = (at: number, x: number, ms: number) =>
+        hintTimers.current.push(
+          window.setTimeout(() => {
+            if (touched.current || pointers.current.size > 0) return;
+            view.current = clampView(x, view.current.y, view.current.s);
+            apply(true, ms);
+          }, at),
+        );
+      hintTimers.current.push(
         window.setTimeout(() => {
-          if (touched.current || pointers.current.size > 0) return;
-          view.current = clampView(x, view.current.y, view.current.s);
-          apply(true, ms);
-        }, at),
+          if (touched.current) return;
+          try {
+            localStorage.setItem("pinz:pan-hint", today);
+          } catch {}
+          setHint(true);
+        }, 700),
       );
-    timers.push(
-      window.setTimeout(() => {
-        if (touched.current) return;
-        try {
-          localStorage.setItem("pinz:pan-hint", today);
-        } catch {}
-        setHint(true);
-      }, 700),
-    );
-    // vai até a ponta de um lado, atravessa até a ponta do outro (mostra que o mural é grande) e volta ao centro
-    go(900, -1e6, 1100);
-    go(2150, 1e6, 1700);
-    go(3950, base, 1100);
-    timers.push(window.setTimeout(() => setHint(false), 5600));
-    return () => timers.forEach((t) => window.clearTimeout(t));
-  }, [startZoomed, apply, clampView]);
+      // vai até a ponta de um lado, atravessa até a ponta do outro (mostra que o mural é grande) e volta ao centro
+      go(900, -1e6, 1100);
+      go(2150, 1e6, 1700);
+      go(3950, base, 1100);
+      hintTimers.current.push(window.setTimeout(() => setHint(false), 5600));
+    },
+    [apply, clampView, limits],
+  );
+  const startHintRef = useRef(startHint);
+  startHintRef.current = startHint;
+  useEffect(() => {
+    startHint(false);
+  }, [startZoomed, startHint]);
+  // o mural pode ficar pronto (medido) depois de a tela montar: tenta de novo quando ele aparece
+  useEffect(() => {
+    const t = window.setTimeout(() => startHintRef.current(false), 1200);
+    const ask = () => {
+      hintDone.current = false;
+      startHintRef.current(true);
+    };
+    window.addEventListener("pinz:pan-hint", ask);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("pinz:pan-hint", ask);
+      hintTimers.current.forEach((x) => window.clearTimeout(x));
+      hintTimers.current = [];
+    };
+  }, []);
 
   // roda do mouse amplia (útil em tablets e testes no computador)
   useEffect(() => {

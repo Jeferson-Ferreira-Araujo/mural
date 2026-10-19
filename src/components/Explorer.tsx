@@ -1265,7 +1265,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      {everOnb && <OnboardingModal open={onbOpen} onClose={() => setOnbOpen(false)} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
+      {everOnb && <OnboardingModal open={onbOpen} onClose={() => (setOnbOpen(false), window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 500))} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
       {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
       <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label="Pins arquivados">
         {archivedNote && (
