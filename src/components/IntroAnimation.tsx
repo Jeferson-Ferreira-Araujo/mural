@@ -26,13 +26,8 @@ const done = () => {
   } catch {}
 };
 
-/** Varredura com borda suave (a tinta "vai sendo escrita"): anima a posição da máscara. */
-function maskStyle(axis: "x" | "y"): React.CSSProperties {
-  const grad = axis === "x" ? "linear-gradient(90deg, #000 0%, #000 44%, transparent 56%, transparent 100%)" : "linear-gradient(180deg, #000 0%, #000 44%, transparent 56%, transparent 100%)";
-  const size = axis === "x" ? "300% 100%" : "100% 300%";
-  const pos = axis === "x" ? "100% 0%" : "0% 100%";
-  return { maskImage: grad, WebkitMaskImage: grad, maskSize: size, WebkitMaskSize: size, maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: pos, WebkitMaskPosition: pos } as React.CSSProperties;
-}
+/** Varredura da tinta ("vai sendo escrita"): o recorte da letra começa fechado e abre até aparecer inteira (clip-path é bem mais leve que máscara). */
+const hidden = (axis: "x" | "y") => (axis === "x" ? "inset(0 100% 0 0)" : "inset(0 0 100% 0)");
 
 /**
  * Abertura do site (só movimento, sem mãos): o bloco amarelo aparece no meio da tela, "pinz" é escrito letra por letra,
@@ -75,7 +70,7 @@ export function IntroAnimation() {
       try {
         // espera as imagens (papel + letras) para a escrita não "piscar"
         const imgs = [...el.querySelectorAll("img")];
-        await Promise.race([Promise.all(imgs.map((i) => i.decode().catch(() => undefined))), wait(1500)]);
+        await Promise.race([Promise.all(imgs.map((i) => i.decode().catch(() => undefined))), wait(900)]);
         if (cancelled) return;
 
         // 1) o bloco entra no meio da tela
@@ -87,7 +82,7 @@ export function IntroAnimation() {
               { opacity: 0, transform: `translate(${dx}px, ${dy + 18}px) scale(${big * 0.92}) rotate(-4deg)` },
               { opacity: 1, transform: `${center} rotate(0deg)` },
             ],
-            { duration: 300, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" },
+            { duration: 220, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" },
           ),
         );
 
@@ -97,19 +92,17 @@ export function IntroAnimation() {
         for (const g of INK_ORDER) {
           const layer = el.querySelector<HTMLElement>(`[data-ink="${g.k}"]`);
           if (layer) {
-            const from = g.axis === "x" ? "100% 0%" : "0% 100%";
-            const to = g.axis === "x" ? "0% 0%" : "0% 0%";
-            const a = add(layer.animate([{ maskPosition: from, webkitMaskPosition: from }, { maskPosition: to, webkitMaskPosition: to }] as Keyframe[], { duration: g.ms, delay: at, easing: "linear", fill: "both" }));
+            const a = add(layer.animate([{ clipPath: hidden(g.axis) }, { clipPath: "inset(0 0 0 0)" }], { duration: Math.round(g.ms * 0.8), delay: at, easing: "linear", fill: "both" }));
             writes.push(a.finished);
           }
-          at += g.ms * 0.85;
+          at += g.ms * 0.65;
         }
         await appear.finished;
         await Promise.all(writes);
         if (cancelled) return;
 
         // 3) a tachinha cai e prende; o papel cede um instante
-        const DROP = 300;
+        const DROP = 220;
         const drop = add(
           tack.current!.animate(
             [
@@ -135,22 +128,22 @@ export function IntroAnimation() {
         );
         await drop.finished;
         if (cancelled) return;
-        await wait(140);
+        await wait(50);
         if (cancelled) return;
 
         // 4) sobe até o lugar do logo, e o formulário aparece
         const rect = target.getBoundingClientRect();
         const toX = rect.left - r.left;
         const toY = rect.top - r.top;
-        const fly = add(el.animate([{ transform: center }, { transform: `translate(${toX}px, ${toY}px) scale(${rect.width / r.width})` }], { duration: 480, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" }));
-        add(back.current!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 480, fill: "forwards" }));
+        const fly = add(el.animate([{ transform: center }, { transform: `translate(${toX}px, ${toY}px) scale(${rect.width / r.width})` }], { duration: 380, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" }));
+        add(back.current!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, fill: "forwards" }));
         await fly.finished;
       } catch {
         /* pula para o fim */
       } finally {
         if (!cancelled) {
           done(); // mostra o logo real e faz o formulário aparecer
-          const fade = root.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" });
+          const fade = root.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: "forwards" });
           await fade?.finished.catch(() => undefined);
           root.current?.remove();
         }
@@ -167,9 +160,9 @@ export function IntroAnimation() {
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
       <div ref={back} className="absolute inset-0 bg-[#1a0f06]/75 opacity-0" />
-      <div ref={note} className="absolute origin-center will-change-transform [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
+      <div ref={note} className="absolute origin-center will-change-transform" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/pinz/papel.webp" alt="" draggable={false} className="block size-full select-none" />
+        <img src="/img/pinz/papel.webp" alt="" draggable={false} className="block size-full select-none [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" />
         {INK_ORDER.map((g) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -179,7 +172,7 @@ export function IntroAnimation() {
             alt=""
             draggable={false}
             className="absolute block select-none"
-            style={{ left: `${INK_BOX[g.k].left}%`, top: `${INK_BOX[g.k].top}%`, width: `${INK_BOX[g.k].width}%`, height: `${INK_BOX[g.k].height}%`, ...maskStyle(g.axis) }}
+            style={{ left: `${INK_BOX[g.k].left}%`, top: `${INK_BOX[g.k].top}%`, width: `${INK_BOX[g.k].width}%`, height: `${INK_BOX[g.k].height}%`, clipPath: hidden(g.axis) }}
           />
         ))}
         <span ref={tack} className="absolute block opacity-0" style={{ ...TACK }}>
