@@ -26,8 +26,8 @@ const done = () => {
   } catch {}
 };
 
-/** Varredura da tinta ("vai sendo escrita"): o recorte da letra começa fechado e abre até aparecer inteira (clip-path é bem mais leve que máscara). */
-const hidden = (axis: "x" | "y") => (axis === "x" ? "inset(0 100% 0 0)" : "inset(0 0 100% 0)");
+/** A tinta "é escrita" só com opacidade e escala (rodam na placa de vídeo, sem repintar nada): cada letra abre a partir do lado em que começa o traço. */
+const from = (axis: "x" | "y") => ({ opacity: 0, transform: axis === "x" ? "scaleX(0.55)" : "scaleY(0.55)", transformOrigin: axis === "x" ? "0% 50%" : "50% 0%" });
 
 /**
  * Abertura do site (só movimento, sem mãos): o bloco amarelo aparece no meio da tela, "pinz" é escrito letra por letra,
@@ -92,7 +92,7 @@ export function IntroAnimation() {
         for (const g of INK_ORDER) {
           const layer = el.querySelector<HTMLElement>(`[data-ink="${g.k}"]`);
           if (layer) {
-            const a = add(layer.animate([{ clipPath: hidden(g.axis) }, { clipPath: "inset(0 0 0 0)" }], { duration: Math.round(g.ms * 0.8), delay: at, easing: "linear", fill: "both" }));
+            const a = add(layer.animate([{ opacity: 0, transform: from(g.axis).transform }, { opacity: 1, transform: "scale(1)" }], { duration: Math.max(120, Math.round(g.ms * 1.1)), delay: at, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" }));
             writes.push(a.finished);
           }
           at += g.ms * 0.65;
@@ -172,7 +172,7 @@ export function IntroAnimation() {
             alt=""
             draggable={false}
             className="absolute block select-none"
-            style={{ left: `${INK_BOX[g.k].left}%`, top: `${INK_BOX[g.k].top}%`, width: `${INK_BOX[g.k].width}%`, height: `${INK_BOX[g.k].height}%`, clipPath: hidden(g.axis) }}
+            style={{ left: `${INK_BOX[g.k].left}%`, top: `${INK_BOX[g.k].top}%`, width: `${INK_BOX[g.k].width}%`, height: `${INK_BOX[g.k].height}%`, opacity: 0, transformOrigin: from(g.axis).transformOrigin, willChange: "transform, opacity" }}
           />
         ))}
         <span ref={tack} className="absolute block opacity-0" style={{ ...TACK }}>
