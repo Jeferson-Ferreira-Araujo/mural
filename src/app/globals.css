@@ -221,7 +221,7 @@ body.badge-dragging * {
 /* abertura animada (IntroAnimation): enquanto toca, o logo e o formulário reais esperam */
 [data-intro="play"] [data-explorer] .brand-real {
   visibility: hidden;
-  animation: intro-reveal 0s linear 8s forwards; /* segurança: se a animação não rodar, o logo aparece */
+  animation: intro-reveal 0s linear 3.8s forwards; /* segurança: se a animação não rodar (ou a página demorar a carregar), o logo aparece */
 }
 @keyframes intro-reveal {
   to {
@@ -235,6 +235,14 @@ body.badge-dragging * {
   opacity: 0;
   transform: translateY(14px);
   pointer-events: none;
+  animation: intro-form-reveal 0s linear 3.8s forwards; /* o formulário também nunca fica escondido para sempre */
+}
+@keyframes intro-form-reveal {
+  to {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
 }
 
 /* imagem do mural: sem os marcadores de "espaço livre" */

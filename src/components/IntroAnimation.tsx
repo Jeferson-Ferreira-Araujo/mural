@@ -43,8 +43,10 @@ export function IntroAnimation() {
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // a página demorou a ficar pronta (celular lento ou rede ruim): não faz a pessoa esperar mais pela abertura
+    const late = performance.now() > 2600;
     const target = [...document.querySelectorAll<HTMLImageElement>(".brand-real img")].find((i) => i.offsetParent && i.getBoundingClientRect().width > 20);
-    if (reduced || !target || !root.current || !back.current || !note.current || !tack.current) {
+    if (reduced || late || !target || !root.current || !back.current || !note.current || !tack.current) {
       done();
       root.current?.remove();
       return;
@@ -150,7 +152,15 @@ export function IntroAnimation() {
       }
     };
     void run();
+    // trava de segurança: se a abertura passar de ~3,4 s, mostra o logo e o formulário de qualquer jeito
+    const watchdog = window.setTimeout(() => {
+      cancelled = true;
+      anims.forEach((a) => a.cancel());
+      done();
+      root.current?.remove();
+    }, 3400);
     return () => {
+      window.clearTimeout(watchdog);
       cancelled = true;
       anims.forEach((a) => a.cancel());
       done();
