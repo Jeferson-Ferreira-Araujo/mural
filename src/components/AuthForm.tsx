@@ -11,6 +11,7 @@ import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
 import { CodeStep } from "./CodeStep";
 import { OAuthButtons } from "./OAuthButtons";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
+import { useLit } from "@/i18n/literal";
 
 type Mode = "login" | "signup";
 
@@ -22,6 +23,7 @@ export const authIntent: { mode: Mode; /** a pessoa escolheu a aba num dos botõ
  * Ao entrar, a sessão muda e a tela se atualiza sozinha (quem usa observa `useSession`).
  */
 export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entrar) */ initialMode?: Mode } = {}) {
+  const tl = useLit();
   const router = useRouter();
   const t = useTranslations("auth");
   const [mode, setMode] = useState<Mode>(() => (authIntent.touched ? authIntent.mode : (initialMode ?? authIntent.mode)));
@@ -47,7 +49,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
     if (!password) return setError(t("errors.passwordRequired"));
     if (mode === "signup") {
       const problem = passwordProblem(password, { email: mail, username: nick });
-      if (problem) return setError(problem);
+      if (problem) return setError(tl(problem));
     }
     setBusy(true);
     setError(null);
@@ -58,7 +60,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       const check = await checkSignup(sb, nick, mail);
       if (check === "denied") {
         setBusy(false);
-        return setError(NAME_DENIED_TEXT);
+        return setError(tl(NAME_DENIED_TEXT));
       }
       if (check === "verify") {
         const sent = await sendEmailCode(sb, mail, nick);

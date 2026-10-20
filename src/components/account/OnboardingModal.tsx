@@ -8,6 +8,7 @@ import { primaryButton } from "../ui";
 import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, toIso } from "./BirthField";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Boas-vindas de quem acabou de criar a conta: foto de perfil, data de nascimento e convite para o tour.
@@ -15,6 +16,7 @@ import { useTranslations } from "next-intl";
  * Aparece uma vez por conta (o banco guarda que já passou); fechar ou "Agora não" também conta.
  */
 export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { open: boolean; onClose: () => void; nick: string; plus?: boolean; uid?: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.OnboardingModal");
   const [step, setStep] = useState<"profile" | "tour">("profile");
   const [birth, setBirth] = useState("");
@@ -45,11 +47,11 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
     setError(null);
     if (birth) {
       const iso = toIso(birth);
-      if (!iso) return setError(BIRTH_FORMAT_HINT);
+      if (!iso) return setError(tl(BIRTH_FORMAT_HINT));
       setBusy(true);
       const err = await saveOnboarding(getBrowserSupabase(), iso, false);
       setBusy(false);
-      if (err) return setError(BIRTH_ERROR[err]);
+      if (err) return setError(tl(BIRTH_ERROR[err]));
     }
     setStep("tour");
   }

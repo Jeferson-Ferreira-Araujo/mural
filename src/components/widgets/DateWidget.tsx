@@ -5,9 +5,8 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
-const MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
-const WEEKDAYS = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
 /** Estilos do calendário do dia: folha e noite são os de origem; os outros vêm dos estilos compartilhados. */
 const SKINS: Record<string, Skin> = {
@@ -35,14 +34,15 @@ function useToday() {
  */
 export function DateWidget({ style = "page", frame }: { style?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.DateWidget");
+  const wt = useWT();
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const base = baseStyle(style);
   const d = today ?? new Date(2026, 0, 15); // até montar: uma data qualquer
   const day = String(d.getDate());
-  const weekday = WEEKDAYS[d.getDay()];
-  const month = MONTHS[d.getMonth()];
+  const weekday = new Intl.DateTimeFormat(wt.tag, { weekday: "long" }).format(d).toLowerCase();
+  const month = new Intl.DateTimeFormat(wt.tag, { month: "long" }).format(d).toLowerCase();
   const year = d.getFullYear();
   const wd = weekday.replace("-feira", "");
 

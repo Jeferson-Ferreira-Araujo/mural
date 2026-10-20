@@ -19,6 +19,7 @@ import { DrawForm } from "./DrawForm";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 type Props = {
   open: boolean;
@@ -89,6 +90,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  */
 function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
   const tx = useTranslations("components.composer.ComposerDialog");
+  const tl = useLit();
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -176,7 +178,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 
       {error && (
         <p role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] px-3.5 py-2.5 text-sm font-semibold text-[#8c3022]">
-          {error}
+          {tl(error)}
         </p>
       )}
       <button type="submit" data-tour="compose-send" disabled={!canSend} className={primaryButton}>

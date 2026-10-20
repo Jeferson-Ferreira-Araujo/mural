@@ -7,6 +7,7 @@ import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
@@ -65,6 +66,7 @@ const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(
 
 /** Planos em carrossel: o que cada um custa e inclui; com a cobrança ligada, também assina o PINZ+ e compra créditos. */
 export function PlansModal({ open, onClose, plan, credits }: { open: boolean; onClose: () => void; plan: PlanId; credits: number }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PlansModal");
   const [sub, setSub] = useState<Subscription>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -83,7 +85,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
     setMsg(null);
     const err = await startCheckout(product);
     if (err) {
-      setMsg(err);
+      setMsg(tl(err));
       setBusy(null);
     }
   }

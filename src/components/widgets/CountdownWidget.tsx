@@ -5,6 +5,7 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -39,16 +40,17 @@ function useTick(): number | null {
 
 /**
  * Contador regressivo até uma data: nome do evento e dias, horas, minutos e segundos que faltam.
- * Chegando a hora mostra "Chegou o dia!"; depois do dia, há quanto tempo foi. Cinco estilos, em formato retangular ou quadrado.
+ * Chegando a hora mostra wt.arrived; depois do dia, há quanto tempo foi. Cinco estilos, em formato retangular ou quadrado.
  */
 export function CountdownWidget({ style = "neon", title, target, time, frame }: { style?: string; title?: string; target?: string; time?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.CountdownWidget");
+  const wt = useWT();
   const now = useTick();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const skin = SKINS[baseStyle(style)] ?? SKINS.neon;
   const at = targetOf(target, time);
-  const name = (title ?? "").trim() || "Seu evento";
+  const name = (title ?? "").trim() || wt.defEvent;
 
   const diff = at && now !== null ? at.getTime() - now : null; // ms (negativo = já passou)
   const arrived = diff !== null && diff <= 0;
@@ -59,10 +61,10 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
   const minutes = Math.floor(left / 60_000) % 60;
   const seconds = Math.floor(left / 1000) % 60;
   const cells: [string, string][] = [
-    [String(days), days === 1 ? "dia" : "dias"],
-    [pad(hours), "horas"],
-    [pad(minutes), "min"],
-    [pad(seconds), "seg"],
+    [String(days), days === 1 ? wt.day : wt.days],
+    [pad(hours), wt.hours],
+    [pad(minutes), wt.min],
+    [pad(seconds), wt.sec],
   ];
   const big = square ? 2.05 : 2.9;
 
@@ -83,7 +85,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
             </p>
             {ago >= 1 && (
               <p className="mt-[0.35em] text-[1.1em] font-semibold" style={{ color: skin.sub }}>
-                há {ago} {ago === 1 ? "dia" : "dias"}
+                {wt.ago(ago)}
               </p>
             )}
           </div>

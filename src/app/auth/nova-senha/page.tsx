@@ -9,9 +9,11 @@ import { homeRouteFor } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Destino do link de "trocar a senha" enviado por e-mail: a sessão do link já chegou (pelo /auth/callback); aqui a pessoa escolhe a nova senha. */
 export default function NovaSenha() {
+  const tl = useLit();
   const tx = useTranslations("app.auth.nova_senha.page");
   const router = useRouter();
   const [state, setState] = useState<"loading" | "form" | "nosession">("loading");
@@ -37,7 +39,7 @@ export default function NovaSenha() {
     e.preventDefault();
     setMsg(null);
     const problem = passwordProblem(pw, { email });
-    if (problem) return setMsg(problem);
+    if (problem) return setMsg(tl(problem));
     if (pw !== pw2) return setMsg(tx("m_asSenhasNaoSaoIguais"));
     setBusy(true);
     const sb = getBrowserSupabase();

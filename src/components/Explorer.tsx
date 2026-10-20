@@ -79,6 +79,7 @@ import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 import { useTranslations, useLocale } from "next-intl";
 import type { DemoLocale } from "@/data/demoText";
+import { useLit } from "@/i18n/literal";
 
 
 /** "Salvar imagem do mural" fica desligado por enquanto (a qualidade da imagem ainda está em estudo). Ligue para reabrir no menu da conta. */
@@ -89,6 +90,7 @@ const EXPORT_IMAGE_ENABLED = false;
  * revela o quadro (que fica desfocado até lá). Também abre direto em um mural (`/nickname/mural`).
  */
 export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.Explorer");
   const demoLocale = useLocale() as DemoLocale;
   const localeRef = useRef(demoLocale);
@@ -520,7 +522,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       setItems([]);
       setBoardLoaded(false);
       autoKey.current = null;
-      if (!openMural_) notify(selected?.kind === "shared" ? tx("m_porSegurancaDigiteASenha") : why); // mural público volta a entrar sozinho, sem aviso
+      if (!openMural_) notify(selected?.kind === "shared" ? tx("m_porSegurancaDigiteASenha") : tl(why)); // mural público volta a entrar sozinho, sem aviso
       // a pergunta pode ter mudado: mostra a atual
       if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
     },
@@ -632,7 +634,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         notify(tx("m_naoFoiPossivelConcluirAgora"));
         return false;
       }
-      notify(done);
+      notify(tl(done));
       await loadBoard();
       if (firstOwnId) void listOwnerPins(getBrowserSupabase(), firstOwnId).then((l) => l && setPendingCount(l.filter((p) => p.status === "pending").length));
       return true;
@@ -709,7 +711,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     try {
       const blob = await boardToImage(el);
       const res = await deliverImage(blob, `pinz-${slug ?? "mural"}`);
-      if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸" : "Imagem salva! 📸");
+      if (res !== "canceled") notify(res === "shared" ? tl("Imagem pronta! 📸") : tl("Imagem salva! 📸"));
     } catch {
       notify(tx("m_naoFoiPossivelGerarA"));
     } finally {
@@ -752,7 +754,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       const sb = getBrowserSupabase();
       const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? tx("m_bottonLiberadoComUnidadesJa", { v0: item.qty }) : tx("m_bottonLiberadoJaEstaNa")) : item.kind === "board" ? tx("m_fundoLiberadoApliqueEmEditar") : item.kind === "product" ? tx("m_displayLiberadoEleJaEsta") : tx("m_muralExtraLiberadoCrieO"));
+        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : tl("+1 unidade adicionada.")) : item.kind === "badge" ? (item.qty > 1 ? tx("m_bottonLiberadoComUnidadesJa", { v0: item.qty }) : tx("m_bottonLiberadoJaEstaNa")) : item.kind === "board" ? tx("m_fundoLiberadoApliqueEmEditar") : item.kind === "product" ? tx("m_displayLiberadoEleJaEsta") : tx("m_muralExtraLiberadoCrieO"));
         await reloadInventory();
         return true;
       }

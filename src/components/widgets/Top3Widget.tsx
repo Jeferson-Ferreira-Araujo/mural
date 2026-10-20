@@ -3,6 +3,7 @@
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 /** Estilos do Top 3: pódio (papel claro), noite (escuro) e neon (roxo e rosa). */
 const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string; edge: string; title: string; glow: string }> = {
@@ -32,6 +33,7 @@ function Spark({ side, color, size }: { side: "left" | "right"; color: string; s
  */
 export function Top3Widget({ style = "podium", title, items, frame }: { style?: string; title?: string; items?: string[]; frame?: string | null }) {
   const tx = useTranslations("components.widgets.Top3Widget");
+  const wt = useWT();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const sk = SKINS[baseStyle(style)] ?? SKINS.podium;
@@ -70,7 +72,7 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
                   </svg>
                 )}
                 {/* o número tem o tamanho do próprio círculo (cqh) e desce um pouco: os algarismos ficam acima do centro da linha de texto */}
-                <span aria-label={`${i + 1}º lugar`} className="block size-full rounded-full [container-type:size]" style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
+                <span aria-label={wt.place(i + 1)} className="block size-full rounded-full [container-type:size]" style={{ background: MEDALS[i].bg, color: MEDALS[i].ink, boxShadow: "inset 0 0 0 0.09em rgba(255,255,255,.6), 0 0.12em 0.25em rgba(0,0,0,.28)" }}>
                   <span className="grid size-full place-items-center font-black tabular-nums" style={{ fontSize: "50cqh", lineHeight: 1, paddingTop: "0.06em" }}>
                     {i + 1}
                   </span>

@@ -4,10 +4,11 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Corner, ClockIcon, CLOCK_ZONES, isNightHour, MoonIcon, sceneForHour, SunIcon, useNow, WidgetFrame, type Now } from "./core";
 import { Skyline } from "./scenes";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 export type ClockStyle = "sunset" | "flip" | "minimal" | "analog" | "pixel";
 
-const dateLine = (n: Now | null) => (n ? `${n.weekdayShort}, ${n.day} de ${n.monthShort.charAt(0).toUpperCase() + n.monthShort.slice(1)}` : "");
+const dateLine = (n: Now | null) => (n ? n.dateLine : "");
 
 /** Folhas do estilo Minimal e Analógico (cantos). */
 const Leaves = ({ dark }: { dark?: boolean }) => (
@@ -36,7 +37,8 @@ function Flip({ v }: { v: string }) {
 /** Relógio quadrado (12 × 12 em): os mesmos cinco estilos, com a hora em cima e a data embaixo. */
 function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: Now | null; time: string; wd: string; place: string | null | undefined; hour: number; frame?: string | null }) {
   const tx = useTranslations("components.widgets.ClockWidget");
-  const dm = n ? `${n.day} ${n.monthShort.charAt(0).toUpperCase()}${n.monthShort.slice(1)}` : "";
+  const wt = useWT();
+  const dm = n ? n.dm : "";
   const secDeg = ((n?.second ?? 0) / 60) * 360;
   const minDeg = ((n?.minute ?? 0) + (n?.second ?? 0) / 60) * 6;
   const hourDeg = (((n?.hour ?? 0) % 12) + (n?.minute ?? 0) / 60) * 30;
@@ -174,13 +176,14 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
 /** Relógio: cinco estilos, em formato retangular ou quadrado. A hora passa sozinha (atualiza a cada poucos segundos). */
 export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame }: { style?: string; tz?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.ClockWidget");
+  const wt = useWT();
   const zone = CLOCK_ZONES.some((z) => z.id === tz) ? tz : "America/Sao_Paulo";
   const n = useNow(zone, 1000);
   const hour = n?.hour ?? 21;
-  const place = zone !== "local" ? CLOCK_ZONES.find((z) => z.id === zone)?.label : null;
+  const place = zone !== "local" ? wt.zones[zone] ?? CLOCK_ZONES.find((z) => z.id === zone)?.label : null;
   const time = n ? `${n.hh}:${n.mm}` : "--:--";
   const wd = n?.weekdayShort ?? "";
-  const dm = n ? `${n.day} ${n.monthShort}` : "";
+  const dm = n ? n.dm : "";
 
   if (shapeOfStyle(style) === "square") return <ClockSquare st={baseStyle(style)} n={n} time={time} wd={wd} place={place} hour={hour} frame={frame} />;
 
@@ -245,7 +248,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
                 {wd}
               </p>
               <p className="text-[1.4em]" suppressHydrationWarning>
-                {n ? `${n.day} ${n.monthShort.charAt(0).toUpperCase()}${n.monthShort.slice(1)}` : ""}
+                {n ? n.dm : ""}
               </p>
               {place && <p className="mt-[0.2em] text-[0.62em] opacity-70">{place}</p>}
             </div>
@@ -292,7 +295,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
               {time}
             </p>
             <p style={{ fontFamily: "var(--font-silk), monospace", fontSize: "1.15em", marginTop: "0.45em", letterSpacing: "0.12em", textTransform: "uppercase", textShadow: "0.08em 0.08em 0 #2a1f6a" }} suppressHydrationWarning>
-              {wd} {n ? `${n.day} ${n.monthShort}` : ""}
+              {wd} {n ? n.dm : ""}
             </p>
           </div>
         </div>

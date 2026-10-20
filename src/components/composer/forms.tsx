@@ -13,6 +13,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
 const PLAYER_NOTE_MAX = 32;
@@ -301,6 +302,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
 }
 
 export function PhotoForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [src, setSrc] = useState<string | null>(null);
   const [ratio, setRatio] = useState<number | null>(null);
@@ -312,7 +314,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
   async function pick(original: File | undefined) {
     if (!original) return;
-    if (!original.type.startsWith("image/")) return setError("Escolha um arquivo de imagem.");
+    if (!original.type.startsWith("image/")) return setError(tl("Escolha um arquivo de imagem."));
     setError(null);
     const file = await downscalePhoto(original); // foto da câmera: reduz sozinha, sem o usuário precisar saber o tamanho
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) return setError(tx("m_estaFotoFicouGrandeDemais", { v0: (file.size / 1048576).toFixed(0) }));

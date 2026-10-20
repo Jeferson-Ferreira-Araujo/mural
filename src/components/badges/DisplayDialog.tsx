@@ -6,11 +6,13 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import type { FrameColor } from "@/lib/style";
 import { CLOCK_ZONES } from "../widgets/core";
+import { useWT } from "../widgets/wt";
 import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { Field, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const SAMPLE: Record<string, Partial<DisplayData>> = {
   bible: { text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" },
@@ -37,7 +39,9 @@ const isoPlus = (days: number) => {
  * `onSubmit` recebe os dados prontos para o servidor.
  */
 export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDialog");
+  const wt = useWT();
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
@@ -103,7 +107,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   }, [bkFile]);
   function pickCover(f?: File) {
     if (!f) return;
-    if (!f.type.startsWith("image/")) return setErr("Escolha um arquivo de imagem.");
+    if (!f.type.startsWith("image/")) return setErr(tl("Escolha um arquivo de imagem."));
     setErr(null);
     setBkFile(f);
   }
@@ -175,7 +179,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
               <select id={id} value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass}>
                 {CLOCK_ZONES.map((z) => (
                   <option key={z.id} value={z.id}>
-                    {z.label}
+                    {wt.zones[z.id] ?? z.label}
                   </option>
                 ))}
               </select>

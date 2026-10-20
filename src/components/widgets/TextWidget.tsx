@@ -1,5 +1,8 @@
+"use client";
+
 import type { SceneId } from "./scenes";
 import { Corner, LeafIcon, MoonIcon, SunIcon, WidgetFrame } from "./core";
+import { useWT } from "./wt";
 
 export type TextStyle = "classic" | "night" | "floral" | "natural";
 
@@ -7,8 +10,9 @@ const SCENE: Record<TextStyle, SceneId> = { classic: "parchment", night: "dusk",
 
 /** Frases e versículos: quatro estilos. O texto de hoje vem do servidor e muda sozinho a cada dia. */
 export function TextWidget({ style = "classic", text, reference, frame, label }: { style?: string; text?: string; reference?: string | null; frame?: string | null; label: string }) {
+  const wt = useWT();
   const st: TextStyle = style === "night" || style === "floral" || style === "natural" ? style : "classic";
-  const body = text ?? "O texto de hoje aparece aqui.";
+  const body = text ?? wt.defText;
   const quote = st !== "natural";
   // a letra cresce até ocupar a área útil do cartão (cerca de 21em × 7em): quanto mais longo o texto, menor, mas sempre o maior que cabe
   const size = Math.min(2.1, Math.max(0.74, Math.sqrt((190 * (reference ? 0.8 : 1)) / (body.length + 6))));

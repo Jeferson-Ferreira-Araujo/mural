@@ -10,6 +10,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -21,6 +22,7 @@ function Coin({ className = "size-5" }: { className?: string }) {
  * Público ou privado é do perfil (Perfil → Privacidade): o mural novo já nasce com a mesma regra.
  */
 export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean; onClose: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.NewMuralModal");
   const [title, setTitle] = useState("");
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
@@ -93,7 +95,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     if (busy) return;
     if (!title.trim()) return setError(tx("m_preenchaONomeDoMural"));
     const perr = privacyError(privacy, false);
-    if (perr) return setError(perr);
+    if (perr) return setError(tl(perr));
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();

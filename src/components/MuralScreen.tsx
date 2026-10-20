@@ -12,6 +12,7 @@ import { DesktopBoard } from "./DesktopBoard";
 import { MobileCarousel } from "./MobileCarousel";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Como o botão "Deixar uma mensagem" se comporta. */
 export type ComposerMode =
@@ -29,6 +30,7 @@ type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
  * As duas versões são renderizadas e alternadas por CSS (sem flash de layout no carregamento).
  */
 export function MuralScreen({ composer, ...view }: Props) {
+  const tl = useLit();
   const tx = useTranslations("components.MuralScreen");
   const [open, setOpen] = useState(false);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
@@ -103,7 +105,7 @@ export function MuralScreen({ composer, ...view }: Props) {
               }
               setOpen(false);
               window.dispatchEvent(new CustomEvent("pinz:expect-new")); // o quadro destaca onde o pin entrou
-              onNotify(composer.sentNote ?? (p.capsuleAt ? tx("m_capsulaFechadaEColocadaNo") : tx("m_seuPinzFoiColocadoNo")));
+              onNotify((composer.sentNote ? tl(composer.sentNote) : undefined) ?? (p.capsuleAt ? tx("m_capsulaFechadaEColocadaNo") : tx("m_seuPinzFoiColocadoNo")));
             } finally {
               setSending(false);
             }

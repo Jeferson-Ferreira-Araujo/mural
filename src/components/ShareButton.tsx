@@ -1,6 +1,7 @@
 "use client";
 
 import { withRef } from "@/lib/rewards";
+import { useLit } from "@/i18n/literal";
 
 type Props = {
   title: string;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export function ShareButton({ title, text, path, onNotify, className = "", iconOnly = false, label = "Compartilhar", reward = false }: Props) {
+  const tl = useLit();
   async function share() {
     const base = path ? `${window.location.origin}${path}` : window.location.href;
     const url = reward ? await withRef(base, "m") : base;
@@ -28,7 +30,7 @@ export function ShareButton({ title, text, path, onNotify, className = "", iconO
         return;
       }
       await navigator.clipboard.writeText(url);
-      onNotify("Link copiado!");
+      onNotify(tl("Link copiado!"));
     } catch {
       /* compartilhamento cancelado pelo usuário */
     }

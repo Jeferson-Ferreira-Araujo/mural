@@ -5,6 +5,7 @@ import { deleteSharedMural, listSharedMurals, respondSharedInvite, setSharedPass
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const iconBtn = "grid size-10 shrink-0 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50";
 const ic = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
@@ -14,6 +15,7 @@ const ic = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "c
  * Para criar um, a pessoa vai ao perfil da outra ("Solicitar mural compartilhado").
  */
 export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChanged: () => void; onNotify: (m: string) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.SharedMurals");
   const sb = getBrowserSupabase();
   const [list, setList] = useState<SharedMural[] | null>(null);
@@ -31,7 +33,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     void listSharedMurals(sb).then(setList);
   }, [sb]);
 
-  const fail = (r: SharedFailure) => setErr(SHARED_ERROR_TEXT[r]);
+  const fail = (r: SharedFailure) => setErr(tl(SHARED_ERROR_TEXT[r]));
 
   async function respond(m: SharedMural, accept: boolean) {
     setBusy(true);
@@ -39,7 +41,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     const res = await respondSharedInvite(sb, m.id, accept);
     setBusy(false);
     if (!res.ok) return fail(res.reason);
-    onNotify(accept ? tx("m_conviteAceitoAbraOMural") : "Convite recusado.");
+    onNotify(accept ? tx("m_conviteAceitoAbraOMural") : tl("Convite recusado."));
     await reload();
   }
 

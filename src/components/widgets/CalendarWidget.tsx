@@ -5,12 +5,11 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 /** Uma data importante marcada no calendário. `yearly`: repete todo ano (aniversário, Natal…). */
 export type CalDate = { date: string; label: string; yearly: boolean };
 
-const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-const WEEK = ["D", "S", "T", "Q", "Q", "S", "S"];
 
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const parts = (s: string) => {
@@ -58,6 +57,7 @@ const SKINS: Record<string, Skin> = {
  */
 export function CalendarWidget({ style = "paper", dates, frame }: { style?: string; dates?: CalDate[]; frame?: string | null }) {
   const tx = useTranslations("components.widgets.CalendarWidget");
+  const wt = useWT();
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
@@ -88,14 +88,14 @@ export function CalendarWidget({ style = "paper", dates, frame }: { style?: stri
     <div className={`flex min-w-0 flex-col ${square ? "flex-1 px-[0.9em] pt-[0.85em] pb-[0.6em]" : "flex-[1.55] px-[0.9em] pt-[0.7em] pb-[0.5em]"}`}>
       <div className="flex items-baseline justify-between leading-none">
         <span className={`font-bold tracking-wide uppercase ${square ? "text-[1.45em]" : "text-[1.25em]"}`} style={{ color: accent }}>
-          {MONTHS[month]}
+          {new Intl.DateTimeFormat(wt.tag, { month: "long" }).format(new Date(year, month, 1))}
         </span>
         <span className="text-[0.85em] font-semibold" style={{ color: soft }}>
           {year}
         </span>
       </div>
       <div className={`grid grid-cols-7 text-center font-bold ${square ? "mt-[0.6em] text-[0.7em]" : "mt-[0.45em] text-[0.62em]"}`} style={{ color: soft }}>
-        {WEEK.map((w, i) => (
+        {wt.weekInitials.map((w, i) => (
           <span key={i}>{w}</span>
         ))}
       </div>

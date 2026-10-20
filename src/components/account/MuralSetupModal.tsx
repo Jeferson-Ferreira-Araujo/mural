@@ -8,12 +8,14 @@ import { Modal } from "./Modal";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Primeiro mural da conta nova (que já nasce pronto, com nome padrão): pergunta o nome, se é público ou privado (com a pergunta de segurança)
  * e por quanto tempo ficam os pins de outras pessoas. Tudo dá para mudar depois em Meus murais.
  */
 export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boolean; onClose: () => void; mural: OwnMural | null; onSaved: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.MuralSetupModal");
   const [title, setTitle] = useState("");
   const [privacy, setPrivacy] = useState<Privacy>({ priv: false, question: "", answer: "" });
@@ -34,7 +36,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
     if (!mural || busy) return;
     if (!title.trim()) return setError(tx("m_deUmNomeAoMural"));
     const perr = privacyError(privacy, false);
-    if (perr) return setError(perr);
+    if (perr) return setError(tl(perr));
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();

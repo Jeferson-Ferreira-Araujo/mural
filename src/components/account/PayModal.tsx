@@ -9,6 +9,7 @@ import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { Skeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 type Step = "plans" | "gift" | "choose" | "pix" | "card" | "review" | "done" | "expired";
 
@@ -36,6 +37,7 @@ const GIFT_ERROR: Record<string, string> = {
  * depois o pagamento. O Pix mostra o QR code e o "copia e cola" aqui mesmo e confirma na tela assim que cair; o cartão usa o formulário seguro do Mercado Pago.
  */
 export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o pagamento foi confirmado: atualiza saldo e plano da tela */ onPaid: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PayModal");
   const [step, setStep] = useState<Step>("choose");
   const [target, setTarget] = useState<string | null>(null); // o que está sendo pago: "credits:<id>", "plus" (mensal), "plus_annual", "plus_life" ou "gift"
@@ -94,7 +96,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
     setGiftBusy(false);
     const d = data as { ok?: boolean; nickname?: string; reason?: string } | null;
     if (err || !d) return setError(tx("m_naoFoiPossivelConferirAgora"));
-    if (!d.ok) return setError(GIFT_ERROR[String(d.reason)] ?? GIFT_ERROR.not_found);
+    if (!d.ok) return setError(tl(GIFT_ERROR[String(d.reason)]) ?? tl(GIFT_ERROR.not_found));
     setRecipient(d.nickname ?? nick);
     setTarget("gift");
     setStep("choose");

@@ -1241,5 +1241,6 @@
     "FollowButton": {
       "m_seguindoToqueParaDeixarDe": "Seguindo (toque para deixar de seguir)"
     }
-  }
+  },
+  "lit": {}
 }

@@ -5,6 +5,7 @@ import { confirmEmailCode, markCompanyWelcome, sendEmailCode, setFinalizing, typ
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "./ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const TEXT: Record<ConfirmFailure, string> = {
   wrong_code: "Código incorreto ou vencido. Confira o e-mail ou peça um novo código.",
@@ -19,6 +20,7 @@ const TEXT: Record<ConfirmFailure, string> = {
  * `onDone` recebe o nome de usuário já definido.
  */
 export function CodeStep({ email, nick, password, onDone, onBack }: { email: string; nick: string; password: string; onDone: (nickname: string) => void; onBack: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.CodeStep");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -42,7 +44,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
     setBusy(false);
     if (!res.ok) {
       if (res.reason !== "password") setFinalizing(false);
-      return setError(TEXT[res.reason]);
+      return setError(tl(TEXT[res.reason]));
     }
     setFinalizing(false);
     markCompanyWelcome(res.nickname); // o mural recebe a empresa com uma mensagem de boas-vindas

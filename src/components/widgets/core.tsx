@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { NATURAL_W, shapeOfStyle, type Shape } from "@/lib/displayShape";
 import { INK, Scene, type SceneId } from "./scenes";
+import { useWT, wtFor } from "./wt";
 
 /** Largura de um widget, em em da própria fonte; a altura é a metade (formato 2:1). */
 export const WIDGET_W = 24;
@@ -116,28 +117,35 @@ export const CLOCK_ZONES: { id: string; label: string }[] = [
   { id: "Australia/Sydney", label: "Sydney" },
 ];
 
-export type Now = { hh: string; mm: string; hour: number; minute: number; second: number; weekday: string; weekdayShort: string; day: number; monthShort: string };
+export type Now = { dm: string; dateLine: string; hh: string; mm: string; hour: number; minute: number; second: number; weekday: string; weekdayShort: string; day: number; monthShort: string };
 
-function partsIn(tz: string, d: Date): Now {
+function partsIn(tz: string, d: Date, tag = "pt-BR"): Now {
   const zone = tz === "local" ? undefined : tz;
-  const get = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("pt-BR", { ...opts, timeZone: zone }).format(d);
+  const get = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(tag, { ...opts, timeZone: zone }).format(d);
   const hh = get({ hour: "2-digit", hour12: false }).replace(/\D/g, "").padStart(2, "0").slice(-2);
   const mm = get({ minute: "2-digit" }).padStart(2, "0");
   const second = Number(get({ second: "2-digit" }));
   const clean = (t: string) => t.replace(/\./g, "").replace(/-feira/, "");
-  const weekdayShort = clean(get({ weekday: "short" }));
-  return { hh, mm, hour: Number(hh) % 24, minute: Number(mm), second, weekday: clean(get({ weekday: "long" })), weekdayShort: weekdayShort.charAt(0).toUpperCase() + weekdayShort.slice(1), day: Number(get({ day: "numeric" })), monthShort: clean(get({ month: "short" })) };
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const lang = tag.slice(0, 2);
+  const weekdayShort = cap(clean(get({ weekday: "short" })));
+  const dayN = Number(get({ day: "numeric" }));
+  const mon = cap(clean(get({ month: "short" })));
+  const dm = lang === "en" ? `${mon} ${dayN}` : `${dayN} ${mon}`;
+  const dateLine = lang === "en" ? `${weekdayShort}, ${mon} ${dayN}` : `${weekdayShort}, ${dayN} de ${mon}`;
+  return { dm, dateLine, hh, mm, hour: Number(hh) % 24, minute: Number(mm), second, weekday: clean(get({ weekday: "long" })), weekdayShort, day: Number(get({ day: "numeric" })), monthShort: clean(get({ month: "short" })) };
 }
 
 /** A hora do fuso escolhido, atualizada sozinha (null até a tela montar, para não divergir do servidor). */
 export function useNow(tz: string, tickMs = 5000): Now | null {
   const zone = CLOCK_ZONES.some((z) => z.id === tz) ? tz : "America/Sao_Paulo";
+  const { tag } = useWT();
   const [now, setNow] = useState<Now | null>(null);
   useEffect(() => {
-    setNow(partsIn(zone, new Date()));
-    const t = window.setInterval(() => setNow(partsIn(zone, new Date())), tickMs);
+    setNow(partsIn(zone, new Date(), tag));
+    const t = window.setInterval(() => setNow(partsIn(zone, new Date(), tag)), tickMs);
     return () => window.clearInterval(t);
-  }, [zone, tickMs]);
+  }, [zone, tickMs, tag]);
   return now;
 }
 
@@ -174,17 +182,17 @@ export function loadWeather(lat: number, lon: number, withPlace = false): Promis
 export type WeatherKind = "clear" | "partly" | "cloudy" | "rain" | "snow" | "storm" | "fog";
 
 /** Código do MET Norway (ex.: "partlycloudy_day", "lightrain") → tipo de tempo, texto em português e se é noite. */
-export function describe(symbol: string): { kind: WeatherKind; label: string; night: boolean } {
+export function describe(symbol: string, w: ReturnType<typeof wtFor>["weather"] = wtFor("pt").weather): { kind: WeatherKind; label: string; night: boolean } {
   const night = symbol.endsWith("_night");
   const b = symbol.replace(/_(day|night|polartwilight)$/, "");
-  if (b.includes("thunder")) return { kind: "storm", label: "Trovoadas", night };
-  if (b.includes("snow")) return { kind: "snow", label: "Neve", night };
-  if (b.includes("sleet")) return { kind: "snow", label: "Chuva com neve", night };
-  if (b.includes("rain")) return { kind: "rain", label: b.includes("heavy") ? "Chuva forte" : b.includes("light") ? "Chuva fraca" : "Chuva", night };
-  if (b === "fog") return { kind: "fog", label: "Neblina", night };
-  if (b === "cloudy") return { kind: "cloudy", label: "Nublado", night };
-  if (b === "partlycloudy") return { kind: "partly", label: "Parcialmente nublado", night };
-  return { kind: "clear", label: night ? "Limpo" : "Ensolarado", night };
+  if (b.includes("thunder")) return { kind: "storm", label: w.storm, night };
+  if (b.includes("snow")) return { kind: "snow", label: w.snow, night };
+  if (b.includes("sleet")) return { kind: "snow", label: w.sleet, night };
+  if (b.includes("rain")) return { kind: "rain", label: b.includes("heavy") ? w.rainHeavy : b.includes("light") ? w.rainLight : w.rain, night };
+  if (b === "fog") return { kind: "fog", label: w.fog, night };
+  if (b === "cloudy") return { kind: "cloudy", label: w.cloudy, night };
+  if (b === "partlycloudy") return { kind: "partly", label: w.partly, night };
+  return { kind: "clear", label: night ? w.clearNight : w.clearDay, night };
 }
 
 /** O tempo da cidade (ou um exemplo na prévia, antes de escolher a cidade), atualizado a cada 15 minutos. */

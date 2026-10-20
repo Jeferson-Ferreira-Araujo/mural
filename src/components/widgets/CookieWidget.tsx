@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 /** Mensagens do biscoito da sorte (uma é sorteada a cada vez que se quebra um biscoito). */
 export const FORTUNES = [
@@ -44,15 +45,17 @@ export const FORTUNES = [
  */
 export function CookieWidget({ style = "classic", frame }: { style?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.CookieWidget");
+  const wt = useWT();
+  const fortunes = wt.fortunes.length ? wt.fortunes : FORTUNES;
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const [msg, setMsg] = useState<string | null>(null); // null = biscoito inteiro
+  const [msg, setMsg] = useState<number | null>(null); // null = biscoito inteiro
   const red = style === "red";
   const broken = msg !== null;
 
   const toggle = (e: React.SyntheticEvent) => {
     e.stopPropagation(); // dentro do mural, tocar no biscoito não abre o detalhe nem seleciona o display
     if (broken) setMsg(null);
-    else setMsg(FORTUNES[Math.floor(Math.random() * FORTUNES.length)]);
+    else setMsg(Math.floor(Math.random() * FORTUNES.length));
   };
 
   // borda irregular da quebra (a mesma nas duas metades)
@@ -115,7 +118,7 @@ export function CookieWidget({ style = "classic", frame }: { style?: string; fra
           className="pointer-events-none absolute top-[52%] left-1/2 flex w-[9.6em] -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center leading-[1.15] font-medium text-[#3a2a12]"
           style={{ height: "1.9em", fontSize: "0.54em", fontFamily: "var(--font-playfair), Georgia, serif", opacity: broken ? 1 : 0, transition: "opacity .3s ease .3s" }}
         >
-          <span className="line-clamp-2">{msg}</span>
+          <span className="line-clamp-2">{fortunes[msg ?? 0]}</span>
         </p>
         <p className="pointer-events-none absolute inset-x-0 bottom-[0.7em] text-center text-[0.7em] font-semibold tracking-wide uppercase" style={{ color: red ? "#f1d68a" : "#7a5a20", opacity: 0.85 }}>
           {broken ? tx("m_toqueParaOutroBiscoito") : tx("m_toqueParaQuebrar")}

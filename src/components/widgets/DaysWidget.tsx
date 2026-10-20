@@ -5,6 +5,7 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 /** Estilos do contador de dias: quente e entardecer são os de origem; os outros vêm dos estilos compartilhados. */
 const SKINS: Record<string, Skin> = {
@@ -34,12 +35,13 @@ const dayOf = (y: number, m: number, d: number) => Date.UTC(y, m - 1, d) / 86_40
  */
 export function DaysWidget({ style = "warm", title, since, frame }: { style?: string; title?: string; since?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.DaysWidget");
+  const wt = useWT();
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const skin = SKINS[baseStyle(style)] ?? SKINS.warm;
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(since ?? "");
-  const name = (title ?? "").trim() || "Nosso tempo";
+  const name = (title ?? "").trim() || wt.defTogether;
 
   let n = 0;
   let future = false;
@@ -48,7 +50,7 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
     future = diff < 0;
     n = Math.abs(diff);
   }
-  const label = future ? (n === 1 ? "dia para começar" : "dias para começar") : n === 1 ? "dia" : "dias";
+  const label = future ? (n === 1 ? wt.dayToStart : wt.daysToStart) : n === 1 ? wt.day : wt.days;
   const from = m ? `${m[3]}/${m[2]}/${m[1]}` : "";
   const len = String(n).length;
   const size = square ? (len >= 5 ? 3.3 : len === 4 ? 4.1 : len === 3 ? 5 : 6.2) : len >= 5 ? 3.6 : len === 4 ? 4.4 : 5.4;

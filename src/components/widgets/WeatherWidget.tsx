@@ -5,6 +5,7 @@ import type { SceneId } from "./scenes";
 import { useViewerCoords } from "@/lib/geo";
 import { describe, Marquee, tempTint, useWeather, WeatherGlyph, WidgetFrame, type WeatherKind } from "./core";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 export type WeatherStyle = "nature" | "pixel" | "tech" | "sky" | "rain" | "night";
 const MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace';
@@ -56,12 +57,13 @@ function WeatherSquare({ st, scene, kind, night, temp, label, cityName, d, frame
 /** Clima: cinco estilos, em formato retangular ou quadrado. O tempo agora na cidade escolhida pelo dono, sempre atualizado. */
 export function WeatherWidget({ style = "sky", city, lat, lon, frame, preview = false }: { style?: string; city?: string; lat?: number; lon?: number; frame?: string | null; /** prévia (loja, formulário): usa só a cidade escolhida, sem pedir a localização de quem vê */ preview?: boolean }) {
   const tx = useTranslations("components.widgets.WeatherWidget");
+  const wt = useWT();
   // o tempo é o do lugar onde QUEM VÊ está (o navegador pergunta uma vez); sem permissão, vale a cidade escolhida pelo dono
   const ownerSample = lat === undefined || lon === undefined || (lat === 0 && lon === 0);
   const viewer = useViewerCoords(!preview && !ownerSample);
   const here = viewer.coords;
   const { now } = useWeather(here ? here.lat : lat, here ? here.lon : lon, !!here);
-  const d = now && now !== "error" ? describe(now.symbol) : null;
+  const d = now && now !== "error" ? describe(now.symbol, wt.weather) : null;
   const b = baseStyle(style);
   const st = b === "nature" || b === "pixel" || b === "tech" || b === "rain" || b === "night" ? b : "sky";
   const kind: WeatherKind = d?.kind ?? "clear";
@@ -70,11 +72,11 @@ export function WeatherWidget({ style = "sky", city, lat, lon, frame, preview = 
   const scene = sceneFor(st, kind, night, degrees);
   const tint = st === "tech" ? null : tempTint(degrees);
   const temp = now && now !== "error" ? `${now.temp}°` : "--°";
-  const label = st === "night" && d && d.kind === "clear" ? "Limpo" : d ? d.label : now === "error" ? "Sem dados agora" : "Buscando…";
+  const label = st === "night" && d && d.kind === "clear" ? wt.weather.clearNight : d ? d.label : now === "error" ? wt.weather.noData : wt.weather.loading;
   const pixel = st === "pixel";
   const tech = st === "tech";
   const font = pixel ? "var(--font-silk), monospace" : tech ? MONO : undefined;
-  const cityName = here ? (now && now !== "error" && now.place ? now.place : "Sua localização") : (city ?? "Cidade");
+  const cityName = here ? (now && now !== "error" && now.place ? now.place : wt.weather.yourLocation) : (city ?? wt.defCity);
 
   if (shapeOfStyle(style) === "square") return <WeatherSquare st={st} scene={scene} kind={kind} night={night} temp={temp} label={label} cityName={cityName} d={d} frame={frame} tint={tint} />;
 

@@ -3,6 +3,7 @@
 import { baseStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 export type BookView = "count" | "bar" | "both";
 
@@ -30,6 +31,7 @@ function Placeholder({ color }: { color: string }) {
  */
 export function BookWidget({ style = "paper", title, cover, pages, read, view = "both", frame }: { style?: string; title?: string; cover?: string; pages?: number; read?: number; view?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.BookWidget");
+  const wt = useWT();
   const sk = SKINS[baseStyle(style)] ?? SKINS.paper;
   const total = Math.max(1, Math.round(pages ?? 300));
   const done = Math.min(total, Math.max(0, Math.round(read ?? 0)));
@@ -79,7 +81,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
                 </>
               ) : (
                 <>
-                  {done} / {total} páginas
+                  {done} / {total} {wt.pages}
                 </>
               )}
               {mode === "count" && (

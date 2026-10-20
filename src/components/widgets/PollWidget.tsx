@@ -7,6 +7,7 @@ import { usePoll } from "@/lib/poll";
 import { useInDetail } from "../board/ListEditContext";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
+import { useWT } from "./wt";
 
 /** Estilos da enquete: papel (claro), noite (escuro) e colorido. */
 const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string; fill: string; mine: string; tag: string }> = {
@@ -21,10 +22,11 @@ const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string;
  */
 export function PollWidget({ style = "q-paper", title, options, badgeId, frame }: { style?: string; title?: string; options?: string[]; badgeId?: string; frame?: string | null }) {
   const tx = useTranslations("components.widgets.PollWidget");
+  const wt = useWT();
   const inDetail = useInDetail();
   const sk = SKINS[baseStyle(style)] ?? SKINS.paper;
-  const opts = (options && options.length >= 2 ? options : ["Sim", "Não"]).slice(0, 4);
-  const question = (title ?? "").trim() || "Sua pergunta aqui?";
+  const opts = (options && options.length >= 2 ? options : [wt.defYes, wt.defNo]).slice(0, 4);
+  const question = (title ?? "").trim() || wt.defQuestion;
   // sem id (prévia na loja e no formulário): resultado de exemplo
   const demo = !badgeId;
   const { state, vote, logged } = usePoll(badgeId, !demo, opts.length);
@@ -95,7 +97,7 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
         )}
         <p className="mt-[0.45em] flex items-center justify-between text-[0.66em] font-semibold" style={{ color: sk.sub }} aria-live="polite">
           <span>
-            {total} {total === 1 ? "voto" : "votos"}
+            {total} {total === 1 ? wt.vote : wt.votes}
           </span>
           <span>{err ? tx("m_naoFoiPossivelVotarAgora") : demo ? "" : inDetail ? (!logged ? tx("m_entreParaVotar") : mine !== null ? tx("m_toqueParaTrocarOVoto") : tx("m_toqueNumaOpcao")) : mine !== null ? tx("m_voceJaVotou") : tx("m_toqueParaVotar")}</span>
         </p>

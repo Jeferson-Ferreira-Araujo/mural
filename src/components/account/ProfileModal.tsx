@@ -10,12 +10,14 @@ import { AvatarUploader } from "../AvatarUploader";
 import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Interruptor "Aparecer como visitante" no Perfil: desligado por enquanto (quem já tinha escolhido mantém a escolha; para religar, troque para true). */
 const VISIT_TOGGLE_ENABLED = false;
 
 /** Perfil: foto, nome de usuário e e-mail (só leitura) e troca de senha. */
 export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacySaved, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; /** a privacidade mudou: recarrega os murais da tela */ onPrivacySaved?: () => void; plus?: boolean }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.ProfileModal");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
@@ -45,8 +47,8 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
   async function savePrivacy() {
     setPrivErr(null);
     const q = question.trim();
-    if (priv && q.length < 3) return setPrivErr(q === "" ? tx("m_escrevaAPerguntaDeSeguranca") : "A pergunta precisa ter pelo menos 3 letras.");
-    if (priv && !answer.trim() && !hadAnswer) return setPrivErr("Digite a resposta.");
+    if (priv && q.length < 3) return setPrivErr(q === "" ? tx("m_escrevaAPerguntaDeSeguranca") : tl("A pergunta precisa ter pelo menos 3 letras."));
+    if (priv && !answer.trim() && !hadAnswer) return setPrivErr(tl("Digite a resposta."));
     setPrivBusy(true);
     const ok = await saveProfilePrivacy(getBrowserSupabase(), priv, priv ? q : "", priv && answer.trim() ? answer.trim() : null);
     setPrivBusy(false);

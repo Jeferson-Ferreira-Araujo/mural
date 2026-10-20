@@ -12,6 +12,7 @@ import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const REASONS: { id: ProfileReportReason; label: string }[] = [
   { id: "ofensa", label: "Ofensa ou discurso de ódio" },
@@ -62,6 +63,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
  * compartilhar o perfil, pedir um mural compartilhado e denunciar. `showStats` = false (mural privado ainda trancado): só foto, nome e selo.
  */
 export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary", isOwner = false }: { /** quem está vendo é o dono deste perfil (garante o botão Editar perfil) */ isOwner?: boolean; /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.ProfileSummaryModal");
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
@@ -101,7 +103,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setErr(null);
     const res = await createSharedMural(getBrowserSupabase(), title.trim(), nick, password);
     setBusy(false);
-    if (!res.ok) return setErr(SHARED_ERROR_TEXT[res.reason]);
+    if (!res.ok) return setErr(tl(SHARED_ERROR_TEXT[res.reason]));
     if (board !== DEFAULT_BOARD) await getBrowserSupabase().rpc("set_mural_board", { p_mural_id: res.id, p_board: board });
     onNotify(tx("m_conviteEnviadoParaOMural", { v0: nick }));
     onClose();
@@ -143,7 +145,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       if (navigator.share) await navigator.share({ title: `Perfil de @${data.nickname} no Pinz`, text: `Veja o perfil de @${data.nickname} no Pinz!`, url });
       else {
         await navigator.clipboard.writeText(url);
-        onNotify("Link copiado!");
+        onNotify(tl("Link copiado!"));
       }
     } catch {
       /* compartilhamento cancelado */

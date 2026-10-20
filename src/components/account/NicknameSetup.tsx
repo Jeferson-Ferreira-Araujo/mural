@@ -8,6 +8,7 @@ import { primaryButton, NicknameField, useNicknameStatus } from "../ui";
 import { AvatarUploader } from "../AvatarUploader";
 import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, isUnder13, toIso } from "./BirthField";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const ERROR: Record<string, string> = {
   nickname_taken: "Esse nome de usuário já está em uso.",
@@ -21,6 +22,7 @@ const ERROR: Record<string, string> = {
  * `suggested` é o nome automático criado a partir do e-mail.
  */
 export function NicknameSetup({ open, suggested, onDone }: { open: boolean; suggested: string; onDone: (nickname: string) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.NicknameSetup");
   const ref = useRef<HTMLDialogElement>(null);
   const [nick, setNick] = useState(suggested);
@@ -61,14 +63,14 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
     if (busy || !ok) return;
     setError(null);
     const iso = birth ? toIso(birth) : null;
-    if (birth && !iso) return setError(BIRTH_FORMAT_HINT);
-    if (iso && isUnder13(iso)) return setError(BIRTH_ERROR.too_young); // confere antes de salvar o nome (que depois não muda)
+    if (birth && !iso) return setError(tl(BIRTH_FORMAT_HINT));
+    if (iso && isUnder13(iso)) return setError(tl(BIRTH_ERROR.too_young)); // confere antes de salvar o nome (que depois não muda)
     setBusy(true);
     const { data, error: err } = await getBrowserSupabase().rpc("claim_nickname", { p_nick: nick });
     setBusy(false);
     if (err || typeof data !== "string") {
       const key = Object.keys(ERROR).find((k) => err?.message.includes(k));
-      return setError(key ? ERROR[key] : tx("m_naoFoiPossivelSalvarAgora"));
+      return setError(key ? tl(ERROR[key]) : tx("m_naoFoiPossivelSalvarAgora"));
     }
     const sb = getBrowserSupabase();
     if (iso) await saveOnboarding(sb, iso, false); // a data é opcional: se falhar, o nome já salvo segue valendo
