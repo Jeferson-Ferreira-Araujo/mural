@@ -135,7 +135,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
             <button type="button" onClick={() => (setBuying(null), setError(null))} disabled={busy} className={`${ghostButton} flex-1`}>
               {tx("cancelar")}</button>
             <button type="button" onClick={() => void confirmBuy()} disabled={busy || credits < price} className={`${primaryButton} flex-1`}>
-              {busy ? "Comprando…" : "Comprar"}
+              {busy ? tl("Comprando…") : tl("Comprar")}
             </button>
           </div>
         </div>
@@ -191,7 +191,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                   key={d}
                   type="button"
                   onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
-                  aria-label={d < 0 ? "Tipo anterior" : tx("m_proximoTipo")}
+                  aria-label={d < 0 ? tl("Tipo anterior") : tx("m_proximoTipo")}
                   className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
                   <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -218,7 +218,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
             </p>
           )}
           <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : tx("m_compreEsteTipoDeMural")} className={primaryButton}>
-            {busy ? "Criando…" : tx("m_criarMural")}
+            {busy ? tl("Criando…") : tx("m_criarMural")}
           </button>
         </form>
       )}

@@ -209,7 +209,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
                   key={d}
                   type="button"
                   onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
-                  aria-label={d < 0 ? "Tipo anterior" : tx("m_proximoTipo")}
+                  aria-label={d < 0 ? tl("Tipo anterior") : tx("m_proximoTipo")}
                   className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
                   <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -273,7 +273,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </p>
         )}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : tl("Salvar")}
+          {busy ? tl("Salvando…") : tl("Salvar")}
         </button>
       </form>
 
@@ -285,7 +285,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
             <p className="mt-1 text-sm text-[#6b2a1c]">{tx("todosOsRecadosPinsSerao")}</p>
             <div className="mt-3 flex gap-2">
               <button type="button" onClick={reset} disabled={busy} className="cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8a3123] disabled:opacity-60">
-                {busy ? "Resetando…" : "Sim, resetar"}
+                {busy ? tl("Resetando…") : tl("Sim, resetar")}
               </button>
               <button type="button" onClick={() => setConfirmReset(false)} disabled={busy} className={`${ghostButton} !px-4 !py-2 text-sm`}>
                 {tx("cancelar")}</button>

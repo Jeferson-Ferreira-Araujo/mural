@@ -218,7 +218,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                   autoComplete="off"
                 />
                 <button type="button" onClick={() => void search()} disabled={searching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
-                  {searching ? "Buscando…" : "Buscar"}
+                  {searching ? tl("Buscando…") : tl("Buscar")}
                 </button>
               </div>
               {searched && hits.length === 0 && !err && <p className="mt-2 text-sm text-[#6b5440]">{tx("nenhumaCidadeEncontradaTenteOutro")}</p>}
@@ -267,7 +267,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
               <div className="min-w-0 flex-1 space-y-2">
                 <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label={tx("escolherAFotoDaCapa")} />
                 <button type="button" onClick={() => bkInput.current?.click()} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-3 py-2 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                  {bkPreview || bkCover ? "Trocar a capa" : tl("Escolher a foto da capa")}
+                  {bkPreview || bkCover ? tl("Trocar a capa") : tl("Escolher a foto da capa")}
                 </button>
                 {(bkPreview || bkCover) && (
                   <button type="button" onClick={() => { setBkFile(null); setBkCover(null); }} className="ml-2 cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
@@ -292,8 +292,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 {(
                   [
                     ["count", tl("Páginas")],
-                    ["bar", "Barra"],
-                    ["both", "Os dois"],
+                    ["bar", tl("Barra")],
+                    ["both", tl("Os dois")],
                   ] as const
                 ).map(([v, label]) => (
                   <button key={v} type="button" role="radio" aria-checked={bkView === v} onClick={() => setBkView(v)} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${bkView === v ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -313,7 +313,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
             <div className="space-y-2">
               <p className="text-sm font-semibold">{tx("asDuasRespostas")}</p>
               {([0, 1] as const).map((i) => (
-                <input key={i} value={plOptions[i] ?? ""} onChange={(e) => setPlOptions((l) => [0, 1].map((j) => (j === i ? e.target.value : (l[j] ?? ""))))} maxLength={40} aria-label={`Resposta ${i + 1}`} placeholder={i === 0 ? "Ex: Sim" : tx("m_exNao")} className={inputClass} autoComplete="off" />
+                <input key={i} value={plOptions[i] ?? ""} onChange={(e) => setPlOptions((l) => [0, 1].map((j) => (j === i ? e.target.value : (l[j] ?? ""))))} maxLength={40} aria-label={`Resposta ${i + 1}`} placeholder={i === 0 ? tl("Ex: Sim") : tx("m_exNao")} className={inputClass} autoComplete="off" />
               ))}
             </div>
             {editing && <p className="text-xs text-[#8a7b69]">{tx("mudarAsRespostasZeraOs")}</p>}
@@ -328,7 +328,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
             {([0, 1, 2] as const).map((i) => (
               <Field key={i} label={`${i + 1}º lugar`}>
                 {(id) => (
-                  <input id={id} value={t3Items[i]} onChange={(e) => setT3Items((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={30} placeholder={["Ex: Lasanha", "Ex: Pizza", "Ex: Sorvete"][i]} className={inputClass} autoComplete="off" />
+                  <input id={id} value={t3Items[i]} onChange={(e) => setT3Items((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={30} placeholder={[tl("Ex: Lasanha"), tl("Ex: Pizza"), tl("Ex: Sorvete")][i]} className={inputClass} autoComplete="off" />
                 )}
               </Field>
             ))}
@@ -399,7 +399,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
           </p>
         )}
         <button type="button" disabled={busy || uploading || !ready} onClick={() => void submit()} className={primaryButton}>
-          {uploading ? "Enviando a capa…" : busy ? "Salvando…" : editing ? tl("Salvar") : "Escolher o lugar"}
+          {uploading ? tl("Enviando a capa…") : busy ? tl("Salvando…") : editing ? tl("Salvar") : tl("Escolher o lugar")}
         </button>
       </div>
     </Modal>

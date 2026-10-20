@@ -77,7 +77,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
             </p>
           )}
           <button type="button" onClick={() => void continueProfile()} disabled={busy} className={`${primaryButton} mt-4`}>
-            {busy ? "Salvando…" : "Continuar"}
+            {busy ? tl("Salvando…") : tl("Continuar")}
           </button>
           <button type="button" onClick={() => setStep("tour")} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
             {tx("agoraNao")}</button>

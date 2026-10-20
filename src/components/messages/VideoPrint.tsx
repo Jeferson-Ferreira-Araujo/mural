@@ -7,6 +7,7 @@ import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE, type PlayerLook } from "./playerPalette";
 import { Scene } from "./Scene";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}`;
@@ -85,6 +86,7 @@ const icon = "size-[1em]";
  * `src` = vídeo escolhido pela pessoa (toca de verdade); sem `src`, é uma cena de exemplo com tempo simulado.
  */
 export function VideoPrint({ caption, duration, src, link, color = "black" }: { caption: string; duration?: string; src?: string; link?: string; color?: PlayerColor }) {
+  const tl = useLit();
   const tx = useTranslations("components.messages.VideoPrint");
   const look = PLAYER_PALETTE[color];
   // vídeo do YouTube: miniatura no aparelho e, ao tocar, o player oficial (só reconhecemos o endereço e extraímos o ID)
@@ -268,7 +270,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
 
         {/* botões do aparelho: só tocar/pausar e ampliar */}
         <div className="mt-[0.35em] flex items-center justify-center gap-[0.5em]">
-          <HwButton look={look} label={playing ? "Pausar" : "Reproduzir"} onClick={toggle} big>
+          <HwButton look={look} label={playing ? tl("Pausar") : tl("Reproduzir")} onClick={toggle} big>
             {playing ? PauseIcon : PlayIcon}
           </HwButton>
           <HwButton look={look} label={tx("verOVideoEmTamanho")} onClick={expand}>

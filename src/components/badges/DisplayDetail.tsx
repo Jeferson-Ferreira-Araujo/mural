@@ -11,6 +11,7 @@ import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "./SecretCover";
 import { ghostButton } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
 
@@ -19,6 +20,7 @@ const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "
  * Quem vê o mural toca no widget; o dono abre pelo botão de ampliar nos controles (ou com duplo clique no computador).
  */
 export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDetail");
   const [copied, setCopied] = useState(false);
   const { badges, editable, removeDisplay, setDisplaySecret } = useBadges();
@@ -65,7 +67,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
     }
   }
 
-  const title = NAME[data.product] ?? "Display";
+  const title = NAME[data.product] ?? tl("Display");
   return (
     <Modal open onClose={onClose} title={title} label={title}>
       <div className="space-y-4">
@@ -79,12 +81,12 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
         </div>
         {own && hidden && (
           <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} className={`${ghostButton} w-full`}>
-            {reveal ? "Esconder display" : "Revelar display"}
+            {reveal ? tl("Esconder display") : tl("Revelar display")}
           </button>
         )}
         {text ? (
           <button type="button" onClick={() => void share()} className={`${ghostButton} w-full`}>
-            {copied ? "Texto copiado!" : "Compartilhar o texto"}
+            {copied ? tl("Texto copiado!") : tl("Compartilhar o texto")}
           </button>
         ) : (
           own && (
@@ -113,7 +115,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
               }}
               className={`${ghostButton} flex-1`}
             >
-              {mod && mod.plan !== "full" ? "Segredo (PINZ+)" : hidden ? "Desabilitar segredo" : "Habilitar segredo"}
+              {mod && mod.plan !== "full" ? tl("Segredo (PINZ+)") : hidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
             </button>
           </div>
         )}

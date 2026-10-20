@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useBackClose } from "@/lib/backStack";
 import { TOUR_STEPS, type TourStep } from "./steps";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const PAD = 8;
 const GIVE_UP_MS = 6000;
@@ -24,6 +25,7 @@ function findVisible(sel: string): HTMLElement | null {
  * esperam o elemento surgir. Quando há uma janela aberta, o tour é desenhado dentro dela (a janela fica acima de tudo e deixaria o tour escondido).
  */
 export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.tour.Tour");
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [i, setI] = useState(0);
@@ -242,7 +244,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
           {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque; os de escolha esperam a pessoa tocar em Próximo */}
           {(!step.act || step.manual) && (
             <button type="button" onClick={next} disabled={!!step.manual && !acted} autoFocus={!step.act} className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-40`}>
-              {last ? "Concluir" : tx("m_proximo")}
+              {last ? tl("Concluir") : tx("m_proximo")}
             </button>
           )}
         </div>

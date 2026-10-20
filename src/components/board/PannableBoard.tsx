@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** O "mundo" do quadro (proporção 3:2 da imagem). O conteúdo é desenhado nesse tamanho e depois movido/ampliado por transform. */
 export const WORLD_W = 1200;
@@ -20,6 +21,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
 export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+  const tl = useLit();
   const tx = useTranslations("components.board.PannableBoard");
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
@@ -521,7 +523,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           onClick={toggleZoom}
           data-tour="zoom"
           aria-label={zoomedOut ? tx("m_aproximarOMural") : tx("m_afastarOMural")}
-          title={zoomedOut ? "Aproximar" : "Afastar"}
+          title={zoomedOut ? tl("Aproximar") : tl("Afastar")}
           className={`absolute ${controlPos} z-20 inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-3 text-[13px] font-semibold sm:h-11 sm:gap-2 sm:px-4 sm:text-sm text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
           <svg viewBox="0 0 24 24" className="size-4 shrink-0 sm:size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -530,7 +532,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
             <path d="m20 20-4.2-4.2" />
             {zoomedOut ? <path d="M11 8v6M8 11h6" /> : <path d="M8 11h6" />}
           </svg>
-          {zoomedOut ? "Aproximar" : "Afastar"}
+          {zoomedOut ? tl("Aproximar") : tl("Afastar")}
         </button>
       )}
     </div>

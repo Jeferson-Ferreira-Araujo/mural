@@ -7,6 +7,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Brand } from "./Brand";
 import { BOARD_IMAGE } from "./DesktopBoard";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Fundo e cartão centralizado usados nas telas de conta (entrar, criar, painel). */
 export function AuthShell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
@@ -80,9 +81,10 @@ export function Field({
 }
 
 export function Spinner({ label = "Carregando…" }: { label?: string }) {
+  const tl = useLit();
   return (
     <p role="status" className="py-8 text-center text-[#6b5440]">
-      {label}
+      {tl(label)}
     </p>
   );
 }
@@ -131,12 +133,13 @@ export function NicknameField({
   autoFocus?: boolean;
 }) {
   const tx = useTranslations("components.ui");
+  const tl = useLit();
   const bad = state === "taken" || state === "invalid" || state === "denied";
   return (
     <Field
       label={tx("nomeDeUsuario")}
-      error={bad ? nickMessage[state] : null}
-      hint={nickMessage[state]}
+      error={bad && nickMessage[state] ? tl(nickMessage[state] as string) : null}
+      hint={nickMessage[state] ? tl(nickMessage[state] as string) : null}
     >
       {(id) => (
         <input
@@ -159,6 +162,7 @@ export function NicknameField({
 
 /** Mostra uma URL em destaque, com botão para copiar (para a pessoa guardar ou enviar). */
 export function AddressBox({ url, label = "Endereço do seu mural" }: { url: string; label?: string }) {
+  const tl = useLit();
   const [copied, setCopied] = useState(false);
   async function copy() {
     try {
@@ -171,11 +175,11 @@ export function AddressBox({ url, label = "Endereço do seu mural" }: { url: str
   }
   return (
     <div className="rounded-xl border border-[#e1d3ba] bg-white/60 p-3 sm:p-4">
-      <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{label}</p>
+      <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tl(label)}</p>
       <div className="mt-1.5 flex items-center gap-3">
         <p className="min-w-0 flex-1 text-[15px] font-semibold break-all text-[#2f2218]">{url}</p>
         <button type="button" onClick={copy} className={`${ghostButton} shrink-0 !px-3.5 !py-2 text-sm`}>
-          {copied ? "Copiado ✓" : "Copiar"}
+          {copied ? tl("Copiado ✓") : tl("Copiar")}
         </button>
       </div>
     </div>
@@ -200,6 +204,7 @@ const QUESTION_SUGGESTIONS = [
 /** Botão que abre uma lista de sugestões de pergunta; ao escolher, preenche o campo. */
 export function QuestionSuggestions({ onPick }: { onPick: (q: string) => void }) {
   const tx = useTranslations("components.ui");
+  const tl = useLit();
   const [open, setOpen] = useState(false);
   const listId = useId();
   return (
@@ -220,12 +225,12 @@ export function QuestionSuggestions({ onPick }: { onPick: (q: string) => void })
               <button
                 type="button"
                 onClick={() => {
-                  onPick(q);
+                  onPick(tl(q));
                   setOpen(false);
                 }}
                 className="w-full cursor-pointer rounded-xl border border-[#e1d3ba] bg-white/60 px-3.5 py-2.5 text-left text-sm text-[#2f2218] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
               >
-                {q}
+                {tl(q)}
               </button>
             </li>
           ))}

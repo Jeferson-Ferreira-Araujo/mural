@@ -92,7 +92,7 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
         <button type="button" onClick={onClose} className={`${ghostButton} flex-1`}>
           {tx("cancelar")}</button>
         <button type="button" disabled={!canSave} onClick={() => void save()} className={`${primaryButton} flex-1`}>
-          {busy ? "Salvando…" : tl("Salvar")}
+          {busy ? tl("Salvando…") : tl("Salvar")}
         </button>
       </div>
     </dialog>

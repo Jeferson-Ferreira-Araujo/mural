@@ -1,9 +1,11 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Desenho feito pela pessoa: folha de papel presa com fita. `src` = imagem do desenho; sem `src`, mostra uma folha em branco. */
 export function DrawingCard({ caption, src, font, tape }: { caption: string; src?: string; font?: HandId; tape?: TapeColor }) {
+  const tl = useLit();
   const tx = useTranslations("components.messages.DrawingCard");
   const hand = handOf(font);
   return (
@@ -12,7 +14,7 @@ export function DrawingCard({ caption, src, font, tape }: { caption: string; src
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-white shadow-[inset_0_0_0.25em_rgba(0,0,0,.25)]">
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={caption || "Desenho"} className="size-full object-cover" draggable={false} />
+          <img src={src} alt={caption || tl("Desenho")} className="size-full object-cover" draggable={false} />
         ) : null}
       </div>
       {caption && (

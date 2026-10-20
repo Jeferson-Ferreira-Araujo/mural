@@ -204,7 +204,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
                 {tx("convidarParaOMuralCompartilhado")}</button>
             )}
-            <Action tone="purple" title={sharing ? "Preparando a imagem…" : tl("Compartilhar perfil")} hint={tx("enviaUmCartaoDeVisita")} onClick={() => void shareProfile()}>
+            <Action tone="purple" title={sharing ? tl("Preparando a imagem…") : tl("Compartilhar perfil")} hint={tx("enviaUmCartaoDeVisita")} onClick={() => void shareProfile()}>
               <svg {...icon}>
                 <circle cx="18" cy="5" r="2.6" />
                 <circle cx="6" cy="12" r="2.6" />
@@ -263,7 +263,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             </p>
           )}
           <button type="submit" disabled={busy || !viewerPlus || !title.trim() || password.length < 6} className={primaryButton}>
-            {busy ? "Enviando…" : tl("Enviar convite")}
+            {busy ? tl("Enviando…") : tl("Enviar convite")}
           </button>
         </form>
       ) : (
@@ -286,7 +286,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             </p>
           )}
           <button type="submit" disabled={busy} className="w-full cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60">
-            {busy ? "Enviando…" : tx("m_enviarDenuncia")}
+            {busy ? tl("Enviando…") : tx("m_enviarDenuncia")}
           </button>
         </form>
       )}

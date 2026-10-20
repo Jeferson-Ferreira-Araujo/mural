@@ -6,6 +6,7 @@ import { OAUTH_LABEL, OAUTH_PROVIDERS, type OAuthProvider } from "@/lib/oauth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ghostButton } from "./ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 function GoogleLogo() {
   return (
@@ -35,8 +36,11 @@ function AppleLogo() {
 }
 
 /** Botões "Continuar com…" (só os provedores ligados). `onError` recebe o texto do erro, se houver. */
+const OAUTH_NAME: Record<string, string> = { google: "Google", apple: "Apple", facebook: "Facebook", azure: "Microsoft", github: "GitHub" };
+
 export function OAuthButtons({ onError, className = "" }: { onError: (msg: string | null) => void; className?: string }) {
   const tx = useTranslations("components.OAuthButtons");
+  const tl = useLit();
   const [busy, setBusy] = useState<OAuthProvider | null>(null);
   // voltou do Google pelo botão "voltar": o navegador restaura a página com o botão preso em "Abrindo…"
   useEffect(() => {
@@ -58,7 +62,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
     const { error } = await getBrowserSupabase().auth.signInWithOAuth({ provider, options: { redirectTo: callbackUrl() } });
     if (error) {
       setBusy(null);
-      onError(tx("m_naoFoiPossivelEntrarCom", { v0: OAUTH_LABEL[provider].replace("Continuar com ", "") }));
+      onError(tx("m_naoFoiPossivelEntrarCom", { v0: OAUTH_NAME[provider] }));
     }
   }
 
@@ -73,8 +77,8 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
             type="button"
             disabled={busy !== null}
             onClick={() => void go(p)}
-            aria-label={OAUTH_LABEL[p]}
-            title={OAUTH_LABEL[p]}
+            aria-label={tl(OAUTH_LABEL[p])}
+            title={tl(OAUTH_LABEL[p])}
             className={`${ghostButton} grid h-12 min-w-0 flex-1 place-items-center bg-white/70 !px-0 disabled:opacity-60 sm:max-w-[6.5rem]`}
           >
             {busy === p ? (
@@ -86,7 +90,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
             ) : p === "apple" ? (
               <AppleLogo />
             ) : (
-              <span className="text-sm font-bold">{OAUTH_LABEL[p].replace("Continuar com ", "").replace(/^(o|a) /, "")}</span>
+              <span className="text-sm font-bold">{OAUTH_NAME[p]}</span>
             )}
           </button>
         ))}

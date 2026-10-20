@@ -73,7 +73,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
         </Field>
         {info && <p className="text-sm text-[#2f6a3c]">{info}</p>}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Confirmando…" : "Confirmar e entrar"}
+          {busy ? tl("Confirmando…") : tl("Confirmar e entrar")}
         </button>
         <div className="flex gap-2">
           <button type="button" onClick={resend} disabled={wait > 0} className={`${ghostButton} flex-1 disabled:opacity-60`}>

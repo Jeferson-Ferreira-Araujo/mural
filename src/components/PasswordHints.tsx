@@ -1,6 +1,7 @@
 "use client";
 
 import { checkPassword, passwordStrength } from "@/lib/password";
+import { useLit } from "@/i18n/literal";
 
 const LEVEL = [
   { label: "Muito fraca", color: "#c0392b" },
@@ -11,6 +12,7 @@ const LEVEL = [
 
 /** Dicas para uma senha segura, com medidor e checklist que se atualiza enquanto a pessoa digita. */
 export function PasswordHints({ password, email, username }: { password: string; email: string; username: string }) {
+  const tl = useLit();
   const checks = checkPassword(password, { email, username });
   const level = passwordStrength(checks, password);
   const lv = LEVEL[level];
@@ -24,14 +26,14 @@ export function PasswordHints({ password, email, username }: { password: string;
             ))}
           </div>
           <span className="text-xs font-semibold" style={{ color: lv.color }}>
-            {lv.label}
+            {tl(lv.label)}
           </span>
         </div>
       )}
       <ul className="space-y-0.5 text-xs">
         {checks.map((c) => (
           <li key={c.id} className={c.ok ? "text-[#2f6b3a]" : c.required ? "text-[#6b5440]" : "text-[#8a7b69]"}>
-            <span aria-hidden>{c.ok ? "✓" : "○"}</span> {c.label}
+            <span aria-hidden>{c.ok ? "✓" : "○"}</span> {tl(c.label)}
           </li>
         ))}
       </ul>

@@ -11,10 +11,12 @@ import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const STEPS = ["Nome", "Pergunta", "Mural"] as const;
 
 export default function CriarMural() {
+  const tl = useLit();
   const tx = useTranslations("app.criar.page");
   const router = useRouter();
   const { session, loading } = useSession();
@@ -192,7 +194,7 @@ export default function CriarMural() {
               {tx("voltar")}</button>
           )}
           <button type="submit" disabled={!canNext || busy} className={`${primaryButton} flex-1`}>
-            {step < 2 ? "Continuar" : busy ? "Criando…" : tx("m_criarMeuMural")}
+            {step < 2 ? tl("Continuar") : busy ? tl("Criando…") : tx("m_criarMeuMural")}
           </button>
         </div>
       </form>

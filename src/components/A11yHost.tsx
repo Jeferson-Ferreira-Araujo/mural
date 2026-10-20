@@ -121,8 +121,8 @@ export function A11yHost() {
             <div role="radiogroup" aria-label={tx("tamanhoDoTexto")} className="mt-2 grid grid-cols-2 gap-1.5">
               {(
                 [
-                  [0, "Normal", "text-sm"],
-                  [1, "Grande", "text-base"],
+                  [0, tl("Normal"), "text-sm"],
+                  [1, tl("Grande"), "text-base"],
                 ] as const
               ).map(([v, label, sz]) => (
                 <button key={v} type="button" role="radio" aria-checked={s.text === v} onClick={() => patch({ text: v })} className={`cursor-pointer rounded-xl border-2 px-2 py-2 font-bold transition ${sz} ${s.text === v ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}>

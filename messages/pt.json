@@ -1407,6 +1407,10 @@
     },
     "LockedNotice": {
       "x_muralPrivado": "Mural privado"
+    },
+    "Avatar": {
+      "x_photoOf": "Foto de {name}{plus, select, yes { (PINZ+)} other {}}",
+      "x_noPhoto": "Sem foto: {name}"
     }
   },
   "lit": {}

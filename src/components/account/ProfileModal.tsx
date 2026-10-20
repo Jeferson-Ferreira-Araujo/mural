@@ -176,7 +176,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
               </p>
             )}
             <button type="button" onClick={() => void sendResetLink()} disabled={busy || !email} className={primaryButton}>
-              {busy ? "Enviando…" : tx("m_enviarLinkParaTrocarA")}
+              {busy ? tl("Enviando…") : tx("m_enviarLinkParaTrocarA")}
             </button>
           </>
         )}
@@ -245,7 +245,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
               }} disabled={delBusy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                     {tx("cancelar")}</button>
                   <button type="button" onClick={() => void deleteAccount()} disabled={delBusy || delText.trim().toUpperCase() !== "EXCLUIR"} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:cursor-not-allowed disabled:opacity-50">
-                    {delBusy ? "Excluindo…" : tx("m_excluirConta")}
+                    {delBusy ? tl("Excluindo…") : tx("m_excluirConta")}
                   </button>
                 </div>
               </div>

@@ -77,7 +77,7 @@ export default function NovaSenha() {
             <div className="relative">
               <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} className={`${inputClass} pr-20`} />
               <button type="button" onClick={() => setShow((v) => !v)} aria-pressed={show} className="absolute inset-y-0 right-3 cursor-pointer text-sm font-semibold text-[#6b5440] hover:text-[#2f2218]">
-                {show ? "Ocultar" : "Mostrar"}
+                {show ? tl("Ocultar") : tl("Mostrar")}
               </button>
             </div>
           )}
@@ -90,7 +90,7 @@ export default function NovaSenha() {
           </p>
         )}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : tx("m_salvarNovaSenha")}
+          {busy ? tl("Salvando…") : tx("m_salvarNovaSenha")}
         </button>
       </form>
     </AuthShell>

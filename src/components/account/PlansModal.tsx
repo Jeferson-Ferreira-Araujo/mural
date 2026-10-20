@@ -115,7 +115,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
     <div className="mt-4 text-sm">
       <p className="font-semibold text-[#2f6a3c]">{tx("x_assinaturaAtiva", { v0: sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil, tag)}` : "" })}</p>
       <button type="button" disabled={busy !== null} onClick={() => setConfirmCancel(true)} className="mt-2 cursor-pointer text-xs font-semibold text-[#a23b2a] underline disabled:opacity-50">
-        {busy === "cancel" ? "Cancelando…" : tl("Cancelar assinatura")}
+        {busy === "cancel" ? tl("Cancelando…") : tl("Cancelar assinatura")}
       </button>
     </div>
   ) : sub?.status === "once" && sub.active ? (
@@ -124,7 +124,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
     <p className="mt-4 text-sm font-semibold text-[#6b5440]">{tx("x_assinaturaCanceladaPinzAte", { v0: fmtDate(sub.paidUntil, tag) })}</p>
   ) : plan === "free" ? (
     <button type="button" disabled={busy !== null} onClick={() => void buy("plus")} className={btn}>
-      {busy === "plus" ? "Abrindo o pagamento…" : tl("Ver os planos do PINZ+")}
+      {busy === "plus" ? tl("Abrindo o pagamento…") : tl("Ver os planos do PINZ+")}
     </button>
   ) : undefined;
 
@@ -151,7 +151,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
               </span>
               {PAYMENTS_ENABLED && (
                 <button type="button" disabled={busy !== null} onClick={() => void buy(`credits:${c.id}`)} className="cursor-pointer rounded-md bg-[#d9a21b] px-2 py-0.5 text-xs font-bold text-[#2a1c12] hover:bg-[#e6ae22] disabled:opacity-50">
-                  {busy === `credits:${c.id}` ? "…" : "Comprar"}
+                  {busy === `credits:${c.id}` ? "…" : tl("Comprar")}
                 </button>
               )}
             </li>

@@ -144,7 +144,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
               <button type="button" onClick={() => (setConfirmId(null), setErr(null))} disabled={busy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                 {tx("cancelar")}</button>
               <button type="button" onClick={() => void remove()} disabled={busy} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
-                {busy ? "Apagando…" : tl("Apagar")}
+                {busy ? tl("Apagando…") : tl("Apagar")}
               </button>
             </div>
           </div>
@@ -247,7 +247,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                           <path d="M3 12h18M12 3c2.5 2.6 3.7 5.600 3.700 9s-1.200 6.400-3.700 9c-2.500-2.600-3.700-5.600-3.700-9s1.200-6.400 3.700-9Z" />
                         </svg>
                       )}
-                      {m.question ? "Privado" : tx("m_publico")}
+                      {m.question ? tl("Privado") : tx("m_publico")}
                     </span>
                   </button>
                   <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">

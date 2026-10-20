@@ -7,7 +7,7 @@ export type PasswordCheck = { id: string; label: string; ok: boolean; required: 
 /** Regras da senha (as obrigatórias bloqueiam o cadastro; as recomendadas só deixam a senha mais forte). */
 export function checkPassword(pw: string, ctx: { email?: string; username?: string } = {}): PasswordCheck[] {
   return [
-    { id: "len", label: `Pelo menos ${MIN_PASSWORD} caracteres`, ok: pw.length >= MIN_PASSWORD, required: true },
+    { id: "len", label: "Pelo menos 8 caracteres" /* = MIN_PASSWORD; texto fixo para poder ser traduzido */, ok: pw.length >= MIN_PASSWORD, required: true },
     { id: "case", label: "Letras maiúsculas e minúsculas", ok: /[a-zà-ÿ]/.test(pw) && /[A-ZÀ-Þ]/.test(pw), required: true },
     { id: "num", label: "Pelo menos um número", ok: /\d/.test(pw), required: true },
     { id: "sym", label: "Um símbolo (!@#$…)", ok: /[^A-Za-z0-9À-ÿ]/.test(pw), required: true },

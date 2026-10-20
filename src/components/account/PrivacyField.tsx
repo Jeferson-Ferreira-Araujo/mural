@@ -26,7 +26,7 @@ export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v
         {(
           [
             [false, tl("🌐 Público")],
-            [true, "🔒 Privado"],
+            [true, tl("🔒 Privado")],
           ] as const
         ).map(([val, label]) => (
           <button

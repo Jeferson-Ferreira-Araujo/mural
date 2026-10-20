@@ -93,7 +93,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label={tx("tipoDePapel")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
-        {([["letter", "Papel liso"], ["notebook", tl("Folha de caderno")]] as const).map(([v, label]) => (
+        {([["letter", tl("Papel liso")], ["notebook", tl("Folha de caderno")]] as const).map(([v, label]) => (
           <button
             key={v}
             type="button"
@@ -117,6 +117,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Lista ----------
 export function ListForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [title, setTitle] = useState("");
   const [items, setItems] = useState(["", "", ""]);
@@ -129,7 +130,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
       {
         type: "list",
         title: title.trim() || tx("m_suaLista"),
-        items: (filled.length ? filled : ["Primeiro item", "Segundo item"]).map((text) => ({ text, done: false })),
+        items: (filled.length ? filled : [tl("Primeiro item"), tl("Segundo item")]).map((text) => ({ text, done: false })),
         font,
         tape,
       },
@@ -616,7 +617,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
             {canRecord && (
               <button type="button" onClick={start} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b]">
                 <span aria-hidden className="size-2.5 rounded-full bg-[#ff5a4d]" />
-                {src ? tx("m_gravarDeNovo") : "Gravar"}
+                {src ? tx("m_gravarDeNovo") : tl("Gravar")}
               </button>
             )}
             <label className="cursor-pointer rounded-xl border border-[#d9c9ad] px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf] focus-within:outline-2 focus-within:outline-[#d98a2b]">
@@ -711,7 +712,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
               autoComplete="off"
             />
             <button type="button" onClick={() => void search()} disabled={searching} className="shrink-0 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b] disabled:opacity-60">
-              {searching ? "Buscando…" : "Buscar"}
+              {searching ? tl("Buscando…") : tl("Buscar")}
             </button>
           </div>
           {error && <ErrorText>{error}</ErrorText>}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { loginUrl } from "@/lib/auth";
+import { useLit } from "@/i18n/literal";
 
 export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number; /** PINZ+: botão "Novo mural" no cabeçalho do mural (celular) */ onNewMural?: () => void; /** sino de notificações */ notifications?: { count: number; onOpen: () => void } };
 
@@ -10,6 +11,7 @@ const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-ce
 
 /** Ícones do cabeçalho de quem está logado: pesquisar murais e abrir o menu da conta. `tone`: light = fundo claro; dark = sobre a imagem do mural. */
 export function AccountActions({ account, tone = "light", className = "", menu = true }: { account: AccountApi; tone?: "light" | "dark"; className?: string; /** false: sem o botão do menu (no desktop os atalhos ficam na coluna bege) */ menu?: boolean }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.AccountActions");
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
@@ -34,7 +36,7 @@ export function AccountActions({ account, tone = "light", className = "", menu =
           <path d="m20 20-4.2-4.2" />
         </svg>
         {tx("x_pesquisarUsuarios")}</button>
-      {menu && <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : "Menu"} title={tx("menu")} className={`${base} ${look}`}>
+      {menu && <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : tl("Menu")} title={tx("menu")} className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
@@ -50,10 +52,11 @@ export function AccountActions({ account, tone = "light", className = "", menu =
 
 /** Só o botão do menu da conta (no celular ele fica no canto esquerdo da tela). */
 export function AccountMenuButton({ account, tone = "light", className = "" }: { account: AccountApi; tone?: "light" | "dark"; className?: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.AccountActions");
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
-    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : "Menu"} title={tx("menu")} className={`${base} ${look} ${className}`}>
+    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : tl("Menu")} title={tx("menu")} className={`${base} ${look} ${className}`}>
       <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
@@ -71,10 +74,11 @@ const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", strok
 
 /** Cabeçalho do mural no celular: à esquerda o menu (e o atalho para o seu mural quando você está no de outra pessoa); à direita a lupa (busca) e o sino. O logo fica no meio (quem usa). */
 export function MobileHeaderLeft({ account }: { account: AccountApi }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.AccountActions");
   return (
     <div className="flex items-center gap-1.5">
-      <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : "Menu"} title={tx("menu")} className={iconBtn}>
+      <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? tx("m_menuPinsParaAprovar", { v0: account.badge }) : tl("Menu")} title={tx("menu")} className={iconBtn}>
         <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>

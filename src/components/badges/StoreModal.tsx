@@ -278,7 +278,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <div className="mt-3 flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2">
                 <p className="text-lg font-bold whitespace-nowrap">{p.price}</p>
                 <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="grow cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
-                  {!PAYMENTS_ENABLED ? tl("Em breve") : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
+                  {!PAYMENTS_ENABLED ? tl("Em breve") : busy === `credits:${p.id}` ? tl("Abrindo…") : tl("Comprar")}
                 </button>
               </div>
             </li>
@@ -304,9 +304,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       <div role="tablist" aria-label={tx("loja")} className="mb-4 grid grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
-            ["pins", "Bottons"],
+            ["pins", tl("Bottons")],
             ["boards", tl("Murais")],
-            ["formats", "Displays"],
+            ["formats", tl("Displays")],
           ] as const
         ).map(([id, text]) => (
           <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -361,7 +361,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <button
                         type="button"
                         disabled={busy === `p${b.key}`}
-                        aria-label={tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : "Comprar", v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
+                        aria-label={tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : tl("Comprar"), v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
                         onClick={() =>
                           buy(
                             `p${b.key}`,
@@ -377,9 +377,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         className={`${buyBtn} !gap-1 !px-1.5 !text-xs`}
                       >
                         {busy === `p${b.key}` ? (
-                          "Comprando…"
+                          tl("Comprando…")
                         ) : (
-                          "Comprar"
+                          tl("Comprar")
                         )}
                       </button>
                     )}
@@ -471,7 +471,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-title text-base font-semibold">{name}</p>
                       {p.owned ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{p.price === 0 ? tx("m_gratis") : "✓ Comprado"}</span>
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{p.price === 0 ? tx("m_gratis") : tl("✓ Comprado")}</span>
                       ) : (
                         <p className="flex items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: p.price })}>
                           <Coin className="size-5" />
@@ -490,7 +490,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     )}
                     {!p.owned && (
                       <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: tx("m_liberadoJaEstaNaEscolha"), spent: p.price })} className={`${buyBtn} mt-2`}>
-                        {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
+                        {busy === `f${p.id}` ? tl("Comprando…") : tl("Comprar")}
                       </button>
                     )}
                   </div>
@@ -553,13 +553,13 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <path d="m5 12.5 4.5 4.5L19 7.5" />
                         </svg>
-                        {b.id === "cortica" ? tx("m_padrao") : "Comprado"}
+                        {b.id === "cortica" ? tx("m_padrao") : tl("Comprado")}
                       </span>
                     )}
                   </div>
                   {owned ? null : (
                     <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: tx("m_liberadoApliqueEmEditarMural"), img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
-                      {busy === `t${b.id}` ? "Comprando…" : "Comprar"}
+                      {busy === `t${b.id}` ? tl("Comprando…") : tl("Comprar")}
                     </button>
                   )}
                 </div>
@@ -609,7 +609,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   }}
                   className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {PAYMENTS_ENABLED ? "Comprar" : tl("Em breve")}
+                  {PAYMENTS_ENABLED ? tl("Comprar") : tl("Em breve")}
                 </button>
               </div>
             </div>

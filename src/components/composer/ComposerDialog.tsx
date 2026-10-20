@@ -182,7 +182,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         </p>
       )}
       <button type="submit" data-tour="compose-send" disabled={!canSend} className={primaryButton}>
-        {sending ? "Colocando…" : capsule.enabled ? tx("m_fecharACapsulaEColocar") : tx("m_colocarNoMural")}
+        {sending ? tl("Colocando…") : capsule.enabled ? tx("m_fecharACapsulaEColocar") : tx("m_colocarNoMural")}
       </button>
       </div>
     </form>
@@ -248,7 +248,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
                 {(
                   [
                     ["pins", tl("Pins")],
-                    ["displays", "Displays"],
+                    ["displays", tl("Displays")],
                   ] as const
                 ).map(([id, text]) => (
                   <button key={id} role="tab" type="button" aria-selected={tab === id} onClick={() => setTab(id)} className={`cursor-pointer rounded-lg py-2 text-sm font-semibold transition-colors ${tab === id ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-white"}`}>

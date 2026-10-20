@@ -149,7 +149,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             </p>
           )}
           <button type="submit" disabled={busy} className="mt-[0.9em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.7em] bg-[#f2c230] px-[1em] py-[0.85em] text-[1.05em] font-bold text-[#2a1c12] transition hover:bg-[#f7cd45] disabled:opacity-70">
-            {busy ? "Verificando…" : "Desbloquear"}
+            {busy ? tl("Verificando…") : tl("Desbloquear")}
             <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
@@ -195,7 +195,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
                 [
                   visits !== undefined && [visits, visits === 1 ? tl("visualização") : tl("visualizações")],
                   followers != null && [followers, followers === 1 ? "seguidor" : "seguidores"],
-                  placed != null && [placed, placed === 1 ? "PINZ colocado" : "PINZ colocados"],
+                  placed != null && [placed, placed === 1 ? tl("PINZ colocado") : tl("PINZ colocados")],
                 ].filter(Boolean) as [number, string][]
               ).map(([n, label]) => (
                 <li key={label} className="min-w-0 px-[0.4em]">
@@ -252,7 +252,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             disabled={busy}
             className="mt-[0.8em] disabled:opacity-70 flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.6em] border border-white/10 bg-[#1f232b] px-[1em] py-[0.8em] text-[1em] font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px"
           >
-            {busy ? "Verificando…" : "Desbloquear"}
+            {busy ? tl("Verificando…") : tl("Desbloquear")}
             <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>

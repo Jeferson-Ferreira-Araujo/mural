@@ -5,6 +5,7 @@ import { claimReward, getRewards, type RewardId, type RewardTask } from "@/lib/r
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -13,6 +14,7 @@ function Coin({ className = "size-5" }: { className?: string }) {
 
 /** Tarefas que dão créditos: cada uma vale uma vez por conta e o crédito entra na hora em que ela é feita. */
 export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.RewardsModal");
   const [tasks, setTasks] = useState<RewardTask[] | null>(null);
 
@@ -49,7 +51,7 @@ export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => 
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className={`block text-[15px] leading-tight font-bold ${t.done ? "text-[#2f6a3c]" : ""}`}>{t.title}</span>
-                  <span className="block text-xs text-[#6b5440]">{t.done ? "Ganho" : t.hint}</span>
+                  <span className="block text-xs text-[#6b5440]">{t.done ? tl("Ganho") : t.hint}</span>
                 </span>
                 <span className={`flex shrink-0 items-center gap-1 text-sm font-bold ${t.done ? "text-[#2f6a3c]" : ""}`} aria-label={tx("m_credito", { v0: t.credits, v1: t.credits > 1 ? "s" : "" })}>
                   <Coin className="size-5" />+{t.credits}

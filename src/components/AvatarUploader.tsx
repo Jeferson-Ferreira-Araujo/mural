@@ -77,7 +77,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
         <p className="text-sm font-bold">{url ? tx("m_suaFoto") : tx("m_adicioneUmaFoto")}</p>
         <div className="mt-1.5 flex flex-wrap gap-2">
           <button type="button" className={btn} disabled={busy || !ready} onClick={() => input.current?.click()}>
-            {busy ? "Enviando…" : url ? tl("Alterar foto") : tl("Escolher foto")}
+            {busy ? tl("Enviando…") : url ? tl("Alterar foto") : tl("Escolher foto")}
           </button>
           {url && (
             <button type="button" className={btn} disabled={busy} onClick={remove}>

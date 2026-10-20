@@ -121,7 +121,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const revealBtn = () => (
     <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
       {showSecret ? <EyeClosed /> : <EyeOpen />}
-      {showSecret ? (widget ? "Esconder display" : tx("m_esconderPin")) : widget ? "Revelar display" : tx("m_revelarPin")}
+      {showSecret ? (widget ? tl("Esconder display") : tx("m_esconderPin")) : widget ? tl("Revelar display") : tx("m_revelarPin")}
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
@@ -290,7 +290,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             {widget && wText && (
               <button type="button" aria-label={tx("compartilharOTexto")} title={tx("compartilharOTexto")} onClick={() => void shareWidgetText()} className={shareBtn}>
                 <ShareIcon />
-                {wCopied ? "Copiado!" : "Compartilhar"}
+                {wCopied ? tl("Copiado!") : tl("Compartilhar")}
               </button>
             )}
             {bookShare && (
@@ -380,7 +380,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 }}
                 className={ghost}
               >
-                {mod?.plan !== "full" ? "Segredo (PINZ+)" : widgetHidden ? "Desabilitar segredo" : "Habilitar segredo"}
+                {mod?.plan !== "full" ? tl("Segredo (PINZ+)") : widgetHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
               </button>
             </div>
           )}
@@ -394,7 +394,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? tx("m_aprovaEDeixaEmSegredo") : tx("m_segredoEDoPinz")} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
-                        {mod.plan === "full" ? tl("Aprovar como segredo") : "Segredo (PINZ+)"}
+                        {mod.plan === "full" ? tl("Aprovar como segredo") : tl("Segredo (PINZ+)")}
                       </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
@@ -410,7 +410,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
                     }} className={`${ghost}`}>
-                      {mod.plan !== "full" ? "Segredo (PINZ+)" : item.ownerHidden ? "Desabilitar segredo" : "Habilitar segredo"}
+                      {mod.plan !== "full" ? tl("Segredo (PINZ+)") : item.ownerHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
                     </button>
                   </>
                 )}

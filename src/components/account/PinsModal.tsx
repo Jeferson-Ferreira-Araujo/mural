@@ -179,7 +179,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
           <>
             {full && (
               <button type="button" role="switch" aria-checked={!p.hiddenFromVisitors} className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => setPinHidden(sb, p.id, !p.hiddenFromVisitors))}>
-                {p.hiddenFromVisitors ? "🔒 Segredo — mostrar" : tx("m_visivelDeixarEmSegredo")}
+                {p.hiddenFromVisitors ? tl("🔒 Segredo — mostrar") : tx("m_visivelDeixarEmSegredo")}
               </button>
             )}
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>
@@ -199,7 +199,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         {(
           [
             ["approvals", tl("Aprovações"), pending.length],
-            ["archived", "Arquivados", archived?.length ?? null],
+            ["archived", tl("Arquivados"), archived?.length ?? null],
           ] as const
         ).map(([id, label, n]) => (
           <button key={id} type="button" role="tab" aria-selected={section === id} onClick={() => setSection(id)} className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold transition ${section === id ? "bg-white text-[#2a1c12] shadow-[0_0.1rem_0.4rem_rgba(60,35,10,.2)]" : "text-[#6b5440] hover:text-[#2a1c12]"}`}>
@@ -261,7 +261,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
                   </p>
                   <div className="mt-3 flex justify-center">
                     <button type="button" className={primary} disabled={busy === a.id} onClick={() => void restore(a.id)}>
-                      {busy === a.id ? "Colocando…" : tx("m_colocarDeVoltaNoMural")}
+                      {busy === a.id ? tl("Colocando…") : tx("m_colocarDeVoltaNoMural")}
                     </button>
                   </div>
                 </div>

@@ -101,7 +101,7 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
             </p>
           )}
           <button type="submit" disabled={busy || !ok} className={primaryButton}>
-            {busy ? "Salvando…" : "Continuar"}
+            {busy ? tl("Salvando…") : tl("Continuar")}
           </button>
         </form>
       )}

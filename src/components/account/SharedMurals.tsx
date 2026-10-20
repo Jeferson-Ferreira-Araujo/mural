@@ -147,7 +147,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                       <button type="button" disabled={busy} onClick={() => setConfirmId(null)} className={`${ghostButton} flex-1`}>
                         {tx("voltar")}</button>
                       <button type="button" disabled={busy} onClick={() => void remove(m)} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
-                        {busy ? "Apagando…" : m.status === "pending" ? tl("Cancelar convite") : tl("Apagar")}
+                        {busy ? tl("Apagando…") : m.status === "pending" ? tl("Cancelar convite") : tl("Apagar")}
                       </button>
                     </div>
                   </div>

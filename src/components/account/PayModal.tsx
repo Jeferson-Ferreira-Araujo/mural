@@ -65,10 +65,10 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   const pack = target?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === target.slice(8)) : undefined;
   const info = (() => {
-    if (pack) return { cents: pack.cents, label: tx("m_pinzCreditos", { v0: pack.credits }), suffix: "", done: tx("m_creditosJaEstaoNaSua", { v0: pack.credits }), title: "Pagamento" };
-    if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · mensal", suffix: "/mês", done: tx("m_oSeuMuralAgoraE"), title: "Assinar o PINZ+" };
+    if (pack) return { cents: pack.cents, label: tx("m_pinzCreditos", { v0: pack.credits }), suffix: "", done: tx("m_creditosJaEstaoNaSua", { v0: pack.credits }), title: tl("Pagamento") };
+    if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: tl("PINZ+ · mensal"), suffix: "/mês", done: tx("m_oSeuMuralAgoraE"), title: tl("Assinar o PINZ+") };
     if (target === "plus_month") return { cents: PLUS_PRICE_CENTS, label: tx("m_pinz1Mes"), suffix: "", done: tx("m_oSeuMuralAgoraE2"), title: tx("m_pinzPor1Mes") };
-    if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: "PINZ+ · anual", suffix: "/ano", done: tx("m_oSeuMuralAgoraE3"), title: "PINZ+ anual" };
+    if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: tl("PINZ+ · anual"), suffix: "/ano", done: tx("m_oSeuMuralAgoraE3"), title: tl("PINZ+ anual") };
     if (target === "plus_life") return { cents: PLUS_LIFETIME_CENTS, label: tx("m_pinzVitalicio"), suffix: "", done: tx("m_oSeuMuralAgoraE4"), title: tx("m_pinzVitalicio2") };
     if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: tx("m_presentePara1MesDe", { v0: recipient }), suffix: "", done: tx("m_jaTem1MesDe", { v0: recipient }), title: tx("m_presentearComPinz") };
     return null;
@@ -200,7 +200,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
   const open = !!product && (fromPlans || !!pack);
-  const title = step === "plans" || step === "gift" ? "PINZ+" : (info?.title ?? "PINZ+");
+  const title = step === "plans" || step === "gift" ? tl("PINZ+") : (info?.title ?? tl("PINZ+"));
   const ghost = "mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5";
 
   const planCard = (id: "plus" | "plus_month" | "plus_annual" | "plus_life", name: string, cents: number, suffix: string, note: string, badge?: string) => (
@@ -237,7 +237,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <path d="m5 12.5 4.5 4.5L19 7.5" />
                 </svg>
               </span>
-              <h2 className="font-title mt-4 text-2xl font-semibold">{target === "gift" ? "Presente enviado!" : target?.startsWith("plus") ? "PINZ+ ativado!" : "Pagamento confirmado!"}</h2>
+              <h2 className="font-title mt-4 text-2xl font-semibold">{target === "gift" ? tl("Presente enviado!") : target?.startsWith("plus") ? tl("PINZ+ ativado!") : tl("Pagamento confirmado!")}</h2>
               <p className="mt-1 text-[#4a3826]">{info?.done}</p>
               <button type="button" onClick={onClose} className={`${primaryButton} mt-6`}>
                 {tx("continuar")}</button>
@@ -302,7 +302,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 </p>
               )}
               <button type="button" disabled={giftBusy} onClick={() => void checkGift()} className={`${primaryButton} mt-4`}>
-                {giftBusy ? "Conferindo…" : "Continuar"}
+                {giftBusy ? tl("Conferindo…") : tl("Continuar")}
               </button>
               <button type="button" onClick={() => setStep("plans")} className={ghost}>
                 {tx("voltar")}</button>
@@ -320,7 +320,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 <div className="mt-4 space-y-2.5">
                   <p className="text-sm font-semibold text-[#6b5440]">{tx("comoVoceQuerPagar")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} flex items-center justify-center gap-2`}>
-                    {busy === "pix" ? "Gerando o Pix…" : tl("Pix · confirma na hora")}
+                    {busy === "pix" ? tl("Gerando o Pix…") : tl("Pix · confirma na hora")}
                   </button>
                   <button type="button" disabled={busy !== null} onClick={() => setStep("card")} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
                     {tx("cartaoDeCreditoOuDebito")}</button>
@@ -388,7 +388,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 <div className="mt-4 text-center">
                   <p className="text-[15px] text-[#4a3826]">{tx("esseCodigoExpirouOuNao")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} mt-4`}>
-                    {busy ? "Gerando…" : tx("m_gerarUmNovoCodigo")}
+                    {busy ? tl("Gerando…") : tx("m_gerarUmNovoCodigo")}
                   </button>
                 </div>
               )}
