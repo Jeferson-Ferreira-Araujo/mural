@@ -10,7 +10,7 @@ import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "./SecretCover";
 import { ghostButton } from "../ui";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
@@ -22,6 +22,7 @@ const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "
 export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: () => void }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDetail");
+  const locale = useLocale();
   const [copied, setCopied] = useState(false);
   const { badges, editable, removeDisplay, setDisplaySecret } = useBadges();
   const mod = useModeration();
@@ -32,7 +33,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
   const cardRef = useRef<HTMLDivElement>(null);
   const hidden = !!badges.find((b) => b.id === data.id)?.hidden;
   const own = editable && !!data.id;
-  const live = withLiveText(data);
+  const live = withLiveText(data, locale);
   const pages = Math.max(1, data.pages ?? 1);
   const readN = Math.min(pages, Math.max(0, data.read ?? 0));
   const bookText = data.product === "book" ? tx("x_reading", { hasTitle: data.title ? "yes" : "no", title: data.title ?? "", read: readN, pages, pct: Math.round((readN / pages) * 100) }) : null;

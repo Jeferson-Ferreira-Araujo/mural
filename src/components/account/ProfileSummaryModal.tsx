@@ -246,7 +246,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                         </svg>
                       </span>
                     )}
-                    <span className="mt-1 block text-xs font-semibold">{bd.name}</span>
+                    <span className="mt-1 block text-xs font-semibold">{tl(bd.name)}</span>
                   </button>
                 );
               })}

@@ -11,12 +11,13 @@ import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { Field, inputClass, primaryButton } from "../ui";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 
 const SAMPLE: Record<string, Partial<DisplayData>> = {
-  bible: { text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" },
-  motivation: { text: "Disciplina de hoje é o resultado de amanhã." },
+  bible: {},
+  motivation: {},
   clock: {},
   weather: {},
   calendar: {},
@@ -41,6 +42,7 @@ const isoPlus = (days: number) => {
 export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDialog");
+  const dLocale = useLocale() as DemoLocale;
   const wt = useWT();
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
@@ -131,6 +133,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     product,
     frame,
     ...SAMPLE[product],
+    ...(product === "bible" ? { text: SAMPLE_TEXT[dLocale].bibleText, ref: SAMPLE_TEXT[dLocale].bibleRef } : product === "motivation" ? { text: SAMPLE_TEXT[dLocale].motivation } : {}),
     ...(product === "clock" ? { tz } : {}),
     ...(product === "calendar" ? { dates: dates.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d.date)) } : {}),
     // na prévia, enquanto não preencheu, aparece um exemplo (30 dias adiante)
@@ -138,7 +141,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "book"
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
-    ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
+    ...(product === "top3" ? { title: t3Title.trim() || SAMPLE_TEXT[dLocale].top3, items: t3Items.map((x, i) => x.trim() || SAMPLE_TEXT[dLocale].food[i]) } : {}),
     ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || [wt.defYes, wt.defNo][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { embedFor } from "@/lib/embed";
 import { allow } from "@/lib/rateLimit";
+import { requestTag } from "@/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,8 @@ const cache = new Map<string, { at: number; meta: Meta }>();
 const TTL = 6 * 3600_000;
 
 async function get(url: string, headers: Record<string, string> = {}) {
-  return fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "pt-BR,pt;q=0.9", ...headers }, signal: AbortSignal.timeout(5000), cache: "no-store" });
+  const lang = await requestTag();
+  return fetch(url, { headers: { "User-Agent": UA, "Accept-Language": `${lang},${lang.slice(0, 2)};q=0.9,en;q=0.5`, ...headers }, signal: AbortSignal.timeout(5000), cache: "no-store" });
 }
 
 /** YouTube: o nome e o canal vêm do oEmbed oficial; a duração, do HTML público do vídeo. */

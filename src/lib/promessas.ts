@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import data from "@/data/promessas.json";
+import dataEn from "@/data/promessas.en.json";
+import dataEs from "@/data/promessas.es.json";
+import { useLocale } from "next-intl";
 import { msUntilMidnight, promiseIndex } from "./promessasDia";
 
 export type Promessa = { promessa: string; referencia: string };
@@ -10,19 +13,25 @@ export type Promessa = { promessa: string; referencia: string };
 export const PROMESSAS: readonly Promessa[] = data;
 
 /** A promessa de um dia (hoje, por padrão), no calendário de São Paulo. */
-export const promessaDoDia = (now: Date = new Date()): Promessa => PROMESSAS[promiseIndex(now, PROMESSAS.length)];
+/** A mesma biblioteca em cada idioma (ARA em português, New Heart English Bible, Reina-Valera 1909): mesma ordem e mesmas referências, então o versículo do dia é o mesmo em qualquer idioma. */
+const LIBS: Record<string, readonly Promessa[]> = { pt: PROMESSAS, en: dataEn, es: dataEs };
+export const promessaDoDia = (now: Date = new Date(), locale = "pt"): Promessa => {
+  const lib = LIBS[locale] ?? PROMESSAS;
+  return lib[promiseIndex(now, lib.length)];
+};
 
 /**
  * Hook: a promessa de hoje desde a primeira renderização, trocada sozinha à meia-noite de São Paulo com a tela aberta.
  * Só relógio local: nenhuma requisição. Ao voltar para a aba (ou acordar o aparelho) confere de novo.
  */
 export function usePromessaDoDia(): Promessa {
-  const [p, setP] = useState<Promessa>(() => promessaDoDia());
+  const locale = useLocale();
+  const [p, setP] = useState<Promessa>(() => promessaDoDia(new Date(), locale));
   useEffect(() => {
     let timer = 0;
     const sync = () => {
-      const next = promessaDoDia();
-      setP((cur) => (cur.referencia === next.referencia ? cur : next));
+      const next = promessaDoDia(new Date(), locale);
+      setP((cur) => (cur.referencia === next.referencia && cur.promessa === next.promessa ? cur : next));
     };
     const arm = () => {
       window.clearTimeout(timer);
@@ -44,6 +53,6 @@ export function usePromessaDoDia(): Promessa {
       document.removeEventListener("visibilitychange", wake);
       window.removeEventListener("focus", wake);
     };
-  }, []);
+  }, [locale]);
   return p;
 }

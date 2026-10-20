@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { allow, clientIp } from "@/lib/rateLimit";
+import { requestTag } from "@/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,7 +45,7 @@ export async function GET(req: Request) {
   url.searchParams.set("size", `${W}x${H}`);
   url.searchParams.set("scale", "2");
   url.searchParams.set("maptype", "roadmap");
-  url.searchParams.set("language", "pt-BR");
+  url.searchParams.set("language", await requestTag());
   url.searchParams.set("key", GOOGLE_KEY);
 
   try {

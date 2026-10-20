@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { allow } from "@/lib/rateLimit";
+import { requestTag } from "@/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,6 +21,7 @@ type GooglePlace = { displayName?: { text?: string }; formattedAddress?: string;
 export async function GET(req: Request) {
   if (!GOOGLE_KEY || !SUPABASE_URL) return fail(503, "unavailable");
 
+  const tag = await requestTag();
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!jwt) return fail(401, "not_authenticated");
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
@@ -39,7 +41,7 @@ export async function GET(req: Request) {
         "X-Goog-Api-Key": GOOGLE_KEY,
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.location",
       },
-      body: JSON.stringify({ textQuery: q, languageCode: "pt-BR", regionCode: "BR", pageSize: 5 }),
+      body: JSON.stringify({ textQuery: q, languageCode: tag, ...(tag.startsWith("pt") ? { regionCode: "BR" } : {}), pageSize: 5 }),
       signal: AbortSignal.timeout(10_000),
     });
     if (!r.ok) return fail(502, "upstream");

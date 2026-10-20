@@ -19,7 +19,7 @@ import { useBadges } from "../badges/BadgeContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "../badges/SecretCover";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
@@ -103,6 +103,7 @@ export type DetailEntry = BoardItem | WidgetEntry;
 export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: DetailEntry[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
   const tl = useLit();
   const tx = useTranslations("components.board.PinDetail");
+  const locale = useLocale();
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
   useBackClose(open, onClose); // voltar (Android) fecha o detalhe em vez de sair do mural
@@ -169,7 +170,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const widget = entry && "widget" in entry ? entry : null; // este item da fila é um widget da loja
   const item: BoardItem | null = entry && !widget ? (entry as BoardItem) : null;
   const [wCopied, setWCopied] = useState(false);
-  const wLive = widget ? withLiveText(widget.data) : null;
+  const wLive = widget ? withLiveText(widget.data, locale) : null;
   const wText = wLive?.text ? `“${wLive.text}”${wLive.ref ? ` — ${wLive.ref}` : ""}` : null;
   async function shareWidgetText() {
     if (!wText) return;

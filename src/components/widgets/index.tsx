@@ -128,9 +128,9 @@ function BibleCard({ data }: { data: DisplayData }) {
 }
 
 /** Para compartilhar/ler fora do cartão: o versículo do dia no lugar do que o servidor guardou. */
-export const withLiveText = (data: DisplayData): DisplayData => {
+export const withLiveText = (data: DisplayData, locale = "pt"): DisplayData => {
   if (data.product !== "bible") return data;
-  const p = promessaDoDia();
+  const p = promessaDoDia(new Date(), locale);
   return { ...data, text: p.promessa, ref: p.referencia };
 };
 

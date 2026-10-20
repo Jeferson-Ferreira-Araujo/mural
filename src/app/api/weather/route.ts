@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { allow, clientIp } from "@/lib/rateLimit";
 import { resilientFetch } from "@/lib/resilience";
+import { requestTag } from "@/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,12 +13,12 @@ const places = new Map<string, { at: number; name: string | null }>(); // nome d
 const PLACE_TTL_MS = 24 * 3_600_000;
 
 /** Nome da cidade de uma coordenada (OpenStreetMap/Nominatim). Falhou ou não achou: null (o display usa "Sua localização"). */
-async function placeName(la: string, lo: string): Promise<string | null> {
-  const key = `${la},${lo}`;
+async function placeName(la: string, lo: string, tag: string): Promise<string | null> {
+  const key = `${la},${lo},${tag}`;
   const hit = places.get(key);
   if (hit && Date.now() - hit.at < PLACE_TTL_MS) return hit.name;
   try {
-    const r = await resilientFetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=pt-BR&lat=${la}&lon=${lo}`, { headers: { "User-Agent": "Pinz/1.0 (https://pinz.digital; contato@pinz.digital)" } }, { service: "nominatim", timeoutMs: 6_000, retries: 1 });
+    const r = await resilientFetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=${tag}&lat=${la}&lon=${lo}`, { headers: { "User-Agent": "Pinz/1.0 (https://pinz.digital; contato@pinz.digital)" } }, { service: "nominatim", timeoutMs: 6_000, retries: 1 });
     if (!r.ok) return hit?.name ?? null;
     const j = (await r.json()) as { address?: { city?: string; town?: string; village?: string; municipality?: string; suburb?: string; county?: string } };
     const a = j.address;
@@ -50,11 +51,12 @@ export async function GET(req: Request) {
   if (hit && Date.now() - hit.at < TTL_MS) return NextResponse.json(hit.data, { headers: { "Cache-Control": "public, max-age=300" } });
 
   try {
+    const tag = await requestTag();
     const [r, place] = await Promise.all([
       resilientFetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${la}&lon=${lo}`, {
         headers: { "User-Agent": "Pinz/1.0 (https://pinz.digital; contato@pinz.digital)" },
       }, { service: "metno", timeoutMs: 10_000, retries: 1 }),
-      sp.get("place") === "1" ? placeName(la, lo) : Promise.resolve(null), // o nome só é buscado quando a localização é de quem vê
+      sp.get("place") === "1" ? placeName(la, lo, tag) : Promise.resolve(null), // o nome só é buscado quando a localização é de quem vê
     ]);
     if (!r.ok) return hit ? NextResponse.json(hit.data) : fail(502, "upstream");
     const j = (await r.json()) as { properties?: { timeseries?: { data?: { instant?: { details?: { air_temperature?: number } }; next_1_hours?: { summary?: { symbol_code?: string } }; next_6_hours?: { summary?: { symbol_code?: string } } } }[] } };
