@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Explorer } from "@/components/Explorer";
+import { getLocale, getTranslations } from "next-intl/server";
+
+const OG_LOCALE: Record<string, string> = { pt: "pt_BR", en: "en_US", es: "es_ES" };
 
 export const dynamic = "force-dynamic";
 
@@ -9,12 +12,14 @@ type Params = { params: Promise<{ nick: string; slug: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { nick } = await params;
   const who = `@${nick.toLowerCase()}`;
-  const title = `Mural de ${who} no Pinz`;
-  const description = "Deixe um recado no meu mural";
+  const t = await getTranslations("meta");
+  const locale = await getLocale();
+  const title = t("muralTitle", { who });
+  const description = t("muralDescription");
   return {
-    title: `Mural de ${who}`,
+    title: t("muralTab", { who }),
     description,
-    openGraph: { title, description, siteName: "Pinz", type: "website", locale: "pt_BR" }, // a imagem vem de opengraph-image.tsx (mural borrado ou real)
+    openGraph: { title, description, siteName: "Pinz", type: "website", locale: OG_LOCALE[locale] ?? "pt_BR" }, // a imagem vem de opengraph-image.tsx (mural borrado ou real)
     twitter: { card: "summary_large_image", title, description },
   };
 }

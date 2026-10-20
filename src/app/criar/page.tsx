@@ -110,7 +110,7 @@ export default function CriarMural() {
         {STEPS.map((label, i) => (
           <li key={label} className="min-w-0 flex-1" aria-current={i === step ? "step" : undefined}>
             <span className={`block h-1.5 rounded-full ${i <= step ? "bg-[#1f232b]" : "bg-[#e1d3ba]"}`} />
-            <span className={`mt-1.5 block truncate text-[11px] font-semibold sm:text-xs ${i === step ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>{label}</span>
+            <span className={`mt-1.5 block truncate text-[11px] font-semibold sm:text-xs ${i === step ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>{tl(label)}</span>
           </li>
         ))}
       </ol>

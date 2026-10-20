@@ -15,5 +15,7 @@ jobs:
       - run: npm ci
       - name: Tipos (tsc)
         run: npx tsc --noEmit
+      - name: Chaves usadas no código existem no catálogo
+        run: node scripts/check-keys.mjs
       - name: Catálogos de tradução (mesmas chaves em pt, en e es)
         run: node scripts/check-messages.mjs

@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = { title: "Política de Privacidade", alternates: { canonical: "/privacidade" }, robots: { index: true, follow: true } };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("privacyTitle"), alternates: { canonical: "/privacidade" }, robots: { index: true, follow: true } };
+}
 
 export default function Privacidade() {
   const tl = useLit();
   const tx = useTranslations("app.privacidade.page");
   return (
-    <LegalPage title={tl("Política de Privacidade")} updated="12 de outubro de 2026">
+    <LegalPage title={tl("Política de Privacidade")} updated="2026-10-12">
       <p>{tx("x_oPinzPinzDigitalE")}</p>
 
       <section>

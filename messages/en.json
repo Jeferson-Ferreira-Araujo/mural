@@ -1096,7 +1096,8 @@
       "StylePickers": {
         "letra": "Font",
         "ola": "Hello!",
-        "corDoContorno": "Outline color"
+        "corDoContorno": "Outline color",
+        "x_font": "Handwriting {name}"
       }
     },
     "DesktopBoard": {
@@ -2064,7 +2065,39 @@
     "hkisj43": "Use a YouTube link, like https://youtu.be/… or https://www.youtube.com/watch?v=…",
     "h10dc4r4": "The photo can be up to 8 MB.",
     "h5azz8d": "The photo can be up to 12 MB.",
-    "h1tqmotc": "Choose an image file."
+    "h1tqmotc": "Choose an image file.",
+    "hnvv6tp": "Artist",
+    "h1rp8q5": "Question",
+    "h1oz46u3": "Wrong or expired code. Check your email or ask for a new code.",
+    "h1f5act0": "That email already has an account. Go back and sign in with your password.",
+    "h56jori": "That username can't be used with that email.",
+    "hbz6z3e": "The code is right, but we couldn't set the password right now. Try confirming again.",
+    "h1bsx66c": "Wall",
+    "h1nuhyzj": "Modern",
+    "h1chhz0": "Dark and clean.",
+    "hh8c2g5": "Sheet",
+    "h47wzd2": "Night",
+    "hj51w0i": "Light",
+    "huyljr": "Warm",
+    "hdoyxe7": "Light and warm.",
+    "h2ih6k4": "Light paper.",
+    "h1wsgjnj": "Shelf",
+    "h5wmxvd": "Wood and gold.",
+    "h75go6n": "Light paper, medals.",
+    "h67kmsw": "Glowing purple and pink.",
+    "h6ubikn": "Paper",
+    "h1tql8z5": "Light and airy.",
+    "ho6jpoe": "Colorful",
+    "h17bwfm4": "Pink, orange and purple.",
+    "h1hx1ouf": "Golden cookie.",
+    "h1nv2i0p": "Red",
+    "h147qmhi": "Wine and gold.",
+    "hx5l3cq": "Pixel Art",
+    "h1qedakl": "Quotes",
+    "hgltusb": "Handwriting",
+    "h15zgxng": "Approve",
+    "ha8quai": "Reject",
+    "hsh6nr1": "Remove"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
@@ -2081,5 +2114,19 @@
     "listAnd": "and",
     "listNone": "changed something",
     "list": "@{actor} {what} in your list “{list}”"
+  },
+  "meta": {
+    "siteDescription": "Pinz is a digital board for collecting moments: receive notes, photos, songs and videos from the people you love.",
+    "homeTitle": "Pinz - Your board of shared moments",
+    "homeDescription": "Pinz is a digital board for collecting moments: receive notes, photos, songs and videos from the people you love, and decorate it your way.",
+    "profileTitle": "{who}'s profile on Pinz",
+    "profileTab": "{nick}'s boards",
+    "profileDescription": "See the boards and leave a note",
+    "muralTitle": "{who}'s board on Pinz",
+    "muralTab": "{who}'s board",
+    "muralDescription": "Leave a note on my board",
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Use",
+    "deletionTitle": "Data deletion"
   }
 }

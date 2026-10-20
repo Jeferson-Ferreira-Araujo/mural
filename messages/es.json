@@ -1096,7 +1096,8 @@
       "StylePickers": {
         "letra": "Letra",
         "ola": "¡Hola!",
-        "corDoContorno": "Color del contorno"
+        "corDoContorno": "Color del contorno",
+        "x_font": "Letra {name}"
       }
     },
     "DesktopBoard": {
@@ -2064,7 +2065,39 @@
     "hkisj43": "Usa un enlace de YouTube, como https://youtu.be/… o https://www.youtube.com/watch?v=…",
     "h10dc4r4": "La foto puede pesar hasta 8 MB.",
     "h5azz8d": "La foto puede pesar hasta 12 MB.",
-    "h1tqmotc": "Elige un archivo de imagen."
+    "h1tqmotc": "Elige un archivo de imagen.",
+    "hnvv6tp": "Artista",
+    "h1rp8q5": "Pregunta",
+    "h1oz46u3": "Código incorrecto o vencido. Revisa el correo o pide un código nuevo.",
+    "h1f5act0": "Ese correo ya tiene una cuenta. Vuelve y entra con tu contraseña.",
+    "h56jori": "Ese nombre de usuario no se puede usar con ese correo.",
+    "hbz6z3e": "El código es correcto, pero no se pudo definir la contraseña ahora. Intenta confirmar de nuevo.",
+    "h1bsx66c": "Pared",
+    "h1nuhyzj": "Moderno",
+    "h1chhz0": "Oscuro y limpio.",
+    "hh8c2g5": "Hoja",
+    "h47wzd2": "Noche",
+    "hj51w0i": "Claro",
+    "huyljr": "Cálido",
+    "hdoyxe7": "Claro y cálido.",
+    "h2ih6k4": "Papel claro.",
+    "h1wsgjnj": "Estante",
+    "h5wmxvd": "Madera y dorado.",
+    "h75go6n": "Papel claro, medallas.",
+    "h67kmsw": "Morado y rosa luminosos.",
+    "h6ubikn": "Papel",
+    "h1tql8z5": "Claro y ligero.",
+    "ho6jpoe": "Colorido",
+    "h17bwfm4": "Rosa, naranja y morado.",
+    "h1hx1ouf": "Galleta dorada.",
+    "h1nv2i0p": "Rojo",
+    "h147qmhi": "Vino y dorado.",
+    "hx5l3cq": "Pixel Art",
+    "h1qedakl": "Frases",
+    "hgltusb": "Letra",
+    "h15zgxng": "Aprobar",
+    "ha8quai": "Rechazar",
+    "hsh6nr1": "Quitar"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
@@ -2081,5 +2114,19 @@
     "listAnd": "y",
     "listNone": "modificó algo",
     "list": "@{actor} {what} en tu lista “{list}”"
+  },
+  "meta": {
+    "siteDescription": "Pinz es un mural digital para coleccionar momentos: recibe mensajes, fotos, canciones y videos de las personas que quieres.",
+    "homeTitle": "Pinz - Tu mural de momentos compartidos",
+    "homeDescription": "Pinz es un mural digital para coleccionar momentos: recibe mensajes, fotos, canciones y videos de las personas que quieres y decóralo a tu manera.",
+    "profileTitle": "Perfil de {who} en Pinz",
+    "profileTab": "Murales de {nick}",
+    "profileDescription": "Mira los murales y deja un mensaje",
+    "muralTitle": "Mural de {who} en Pinz",
+    "muralTab": "Mural de {who}",
+    "muralDescription": "Deja un mensaje en mi mural",
+    "privacyTitle": "Política de Privacidad",
+    "termsTitle": "Términos de Uso",
+    "deletionTitle": "Eliminación de datos"
   }
 }

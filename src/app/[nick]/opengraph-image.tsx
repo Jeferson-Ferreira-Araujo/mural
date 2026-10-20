@@ -67,15 +67,14 @@ async function build(nick: string): Promise<ArrayBuffer> {
             <div style={{ width: 250, height: 250, borderRadius: 999, background: "#d98a2b", color: "#fff", fontSize: 120, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "8px solid #fff" }}>{owner.slice(0, 1).toUpperCase()}</div>
           )}
           <div style={{ display: "flex", flexDirection: "column", marginLeft: 48, flex: 1 }}>
-            <div style={{ display: "flex", fontSize: 30, color: "#8a7b69", fontWeight: 700 }}>PERFIL NO PINZ</div>
+            <div style={{ display: "flex", fontSize: 30, color: "#8a7b69", fontWeight: 700 }}>PINZ</div>
             <div style={{ display: "flex", fontSize: owner.length > 14 ? 56 : 72, fontWeight: 700, color: "#2f2218", lineHeight: 1.05, marginTop: 6 }}>{`@${owner}`}</div>
             {pv?.plus && (
               <div style={{ display: "flex", marginTop: 16 }}>
                 <div style={{ display: "flex", background: "#f2b81c", color: "#2a1c12", fontSize: 30, fontWeight: 800, padding: "6px 22px", borderRadius: 16 }}>PINZ+</div>
               </div>
             )}
-            <div style={{ display: "flex", fontSize: 28, color: "#4a3826", marginTop: 22 }}>Veja os murais e deixe um recado</div>
-          </div>
+                      </div>
           {logo && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logo} width={170} height={128} alt="" style={{ position: "absolute", right: 36, top: 28 }} />

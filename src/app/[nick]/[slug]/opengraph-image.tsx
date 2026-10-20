@@ -214,7 +214,7 @@ async function build(nick: string, slug: string): Promise<ArrayBuffer> {
           )}
           <div style={{ display: "flex", flexDirection: "column", marginLeft: 30, flex: 1 }}>
             <div style={{ display: "flex", fontSize: 58, fontWeight: 700, color: "#fff7e6", lineHeight: 1.05 }}>{`@${owner}`}</div>
-            <div style={{ display: "flex", fontSize: 32, color: "#f1dfbd", marginTop: 8, whiteSpace: "nowrap" }}>Deixe um recado no meu mural</div>
+            <div style={{ display: "flex", fontSize: 32, color: "#f1dfbd", marginTop: 8, whiteSpace: "nowrap" }}>{SITE_HOST}</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             {logo && (

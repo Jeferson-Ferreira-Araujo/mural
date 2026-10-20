@@ -20,7 +20,8 @@ export function FitSidebar() {
       // a largura máxima (40em) não pode encolher junto com a letra: senão sobra faixa desfocada nas laterais do mural
       el.style.maxWidth = `${fs * 40}px`;
       const h0 = el.scrollHeight;
-      while (el.scrollHeight > el.clientHeight + 1 && fs > 8.5) {
+      const floor = Math.max(8.5, fs * 0.9); // a letra encolhe no máximo 10%: trocar de idioma (textos mais longos) não pode diminuir os campos; o que sobrar rola na própria coluna
+      while (el.scrollHeight > el.clientHeight + 1 && fs > floor) {
         fs -= 0.5;
         el.style.fontSize = `${fs}px`;
       }

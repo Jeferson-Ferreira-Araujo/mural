@@ -2,6 +2,7 @@
 
 import { FRAME_COLORS, HAND_FONTS, PIN_COLORS, TAPE_COLORS, type FrameColor, type HandId, type PinColor, type TapeColor } from "@/lib/style";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const ring = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
@@ -18,7 +19,7 @@ export function FontPicker({ value, onChange }: { value: HandId; onChange: (f: H
             type="button"
             role="radio"
             aria-checked={value === f.id}
-            aria-label={`Letra ${f.label}`}
+            aria-label={tx("x_font", { name: f.label })}
             onClick={() => onChange(f.id)}
             className={`cursor-pointer rounded-xl border-2 bg-white/70 px-1 py-2.5 text-center transition ${ring} ${value === f.id ? "border-[#2f2218] bg-white shadow-sm" : "border-[#e1d3ba] hover:bg-white"}`}
           >
@@ -32,18 +33,19 @@ export function FontPicker({ value, onChange }: { value: HandId; onChange: (f: H
 }
 
 function Dots<T extends string>({ label, options, value, onChange }: { label: string; options: readonly { id: T; label: string; swatch: string }[]; value: T; onChange: (v: T) => void }) {
+  const tl = useLit();
   return (
     <fieldset>
-      <legend className="mb-1.5 text-sm font-semibold">{label}</legend>
-      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={label}>
+      <legend className="mb-1.5 text-sm font-semibold">{tl(label)}</legend>
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={tl(label)}>
         {options.map((o) => (
           <button
             key={o.id}
             type="button"
             role="radio"
             aria-checked={value === o.id}
-            aria-label={o.label}
-            title={o.label}
+            aria-label={tl(o.label)}
+            title={tl(o.label)}
             onClick={() => onChange(o.id)}
             className={`size-9 cursor-pointer rounded-full border-2 shadow-[inset_0_0.15rem_0.2rem_rgba(255,255,255,.45),0_0.1rem_0.25rem_rgba(0,0,0,.3)] transition-transform ${ring} ${value === o.id ? "scale-110 border-[#2f2218]" : "border-transparent"}`}
             style={{ background: o.swatch }}

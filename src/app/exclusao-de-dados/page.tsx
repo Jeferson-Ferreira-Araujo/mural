@@ -3,14 +3,18 @@ import { LegalPage } from "@/components/LegalPage";
 import { SUPPORT_EMAIL } from "@/lib/contact";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = { title: "Exclusão de dados", alternates: { canonical: "/exclusao-de-dados" }, robots: { index: true, follow: true } };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("deletionTitle"), alternates: { canonical: "/exclusao-de-dados" }, robots: { index: true, follow: true } };
+}
 
 export default function ExclusaoDeDados() {
   const tl = useLit();
   const tx = useTranslations("app.exclusao_de_dados.page");
   return (
-    <LegalPage title={tl("Exclusão de dados")} updated="8 de outubro de 2026">
+    <LegalPage title={tl("Exclusão de dados")} updated="2026-10-08">
       <p>{tx("x_vocePodePedirAExclusao")}</p>
 
       <section>

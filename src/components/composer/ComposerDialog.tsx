@@ -67,6 +67,14 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
   }
 }
 
+/** Traduz os textos de um exemplo da prévia para o idioma da pessoa. */
+const localizeSample = (d: DraftMessage, tl: (s: string) => string): DraftMessage => {
+  const r = { ...d } as Record<string, unknown>;
+  for (const k of ["text", "title", "caption", "name", "artist"]) if (typeof r[k] === "string" && r[k]) r[k] = tl(r[k] as string);
+  if (Array.isArray(r.items)) r.items = (r.items as { text: string; done: boolean }[]).map((x) => ({ ...x, text: tl(x.text) }));
+  return r as DraftMessage;
+};
+
 /** Exemplos mostrados na prévia antes de a pessoa preencher (nunca são enviados). */
 const SAMPLE: Record<MessageType, DraftMessage> = {
   postit: { type: "postit", color: "yellow", text: "Seu recado aparece aqui" },
@@ -137,7 +145,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const canSend = !!signAs && !sending && !!draft && !empty && slot !== null && capsuleDateOk(capsule) && (!capsule.enabled || !!capsule.at);
   const hasPos = format === "postit"; // só a tachinha muda de lugar; a fita fica sempre no lugar do card
   const withPos = (d: DraftMessage): DraftMessage => (hasPos ? ({ ...d, pos } as DraftMessage) : d);
-  const shown = withPos(draft ?? SAMPLE[format]);
+  const shown = withPos(draft ?? localizeSample(SAMPLE[format], tl));
 
   return (
     <form

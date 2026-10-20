@@ -1096,7 +1096,8 @@
       "StylePickers": {
         "letra": "Letra",
         "ola": "Olá!",
-        "corDoContorno": "Cor do contorno"
+        "corDoContorno": "Cor do contorno",
+        "x_font": "Letra {name}"
       }
     },
     "DesktopBoard": {
@@ -1454,5 +1455,19 @@
     "listAnd": "e",
     "listNone": "mexeu",
     "list": "@{actor} {what} na sua lista “{list}”"
+  },
+  "meta": {
+    "siteDescription": "O Pinz é um mural digital para colecionar momentos: receba recados, fotos, músicas e vídeos de quem você ama.",
+    "homeTitle": "Pinz - Seu mural de momentos compartilhados",
+    "homeDescription": "O Pinz é um mural digital para colecionar momentos: receba recados, fotos, músicas e vídeos de quem você ama e decore do seu jeito.",
+    "profileTitle": "Perfil de {who} no Pinz",
+    "profileTab": "Murais de {nick}",
+    "profileDescription": "Veja os murais e deixe um recado",
+    "muralTitle": "Mural de {who} no Pinz",
+    "muralTab": "Mural de {who}",
+    "muralDescription": "Deixe um recado no meu mural",
+    "privacyTitle": "Política de Privacidade",
+    "termsTitle": "Termos de Uso",
+    "deletionTitle": "Exclusão de dados"
   }
 }
