@@ -180,13 +180,13 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                   </svg>
                 </Stat>
               )}
-              <Stat tone="blue" value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? "visualização nos murais" : "visualizações nos murais"}>
+              <Stat tone="blue" value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? "visualização" : "visualizações"}>
                 <svg {...icon} strokeWidth="2.4">
                   <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </Stat>
-              <Stat tone="green" value={data.placed.toLocaleString("pt-BR")} label={data.placed === 1 ? "PINZ colocado" : "PINZ colocados"}>
+              <Stat tone="green" value={(data.received ?? 0).toLocaleString("pt-BR")} label={(data.received ?? 0) === 1 ? "pin colocado no mural" : "pins colocados no mural"}>
                 <svg {...icon} fill="currentColor" stroke="none">
                   <path d="M14.500 2.500 21.500 9.500c.6.6.2 1.500-.6 1.600l-2.300.2-3.700 3.700.4 3.400c.1.8-.8 1.200-1.400.7L9.600 15.600 4 21.200 2.800 20 8.400 14.400 5.400 11c-.5-.6-.1-1.500.7-1.400l3.400.4 3.700-3.700.2-2.300c.1-.8 1-1.200 1.600-.6Z" />
                 </svg>
@@ -307,7 +307,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                 {([
                   ...(data.followers != null ? [{ v: data.followers.toLocaleString("pt-BR"), l: data.followers === 1 ? "seguidor" : "seguidores", bg: "#fbe4e2" }] : []),
                   { v: data.views.toLocaleString("pt-BR"), l: "visualizações", bg: "#e0ecf8" },
-                  { v: data.placed.toLocaleString("pt-BR"), l: "PINZ colocados", bg: "#e3f1de" },
+                  { v: (data.received ?? 0).toLocaleString("pt-BR"), l: "pins colocados no mural", bg: "#e3f1de" },
                 ] as { v: string; l: string; bg: string }[])
                   .map(({ v, l, bg }) => (
                     <div key={l} style={{ flex: 1, background: bg, borderRadius: 18, padding: "14px 6px", display: "flex", flexDirection: "column", alignItems: "center" }}>
