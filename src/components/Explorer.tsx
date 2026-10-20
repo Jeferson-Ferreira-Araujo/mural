@@ -1159,7 +1159,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         }}
         onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
         onSignOut={() => {
-          void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/entrar"));
+          void getBrowserSupabase().auth.signOut().then(() => window.location.replace("/")); // volta para a tela principal do site: a mudança brusca deixa claro que saiu
         }}
       />
     ) : undefined;
@@ -1261,7 +1261,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             }}
             onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
             onSignOut={() => {
-              void getBrowserSupabase().auth.signOut().then(() => window.location.assign("/entrar"));
+              void getBrowserSupabase().auth.signOut().then(() => window.location.replace("/")); // volta para a tela principal do site: a mudança brusca deixa claro que saiu
             }}
           />
           {everProfile && selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}

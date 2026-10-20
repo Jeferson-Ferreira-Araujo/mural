@@ -180,6 +180,15 @@ export function AccountDrawer({
       ro.disconnect();
     };
   }, [open, inline, modal]); // eslint-disable-line react-hooks/exhaustive-deps
+  // confirmar antes de sair da conta (janela nativa centralizada em toda a tela)
+  const [confirmOut, setConfirmOut] = useState(false);
+  const outRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = outRef.current;
+    if (!d) return;
+    if (confirmOut && !d.open) d.showModal();
+    if (!confirmOut && d.open) d.close();
+  }, [confirmOut]);
   const tokenAt = useRef(0);
   useEffect(() => {
     if (!editProfileToken) return;
@@ -398,6 +407,38 @@ export function AccountDrawer({
   );
   const modals = (
     <>
+      <dialog
+        ref={outRef}
+        aria-label="Sair da conta"
+        onClose={() => setConfirmOut(false)}
+        onClick={(e) => e.target === e.currentTarget && setConfirmOut(false)}
+        className="m-auto w-[min(92vw,22rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
+      >
+        <div className="w-full rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
+          <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#f1e7d2] text-[#6b5440]" aria-hidden>
+            <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
+            </svg>
+          </span>
+          <h2 className="font-title mt-3 text-2xl font-semibold">Sair da conta?</h2>
+          <p className="mt-2 text-sm text-[#4a3826]">Você volta para a tela de entrada. Seus murais e pins continuam guardados.</p>
+          <div className="mt-4 flex gap-2">
+            <button type="button" onClick={() => setConfirmOut(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmOut(false);
+                onSignOut();
+              }}
+              className="flex-1 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#2c313b]"
+            >
+              Sair
+            </button>
+          </div>
+        </div>
+      </dialog>
       {mural && <PinsModal open={isOpen && modal === "pins"} onClose={close} muralId={mural.id} plan={mural.plan} onPending={onPending} onRestored={onChanged} startSection={pinsStart} ttlDays={mural.pin_ttl_days ?? null} onTtlSaved={onChanged} />}
       <VisitorsModal open={isOpen && modal === "visitors"} onClose={close} />
       <FollowingModal open={isOpen && modal === "following"} onClose={close} nick={nick} />
@@ -442,7 +483,7 @@ export function AccountDrawer({
       </Modal>
       <RewardsModal open={isOpen && modal === "rewards"} onClose={close} />
       <PlansModal open={isOpen && modal === "plans"} onClose={close} plan={account.plan} credits={credits} />
-      <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={onSignOut} onPrivacySaved={onChanged} plus={account.plan === "full"} />
+      <ProfileModal open={isOpen && modal === "profile"} onClose={close} nick={nick} email={email} onSignOut={() => setConfirmOut(true)} onPrivacySaved={onChanged} plus={account.plan === "full"} />
     </>
   );
 
@@ -453,7 +494,7 @@ export function AccountDrawer({
         <nav aria-label="Menu da conta" data-tour="menu" className="space-y-[0.45em]">
           {rows}
         </nav>
-        <button type="button" onClick={onSignOut} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
+        <button type="button" onClick={() => setConfirmOut(true)} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
           Sair da conta
         </button>
         {modals}
@@ -506,7 +547,7 @@ export function AccountDrawer({
 
             <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
               <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />
-              <button type="button" onClick={onSignOut} className="relative z-10 mx-auto flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#8a5a50] transition hover:bg-[#f1e3d6] active:scale-[0.99]">
+              <button type="button" onClick={() => setConfirmOut(true)} className="relative z-10 mx-auto flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#8a5a50] transition hover:bg-[#f1e3d6] active:scale-[0.99]">
                 <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
                 </svg>
