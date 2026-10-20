@@ -1,4 +1,4 @@
-import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS } from "./plans";
+import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "./plans";
 import { adminClient, isUuid } from "./mercadopago";
 
 /**
@@ -10,6 +10,7 @@ export type Item = { id: string; kind: "credits" | "plus" | "gift"; cents: numbe
 export function itemForId(id: string): Item | undefined {
   const pack = CREDIT_PACKS.find((p) => p.id === id);
   if (pack) return { id: pack.id, kind: "credits", cents: pack.cents, credits: pack.credits, title: `Pinz — ${pack.credits} créditos` };
+  if (id === "plus_month") return { id, kind: "plus", cents: PLUS_PRICE_CENTS, days: 30, title: "Pinz — PINZ+ por 1 mês" };
   if (id === "plus_annual") return { id, kind: "plus", cents: PLUS_ANNUAL_CENTS, days: 365, title: "Pinz — PINZ+ anual" };
   if (id === "plus_life") return { id, kind: "plus", cents: PLUS_LIFETIME_CENTS, days: null, title: "Pinz — PINZ+ vitalício" };
   if (id === "gift") return { id, kind: "gift", cents: PLUS_GIFT_CENTS, days: 30, title: "Pinz — presente: 1 mês de PINZ+" };

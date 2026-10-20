@@ -63,6 +63,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   const info = (() => {
     if (pack) return { cents: pack.cents, label: `Pinz · ${pack.credits} créditos`, suffix: "", done: `+${pack.credits} créditos já estão na sua conta.`, title: "Pagamento" };
     if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · mensal", suffix: "/mês", done: "O seu mural agora é PINZ+. Aproveite!", title: "Assinar o PINZ+" };
+    if (target === "plus_month") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · 1 mês", suffix: "", done: "O seu mural agora é PINZ+ por 1 mês. Aproveite!", title: "PINZ+ por 1 mês" };
     if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: "PINZ+ · anual", suffix: "/ano", done: "O seu mural agora é PINZ+ por 1 ano. Aproveite!", title: "PINZ+ anual" };
     if (target === "plus_life") return { cents: PLUS_LIFETIME_CENTS, label: "PINZ+ · vitalício", suffix: "", done: "O seu mural agora é PINZ+ para sempre. Aproveite!", title: "PINZ+ vitalício" };
     if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: `Presente para @${recipient} · 1 mês de PINZ+`, suffix: "", done: `@${recipient} já tem 1 mês de PINZ+ e foi avisado.`, title: "Presentear com PINZ+" };
@@ -198,7 +199,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   const title = step === "plans" || step === "gift" ? "PINZ+" : (info?.title ?? "PINZ+");
   const ghost = "mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5";
 
-  const planCard = (id: "plus" | "plus_annual" | "plus_life", name: string, cents: number, suffix: string, note: string, badge?: string) => (
+  const planCard = (id: "plus" | "plus_month" | "plus_annual" | "plus_life", name: string, cents: number, suffix: string, note: string, badge?: string) => (
     <button
       key={id}
       type="button"
@@ -253,7 +254,8 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               </ul>
               <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">Escolha o seu plano</p>
               <div className="space-y-3.5">
-                {planCard("plus", "Mensal", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago.")}
+                {planCard("plus", "Mensal (assinatura)", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago.")}
+                {planCard("plus_month", "1 mês", PLUS_PRICE_CENTS, "pagamento único", "Só quer usar por um mês? Pague uma vez com Pix ou cartão, sem renovação automática.")}
                 {planCard("plus_annual", "Anual", PLUS_ANNUAL_CENTS, "por ano", `Equivale a ${brl(Math.round(PLUS_ANNUAL_CENTS / 12))} por mês. Pix ou cartão, sem renovação automática.`, `Economize ${Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100)}%`)}
                 {planCard("plus_life", "Vitalício", PLUS_LIFETIME_CENTS, "pagamento único", "Pague uma vez e use para sempre. Pix ou cartão.")}
               </div>
