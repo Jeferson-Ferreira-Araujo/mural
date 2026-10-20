@@ -37,7 +37,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
   }, [open]);
 
   return (
-    <Field label="Validade dos pins de outras pessoas" hint={<span className="text-xs text-[#8a7b69]">Depois do prazo o pin sai do mural, mas fica guardado em Meus pins.</span>}>
+    <Field label="Tempo de exibição dos pinz" hint={<span className="text-xs text-[#8a7b69]">Depois do prazo o pin sai do mural, mas fica guardado em Meus pins.</span>}>
       {(id) => (
         <div ref={box} className="overflow-hidden rounded-xl border border-[#d9c9ad] bg-white">
           <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base">

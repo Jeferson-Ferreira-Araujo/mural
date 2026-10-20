@@ -198,7 +198,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         ))}
       </div>
       {ask && (
-        <div role="dialog" aria-label="Validade dos pins" className="mb-4 rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-4 text-[#2f2218]">
+        <div role="dialog" aria-label="Tempo de exibição dos pinz" className="mb-4 rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-4 text-[#2f2218]">
           <p className="font-title text-lg font-semibold">Por quanto tempo os pins ficam no mural?</p>
           <p className="mt-1 text-sm text-[#4a3826]">Os pins que outras pessoas colocam podem sair do mural depois de um tempo. Eles não são apagados: ficam guardados em Meus pins &gt; Arquivados, e você coloca de volta quando quiser. Seus próprios pins nunca saem. Dá para mudar depois em Editar mural.</p>
           <div role="radiogroup" aria-label="Validade" className="mt-3 space-y-2">
@@ -275,7 +275,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
             <p className="mb-3 text-center text-xs text-[#6b5440]">
               Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.
               <br />
-              Validade dos pins de outras pessoas: <strong>{ttlDays ? `${ttlDays} dias` : "sem prazo (ficam para sempre)"}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
+              Tempo de exibição dos pinz: <strong>{ttlDays ? `${ttlDays} dias` : "sem prazo (ficam para sempre)"}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
             </p>
           )}
           <Carousel label={tab === "pending" ? "Pins para aprovar" : "Pins no mural"}>
