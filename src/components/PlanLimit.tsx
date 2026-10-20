@@ -62,7 +62,7 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
             type="button"
             disabled={!PAYMENTS_ENABLED}
             onClick={subscribe}
-            className="w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full cursor-pointer rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-4 py-3 text-sm font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.7rem_rgba(150,90,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {!PAYMENTS_ENABLED ? "PINZ+ em breve" : "Assinar o PINZ+ por R$ 9,90/mês"}
           </button>
