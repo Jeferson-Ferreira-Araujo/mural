@@ -1,5 +1,7 @@
 
-import { useTranslations } from "next-intl";"use client";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 /** Evento que pede ao mural visível para escolher um ponto livre e abrir o compositor (Pins e Displays), sem precisar tocar no mural. */
 export const COMPOSE_AUTO_EVENT = "pinz:compose-auto";
