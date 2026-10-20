@@ -6,6 +6,7 @@ import { boardById } from "@/lib/boards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
+import { SuccessPopup } from "./SuccessPopup";
 
 /**
  * Meus murais: a lista dos murais da conta. Tocar num deles abre a edição (nome, pergunta de segurança e resposta, tipo do mural),
@@ -128,6 +129,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
   }
 
   return (
+    <>
     <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide overlay={confirmId && toDelete ? (
         <div role="alertdialog" aria-label="Apagar mural" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#2a1c12]/55 p-5 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-5 text-center shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
@@ -142,17 +144,6 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                 {busy ? "Apagando…" : "Apagar"}
               </button>
             </div>
-          </div>
-        </div>
-      ) : flash ? (
-        <div role="status" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#fbf6ea]/95 backdrop-blur-sm">
-          <div className="text-center" style={{ animation: "buy-pop 0.5s ease" }}>
-            <span className="mx-auto grid size-20 place-items-center rounded-full bg-[#3aa655] text-white shadow-[0_0.5rem_1.6rem_rgba(58,166,85,.5)]">
-              <svg viewBox="0 0 24 24" className="size-11" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="m5 12.5 4.5 4.5L19 7.5" />
-              </svg>
-            </span>
-            <p className="font-title mt-4 text-2xl font-semibold text-[#1f4d2b]">Mural salvo com sucesso!</p>
           </div>
         </div>
       ) : undefined} headerLeft={editing ? (<button type="button" onClick={() => setEditId(null)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#4a3826] hover:text-[#2a1c12]">
@@ -281,5 +272,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
         </div>
       )}
     </Modal>
+    <SuccessPopup open={flash} message="Mural salvo com sucesso!" onClose={() => setFlash(false)} />
+    </>
   );
 }
