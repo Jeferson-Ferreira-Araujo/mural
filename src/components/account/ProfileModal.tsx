@@ -124,7 +124,48 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       onClose={onClose}
       title="Perfil"
       overlay={
-        flash ? (
+        delOpen ? (
+          // confirmação: janelinha por cima do perfil (fundo escurecido), com a conta só sendo excluída depois de digitar EXCLUIR
+          <div role="alertdialog" aria-label="Excluir a conta" aria-modal="true" className="absolute inset-0 z-30 grid place-items-center overflow-y-auto rounded-3xl bg-[#2a1c12]/60 p-5 backdrop-blur-sm" onClick={(e) => e.target === e.currentTarget && (() => {
+              if (delBusy) return;
+              setDelOpen(false);
+              setDelText("");
+              setDelErr(null);
+            })()}>
+            <div className="w-full max-w-sm rounded-3xl border border-[#e3b3a8] bg-[#fdf6f3] p-5 text-[#4a1d14] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
+              <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#fbd9d2] text-[#a23b2a]" aria-hidden>
+                <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3.5 2.5 20h19L12 3.5Z" />
+                  <path d="M12 10v4.5M12 17.5v.01" />
+                </svg>
+              </span>
+              <h2 className="font-title mt-3 text-center text-2xl font-semibold">Excluir a conta?</h2>
+              <p className="mt-2 text-center text-sm">Sua conta ficará inativa por <strong>30 dias</strong> e, depois disso, será <strong>totalmente apagada</strong>, com murais, pins e bottons. Depois do prazo, não dá para desfazer.</p>
+              <label htmlFor="del-confirm" className="mt-4 block text-sm font-semibold">
+                Para confirmar, digite <span className="rounded bg-[#fbd9d2] px-1.5 py-0.5 font-bold">EXCLUIR</span>
+              </label>
+              <input id="del-confirm" value={delText} onChange={(e) => setDelText(e.target.value)} autoComplete="off" autoCapitalize="characters" className={`${inputClass} mt-1.5`} />
+              {delErr && (
+                <p role="alert" className="mt-2 text-sm text-[#a23b2a]">
+                  {delErr}
+                </p>
+              )}
+              <div className="mt-4 flex gap-2">
+                <button type="button" onClick={() => {
+              if (delBusy) return;
+              setDelOpen(false);
+              setDelText("");
+              setDelErr(null);
+            }} disabled={delBusy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+                  Cancelar
+                </button>
+                <button type="button" onClick={() => void deleteAccount()} disabled={delBusy || delText.trim().toUpperCase() !== "EXCLUIR"} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:cursor-not-allowed disabled:opacity-50">
+                  {delBusy ? "Excluindo…" : "Excluir conta"}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : flash ? (
           <div role="status" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#fbf6ea]/95 backdrop-blur-sm">
             <div className="text-center" style={{ animation: "buy-pop 0.5s ease" }}>
               <span className="mx-auto grid size-20 place-items-center rounded-full bg-[#3aa655] text-white shadow-[0_0.5rem_1.6rem_rgba(58,166,85,.5)]">
@@ -191,54 +232,6 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       </button>
     </Modal>
 
-    {/* confirmação em janela vermelha: a conta só é excluída depois de digitar EXCLUIR */}
-    <Modal
-      open={open && delOpen}
-      danger
-      title="Excluir a conta"
-      onClose={() => {
-        if (delBusy) return;
-        setDelOpen(false);
-        setDelText("");
-        setDelErr(null);
-      }}
-    >
-      <div role="alertdialog" aria-label="Excluir a conta">
-        <p className="text-sm font-bold text-[#6b2a1c]">Esta ação não pode ser desfeita depois do prazo.</p>
-        <p className="mt-1 text-sm text-[#6b2a1c]">Sua conta ficará inativa por 30 dias e, depois disso, será totalmente apagada.</p>
-        <label htmlFor="del-confirm" className="mt-4 block text-sm font-semibold text-[#6b2a1c]">
-          Para confirmar, digite EXCLUIR
-        </label>
-        <input id="del-confirm" value={delText} onChange={(e) => setDelText(e.target.value)} autoComplete="off" className={`${inputClass} mt-1`} />
-        {delErr && (
-          <p role="alert" className="mt-2 text-sm text-[#a23b2a]">
-            {delErr}
-          </p>
-        )}
-        <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setDelOpen(false);
-              setDelText("");
-              setDelErr(null);
-            }}
-            disabled={delBusy}
-            className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            onClick={() => void deleteAccount()}
-            disabled={delBusy || delText.trim().toUpperCase() !== "EXCLUIR"}
-            className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {delBusy ? "Excluindo…" : "Excluir conta"}
-          </button>
-        </div>
-      </div>
-    </Modal>
     </>
   );
 }
