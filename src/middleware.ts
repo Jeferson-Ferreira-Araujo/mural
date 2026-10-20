@@ -18,6 +18,9 @@ const RULES: Rule[] = [
 const DEFAULT_MAX = 240;
 
 function clientIp(req: NextRequest): string {
+  // o site fica atrás da Cloudflare: o x-forwarded-for traz o IP da Cloudflare, e o do visitante vem em cf-connecting-ip
+  const cf = req.headers.get("cf-connecting-ip");
+  if (cf) return cf.trim();
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
   return req.headers.get("x-real-ip") ?? "unknown";
@@ -42,7 +45,6 @@ export function middleware(req: NextRequest) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(retry) } });
   }
   const res = NextResponse.next();
-  res.headers.set("x-rl-key", key);
   res.headers.set("x-ratelimit-remaining", String(Math.max(0, max - h.n)));
   return res;
 }
