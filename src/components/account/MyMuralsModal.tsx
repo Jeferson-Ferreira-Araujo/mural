@@ -242,14 +242,21 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                     <span className="mb-1 block h-5 max-w-44 truncate text-sm leading-5 font-bold">{m.title}</span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
-                    {m.question && (
-                      <span className="absolute bottom-1.5 left-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.4)]" aria-hidden>
-                        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    {/* abaixo da imagem: se o mural é público ou privado (com pergunta de segurança) */}
+                    <span className={`mt-1.5 flex items-center gap-1 text-xs font-semibold ${m.question ? "text-[#8a5a10]" : "text-[#2f6a3c]"}`}>
+                      {m.question ? (
+                        <svg viewBox="0 0 24 24" className="size-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <rect x="5" y="11" width="14" height="9" rx="2" />
                           <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                         </svg>
-                      </span>
-                    )}
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="size-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M3 12h18M12 3c2.5 2.6 3.7 5.600 3.700 9s-1.200 6.400-3.700 9c-2.500-2.600-3.700-5.600-3.700-9s1.200-6.400 3.700-9Z" />
+                        </svg>
+                      )}
+                      {m.question ? "Privado" : "Público"}
+                    </span>
                   </button>
                   <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">
                     <button type="button" onClick={() => setEditId(m.id)} aria-label={`Editar ${m.title}`} title="Editar" className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
