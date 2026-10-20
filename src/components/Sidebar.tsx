@@ -25,7 +25,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
   const tx = useTranslations("components.Sidebar");
   return (
     <aside
-      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[30em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
+      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[40em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">{tx("pinz")}</h1>
