@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { SITE_HOST } from "./mural";
+import { resilientFetch } from "@/lib/resilience";
 
 /**
  * Mercado Pago (só no servidor). As credenciais ficam em variáveis de ambiente, nunca no navegador. Há dois ambientes, e o /admin escolhe
@@ -46,12 +47,13 @@ export const paymentsConfigured = async (env?: PayEnv) => envConfigured(env ?? (
 
 export async function mp<T = Record<string, unknown>>(path: string, init?: { method?: string; body?: unknown }, env?: PayEnv): Promise<{ ok: boolean; status: number; data: T }> {
   const e = env ?? (await payMode());
-  const res = await fetch(`https://api.mercadopago.com${path}`, {
-    method: init?.method ?? "GET",
-    headers: { Authorization: `Bearer ${TOKENS[e]}`, "Content-Type": "application/json", ...(init?.method === "POST" ? { "X-Idempotency-Key": crypto.randomUUID() } : {}) },
-    body: init?.body ? JSON.stringify(init.body) : undefined,
-    cache: "no-store",
-  });
+  // a mesma chave de idempotência vale para todas as tentativas: se a primeira chegou e a resposta se perdeu, o Mercado Pago não cobra duas vezes
+  const idem: Record<string, string> = init?.method === "POST" ? { "X-Idempotency-Key": crypto.randomUUID() } : {};
+  const res = await resilientFetch(
+    `https://api.mercadopago.com${path}`,
+    { method: init?.method ?? "GET", headers: { Authorization: `Bearer ${TOKENS[e]}`, "Content-Type": "application/json", ...idem }, body: init?.body ? JSON.stringify(init.body) : undefined, cache: "no-store" },
+    { service: "mercadopago", timeoutMs: 15_000, retries: 2 },
+  );
   const data = (await res.json().catch(() => ({}))) as T;
   return { ok: res.ok, status: res.status, data };
 }

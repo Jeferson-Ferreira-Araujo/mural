@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { resilientFetch } from "@/lib/resilience";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
 
   let verdict: { safe?: boolean } | null = null;
   try {
-    const r = await fetch(`${NSFW_URL}/check`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" }, signal: AbortSignal.timeout(20_000) });
+    const r = await resilientFetch(`${NSFW_URL}/check`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" } }, { service: "nsfw", timeoutMs: 20_000, retries: 1 });
     if (r.status === 422) {
       await sb.storage.from("avatars").remove([path]);
       return fail(422, "unreadable");

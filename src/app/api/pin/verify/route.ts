@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/mercadopago";
 import { allow } from "@/lib/rateLimit";
+import { resilientFetch } from "@/lib/resilience";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
 
   let verdict: { safe?: boolean; flags?: string[]; detected?: string[]; nsfw_prob?: number } | null = null;
   try {
-    const r = await fetch(`${NSFW_URL}/${video ? "check-video" : "check"}`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" }, signal: AbortSignal.timeout(video ? 90_000 : 25_000) });
+    const r = await resilientFetch(`${NSFW_URL}/${video ? "check-video" : "check"}`, { method: "POST", body: bytes, headers: { "Content-Type": "application/octet-stream" } }, { service: "nsfw", timeoutMs: video ? 90_000 : 25_000, retries: 1 });
     if (r.status === 422) {
       await admin.storage.from("pin-media").remove([path]);
       return fail(422, "unreadable");
