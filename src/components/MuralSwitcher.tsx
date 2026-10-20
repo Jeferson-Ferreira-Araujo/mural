@@ -24,7 +24,7 @@ export function MuralSwitcher({ sw, className = "" }: { sw?: MuralSwitch; classN
           ))}
         </span>
         <span className="sr-only">
-          {i + 1} de {sw.items.length}
+          {tx("x_de", { v0: i + 1, v1: sw.items.length })}
         </span>
       </p>
       <button type="button" aria-label={tx("proximoMural")} onClick={() => go(i + 1)} className={arrow}>

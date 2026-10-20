@@ -27,8 +27,7 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
-            Voltar
-          </Link>
+            {tx("x_voltar")}</Link>
           <Brand className="h-[5.5rem] sm:h-[6.5rem]" />
         </div>
         <main className="paper-grain rounded-[1.4rem] border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_1.5rem_4rem_rgba(0,0,0,.5)] sm:p-8">

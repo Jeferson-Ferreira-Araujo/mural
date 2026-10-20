@@ -95,7 +95,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
               {sharedList.map((m) => (
                 <a key={m.id} role="menuitem" href={`/${m.owner}/${m.slug}`} className={item}>
                   <span className="min-w-0 flex-1 truncate">{m.title}</span>
-                  <span className="shrink-0 text-xs font-normal text-[#6b5440]">com @{m.mine ? m.partner : m.owner}</span>
+                  <span className="shrink-0 text-xs font-normal text-[#6b5440]">{tx("x_com", { v0: m.mine ? m.partner : m.owner })}</span>
                 </a>
               ))}
             </>

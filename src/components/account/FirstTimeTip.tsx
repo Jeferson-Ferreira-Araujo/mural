@@ -40,25 +40,25 @@ export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: {
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             📌
           </span>
-          <p><strong>{tx("colocarUmPin")}</strong> clique (ou toque) num espaço vazio do mural.</p>
+          <p>{tx.rich("x_colocarUmPinCliqueOu", { s0: (c) => <strong>{c}</strong> })}</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🤏
           </span>
-          <p><strong>{tx("zoom")}</strong> pinça com dois dedos ou toque duplo. “Afastar” volta ao mural inteiro.</p>
+          <p>{tx.rich("x_zoomPincaComDoisDedos", { s0: (c) => <strong>{c}</strong> })}</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             ✋
           </span>
-          <p><strong>{tx("mover")}</strong> com o mural aproximado, arraste para ver o resto.</p>
+          <p>{tx.rich("x_moverComOMuralAproximado", { s0: (c) => <strong>{c}</strong> })}</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🎨
           </span>
-          <p><strong>{tx("bottons")}</strong> arraste da barra de baixo para o mural. Para tirar, arraste de volta.</p>
+          <p>{tx.rich("x_bottonsArrasteDaBarraDe", { s0: (c) => <strong>{c}</strong> })}</p>
         </li>
       </ul>
       <button type="button" onClick={close} className="mt-6 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">

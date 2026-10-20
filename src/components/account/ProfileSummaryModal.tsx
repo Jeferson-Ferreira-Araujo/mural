@@ -219,8 +219,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       ) : view === "shared" ? (
         <form onSubmit={sendShared} noValidate className="space-y-4">
           <p className="text-sm text-[#4a3826]">
-            Um mural só de vocês dois. Você define o nome e a senha e <strong>@{data.nickname}</strong> recebe o convite. Os dois precisam ter o PINZ+.
-          </p>
+            {tx.rich("x_umMuralSoDeVoces", { v0: data.nickname, s0: (c) => <strong>{c}</strong> })}</p>
           {!viewerPlus && <p className="rounded-xl border border-[#ecd9a0] bg-[#fff6dd] px-3 py-2 text-sm text-[#6b4a10]">{tx("voceAindaNaoTemO")}</p>}
           <fieldset className="min-w-0">
             <legend className="mb-1 text-sm font-semibold">{tx("tipoDoMural")}</legend>
@@ -268,8 +267,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       ) : (
         <form onSubmit={sendReport} noValidate className="space-y-4">
           <p className="text-sm text-[#4a3826]">
-            A denúncia é anônima: <strong>@{data.nickname}</strong> não sabe quem denunciou. Nossa equipe analisa e decide o que fazer.
-          </p>
+            {tx.rich("x_aDenunciaEAnonimaNao", { v0: data.nickname, s0: (c) => <strong>{c}</strong> })}</p>
           <fieldset className="space-y-1.5">
             <legend className="mb-1 text-sm font-semibold">{tx("qualEOProblema")}</legend>
             {REASONS.map((r) => (

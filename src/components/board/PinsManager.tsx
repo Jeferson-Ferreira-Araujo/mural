@@ -126,7 +126,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       {pending.length > 0 && (
         <section aria-label={tx("pinsAguardandoAprovacao")}>
           <h3 className="text-sm font-bold">
-            Aguardando sua aprovação <span className="rounded-md bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{pending.length}</span>
+            {tx.rich("x_aguardandoSuaAprovacao", { v0: pending.length, s0: (c) => <span className="rounded-md bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{c}</span> })}
           </h3>
           <p className={`mt-1 text-xs ${muted}`}>{tx("nadaApareceNoMuralAntes")}</p>
           <ul className="mt-3 space-y-2">
@@ -147,7 +147,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
 
       {approved.length > 0 && (
         <section aria-label={tx("pinsNoMural")}>
-          <h3 className="text-sm font-bold">No mural ({approved.length})</h3>
+          <h3 className="text-sm font-bold">{tx("x_noMural", { v0: approved.length })}</h3>
           <p className={`mt-1 text-xs ${muted}`}>{full ? tx("m_escolhaQuaisFicamVisiveisE") : tx("m_noPinzVoceEscolheQuais")}</p>
           <ul className="mt-3 space-y-2">
             {approved.map((p) => (

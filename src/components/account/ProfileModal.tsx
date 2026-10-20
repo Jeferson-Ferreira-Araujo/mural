@@ -169,7 +169,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
           <p className="text-sm text-[#4a3826]">{tx("voceEntraComOGoogle")}</p>
         ) : (
           <>
-            <p className="text-sm text-[#4a3826]">Para sua segurança, a troca é feita por um link enviado para <strong className="break-all">{email}</strong>.</p>
+            <p className="text-sm text-[#4a3826]">{tx.rich("x_paraSuaSegurancaATroca", { v0: email, s0: (c) => <strong className="break-all">{c}</strong> })}</p>
             {msg && (
               <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
                 {msg.text}
@@ -226,9 +226,9 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
                   </svg>
                 </span>
                 <h2 className="font-title mt-3 text-center text-2xl font-semibold">{tx("excluirAConta2")}</h2>
-                <p className="mt-2 text-center text-sm">Sua conta ficará inativa por <strong>{tx("t30Dias")}</strong> e, depois disso, será <strong>{tx("totalmenteApagada")}</strong>, com murais, pins e bottons. Depois do prazo, não dá para desfazer.</p>
+                <p className="mt-2 text-center text-sm">{tx.rich("x_suaContaFicaraInativaPor", { s0: (c) => <strong>{c}</strong>, s1: (c) => <strong>{c}</strong> })}</p>
                 <label htmlFor="del-confirm" className="mt-4 block text-sm font-semibold">
-                  Para confirmar, digite <span className="rounded bg-[#fbd9d2] px-1.5 py-0.5 font-bold">{tx("excluir")}</span>
+                  {tx.rich("x_paraConfirmarDigiteExcluir", { s0: (c) => <span className="rounded bg-[#fbd9d2] px-1.5 py-0.5 font-bold">{c}</span> })}
                 </label>
                 <input id="del-confirm" value={delText} onChange={(e) => setDelText(e.target.value)} autoComplete="off" autoCapitalize="characters" className={`${inputClass} mt-1.5`} />
                 {delErr && (

@@ -56,11 +56,10 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
     >
       <h3 className="font-title text-lg font-semibold">{tx("editarLista")}</h3>
       <label className="mt-4 block text-sm font-semibold">
-        Título
-        <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} className={`${inputClass} mt-1.5 font-normal`} />
+        {tx("x_titulo")}<input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} className={`${inputClass} mt-1.5 font-normal`} />
       </label>
       <fieldset className="mt-4">
-        <legend className="mb-1.5 text-sm font-semibold">Itens (até {MAX_ITEMS})</legend>
+        <legend className="mb-1.5 text-sm font-semibold">{tx("x_itensAte", { v0: MAX_ITEMS })}</legend>
         <ul className="space-y-2">
           {items.map((it, i) => (
             <li key={i} className="flex items-center gap-2">

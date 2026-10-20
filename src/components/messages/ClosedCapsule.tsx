@@ -45,7 +45,7 @@ export function ClosedCapsule({ opensAt }: { opensAt: string }) {
       <div className="absolute inset-x-0 bottom-0 px-[1em] pb-[0.9em] text-center">
         <p className="font-hand text-[1.4em] leading-[1.05] text-[#3b2a14]">{tx("voceRecebeuUmaMensagemFechada")}</p>
         <p className="mt-[0.5em] font-mono text-[0.72em] leading-snug text-[#5a4527]" aria-live="off">
-          Abre em: {left ?? "…"}
+          {tx("x_abreEm", { v0: left ?? "…" })}
         </p>
       </div>
       </div>

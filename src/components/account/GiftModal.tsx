@@ -60,7 +60,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
             ))}
           </div>
           <div>
-            <p className="font-title text-3xl leading-tight font-semibold">Feliz aniversário{name ? `, ${name}` : ""}! 🎉</p>
+            <p className="font-title text-3xl leading-tight font-semibold">{tx("x_felizAniversario", { v0: name ? `, ${name}` : "" })}</p>
             <p className="mx-auto mt-2 max-w-[22rem] text-[15px] leading-snug text-[#4a3826]">{tx("oPinzDesejaAVoce")}</p>
           </div>
           <div className="rounded-2xl border border-[#e8d5a6] bg-[#fff6dd] p-4 text-left">
@@ -70,8 +70,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
                 <li className="flex gap-2">
                   <span aria-hidden>✨</span>
                   <span>
-                    <strong>PINZ+ liberado{until ? tx("m_ate", { v0: until }) : tx("m_ateOFimDoMes")}</strong>, de presente.
-                  </span>
+                    {tx.rich("x_pinzLiberadoDePresente", { v0: until ? tx("m_ate", { v0: until }) : tx("m_ateOFimDoMes"), s0: (c) => <strong>{c}</strong> })}</span>
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden>📌</span>
@@ -85,8 +84,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
             ) : (
               <>
                 <p className="mt-2 text-[15px]">
-                  <strong>{tx("todosOsBottonsDeAniversario")}</strong>, de presente por ser PINZ+: balões, bolos, presentes, recados de parabéns e muito mais.
-                </p>
+                  {tx.rich("x_todosOsBottonsDeAniversario", { s0: (c) => <strong>{c}</strong> })}</p>
                 <div className="mt-3 flex flex-wrap justify-center gap-2" aria-hidden>
                   {[88, 87, 91, 92, 93, 107, 100, 113, 119, 122].map((k) => (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -107,7 +105,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
               🎁
             </div>
             {gift.actor && <Avatar src={gift.avatar ?? null} name={gift.actor} className="mx-auto size-16" />}
-            <p className="text-base font-semibold">{gift.actor ? `@${gift.actor}` : tx("m_alguem")} te presenteou com 1 mês de PINZ+!</p>
+            <p className="text-base font-semibold">{tx("x_tePresenteouCom1Mes", { v0: gift.actor ? `@${gift.actor}` : tx("m_alguem") })}</p>
             <p className="text-sm text-[#4a3826]">{tx("seuPinzJaEstaAtivo")}</p>
             <button type="button" onClick={onClose} className={`${primaryButton} w-full`}>
               {tx("obrigado")}</button>

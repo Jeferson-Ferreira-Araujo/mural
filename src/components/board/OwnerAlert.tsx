@@ -20,8 +20,7 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
       <p className="mt-[0.3em] text-[0.92em]">
         {tries > 0 ? (
           <>
-            <strong>{tries}</strong> {tries === 1 ? "pessoa tentou" : "pessoas tentaram"} deixar um PINZ.
-          </>
+            {tx.rich("x_deixarUmPinz", { v0: tries, s0: (c) => <strong>{c}</strong> })}</>
         ) : (
           tx("m_ninguemTentouDeixarUmPinz")
         )}

@@ -375,8 +375,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                   </div>
                   <label className="flex cursor-pointer items-center gap-2 text-xs text-[#4a3826]">
                     <input type="checkbox" checked={d.yearly} onChange={(e) => setDates((l) => l.map((x, j) => (j === i ? { ...x, yearly: e.target.checked } : x)))} className="size-4 accent-[#d9a21b]" />
-                    Repetir todo ano
-                  </label>
+                    {tx("x_repetirTodoAno")}</label>
                 </li>
               ))}
             </ul>

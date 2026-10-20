@@ -253,17 +253,11 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
 
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={() => setErase((v) => !v)} aria-pressed={erase} className={chip(erase)}>
-          {ICONS.eraser}
-          Borracha
-        </button>
+          {tx.rich("x_borracha", { n0: () => ICONS.eraser })}</button>
         <button type="button" onClick={undo} disabled={count === 0} className={chip(false)}>
-          {ICONS.undo}
-          Desfazer
-        </button>
+          {tx.rich("x_desfazer", { n0: () => ICONS.undo })}</button>
         <button type="button" onClick={clear} disabled={count === 0} className={chip(false)}>
-          {ICONS.clear}
-          Limpar
-        </button>
+          {tx.rich("x_limpar", { n0: () => ICONS.clear })}</button>
       </div>
     </div>
   );

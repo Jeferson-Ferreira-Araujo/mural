@@ -11,6 +11,7 @@ import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useTag } from "@/i18n/useTag";
 
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
@@ -57,6 +58,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
  */
 export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals", ttlDays = null, onTtlSaved }: { /** validade atual dos pins de outras pessoas neste mural (null = sem prazo) */ ttlDays?: 7 | 15 | 30 | null; /** a validade mudou aqui: atualiza os dados do mural */ onTtlSaved?: () => void; /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
   const tx = useTranslations("components.account.PinsModal");
+  const tag = useTag();
   const [section, setSection] = useState<"approvals" | "archived">("approvals");
   const [archived, setArchived] = useState<ArchivedPin[] | null>(null);
   const [archNote, setArchNote] = useState<{ ok: boolean; text: string } | null>(null);
@@ -156,8 +158,8 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         <MessageView message={{ ...p, pending: false, ownerHidden: false, ownerReview: false }} />
       </div>
       <p className="mt-2 text-sm font-semibold">
-        {formatInfo[p.type].label} <span className="font-normal text-[#6b5440]">· espaço {(p.slot ?? 0) + 1}</span>
-        {p.signedBy && <span className="font-normal text-[#6b5440]"> · assinado por {p.signedBy}</span>}
+        {formatInfo[p.type].label} <span className="font-normal text-[#6b5440]">{tx("x_espaco", { v0: (p.slot ?? 0) + 1 })}</span>
+        {p.signedBy && <span className="font-normal text-[#6b5440]"> {tx("x_assinadoPor", { v0: p.signedBy })}</span>}
       </p>
       <div className="mt-3 flex flex-wrap justify-center gap-2">
         {tab === "pending" ? (
@@ -250,10 +252,10 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
                   </div>
                   <p className="mt-2 text-sm font-semibold">
                     {formatInfo[a.type as keyof typeof formatInfo]?.label ?? a.type}
-                    {a.author && <span className="font-normal text-[#6b5440]"> · de @{a.author}</span>}
+                    {a.author && <span className="font-normal text-[#6b5440]"> {tx("x_de", { v0: a.author })}</span>}
                   </p>
                   <p className="text-xs text-[#6b5440]">
-                    Mural “{a.mural_title}”{a.slot != null ? tx("m_estavaNoEspaco", { v0: a.slot + 1 }) : ""} · saiu em {new Date(a.archived_at).toLocaleDateString("pt-BR")}
+                    {tx("x_muralSaiuEm", { v0: a.mural_title, v1: a.slot != null ? tx("m_estavaNoEspaco", { v0: a.slot + 1 }) : "", v2: new Date(a.archived_at).toLocaleDateString(tag) })}
                   </p>
                   <div className="mt-3 flex justify-center">
                     <button type="button" className={primary} disabled={busy === a.id} onClick={() => void restore(a.id)}>
@@ -280,10 +282,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         <>
           {tab === "pending" && (
             <p className="mb-3 text-center text-xs text-[#6b5440]">
-              Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.
-              <br />
-              Tempo de exibição dos pinz: <strong>{ttlDays ? `${ttlDays} dias` : tx("m_semPrazoFicamParaSempre")}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
-            </p>
+              {tx.rich("x_nadaApareceNoMuralAntes", { v0: ttlDays ? `${ttlDays} dias` : tx("m_semPrazoFicamParaSempre"), n0: () => <br />, s1: (c) => <strong>{c}</strong> })}</p>
           )}
           <Carousel label={tab === "pending" ? tx("m_pinsParaAprovar") : tx("m_pinsNoMural")}>
             {list.map((p) => (

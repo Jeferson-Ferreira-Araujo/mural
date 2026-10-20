@@ -501,8 +501,7 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10 3 5 8l5 5" />
           </svg>
-          Arraste para os lados
-          <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          {tx("x_arrasteParaOsLados")}<svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="m6 3 5 5-5 5" />
           </svg>
         </div>

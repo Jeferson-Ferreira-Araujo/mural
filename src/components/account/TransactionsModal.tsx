@@ -104,12 +104,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
           </section>
 
           <p className="text-center text-xs text-[#6b5440]">
-            Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para{" "}
-            <a className="font-semibold underline" href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Dúvida sobre um pagamento")}`}>
-              {SUPPORT_EMAIL}
-            </a>
-            .
-          </p>
+            {txt.rich("x_duvidaSobreUmaCobrancaEnvie", { v0: SUPPORT_EMAIL, s0: (c) => <a className="font-semibold underline" href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Dúvida sobre um pagamento")}`}>{c}</a> })}</p>
         </div>
       )}
     </Modal>

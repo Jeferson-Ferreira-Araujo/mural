@@ -122,11 +122,9 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={target.image} alt="" draggable={false} className="mx-auto aspect-[3/2] w-56 rounded-xl object-cover shadow" />
           <p className="text-center text-base font-semibold">
-            Comprar o mural “{target.name}” por <span className="whitespace-nowrap">{price} créditos</span>?
-          </p>
+            {tx.rich("x_comprarOMuralPorCreditos", { v0: target.name, v1: price, s0: (c) => <span className="whitespace-nowrap">{c}</span> })}</p>
           <p className="flex items-center justify-center gap-1.5 text-sm text-[#6b5440]">
-            Você tem <Coin className="size-4" /> <strong>{credits}</strong>
-            {credits < price ? ` · faltam ${price - credits}` : ""}
+            {tx.rich("x_voceTem", { v0: credits, v1: credits < price ? ` · faltam ${price - credits}` : "", n0: () => <Coin className="size-4" />, s1: (c) => <strong>{c}</strong> })}
           </p>
           {error && (
             <p role="alert" className="text-center text-sm text-[#a23b2a]">
@@ -180,8 +178,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                             onClick={() => (setError(null), setBuying(bd.id))}
                             className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-white/90 px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4)] transition hover:bg-white active:scale-95"
                           >
-                            Comprar <Coin className="size-4" />
-                            {priceOf(bd.id)}
+                            {tx.rich("x_comprar", { v0: priceOf(bd.id), n0: () => <Coin className="size-4" /> })}
                           </button>
                         ) : null}
                       </div>

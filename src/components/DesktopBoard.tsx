@@ -64,8 +64,7 @@ export function DesktopBoard(props: ViewProps) {
                   <circle cx="9" cy="8" r="3.2" />
                   <path d="M3 20c0-3.3 2.7-5.5 6-5.5M17 9v6M14 12h6" />
                 </svg>
-                Convidar para o mural compartilhado
-              </button>
+                {tx("x_convidarParaOMuralCompartilhado")}</button>
             )}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (

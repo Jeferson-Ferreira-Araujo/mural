@@ -77,7 +77,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
           {invites.map((m) => (
             <div key={m.id} className={card}>
               <p className="font-bold">{m.title}</p>
-              <p className="text-sm text-[#6b5440]">@{m.owner} quer compartilhar um mural com você.</p>
+              <p className="text-sm text-[#6b5440]">{tx("x_querCompartilharUmMuralCom", { v0: m.owner })}</p>
               <div className="mt-3 flex gap-2">
                 <button type="button" disabled={busy} onClick={() => void respond(m, false)} className={`${ghostButton} flex-1`}>
                   {tx("recusar")}</button>
@@ -112,8 +112,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                       {m.title}
                     </p>
                     <p className="truncate text-sm text-[#6b5440]">
-                      com @{who}
-                      {m.status === "pending" ? " · aguardando aceitar" : ""}
+                      {tx("x_com", { v0: who, pending: m.status === "pending" ? "yes" : "no" })}
                     </p>
                   </div>
                   {m.mine && m.status === "accepted" && (

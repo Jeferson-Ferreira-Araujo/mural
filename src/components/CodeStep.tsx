@@ -66,8 +66,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
     <section aria-label={tx("confirmarEMail")} className="rounded-2xl bg-[#fbf6ea] p-4 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
       <p className="font-title text-xl font-semibold">{tx("confirmeSeuEMail")}</p>
       <p role="status" className="mt-2 text-[#4a3826]">
-        Um código foi enviado para <strong>{email}</strong>. Confirme para ter acesso à conta: sem a confirmação, você não consegue entrar.
-      </p>
+        {tx.rich("x_umCodigoFoiEnviadoPara", { v0: email, s0: (c) => <strong>{c}</strong> })}</p>
       <form onSubmit={submit} noValidate className="mt-4 space-y-3">
         <Field label={tx("codigo")} error={error}>
           {(id) => <input id={id} value={code} onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 10)); setError(null); }} inputMode="numeric" autoComplete="one-time-code" placeholder="000000" className={`${inputClass} text-center text-xl tracking-[0.4em]`} />}

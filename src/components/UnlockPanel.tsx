@@ -212,9 +212,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       ) : blocked ? (
         <div role="status" className="rise">
           <p className="flex items-center gap-[0.5em] text-[1.15em] leading-snug font-bold">
-            <LockIcon />
-            Mural bloqueado
-          </p>
+            {tx.rich("x_muralBloqueado", { n0: () => <LockIcon /> })}</p>
           <p className={`mt-[0.4em] text-[0.95em] ${dark ? "text-white/75" : "text-[#6b5440]"}`}>{blockedText}</p>
         </div>
       ) : (

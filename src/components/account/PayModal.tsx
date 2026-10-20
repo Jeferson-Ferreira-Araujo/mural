@@ -280,7 +280,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
           ) : step === "gift" ? (
             <div>
               <p className="font-title text-xl font-semibold">{tx("presentearCom1MesDe")}</p>
-              <p className="mt-1 text-sm text-[#4a3826]">Quem recebe ganha 30 dias de PINZ+ na hora e é avisado. Vale só para outro usuário, por {brl(PLUS_GIFT_CENTS)}.</p>
+              <p className="mt-1 text-sm text-[#4a3826]">{tx("x_quemRecebeGanha30Dias", { v0: brl(PLUS_GIFT_CENTS) })}</p>
               <label htmlFor="gift-nick" className="mt-4 block text-sm font-semibold">
                 {tx("nomeDeUsuarioDaPessoa")}</label>
               <input
@@ -350,7 +350,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <div id="pinz-card-brick" />
                   <button type="button" onClick={() => setStep(plusTarget ? "plans" : "choose")} className={ghost}>
                     {tx("voltar")}</button>
-                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plusTarget ? tx("m_renovaTodoMesCanceleQuando") : ""}</p>
+                  <p className="mt-1 text-center text-xs text-[#8a7b69]">{tx("x_osDadosDoCartaoSao", { v0: plusTarget ? tx("m_renovaTodoMesCanceleQuando") : "" })}</p>
                 </div>
               )}
 
@@ -378,7 +378,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   </button>
                   <p className="mt-3 flex items-center justify-center gap-2 text-sm font-semibold text-[#6b5440]" aria-live="polite">
                     <span aria-hidden className="size-2.5 animate-pulse rounded-full bg-[#d9a21b]" />
-                    Aguardando o pagamento… {mm}:{ss}
+                    {tx("x_aguardandoOPagamento", { v0: mm, v1: ss })}
                   </p>
                   <p className="mt-1 text-xs text-[#8a7b69]">{tx("assimQueVocePagarEsta")}</p>
                 </div>

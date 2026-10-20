@@ -110,7 +110,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   const subscribed = sub?.status === "authorized";
   const plusFooter = !PAYMENTS_ENABLED ? undefined : subscribed ? (
     <div className="mt-4 text-sm">
-      <p className="font-semibold text-[#2f6a3c]">Assinatura ativa{sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil)}` : ""}</p>
+      <p className="font-semibold text-[#2f6a3c]">{tx("x_assinaturaAtiva", { v0: sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil)}` : "" })}</p>
       <button type="button" disabled={busy !== null} onClick={() => setConfirmCancel(true)} className="mt-2 cursor-pointer text-xs font-semibold text-[#a23b2a] underline disabled:opacity-50">
         {busy === "cancel" ? "Cancelando…" : "Cancelar assinatura"}
       </button>
@@ -118,7 +118,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   ) : sub?.status === "once" && sub.active ? (
     <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? tx("m_pinzVitalicioParaSempre") : tx("m_pinzAtivoAte", { v0: fmtDate(sub.paidUntil) })}</p>
   ) : sub?.status === "cancelled" && sub.active ? (
-    <p className="mt-4 text-sm font-semibold text-[#6b5440]">Assinatura cancelada · PINZ+ até {fmtDate(sub.paidUntil)}</p>
+    <p className="mt-4 text-sm font-semibold text-[#6b5440]">{tx("x_assinaturaCanceladaPinzAte", { v0: fmtDate(sub.paidUntil) })}</p>
   ) : plan === "free" ? (
     <button type="button" disabled={busy !== null} onClick={() => void buy("plus")} className={btn}>
       {busy === "plus" ? "Abrindo o pagamento…" : "Ver os planos do PINZ+"}
@@ -138,13 +138,13 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
       )}
       <div className="mt-5 rounded-2xl border border-[#e1d3ba] bg-white/50 p-4">
         <h3 className="text-sm font-bold">
-          Créditos <span className="font-normal text-[#8a7b69]">· {PAYMENTS_ENABLED ? "" : "em breve · "}você tem {credits}</span>
+          {tx.rich("x_creditosVoceTem", { soon: PAYMENTS_ENABLED ? "no" : "yes", v1: credits, s0: (c) => <span className="font-normal text-[#8a7b69]">{c}</span> })}
         </h3>
         <ul className="mt-2 flex flex-wrap gap-2">
           {CREDIT_PACKS.map((c) => (
             <li key={c.id} className="flex items-center gap-2 rounded-lg border border-[#d9c9ad] bg-[#f3ead8] px-3 py-1 text-sm">
               <span>
-                <strong>{c.credits}</strong> créditos · {c.price}
+                {tx.rich("x_creditos", { v0: c.credits, v1: c.price, s0: (c) => <strong>{c}</strong> })}
               </span>
               {PAYMENTS_ENABLED && (
                 <button type="button" disabled={busy !== null} onClick={() => void buy(`credits:${c.id}`)} className="cursor-pointer rounded-md bg-[#d9a21b] px-2 py-0.5 text-xs font-bold text-[#2a1c12] hover:bg-[#e6ae22] disabled:opacity-50">

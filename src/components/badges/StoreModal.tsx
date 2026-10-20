@@ -390,7 +390,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <button type="button" disabled={pageSafe === 0} onClick={() => goPage(pageSafe - 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
                   {tx("anterior")}</button>
                 <span className="text-sm font-semibold tabular-nums text-[#6b5440]">
-                  {pageSafe + 1} de {pages}
+                  {tx("x_de", { v0: pageSafe + 1, v1: pages })}
                 </span>
                 <button type="button" disabled={pageSafe >= pages - 1} onClick={() => goPage(pageSafe + 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
                   {tx("proxima")}</button>
@@ -438,8 +438,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M19 12H5M11 6l-6 6 6 6" />
               </svg>
-              Displays
-            </button>
+              {tx("x_displays")}</button>
             <h3 className="font-title text-base font-semibold">{DISPLAY_CATS.find((c) => c.id === displayCat)?.label}</h3>
           </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -595,7 +594,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 </div>
                 <p className="mt-3 text-2xl font-bold">{sug.price}</p>
               </div>
-              <p className="mt-3 text-sm text-[#4a3826]">Com {sug.credits} créditos você leva bastante coisa: vários bottons, displays e até um fundo de mural.</p>
+              <p className="mt-3 text-sm text-[#4a3826]">{tx("x_comCreditosVoceLevaBastante", { v0: sug.credits })}</p>
               <div className="mt-4 flex gap-2">
                 <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                   {tx("agoraNao")}</button>
@@ -617,8 +616,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             <Coin className="mx-auto size-14" />
             <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">{tx("creditosInsuficientes")}</h2>
             <p className="mt-2 text-sm text-[#4a3826]">
-              Você não tem crédito suficiente para comprar <strong>{short.name}</strong>. Faltam <strong>{short.cost - credits}</strong> {short.cost - credits === 1 ? tx("m_credito") : tx("m_creditos2")}.
-            </p>
+              {tx.rich("x_voceNaoTemCreditoSuficiente", { v0: short.name, v1: short.cost - credits, v2: short.cost - credits === 1 ? tx("m_credito") : tx("m_creditos2"), s0: (c) => <strong>{c}</strong>, s1: (c) => <strong>{c}</strong> })}</p>
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                 {tx("agoraNao")}</button>

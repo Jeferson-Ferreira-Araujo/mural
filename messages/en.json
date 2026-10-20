@@ -125,7 +125,8 @@
         "m_oPlanoGratuitoInclui12": "The free plan includes 1 board. PINZ+ lets you have up to 10 boards.",
         "m_vamosCriarMaisUmMural": "Let's create one more board",
         "m_comoOSeuMuralVai": "What will your board be called?",
-        "m_criarMeuMural": "Create my board"
+        "m_criarMeuMural": "Create my board",
+        "x_resposta": "Answer: {v0}"
       }
     },
     "loading": {
@@ -140,6 +141,80 @@
     "pagamento": {
       "page": {
         "voltandoParaOPinz": "Going back to Pinz…"
+      }
+    },
+    "exclusao_de_dados": {
+      "page": {
+        "x_vocePodePedirAExclusao": "You can ask us to delete your account and all the data that Pinz (pinz.digital) keeps about you, including data received through Google, Facebook or Apple login.",
+        "x_comoPedir": "How to ask",
+        "x_envieUmEMailPara": "Send an email to <s0>{v0}</s0> with the subject “Data deletion”.",
+        "x_escrevaDoMesmoEMail": "Write from the same email as your account and tell us your username (the @ of your board).",
+        "x_confirmaremosOPedidoPorResposta": "We will confirm the request by reply and delete the data within 30 days.",
+        "x_oQueEExcluido": "What is deleted",
+        "x_suaContaOEMail": "Your account, email, username and profile photo.",
+        "x_seusMuraisETodosOs": "Your boards and all the pins you posted, and the uploaded files (photos, drawings, audio and videos).",
+        "x_notificacoesBottonsECreditosDa": "Notifications, buttons and credits of the account.",
+        "x_registrosDePagamentosPodemSer": "Payment records may be kept for as long as the law requires. If you used Facebook login, you can also remove Pinz in Facebook Settings → Apps and Websites."
+      }
+    },
+    "privacidade": {
+      "page": {
+        "x_oPinzPinzDigitalE": "Pinz (pinz.digital) is a message board. This page explains which data we use and why.",
+        "x_dadosQueColetamos": "Data we collect",
+        "x_contaEMailNomeDe": "Account: email, username (nickname) and, if you upload one, the profile photo. If you sign in with Google, we receive the email and name of the Google account.",
+        "x_dataDeNascimentoOpcionalSe": "Date of birth (optional): if you enter it at the welcome step, we keep it to confirm you are 13 or older. Only you can access it; it is not shown to anyone.",
+        "x_conteudoOsPinsQueVoce": "Content: the pins you post (texts, lists, photos, drawings, audio, videos, songs and places), the question and answer that protect your board, and the shared board password (stored encrypted).",
+        "x_visitasESeguidoresQuandoVoce": "Visits and followers: when you sign in and visit another person's board, your @ and profile photo appear in their visitor list (without a date). The people you follow are in a list only you see, and people who follow you appear only as a number.",
+        "x_enquetesAoVotarNumaEnquete": "Polls: when you vote in a poll, we store the option you chose linked to your account (one vote per person); the board owner sees only the total and percentages, never who voted for what.",
+        "x_localizacaoSoQuandoVocePermite": "Location (only when you allow it): if the board has a Weather display, the browser or phone asks whether it can use your location to show the weather where you are. See the “Location” section.",
+        "x_usoNotificacoesDaSuaConta": "Usage: your account notifications, board view counts and technical security logs, such as the IP address, to prevent abuse.",
+        "x_paraQueUsamos": "What we use it for",
+        "x_criarSuaContaPermitirO": "Create your account, allow login and show your board and pins.",
+        "x_enviarEMailsDaConta": "Send account emails, such as the confirmation code.",
+        "x_moderarConteudoAtenderDenunciasE": "Moderate content, handle reports and protect the service against abuse.",
+        "x_naoVendemosSeusDados": "We do not sell your data.",
+        "x_localizacao": "Location",
+        "x_oDisplayDeClimaMostra": "The Weather display shows the weather where you are, and only if you allow it. The permission is requested by the browser or phone itself, and you can deny or withdraw it at any time in your device settings. If you deny it, the display shows the weather of the city chosen by the board owner, and we don't ask again: your choice is stored on this device until you delete your account (or clear the browser data).",
+        "x_suaPosicaoFicaGuardadaApenas": "Your position is stored only on your device, for up to 30 minutes. We do not link the position to your account and do not store it in the database.",
+        "x_paraBuscarOTempoO": "To fetch the weather, the Pinz server receives the rounded position (about 1 km) and passes it to the weather forecast service; to show the city name, it also passes it to the maps service. The server keeps the response for a few minutes (the weather) or for one day (the city name), together with the rounded position, without identifying you.",
+        "x_quemVeOQue": "Who sees what",
+        "x_seuMuralSoAbrePara": "Your board only opens for those who answer the question you set. Pins marked as secret appear blurred to visitors. When you leave a pin on someone else's board, it is signed with your username.",
+        "x_servicosQueUsamos": "Services we use",
+        "x_supabaseBancoDeDadosLogin": "Supabase: database, login and file storage.",
+        "x_googleLoginComOGoogle": "Google: Google login and maps and place search (Google Maps).",
+        "x_metNorwayApiMetNo": "MET Norway (api.met.no): weather forecast for the Weather display, from the rounded position.",
+        "x_openstreetmapNominatimNomeDaCidade": "OpenStreetMap (Nominatim): city name for the position of whoever allows location.",
+        "x_resendEnvioDosEMails": "Resend: sending of account emails.",
+        "x_cloudflareProtecaoEEntregaDo": "Cloudflare: protection and delivery of the site.",
+        "x_mercadoPagoPagamentosDaAssinatura": "Mercado Pago: payments for the subscription and credits. Card or Pix data is entered directly on Mercado Pago; Pinz neither receives nor stores it, only the payment result.",
+        "x_essesServicosTratamOsDados": "These services process data under their own policies and may process it outside Brazil.",
+        "x_seusDireitos": "Your rights",
+        "x_vocePodePedirAcessoCorrecao": "You can request access, correction or deletion of your data and account, and delete your pins at any time from the board itself. We keep the data while the account exists; reports and security logs may be kept for as long as needed to protect other people.",
+        "x_criancas": "Children",
+        "x_oPinzNaoEDestinado": "Pinz is not intended for children under 13."
+      }
+    },
+    "termos": {
+      "page": {
+        "x_aoCriarUmaContaOu": "By creating an account or using Pinz (pinz.digital), you agree to these terms.",
+        "x_oServico": "The service",
+        "x_oPinzPermiteCriarUm": "Pinz lets you create a personal board, or one shared between two people, and leave pins (messages, photos, songs and other formats) on boards. Some features are part of the PINZ+ plan.",
+        "x_suaConta": "Your account",
+        "x_voceEResponsavelPeloAcesso": "You are responsible for access to your account and for what you publish with it.",
+        "x_oNomeDeUsuarioE": "The username is chosen once and may not imitate brands, companies or other people.",
+        "x_conteudoEConduta": "Content and conduct",
+        "x_naoEPermitidoPublicarConteudo": "It is not allowed to publish illegal content, content that harasses, threatens or exposes other people, that violates third-party rights or that contains nudity or violence. You declare that you have the right to publish what you send.",
+        "x_pinsPodemSerDenunciadosPodemos": "Pins can be reported. We may remove content and suspend accounts that violate these terms.",
+        "x_pagamentos": "Payments",
+        "x_oPinzEUmaAssinatura": "PINZ+ is a monthly subscription (R$ 9.90) charged by Mercado Pago, and credits are sold in separate packs. Prices appear before purchase.",
+        "x_vocePodeCancelarAAssinatura": "You can cancel the subscription at any time, from within Pinz, with no penalty. PINZ+ continues until the end of the period already paid and there are no new charges.",
+        "x_vocePodeDesistirDeUma": "You can withdraw from a purchase within 7 days, as provided by the Brazilian Consumer Protection Code, and request a refund through Pinz contact. Credits already spent in the store are deducted.",
+        "x_seAAssinaturaDeixarDe": "If the subscription stops being paid, the account returns to the free plan: your pins stay, but PINZ+ features become unavailable.",
+        "x_osCreditosNaoSaoDinheiro": "Credits are not money and cannot be transferred or withdrawn.",
+        "x_disponibilidade": "Availability",
+        "x_fazemosOPossivelParaManter": "We do our best to keep the service online, but it is provided as is, with no guarantee of uninterrupted operation. We may change or discontinue features, and these terms, with notice.",
+        "x_privacidade": "Privacy",
+        "x_oUsoDosSeusDados": "The use of your data is described in the <s0>Privacy Policy</s0>."
       }
     }
   },
@@ -171,7 +246,8 @@
         "meuMural": "My board",
         "m_notificacoesNovas": "Notifications ({v0} new)",
         "m_notificacoes": "Notifications",
-        "m_menuPinsParaAprovar": "Menu ({v0} pins to approve)"
+        "m_menuPinsParaAprovar": "Menu ({v0} pins to approve)",
+        "x_pesquisarUsuarios": "Search users"
       },
       "AccountDrawer": {
         "editarMural": "Edit board",
@@ -182,7 +258,10 @@
         "seNaoAparecerAOpcao": "If the option doesn't appear, open Pinz in Safari (other iPhone browsers can't install apps).",
         "metricas": "Metrics",
         "muralCompartilhado": "Shared board",
-        "desenvolvidoPorJefersonAraujo": "Developed by Jeferson Araújo"
+        "desenvolvidoPorJefersonAraujo": "Developed by Jeferson Araújo",
+        "x_toqueNoBotaoCompartilharDo": "Tap the <s0>Share</s0> button in Safari (the square with an arrow pointing up).",
+        "x_roleAListaEToque": "Scroll the list and tap <s0>Add to Home Screen</s0>.",
+        "x_confirmeEmAdicionarOPinz": "Confirm with <s0>Add</s0>. Pinz stays on your home screen and opens full screen."
       },
       "BirthField": {
         "dataDeNascimento": "Date of birth",
@@ -201,7 +280,11 @@
         "entendi": "Got it",
         "m_ola": "Hello {v0}",
         "m_queBomTerVocePor": "So glad to have you here. We hope this is a great experience for you and your customers.",
-        "m_queBomTerVocePor2": "So glad to have you here! Here's how to use it:"
+        "m_queBomTerVocePor2": "So glad to have you here! Here's how to use it:",
+        "x_colocarUmPinCliqueOu": "<s0>Place a pin:</s0> click (or tap) an empty spot on the board.",
+        "x_zoomPincaComDoisDedos": "<s0>Zoom:</s0> pinch with two fingers or double tap. “Zoom out” goes back to the whole board.",
+        "x_moverComOMuralAproximado": "<s0>Move:</s0> with the board zoomed in, drag to see the rest.",
+        "x_bottonsArrasteDaBarraDe": "<s0>Buttons:</s0> drag from the bottom bar onto the board. To remove one, drag it back."
       },
       "GiftModal": {
         "oPinzDesejaAVoce": "Pinz wishes you an amazing day and a year full of messages, photos and special moments. Congratulations!",
@@ -217,7 +300,11 @@
         "m_felizAniversario": "Happy birthday!",
         "m_ate": "until {v0}",
         "m_ateOFimDoMes": "until the end of the month",
-        "m_alguem": "Someone"
+        "m_alguem": "Someone",
+        "x_felizAniversario": "Happy birthday{v0}! 🎉",
+        "x_pinzLiberadoDePresente": "<s0>PINZ+ unlocked{v0}</s0>, as a gift.",
+        "x_todosOsBottonsDeAniversario": "<s0>All birthday buttons</s0>, as a gift for being PINZ+: balloons, cakes, gifts, congratulation notes and much more.",
+        "x_tePresenteouCom1Mes": "{v0} gifted you 1 month of PINZ+!"
       },
       "Modal": {
         "voltarAoMenu": "Back to menu",
@@ -268,7 +355,10 @@
         "apagar": "Delete",
         "m_naoFoiPossivelMudarA": "We couldn't change the order right now. Try again.",
         "m_naoFoiPossivelApagarAgora": "We couldn't delete right now. Try again.",
-        "m_publico": "Public"
+        "m_publico": "Public",
+        "x_apagar": "Delete “{v0}”?",
+        "x_voltarParaMeusMurais": "Back to My boards",
+        "x_criarNovoMural": "Create new board"
       },
       "NewMuralModal": {
         "novoMural": "New board",
@@ -285,7 +375,10 @@
         "m_creditos": "{v0} credits",
         "m_proximoTipo": "Next type",
         "m_compreEsteTipoDeMural": "Buy this board type to create with it",
-        "m_criarMural": "Create board"
+        "m_criarMural": "Create board",
+        "x_comprarOMuralPorCreditos": "Buy the board “{v0}” for <s0>{v1} credits</s0>?",
+        "x_voceTem": "You have <n0></n0> <s1>{v0}</s1>{v1}",
+        "x_comprar": "Buy <n0></n0>{v0}"
       },
       "NicknameSetup": {
         "completeOSeuPerfil": "Complete your profile",
@@ -349,7 +442,10 @@
         "m_renovaTodoMesCanceleQuando": "Renews every month; cancel anytime in Plans.",
         "m_codigoCopiado": "Code copied!",
         "m_copiarCodigoPix": "Copy Pix code",
-        "m_gerarUmNovoCodigo": "Generate a new code"
+        "m_gerarUmNovoCodigo": "Generate a new code",
+        "x_quemRecebeGanha30Dias": "The recipient gets 30 days of PINZ+ right away and is notified. Only valid for another user, for {v0}.",
+        "x_osDadosDoCartaoSao": "Card details are typed directly into Mercado Pago and don't pass through Pinz.{v0}",
+        "x_aguardandoOPagamento": "Waiting for payment… {v0}:{v1}"
       },
       "PeopleModals": {
         "seguidoresESeguindo": "Followers and following",
@@ -402,7 +498,12 @@
         "m_colocarDeVoltaNoMural": "Put back on the board",
         "m_semPrazoFicamParaSempre": "no time limit (they stay forever)",
         "m_pinsParaAprovar": "Pins to approve",
-        "m_pinsNoMural": "Pins on the board"
+        "m_pinsNoMural": "Pins on the board",
+        "x_espaco": "· spot {v0}",
+        "x_assinadoPor": "· signed by {v0}",
+        "x_de": "· from @{v0}",
+        "x_muralSaiuEm": "Board “{v0}”{v1} · left on {v2}",
+        "x_nadaApareceNoMuralAntes": "Nothing appears on the board before you approve it. Check that there is no confidential or offensive information.<n0></n0>Pin display time: <s1>{v0}</s1>. Pins past the deadline go to Archived; change it in Edit board."
       },
       "PinTtlField": {
         "tempoDeExibicaoDosPinz": "Pin display time",
@@ -422,7 +523,11 @@
         "m_assinaturaCanceladaOPinzContinua": "Subscription cancelled. PINZ+ continues until the end of the paid period.",
         "m_naoFoiPossivelCancelarAgora": "We couldn't cancel right now. Try again.",
         "m_pinzVitalicioParaSempre": "PINZ+ lifetime · forever",
-        "m_pinzAtivoAte": "PINZ+ active until {v0}"
+        "m_pinzAtivoAte": "PINZ+ active until {v0}",
+        "x_assinaturaAtiva": "Active subscription{v0}",
+        "x_assinaturaCanceladaPinzAte": "Subscription cancelled · PINZ+ until {v0}",
+        "x_creditosVoceTem": "Credits <s0>· {soon, select, yes {coming soon · } other {}}you have {v1}</s0>",
+        "x_creditos": "<s0>{v0}</s0> credits · {v1}"
       },
       "PrivacyField": {
         "quemPodeAbrirEsteMural": "Who can open this board",
@@ -455,7 +560,10 @@
         "m_naoFoiPossivelEnviarO": "We couldn't send the link right now. Try again shortly.",
         "m_enviamosUmLinkParaEle": "We sent a link to {v0}. It is valid for a short time: open it in the same browser.",
         "m_enviarLinkParaTrocarA": "Send link to change password",
-        "m_excluirConta": "Delete account"
+        "m_excluirConta": "Delete account",
+        "x_paraSuaSegurancaATroca": "For your security, the change is done through a link sent to <s0>{v0}</s0>.",
+        "x_suaContaFicaraInativaPor": "Your account will be inactive for <s0>30 days</s0> and after that will be <s1>completely deleted</s1>, with boards, pins and buttons. After the deadline, it can't be undone.",
+        "x_paraConfirmarDigiteExcluir": "To confirm, type <s0>DELETE</s0>"
       },
       "ProfileSummaryModal": {
         "voltar": "Back",
@@ -483,7 +591,9 @@
         "m_visualizacoes": "views",
         "m_pinColocadoNoMural": "pin placed on the board",
         "m_pinsColocadosNoMural": "pins placed on the board",
-        "m_enviarDenuncia": "Send report"
+        "m_enviarDenuncia": "Send report",
+        "x_umMuralSoDeVoces": "A board just for the two of you. You set the name and password and <s0>@{v0}</s0> receives the invitation. Both need PINZ+.",
+        "x_aDenunciaEAnonimaNao": "The report is anonymous: <s0>@{v0}</s0> won't know who reported. Our team reviews and decides what to do."
       },
       "RewardsModal": {
         "ganheCreditos": "Earn credits",
@@ -514,7 +624,9 @@
         "m_visualizarOMural": "View the board",
         "m_apagarMural": "Delete board",
         "m_cancelarEsteConvite": "Cancel this invitation?",
-        "m_apagarParaAsDuasPessoas": "Delete “{v0}” for both people?"
+        "m_apagarParaAsDuasPessoas": "Delete “{v0}” for both people?",
+        "x_querCompartilharUmMuralCom": "@{v0} wants to share a board with you.",
+        "x_com": "with @{v0}{pending, select, yes { · waiting to accept} other {}}"
       },
       "TransactionsModal": {
         "minhasCompras": "My purchases",
@@ -522,7 +634,8 @@
         "assinaturaPinz": "PINZ+ subscription:",
         "pagamentos": "Payments",
         "voceAindaNaoFezNenhum": "You haven't made any payment yet.",
-        "m_valeAte": "· valid until {v0}"
+        "m_valeAte": "· valid until {v0}",
+        "x_duvidaSobreUmaCobrancaEnvie": "Question about a charge? Send the payment number (No.) to <s0>{v0}</s0>."
       }
     },
     "AvatarUploader": {
@@ -534,7 +647,8 @@
       "m_naoFoiPossivelEnviarA": "We couldn't upload the photo.",
       "m_naoFoiPossivelRemoverAgora": "We couldn't remove it right now.",
       "m_suaFoto": "Your photo",
-      "m_adicioneUmaFoto": "Add a photo"
+      "m_adicioneUmaFoto": "Add a photo",
+      "x_ganheCreditosAoEnviarA": "🎁 Earn {v0} credits by uploading your photo."
     },
     "badges": {
       "BadgeBar": {
@@ -612,7 +726,8 @@
         "verDisplaysNaLoja": "See displays in the Store",
         "formato": "Shape",
         "colocarDisplay": "Place display",
-        "seusDisplaysPorCategoria": "Your displays by category"
+        "seusDisplaysPorCategoria": "Your displays by category",
+        "x_categorias": "Categories"
       },
       "DisplayDetail": {
         "compartilhar": "Share",
@@ -671,7 +786,8 @@
         "m_essaImagemNaoPodeSer": "That image couldn't be used. Choose another cover photo.",
         "m_naoFoiPossivelEnviarA": "We couldn't upload the cover right now.",
         "m_exNao": "E.g.: No",
-        "m_nomeDaData": "Date name {v0}"
+        "m_nomeDaData": "Date name {v0}",
+        "x_repetirTodoAno": "Repeat every year"
       },
       "SecretCover": {
         "displayEmSegredo": "Secret display",
@@ -716,7 +832,11 @@
         "m_padrao": "Default",
         "m_liberadoApliqueEmEditarMural": "unlocked! Apply it in Edit board.",
         "m_credito": "credit",
-        "m_creditos2": "credits"
+        "m_creditos2": "credits",
+        "x_de": "{v0} of {v1}",
+        "x_displays": "Displays",
+        "x_comCreditosVoceLevaBastante": "With {v0} credits you get plenty: several buttons, displays and even a board background.",
+        "x_voceNaoTemCreditoSuficiente": "You don't have enough credits to buy <s0>{v0}</s0>. You need <s1>{v1}</s1> {v2}."
       }
     },
     "board": {
@@ -738,7 +858,9 @@
         "editarLista": "Edit list",
         "adicionarItem": "+ Add item",
         "naoFoiPossivelSalvarAgora": "We couldn't save right now. Try again.",
-        "cancelar": "Cancel"
+        "cancelar": "Cancel",
+        "x_titulo": "Title",
+        "x_itensAte": "Items (up to {v0})"
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Notice for the board owner",
@@ -746,7 +868,8 @@
         "m_seuMuralEstaCheio": "Your board is full.",
         "m_ninguemTentouDeixarUmPinz": "Nobody tried to leave a PINZ yet.",
         "m_assineOPinzParaColocar": "Subscribe to PINZ+ to place unlimited pins and displays.",
-        "m_emBreveUseCreditosPara": "Coming soon: use credits to open another board."
+        "m_emBreveUseCreditosPara": "Coming soon: use credits to open another board.",
+        "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {person tried} other {people tried}} to leave a PINZ."
       },
       "PinDetail": {
         "verMensagemEmDetalhe": "View message in detail",
@@ -776,7 +899,9 @@
         "m_aguardandoASuaAprovacao": "Waiting for your approval",
         "m_aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release",
         "m_segredoEDoPinz": "Secret is a PINZ+ feature",
-        "m_aprovaEDeixaEmSegredo": "Approves and keeps it secret: visitors see the pin blurred"
+        "m_aprovaEDeixaEmSegredo": "Approves and keeps it secret: visitors see the pin blurred",
+        "x_compartilhar": "<n0></n0>Share",
+        "x_excluirMeuPin": "<n0></n0>Delete my PIN"
       },
       "PinsManager": {
         "nenhumPinAindaQuandoAlguem": "No pins yet. When someone places one, it shows up here for you to approve.",
@@ -791,18 +916,22 @@
         "m_disponivelNoPinz": "Available in PINZ+",
         "m_escolhaQuaisFicamVisiveisE": "Choose which ones are visible and which are blurred for visitors. Blurred ones still take up the space, and the content is not sent.",
         "m_noPinzVoceEscolheQuais": "With PINZ+ you choose which pins are blurred for visitors.",
-        "m_visivelDeixarEmBlur": "👁 Visible — make blurred"
+        "m_visivelDeixarEmBlur": "👁 Visible — make blurred",
+        "x_aguardandoSuaAprovacao": "Waiting for your approval <s0>{v0}</s0>",
+        "x_noMural": "On the board ({v0})"
       },
       "ReactionBar": {
         "naoFoiPossivelReagirAgora": "We couldn't react right now.",
         "reagirAEstePin": "React to this pin"
       },
       "SlotMarker": {
-        "bloqueado": "locked"
+        "bloqueado": "locked",
+        "x_espacoLivre": "free<n0></n0>spot"
       },
       "PannableBoard": {
         "m_aproximarOMural": "Zoom in the board",
-        "m_afastarOMural": "Zoom out the board"
+        "m_afastarOMural": "Zoom out the board",
+        "x_arrasteParaOsLados": "Drag sideways"
       }
     },
     "Brand": {
@@ -818,7 +947,8 @@
       "m_enviamosUmNovoCodigo": "We sent a new code.",
       "m_naoFoiPossivelEnviarO": "We couldn't send the code right now. Try again shortly.",
       "m_enviarOutroCodigoS": "Send another code ({v0}s)",
-      "m_enviarOutroCodigo": "Send another code"
+      "m_enviarOutroCodigo": "Send another code",
+      "x_umCodigoFoiEnviadoPara": "A code was sent to <s0>{v0}</s0>. Confirm to access the account: without confirmation, you can't sign in."
     },
     "composer": {
       "CapsuleOption": {
@@ -849,7 +979,10 @@
         "papel": "Paper",
         "corDaFita": "Tape color",
         "fita": "Tape",
-        "opcoes": "Options"
+        "opcoes": "Options",
+        "x_borracha": "<n0></n0>Eraser",
+        "x_desfazer": "<n0></n0>Undo",
+        "x_limpar": "<n0></n0>Clear"
       },
       "forms": {
         "corDoPostIt": "Post-it color",
@@ -913,7 +1046,13 @@
         "m_gravarDeNovo": "Record again",
         "m_escolherUmArquivoDeAudio": "Choose an audio file",
         "m_digitePeloMenos3Letras": "Type at least 3 letters of the place name.",
-        "m_naoFoiPossivelBuscarAgora": "We couldn't search right now. Try again shortly."
+        "m_naoFoiPossivelBuscarAgora": "We couldn't search right now. Try again shortly.",
+        "x_itensAte": "Items (up to {v0})",
+        "x_tirarFotoAgora": "Take a photo now",
+        "x_semLegendaApareceSoO": "<n0></n0> · No caption: only the device appears.",
+        "x_otimizandoOVideo": "Optimizing the video… {v0}%",
+        "x_semLegendaApareceSoO2": "<n0></n0> · No caption: only the player appears.",
+        "x_ateSegundos": "Up to {v0} seconds."
       },
       "FullNotice": {
         "oPlanoGratuitoTemUm": "The free plan has a limit of 15 pins and displays. To have more, the owner needs PINZ+.",
@@ -938,7 +1077,8 @@
     "DesktopBoard": {
       "informacoesDoMural": "Board information",
       "convidarPessoasParaVerEste": "Invite people to see this board",
-      "acessibilidade": "Accessibility"
+      "acessibilidade": "Accessibility",
+      "x_convidarParaOMuralCompartilhado": "Invite to the shared board"
     },
     "Explorer": {
       "buscando": "Searching…",
@@ -992,15 +1132,21 @@
       "m_pinColocadoNoMuralDe": "Pin placed on your shared board! 📌",
       "m_pinEnviadoEleAparecePara": "Pin sent! It shows for everyone once the owner approves. ⏳",
       "m_pinFoiArquivado": "pin was archived",
-      "m_oPinArquivado": "the archived pin"
+      "m_oPinArquivado": "the archived pin",
+      "x_temMuraisQualVoceQuer": "<s0>{v0}</s0> has {v1} boards. Which one do you want to open?",
+      "x_doPrazoDeValidadeDo": "{count, plural, one {It} other {They}} passed the display time of the board “{v1}”. Tap below to see {count, plural, one {the archived pin} other {the archived pins}} and, if you want, put {count, plural, one {it} other {them}} back on the board.",
+      "x_mensagemDe": "Message from @{v0}"
     },
     "LegalPage": {
-      "contato": "Contact"
+      "contato": "Contact",
+      "x_atualizadoEm": "Updated on {v0}",
+      "x_duvidasOuPedidosSobreSeus": "Questions or requests about your data: <s0>{v0}</s0>."
     },
     "messages": {
       "ClosedCapsule": {
         "capsulaPinzFechada": "Closed PINZ capsule",
-        "voceRecebeuUmaMensagemFechada": "You received a closed message."
+        "voceRecebeuUmaMensagemFechada": "You received a closed message.",
+        "x_abreEm": "Opens in: {v0}"
       },
       "DrawingCard": {
         "desenho": "Drawing"
@@ -1085,7 +1231,8 @@
     "MuralNameMenu": {
       "criarNovoMural": "Create a new board",
       "aberto": "✓ open",
-      "compartilhados": "Shared"
+      "compartilhados": "Shared",
+      "x_com": "with @{v0}"
     },
     "MuralScreen": {
       "aguardeUmPouco": "Wait a moment",
@@ -1103,7 +1250,8 @@
       "muralAnterior": "Previous board",
       "proximoMural": "Next board",
       "murais": "Boards",
-      "m_muralDe": "Board {v0} of {v1}"
+      "m_muralDe": "Board {v0} of {v1}",
+      "x_de": "{v0} of {v1}"
     },
     "OAuthButtons": {
       "continuarCom": "Continue with",
@@ -1115,12 +1263,14 @@
       "limiteDoPlano": "Plan limit",
       "free": "FREE",
       "comOPinzVoceTem": "With PINZ+ you get:",
-      "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month"
+      "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month",
+      "x_voceEstaUsandoDePins": "You are using <s0>{v0}</s0> of <s1>{v1}</s1> pins and displays on your board. That is the limit of the <s2>FREE</s2> account, which includes 1 board."
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person not found",
       "voltar": "Back",
-      "essaPessoaAindaNaoCriou": "This person hasn't created any board yet."
+      "essaPessoaAindaNaoCriou": "This person hasn't created any board yet.",
+      "x_muraisDe": "Boards of {v0}"
     },
     "SearchBox": {
       "pesquisarUsuarios": "Search users",
@@ -1134,7 +1284,8 @@
       "compartilheMomentosEspeciaisRecebaRecados": "Share special moments, receive personalized messages and decorate your own way.",
       "pinzEmNumeros": "Pinz in numbers",
       "murais": "boards",
-      "pinzColocados": "PINZ placed"
+      "pinzColocados": "PINZ placed",
+      "x_voltarParaMeuMural": "Back to my Board"
     },
     "tour": {
       "Tour": {
@@ -1142,7 +1293,8 @@
         "naoEncontreiEstaParteNa": "I couldn't find this part on the screen. If you closed the window, tap Back and follow along again.",
         "pularTour": "Skip tour",
         "voltar": "Back",
-        "m_proximo": "Next"
+        "m_proximo": "Next",
+        "x_de": "{v0} of {v1}"
       }
     },
     "ui": {
@@ -1152,7 +1304,8 @@
       "nomeDeUsuario": "Username",
       "seuUsuario": "your_username",
       "m_esconderSugestoes": "Hide suggestions",
-      "m_verSugestoesDePerguntas": "See question suggestions"
+      "m_verSugestoesDePerguntas": "See question suggestions",
+      "x_voltar": "Back"
     },
     "UnlockPanel": {
       "muralBloqueado": "Board locked",
@@ -1170,7 +1323,8 @@
       "m_muralCompartilhado": "Shared board",
       "m_muralPrivado": "Private board",
       "m_digiteASenha": "Type the password...",
-      "m_digiteSuaResposta": "Type your answer..."
+      "m_digiteSuaResposta": "Type your answer...",
+      "x_muralBloqueado": "<n0></n0>Board locked"
     },
     "widgets": {
       "BookWidget": {
@@ -1240,6 +1394,9 @@
     },
     "FollowButton": {
       "m_seguindoToqueParaDeixarDe": "Following (tap to unfollow)"
+    },
+    "LockedNotice": {
+      "x_muralPrivado": "Private board"
     }
   },
   "lit": {

@@ -135,7 +135,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label={tx("meusMurais")} wide overlay={confirmId && toDelete ? (
         <div role="alertdialog" aria-label={tx("apagarMural")} className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#2a1c12]/55 p-5 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-5 text-center shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
-            <p className="font-title text-xl font-semibold">Apagar “{toDelete.title}”?</p>
+            <p className="font-title text-xl font-semibold">{tx("x_apagar", { v0: toDelete.title })}</p>
             <p className="mt-2 text-sm text-[#4a3826]">{tx("osBottonsSeraoDevolvidosA")}</p>
             {err && <p role="alert" className="mt-2 text-sm text-[#a23b2a]">{err}</p>}
             <div className="mt-4 flex gap-2">
@@ -151,8 +151,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 5-7 7 7 7" />
             </svg>
-            Voltar para Meus murais
-          </button>) : undefined}>
+            {tx("x_voltarParaMeusMurais")}</button>) : undefined}>
       {editing ? (
         <div className="space-y-4">
           <MuralSettings
@@ -190,8 +189,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
                   <path d="M12 5v14M5 12h14" />
                 </svg>
-                Criar novo mural
-              </button>
+                {tx("x_criarNovoMural")}</button>
             </div>
           )}
           {err && !confirmId && (

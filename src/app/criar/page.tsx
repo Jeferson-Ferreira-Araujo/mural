@@ -170,7 +170,7 @@ export default function CriarMural() {
                 {question.trim() ? (
                   <>
                     <dd>{question.trim()}</dd>
-                    <dd className="text-[#6b5440]">Resposta: {answer.trim()}</dd>
+                    <dd className="text-[#6b5440]">{tx("x_resposta", { v0: answer.trim() })}</dd>
                   </>
                 ) : (
                   <dd>{tx("publicoQualquerPessoaComO")}</dd>

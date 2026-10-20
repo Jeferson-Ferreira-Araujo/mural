@@ -125,7 +125,8 @@
         "m_oPlanoGratuitoInclui12": "O plano gratuito inclui 1 mural. O PINZ+ permite ter até 10 murais.",
         "m_vamosCriarMaisUmMural": "Vamos criar mais um mural",
         "m_comoOSeuMuralVai": "Como o seu mural vai se chamar?",
-        "m_criarMeuMural": "Criar meu mural"
+        "m_criarMeuMural": "Criar meu mural",
+        "x_resposta": "Resposta: {v0}"
       }
     },
     "loading": {
@@ -140,6 +141,80 @@
     "pagamento": {
       "page": {
         "voltandoParaOPinz": "Voltando para o Pinz…"
+      }
+    },
+    "exclusao_de_dados": {
+      "page": {
+        "x_vocePodePedirAExclusao": "Você pode pedir a exclusão da sua conta e de todos os dados que o Pinz (pinz.digital) guarda sobre você, inclusive os recebidos pelo login com Google, Facebook ou Apple.",
+        "x_comoPedir": "Como pedir",
+        "x_envieUmEMailPara": "Envie um e-mail para <s0>{v0}</s0> com o assunto “Exclusão de dados”.",
+        "x_escrevaDoMesmoEMail": "Escreva do mesmo e-mail da sua conta e informe o seu nome de usuário (o @ do seu mural).",
+        "x_confirmaremosOPedidoPorResposta": "Confirmaremos o pedido por resposta e excluiremos os dados em até 30 dias.",
+        "x_oQueEExcluido": "O que é excluído",
+        "x_suaContaOEMail": "Sua conta, o e-mail, o nome de usuário e a foto de perfil.",
+        "x_seusMuraisETodosOs": "Seus murais e todos os pins que você publicou, e os arquivos enviados (fotos, desenhos, áudios e vídeos).",
+        "x_notificacoesBottonsECreditosDa": "Notificações, bottons e créditos da conta.",
+        "x_registrosDePagamentosPodemSer": "Registros de pagamentos podem ser mantidos pelo tempo que a lei exigir. Se você usou o login do Facebook, também pode remover o Pinz em Configurações do Facebook → Aplicativos e sites."
+      }
+    },
+    "privacidade": {
+      "page": {
+        "x_oPinzPinzDigitalE": "O Pinz (pinz.digital) é um mural de recados. Esta página explica quais dados usamos e para quê.",
+        "x_dadosQueColetamos": "Dados que coletamos",
+        "x_contaEMailNomeDe": "Conta: e-mail, nome de usuário (apelido) e, se você enviar, a foto de perfil. Se entrar com o Google, recebemos o e-mail e o nome da conta Google.",
+        "x_dataDeNascimentoOpcionalSe": "Data de nascimento (opcional): se você informar nas boas-vindas, guardamos para confirmar que você tem 13 anos ou mais. Só você tem acesso a ela; não aparece para ninguém.",
+        "x_conteudoOsPinsQueVoce": "Conteúdo: os pins que você publica (textos, listas, fotos, desenhos, áudios, vídeos, músicas e locais), a pergunta e a resposta que protegem seu mural e a senha do mural compartilhado (guardada de forma criptografada).",
+        "x_visitasESeguidoresQuandoVoce": "Visitas e seguidores: quando você entra com a sua conta e visita o mural de outra pessoa, o @ e a foto de perfil aparecem na lista de visitantes dela (sem data). Quem você segue fica numa lista só sua, e quem segue você aparece apenas como um número.",
+        "x_enquetesAoVotarNumaEnquete": "Enquetes: ao votar numa enquete, guardamos a opção que você escolheu ligada à sua conta (um voto por pessoa); o dono do mural vê só o total e as porcentagens, nunca quem votou em quê.",
+        "x_localizacaoSoQuandoVocePermite": "Localização (só quando você permite): se o mural tiver um display de Clima, o navegador ou o celular pergunta se pode usar a sua localização para mostrar o tempo de onde você está. Veja a seção “Localização”.",
+        "x_usoNotificacoesDaSuaConta": "Uso: notificações da sua conta, contagem de visualizações do mural e registros técnicos de segurança, como o endereço IP, para evitar abuso.",
+        "x_paraQueUsamos": "Para que usamos",
+        "x_criarSuaContaPermitirO": "Criar sua conta, permitir o login e exibir seu mural e seus pins.",
+        "x_enviarEMailsDaConta": "Enviar e-mails da conta, como o código de confirmação.",
+        "x_moderarConteudoAtenderDenunciasE": "Moderar conteúdo, atender denúncias e proteger o serviço contra abuso.",
+        "x_naoVendemosSeusDados": "Não vendemos seus dados.",
+        "x_localizacao": "Localização",
+        "x_oDisplayDeClimaMostra": "O display de Clima mostra o tempo do lugar onde você está, e só se você permitir. A permissão é pedida pelo próprio navegador ou celular, e você pode negá-la ou retirá-la quando quiser nas configurações do aparelho. Se negar, o display mostra o tempo da cidade escolhida pelo dono do mural, e não pedimos de novo: a sua escolha fica guardada neste aparelho até você excluir a conta (ou limpar os dados do navegador).",
+        "x_suaPosicaoFicaGuardadaApenas": "Sua posição fica guardada apenas no seu aparelho, por até 30 minutos. Não ligamos a posição à sua conta e não a guardamos no banco de dados.",
+        "x_paraBuscarOTempoO": "Para buscar o tempo, o servidor do Pinz recebe a posição arredondada (cerca de 1 km) e a repassa ao serviço de previsão do tempo; para mostrar o nome da cidade, repassa também ao serviço de mapas. O servidor guarda a resposta por alguns minutos (o tempo) ou por um dia (o nome da cidade), junto da posição arredondada, sem identificar você.",
+        "x_quemVeOQue": "Quem vê o que",
+        "x_seuMuralSoAbrePara": "Seu mural só abre para quem responde à pergunta que você definiu. Pins marcados como segredo aparecem borrados para visitantes. Quando você deixa um pin no mural de outra pessoa, ele é assinado com o seu nome de usuário.",
+        "x_servicosQueUsamos": "Serviços que usamos",
+        "x_supabaseBancoDeDadosLogin": "Supabase: banco de dados, login e armazenamento de arquivos.",
+        "x_googleLoginComOGoogle": "Google: login com o Google e mapas e busca de lugares (Google Maps).",
+        "x_metNorwayApiMetNo": "MET Norway (api.met.no): previsão do tempo do display de Clima, a partir da posição arredondada.",
+        "x_openstreetmapNominatimNomeDaCidade": "OpenStreetMap (Nominatim): nome da cidade da posição de quem permite a localização.",
+        "x_resendEnvioDosEMails": "Resend: envio dos e-mails da conta.",
+        "x_cloudflareProtecaoEEntregaDo": "Cloudflare: proteção e entrega do site.",
+        "x_mercadoPagoPagamentosDaAssinatura": "Mercado Pago: pagamentos da assinatura e dos créditos. Os dados do cartão ou do Pix são informados direto no Mercado Pago; o Pinz não os recebe nem os guarda, só o resultado do pagamento.",
+        "x_essesServicosTratamOsDados": "Esses serviços tratam os dados segundo as próprias políticas e podem processá-los fora do Brasil.",
+        "x_seusDireitos": "Seus direitos",
+        "x_vocePodePedirAcessoCorrecao": "Você pode pedir acesso, correção ou exclusão dos seus dados e da sua conta, e apagar seus pins a qualquer momento pelo próprio mural. Guardamos os dados enquanto a conta existir; denúncias e registros de segurança podem ficar guardados pelo tempo necessário para proteger outras pessoas.",
+        "x_criancas": "Crianças",
+        "x_oPinzNaoEDestinado": "O Pinz não é destinado a menores de 13 anos."
+      }
+    },
+    "termos": {
+      "page": {
+        "x_aoCriarUmaContaOu": "Ao criar uma conta ou usar o Pinz (pinz.digital), você concorda com estes termos.",
+        "x_oServico": "O serviço",
+        "x_oPinzPermiteCriarUm": "O Pinz permite criar um mural pessoal, ou compartilhado entre duas pessoas, e deixar pins (recados, fotos, músicas e outros formatos) nos murais. Alguns recursos fazem parte do plano PINZ+.",
+        "x_suaConta": "Sua conta",
+        "x_voceEResponsavelPeloAcesso": "Você é responsável pelo acesso à sua conta e pelo que publica com ela.",
+        "x_oNomeDeUsuarioE": "O nome de usuário é escolhido uma vez e não pode imitar marcas, empresas ou outras pessoas.",
+        "x_conteudoEConduta": "Conteúdo e conduta",
+        "x_naoEPermitidoPublicarConteudo": "Não é permitido publicar conteúdo ilegal, que assedie, ameace ou exponha outras pessoas, que viole direitos de terceiros ou que contenha nudez ou violência. Você declara ter o direito de publicar o que envia e nos autoriza a armazená-lo e exibi-lo no mural conforme sua escolha.",
+        "x_pinsPodemSerDenunciadosPodemos": "Pins podem ser denunciados. Podemos remover conteúdo e suspender contas que violem estes termos.",
+        "x_pagamentos": "Pagamentos",
+        "x_oPinzEUmaAssinatura": "O PINZ+ é uma assinatura mensal (R$ 9,90) cobrada pelo Mercado Pago, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.",
+        "x_vocePodeCancelarAAssinatura": "Você pode cancelar a assinatura quando quiser, pelo próprio Pinz, sem multa. O PINZ+ continua até o fim do período já pago e não há novas cobranças.",
+        "x_vocePodeDesistirDeUma": "Você pode desistir de uma compra em até 7 dias, como prevê o Código de Defesa do Consumidor, e pedir o reembolso pelo contato do Pinz. Créditos já gastos na loja são descontados.",
+        "x_seAAssinaturaDeixarDe": "Se a assinatura deixar de ser paga, a conta volta ao plano gratuito: seus pins continuam, mas os recursos do PINZ+ ficam indisponíveis.",
+        "x_osCreditosNaoSaoDinheiro": "Os créditos não são dinheiro, não podem ser transferidos nem sacados.",
+        "x_disponibilidade": "Disponibilidade",
+        "x_fazemosOPossivelParaManter": "Fazemos o possível para manter o serviço no ar, mas ele é oferecido como está, sem garantia de funcionamento ininterrupto. Podemos alterar ou encerrar recursos, e estes termos, avisando no site.",
+        "x_privacidade": "Privacidade",
+        "x_oUsoDosSeusDados": "O uso dos seus dados está descrito na <s0>Política de Privacidade</s0>."
       }
     }
   },
@@ -171,7 +246,8 @@
         "meuMural": "Meu mural",
         "m_notificacoesNovas": "Notificações ({v0} novas)",
         "m_notificacoes": "Notificações",
-        "m_menuPinsParaAprovar": "Menu ({v0} pins para aprovar)"
+        "m_menuPinsParaAprovar": "Menu ({v0} pins para aprovar)",
+        "x_pesquisarUsuarios": "Pesquisar usuários"
       },
       "AccountDrawer": {
         "editarMural": "Editar mural",
@@ -182,7 +258,10 @@
         "seNaoAparecerAOpcao": "Se não aparecer a opção, abra o Pinz pelo Safari (outros navegadores do iPhone não instalam apps).",
         "metricas": "Métricas",
         "muralCompartilhado": "Mural compartilhado",
-        "desenvolvidoPorJefersonAraujo": "Desenvolvido por Jeferson Araújo"
+        "desenvolvidoPorJefersonAraujo": "Desenvolvido por Jeferson Araújo",
+        "x_toqueNoBotaoCompartilharDo": "Toque no botão <s0>Compartilhar</s0> do Safari (o quadrado com a seta para cima).",
+        "x_roleAListaEToque": "Role a lista e toque em <s0>Adicionar à Tela de Início</s0>.",
+        "x_confirmeEmAdicionarOPinz": "Confirme em <s0>Adicionar</s0>. O Pinz fica na sua tela inicial e abre em tela cheia."
       },
       "BirthField": {
         "dataDeNascimento": "Data de nascimento",
@@ -201,7 +280,11 @@
         "entendi": "Entendi",
         "m_ola": "Olá {v0}",
         "m_queBomTerVocePor": "Que bom ter você por aqui. Esperamos que essa seja uma experiência muito boa para você e seus clientes.",
-        "m_queBomTerVocePor2": "Que bom ter você por aqui! Veja como usar:"
+        "m_queBomTerVocePor2": "Que bom ter você por aqui! Veja como usar:",
+        "x_colocarUmPinCliqueOu": "<s0>Colocar um pin:</s0> clique (ou toque) num espaço vazio do mural.",
+        "x_zoomPincaComDoisDedos": "<s0>Zoom:</s0> pinça com dois dedos ou toque duplo. “Afastar” volta ao mural inteiro.",
+        "x_moverComOMuralAproximado": "<s0>Mover:</s0> com o mural aproximado, arraste para ver o resto.",
+        "x_bottonsArrasteDaBarraDe": "<s0>Bottons:</s0> arraste da barra de baixo para o mural. Para tirar, arraste de volta."
       },
       "GiftModal": {
         "oPinzDesejaAVoce": "O Pinz deseja a você um dia incrível e um ano cheio de recados, fotos e momentos especiais. Parabéns!",
@@ -217,7 +300,11 @@
         "m_felizAniversario": "Feliz aniversário!",
         "m_ate": "até {v0}",
         "m_ateOFimDoMes": "até o fim do mês",
-        "m_alguem": "Alguém"
+        "m_alguem": "Alguém",
+        "x_felizAniversario": "Feliz aniversário{v0}! 🎉",
+        "x_pinzLiberadoDePresente": "<s0>PINZ+ liberado{v0}</s0>, de presente.",
+        "x_todosOsBottonsDeAniversario": "<s0>Todos os bottons de aniversário</s0>, de presente por ser PINZ+: balões, bolos, presentes, recados de parabéns e muito mais.",
+        "x_tePresenteouCom1Mes": "{v0} te presenteou com 1 mês de PINZ+!"
       },
       "Modal": {
         "voltarAoMenu": "Voltar ao menu",
@@ -268,7 +355,10 @@
         "apagar": "Apagar",
         "m_naoFoiPossivelMudarA": "Não foi possível mudar a ordem agora. Tente de novo.",
         "m_naoFoiPossivelApagarAgora": "Não foi possível apagar agora. Tente de novo.",
-        "m_publico": "Público"
+        "m_publico": "Público",
+        "x_apagar": "Apagar “{v0}”?",
+        "x_voltarParaMeusMurais": "Voltar para Meus murais",
+        "x_criarNovoMural": "Criar novo mural"
       },
       "NewMuralModal": {
         "novoMural": "Novo mural",
@@ -285,7 +375,10 @@
         "m_creditos": "{v0} créditos",
         "m_proximoTipo": "Próximo tipo",
         "m_compreEsteTipoDeMural": "Compre este tipo de mural para criar com ele",
-        "m_criarMural": "Criar mural"
+        "m_criarMural": "Criar mural",
+        "x_comprarOMuralPorCreditos": "Comprar o mural “{v0}” por <s0>{v1} créditos</s0>?",
+        "x_voceTem": "Você tem <n0></n0> <s1>{v0}</s1>{v1}",
+        "x_comprar": "Comprar <n0></n0>{v0}"
       },
       "NicknameSetup": {
         "completeOSeuPerfil": "Complete o seu perfil",
@@ -349,7 +442,10 @@
         "m_renovaTodoMesCanceleQuando": "Renova todo mês; cancele quando quiser em Planos.",
         "m_codigoCopiado": "Código copiado!",
         "m_copiarCodigoPix": "Copiar código Pix",
-        "m_gerarUmNovoCodigo": "Gerar um novo código"
+        "m_gerarUmNovoCodigo": "Gerar um novo código",
+        "x_quemRecebeGanha30Dias": "Quem recebe ganha 30 dias de PINZ+ na hora e é avisado. Vale só para outro usuário, por {v0}.",
+        "x_osDadosDoCartaoSao": "Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{v0}",
+        "x_aguardandoOPagamento": "Aguardando o pagamento… {v0}:{v1}"
       },
       "PeopleModals": {
         "seguidoresESeguindo": "Seguidores e seguindo",
@@ -402,7 +498,12 @@
         "m_colocarDeVoltaNoMural": "Colocar de volta no mural",
         "m_semPrazoFicamParaSempre": "sem prazo (ficam para sempre)",
         "m_pinsParaAprovar": "Pins para aprovar",
-        "m_pinsNoMural": "Pins no mural"
+        "m_pinsNoMural": "Pins no mural",
+        "x_espaco": "· espaço {v0}",
+        "x_assinadoPor": "· assinado por {v0}",
+        "x_de": "· de @{v0}",
+        "x_muralSaiuEm": "Mural “{v0}”{v1} · saiu em {v2}",
+        "x_nadaApareceNoMuralAntes": "Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.<n0></n0>Tempo de exibição dos pinz: <s1>{v0}</s1>. Quem passa do prazo vai para Arquivados; mude em Editar mural."
       },
       "PinTtlField": {
         "tempoDeExibicaoDosPinz": "Tempo de exibição dos pinz",
@@ -422,7 +523,11 @@
         "m_assinaturaCanceladaOPinzContinua": "Assinatura cancelada. O PINZ+ continua até o fim do período pago.",
         "m_naoFoiPossivelCancelarAgora": "Não foi possível cancelar agora. Tente de novo.",
         "m_pinzVitalicioParaSempre": "PINZ+ vitalício · para sempre",
-        "m_pinzAtivoAte": "PINZ+ ativo até {v0}"
+        "m_pinzAtivoAte": "PINZ+ ativo até {v0}",
+        "x_assinaturaAtiva": "Assinatura ativa{v0}",
+        "x_assinaturaCanceladaPinzAte": "Assinatura cancelada · PINZ+ até {v0}",
+        "x_creditosVoceTem": "Créditos <s0>· {soon, select, yes {em breve · } other {}}você tem {v1}</s0>",
+        "x_creditos": "<s0>{v0}</s0> créditos · {v1}"
       },
       "PrivacyField": {
         "quemPodeAbrirEsteMural": "Quem pode abrir este mural",
@@ -455,7 +560,10 @@
         "m_naoFoiPossivelEnviarO": "Não foi possível enviar o link agora. Tente de novo daqui a pouco.",
         "m_enviamosUmLinkParaEle": "Enviamos um link para {v0}. Ele vale por pouco tempo: abra no mesmo navegador.",
         "m_enviarLinkParaTrocarA": "Enviar link para trocar a senha",
-        "m_excluirConta": "Excluir conta"
+        "m_excluirConta": "Excluir conta",
+        "x_paraSuaSegurancaATroca": "Para sua segurança, a troca é feita por um link enviado para <s0>{v0}</s0>.",
+        "x_suaContaFicaraInativaPor": "Sua conta ficará inativa por <s0>30 dias</s0> e, depois disso, será <s1>totalmente apagada</s1>, com murais, pins e bottons. Depois do prazo, não dá para desfazer.",
+        "x_paraConfirmarDigiteExcluir": "Para confirmar, digite <s0>EXCLUIR</s0>"
       },
       "ProfileSummaryModal": {
         "voltar": "Voltar",
@@ -483,7 +591,9 @@
         "m_visualizacoes": "visualizações",
         "m_pinColocadoNoMural": "pin colocado no mural",
         "m_pinsColocadosNoMural": "pins colocados no mural",
-        "m_enviarDenuncia": "Enviar denúncia"
+        "m_enviarDenuncia": "Enviar denúncia",
+        "x_umMuralSoDeVoces": "Um mural só de vocês dois. Você define o nome e a senha e <s0>@{v0}</s0> recebe o convite. Os dois precisam ter o PINZ+.",
+        "x_aDenunciaEAnonimaNao": "A denúncia é anônima: <s0>@{v0}</s0> não sabe quem denunciou. Nossa equipe analisa e decide o que fazer."
       },
       "RewardsModal": {
         "ganheCreditos": "Ganhe créditos",
@@ -514,7 +624,9 @@
         "m_visualizarOMural": "Visualizar o mural",
         "m_apagarMural": "Apagar mural",
         "m_cancelarEsteConvite": "Cancelar este convite?",
-        "m_apagarParaAsDuasPessoas": "Apagar “{v0}” para as duas pessoas?"
+        "m_apagarParaAsDuasPessoas": "Apagar “{v0}” para as duas pessoas?",
+        "x_querCompartilharUmMuralCom": "@{v0} quer compartilhar um mural com você.",
+        "x_com": "com @{v0}{pending, select, yes { · aguardando aceitar} other {}}"
       },
       "TransactionsModal": {
         "minhasCompras": "Minhas compras",
@@ -522,7 +634,8 @@
         "assinaturaPinz": "Assinatura PINZ+:",
         "pagamentos": "Pagamentos",
         "voceAindaNaoFezNenhum": "Você ainda não fez nenhum pagamento.",
-        "m_valeAte": "· vale até {v0}"
+        "m_valeAte": "· vale até {v0}",
+        "x_duvidaSobreUmaCobrancaEnvie": "Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para <s0>{v0}</s0>."
       }
     },
     "AvatarUploader": {
@@ -534,7 +647,8 @@
       "m_naoFoiPossivelEnviarA": "Não foi possível enviar a foto.",
       "m_naoFoiPossivelRemoverAgora": "Não foi possível remover agora.",
       "m_suaFoto": "Sua foto",
-      "m_adicioneUmaFoto": "Adicione uma foto"
+      "m_adicioneUmaFoto": "Adicione uma foto",
+      "x_ganheCreditosAoEnviarA": "🎁 Ganhe {v0} créditos ao enviar a sua foto."
     },
     "badges": {
       "BadgeBar": {
@@ -612,7 +726,8 @@
         "verDisplaysNaLoja": "Ver displays na Loja",
         "formato": "Formato",
         "colocarDisplay": "Colocar display",
-        "seusDisplaysPorCategoria": "Seus displays por categoria"
+        "seusDisplaysPorCategoria": "Seus displays por categoria",
+        "x_categorias": "Categorias"
       },
       "DisplayDetail": {
         "compartilhar": "Compartilhar",
@@ -671,7 +786,8 @@
         "m_essaImagemNaoPodeSer": "Essa imagem não pôde ser usada. Escolha outra foto de capa.",
         "m_naoFoiPossivelEnviarA": "Não foi possível enviar a capa agora.",
         "m_exNao": "Ex: Não",
-        "m_nomeDaData": "Nome da data {v0}"
+        "m_nomeDaData": "Nome da data {v0}",
+        "x_repetirTodoAno": "Repetir todo ano"
       },
       "SecretCover": {
         "displayEmSegredo": "Display em segredo",
@@ -716,7 +832,11 @@
         "m_padrao": "Padrão",
         "m_liberadoApliqueEmEditarMural": "liberado! Aplique em Editar mural.",
         "m_credito": "crédito",
-        "m_creditos2": "créditos"
+        "m_creditos2": "créditos",
+        "x_de": "{v0} de {v1}",
+        "x_displays": "Displays",
+        "x_comCreditosVoceLevaBastante": "Com {v0} créditos você leva bastante coisa: vários bottons, displays e até um fundo de mural.",
+        "x_voceNaoTemCreditoSuficiente": "Você não tem crédito suficiente para comprar <s0>{v0}</s0>. Faltam <s1>{v1}</s1> {v2}."
       }
     },
     "board": {
@@ -738,7 +858,9 @@
         "editarLista": "Editar lista",
         "adicionarItem": "+ Adicionar item",
         "naoFoiPossivelSalvarAgora": "Não foi possível salvar agora. Tente de novo.",
-        "cancelar": "Cancelar"
+        "cancelar": "Cancelar",
+        "x_titulo": "Título",
+        "x_itensAte": "Itens (até {v0})"
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Aviso para o dono do mural",
@@ -746,7 +868,8 @@
         "m_seuMuralEstaCheio": "Seu mural está cheio.",
         "m_ninguemTentouDeixarUmPinz": "Ninguém tentou deixar um PINZ ainda.",
         "m_assineOPinzParaColocar": "Assine o PINZ+ para colocar pins e displays sem limite.",
-        "m_emBreveUseCreditosPara": "Em breve: use créditos para abrir outro mural."
+        "m_emBreveUseCreditosPara": "Em breve: use créditos para abrir outro mural.",
+        "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {pessoa tentou} other {pessoas tentaram}} deixar um PINZ."
       },
       "PinDetail": {
         "verMensagemEmDetalhe": "Ver mensagem em detalhe",
@@ -776,7 +899,9 @@
         "m_aguardandoASuaAprovacao": "Aguardando a sua aprovação",
         "m_aguardandoLiberacaoDoDonoDo": "Aguardando liberação do dono do mural",
         "m_segredoEDoPinz": "Segredo é do PINZ+",
-        "m_aprovaEDeixaEmSegredo": "Aprova e deixa em segredo: os visitantes veem o pin borrado"
+        "m_aprovaEDeixaEmSegredo": "Aprova e deixa em segredo: os visitantes veem o pin borrado",
+        "x_compartilhar": "<n0></n0>Compartilhar",
+        "x_excluirMeuPin": "<n0></n0>Excluir meu PIN"
       },
       "PinsManager": {
         "nenhumPinAindaQuandoAlguem": "Nenhum pin ainda. Quando alguém colocar um, ele aparece aqui para você aprovar.",
@@ -791,18 +916,22 @@
         "m_disponivelNoPinz": "Disponível no PINZ+",
         "m_escolhaQuaisFicamVisiveisE": "Escolha quais ficam visíveis e quais ficam em blur para quem visita. Os em blur continuam ocupando o espaço, e o conteúdo não é enviado.",
         "m_noPinzVoceEscolheQuais": "No PINZ+ você escolhe quais pins ficam em blur para os visitantes.",
-        "m_visivelDeixarEmBlur": "👁 Visível — deixar em blur"
+        "m_visivelDeixarEmBlur": "👁 Visível — deixar em blur",
+        "x_aguardandoSuaAprovacao": "Aguardando sua aprovação <s0>{v0}</s0>",
+        "x_noMural": "No mural ({v0})"
       },
       "ReactionBar": {
         "naoFoiPossivelReagirAgora": "Não foi possível reagir agora.",
         "reagirAEstePin": "Reagir a este pin"
       },
       "SlotMarker": {
-        "bloqueado": "bloqueado"
+        "bloqueado": "bloqueado",
+        "x_espacoLivre": "espaço<n0></n0>livre"
       },
       "PannableBoard": {
         "m_aproximarOMural": "Aproximar o mural",
-        "m_afastarOMural": "Afastar o mural"
+        "m_afastarOMural": "Afastar o mural",
+        "x_arrasteParaOsLados": "Arraste para os lados"
       }
     },
     "Brand": {
@@ -818,7 +947,8 @@
       "m_enviamosUmNovoCodigo": "Enviamos um novo código.",
       "m_naoFoiPossivelEnviarO": "Não foi possível enviar o código agora. Tente de novo em instantes.",
       "m_enviarOutroCodigoS": "Enviar outro código ({v0}s)",
-      "m_enviarOutroCodigo": "Enviar outro código"
+      "m_enviarOutroCodigo": "Enviar outro código",
+      "x_umCodigoFoiEnviadoPara": "Um código foi enviado para <s0>{v0}</s0>. Confirme para ter acesso à conta: sem a confirmação, você não consegue entrar."
     },
     "composer": {
       "CapsuleOption": {
@@ -849,7 +979,10 @@
         "papel": "Papel",
         "corDaFita": "Cor da fita",
         "fita": "Fita",
-        "opcoes": "Opções"
+        "opcoes": "Opções",
+        "x_borracha": "<n0></n0>Borracha",
+        "x_desfazer": "<n0></n0>Desfazer",
+        "x_limpar": "<n0></n0>Limpar"
       },
       "forms": {
         "corDoPostIt": "Cor do post-it",
@@ -913,7 +1046,13 @@
         "m_gravarDeNovo": "Gravar de novo",
         "m_escolherUmArquivoDeAudio": "Escolher um arquivo de áudio",
         "m_digitePeloMenos3Letras": "Digite pelo menos 3 letras do nome do lugar.",
-        "m_naoFoiPossivelBuscarAgora": "Não foi possível buscar agora. Tente de novo em instantes."
+        "m_naoFoiPossivelBuscarAgora": "Não foi possível buscar agora. Tente de novo em instantes.",
+        "x_itensAte": "Itens (até {v0})",
+        "x_tirarFotoAgora": "Tirar foto agora",
+        "x_semLegendaApareceSoO": "<n0></n0> · Sem legenda, aparece só o aparelho.",
+        "x_otimizandoOVideo": "Otimizando o vídeo… {v0}%",
+        "x_semLegendaApareceSoO2": "<n0></n0> · Sem legenda, aparece só o player.",
+        "x_ateSegundos": "Até {v0} segundos."
       },
       "FullNotice": {
         "oPlanoGratuitoTemUm": "O plano gratuito tem um limite de 15 pins e displays. Para ter mais, o dono precisa do PINZ+.",
@@ -938,7 +1077,8 @@
     "DesktopBoard": {
       "informacoesDoMural": "Informações do mural",
       "convidarPessoasParaVerEste": "Convidar pessoas para ver este mural",
-      "acessibilidade": "Acessibilidade"
+      "acessibilidade": "Acessibilidade",
+      "x_convidarParaOMuralCompartilhado": "Convidar para o mural compartilhado"
     },
     "Explorer": {
       "buscando": "Buscando…",
@@ -992,15 +1132,21 @@
       "m_pinColocadoNoMuralDe": "Pin colocado no mural de vocês! 📌",
       "m_pinEnviadoEleAparecePara": "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
       "m_pinFoiArquivado": "pin foi arquivado",
-      "m_oPinArquivado": "o pin arquivado"
+      "m_oPinArquivado": "o pin arquivado",
+      "x_temMuraisQualVoceQuer": "<s0>{v0}</s0> tem {v1} murais. Qual você quer abrir?",
+      "x_doPrazoDeValidadeDo": "{count, plural, one {Ele passou} other {Eles passaram}} do prazo de validade do mural “{v1}”. Toque abaixo para ver {count, plural, one {o pin arquivado} other {os pins arquivados}} e, se quiser, colocar de volta no mural.",
+      "x_mensagemDe": "Mensagem de @{v0}"
     },
     "LegalPage": {
-      "contato": "Contato"
+      "contato": "Contato",
+      "x_atualizadoEm": "Atualizado em {v0}",
+      "x_duvidasOuPedidosSobreSeus": "Dúvidas ou pedidos sobre seus dados: <s0>{v0}</s0>."
     },
     "messages": {
       "ClosedCapsule": {
         "capsulaPinzFechada": "Cápsula PINZ fechada",
-        "voceRecebeuUmaMensagemFechada": "Você recebeu uma mensagem fechada."
+        "voceRecebeuUmaMensagemFechada": "Você recebeu uma mensagem fechada.",
+        "x_abreEm": "Abre em: {v0}"
       },
       "DrawingCard": {
         "desenho": "Desenho"
@@ -1085,7 +1231,8 @@
     "MuralNameMenu": {
       "criarNovoMural": "Criar novo mural",
       "aberto": "✓ aberto",
-      "compartilhados": "Compartilhados"
+      "compartilhados": "Compartilhados",
+      "x_com": "com @{v0}"
     },
     "MuralScreen": {
       "aguardeUmPouco": "Aguarde um pouco",
@@ -1103,7 +1250,8 @@
       "muralAnterior": "Mural anterior",
       "proximoMural": "Próximo mural",
       "murais": "Murais",
-      "m_muralDe": "Mural {v0} de {v1}"
+      "m_muralDe": "Mural {v0} de {v1}",
+      "x_de": "{v0} de {v1}"
     },
     "OAuthButtons": {
       "continuarCom": "Continuar com",
@@ -1115,12 +1263,14 @@
       "limiteDoPlano": "Limite do plano",
       "free": "FREE",
       "comOPinzVoceTem": "Com o PINZ+ você tem:",
-      "m_assinarOPinzPorR": "Assinar o PINZ+ por R$ 9,90/mês"
+      "m_assinarOPinzPorR": "Assinar o PINZ+ por R$ 9,90/mês",
+      "x_voceEstaUsandoDePins": "Você está usando <s0>{v0}</s0> de <s1>{v1}</s1> pins e displays do seu mural. Esse é o limite da conta <s2>FREE</s2>, que inclui 1 mural."
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Pessoa não encontrada",
       "voltar": "Voltar",
-      "essaPessoaAindaNaoCriou": "Essa pessoa ainda não criou nenhum mural."
+      "essaPessoaAindaNaoCriou": "Essa pessoa ainda não criou nenhum mural.",
+      "x_muraisDe": "Murais de {v0}"
     },
     "SearchBox": {
       "pesquisarUsuarios": "Pesquisar usuários",
@@ -1134,7 +1284,8 @@
       "compartilheMomentosEspeciaisRecebaRecados": "Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.",
       "pinzEmNumeros": "Pinz em números",
       "murais": "murais",
-      "pinzColocados": "PINZ colocados"
+      "pinzColocados": "PINZ colocados",
+      "x_voltarParaMeuMural": "Voltar para meu Mural"
     },
     "tour": {
       "Tour": {
@@ -1142,7 +1293,8 @@
         "naoEncontreiEstaParteNa": "Não encontrei esta parte na tela. Se você fechou a janela, toque em Voltar e siga de novo.",
         "pularTour": "Pular tour",
         "voltar": "Voltar",
-        "m_proximo": "Próximo"
+        "m_proximo": "Próximo",
+        "x_de": "{v0} de {v1}"
       }
     },
     "ui": {
@@ -1152,7 +1304,8 @@
       "nomeDeUsuario": "Nome de usuário",
       "seuUsuario": "seu_usuario",
       "m_esconderSugestoes": "Esconder sugestões",
-      "m_verSugestoesDePerguntas": "Ver sugestões de perguntas"
+      "m_verSugestoesDePerguntas": "Ver sugestões de perguntas",
+      "x_voltar": "Voltar"
     },
     "UnlockPanel": {
       "muralBloqueado": "Mural bloqueado",
@@ -1170,7 +1323,8 @@
       "m_muralCompartilhado": "Mural compartilhado",
       "m_muralPrivado": "Mural privado",
       "m_digiteASenha": "Digite a senha...",
-      "m_digiteSuaResposta": "Digite sua resposta..."
+      "m_digiteSuaResposta": "Digite sua resposta...",
+      "x_muralBloqueado": "<n0></n0>Mural bloqueado"
     },
     "widgets": {
       "BookWidget": {
@@ -1240,6 +1394,9 @@
     },
     "FollowButton": {
       "m_seguindoToqueParaDeixarDe": "Seguindo (toque para deixar de seguir)"
+    },
+    "LockedNotice": {
+      "x_muralPrivado": "Mural privado"
     }
   },
   "lit": {}

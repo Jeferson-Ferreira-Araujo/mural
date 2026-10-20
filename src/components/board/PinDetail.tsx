@@ -282,9 +282,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
               <button type="button" disabled={sharing} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
-                <ShareIcon />
-                Compartilhar
-              </button>
+                {tx.rich("x_compartilhar", { n0: () => <ShareIcon /> })}</button>
             )}
             {/* frase ou versículo: o mesmo botão de compartilhar de cima leva o texto */}
             {widget && wText && (
@@ -295,9 +293,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             )}
             {bookShare && (
               <button type="button" disabled={sharing} aria-label={tx("compartilharEsteDisplay")} title={tx("compartilharEsteDisplay")} onClick={() => void sharePin()} className={shareBtn}>
-                <ShareIcon />
-                Compartilhar
-              </button>
+                {tx.rich("x_compartilhar", { n0: () => <ShareIcon /> })}</button>
             )}
             {mod && item && !isSealed(item) && !isHidden(item) && !item.mine && item.pending && ( // só enquanto aguarda aprovação: depois de aprovado, o dono usa Excluir PIN
               <button
@@ -364,9 +360,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           )}
           {!mod && item && !isSealed(item) && !isHidden(item) && item.mine && (
             <button type="button" disabled={busy} onClick={() => setConfirmDelete(true)} className={`${ghost} flex items-center justify-center gap-2`}>
-              <Trash />
-              Excluir meu PIN
-            </button>
+              {tx.rich("x_excluirMeuPin", { n0: () => <Trash /> })}</button>
           )}
           {ownWidget && widget && (
             <div className="flex w-full flex-wrap justify-center gap-2" role="group" aria-label={tx("opcoesDesteDisplay")}>

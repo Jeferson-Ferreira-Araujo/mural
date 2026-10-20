@@ -957,8 +957,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           {choices && (
             <section aria-label={`Murais de ${choices.nickname}`} className={`rounded-[1.1em] border p-[1.1em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
               <p className="text-[0.9em] font-semibold">
-                <strong className="break-all">{choices.nickname}</strong> tem {choices.murals.length} murais. Qual você quer abrir?
-              </p>
+                {tx.rich("x_temMuraisQualVoceQuer", { v0: choices.nickname, v1: choices.murals.length, s0: (c) => <strong className="break-all">{c}</strong> })}</p>
               <ul className="mt-[0.7em] space-y-[0.5em]">
                 {choices.murals.map((m) => (
                   <li key={m.slug}>
@@ -1308,8 +1307,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               {archivedNote.count} {archivedNote.count === 1 ? tx("m_pinFoiArquivado") : "pins foram arquivados"}
             </p>
             <p className="text-[15px] text-[#4a3826]">
-              {archivedNote.count === 1 ? "Ele passou" : "Eles passaram"} do prazo de validade do mural “{archivedNote.title}”. Toque abaixo para ver {archivedNote.count === 1 ? tx("m_oPinArquivado") : "os pins arquivados"} e, se quiser, colocar de volta no mural.
-            </p>
+              {tx("x_doPrazoDeValidadeDo", { count: archivedNote.count, v1: archivedNote.title })}</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => closeArchivedNote(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                 {tx("depois")}</button>
@@ -1321,7 +1319,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       </Modal>
       <Modal open={!!welcomeText} onClose={() => setWelcomeText(null)} title="">
         <div className="px-1 pb-3 text-center">
-          <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Mensagem de @{selected?.nickname}</p>
+          <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("x_mensagemDe", { v0: selected?.nickname ?? "" })}</p>
           <p className="font-title mt-3 text-xl leading-snug [overflow-wrap:anywhere] whitespace-pre-wrap">{welcomeText}</p>
         </div>
       </Modal>

@@ -83,7 +83,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
           )}
         </div>
         <input ref={input} type="file" accept="image/*" hidden onChange={(e) => void pick(e.target.files?.[0])} aria-label={tx("escolherFotoDePerfil")} />
-        {reward !== null && !msg && <p className="mt-1.5 text-sm font-semibold text-[#8a6a1c]">🎁 Ganhe {reward} créditos ao enviar a sua foto.</p>}
+        {reward !== null && !msg && <p className="mt-1.5 text-sm font-semibold text-[#8a6a1c]">{tx("x_ganheCreditosAoEnviarA", { v0: reward })}</p>}
         {msg && (
           <p role={msg.ok ? "status" : "alert"} className={`mt-1.5 text-sm ${msg.ok ? "text-[#2f6b3a]" : "text-[#a23b2a]"}`}>
             {msg.text}

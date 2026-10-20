@@ -439,14 +439,11 @@ export function AccountDrawer({
       <Modal open={isOpen && modal === "install"} onClose={close} title={tx("instalarOPinz")}>
         <ol className="list-decimal space-y-2 pl-5 text-sm text-[#4a3826]">
           <li>
-            Toque no botão <strong>{tx("compartilhar")}</strong> do Safari (o quadrado com a seta para cima).
-          </li>
+            {tx.rich("x_toqueNoBotaoCompartilharDo", { s0: (c) => <strong>{c}</strong> })}</li>
           <li>
-            Role a lista e toque em <strong>{tx("adicionarATelaDeInicio")}</strong>.
-          </li>
+            {tx.rich("x_roleAListaEToque", { s0: (c) => <strong>{c}</strong> })}</li>
           <li>
-            Confirme em <strong>{tx("adicionar")}</strong>. O Pinz fica na sua tela inicial e abre em tela cheia.
-          </li>
+            {tx.rich("x_confirmeEmAdicionarOPinz", { s0: (c) => <strong>{c}</strong> })}</li>
         </ol>
         <p className="mt-3 text-xs text-[#6b5440]">{tx("seNaoAparecerAOpcao")}</p>
       </Modal>

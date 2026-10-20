@@ -42,7 +42,7 @@ export function ProfileMurals({ nick }: { nick: string }) {
 
   return (
     <AuthShell>
-      <h1 className="font-title text-2xl font-semibold">Murais de {profile.nickname}</h1>
+      <h1 className="font-title text-2xl font-semibold">{tx("x_muraisDe", { v0: profile.nickname })}</h1>
       {profile.murals.length === 0 ? (
         <p className="mt-3 text-[#4a3826]">{tx("essaPessoaAindaNaoCriou")}</p>
       ) : (

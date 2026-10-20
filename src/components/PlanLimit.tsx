@@ -45,8 +45,7 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
       <Modal open={open} onClose={() => setOpen(false)} title={tx("limiteDoPlano")} label={tx("limiteDoPlano")}>
         <div className="space-y-4 text-sm text-[#2f2218]">
           <p>
-            Você está usando <strong>{used}</strong> de <strong>{max}</strong> pins e displays do seu mural. Esse é o limite da conta <strong>{tx("free")}</strong>, que inclui 1 mural.
-          </p>
+            {tx.rich("x_voceEstaUsandoDePins", { v0: used, v1: max, s0: (c) => <strong>{c}</strong>, s1: (c) => <strong>{c}</strong>, s2: (c) => <strong>{c}</strong> })}</p>
           <div className="rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] p-4">
             <p className="font-bold">{tx("comOPinzVoceTem")}</p>
             <ul className="mt-2 space-y-1.5">

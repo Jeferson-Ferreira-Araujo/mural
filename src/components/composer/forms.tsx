@@ -143,7 +143,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} placeholder={tx("exPraGenteFazer")} className={inputClass} />}
       </Field>
       <fieldset>
-        <legend className="mb-1.5 text-sm font-semibold">Itens (até {max})</legend>
+        <legend className="mb-1.5 text-sm font-semibold">{tx("x_itensAte", { v0: max })}</legend>
         <ul className="space-y-2">
           {items.map((it, i) => (
             <li key={i} className="flex gap-2">
@@ -281,8 +281,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
             <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
             <circle cx="12" cy="13" r="3.5" />
           </svg>
-          Tirar foto agora
-        </button>
+          {tx("x_tirarFotoAgora")}</button>
       ) : (
         <div className="fixed inset-0 z-[200] flex flex-col bg-black" role="dialog" aria-label={tx("camera")}>
           <video ref={video} playsInline muted className={`block min-h-0 w-full flex-1 object-contain ${facing === "user" ? "-scale-x-100" : ""}`} />
@@ -387,7 +386,7 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder={tx("https")} className={inputClass} />}
       </Field>
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label={tx("mensagemOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
+      <Field label={tx("mensagemOpcional")} hint={<>{tx.rich("x_semLegendaApareceSoO", { n0: () => <Counter value={caption} max={PLAYER_NOTE_MAX} /> })}</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exEssaMusicaMeLembra")} className={inputClass} />}
       </Field>
     </div>
@@ -482,7 +481,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
       )}
       {progress !== null && (
         <div role="status" aria-live="polite" className="rounded-xl border border-[#d9c9ad] bg-white/70 p-3 text-sm">
-          <p className="font-semibold">Otimizando o vídeo… {Math.round(progress * 100)}%</p>
+          <p className="font-semibold">{tx("x_otimizandoOVideo", { v0: Math.round(progress * 100) })}</p>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#e1d3ba]">
             <div className="h-full rounded-full bg-[#d98a2b] transition-[width]" style={{ width: `${Math.round(progress * 100)}%` }} />
           </div>
@@ -492,7 +491,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
       {note && <p role="status" className="text-sm text-[#2f6a3c]">{note}</p>}
       {error && <ErrorText>{error}</ErrorText>}
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label={tx("legendaOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o player.</>}>
+      <Field label={tx("legendaOpcional")} hint={<>{tx.rich("x_semLegendaApareceSoO2", { n0: () => <Counter value={caption} max={PLAYER_NOTE_MAX} /> })}</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exUmLugarQueMe")} className={inputClass} />}
       </Field>
     </div>
@@ -623,13 +622,13 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
             </label>
           </div>
         )}
-        <p className="mt-1.5 text-sm text-[#6b5440]">Até {MAX_VOICE_SEC} segundos.</p>
+        <p className="mt-1.5 text-sm text-[#6b5440]">{tx("x_ateSegundos", { v0: MAX_VOICE_SEC })}</p>
         {error && <ErrorText>{error}</ErrorText>}
       </div>
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label={tx("legendaOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
+      <Field label={tx("legendaOpcional")} hint={<>{tx.rich("x_semLegendaApareceSoO", { n0: () => <Counter value={caption} max={PLAYER_NOTE_MAX} /> })}</>}>
         {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exSuaVozSempreMe")} className={inputClass} />}
       </Field>
     </div>

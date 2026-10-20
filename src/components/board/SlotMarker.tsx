@@ -1,6 +1,7 @@
 
 import { useTranslations } from "next-intl";/** Espaço livre do mural (ainda sem mensagem). Mesmo tamanho de uma mensagem; tamanho via font-size do pai. */
 export function EmptySlot() {
+  const tx = useTranslations("components.board.SlotMarker");
   return (
     <div
       aria-hidden
@@ -13,7 +14,7 @@ export function EmptySlot() {
             <path d="M12 5v14M5 12h14" />
           </svg>
         </span>
-        <span className="block text-[1.9em] leading-[1.05] font-extrabold tracking-wide uppercase">espaço<br />livre</span>
+        <span className="block text-[1.9em] leading-[1.05] font-extrabold tracking-wide uppercase">{tx.rich("x_espacoLivre", { n0: () => <br /> })}</span>
       </span>
     </div>
   );

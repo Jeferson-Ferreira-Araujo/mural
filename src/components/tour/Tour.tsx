@@ -209,7 +209,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
           <div className="h-full rounded-full bg-[#d9a21b] transition-all" style={{ width: `${((i + 1) / steps.length) * 100}%` }} />
         </div>
         <p className="text-[11px] font-bold tracking-wide text-[#8a7b69] uppercase">
-          {i + 1} de {steps.length}
+          {tx("x_de", { v0: i + 1, v1: steps.length })}
         </p>
         <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{step.title}</h2>
         <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{step.text}</p>
