@@ -66,7 +66,6 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
           >
             {!PAYMENTS_ENABLED ? "PINZ+ em breve" : "Assinar o PINZ+ por R$ 9,90/mês"}
           </button>
-          {PAYMENTS_ENABLED && <p className="text-center text-xs text-[#6b5440]">Cobrado todo mês no Mercado Pago · cancele quando quiser.</p>}
         </div>
       </Modal>
     </>

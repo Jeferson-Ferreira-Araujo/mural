@@ -41,7 +41,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
         {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">Seu plano</span>}
       </header>
       <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
-      <p className="text-sm text-[#6b5440]">{full ? (PAYMENTS_ENABLED ? "Cobrado todo mês no Mercado Pago · cancele quando quiser" : "Cobrança em breve") : "Para sempre"}</p>
+      {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? "Cobrança em breve" : "Para sempre"}</p>}
       <ul className="mt-4 space-y-2 text-sm">
         {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
           <li key={f.text} className={`flex items-start gap-2 ${f.on ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>
