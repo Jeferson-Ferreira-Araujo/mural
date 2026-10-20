@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { PlanId } from "@/lib/plans";
 import { formatInfo, type Message } from "@/lib/types";
 import { MessageView } from "../messages/MessageView";
+import { useTranslations } from "next-intl";
 
 /** Pin como o dono o vê: com conteúdo, estado de aprovação e se está em blur para os visitantes. */
 export type OwnerPin = Message & { status: "pending" | "approved"; hiddenFromVisitors: boolean };
@@ -34,6 +35,7 @@ type Props = {
  * escolhe pin por pin o que fica visível e o que fica em blur para quem visita.
  */
 export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, onSetHidden, onReport, tone = "light" }: Props) {
+  const tx = useTranslations("components.board.PinsManager");
   const [reporting, setReporting] = useState<string | null>(null);
   const [reason, setReason] = useState<ReportReason>("ofensa");
   const [details, setDetails] = useState("");
@@ -117,28 +119,26 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
     </li>
   );
 
-  if (pins.length === 0) return <p className={`text-sm ${muted}`}>Nenhum pin ainda. Quando alguém colocar um, ele aparece aqui para você aprovar.</p>;
+  if (pins.length === 0) return <p className={`text-sm ${muted}`}>{tx("nenhumPinAindaQuandoAlguem")}</p>;
 
   return (
     <div className="space-y-5">
       {pending.length > 0 && (
-        <section aria-label="Pins aguardando aprovação">
+        <section aria-label={tx("pinsAguardandoAprovacao")}>
           <h3 className="text-sm font-bold">
             Aguardando sua aprovação <span className="rounded-md bg-[#d98a2b] px-2 py-0.5 text-xs text-white">{pending.length}</span>
           </h3>
-          <p className={`mt-1 text-xs ${muted}`}>Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.</p>
+          <p className={`mt-1 text-xs ${muted}`}>{tx("nadaApareceNoMuralAntes")}</p>
           <ul className="mt-3 space-y-2">
             {pending.map((p) => (
               <Row key={p.id} p={p}>
                 <button type="button" className={primary} disabled={busyId === p.id} onClick={() => onApprove(p.id, false)}>
-                  Aprovar
-                </button>
+                  {tx("aprovar")}</button>
                 <button type="button" className={btn} disabled={busyId === p.id || !full} title={full ? "Aprova e deixa em blur para quem visita" : "Disponível no PINZ+"} onClick={() => onApprove(p.id, true)}>
                   {full ? "Aprovar em blur" : "🔒 Aprovar em blur (PINZ+)"}
                 </button>
                 <button type="button" className={btn} disabled={busyId === p.id} onClick={() => onReject(p.id)}>
-                  Recusar
-                </button>
+                  {tx("recusar")}</button>
               </Row>
             ))}
           </ul>
@@ -146,7 +146,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       )}
 
       {approved.length > 0 && (
-        <section aria-label="Pins no mural">
+        <section aria-label={tx("pinsNoMural")}>
           <h3 className="text-sm font-bold">No mural ({approved.length})</h3>
           <p className={`mt-1 text-xs ${muted}`}>{full ? "Escolha quais ficam visíveis e quais ficam em blur para quem visita. Os em blur continuam ocupando o espaço, e o conteúdo não é enviado." : "No PINZ+ você escolhe quais pins ficam em blur para os visitantes."}</p>
           <ul className="mt-3 space-y-2">
@@ -164,11 +164,10 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
                     {p.hiddenFromVisitors ? "🔒 Em blur — mostrar" : "👁 Visível — deixar em blur"}
                   </button>
                 ) : (
-                  <span className={`self-center text-xs ${muted}`}>👁 Visível para os visitantes</span>
+                  <span className={`self-center text-xs ${muted}`}>{tx("visivelParaOsVisitantes")}</span>
                 )}
                 <button type="button" className={btn} disabled={busyId === p.id} onClick={() => onReject(p.id)}>
-                  Remover
-                </button>
+                  {tx("remover")}</button>
               </Row>
             ))}
           </ul>

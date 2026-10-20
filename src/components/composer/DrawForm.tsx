@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { TAPE_COLORS, tapeOf, type TapeColor } from "@/lib/style";
 import { Tape } from "../messages/fasteners";
 import type { DraftChange } from "./types";
+import { useTranslations } from "next-intl";
 
 // ---------- Desenho (PINZ+) ----------
 const DRAW_W = 800;
@@ -82,6 +83,7 @@ function OptionButton({ label, open, onClick, children }: { label: string; open:
 
 /** Desenho na hora: traço livre com cor, espessura, borracha, desfazer, papel e fita. Vira uma imagem PNG no envio. Sem texto. */
 export function DrawForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.DrawForm");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<Stroke[]>([]);
   const current = useRef<Stroke | null>(null);
@@ -188,7 +190,7 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
           ref={canvasRef}
           width={DRAW_W}
           height={DRAW_H}
-          aria-label="Área de desenho"
+          aria-label={tx("areaDeDesenho")}
           onPointerDown={down}
           onPointerMove={move}
           onPointerUp={up}
@@ -199,29 +201,29 @@ export function DrawForm({ onChange }: { onChange: DraftChange }) {
 
       {/* uma linha só: cada botão mostra o que está aplicado e abre as opções logo abaixo */}
       <div className="flex flex-wrap gap-2">
-        <OptionButton label="Cor do traço" open={panel === "color"} onClick={() => toggle("color")}>
+        <OptionButton label={tx("corDoTraco")} open={panel === "color"} onClick={() => toggle("color")}>
           {ICONS.color}
           {dot(16, erase ? "#ffffff" : color)}
-          <span className="hidden sm:inline">Cor</span>
+          <span className="hidden sm:inline">{tx("cor")}</span>
         </OptionButton>
-        <OptionButton label="Espessura do traço" open={panel === "size"} onClick={() => toggle("size")}>
+        <OptionButton label={tx("espessuraDoTraco")} open={panel === "size"} onClick={() => toggle("size")}>
           {ICONS.size}
           <span className="hidden sm:inline">{sizeNow.label}</span>
         </OptionButton>
-        <OptionButton label="Cor do papel" open={panel === "paper"} onClick={() => toggle("paper")}>
+        <OptionButton label={tx("corDoPapel")} open={panel === "paper"} onClick={() => toggle("paper")}>
           {ICONS.paper}
           {dot(16, paper)}
-          <span className="hidden sm:inline">Papel</span>
+          <span className="hidden sm:inline">{tx("papel")}</span>
         </OptionButton>
-        <OptionButton label="Cor da fita" open={panel === "tape"} onClick={() => toggle("tape")}>
+        <OptionButton label={tx("corDaFita")} open={panel === "tape"} onClick={() => toggle("tape")}>
           {ICONS.tape}
           {dot(16, tapeOf(tape).swatch)}
-          <span className="hidden sm:inline">Fita</span>
+          <span className="hidden sm:inline">{tx("fita")}</span>
         </OptionButton>
       </div>
 
       {panel && (
-        <div className="rounded-xl border border-[#e1d3ba] bg-white/70 p-2.5" role="radiogroup" aria-label="Opções">
+        <div className="rounded-xl border border-[#e1d3ba] bg-white/70 p-2.5" role="radiogroup" aria-label={tx("opcoes")}>
           <div className="flex flex-wrap gap-2">
             {panel === "color" &&
               DRAW_COLORS.map((c) => (

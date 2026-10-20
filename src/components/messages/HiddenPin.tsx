@@ -1,6 +1,7 @@
 import type { HiddenItem, Message } from "@/lib/types";
 import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
+import { useTranslations } from "next-intl";
 
 const LOREM = "——— ———— —— ————— ——— ———— ——";
 
@@ -39,10 +40,11 @@ function placeholderFor(h: HiddenItem): Message | null {
  * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
 export function HiddenPin({ item }: { item: HiddenItem }) {
+  const tx = useTranslations("components.messages.HiddenPin");
   const inDetail = useInDetail();
   const fake = placeholderFor(item);
   return (
-    <div aria-label="Pin em segredo" role="img" className="relative select-none">
+    <div aria-label={tx("pinEmSegredo")} role="img" className="relative select-none">
       <div inert aria-hidden className="pointer-events-none" style={{ filter: "blur(0.38em) saturate(0.9)" }}>
         {fake ? (
           <MessageView message={fake} />
@@ -60,7 +62,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </span>
-            <span className="max-w-[9.5em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Aguardando liberação do dono do mural</span>
+            <span className="max-w-[9.5em] rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{tx("aguardandoLiberacaoDoDonoDo")}</span>
           </span>
         ) : (
           <span className="flex flex-col items-center gap-[0.45em]">
@@ -69,7 +71,7 @@ export function HiddenPin({ item }: { item: HiddenItem }) {
                 <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
               </svg>
             </span>
-            <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+            <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{tx("segredo")}</span>
           </span>
         )}
       </span>

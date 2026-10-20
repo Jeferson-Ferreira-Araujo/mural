@@ -11,6 +11,7 @@ import { Avatar } from "../Avatar";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 const REASONS: { id: ProfileReportReason; label: string }[] = [
   { id: "ofensa", label: "Ofensa ou discurso de ódio" },
@@ -61,6 +62,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
  * compartilhar o perfil, pedir um mural compartilhado e denunciar. `showStats` = false (mural privado ainda trancado): só foto, nome e selo.
  */
 export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary", isOwner = false }: { /** quem está vendo é o dono deste perfil (garante o botão Editar perfil) */ isOwner?: boolean; /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
+  const tx = useTranslations("components.account.ProfileSummaryModal");
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
@@ -149,9 +151,9 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">Voltar</button> : undefined}>
+    <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">{tx("voltar")}</button> : undefined}>
       {!data ? (
-        <CardSkeleton label="Carregando o perfil" />
+        <CardSkeleton label={tx("carregandoOPerfil")} />
       ) : view === "summary" ? (
         <div className="space-y-4">
           {/* foto grande com a moldura dourada do PINZ+ */}
@@ -163,8 +165,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             <p className="font-title text-[2rem] leading-tight font-semibold [overflow-wrap:anywhere]">@{data.nickname}</p>
             {data.plus && (
               <span className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-b from-[#f6cb4a] to-[#eaa91a] px-3.5 py-1.5 text-lg font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(150,90,0,.35)]">
-                PINZ+
-              </span>
+                {tx("pinz")}</span>
             )}
           </div>
 
@@ -197,10 +198,9 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           <div className="space-y-2.5 border-t border-[#e6d8bd] pt-4">
             {logged && !self && (
               <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
-                Convidar para o mural compartilhado
-              </button>
+                {tx("convidarParaOMuralCompartilhado")}</button>
             )}
-            <Action tone="purple" title={sharing ? "Preparando a imagem…" : "Compartilhar perfil"} hint="Envia um cartão de visita com a sua foto e o link do perfil" onClick={() => void shareProfile()}>
+            <Action tone="purple" title={sharing ? "Preparando a imagem…" : "Compartilhar perfil"} hint={tx("enviaUmCartaoDeVisita")} onClick={() => void shareProfile()}>
               <svg {...icon}>
                 <circle cx="18" cy="5" r="2.6" />
                 <circle cx="6" cy="12" r="2.6" />
@@ -210,8 +210,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             </Action>
             {logged && !self && (
               <button type="button" onClick={() => (setErr(null), setView("report"))} className="w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
-                Denunciar perfil
-              </button>
+                {tx("denunciarPerfil")}</button>
             )}
           </div>
         </div>
@@ -220,10 +219,10 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           <p className="text-sm text-[#4a3826]">
             Um mural só de vocês dois. Você define o nome e a senha e <strong>@{data.nickname}</strong> recebe o convite. Os dois precisam ter o PINZ+.
           </p>
-          {!viewerPlus && <p className="rounded-xl border border-[#ecd9a0] bg-[#fff6dd] px-3 py-2 text-sm text-[#6b4a10]">Você ainda não tem o PINZ+. Assine o PINZ+ no menu (Planos) para criar murais compartilhados.</p>}
+          {!viewerPlus && <p className="rounded-xl border border-[#ecd9a0] bg-[#fff6dd] px-3 py-2 text-sm text-[#6b4a10]">{tx("voceAindaNaoTemO")}</p>}
           <fieldset className="min-w-0">
-            <legend className="mb-1 text-sm font-semibold">Tipo do mural</legend>
-            <div role="radiogroup" aria-label="Tipo do mural" className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
+            <legend className="mb-1 text-sm font-semibold">{tx("tipoDoMural")}</legend>
+            <div role="radiogroup" aria-label={tx("tipoDoMural")} className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
               {ownedBoards.map((bd) => {
                 const on = board === bd.id;
                 return (
@@ -249,10 +248,10 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                 );
               })}
             </div>
-            {ownedBoards.length === 1 && <p className="text-xs text-[#6b5440]">Outros tipos de mural você compra na loja.</p>}
+            {ownedBoards.length === 1 && <p className="text-xs text-[#6b5440]">{tx("outrosTiposDeMuralVoce")}</p>}
           </fieldset>
-          <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Nossa viagem" className={inputClass} />}</Field>
-          <Field label="Senha do mural" hint={<span className="text-xs text-[#8a7b69]">Combine com a outra pessoa (mínimo 6 caracteres)</span>}>
+          <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exNossaViagem")} className={inputClass} />}</Field>
+          <Field label={tx("senhaDoMural")} hint={<span className="text-xs text-[#8a7b69]">{tx("combineComAOutraPessoa")}</span>}>
             {(id) => <input id={id} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />}
           </Field>
           {err && (
@@ -270,7 +269,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             A denúncia é anônima: <strong>@{data.nickname}</strong> não sabe quem denunciou. Nossa equipe analisa e decide o que fazer.
           </p>
           <fieldset className="space-y-1.5">
-            <legend className="mb-1 text-sm font-semibold">Qual é o problema?</legend>
+            <legend className="mb-1 text-sm font-semibold">{tx("qualEOProblema")}</legend>
             {REASONS.map((r) => (
               <label key={r.id} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm ${reason === r.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70"}`}>
                 <input type="radio" name="reason" checked={reason === r.id} onChange={() => setReason(r.id)} className="accent-[#d9a21b]" />
@@ -278,7 +277,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               </label>
             ))}
           </fieldset>
-          <Field label="Detalhes (opcional)">{(id) => <textarea id={id} value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={3} className={inputClass} />}</Field>
+          <Field label={tx("detalhesOpcional")}>{(id) => <textarea id={id} value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={3} className={inputClass} />}</Field>
           {err && (
             <p role="alert" className="text-sm text-[#a23b2a]">
               {err}
@@ -301,7 +300,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               <div style={{ width: 190, height: 190, borderRadius: 999, background: "#d98a2b", color: "#fff", fontSize: 96, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "6px solid #fff" }}>{data.nickname.slice(0, 1).toUpperCase()}</div>
             )}
             <div style={{ marginTop: 18, fontSize: 44, fontWeight: 700, lineHeight: 1.1, wordBreak: "break-word" }}>{`@${data.nickname}`}</div>
-            {data.plus && <div style={{ marginTop: 12, background: "#f2b81c", color: "#2a1c12", fontWeight: 800, fontSize: 22, padding: "6px 18px", borderRadius: 14 }}>PINZ+</div>}
+            {data.plus && <div style={{ marginTop: 12, background: "#f2b81c", color: "#2a1c12", fontWeight: 800, fontSize: 22, padding: "6px 18px", borderRadius: 14 }}>{tx("pinz")}</div>}
             {showStats && (
               <div style={{ marginTop: 22, display: "flex", gap: 14, width: "100%" }}>
                 {([
@@ -321,8 +320,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 52 }} />
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 15, color: "#4a3826", fontWeight: 600 }}>Crie seu mural e compartilhe momentos!</div>
-                <div style={{ fontSize: 18, fontWeight: 800 }}>pinz.digital</div>
+                <div style={{ fontSize: 15, color: "#4a3826", fontWeight: 600 }}>{tx("crieSeuMuralECompartilhe")}</div>
+                <div style={{ fontSize: 18, fontWeight: 800 }}>{tx("pinzDigital")}</div>
               </div>
             </div>
           </div>

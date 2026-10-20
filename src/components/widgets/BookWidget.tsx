@@ -2,6 +2,7 @@
 
 import { baseStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
+import { useTranslations } from "next-intl";
 
 export type BookView = "count" | "bar" | "both";
 
@@ -28,6 +29,7 @@ function Placeholder({ color }: { color: string }) {
  * como barra ou como os dois, conforme o dono escolher.
  */
 export function BookWidget({ style = "paper", title, cover, pages, read, view = "both", frame }: { style?: string; title?: string; cover?: string; pages?: number; read?: number; view?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.BookWidget");
   const sk = SKINS[baseStyle(style)] ?? SKINS.paper;
   const total = Math.max(1, Math.round(pages ?? 300));
   const done = Math.min(total, Math.max(0, Math.round(read ?? 0)));
@@ -37,7 +39,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
   const finished = done >= total;
 
   return (
-    <WidgetFrame frame={frame} label="Leitura de livro" shape="tall">
+    <WidgetFrame frame={frame} label={tx("leituraDeLivro")} shape="tall">
       <div className="absolute inset-0 flex flex-col items-center px-[1em] pt-[1em] pb-[0.95em]" style={{ background: sk.bg, color: sk.ink }}>
         {/* a capa ocupa o que sobra; a proporção de um livro (2:3) fica por conta da própria foto */}
         <div className="flex min-h-0 w-full flex-1 justify-center">
@@ -63,7 +65,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
         <div className="mt-[0.5em] w-full">
           {(mode === "bar" || mode === "both") && (
             <div className="flex items-center gap-[0.55em]">
-              <div className="h-[0.7em] flex-1 overflow-hidden rounded-full" style={{ background: sk.track }} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Progresso da leitura">
+              <div className="h-[0.7em] flex-1 overflow-hidden rounded-full" style={{ background: sk.track }} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label={tx("progressoDaLeitura")}>
                 <div className="h-full rounded-full transition-[width]" style={{ width: `${pct}%`, background: sk.fill }} />
               </div>
               <span className="w-[2.6em] text-right text-[0.85em] font-bold tabular-nums">{pct}%</span>

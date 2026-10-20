@@ -12,6 +12,7 @@ import { fetchMusicMeta, type MusicMeta } from "@/lib/music";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { searchPlaces, type PlaceHit } from "@/lib/places";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
+import { useTranslations } from "next-intl";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
 const PLAYER_NOTE_MAX = 32;
@@ -44,6 +45,7 @@ const POSTIT_COLORS: { id: PostItColor; label: string; bg: string }[] = [
 ];
 
 export function PostItForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [color, setColor] = useState<PostItColor>("yellow");
   const [text, setText] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
@@ -53,8 +55,8 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <fieldset data-tour="postit-color">
-        <legend className="mb-1.5 text-sm font-semibold">Cor do post-it</legend>
-        <div className="flex gap-2" role="radiogroup" aria-label="Cor do post-it">
+        <legend className="mb-1.5 text-sm font-semibold">{tx("corDoPostIt")}</legend>
+        <div className="flex gap-2" role="radiogroup" aria-label={tx("corDoPostIt")}>
           {POSTIT_COLORS.map((c) => (
             <button
               key={c.id}
@@ -71,8 +73,8 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
       </fieldset>
       <PinColorPicker value={pin ?? defaultPin} onChange={setPin} />
       <FontPicker value={font} onChange={setFont} />
-      <Field label="Seu recado" hint={<Counter value={text} max={90} />}>
-        {(id) => <textarea id={id} data-tour="postit-text" value={text} onChange={(e) => setText(e.target.value)} maxLength={90} rows={3} placeholder="Escreva um recado curtinho…" className={area} />}
+      <Field label={tx("seuRecado")} hint={<Counter value={text} max={90} />}>
+        {(id) => <textarea id={id} data-tour="postit-text" value={text} onChange={(e) => setText(e.target.value)} maxLength={90} rows={3} placeholder={tx("escrevaUmRecadoCurtinho")} className={area} />}
       </Field>
     </div>
   );
@@ -80,6 +82,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Texto (papel) ----------
 export function TextForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [variant, setVariant] = useState<"letter" | "notebook">("letter");
   const [text, setText] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
@@ -87,7 +90,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
   useEffect(() => onChange({ type: "text", variant, text: text.trim() || "Sua mensagem aparece aqui.", font, tape }, { empty: !text.trim() }), [variant, text, font, tape, onChange]);
   return (
     <div className="space-y-4">
-      <div role="radiogroup" aria-label="Tipo de papel" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="radiogroup" aria-label={tx("tipoDePapel")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {([["letter", "Papel liso"], ["notebook", "Folha de caderno"]] as const).map(([v, label]) => (
           <button
             key={v}
@@ -103,8 +106,8 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
       </div>
       <TapeColorPicker value={tape} onChange={setTape} />
       <FontPicker value={font} onChange={setFont} />
-      <Field label="Sua mensagem" hint={<Counter value={text} max={320} />}>
-        {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={320} rows={6} placeholder="Escreva com calma, é uma folha inteira…" className={area} />}
+      <Field label={tx("suaMensagem")} hint={<Counter value={text} max={320} />}>
+        {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={320} rows={6} placeholder={tx("escrevaComCalmaEUma")} className={area} />}
       </Field>
     </div>
   );
@@ -112,6 +115,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Lista ----------
 export function ListForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [title, setTitle] = useState("");
   const [items, setItems] = useState(["", "", ""]);
   const [font, setFont] = useState<HandId>("caveat");
@@ -134,8 +138,8 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
     <div className="space-y-4">
       <TapeColorPicker value={tape} onChange={setTape} />
       <FontPicker value={font} onChange={setFont} />
-      <Field label="Título da lista">
-        {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} placeholder="Ex: Pra gente fazer:" className={inputClass} />}
+      <Field label={tx("tituloDaLista")}>
+        {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} placeholder={tx("exPraGenteFazer")} className={inputClass} />}
       </Field>
       <fieldset>
         <legend className="mb-1.5 text-sm font-semibold">Itens (até {max})</legend>
@@ -160,8 +164,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
         </ul>
         {items.length < max && (
           <button type="button" onClick={() => setItems((arr) => [...arr, ""])} className="mt-2 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            + Adicionar item
-          </button>
+            {tx("adicionarItem")}</button>
         )}
       </fieldset>
     </div>
@@ -170,10 +173,11 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
 
 /** Cor do aparelho (vídeo e música). */
 function PlayerColorPicker({ value, onChange }: { value: PlayerColor; onChange: (c: PlayerColor) => void }) {
+  const tx = useTranslations("components.composer.forms");
   return (
     <fieldset>
-      <legend className="mb-1.5 text-sm font-semibold">Cor do player</legend>
-      <div className="flex gap-2" role="radiogroup" aria-label="Cor do player">
+      <legend className="mb-1.5 text-sm font-semibold">{tx("corDoPlayer")}</legend>
+      <div className="flex gap-2" role="radiogroup" aria-label={tx("corDoPlayer")}>
         {PLAYER_COLOR_IDS.map((id) => (
           <button
             key={id}
@@ -207,6 +211,7 @@ function measureRatio(url: string): Promise<number | null> {
 
 /** Câmera na hora: mostra o que a câmera vê e, ao tocar em "Tirar foto", entrega a foto como arquivo. Sem câmera (ou sem permissão), cai no seletor do aparelho. */
 function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onError: (m: string) => void }) {
+  const tx = useTranslations("components.composer.forms");
   const [on, setOn] = useState(false);
   const [facing, setFacing] = useState<"environment" | "user">("environment");
   const video = useRef<HTMLVideoElement>(null);
@@ -268,7 +273,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
 
   return (
     <div className="space-y-2">
-      <input ref={fallback} type="file" accept="image/*" capture="environment" hidden onChange={(e) => e.target.files?.[0] && onPhoto(e.target.files[0])} aria-label="Tirar uma foto agora" />
+      <input ref={fallback} type="file" accept="image/*" capture="environment" hidden onChange={(e) => e.target.files?.[0] && onPhoto(e.target.files[0])} aria-label={tx("tirarUmaFotoAgora")} />
       {!on ? (
         <button type="button" onClick={() => void start(facing)} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -278,18 +283,16 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
           Tirar foto agora
         </button>
       ) : (
-        <div className="fixed inset-0 z-[200] flex flex-col bg-black" role="dialog" aria-label="Câmera">
+        <div className="fixed inset-0 z-[200] flex flex-col bg-black" role="dialog" aria-label={tx("camera")}>
           <video ref={video} playsInline muted className={`block min-h-0 w-full flex-1 object-contain ${facing === "user" ? "-scale-x-100" : ""}`} />
           <div className="flex items-center justify-between gap-2 bg-black/80 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             <button type="button" onClick={() => { stop(); setOn(false); }} className="cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
-              Cancelar
-            </button>
-            <button type="button" onClick={snap} aria-label="Tirar foto" className="grid size-14 cursor-pointer place-items-center rounded-full border-4 border-white bg-white/20 active:scale-95">
+              {tx("cancelar")}</button>
+            <button type="button" onClick={snap} aria-label={tx("tirarFoto")} className="grid size-14 cursor-pointer place-items-center rounded-full border-4 border-white bg-white/20 active:scale-95">
               <span className="size-9 rounded-full bg-white" />
             </button>
             <button type="button" onClick={() => void start(facing === "user" ? "environment" : "user")} className="cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
-              Virar
-            </button>
+              {tx("virar")}</button>
           </div>
         </div>
       )}
@@ -298,6 +301,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
 }
 
 export function PhotoForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [src, setSrc] = useState<string | null>(null);
   const [ratio, setRatio] = useState<number | null>(null);
   const [caption, setCaption] = useState("");
@@ -322,14 +326,14 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Foto">
+      <Field label={tx("foto")}>
         {(id) => <input id={id} type="file" accept="image/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
       </Field>
       <CameraCapture onPhoto={(f) => void pick(f)} onError={setError} />
       {error && <ErrorText>{error}</ErrorText>}
       <TapeColorPicker value={tape} onChange={setTape} />
-      <Field label="Legenda (opcional)" hint={<Counter value={caption} max={48} />}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder="Ex: Churrasco de 2019" className={inputClass} />}
+      <Field label={tx("legendaOpcional")} hint={<Counter value={caption} max={48} />}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={48} placeholder={tx("exChurrascoDe2019")} className={inputClass} />}
       </Field>
       {/* a letra só importa se houver legenda: o seletor aparece depois de digitar */}
       {caption.trim() && <FontPicker value={font} onChange={setFont} />}
@@ -339,6 +343,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Música (PINZ+) ----------
 export function MusicForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [caption, setCaption] = useState("");
   const [link, setLink] = useState("");
   const [color, setColor] = useState<PlayerColor>("black");
@@ -374,14 +379,14 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   );
   return (
     <div className="space-y-4">
-      <Field label="Link da música" error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint={
+      <Field label={tx("linkDaMusica")} error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint={
           looking ? "Buscando o nome e a duração…" : meta ? `Encontrada: ${meta.title}${meta.artist ? ` · ${meta.artist}` : ""}${meta.duration ? ` · ${meta.duration}` : ""}` : "Spotify e YouTube tocam aqui mesmo no mural (com nome e duração); outros links abrem em outra aba."
         }>
-        {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder="https://" className={inputClass} />}
+        {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder={tx("https")} className={inputClass} />}
       </Field>
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label="Mensagem (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Essa música me lembra a gente!" className={inputClass} />}
+      <Field label={tx("mensagemOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exEssaMusicaMeLembra")} className={inputClass} />}
       </Field>
     </div>
   );
@@ -399,6 +404,7 @@ function formatDuration(sec: number) {
 }
 
 export function VideoForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [mode, setMode] = useState<"file" | "youtube">("file");
   const [link, setLink] = useState("");
   const ytOk = embedFor(link)?.provider === "youtube";
@@ -456,7 +462,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
 
   return (
     <div className="space-y-4">
-      <div role="radiogroup" aria-label="Origem do vídeo" className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="radiogroup" aria-label={tx("origemDoVideo")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {([["file", "Enviar arquivo"], ["youtube", "Link do YouTube"]] as const).map(([v, label]) => (
           <button key={v} type="button" role="radio" aria-checked={mode === v} onClick={() => setMode(v)} className={`cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${mode === v ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
             {label}
@@ -464,11 +470,11 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
         ))}
       </div>
       {mode === "youtube" ? (
-        <Field label="Link do vídeo no YouTube" error={link.trim() && !ytOk ? "Use um link do YouTube, como https://youtu.be/… ou https://www.youtube.com/watch?v=…" : null} hint="O vídeo toca aqui mesmo, no player do mural.">
-          {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={200} placeholder="https://www.youtube.com/watch?v=…" className={inputClass} />}
+        <Field label={tx("linkDoVideoNoYoutube")} error={link.trim() && !ytOk ? "Use um link do YouTube, como https://youtu.be/… ou https://www.youtube.com/watch?v=…" : null} hint={tx("oVideoTocaAquiMesmo")}>
+          {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={200} placeholder={tx("httpsWwwYoutubeComWatch")} className={inputClass} />}
         </Field>
       ) : (
-        <Field label="Vídeo" hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
+        <Field label={tx("video")} hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
           {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
         </Field>
       )}
@@ -478,14 +484,14 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#e1d3ba]">
             <div className="h-full rounded-full bg-[#d98a2b] transition-[width]" style={{ width: `${Math.round(progress * 100)}%` }} />
           </div>
-          <p className="mt-1.5 text-xs text-[#6b5440]">Fique nesta tela: leva mais ou menos o tempo do vídeo.</p>
+          <p className="mt-1.5 text-xs text-[#6b5440]">{tx("fiqueNestaTelaLevaMais")}</p>
         </div>
       )}
       {note && <p role="status" className="text-sm text-[#2f6a3c]">{note}</p>}
       {error && <ErrorText>{error}</ErrorText>}
       <PlayerColorPicker value={color} onChange={setColor} />
-      <Field label="Legenda (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o player.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que me fez bem" className={inputClass} />}
+      <Field label={tx("legendaOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o player.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exUmLugarQueMe")} className={inputClass} />}
       </Field>
     </div>
   );
@@ -502,6 +508,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
  *
  */
 export function VoiceForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [src, setSrc] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | undefined>();
   const [caption, setCaption] = useState("");
@@ -590,7 +597,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="mb-1.5 text-sm font-semibold">Sua voz</p>
+        <p className="mb-1.5 text-sm font-semibold">{tx("suaVoz")}</p>
         {recording ? (
           <div className="flex items-center gap-3 rounded-2xl border border-[#e0a8a0] bg-[#fdecea] px-4 py-3">
             <span aria-hidden className="size-3 animate-pulse rounded-full bg-[#d6281d]" />
@@ -598,8 +605,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
               {mmss(elapsed)} / {mmss(MAX_VOICE_SEC)}
             </span>
             <button type="button" onClick={stop} className="ml-auto cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2c313b]">
-              Parar
-            </button>
+              {tx("parar")}</button>
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-2">
@@ -621,8 +627,8 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Legenda (opcional)" hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Sua voz sempre me faz sorrir!" className={inputClass} />}
+      <Field label={tx("legendaOpcional")} hint={<><Counter value={caption} max={PLAYER_NOTE_MAX} /> · Sem legenda, aparece só o aparelho.</>}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exSuaVozSempreMe")} className={inputClass} />}
       </Field>
     </div>
   );
@@ -632,6 +638,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 
 /** Escolhe um lugar buscando pelo nome; o resultado vira um mini aparelho de mapa. */
 export function PlaceForm({ onChange }: { onChange: DraftChange }) {
+  const tx = useTranslations("components.composer.forms");
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<PlaceHit[]>([]);
   const [place, setPlace] = useState<PlaceHit | null>(null);
@@ -676,14 +683,12 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
             {place.address && <p className="truncate text-sm text-[#6b5440]">{place.address}</p>}
           </div>
           <button type="button" onClick={() => setPlace(null)} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            Trocar
-          </button>
+            {tx("trocar")}</button>
         </div>
       ) : (
         <div>
           <label htmlFor="place-q" className="mb-1.5 block text-sm font-semibold">
-            Qual lugar?
-          </label>
+            {tx("qualLugar")}</label>
           <div className="flex gap-2">
             <input
               id="place-q"
@@ -695,7 +700,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
                   void search();
                 }
               }}
-              placeholder="Ex: Cristo Redentor, Rio de Janeiro"
+              placeholder={tx("exCristoRedentorRioDe")}
               className={inputClass}
               maxLength={100}
               autoComplete="off"
@@ -705,9 +710,9 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
             </button>
           </div>
           {error && <ErrorText>{error}</ErrorText>}
-          {searched && hits.length === 0 && !error && <p className="mt-2 text-sm text-[#6b5440]">Nenhum lugar encontrado. Tente incluir a cidade.</p>}
+          {searched && hits.length === 0 && !error && <p className="mt-2 text-sm text-[#6b5440]">{tx("nenhumLugarEncontradoTenteIncluir")}</p>}
           {hits.length > 0 && (
-            <ul className="mt-2 flex flex-col gap-1.5" aria-label="Resultados">
+            <ul className="mt-2 flex flex-col gap-1.5" aria-label={tx("resultados")}>
               {hits.map((h, i) => (
                 <li key={`${h.lat},${h.lon},${i}`}>
                   <button
@@ -730,8 +735,8 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
 
       <PlayerColorPicker value={color} onChange={setColor} />
 
-      <Field label="Legenda (opcional)" hint={<Counter value={caption} max={PLAYER_NOTE_MAX} />}>
-        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder="Ex: Um lugar que mais amo!" className={inputClass} />}
+      <Field label={tx("legendaOpcional")} hint={<Counter value={caption} max={PLAYER_NOTE_MAX} />}>
+        {(id) => <input id={id} value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={PLAYER_NOTE_MAX} placeholder={tx("exUmLugarQueMais")} className={inputClass} />}
       </Field>
     </div>
   );

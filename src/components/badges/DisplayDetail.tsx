@@ -10,6 +10,7 @@ import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "./SecretCover";
 import { ghostButton } from "../ui";
+import { useTranslations } from "next-intl";
 
 const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
 
@@ -18,6 +19,7 @@ const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "
  * Quem vê o mural toca no widget; o dono abre pelo botão de ampliar nos controles (ou com duplo clique no computador).
  */
 export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: () => void }) {
+  const tx = useTranslations("components.badges.DisplayDetail");
   const [copied, setCopied] = useState(false);
   const { badges, editable, removeDisplay, setDisplaySecret } = useBadges();
   const mod = useModeration();
@@ -87,8 +89,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
         ) : (
           own && (
             <button type="button" disabled={busy} onClick={() => void shareImage()} className={`${ghostButton} w-full`}>
-              Compartilhar
-            </button>
+              {tx("compartilhar")}</button>
           )
         )}
         {msg && (
@@ -99,8 +100,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
         {own && data.id && (
           <div className="flex gap-2">
             <button type="button" onClick={() => setConfirm(true)} className={`${ghostButton} flex-1`}>
-              Excluir display
-            </button>
+              {tx("excluirDisplay")}</button>
             <button
               type="button"
               disabled={busy || (!!mod && mod.plan !== "full")}
@@ -129,20 +129,19 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-              <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", lineHeight: 1.25 }}>Crie seu mural e compartilhe momentos especiais!</p>
-              <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218" }}>Acesse: pinz.digital</p>
+              <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", lineHeight: 1.25 }}>{tx("crieSeuMuralECompartilhe")}</p>
+              <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218" }}>{tx("acessePinzDigital")}</p>
             </div>
           </div>
         </div>
       )}
       {own && data.id && (
-        <Modal open={confirm} onClose={() => setConfirm(false)} title="Excluir display" label="Excluir display">
+        <Modal open={confirm} onClose={() => setConfirm(false)} title={tx("excluirDisplay")} label={tx("excluirDisplay")}>
           <div className="space-y-4">
-            <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este display do mural? Você pode colocá-lo de novo depois.</p>
+            <p className="text-sm text-[#4a3826]">{tx("temCertezaQueDesejaExcluir")}</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setConfirm(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
-                Cancelar
-              </button>
+                {tx("cancelar")}</button>
               <button
                 type="button"
                 onClick={() => {
@@ -152,8 +151,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
                 }}
                 className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022]"
               >
-                Excluir
-              </button>
+                {tx("excluir")}</button>
             </div>
           </div>
         </Modal>

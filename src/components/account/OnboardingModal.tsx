@@ -7,6 +7,7 @@ import { AvatarUploader } from "../AvatarUploader";
 import { primaryButton } from "../ui";
 import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, toIso } from "./BirthField";
 import { Modal } from "./Modal";
+import { useTranslations } from "next-intl";
 
 /**
  * Boas-vindas de quem acabou de criar a conta: foto de perfil, data de nascimento e convite para o tour.
@@ -14,6 +15,7 @@ import { Modal } from "./Modal";
  * Aparece uma vez por conta (o banco guarda que já passou); fechar ou "Agora não" também conta.
  */
 export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { open: boolean; onClose: () => void; nick: string; plus?: boolean; uid?: string }) {
+  const tx = useTranslations("components.account.OnboardingModal");
   const [step, setStep] = useState<"profile" | "tour">("profile");
   const [birth, setBirth] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,7 +58,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
     <Modal open={open} onClose={() => finish(false)} title={step === "profile" ? `Olá, ${nick}!` : "Vamos colocar o seu primeiro pin?"}>
       {step === "profile" ? (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Complete o seu perfil para as pessoas reconhecerem você.</p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">{tx("completeOSeuPerfilPara")}</p>
           <AvatarUploader nickname={nick} plus={plus} />
           <div className="mt-4">
             <BirthField
@@ -76,18 +78,15 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
             {busy ? "Salvando…" : "Continuar"}
           </button>
           <button type="button" onClick={() => setStep("tour")} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
-            Agora não
-          </button>
+            {tx("agoraNao")}</button>
         </>
       ) : (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Eu vou te guiar, tocando junto com você, para colocar o seu primeiro pin no seu mural. Leva cerca de 1 minuto.</p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">{tx("euVouTeGuiarTocando")}</p>
           <button type="button" onClick={() => finish(true)} className={`${primaryButton} mt-5`}>
-            Começar
-          </button>
+            {tx("comecar")}</button>
           <button type="button" onClick={() => finish(false)} className="mt-2 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-[#6b5440] hover:bg-black/5">
-            Agora não
-          </button>
+            {tx("agoraNao")}</button>
         </>
       )}
     </Modal>

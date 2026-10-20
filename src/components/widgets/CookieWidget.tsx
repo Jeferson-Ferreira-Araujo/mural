@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { WidgetFrame } from "./core";
+import { useTranslations } from "next-intl";
 
 /** Mensagens do biscoito da sorte (uma é sorteada a cada vez que se quebra um biscoito). */
 export const FORTUNES = [
@@ -42,6 +43,7 @@ export const FORTUNES = [
  * Dois estilos: clássico (fundo claro) e vermelho (fundo vinho com dourado).
  */
 export function CookieWidget({ style = "classic", frame }: { style?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.CookieWidget");
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const [msg, setMsg] = useState<string | null>(null); // null = biscoito inteiro
   const red = style === "red";
@@ -77,7 +79,7 @@ export function CookieWidget({ style = "classic", frame }: { style?: string; fra
   });
 
   return (
-    <WidgetFrame frame={frame} label="Biscoito da sorte">
+    <WidgetFrame frame={frame} label={tx("biscoitoDaSorte")}>
       <div
         role="button"
         tabIndex={0}

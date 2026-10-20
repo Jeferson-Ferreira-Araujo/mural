@@ -71,5 +71,825 @@
     "installHint": "Pinz en tu pantalla de inicio, a pantalla completa",
     "closeMenu": "Cerrar menú",
     "accountMenu": "Menú de la cuenta"
+  },
+  "app": {
+    "auth": {
+      "callback": {
+        "page": {
+          "ops": "¡Ups!",
+          "voltarParaOLogin": "Volver al inicio de sesión",
+          "entrando": "Entrando…"
+        }
+      },
+      "nova_senha": {
+        "page": {
+          "linkExpirado": "Enlace caducado",
+          "esteLinkJaFoiUsado": "Este enlace ya se usó o caducó. Inicia sesión en tu cuenta y pide uno nuevo en Editar perfil.",
+          "irParaOLogin": "Ir al inicio de sesión",
+          "novaSenha": "Nueva contraseña",
+          "repitaANovaSenha": "Repite la nueva contraseña"
+        }
+      }
+    },
+    "criar": {
+      "page": {
+        "irParaOMeuMural": "Ir a mi mural",
+        "etapas": "Pasos",
+        "nomeDoMural": "Nombre del mural",
+        "escrevaONomeCompletoDo": "Escribe el nombre completo, como quieras.",
+        "exMuralJeferson": "Ej.: Mural de Jeferson",
+        "querDeixarOMuralPrivado": "¿Quieres dejar el mural privado?",
+        "opcionalCrieUmaPerguntaQue": "Opcional. Crea una pregunta que solo las personas cercanas a ti sepan responder. Si la dejas en blanco aquí y ya tienes una pregunta, este mural usa la misma.",
+        "perguntaOpcional": "Pregunta (opcional)",
+        "exQualEraMeuApelido": "Ej.: ¿Cuál era mi apodo en la escuela?",
+        "resposta": "Respuesta",
+        "quemForResponderPrecisaDigitar": "Quien responda debe escribirla exactamente así, con los mismos acentos y puntuación (las mayúsculas y minúsculas no importan).",
+        "exJef": "Ej.: Jef",
+        "tudoCerto": "¿Todo bien?",
+        "mural": "Mural",
+        "acesso": "Acceso",
+        "publicoQualquerPessoaComO": "Público: cualquiera con el enlace puede abrirlo",
+        "voltar": "Volver"
+      }
+    },
+    "loading": {
+      "carregando": "Cargando",
+      "carregando2": "Cargando…"
+    },
+    "not_found": {
+      "muralNaoEncontrado": "Mural no encontrado",
+      "esseEnderecoNaoExisteAinda": "Esa dirección no existe (todavía). ¿Qué tal crear el tuyo?",
+      "criarNovoMural": "Crear un mural nuevo"
+    },
+    "pagamento": {
+      "page": {
+        "voltandoParaOPinz": "Volviendo a Pinz…"
+      }
+    }
+  },
+  "components": {
+    "A11yHost": {
+      "acessibilidade": "Accesibilidad",
+      "queremosQueOPinzSeja": "Queremos que Pinz sea una gran experiencia para todos. Por eso creamos estas opciones.",
+      "daltonismo": "Daltonismo",
+      "corrigeAsCoresDaTela": "Corrige los colores de la pantalla según tu tipo de visión.",
+      "tipoDeDaltonismo": "Tipo de daltonismo",
+      "tamanhoDoTexto": "Tamaño del texto",
+      "leitura": "Lectura",
+      "contrasteAlto": "Contraste alto",
+      "coresMaisFortesParaVer": "Colores más fuertes para leer mejor los textos",
+      "fonteDeLeituraFacil": "Fuente de lectura fácil",
+      "letrasDesenhadasParaNaoSerem": "Letras diseñadas para no confundirse (ayuda con la dislexia y la baja visión)",
+      "maisEspacoEntreLetrasE": "Más espacio entre letras y líneas",
+      "oTextoFicaMenosApertado": "El texto queda menos apretado",
+      "reduzirAnimacoes": "Reducir animaciones",
+      "menosMovimentoNaTela": "Menos movimiento en pantalla",
+      "restaurarOPadrao": "Restaurar valores predeterminados"
+    },
+    "account": {
+      "AccountActions": {
+        "notificacoes": "Notificaciones",
+        "pesquisarUsuarios": "Buscar usuarios",
+        "menu": "Menú",
+        "irParaOMeuMural": "Ir a mi mural",
+        "meuMural": "Mi mural"
+      },
+      "AccountDrawer": {
+        "editarMural": "Editar mural",
+        "instalarOPinz": "Instalar Pinz",
+        "compartilhar": "Compartir",
+        "adicionarATelaDeInicio": "Añadir a la pantalla de inicio",
+        "adicionar": "Añadir",
+        "seNaoAparecerAOpcao": "Si no aparece la opción, abre Pinz en Safari (otros navegadores del iPhone no instalan apps).",
+        "metricas": "Métricas",
+        "muralCompartilhado": "Mural compartido",
+        "desenvolvidoPorJefersonAraujo": "Desarrollado por Jeferson Araújo"
+      },
+      "BirthField": {
+        "dataDeNascimento": "Fecha de nacimiento",
+        "ddMmAaaa": "dd/mm/aaaa",
+        "escolherADataNoCalendario": "Elegir la fecha en el calendario"
+      },
+      "Carousel": {
+        "anterior": "Anterior",
+        "proximo": "Siguiente"
+      },
+      "FirstTimeTip": {
+        "colocarUmPin": "Colocar un pin:",
+        "zoom": "Zoom:",
+        "mover": "Mover:",
+        "bottons": "Botones:",
+        "entendi": "Entendido"
+      },
+      "GiftModal": {
+        "oPinzDesejaAVoce": "Pinz te desea un día increíble y un año lleno de mensajes, fotos y momentos especiales. ¡Felicidades!",
+        "oQueVoceGanhou": "Lo que ganaste",
+        "todosOsTiposDePin": "Todos los tipos de pin (dibujo, música, video, voz y lugar) y la cápsula del tiempo.",
+        "segredoNosPinsMensagemDe": "Pins secretos, mensaje de bienvenida, mural compartido y pins y displays sin límite.",
+        "todosOsBottonsDeAniversario": "Todos los botones de cumpleaños",
+        "elesEstaoNoPrimeiroBotao": "Están en el primer botón de tu barra de botones (el que tiene la flechita arriba). Tócalo, elige uno y arrástralo al mural.",
+        "aproveitar": "¡Disfruta!",
+        "seuPinzJaEstaAtivo": "Tu PINZ+ ya está activo. Disfruta de todos los beneficios.",
+        "obrigado": "¡Gracias!"
+      },
+      "Modal": {
+        "voltarAoMenu": "Volver al menú",
+        "fechar": "Cerrar"
+      },
+      "MuralSettings": {
+        "tipoDoMural": "Tipo de mural",
+        "nomeDoMural": "Nombre del mural",
+        "mensagemDeBoasVindas": "Mensaje de bienvenida",
+        "pinz": "PINZ+",
+        "umRecadoQueAparecePara": "Un mensaje que aparece a quien entre a tu mural (después de acertar la respuesta)",
+        "apareceComoUmaJanelaQuando": "Aparece como una ventana cuando la persona entra.",
+        "resetarEsteMural": "¿Restablecer este mural?",
+        "todosOsRecadosPinsSerao": "Se perderán todos los mensajes (pins). Esto no se puede deshacer.",
+        "cancelar": "Cancelar",
+        "resetarMural": "Restablecer mural",
+        "excluirEsteMuralApagaTambem": "Eliminar este mural también borra sus accesos y todos sus mensajes. Esto no se puede deshacer.",
+        "simExcluir": "Sí, eliminar",
+        "excluirEsteMural": "Eliminar este mural"
+      },
+      "MuralSetupModal": {
+        "configureSeuMural": "Configura tu mural",
+        "seuMuralJaEstaNo": "Tu mural ya está en línea. Elige el nombre, quién puede abrirlo y por cuánto tiempo se quedan los pins de otras personas. Puedes cambiar todo después en Mis murales.",
+        "nomeDoMural": "Nombre del mural",
+        "exViagemDe2026": "Ej.: Viaje de 2026",
+        "depois": "Después"
+      },
+      "MyMuralsModal": {
+        "meusMurais": "Mis murales",
+        "apagarMural": "Eliminar mural",
+        "osBottonsSeraoDevolvidosA": "Los botones se te devolverán, los pins se perderán y ya no se podrá acceder a este mural.",
+        "cancelar": "Cancelar",
+        "voceAindaNaoCriouNenhum": "Aún no has creado ningún mural.",
+        "arrasteParaMudarAOrdem": "Arrastra para cambiar el orden",
+        "editar": "Editar",
+        "apagar": "Eliminar"
+      },
+      "NewMuralModal": {
+        "novoMural": "Nuevo mural",
+        "cancelar": "Cancelar",
+        "tipoDoMural": "Tipo de mural",
+        "nomeDoMural": "Nombre del mural",
+        "exViagemDe2026": "Ej.: Viaje de 2026"
+      },
+      "NicknameSetup": {
+        "completeOSeuPerfil": "Completa tu perfil",
+        "escolhaOSeuNomeDe": "Elige tu nombre de usuario: así te encontrarán las personas y abrirán tu mural. Una vez guardado, no se puede cambiar."
+      },
+      "NotificationsModal": {
+        "notificacoes": "Notificaciones",
+        "carregandoAsNotificacoes": "Cargando notificaciones",
+        "nenhumaNotificacaoPorEnquanto": "Ninguna notificación por ahora."
+      },
+      "OnboardingModal": {
+        "completeOSeuPerfilPara": "Completa tu perfil para que las personas te reconozcan.",
+        "agoraNao": "Ahora no",
+        "euVouTeGuiarTocando": "Te guiaré, tocando junto contigo, para colocar tu primer pin en tu mural. Toma cerca de 1 minuto.",
+        "comecar": "Empezar"
+      },
+      "PaymentResultModal": {
+        "continuar": "Continuar"
+      },
+      "PayModal": {
+        "continuar": "Continuar",
+        "tudoDoPinz": "Todo de PINZ+",
+        "escolhaOSeuPlano": "Elige tu plan",
+        "presentearAlguem": "🎁 Regalar a alguien",
+        "t1MesDePinzPara": "1 mes de PINZ+ para otro usuario. Solo vale para otra persona.",
+        "presentearCom1MesDe": "Regalar 1 mes de PINZ+",
+        "nomeDeUsuarioDaPessoa": "Nombre de usuario de la persona",
+        "usuario": "@usuario",
+        "voltar": "Volver",
+        "comoVoceQuerPagar": "¿Cómo quieres pagar?",
+        "cartaoDeCreditoOuDebito": "Tarjeta de crédito o débito",
+        "carregandoOFormularioSeguro": "Cargando el formulario seguro",
+        "naoFoiPossivelAbrirO": "No pudimos abrir el formulario de la tarjeta ahora. Inténtalo de nuevo o paga con Pix.",
+        "pagamentoEmAnalise": "Pago en revisión",
+        "assimQueOBancoConfirmar": "En cuanto el banco confirme, PINZ+ o los créditos se añaden solos.",
+        "qrCodeDoPix": "Código QR de Pix",
+        "abraOAppDoSeu": "Abre la app de tu banco, elige Pix y lee el código QR, o usa Pix copia y pega.",
+        "assimQueVocePagarEsta": "En cuanto pagues, esta pantalla se confirma sola.",
+        "esseCodigoExpirouOuNao": "Este código caducó o no se completó. No se cobró nada."
+      },
+      "PeopleModals": {
+        "seguidoresESeguindo": "Seguidores y siguiendo",
+        "seguindoESeguidores": "Siguiendo y seguidores",
+        "deixarDeSeguir": "Dejar de seguir",
+        "seguidores": "Seguidores",
+        "nenhumSeguidorParaMostrar": "Ningún seguidor para mostrar.",
+        "visitantes": "Visitantes",
+        "voceDesligouAparecerComoVisitante": "Desactivaste “Aparecer como visitante” en el Perfil. Quien lo desactiva tampoco ve quién visitó sus murales. Vuelve a activarlo allí para ver la lista.",
+        "ninguemComContaVisitouSeus": "Nadie con cuenta ha visitado tus murales todavía."
+      },
+      "PinsModal": {
+        "denunciar": "Denunciar",
+        "motivo": "Motivo",
+        "oQueAconteceuOpcional": "¿Qué pasó? (opcional)",
+        "bloquearQuemEnviou": "Bloquear a quien lo envió",
+        "cancelar": "Cancelar",
+        "excluir": "Eliminar",
+        "aprovarComoSegredo": "Aprobar como secreto",
+        "aprovaEDeixaEmSegredo": "Aprueba y lo deja en secreto (los visitantes ven el pin borroso)",
+        "aprovar": "Aprobar",
+        "remover": "Quitar",
+        "denunciar2": "🚩 Denunciar",
+        "meusPins": "Mis pins",
+        "tempoDeExibicaoDosPinz": "Tiempo de exhibición de los pins",
+        "porQuantoTempoOsPins": "¿Cuánto tiempo se quedan los pins en el mural?",
+        "osPinsQueOutrasPessoas": "Los pins que otras personas colocan pueden salir del mural después de un tiempo. No se borran: quedan guardados en Mis pins > Archivados, y puedes volver a colocarlos cuando quieras. Tus propios pins nunca salen. Puedes cambiarlo después en Editar mural.",
+        "validade": "Duración",
+        "voltar": "Volver",
+        "salvarEAprovar": "Guardar y aprobar",
+        "carregandoOsPins": "Cargando pins",
+        "nenhumPinArquivadoQuandoAlgum": "Ningún pin archivado. Cuando algún pin supere el tiempo límite de exhibición definido en Editar mural, llega a esta pantalla. Aquí puedes verlo y, con un clic, volver a colocarlo en el mural, en el mismo lugar donde estaba. Si ese lugar está ocupado, va al primer espacio libre; si el mural está lleno, te avisamos.",
+        "pinsArquivados": "Pins archivados",
+        "nenhumPinAguardandoAprovacaoNo": "Ningún pin esperando aprobación por ahora. Cuando alguien coloque un pin en tu mural, aparecerá aquí."
+      },
+      "PinTtlField": {
+        "tempoDeExibicaoDosPinz": "Tiempo de exhibición de los pins",
+        "depoisDoPrazoOPin": "Pasado el plazo, el pin sale del mural pero queda guardado en Mis pins."
+      },
+      "PlansModal": {
+        "seuPlano": "Tu plan",
+        "naoIncluso": "(no incluido)",
+        "planos": "Planes",
+        "cancelarAAssinatura": "Cancelar la suscripción",
+        "cancelarAAssinatura2": "¿Cancelar la suscripción?",
+        "voceContinuaComOPinz": "Sigues con PINZ+ hasta el final del periodo ya pagado. Después no hay nuevos cobros y la cuenta vuelve al plan gratuito.",
+        "manterAssinatura": "Mantener suscripción",
+        "cancelarAssinatura": "Cancelar suscripción"
+      },
+      "PrivacyField": {
+        "quemPodeAbrirEsteMural": "Quién puede abrir este mural",
+        "perguntaDeSeguranca": "Pregunta de seguridad",
+        "exQualONomeDo": "Ej.: ¿Cómo se llama nuestro perro?",
+        "resposta": "Respuesta",
+        "digiteAResposta": "Escribe la respuesta"
+      },
+      "ProfileModal": {
+        "perfil": "Perfil",
+        "privacidadeSalva": "¡Privacidad guardada!",
+        "nomeDeUsuario": "Nombre de usuario",
+        "eMail": "Correo electrónico",
+        "senha": "Contraseña",
+        "voceEntraComOGoogle": "Entras con Google, así que no hay contraseña de Pinz que cambiar.",
+        "aparecerComoVisitante": "Aparecer como visitante",
+        "desligadoVoceSomeDasListas": "Desactivado, desapareces de las listas de visitantes y tampoco ves quién visitó tus murales.",
+        "sairDaConta": "Cerrar sesión",
+        "excluirAConta": "Eliminar la cuenta",
+        "excluirAConta2": "¿Eliminar la cuenta?",
+        "t30Dias": "30 días",
+        "totalmenteApagada": "completamente borrada",
+        "excluir": "ELIMINAR",
+        "cancelar": "Cancelar"
+      },
+      "ProfileSummaryModal": {
+        "voltar": "Volver",
+        "carregandoOPerfil": "Cargando el perfil",
+        "pinz": "PINZ+",
+        "convidarParaOMuralCompartilhado": "Invitar a un mural compartido",
+        "enviaUmCartaoDeVisita": "Envía una tarjeta de presentación con tu foto y el enlace del perfil",
+        "denunciarPerfil": "Denunciar perfil",
+        "voceAindaNaoTemO": "Aún no tienes PINZ+. Suscríbete a PINZ+ en el menú (Planes) para crear murales compartidos.",
+        "tipoDoMural": "Tipo de mural",
+        "outrosTiposDeMuralVoce": "Otros tipos de mural los compras en la tienda.",
+        "nomeDoMural": "Nombre del mural",
+        "exNossaViagem": "Ej.: Nuestro viaje",
+        "senhaDoMural": "Contraseña del mural",
+        "combineComAOutraPessoa": "Acuérdala con la otra persona (mínimo 6 caracteres)",
+        "qualEOProblema": "¿Cuál es el problema?",
+        "detalhesOpcional": "Detalles (opcional)",
+        "crieSeuMuralECompartilhe": "¡Crea tu mural y comparte momentos!",
+        "pinzDigital": "pinz.digital"
+      },
+      "RewardsModal": {
+        "ganheCreditos": "Gana créditos",
+        "facaAsTarefasEGanhe": "Haz las tareas y gana créditos al instante."
+      },
+      "SearchDialog": {
+        "pesquisarUsuarios": "Buscar usuarios",
+        "fechar": "Cerrar"
+      },
+      "SharedMurals": {
+        "convitesRecebidos": "Invitaciones recibidas",
+        "convitesParaVoce": "Invitaciones para ti",
+        "recusar": "Rechazar",
+        "aceitar": "Aceptar",
+        "voceAindaNaoTemMurais": "Aún no tienes murales compartidos. Para crear uno, abre el perfil de la otra persona y toca “Solicitar mural compartido”.",
+        "muraisCompartilhados": "Murales compartidos",
+        "bloqueadoOsDoisParticipantesPrecisam": "Bloqueado: los dos participantes necesitan PINZ+ activo",
+        "alterarSenha": "Cambiar contraseña",
+        "todosOsPinsSeraoPerdidos": "Se perderán todos los pins y ya no se podrá acceder a este mural.",
+        "voltar": "Volver",
+        "novaSenhaMin6": "Nueva contraseña (mín. 6)",
+        "novaSenha": "Nueva contraseña",
+        "salvar": "Guardar"
+      },
+      "TransactionsModal": {
+        "minhasCompras": "Mis compras",
+        "naoFoiPossivelCarregarAgora": "No se pudo cargar ahora. Inténtalo de nuevo.",
+        "assinaturaPinz": "Suscripción PINZ+:",
+        "pagamentos": "Pagos",
+        "voceAindaNaoFezNenhum": "Aún no has hecho ningún pago."
+      }
+    },
+    "AvatarUploader": {
+      "suaFoto": "Tu foto",
+      "remover": "Quitar",
+      "escolherFotoDePerfil": "Elegir foto de perfil"
+    },
+    "badges": {
+      "BadgeBar": {
+        "lojaDeBottons": "Tienda de botones",
+        "loja": "Tienda",
+        "ganharCreditos": "Ganar créditos",
+        "ganhar": "Ganar",
+        "seusBottons": "Tus botones",
+        "solteAquiParaTirarDo": "Suelta aquí para quitar del mural",
+        "solteOPinNoMural": "Suelta el pin en el mural"
+      },
+      "BadgeContext": {
+        "antiHorario": "Antihorario",
+        "inclinarOBottonParaA": "Inclinar el botón: a la izquierda gira en sentido antihorario, a la derecha en sentido horario",
+        "horario": "Horario",
+        "restaurar": "Restablecer",
+        "restaurarDeixaOBottonReto": "Restablecer: deja el botón recto",
+        "tamanhoEPosicaoDoBotton": "Tamaño y posición del botón",
+        "maior": "Más grande",
+        "tamanhoDoBottonParaCima": "Tamaño del botón: arriba más grande, abajo más pequeño",
+        "menor": "Más pequeño",
+        "acoesDoBotton": "Acciones del botón",
+        "paginasLidas": "Páginas leídas",
+        "verODisplayEmTamanho": "Ver el display en tamaño grande",
+        "verEmTamanhoGrande": "Ver en grande",
+        "editarODisplayContornoHorario": "Editar el display: contorno, hora o ciudad",
+        "editar": "Editar",
+        "tirarDoMural": "Quitar del mural",
+        "fecharAsOpcoesDoBotton": "Cerrar las opciones del botón",
+        "fechar": "Cerrar",
+        "posicionarODisplayNoMural": "Colocar el display en el mural",
+        "arrasteODisplayESolte": "Arrastra el display y suéltalo donde quieras en el mural",
+        "cancelar": "Cancelar"
+      },
+      "BoardLightbox": {
+        "fechar": "Cerrar"
+      },
+      "DisplayChooser": {
+        "voceAindaNaoTemDisplays": "Aún no tienes displays. Muestran reloj, clima, frase o versículo del día en tu mural.",
+        "verDisplaysNaLoja": "Ver displays en la tienda",
+        "formato": "Formato",
+        "colocarDisplay": "Colocar display",
+        "seusDisplaysPorCategoria": "Tus displays por categoría"
+      },
+      "DisplayDetail": {
+        "compartilhar": "Compartir",
+        "excluirDisplay": "Eliminar display",
+        "crieSeuMuralECompartilhe": "¡Crea tu mural y comparte momentos especiales!",
+        "acessePinzDigital": "Visita: pinz.digital",
+        "temCertezaQueDesejaExcluir": "¿Seguro que quieres eliminar este display del mural? Puedes volver a colocarlo después.",
+        "cancelar": "Cancelar",
+        "excluir": "Eliminar"
+      },
+      "DisplayDialog": {
+        "horarioDeQualLugar": "¿Hora de qué lugar?",
+        "trocar": "Cambiar",
+        "deQualCidade": "¿De qué ciudad?",
+        "exGoianiaGo": "Ej.: Madrid",
+        "nenhumaCidadeEncontradaTenteOutro": "No se encontró ninguna ciudad. Prueba con otro nombre.",
+        "tituloDoContador": "Título del contador",
+        "exFormaturaNatalAniversario": "Ej.: Graduación, Navidad, Cumpleaños",
+        "data": "Fecha",
+        "horaOpcional": "Hora (opcional)",
+        "capaEscolhida": "Portada elegida",
+        "semCapa": "Sin portada",
+        "escolherAFotoDaCapa": "Elegir la foto de portada",
+        "tirar": "Quitar",
+        "nomeDoLivroOpcional": "Nombre del libro (opcional)",
+        "exOPequenoPrincipe": "Ej.: El Principito",
+        "paginasLidas": "Páginas leídas",
+        "totalDePaginas": "Total de páginas",
+        "comoMostrarOProgresso": "Cómo mostrar el progreso",
+        "perguntaDaEnquete": "Pregunta de la encuesta",
+        "exVoceGostaDePizza": "Ej.: ¿Te gusta la piña en la pizza?",
+        "asDuasRespostas": "Las dos respuestas",
+        "mudarAsRespostasZeraOs": "Cambiar las respuestas pone los votos a cero. Cambiar solo la pregunta mantiene los votos.",
+        "temaDoSeuTop3": "Tema de tu top 3",
+        "exMinhasComidasFavoritas": "Ej.: Mis comidas favoritas",
+        "nomeOQueEstaContando": "Nombre (lo que estás contando)",
+        "exJuntosHaSemFumar": "Ej.: Juntos desde hace, Sin fumar, Casa nueva",
+        "desdeQuando": "¿Desde cuándo?",
+        "datasImportantes": "Fechas importantes",
+        "nenhumaDataAindaAdicioneAniversarios": "Aún no hay fechas. Añade cumpleaños, viajes, plazos…",
+        "exAniversarioDaAna": "Ej.: Cumpleaños de Ana",
+        "adicionarData": "+ Añadir fecha",
+        "mostraOMesDeHoje": "Muestra el mes actual con las fechas marcadas y, al lado, las próximas. Puedes volver y editar cuando quieras.",
+        "quemTocarNoBiscoitoQuebra": "Quien toque la galleta la rompe y lee un mensaje; al tocar de nuevo sale otra galleta.",
+        "naPreviaVaiUmExemplo": "En la vista previa va un ejemplo. El texto cambia solo todos los días a medianoche.",
+        "aHoraPassaSozinhaCom": "La hora pasa sola, con la fecha de hoy.",
+        "quemVeOMuralVe": "Quien ve el mural ve el clima del lugar donde está (si permite la ubicación). Sin permiso, vale esta ciudad."
+      },
+      "SecretCover": {
+        "displayEmSegredo": "Display secreto",
+        "segredo": "Secreto"
+      },
+      "StoreModal": {
+        "menosUma": "Una menos",
+        "maisUma": "Una más",
+        "loja": "Tienda",
+        "comprarCreditos": "Comprar créditos",
+        "pacotesDeCredito": "Paquetes de créditos",
+        "compraDeCreditosEmBreve": "Compra de créditos: próximamente",
+        "creditos": "créditos",
+        "assinarPinz": "Suscribirse a PINZ+",
+        "pinsEDisplaysSemLimite": "Pins y displays sin límite, más murales y más tipos de pin",
+        "r990Mes": "R$ 9,90/mes",
+        "carregandoALoja": "Cargando la tienda",
+        "categoriasDeBottons": "Categorías de botones",
+        "nenhumBottonNestaCategoriaAinda": "Aún no hay botones en esta categoría.",
+        "novo": "Nuevo",
+        "comprado": "✓ ¡Comprado!",
+        "paginasDeBottons": "Páginas de botones",
+        "anterior": "‹ Anterior",
+        "proxima": "Siguiente ›",
+        "tiposDeDisplay": "Tipos de display",
+        "emBreveNovosDisplaysPor": "Pronto habrá nuevos displays por aquí.",
+        "formato": "Formato",
+        "verEmTelaCheia": "Ver en pantalla completa",
+        "creditosInsuficientes": "Créditos insuficientes",
+        "queTalEstePacote": "¿Qué tal este paquete?",
+        "agoraNao": "Ahora no",
+        "adquirirCreditos": "Conseguir créditos"
+      }
+    },
+    "board": {
+      "BoardCanvas": {
+        "carregandoMural": "Cargando mural",
+        "carregandoMural2": "Cargando mural…"
+      },
+      "ListEditContext": {
+        "editarLista": "Editar lista",
+        "adicionarItem": "+ Añadir elemento",
+        "naoFoiPossivelSalvarAgora": "No se pudo guardar ahora. Inténtalo de nuevo.",
+        "cancelar": "Cancelar"
+      },
+      "OwnerAlert": {
+        "avisoParaODonoDo": "Aviso para el dueño del mural"
+      },
+      "PinDetail": {
+        "verMensagemEmDetalhe": "Ver mensaje en detalle",
+        "compartilharEstePin": "Compartir este pin",
+        "compartilharOTexto": "Compartir el texto",
+        "compartilharEsteDisplay": "Compartir este display",
+        "denunciar": "Denunciar",
+        "fechar": "Cerrar",
+        "anterior": "Anterior",
+        "proximo": "Siguiente",
+        "opcoesDesteDisplay": "Opciones de este display",
+        "excluirDisplay": "Eliminar display",
+        "moderarEstePin": "Moderar este pin",
+        "recusar": "Rechazar",
+        "aprovar": "Aprobar",
+        "excluirPin": "Eliminar PIN",
+        "crieSeuMuralECompartilhe": "¡Crea tu mural y comparte momentos especiales!",
+        "acessePinzDigital": "Visita: pinz.digital",
+        "temCertezaQueDesejaExcluir": "¿Seguro que quieres eliminar este pin? Esta acción no se puede deshacer.",
+        "cancelar": "Cancelar",
+        "excluir": "Eliminar",
+        "temCertezaQueDesejaExcluir2": "¿Seguro que quieres eliminar este display del mural? Puedes volver a colocarlo después."
+      },
+      "PinsManager": {
+        "nenhumPinAindaQuandoAlguem": "Aún no hay pins. Cuando alguien coloque uno, aparecerá aquí para que lo apruebes.",
+        "pinsAguardandoAprovacao": "Pins esperando aprobación",
+        "nadaApareceNoMuralAntes": "Nada aparece en el mural antes de que apruebes. Comprueba que no haya información confidencial u ofensiva.",
+        "aprovar": "Aprobar",
+        "recusar": "Rechazar",
+        "pinsNoMural": "Pins en el mural",
+        "visivelParaOsVisitantes": "👁 Visible para los visitantes",
+        "remover": "Quitar"
+      },
+      "ReactionBar": {
+        "naoFoiPossivelReagirAgora": "No se pudo reaccionar ahora.",
+        "reagirAEstePin": "Reaccionar a este pin"
+      },
+      "SlotMarker": {
+        "bloqueado": "bloqueado"
+      }
+    },
+    "Brand": {
+      "pinzPaginaInicial": "Pinz — página de inicio",
+      "pinz": "Pinz"
+    },
+    "CodeStep": {
+      "confirmarEMail": "Confirmar correo",
+      "confirmeSeuEMail": "Confirma tu correo ✉️",
+      "codigo": "Código",
+      "voltar": "Volver"
+    },
+    "composer": {
+      "CapsuleOption": {
+        "enviarComoCapsulaPinz": "🔒 Enviar como Cápsula PINZ",
+        "aMensagemFicaFechadaE": "El mensaje queda cerrado y solo se abre en la fecha que elijas.",
+        "abrirEm": "Abrir el",
+        "escolhaUmaDataEHora": "Elige una fecha y hora en el futuro (al menos 10 minutos)."
+      },
+      "ComposerDialog": {
+        "previa": "Vista previa",
+        "previaNoMural": "Vista previa en el mural",
+        "toqueNaSilhuetaParaMudar": "Toca la silueta para cambiar dónde se sujeta el pin.",
+        "noMuralElaApareceComo": "🔒 En el mural aparece como una cápsula cerrada hasta la fecha elegida.",
+        "deixarUmaMensagem": "Dejar un mensaje",
+        "voltarETrocarOFormato": "Volver y cambiar el formato",
+        "fechar": "Cerrar",
+        "oQueColocarNesteEspaco": "Qué colocar en este espacio"
+      },
+      "DrawForm": {
+        "areaDeDesenho": "Área de dibujo",
+        "corDoTraco": "Color del trazo",
+        "cor": "Color",
+        "espessuraDoTraco": "Grosor del trazo",
+        "corDoPapel": "Color del papel",
+        "papel": "Papel",
+        "corDaFita": "Color de la cinta",
+        "fita": "Cinta",
+        "opcoes": "Opciones"
+      },
+      "forms": {
+        "corDoPostIt": "Color del post-it",
+        "seuRecado": "Tu mensaje",
+        "escrevaUmRecadoCurtinho": "Escribe un mensaje cortito…",
+        "tipoDePapel": "Tipo de papel",
+        "suaMensagem": "Tu mensaje",
+        "escrevaComCalmaEUma": "Escribe con calma, es una hoja entera…",
+        "tituloDaLista": "Título de la lista",
+        "exPraGenteFazer": "Ej.: Para hacer juntos:",
+        "adicionarItem": "+ Añadir elemento",
+        "corDoPlayer": "Color del reproductor",
+        "tirarUmaFotoAgora": "Tomar una foto ahora",
+        "camera": "Cámara",
+        "cancelar": "Cancelar",
+        "tirarFoto": "Tomar foto",
+        "virar": "Girar",
+        "foto": "Foto",
+        "legendaOpcional": "Leyenda (opcional)",
+        "exChurrascoDe2019": "Ej.: Asado de 2019",
+        "linkDaMusica": "Enlace de la canción",
+        "https": "https://",
+        "mensagemOpcional": "Mensaje (opcional)",
+        "exEssaMusicaMeLembra": "Ej.: ¡Esta canción me recuerda a nosotros!",
+        "origemDoVideo": "Origen del video",
+        "linkDoVideoNoYoutube": "Enlace del video de YouTube",
+        "oVideoTocaAquiMesmo": "El video se reproduce aquí mismo, en el reproductor del mural.",
+        "httpsWwwYoutubeComWatch": "https://www.youtube.com/watch?v=…",
+        "video": "Video",
+        "fiqueNestaTelaLevaMais": "Quédate en esta pantalla: toma más o menos lo que dura el video.",
+        "exUmLugarQueMe": "Ej.: Un lugar que me hizo bien",
+        "suaVoz": "Tu voz",
+        "parar": "Detener",
+        "exSuaVozSempreMe": "Ej.: ¡Tu voz siempre me hace sonreír!",
+        "trocar": "Cambiar",
+        "qualLugar": "¿Qué lugar?",
+        "exCristoRedentorRioDe": "Ej.: Cristo Redentor, Río de Janeiro",
+        "nenhumLugarEncontradoTenteIncluir": "No se encontró ningún lugar. Prueba incluyendo la ciudad.",
+        "resultados": "Resultados",
+        "exUmLugarQueMais": "Ej.: ¡Un lugar que amo mucho!"
+      },
+      "FullNotice": {
+        "oPlanoGratuitoTemUm": "El plan gratuito tiene un límite de 15 pins y displays. Para tener más, el dueño necesita PINZ+.",
+        "prontoAvisamosODonoDo": "¡Listo! Avisamos al dueño del mural que pasaste por aquí. 💛",
+        "fechar": "Cerrar",
+        "aviseODonoQueVoce": "Avisa al dueño que pasaste por aquí.",
+        "euTenteiDeixarUmPinz": "Intenté dejar un PINZ",
+        "naoCustaNada": "No cuesta nada."
+      },
+      "SlotPicker": {
+        "ondeVoceQuerColocar": "¿Dónde quieres colocarlo?",
+        "espacoDoMural": "Espacio del mural"
+      },
+      "StylePickers": {
+        "letra": "Letra",
+        "ola": "¡Hola!",
+        "corDoContorno": "Color del contorno"
+      }
+    },
+    "DesktopBoard": {
+      "informacoesDoMural": "Información del mural",
+      "convidarPessoasParaVerEste": "Invitar a personas a ver este mural",
+      "acessibilidade": "Accesibilidad"
+    },
+    "Explorer": {
+      "buscando": "Buscando…",
+      "carregando": "Cargando",
+      "muralCompartilhado": "Mural compartido",
+      "muralCompartilhado2": "🔒 Mural compartido",
+      "esteMuralEPrivadoSo": "Este mural es privado: solo las dos personas que lo crearon pueden abrirlo.",
+      "entrarNaMinhaConta": "Entrar a mi cuenta",
+      "trocarDeMural": "Cambiar de mural",
+      "muralBloqueado": "Mural bloqueado",
+      "esseMuralEstaBloqueadoNecessario": "🔒 Este mural está bloqueado: todos los participantes necesitan la cuenta Plus activa.",
+      "pinsArquivados": "Pins archivados",
+      "depois": "Después",
+      "verArquivados": "Ver archivados"
+    },
+    "LegalPage": {
+      "contato": "Contacto"
+    },
+    "messages": {
+      "ClosedCapsule": {
+        "capsulaPinzFechada": "Cápsula PINZ cerrada",
+        "voceRecebeuUmaMensagemFechada": "Recibiste un mensaje cerrado."
+      },
+      "DrawingCard": {
+        "desenho": "Dibujo"
+      },
+      "HiddenPin": {
+        "pinEmSegredo": "Pin secreto",
+        "aguardandoLiberacaoDoDonoDo": "Esperando la liberación del dueño del mural",
+        "segredo": "Secreto"
+      },
+      "ListCard": {
+        "lista": "Lista",
+        "editarLista": "Editar lista"
+      },
+      "MessageView": {
+        "reacaoDoDonoDoMural": "Reacción del dueño del mural",
+        "segredoOsVisitantesVeemEste": "Secreto: los visitantes ven este pin borroso",
+        "segredo": "Secreto",
+        "abertaDeUmaCapsulaPinz": "Abierta de una Cápsula PINZ"
+      },
+      "MusicCard": {
+        "musica": "Música",
+        "tocando": "♪ Reproduciendo",
+        "progressoDaMusica": "Progreso de la canción",
+        "menu": "MENÚ"
+      },
+      "PaperNote": {
+        "texto": "Texto"
+      },
+      "PlaceCard": {
+        "localNoMapa": "Lugar en el mapa",
+        "abrirNoGoogleMaps": "Abrir en Google Maps",
+        "aproximarOMapa": "Acercar el mapa",
+        "afastarOMapa": "Alejar el mapa"
+      },
+      "PolaroidPhoto": {
+        "foto": "Foto"
+      },
+      "PostIt": {
+        "postIt": "Post-it"
+      },
+      "VideoPrint": {
+        "videoEmTamanhoMaior": "Video en tamaño más grande",
+        "videoDoYoutube": "Video de YouTube",
+        "fechar": "Cerrar",
+        "video": "Video",
+        "reproduzirVideo": "Reproducir video",
+        "progressoDoVideo": "Progreso del video",
+        "verOVideoEmTamanho": "Ver el video en tamaño más grande"
+      },
+      "VoiceNote": {
+        "mensagemDeVoz": "Mensaje de voz",
+        "posicaoDaMensagemDeVoz": "Posición del mensaje de voz"
+      }
+    },
+    "MobileCarousel": {
+      "pinz": "Pinz",
+      "seuMuralDigital": "Tu mural digital"
+    },
+    "MobileLanding": {
+      "pinz": "Pinz",
+      "acessibilidade": "Accesibilidad",
+      "seuMuralDigital": "Tu mural digital",
+      "compartilheMomentosEspeciaisRecebaRecados": "Comparte momentos especiales, recibe mensajes personalizados y decora a tu manera.",
+      "criarMeuMural": "Crear mi mural",
+      "jaTenhoContaEntrar": "Ya tengo cuenta — Iniciar sesión",
+      "entrarOuCriarConta": "Iniciar sesión o crear cuenta",
+      "fechar": "Cerrar"
+    },
+    "MobileMural": {
+      "pinz": "Pinz",
+      "assinarPinz": "Suscribirse a PINZ+",
+      "verOsSeguidores": "Ver los seguidores",
+      "compartilharEsteMural": "Compartir este mural",
+      "compartilhar": "Compartir"
+    },
+    "MuralNameMenu": {
+      "criarNovoMural": "Crear un mural nuevo",
+      "aberto": "✓ abierto",
+      "compartilhados": "Compartidos"
+    },
+    "MuralScreen": {
+      "aguardeUmPouco": "Espera un momento",
+      "entendi": "Entendido",
+      "crieUmaContaParaPublicar": "Crea una cuenta para publicar",
+      "paraDeixarUmPinNeste": "Para dejar un pin en este mural necesitas una cuenta. Es rápido, y luego vuelves directo aquí.",
+      "criarMinhaConta": "Crear mi cuenta",
+      "jaTenhoConta": "Ya tengo cuenta"
+    },
+    "MuralSwitcher": {
+      "muraisDestaPessoa": "Murales de esta persona",
+      "muralAnterior": "Mural anterior",
+      "proximoMural": "Siguiente mural",
+      "murais": "Murales"
+    },
+    "OAuthButtons": {
+      "continuarCom": "Continuar con",
+      "abrindo": "Abriendo…",
+      "ou": "o"
+    },
+    "PlanLimit": {
+      "limiteDoPlano": "Límite del plan",
+      "free": "FREE",
+      "comOPinzVoceTem": "Con PINZ+ tienes:"
+    },
+    "ProfileMurals": {
+      "pessoaNaoEncontrada": "Persona no encontrada",
+      "voltar": "Volver",
+      "essaPessoaAindaNaoCriou": "Esta persona aún no creó ningún mural."
+    },
+    "SearchBox": {
+      "pesquisarUsuarios": "Buscar usuarios",
+      "exJeferson": "Ej.: jeferson",
+      "maisAcessados": "Más visitados",
+      "nenhumaPessoaEncontrada": "Ninguna persona encontrada."
+    },
+    "Sidebar": {
+      "pinz": "Pinz",
+      "seuMuralDigital": "Tu mural digital",
+      "compartilheMomentosEspeciaisRecebaRecados": "Comparte momentos especiales, recibe mensajes personalizados y decora a tu manera.",
+      "pinzEmNumeros": "Pinz en números",
+      "murais": "murales",
+      "pinzColocados": "PINZ colocados"
+    },
+    "tour": {
+      "Tour": {
+        "tourPeloPinz": "Tour por Pinz",
+        "naoEncontreiEstaParteNa": "No encontré esta parte en la pantalla. Si cerraste la ventana, toca Volver y sigue de nuevo.",
+        "pularTour": "Saltar tour",
+        "voltar": "Volver"
+      }
+    },
+    "ui": {
+      "voltarAoInicio": "Volver al inicio",
+      "privacidade": "Privacidad",
+      "termosDeUso": "Términos de uso",
+      "nomeDeUsuario": "Nombre de usuario",
+      "seuUsuario": "tu_usuario"
+    },
+    "UnlockPanel": {
+      "muralBloqueado": "Mural bloqueado",
+      "acessoAoMural": "Acceso al mural",
+      "digiteASenhaParaEntrar": "Escribe la contraseña para entrar.",
+      "pinz": "PINZ+",
+      "muralDesbloqueado": "🔓 Mural desbloqueado"
+    },
+    "widgets": {
+      "BookWidget": {
+        "leituraDeLivro": "Lectura de libro",
+        "progressoDaLeitura": "Progreso de la lectura"
+      },
+      "CalendarWidget": {
+        "calendario": "Calendario",
+        "datasMarcadas": "Fechas marcadas",
+        "nenhumaDataMarcada": "Ninguna fecha marcada"
+      },
+      "ClockWidget": {
+        "relogio": "Reloj"
+      },
+      "CookieWidget": {
+        "biscoitoDaSorte": "Galleta de la suerte"
+      },
+      "CountdownWidget": {
+        "contadorRegressivo": "Cuenta regresiva"
+      },
+      "DateWidget": {
+        "calendarioDoDia": "Calendario del día"
+      },
+      "DaysWidget": {
+        "contadorDeDias": "Contador de días"
+      },
+      "index": {
+        "versiculoDoDia": "Versículo del día",
+        "fraseDoDia": "Frase del día"
+      },
+      "PollWidget": {
+        "enquete": "Encuesta",
+        "seuVoto": "Tu voto",
+        "entreParaVotar": "Inicia sesión para votar",
+        "paraVotarVocePrecisaDe": "Para votar necesitas una cuenta",
+        "eRapidoEGratuitoDepois": "Es rápido y gratis. Después de entrar, vuelves a esta encuesta.",
+        "entrar": "Iniciar sesión",
+        "criarConta": "Crear cuenta",
+        "agoraNao": "Ahora no"
+      },
+      "Top3Widget": {
+        "top3": "Top 3"
+      },
+      "WeatherWidget": {
+        "clima": "Clima"
+      }
+    }
   }
 }

@@ -19,6 +19,7 @@ import { useBadges } from "../badges/BadgeContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "../badges/SecretCover";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { useTranslations } from "next-intl";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
 type Over = { id: string; key: number; rot: number; rx: number; ry: number; wr: number };
@@ -99,6 +100,7 @@ export type WidgetEntry = { id: string; widget: true; data: DisplayData };
 export type DetailEntry = BoardItem | WidgetEntry;
 
 export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: DetailEntry[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
+  const tx = useTranslations("components.board.PinDetail");
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
   useBackClose(open, onClose); // voltar (Android) fecha o detalhe em vez de sair do mural
@@ -272,27 +274,27 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      aria-label="Ver mensagem em detalhe"
+      aria-label={tx("verMensagemEmDetalhe")}
       className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-hidden bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && entry && index !== null && (
         <div className="relative flex h-[min(94dvh,60rem)] flex-col items-center gap-3">
           <div className="flex w-full items-center justify-center gap-2 px-1">
             {shareable && (
-              <button type="button" disabled={sharing} aria-label="Compartilhar este pin" title="Compartilhar este pin" onClick={() => void sharePin()} className={shareBtn}>
+              <button type="button" disabled={sharing} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
                 <ShareIcon />
                 Compartilhar
               </button>
             )}
             {/* frase ou versículo: o mesmo botão de compartilhar de cima leva o texto */}
             {widget && wText && (
-              <button type="button" aria-label="Compartilhar o texto" title="Compartilhar o texto" onClick={() => void shareWidgetText()} className={shareBtn}>
+              <button type="button" aria-label={tx("compartilharOTexto")} title={tx("compartilharOTexto")} onClick={() => void shareWidgetText()} className={shareBtn}>
                 <ShareIcon />
                 {wCopied ? "Copiado!" : "Compartilhar"}
               </button>
             )}
             {bookShare && (
-              <button type="button" disabled={sharing} aria-label="Compartilhar este display" title="Compartilhar este display" onClick={() => void sharePin()} className={shareBtn}>
+              <button type="button" disabled={sharing} aria-label={tx("compartilharEsteDisplay")} title={tx("compartilharEsteDisplay")} onClick={() => void sharePin()} className={shareBtn}>
                 <ShareIcon />
                 Compartilhar
               </button>
@@ -301,8 +303,8 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <button
                 type="button"
                 disabled={busy}
-                aria-label="Denunciar"
-                title="Denunciar"
+                aria-label={tx("denunciar")}
+                title={tx("denunciar")}
                 aria-expanded={reporting}
                 onClick={() => setReporting((v) => !v)}
                 className={`${arrow} !border-[#ff9b8f]/50 !text-[#ffb4a8]`}
@@ -313,7 +315,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               </button>
             )}
             {/* fixo no canto superior direito da janela */}
-            <button type="button" onClick={onClose} aria-label="Fechar" className={`${arrow} absolute top-0 right-0 z-10`}>
+            <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${arrow} absolute top-0 right-0 z-10`}>
               <CloseX />
             </button>
           </div>
@@ -325,7 +327,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           {((item && !isSealed(item) && !isHidden(item) && item.ownerHidden) || (ownWidget && widgetHidden)) && revealBtn()}
           {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
           <div className="flex min-h-0 w-full flex-1 items-center justify-center px-12 sm:px-16">
-            <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label="Anterior" className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
+            <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label={tx("anterior")} className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
               <ChevronLeft />
             </button>
             {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
@@ -346,7 +348,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               </DetailProvider>
             </div>
             </div>
-            <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label="Próximo" className={`${arrow} absolute top-1/2 right-0 z-10 -translate-y-1/2`}>
+            <button type="button" onClick={() => onIndex(index + 1)} disabled={index >= items.length - 1} aria-label={tx("proximo")} className={`${arrow} absolute top-1/2 right-0 z-10 -translate-y-1/2`}>
               <ChevronRight />
             </button>
           </div>
@@ -367,10 +369,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </button>
           )}
           {ownWidget && widget && (
-            <div className="flex w-full flex-wrap justify-center gap-2" role="group" aria-label="Opções deste display">
-              <button type="button" disabled={busy} aria-label="Excluir display" title="Excluir display" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
+            <div className="flex w-full flex-wrap justify-center gap-2" role="group" aria-label={tx("opcoesDesteDisplay")}>
+              <button type="button" disabled={busy} aria-label={tx("excluirDisplay")} title={tx("excluirDisplay")} onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
                 <Trash />
-                <span className="hidden sm:inline">Excluir display</span>
+                <span className="hidden sm:inline">{tx("excluirDisplay")}</span>
               </button>
               <button
                 type="button"
@@ -387,13 +389,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </div>
           )}
           {mod && item && !isSealed(item) && !isHidden(item) && (
-            <div className="flex w-full flex-col items-center gap-2" role="group" aria-label="Moderar este pin">
+            <div className="flex w-full flex-col items-center gap-2" role="group" aria-label={tx("moderarEstePin")}>
               <div className="flex w-full flex-wrap justify-center gap-2">
                 {item.pending ? (
                   <>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost}`}>
-                      Recusar
-                    </button>
+                      {tx("recusar")}</button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ+"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
@@ -401,14 +402,13 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
-                      Aprovar
-                    </button>
+                      {tx("aprovar")}</button>
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} aria-label="Excluir PIN" title="Excluir PIN" onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
+                    <button type="button" disabled={busy} aria-label={tx("excluirPin")} title={tx("excluirPin")} onClick={() => setConfirmDelete(true)} className={`${ghost} grid place-items-center sm:flex sm:items-center sm:justify-center sm:gap-2`}>
                       <Trash />
-                      <span className="hidden sm:inline">Excluir PIN</span>
+                      <span className="hidden sm:inline">{tx("excluirPin")}</span>
                     </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ+"} onClick={() => {
                       setShowSecret(false);
@@ -452,20 +452,19 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
           <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-            <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "left", lineHeight: 1.25 }}>Crie seu mural e compartilhe momentos especiais!</p>
-            <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218", textAlign: "left" }}>Acesse: pinz.digital</p>
+            <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "left", lineHeight: 1.25 }}>{tx("crieSeuMuralECompartilhe")}</p>
+            <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218", textAlign: "left" }}>{tx("acessePinzDigital")}</p>
           </div>
         </div>
       </div>
     )}
     {item && !isSealed(item) && !isHidden(item) && (mod || item.mine) && (
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir PIN" label="Excluir PIN">
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title={tx("excluirPin")} label={tx("excluirPin")}>
         <div className="space-y-4">
-          <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este pin? Essa ação não poderá ser desfeita.</p>
+          <p className="text-sm text-[#4a3826]">{tx("temCertezaQueDesejaExcluir")}</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => setConfirmDelete(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
-              Cancelar
-            </button>
+              {tx("cancelar")}</button>
             <button
               type="button"
               disabled={busy}
@@ -475,20 +474,18 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
             >
-              Excluir
-            </button>
+              {tx("excluir")}</button>
           </div>
         </div>
       </Modal>
     )}
     {ownWidget && widget && (
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Excluir display" label="Excluir display">
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title={tx("excluirDisplay")} label={tx("excluirDisplay")}>
         <div className="space-y-4">
-          <p className="text-sm text-[#4a3826]">Tem certeza que deseja excluir este display do mural? Você pode colocá-lo de novo depois.</p>
+          <p className="text-sm text-[#4a3826]">{tx("temCertezaQueDesejaExcluir2")}</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => setConfirmDelete(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
-              Cancelar
-            </button>
+              {tx("cancelar")}</button>
             <button
               type="button"
               onClick={() => {
@@ -498,14 +495,13 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022]"
             >
-              Excluir
-            </button>
+              {tx("excluir")}</button>
           </div>
         </div>
       </Modal>
     )}
     {mod && item && !isSealed(item) && !isHidden(item) && (
-      <Modal open={reporting} onClose={() => setReporting(false)} title="Denunciar">
+      <Modal open={reporting} onClose={() => setReporting(false)} title={tx("denunciar")}>
         <div className="space-y-4">
           <ReportBox inModal onCancel={() => setReporting(false)} onSend={(r) => run(() => mod.report(item.id, r), true)} />
         </div>

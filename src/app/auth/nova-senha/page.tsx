@@ -8,9 +8,11 @@ import { AuthShell, Field, ghostButton, inputClass, primaryButton, Spinner } fro
 import { homeRouteFor } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { useTranslations } from "next-intl";
 
 /** Destino do link de "trocar a senha" enviado por e-mail: a sessão do link já chegou (pelo /auth/callback); aqui a pessoa escolhe a nova senha. */
 export default function NovaSenha() {
+  const tx = useTranslations("app.auth.nova_senha.page");
   const router = useRouter();
   const [state, setState] = useState<"loading" | "form" | "nosession">("loading");
   const [email, setEmail] = useState("");
@@ -57,19 +59,18 @@ export default function NovaSenha() {
     return (
       <AuthShell>
         <div role="alert">
-          <h1 className="font-title text-2xl font-semibold">Link expirado</h1>
-          <p className="mt-3 text-[#4a3826]">Este link já foi usado ou venceu. Entre na sua conta e peça um novo em Editar perfil.</p>
+          <h1 className="font-title text-2xl font-semibold">{tx("linkExpirado")}</h1>
+          <p className="mt-3 text-[#4a3826]">{tx("esteLinkJaFoiUsado")}</p>
           <Link href="/entrar" className={`${ghostButton} mt-6`}>
-            Ir para o login
-          </Link>
+            {tx("irParaOLogin")}</Link>
         </div>
       </AuthShell>
     );
   return (
     <AuthShell>
       <form onSubmit={save} noValidate className="space-y-3 text-left">
-        <h1 className="font-title text-2xl font-semibold">Nova senha</h1>
-        <Field label="Nova senha">
+        <h1 className="font-title text-2xl font-semibold">{tx("novaSenha")}</h1>
+        <Field label={tx("novaSenha")}>
           {(id) => (
             <div className="relative">
               <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} className={`${inputClass} pr-20`} />
@@ -80,7 +81,7 @@ export default function NovaSenha() {
           )}
         </Field>
         <PasswordHints password={pw} email={email} username="" />
-        <Field label="Repita a nova senha">{(id) => <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} className={inputClass} />}</Field>
+        <Field label={tx("repitaANovaSenha")}>{(id) => <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} className={inputClass} />}</Field>
         {msg && (
           <p role="alert" className="text-sm text-[#a23b2a]">
             {msg}

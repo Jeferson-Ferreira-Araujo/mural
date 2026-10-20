@@ -6,6 +6,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
   return (
@@ -21,6 +22,7 @@ function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
 
 /** Seguindo e Seguidores (duas abas): quem você segue, com acesso rápido ao mural, e quem segue você; a busca no topo filtra a lista da aba aberta. */
 export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose: () => void; /** seu nome de usuário (para listar os seguidores) */ nick: string }) {
+  const tx = useTranslations("components.account.PeopleModals");
   const [tab, setTab] = useState<"following" | "followers">("following");
   const [following, setFollowing_] = useState<PersonLite[] | null>(null);
   const [followers, setFollowers] = useState<PersonLite[] | null>(null);
@@ -58,8 +60,8 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
   );
 
   return (
-    <Modal open={open} onClose={onClose} title="Seguidores e seguindo" label="Seguidores e seguindo">
-      <div role="tablist" aria-label="Seguindo e seguidores" className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
+    <Modal open={open} onClose={onClose} title={tx("seguidoresESeguindo")} label={tx("seguidoresESeguindo")}>
+      <div role="tablist" aria-label={tx("seguindoESeguidores")} className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
         {tabBtn("following", "Seguindo", following?.length ?? null)}
         {tabBtn("followers", "Seguidores", followers?.length ?? null)}
       </div>
@@ -92,8 +94,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
               action={
                 tab === "following" ? (
                   <button type="button" onClick={() => void unfollow(p.nickname)} className="shrink-0 cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf]">
-                    Deixar de seguir
-                  </button>
+                    {tx("deixarDeSeguir")}</button>
                 ) : undefined
               }
             />
@@ -106,6 +107,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
 
 /** Seguidores de uma pessoa (aberto ao tocar no número de seguidores do mural). */
 export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose: () => void; nick: string }) {
+  const tx = useTranslations("components.account.PeopleModals");
   const [list, setList] = useState<PersonLite[] | null>(null);
   useEffect(() => {
     if (!open) return;
@@ -113,11 +115,11 @@ export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose
     void listFollowers(getBrowserSupabase(), nick).then((l) => setList(l ?? []));
   }, [open, nick]);
   return (
-    <Modal open={open} onClose={onClose} title="Seguidores" label="Seguidores">
+    <Modal open={open} onClose={onClose} title={tx("seguidores")} label={tx("seguidores")}>
       {!list ? (
         <ListSkeleton rows={5} />
       ) : list.length === 0 ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum seguidor para mostrar.</p>
+        <p className="py-6 text-center text-sm text-[#6b5440]">{tx("nenhumSeguidorParaMostrar")}</p>
       ) : (
         <ul className="space-y-2.5">
           {list.map((p) => (
@@ -131,6 +133,7 @@ export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose
 
 /** Visitantes: quem entrou nos seus murais com conta (sem datas) e quantos seguidores você tem. */
 export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tx = useTranslations("components.account.PeopleModals");
   const [data, setData] = useState<{ hidden: boolean; visitors: PersonLite[]; followers: number } | null>(null);
   useEffect(() => {
     if (!open) return;
@@ -139,18 +142,18 @@ export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () =>
   }, [open]);
 
   return (
-    <Modal open={open} onClose={onClose} title="Visitantes" label="Visitantes">
+    <Modal open={open} onClose={onClose} title={tx("visitantes")} label={tx("visitantes")}>
       {!data ? (
         <ListSkeleton rows={5} />
       ) : data.hidden ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Você desligou “Aparecer como visitante” no Perfil. Quem desliga também não vê quem visitou os seus murais. Ligue de novo lá para ver a lista.</p>
+        <p className="py-6 text-center text-sm text-[#6b5440]">{tx("voceDesligouAparecerComoVisitante")}</p>
       ) : (
         <>
           <p className="mb-3 text-sm text-[#6b5440]">
             {data.followers} {data.followers === 1 ? "seguidor" : "seguidores"}
           </p>
           {data.visitors.length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#6b5440]">Ninguém com conta visitou seus murais ainda.</p>
+            <p className="py-6 text-center text-sm text-[#6b5440]">{tx("ninguemComContaVisitouSeus")}</p>
           ) : (
             <ul className="space-y-2.5">
               {data.visitors.map((p) => (

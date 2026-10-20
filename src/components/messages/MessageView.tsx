@@ -12,6 +12,7 @@ import { PolaroidPhoto } from "./PolaroidPhoto";
 import { PostIt } from "./PostIt";
 import { VideoPrint } from "./VideoPrint";
 import { VoiceNote } from "./VoiceNote";
+import { useTranslations } from "next-intl";
 
 function Content({ m }: { m: Message }) {
   const editList = useListEdit();
@@ -41,10 +42,11 @@ function Content({ m }: { m: Message }) {
 
 /** Assinatura de quem deixou o pin (só aparece se a pessoa escolheu assinar). */
 function Signature({ name, reaction }: { name?: string; reaction?: string }) {
+  const tx = useTranslations("components.messages.MessageView");
   const inDetail = useInDetail();
   // emoji que o dono do mural deixou: canto inferior esquerdo do pin
   const mark = reaction ? (
-    <span role="img" aria-label="Reação do dono do mural" title="Reação do dono do mural" className="absolute -bottom-[0.9em] -left-[0.5em] z-30 grid size-[2em] place-items-center rounded-full bg-[#fff8e6] text-[1em] leading-none shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
+    <span role="img" aria-label={tx("reacaoDoDonoDoMural")} title={tx("reacaoDoDonoDoMural")} className="absolute -bottom-[0.9em] -left-[0.5em] z-30 grid size-[2em] place-items-center rounded-full bg-[#fff8e6] text-[1em] leading-none shadow-[0_0.15em_0.4em_rgba(0,0,0,.35)]">
       {reactionEmoji(reaction)}
     </span>
   ) : null;
@@ -71,6 +73,7 @@ function Signature({ name, reaction }: { name?: string; reaction?: string }) {
 
 /** Marcas que só o autor (aguardando aprovação) ou o dono (em blur para visitantes) veem sobre o pin. */
 function Marked({ m }: { m: Message }) {
+  const tx = useTranslations("components.messages.MessageView");
   const inDetail = useInDetail();
   const kSecret = inDetail ? "1em" : "2.4em"; // no mural inteiro o cartão é pequeno: o selo cresce para continuar visível
   const kPending = inDetail ? "1em" : "1.4em";
@@ -99,13 +102,13 @@ function Marked({ m }: { m: Message }) {
       <Content m={m} />
       <Signature name={m.signedBy} reaction={m.reaction} />
       <span className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: kSecret }}>
-        <span role="img" aria-label="Segredo: os visitantes veem este pin borrado" title="Segredo: os visitantes veem este pin borrado" className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
+        <span role="img" aria-label={tx("segredoOsVisitantesVeemEste")} title={tx("segredoOsVisitantesVeemEste")} className="pointer-events-auto flex flex-col items-center gap-[0.45em]">
           <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
             <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor" aria-hidden>
               <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
             </svg>
           </span>
-          <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">Segredo</span>
+          <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{tx("segredo")}</span>
         </span>
       </span>
     </div>
@@ -117,6 +120,7 @@ function Marked({ m }: { m: Message }) {
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
 export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
+  const tx = useTranslations("components.messages.MessageView");
   const inDetail = useInDetail();
   let m = message;
   if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
@@ -140,11 +144,11 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
       <Signature name={m.signedBy} reaction={m.reaction} />
       {m.fromCapsule && (
       <span
-        title="Aberta de uma Cápsula PINZ"
+        title={tx("abertaDeUmaCapsulaPinz")}
         className="absolute -top-[0.7em] -right-[0.6em] z-30 grid size-[2em] place-items-center rounded-full text-white shadow-[0_0.15em_0.4em_rgba(60,10,5,.5)]"
         style={{ background: "radial-gradient(circle at 35% 30%, #e8554a, #a31d16 70%)" }}
       >
-        <span className="sr-only">Aberta de uma Cápsula PINZ</span>
+        <span className="sr-only">{tx("abertaDeUmaCapsulaPinz")}</span>
         <svg aria-hidden viewBox="0 0 24 24" className="size-[1em]" fill="currentColor">
           <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 8V7a3 3 0 0 1 6 0v3H9Zm6.5 3.5-4 4-2-2 1.1-1.1 0.9 0.9 2.9-2.9 1.1 1.1Z" />
         </svg>

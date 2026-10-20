@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
+import { useTranslations } from "next-intl";
 
 const MIN_ZOOM = 4;
 const MAX_ZOOM = 18;
@@ -36,12 +37,13 @@ export function PlaceCard({
   /** só o desenho (pin em blur): não carrega o mapa */
   blank?: boolean;
 }) {
+  const tx = useTranslations("components.messages.PlaceCard");
   const look = PLAYER_PALETTE[color];
   const [zoom, setZoom] = useState(14);
   const zoomBtn = "grid size-[1.7em] cursor-pointer place-items-center text-[1.05em] leading-none font-bold text-[#2f3a4a] transition hover:bg-black/5 active:bg-black/10 disabled:cursor-default disabled:opacity-35 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#2a6fd6]";
 
   return (
-    <article aria-label="Local no mapa" className="relative w-[14em]">
+    <article aria-label={tx("localNoMapa")} className="relative w-[14em]">
       {/* corpo do aparelho */}
       <div
         className="relative rounded-[1.1em] p-[0.55em]"
@@ -109,7 +111,7 @@ export function PlaceCard({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Abrir ${name} no Google Maps`}
-              title="Abrir no Google Maps"
+              title={tx("abrirNoGoogleMaps")}
               className="absolute top-[0.45em] right-[0.45em] grid size-[1.9em] place-items-center rounded-[0.5em] bg-white/95 text-[#2f3a4a] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-[#2a6fd6]"
               style={{ boxShadow: "0 0.15em 0.4em rgba(0,0,0,.3)" }}
             >
@@ -120,10 +122,10 @@ export function PlaceCard({
 
             {/* zoom */}
             <div data-share-hide className="absolute right-[0.45em] bottom-[0.9em] flex flex-col overflow-hidden rounded-[0.5em] bg-white/95 divide-y divide-black/10" style={{ boxShadow: "0 0.15em 0.4em rgba(0,0,0,.3)" }}>
-              <button type="button" aria-label="Aproximar o mapa" onClick={() => setZoom((z) => clamp(z + 1, MIN_ZOOM, MAX_ZOOM))} disabled={zoom >= MAX_ZOOM} className={zoomBtn}>
+              <button type="button" aria-label={tx("aproximarOMapa")} onClick={() => setZoom((z) => clamp(z + 1, MIN_ZOOM, MAX_ZOOM))} disabled={zoom >= MAX_ZOOM} className={zoomBtn}>
                 +
               </button>
-              <button type="button" aria-label="Afastar o mapa" onClick={() => setZoom((z) => clamp(z - 1, MIN_ZOOM, MAX_ZOOM))} disabled={zoom <= MIN_ZOOM} className={zoomBtn}>
+              <button type="button" aria-label={tx("afastarOMapa")} onClick={() => setZoom((z) => clamp(z - 1, MIN_ZOOM, MAX_ZOOM))} disabled={zoom <= MIN_ZOOM} className={zoomBtn}>
                 −
               </button>
             </div>

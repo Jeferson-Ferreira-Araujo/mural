@@ -4,17 +4,19 @@ import { notificationText, type Notification } from "@/lib/notifications";
 import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
 /** Sino: avisos da conta, em tempo real: pin novo no seu mural, pin aprovado, novo seguidor, reações e listas marcadas. */
 export function NotificationsModal({ open, onClose, items }: { open: boolean; onClose: () => void; items: Notification[] | null }) {
+  const tx = useTranslations("components.account.NotificationsModal");
   return (
-    <Modal open={open} onClose={onClose} title="Notificações">
+    <Modal open={open} onClose={onClose} title={tx("notificacoes")}>
       {!items ? (
-        <ListSkeleton rows={4} label="Carregando as notificações" />
+        <ListSkeleton rows={4} label={tx("carregandoAsNotificacoes")} />
       ) : items.length === 0 ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Nenhuma notificação por enquanto.</p>
+        <p className="py-6 text-center text-sm text-[#6b5440]">{tx("nenhumaNotificacaoPorEnquanto")}</p>
       ) : (
         <ul className="space-y-2.5">
           {items.map((n) => (

@@ -2,6 +2,7 @@
 
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
+import { useTranslations } from "next-intl";
 
 /** Estilos do Top 3: pódio (papel claro), noite (escuro) e neon (roxo e rosa). */
 const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string; edge: string; title: string; glow: string }> = {
@@ -30,6 +31,7 @@ function Spark({ side, color, size }: { side: "left" | "right"; color: string; s
  * Textos parados, em até duas linhas. Três estilos, em formato retangular ou quadrado; o 1º lugar ganha destaque dourado.
  */
 export function Top3Widget({ style = "podium", title, items, frame }: { style?: string; title?: string; items?: string[]; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.Top3Widget");
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const sk = SKINS[baseStyle(style)] ?? SKINS.podium;
@@ -39,7 +41,7 @@ export function Top3Widget({ style = "podium", title, items, frame }: { style?: 
   const gold = "#f0b323";
 
   return (
-    <WidgetFrame frame={frame} label="Top 3" shape={shape}>
+    <WidgetFrame frame={frame} label={tx("top3")} shape={shape}>
       <div className={`absolute inset-0 flex flex-col ${square ? "px-[0.8em] pt-[0.8em] pb-[0.85em]" : "px-[1.1em] pt-[0.75em] pb-[0.85em]"}`} style={{ background: sk.bg, color: sk.ink }}>
         {/* cabeçalho: o tema em destaque, com um grifo embaixo e faíscas dos dois lados */}
         <div className="flex items-center justify-center gap-[0.4em]">

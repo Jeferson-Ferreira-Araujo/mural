@@ -1,4 +1,5 @@
-/** Espaço livre do mural (ainda sem mensagem). Mesmo tamanho de uma mensagem; tamanho via font-size do pai. */
+
+import { useTranslations } from "next-intl";/** Espaço livre do mural (ainda sem mensagem). Mesmo tamanho de uma mensagem; tamanho via font-size do pai. */
 export function EmptySlot() {
   return (
     <div
@@ -20,6 +21,7 @@ export function EmptySlot() {
 
 /** Espaço dos 28 que o plano atual (FREE) ainda não libera. */
 export function LockedSlot() {
+  const tx = useTranslations("components.board.SlotMarker");
   return (
     <div
       aria-hidden
@@ -29,7 +31,7 @@ export function LockedSlot() {
         <svg viewBox="0 0 24 24" className="mx-auto mb-[0.35em] size-[1.7em]" fill="currentColor">
           <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
         </svg>
-        <span className="font-hand text-[1.3em] leading-none">bloqueado</span>
+        <span className="font-hand text-[1.3em] leading-none">{tx("bloqueado")}</span>
       </span>
     </div>
   );

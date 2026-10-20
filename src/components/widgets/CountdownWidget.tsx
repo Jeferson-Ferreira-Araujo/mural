@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
+import { useTranslations } from "next-intl";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -41,6 +42,7 @@ function useTick(): number | null {
  * Chegando a hora mostra "Chegou o dia!"; depois do dia, há quanto tempo foi. Cinco estilos, em formato retangular ou quadrado.
  */
 export function CountdownWidget({ style = "neon", title, target, time, frame }: { style?: string; title?: string; target?: string; time?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.CountdownWidget");
   const now = useTick();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
@@ -65,7 +67,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
   const big = square ? 2.05 : 2.9;
 
   return (
-    <WidgetFrame frame={frame} label="Contador regressivo" shape={shape}>
+    <WidgetFrame frame={frame} label={tx("contadorRegressivo")} shape={shape}>
       <div className={`absolute inset-0 flex flex-col ${square ? "px-[1em] pt-[0.9em] pb-[0.9em]" : "px-[1.2em] pt-[0.9em] pb-[1em]"}`} style={{ background: skin.bg, color: skin.ink }}>
         {square ? (
           <Marquee text={name} className="text-[1.4em] leading-tight font-bold" />

@@ -6,6 +6,7 @@ import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE, type PlayerLook } from "./playerPalette";
 import { Scene } from "./Scene";
+import { useTranslations } from "next-intl";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}`;
@@ -18,6 +19,7 @@ const clamp = (n: number, lo: number, hi: number) => Math.min(Math.max(n, lo), h
 
 /** O vídeo em tamanho grande, por cima da tela inteira. */
 function BigVideo({ src, embedSrc, onClose }: { src?: string; embedSrc?: string; onClose: () => void }) {
+  const tx = useTranslations("components.messages.VideoPrint");
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -28,17 +30,17 @@ function BigVideo({ src, embedSrc, onClose }: { src?: string; embedSrc?: string;
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      aria-label="Vídeo em tamanho maior"
+      aria-label={tx("videoEmTamanhoMaior")}
       className="m-0 size-full max-h-none max-w-none bg-black/95 p-0 backdrop:bg-black/95"
     >
       <div className="relative grid size-full place-items-center p-2 sm:p-6" onClick={(e) => e.target === e.currentTarget && onClose()}>
         {embedSrc ? (
-          <iframe src={embedSrc} title="Vídeo do YouTube" allow="autoplay; encrypted-media; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" className="aspect-video max-h-full w-full max-w-[min(100%,calc((100dvh-3rem)*16/9))] rounded-xl border-0" />
+          <iframe src={embedSrc} title={tx("videoDoYoutube")} allow="autoplay; encrypted-media; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" className="aspect-video max-h-full w-full max-w-[min(100%,calc((100dvh-3rem)*16/9))] rounded-xl border-0" />
         ) : (
           // eslint-disable-next-line jsx-a11y/media-has-caption
           <video src={src} controls autoPlay playsInline className="max-h-full max-w-full rounded-xl" />
         )}
-        <button type="button" onClick={onClose} aria-label="Fechar" className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/20 text-2xl text-white backdrop-blur transition hover:bg-white/35 active:scale-90">
+        <button type="button" onClick={onClose} aria-label={tx("fechar")} className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/20 text-2xl text-white backdrop-blur transition hover:bg-white/35 active:scale-90">
           ×
         </button>
       </div>
@@ -83,6 +85,7 @@ const icon = "size-[1em]";
  * `src` = vídeo escolhido pela pessoa (toca de verdade); sem `src`, é uma cena de exemplo com tempo simulado.
  */
 export function VideoPrint({ caption, duration, src, link, color = "black" }: { caption: string; duration?: string; src?: string; link?: string; color?: PlayerColor }) {
+  const tx = useTranslations("components.messages.VideoPrint");
   const look = PLAYER_PALETTE[color];
   // vídeo do YouTube: miniatura no aparelho e, ao tocar, o player oficial (só reconhecemos o endereço e extraímos o ID)
   const yt = !src ? embedFor(link) : null;
@@ -173,7 +176,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
   );
 
   return (
-    <article aria-label="Vídeo" className="relative w-[14em]">
+    <article aria-label={tx("video")} className="relative w-[14em]">
       {big && <BigVideo src={src} embedSrc={embed?.src} onClose={() => setBig(false)} />}
       {/* corpo do player */}
       <div
@@ -202,7 +205,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
                   ref={frame}
                   onLoad={() => send({ event: "listening", id: 1, channel: "widget" })}
                   src={embed.src}
-                  title="Vídeo do YouTube"
+                  title={tx("videoDoYoutube")}
                   allow="autoplay; encrypted-media; fullscreen"
                   allowFullScreen
                   referrerPolicy="strict-origin-when-cross-origin"
@@ -235,7 +238,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
               <button
                 type="button"
                 onClick={toggle}
-                aria-label="Reproduzir vídeo"
+                aria-label={tx("reproduzirVideo")}
                 className="absolute top-1/2 left-1/2 grid size-[3em] -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/25 text-white shadow-[0_0.2em_0.8em_rgba(0,0,0,.4)] backdrop-blur-[2px] transition hover:bg-white/35 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white"
               >
                 <svg viewBox="0 0 24 24" className="size-[45%] translate-x-[8%]" fill="currentColor" aria-hidden>
@@ -246,7 +249,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
 
             {/* barra de progresso dentro da tela */}
             <div hidden={!!embed} className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-[0.55em] pt-[1.2em] pb-[0.4em] text-white">
-              <div className="relative h-[0.22em] rounded-full bg-white/35" role="progressbar" aria-label="Progresso do vídeo" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
+              <div className="relative h-[0.22em] rounded-full bg-white/35" role="progressbar" aria-label={tx("progressoDoVideo")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
                 <span className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${ratio * 100}%` }} />
                 <span className="absolute top-1/2 size-[0.6em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow" style={{ left: `${ratio * 100}%` }} />
               </div>
@@ -268,7 +271,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
           <HwButton look={look} label={playing ? "Pausar" : "Reproduzir"} onClick={toggle} big>
             {playing ? PauseIcon : PlayIcon}
           </HwButton>
-          <HwButton look={look} label="Ver o vídeo em tamanho maior" onClick={expand}>
+          <HwButton look={look} label={tx("verOVideoEmTamanho")} onClick={expand}>
             <svg viewBox="0 0 24 24" className={icon} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" />
             </svg>

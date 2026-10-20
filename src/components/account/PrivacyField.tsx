@@ -1,6 +1,7 @@
 "use client";
 
 import { Field, inputClass } from "../ui";
+import { useTranslations } from "next-intl";
 
 export type Privacy = { priv: boolean; question: string; answer: string };
 
@@ -15,10 +16,11 @@ export function privacyError(p: Privacy, hadAnswer: boolean): string | null {
 
 /** Pergunta de segurança DESTE mural: público (qualquer pessoa abre) ou privado (só abre quem acerta a resposta). */
 export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v: Privacy) => void }) {
+  const tx = useTranslations("components.account.PrivacyField");
   return (
     <fieldset className="min-w-0 space-y-3">
-      <legend className="mb-1 text-sm font-semibold">Quem pode abrir este mural</legend>
-      <div role="radiogroup" aria-label="Quem pode abrir este mural" className="grid grid-cols-2 gap-2">
+      <legend className="mb-1 text-sm font-semibold">{tx("quemPodeAbrirEsteMural")}</legend>
+      <div role="radiogroup" aria-label={tx("quemPodeAbrirEsteMural")} className="grid grid-cols-2 gap-2">
         {(
           [
             [false, "🌐 Público"],
@@ -39,8 +41,8 @@ export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v
       </div>
       {value.priv && (
         <>
-          <Field label="Pergunta de segurança">{(id) => <input id={id} value={value.question} onChange={(e) => onChange({ ...value, question: e.target.value })} maxLength={140} placeholder="Ex: Qual o nome do nosso cachorro?" className={inputClass} />}</Field>
-          <Field label="Resposta">{(id) => <input id={id} value={value.answer} onChange={(e) => onChange({ ...value, answer: e.target.value })} maxLength={100} autoComplete="off" placeholder="Digite a resposta" className={inputClass} />}</Field>
+          <Field label={tx("perguntaDeSeguranca")}>{(id) => <input id={id} value={value.question} onChange={(e) => onChange({ ...value, question: e.target.value })} maxLength={140} placeholder={tx("exQualONomeDo")} className={inputClass} />}</Field>
+          <Field label={tx("resposta")}>{(id) => <input id={id} value={value.answer} onChange={(e) => onChange({ ...value, answer: e.target.value })} maxLength={100} autoComplete="off" placeholder={tx("digiteAResposta")} className={inputClass} />}</Field>
         </>
       )}
     </fieldset>

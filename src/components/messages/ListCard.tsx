@@ -1,8 +1,10 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
+import { useTranslations } from "next-intl";
 
 /** Lista: papel creme com checklist escrito à mão. */
 export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor; onEdit?: () => void; /** marcar/desmarcar um item (só quem pode editar a lista) */ onToggle?: (index: number) => void }) {
+  const tx = useTranslations("components.messages.ListCard");
   const hand = handOf(font);
   const canToggle = !!onToggle;
   // sem letra escolhida: o visual de sempre (título Caveat, itens Kalam); com letra escolhida, tudo na mesma
@@ -10,7 +12,7 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title
   const itemSize = font ? 1.18 * hand.scale : 0.88;
   return (
     <article
-      aria-label="Lista"
+      aria-label={tx("lista")}
       className="paper-grain shadow-paper relative w-[14em] bg-[#f7f1e1] px-[1.1em] pt-[1.8em] pb-[1.2em]"
       style={{
         borderRadius: "0.2em",
@@ -21,8 +23,8 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title
       {onEdit && (
         <button
           type="button"
-          aria-label="Editar lista"
-          title="Editar lista"
+          aria-label={tx("editarLista")}
+          title={tx("editarLista")}
           onClick={(e) => {
             e.stopPropagation();
             onEdit();

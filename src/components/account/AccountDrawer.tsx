@@ -123,6 +123,7 @@ export function AccountDrawer({
   /** sino: quantas notificações novas e como abrir a lista */
   notifications?: { count: number; onOpen: () => void };
 }) {
+  const tx = useTranslations("components.account.AccountDrawer");
   const t = useTranslations("menu");
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
@@ -431,25 +432,25 @@ export function AccountDrawer({
       <FollowingModal open={isOpen && modal === "following"} onClose={close} nick={nick} />
       <MyMuralsModal open={isOpen && modal === "mymurals"} onClose={close} murals={murals} currentId={mural?.id} onNewMural={onNewMural} onChanged={onChanged} onDeleted={onDeleted} />
       {mural && (
-        <Modal open={isOpen && modal === "edit"} onClose={close} title="Editar mural">
+        <Modal open={isOpen && modal === "edit"} onClose={close} title={tx("editarMural")}>
           <MuralSettings mural={mural} onSaved={onChanged} onDeleted={onDeleted} canDelete={mural.id !== murals[0]?.id} />
         </Modal>
       )}
-      <Modal open={isOpen && modal === "install"} onClose={close} title="Instalar o Pinz">
+      <Modal open={isOpen && modal === "install"} onClose={close} title={tx("instalarOPinz")}>
         <ol className="list-decimal space-y-2 pl-5 text-sm text-[#4a3826]">
           <li>
-            Toque no botão <strong>Compartilhar</strong> do Safari (o quadrado com a seta para cima).
+            Toque no botão <strong>{tx("compartilhar")}</strong> do Safari (o quadrado com a seta para cima).
           </li>
           <li>
-            Role a lista e toque em <strong>Adicionar à Tela de Início</strong>.
+            Role a lista e toque em <strong>{tx("adicionarATelaDeInicio")}</strong>.
           </li>
           <li>
-            Confirme em <strong>Adicionar</strong>. O Pinz fica na sua tela inicial e abre em tela cheia.
+            Confirme em <strong>{tx("adicionar")}</strong>. O Pinz fica na sua tela inicial e abre em tela cheia.
           </li>
         </ol>
-        <p className="mt-3 text-xs text-[#6b5440]">Se não aparecer a opção, abra o Pinz pelo Safari (outros navegadores do iPhone não instalam apps).</p>
+        <p className="mt-3 text-xs text-[#6b5440]">{tx("seNaoAparecerAOpcao")}</p>
       </Modal>
-      <Modal open={isOpen && modal === "numbers"} onClose={close} title="Métricas">
+      <Modal open={isOpen && modal === "numbers"} onClose={close} title={tx("metricas")}>
         <dl className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
           {(
             [
@@ -465,7 +466,7 @@ export function AccountDrawer({
           ))}
         </dl>
       </Modal>
-      <Modal open={isOpen && modal === "shared"} onClose={close} title="Mural compartilhado">
+      <Modal open={isOpen && modal === "shared"} onClose={close} title={tx("muralCompartilhado")}>
         <SharedMurals plus={account.plan === "full"} onChanged={() => onSharedChanged?.()} onNotify={onNotify} />
       </Modal>
       <RewardsModal open={isOpen && modal === "rewards"} onClose={close} />
@@ -542,7 +543,7 @@ export function AccountDrawer({
                 {t("signOut")}
               </button>
               <LanguagePicker className="mx-auto mt-2 flex w-fit" />
-              <p className="mt-2 text-center text-[11px] text-[#a09080]">Desenvolvido por Jeferson Araújo</p>
+              <p className="mt-2 text-center text-[11px] text-[#a09080]">{tx("desenvolvidoPorJefersonAraujo")}</p>
             </footer>
           </div>
         )}

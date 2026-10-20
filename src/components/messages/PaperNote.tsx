@@ -1,18 +1,20 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { TapeSlot } from "./fasteners";
+import { useTranslations } from "next-intl";
 
 /**
  * Texto em folha. `letter`: papel liso rasgado com tinta azul.
  * `notebook`: folha de caderno pautada, com margem e furos.
  */
 export function PaperNote({ text, variant, font, tape }: { text: string; variant: "letter" | "notebook"; font?: HandId; tape?: TapeColor }) {
+  const tx = useTranslations("components.messages.PaperNote");
   const hand = handOf(font);
   const tone = tape ? tapeOf(tape).tone : undefined;
   if (variant === "letter") {
     return (
       <div className="relative w-[14em]">
       <article
-        aria-label="Texto"
+        aria-label={tx("texto")}
         className="paper-grain shadow-paper relative w-full min-h-[13.5em] bg-[#f5f0e2] px-[1.3em] pt-[1.9em] pb-[1.3em]"
         style={{
           clipPath:
@@ -32,7 +34,7 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
 
   return (
     <article
-      aria-label="Texto"
+      aria-label={tx("texto")}
       className="paper-grain shadow-paper relative w-[14em] min-h-[13.5em] bg-[#fbf7ea] pt-[1.9em] pr-[1em] pb-[1.4em] pl-[2.9em]"
       style={{
         borderRadius: "0.15em 0.15em 0.3em 0.15em",

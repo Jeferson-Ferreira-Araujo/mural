@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
+import { useTranslations } from "next-intl";
 
 /** Estilos do contador de dias: quente e entardecer são os de origem; os outros vêm dos estilos compartilhados. */
 const SKINS: Record<string, Skin> = {
@@ -32,6 +33,7 @@ const dayOf = (y: number, m: number, d: number) => Date.UTC(y, m - 1, d) / 86_40
  * Se a data ainda não chegou, mostra quantos dias faltam para começar. Cinco estilos, em formato retangular ou quadrado.
  */
 export function DaysWidget({ style = "warm", title, since, frame }: { style?: string; title?: string; since?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.DaysWidget");
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
@@ -52,7 +54,7 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
   const size = square ? (len >= 5 ? 3.3 : len === 4 ? 4.1 : len === 3 ? 5 : 6.2) : len >= 5 ? 3.6 : len === 4 ? 4.4 : 5.4;
 
   return (
-    <WidgetFrame frame={frame} label="Contador de dias" shape={shape}>
+    <WidgetFrame frame={frame} label={tx("contadorDeDias")} shape={shape}>
       <div className={`absolute inset-0 flex flex-col items-center text-center ${square ? "px-[1em] pt-[1.1em] pb-[1em]" : "px-[1.3em] pt-[0.9em] pb-[0.8em]"}`} style={{ background: skin.bg, color: skin.ink }}>
         {square ? (
           <Marquee text={name} className="text-[1.4em] leading-tight font-bold" />

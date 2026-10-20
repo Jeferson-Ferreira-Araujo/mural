@@ -8,6 +8,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { Skeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 type Step = "plans" | "gift" | "choose" | "pix" | "card" | "review" | "done" | "expired";
 
@@ -35,6 +36,7 @@ const GIFT_ERROR: Record<string, string> = {
  * depois o pagamento. O Pix mostra o QR code e o "copia e cola" aqui mesmo e confirma na tela assim que cair; o cartão usa o formulário seguro do Mercado Pago.
  */
 export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o pagamento foi confirmado: atualiza saldo e plano da tela */ onPaid: () => void }) {
+  const tx = useTranslations("components.account.PayModal");
   const [step, setStep] = useState<Step>("choose");
   const [target, setTarget] = useState<string | null>(null); // o que está sendo pago: "credits:<id>", "plus" (mensal), "plus_annual", "plus_life" ou "gift"
   const [recipient, setRecipient] = useState(""); // presente: nome de usuário de quem recebe
@@ -236,12 +238,11 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               <h2 className="font-title mt-4 text-2xl font-semibold">{target === "gift" ? "Presente enviado!" : target?.startsWith("plus") ? "PINZ+ ativado!" : "Pagamento confirmado!"}</h2>
               <p className="mt-1 text-[#4a3826]">{info?.done}</p>
               <button type="button" onClick={onClose} className={`${primaryButton} mt-6`}>
-                Continuar
-              </button>
+                {tx("continuar")}</button>
             </div>
           ) : step === "plans" ? (
             <div>
-              <p className="font-title text-xl font-semibold">Tudo do PINZ+</p>
+              <p className="font-title text-xl font-semibold">{tx("tudoDoPinz")}</p>
               <ul className="mt-2 space-y-1.5 text-[15px]">
                 {BENEFITS.map((t) => (
                   <li key={t} className="flex gap-2">
@@ -252,7 +253,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">Escolha o seu plano</p>
+              <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">{tx("escolhaOSeuPlano")}</p>
               <div className="space-y-3.5">
                 {planCard("plus", "Mensal (assinatura)", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago.")}
                 {planCard("plus_month", "1 mês", PLUS_PRICE_CENTS, "pagamento único", "Só quer usar por um mês? Pague uma vez com Pix ou cartão, sem renovação automática.")}
@@ -268,19 +269,18 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 className="mt-4 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-left transition hover:bg-white active:scale-[0.99]"
               >
                 <span>
-                  <span className="block text-base font-extrabold">🎁 Presentear alguém</span>
-                  <span className="block text-xs text-[#6b5440]">1 mês de PINZ+ para outro usuário. Só vale para outra pessoa.</span>
+                  <span className="block text-base font-extrabold">{tx("presentearAlguem")}</span>
+                  <span className="block text-xs text-[#6b5440]">{tx("t1MesDePinzPara")}</span>
                 </span>
                 <span className="shrink-0 text-lg font-extrabold">{brl(PLUS_GIFT_CENTS)}</span>
               </button>
             </div>
           ) : step === "gift" ? (
             <div>
-              <p className="font-title text-xl font-semibold">Presentear com 1 mês de PINZ+</p>
+              <p className="font-title text-xl font-semibold">{tx("presentearCom1MesDe")}</p>
               <p className="mt-1 text-sm text-[#4a3826]">Quem recebe ganha 30 dias de PINZ+ na hora e é avisado. Vale só para outro usuário, por {brl(PLUS_GIFT_CENTS)}.</p>
               <label htmlFor="gift-nick" className="mt-4 block text-sm font-semibold">
-                Nome de usuário da pessoa
-              </label>
+                {tx("nomeDeUsuarioDaPessoa")}</label>
               <input
                 id="gift-nick"
                 value={giftInput}
@@ -289,7 +289,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   setError(null);
                 }}
                 onKeyDown={(e) => e.key === "Enter" && void checkGift()}
-                placeholder="@usuario"
+                placeholder={tx("usuario")}
                 autoComplete="off"
                 autoCapitalize="none"
                 className="mt-1 w-full rounded-xl border border-[#d9c9ad] bg-white px-3 py-3 text-base outline-none focus:border-[#d98a2b]"
@@ -303,8 +303,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 {giftBusy ? "Conferindo…" : "Continuar"}
               </button>
               <button type="button" onClick={() => setStep("plans")} className={ghost}>
-                Voltar
-              </button>
+                {tx("voltar")}</button>
             </div>
           ) : (
             <>
@@ -317,17 +316,15 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
               {step === "choose" && (
                 <div className="mt-4 space-y-2.5">
-                  <p className="text-sm font-semibold text-[#6b5440]">Como você quer pagar?</p>
+                  <p className="text-sm font-semibold text-[#6b5440]">{tx("comoVoceQuerPagar")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} flex items-center justify-center gap-2`}>
                     {busy === "pix" ? "Gerando o Pix…" : "Pix · confirma na hora"}
                   </button>
                   <button type="button" disabled={busy !== null} onClick={() => setStep("card")} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
-                    Cartão de crédito ou débito
-                  </button>
+                    {tx("cartaoDeCreditoOuDebito")}</button>
                   {fromPlans && (
                     <button type="button" onClick={() => setStep(target === "gift" ? "gift" : "plans")} className={ghost}>
-                      Voltar
-                    </button>
+                      {tx("voltar")}</button>
                   )}
                 </div>
               )}
@@ -335,7 +332,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               {step === "card" && (
                 <div className="mt-4">
                   {cardState === "loading" && (
-                    <div role="status" aria-label="Carregando o formulário seguro" className="space-y-3 py-3">
+                    <div role="status" aria-label={tx("carregandoOFormularioSeguro")} className="space-y-3 py-3">
                       <Skeleton className="h-11 w-full rounded-xl" />
                       <div className="flex gap-3">
                         <Skeleton className="h-11 flex-1 rounded-xl" />
@@ -346,13 +343,11 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   )}
                   {cardState === "failed" && (
                     <p role="alert" className="py-3 text-center text-sm text-[#a23b2a]">
-                      Não foi possível abrir o formulário do cartão agora. Tente de novo ou pague com Pix.
-                    </p>
+                      {tx("naoFoiPossivelAbrirO")}</p>
                   )}
                   <div id="pinz-card-brick" />
                   <button type="button" onClick={() => setStep(plusTarget ? "plans" : "choose")} className={ghost}>
-                    Voltar
-                  </button>
+                    {tx("voltar")}</button>
                   <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plusTarget ? " Renova todo mês; cancele quando quiser em Planos." : ""}</p>
                 </div>
               )}
@@ -362,11 +357,10 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <p aria-hidden className="text-4xl">
                     ⏳
                   </p>
-                  <p className="font-title mt-2 text-xl font-semibold">Pagamento em análise</p>
-                  <p className="mt-1 text-[15px] text-[#4a3826]">Assim que o banco confirmar, o PINZ+ ou os créditos entram sozinhos.</p>
+                  <p className="font-title mt-2 text-xl font-semibold">{tx("pagamentoEmAnalise")}</p>
+                  <p className="mt-1 text-[15px] text-[#4a3826]">{tx("assimQueOBancoConfirmar")}</p>
                   <button type="button" onClick={onClose} className={`${primaryButton} mt-5`}>
-                    Continuar
-                  </button>
+                    {tx("continuar")}</button>
                 </div>
               )}
 
@@ -374,9 +368,9 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 <div className="mt-4 text-center">
                   {charge.qrBase64 && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`data:image/png;base64,${charge.qrBase64}`} alt="QR code do Pix" className="mx-auto size-52 rounded-xl border border-[#e1d3ba] bg-white p-2" />
+                    <img src={`data:image/png;base64,${charge.qrBase64}`} alt={tx("qrCodeDoPix")} className="mx-auto size-52 rounded-xl border border-[#e1d3ba] bg-white p-2" />
                   )}
-                  <p className="mt-3 text-sm text-[#4a3826]">Abra o app do seu banco, escolha Pix e leia o QR code, ou use o Pix copia e cola.</p>
+                  <p className="mt-3 text-sm text-[#4a3826]">{tx("abraOAppDoSeu")}</p>
                   <button type="button" onClick={() => void copy()} className={`${primaryButton} mt-3`}>
                     {copied ? "Código copiado!" : "Copiar código Pix"}
                   </button>
@@ -384,13 +378,13 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     <span aria-hidden className="size-2.5 animate-pulse rounded-full bg-[#d9a21b]" />
                     Aguardando o pagamento… {mm}:{ss}
                   </p>
-                  <p className="mt-1 text-xs text-[#8a7b69]">Assim que você pagar, esta tela confirma sozinha.</p>
+                  <p className="mt-1 text-xs text-[#8a7b69]">{tx("assimQueVocePagarEsta")}</p>
                 </div>
               )}
 
               {step === "expired" && (
                 <div className="mt-4 text-center">
-                  <p className="text-[15px] text-[#4a3826]">Esse código expirou ou não foi concluído. Nada foi cobrado.</p>
+                  <p className="text-[15px] text-[#4a3826]">{tx("esseCodigoExpirouOuNao")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} mt-4`}>
                     {busy ? "Gerando…" : "Gerar um novo código"}
                   </button>

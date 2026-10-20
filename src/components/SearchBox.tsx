@@ -5,9 +5,11 @@ import { Avatar } from "./Avatar";
 import { cleanNickname, myTopProfiles, searchProfiles, type ProfileHit } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { Tone } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 /** Busca de pessoas pelo nickname, com lista de resultados (combobox acessível). */
 export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onSelect: (nickname: string) => void; tone?: Tone; hideLabel?: boolean }) {
+  const tx = useTranslations("components.SearchBox");
   const dark = tone === "dark";
   const id = useId();
   const [q, setQ] = useState("");
@@ -79,8 +81,7 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
   return (
     <div className="relative">
       <label htmlFor={id} className={`${hideLabel ? "sr-only" : "mb-[0.5em] block"} block text-center text-[0.9em] font-semibold ${dark ? "text-white/90" : "text-[#4a3826]"}`}>
-        Pesquisar usuários
-      </label>
+        {tx("pesquisarUsuarios")}</label>
       <div className="relative">
         <svg viewBox="0 0 24 24" className={`pointer-events-none absolute top-1/2 left-[0.9em] size-[1.15em] -translate-y-1/2 ${dark ? "text-[#6b5440]" : "text-[#8a7b69]"}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="7" />
@@ -108,7 +109,7 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
           autoComplete="off"
           autoCapitalize="none"
           spellCheck={false}
-          placeholder="Ex: jeferson"
+          placeholder={tx("exJeferson")}
           className={`w-full rounded-[0.7em] border py-[0.75em] pr-[0.9em] pl-[2.5em] text-[1em] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#d98a2b]/70 ${
             dark ? "border-transparent bg-[#e9e5df] text-[#2f2218]" : "border-[#e1d3ba] bg-white/85 text-[#2f2218] focus:bg-white"
           }`}
@@ -123,13 +124,11 @@ export function SearchBox({ onSelect, tone = "light", hideLabel = false }: { onS
         >
           {showTop && (
             <li role="presentation" className="px-[0.8em] pt-[0.4em] pb-[0.3em] text-[0.72em] font-bold tracking-wide text-[#8a7b69] uppercase">
-              Mais acessados
-            </li>
+              {tx("maisAcessados")}</li>
           )}
           {shown.length === 0 ? (
             <li role="presentation" className="px-[0.9em] py-[0.8em] text-[0.9em] text-[#6b5440]">
-              Nenhuma pessoa encontrada.
-            </li>
+              {tx("nenhumaPessoaEncontrada")}</li>
           ) : (
             shown.map((h, i) => (
               <li key={h.nickname} role="presentation">

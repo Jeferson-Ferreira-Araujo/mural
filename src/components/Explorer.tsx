@@ -77,6 +77,7 @@ import { SearchBox } from "./SearchBox";
 import { Toast } from "./Toast";
 import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 
 /** "Salvar imagem do mural" fica desligado por enquanto (a qualidade da imagem ainda está em estudo). Ligue para reabrir no menu da conta. */
@@ -87,6 +88,7 @@ const EXPORT_IMAGE_ENABLED = false;
  * revela o quadro (que fica desfocado até lá). Também abre direto em um mural (`/nickname/mural`).
  */
 export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
+  const tx = useTranslations("components.Explorer");
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
   // /entrar?next=…: guarda o mural que a pessoa queria abrir; já logada, vai direto para ele
@@ -943,8 +945,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           {!logged && !sessionLoading && !initialRef && <AuthForm initialMode={authMode} />}
           {loading && (
             <p role="status" className={`text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>
-              Buscando…
-            </p>
+              {tx("buscando")}</p>
           )}
 
           {choices && (
@@ -969,31 +970,28 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           )}
 
           {selected && resolving && (
-            <div role="status" aria-label="Carregando" className="space-y-[0.6em]">
+            <div role="status" aria-label={tx("carregando")} className="space-y-[0.6em]">
               <span className={`skeleton block h-[2.4em] w-full rounded-[0.8em] ${dark ? "!bg-white/15 !bg-none" : ""}`} />
               <span className={`skeleton block h-[2.4em] w-3/4 rounded-[0.8em] ${dark ? "!bg-white/15 !bg-none" : ""}`} />
             </div>
           )}
           {selected && !resolving && isShared && !isMember && (
-            <section aria-label="Mural compartilhado" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
-              <p className="text-[1.05em] font-bold">🔒 Mural compartilhado</p>
-              <p className={`mt-[0.4em] text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>Este mural é privado: só as duas pessoas que o criaram conseguem abrir.</p>
+            <section aria-label={tx("muralCompartilhado")} className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
+              <p className="text-[1.05em] font-bold">{tx("muralCompartilhado2")}</p>
+              <p className={`mt-[0.4em] text-[0.9em] ${dark ? "text-white/70" : "text-[#6b5440]"}`}>{tx("esteMuralEPrivadoSo")}</p>
               {!logged && !sessionLoading && nick && slug && (
                 <a href={loginUrl(`/${nick}/${slug}`)} className="mt-[0.9em] block rounded-[0.6em] bg-[#d9a21b] px-[1em] py-[0.8em] text-center font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
-                  Entrar na minha conta
-                </a>
+                  {tx("entrarNaMinhaConta")}</a>
               )}
               <button type="button" onClick={logged ? () => setSearchOpen(true) : clear} className={`mt-[0.7em] cursor-pointer text-[0.85em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
-                Trocar de mural
-              </button>
+                {tx("trocarDeMural")}</button>
             </section>
           )}
           {selected && !resolving && isMember && selected.locked && (
-            <section aria-label="Mural bloqueado" role="status" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
-              <p className="text-[1.05em] font-bold">🔒 Esse mural está bloqueado, necessário que todos os participantes estejam com a conta Plus ativa.</p>
+            <section aria-label={tx("muralBloqueado")} role="status" className={`rounded-[1.1em] border p-[1.2em] ${dark ? "border-white/15 bg-[#1c1510]/70 text-[#f6efe2]" : "border-[#d9c9ad] bg-[#fbf6ea]/90 text-[#2f2218]"}`}>
+              <p className="text-[1.05em] font-bold">{tx("esseMuralEstaBloqueadoNecessario")}</p>
               <button type="button" onClick={logged ? () => setSearchOpen(true) : clear} className={`mt-[0.7em] cursor-pointer text-[0.85em] font-semibold underline ${dark ? "text-white/75" : "text-[#6b5440]"}`}>
-                Trocar de mural
-              </button>
+                {tx("trocarDeMural")}</button>
             </section>
           )}
           {selected && !resolving && !(isShared && !isMember) && !(isMember && selected.locked) && (
@@ -1289,7 +1287,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       {everSetup && <MuralSetupModal open={setupOpen} mural={own[0] ?? null} onClose={() => { setSetupOpen(false); setupPending.current = false; try { if (uid) localStorage.setItem(`pinz:mural-setup:${uid}`, "1"); } catch {} window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} onSaved={() => void reloadOwn()} />}
       {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); window.setTimeout(() => (setupPending.current ? setSetupOpen(true) : window.dispatchEvent(new CustomEvent("pinz:pan-hint"))), 400); }} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
       {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
-      <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label="Pins arquivados">
+      <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label={tx("pinsArquivados")}>
         {archivedNote && (
           <div className="space-y-4 px-1 pb-2 text-center text-[#2f2218]">
             <div className="text-4xl" aria-hidden>
@@ -1303,11 +1301,9 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             </p>
             <div className="flex gap-2">
               <button type="button" onClick={() => closeArchivedNote(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                Depois
-              </button>
+                {tx("depois")}</button>
               <button type="button" onClick={() => closeArchivedNote(true)} className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] hover:bg-[#e6ae22]">
-                Ver arquivados
-              </button>
+                {tx("verArquivados")}</button>
             </div>
           </div>
         )}

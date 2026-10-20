@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { companyDisplayName } from "@/lib/reserved";
 import { Modal } from "./Modal";
+import { useTranslations } from "next-intl";
 
 const key = (uid: string) => `pinz:tip:${uid}`;
 const RECENT_MS = 7 * 24 * 60 * 60 * 1000;
 
 /** Boas-vindas ("Olá <usuário>") com as instruções de uso: aparece uma vez, no primeiro acesso ao próprio mural depois de criar a conta. */
 export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: { uid?: string; createdAt?: string; /** o mural já está na tela */ ready: boolean; /** nome de usuário (aparece em "Olá ...") */ nick: string; /** conta de empresa (nome reservado): boas-vindas própria */ company?: boolean }) {
+  const tx = useTranslations("components.account.FirstTimeTip");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -38,30 +40,29 @@ export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: {
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             📌
           </span>
-          <p><strong>Colocar um pin:</strong> clique (ou toque) num espaço vazio do mural.</p>
+          <p><strong>{tx("colocarUmPin")}</strong> clique (ou toque) num espaço vazio do mural.</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🤏
           </span>
-          <p><strong>Zoom:</strong> pinça com dois dedos ou toque duplo. “Afastar” volta ao mural inteiro.</p>
+          <p><strong>{tx("zoom")}</strong> pinça com dois dedos ou toque duplo. “Afastar” volta ao mural inteiro.</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             ✋
           </span>
-          <p><strong>Mover:</strong> com o mural aproximado, arraste para ver o resto.</p>
+          <p><strong>{tx("mover")}</strong> com o mural aproximado, arraste para ver o resto.</p>
         </li>
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">
             🎨
           </span>
-          <p><strong>Bottons:</strong> arraste da barra de baixo para o mural. Para tirar, arraste de volta.</p>
+          <p><strong>{tx("bottons")}</strong> arraste da barra de baixo para o mural. Para tirar, arraste de volta.</p>
         </li>
       </ul>
       <button type="button" onClick={close} className="mt-6 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-base font-bold text-[#2a1c12] transition hover:bg-[#e6ae22]">
-        Entendi
-      </button>
+        {tx("entendi")}</button>
     </Modal>
   );
 }

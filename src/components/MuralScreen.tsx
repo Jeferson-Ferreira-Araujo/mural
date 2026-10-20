@@ -11,6 +11,7 @@ import type { SendPayload } from "./composer/types";
 import { DesktopBoard } from "./DesktopBoard";
 import { MobileCarousel } from "./MobileCarousel";
 import type { ViewProps } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 /** Como o botão "Deixar uma mensagem" se comporta. */
 export type ComposerMode =
@@ -28,6 +29,7 @@ type Props = Omit<ViewProps, "onCompose"> & { composer: ComposerMode };
  * As duas versões são renderizadas e alternadas por CSS (sem flash de layout no carregamento).
  */
 export function MuralScreen({ composer, ...view }: Props) {
+  const tx = useTranslations("components.MuralScreen");
   const [open, setOpen] = useState(false);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
@@ -108,23 +110,20 @@ export function MuralScreen({ composer, ...view }: Props) {
           }}
         />
       )}
-      <Modal open={!!blocked} onClose={() => setBlocked(null)} title="Aguarde um pouco">
+      <Modal open={!!blocked} onClose={() => setBlocked(null)} title={tx("aguardeUmPouco")}>
         <p className="text-[15px] leading-relaxed">{blocked}</p>
         <button type="button" onClick={() => setBlocked(null)} className="mt-5 w-full cursor-pointer rounded-xl bg-[#1f232b] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
-          Entendi
-        </button>
+          {tx("entendi")}</button>
       </Modal>
-      <Modal open={needAccount} onClose={() => setNeedAccount(false)} title="Crie uma conta para publicar">
-        <p className="text-[15px] leading-relaxed">Para deixar um pin neste mural você precisa ter uma conta. É rapidinho, e depois você volta direto para cá.</p>
+      <Modal open={needAccount} onClose={() => setNeedAccount(false)} title={tx("crieUmaContaParaPublicar")}>
+        <p className="text-[15px] leading-relaxed">{tx("paraDeixarUmPinNeste")}</p>
         {composer.mode === "demo" && (
           <div className="mt-5 flex flex-col gap-2">
             <a href={composer.signupHref} className="block rounded-xl bg-[#d9a21b] px-4 py-3 text-center font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2a1c12]">
-              Criar minha conta
-            </a>
+              {tx("criarMinhaConta")}</a>
             {composer.loginHref && (
               <a href={composer.loginHref} className="block rounded-xl border border-[#d9c9ad] bg-white/60 px-4 py-3 text-center text-sm font-semibold text-[#4a3826] transition hover:bg-white">
-                Já tenho conta
-              </a>
+                {tx("jaTenhoConta")}</a>
             )}
           </div>
         )}

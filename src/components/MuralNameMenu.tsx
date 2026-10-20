@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { listSharedMurals, type SharedMural } from "@/lib/shared";
 import { getBrowserSupabase } from "@/lib/supabase";
 import type { MuralSwitch } from "./MuralSwitcher";
+import { useTranslations } from "next-intl";
 
 /**
  * Nome do mural aberto. Quando a pessoa tem outros murais, aparece uma seta para baixo ao lado do nome: tocar abre a lista dos outros
  * murais e, no fim, os murais compartilhados com alguém (se houver). Sem outros murais, é só o nome.
  */
 export function MuralNameMenu({ title, sw, showShared = false, align = "left", className = "", label, triggerClassName, onCreate }: { /** PINZ+: a primeira opção do menu é criar um mural novo */ onCreate?: () => void; title: string; sw?: MuralSwitch; /** em vez do nome do mural, mostra só este rótulo (ex.: "Murais") e a lista traz TODOS os murais; sem outros murais, nada aparece (celular: nomes grandes não quebram o layout) */ label?: string; /** aparência do botão que abre a lista (ex.: pílula escura sobre o quadro) */ triggerClassName?: string; /** estou vendo um mural meu: lista também os compartilhados */ showShared?: boolean; align?: "left" | "right"; className?: string }) {
+  const tx = useTranslations("components.MuralNameMenu");
   const [open, setOpen] = useState(false);
   const [shared, setShared] = useState<SharedMural[] | null>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -61,7 +63,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
               <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
                 <path d="M12 5v14M5 12h14" />
               </svg>
-              <span className="min-w-0 flex-1 truncate">Criar novo mural</span>
+              <span className="min-w-0 flex-1 truncate">{tx("criarNovoMural")}</span>
             </button>
           )}
           {listed.length > 0 && (
@@ -81,7 +83,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
                     className={`${item} ${here ? "bg-[#f3e7cc]" : ""}`}
                   >
                     <span className="min-w-0 flex-1 truncate">{m.title}</span>
-                    {here && <span className="shrink-0 text-xs font-bold text-[#8a6a2a]">✓ aberto</span>}
+                    {here && <span className="shrink-0 text-xs font-bold text-[#8a6a2a]">{tx("aberto")}</span>}
                   </button>
                 );
               })}
@@ -89,7 +91,7 @@ export function MuralNameMenu({ title, sw, showShared = false, align = "left", c
           )}
           {sharedList.length > 0 && (
             <>
-              <p className={`px-3 pt-1.5 pb-1 text-[11px] font-bold tracking-wide text-[#8a6a2a] uppercase ${others.length > 0 ? "mt-1 border-t border-[#e1d3ba] pt-2.5" : ""}`}>Compartilhados</p>
+              <p className={`px-3 pt-1.5 pb-1 text-[11px] font-bold tracking-wide text-[#8a6a2a] uppercase ${others.length > 0 ? "mt-1 border-t border-[#e1d3ba] pt-2.5" : ""}`}>{tx("compartilhados")}</p>
               {sharedList.map((m) => (
                 <a key={m.id} role="menuitem" href={`/${m.owner}/${m.slug}`} className={item}>
                   <span className="min-w-0 flex-1 truncate">{m.title}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { inputClass } from "../ui";
+import { useTranslations } from "next-intl";
 
 export type CapsuleValue = { enabled: boolean; at: string };
 
@@ -24,6 +25,7 @@ export function capsuleDateOk(v: CapsuleValue, now = Date.now()) {
  * Só é renderizado quando o mural é PINZ+ (o visitante nunca vê isso em um mural FREE).
  */
 export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChange: (v: CapsuleValue) => void }) {
+  const tx = useTranslations("components.composer.CapsuleOption");
   const min = toLocalInput(new Date(Date.now() + MIN_AHEAD_MS));
   const quick = (days: number) => toLocalInput(new Date(Date.now() + days * 86_400_000));
   const ok = capsuleDateOk(value);
@@ -33,16 +35,15 @@ export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChan
       <label className="flex cursor-pointer items-start gap-3">
         <input type="checkbox" checked={value.enabled} onChange={(e) => onChange({ ...value, enabled: e.target.checked })} className="mt-1 size-5 shrink-0 cursor-pointer accent-[#b3201a]" />
         <span>
-          <span className="block text-[15px] font-bold">🔒 Enviar como Cápsula PINZ</span>
-          <span className="block text-sm text-[#6b5440]">A mensagem fica fechada e só abre na data que você escolher.</span>
+          <span className="block text-[15px] font-bold">{tx("enviarComoCapsulaPinz")}</span>
+          <span className="block text-sm text-[#6b5440]">{tx("aMensagemFicaFechadaE")}</span>
         </span>
       </label>
 
       {value.enabled && (
         <div className="mt-3 space-y-2">
           <label htmlFor="capsule-at" className="block text-sm font-semibold">
-            Abrir em
-          </label>
+            {tx("abrirEm")}</label>
           <input
             id="capsule-at"
             type="datetime-local"
@@ -61,8 +62,7 @@ export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChan
           </div>
           {!ok && (
             <p role="alert" className="text-sm text-[#a23b2a]">
-              Escolha uma data e hora no futuro (pelo menos 10 minutos).
-            </p>
+              {tx("escolhaUmaDataEHora")}</p>
           )}
         </div>
       )}

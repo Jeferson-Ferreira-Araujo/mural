@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
+import { useTranslations } from "next-intl";
 
 const MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 const WEEKDAYS = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -33,6 +34,7 @@ function useToday() {
  * Os dois de origem no retangular (folha e noite) têm o desenho próprio de sempre; os demais usam o desenho comum com faixa do mês.
  */
 export function DateWidget({ style = "page", frame }: { style?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.DateWidget");
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
@@ -47,7 +49,7 @@ export function DateWidget({ style = "page", frame }: { style?: string; frame?: 
   // desenhos de origem (só no retangular)
   if (!square && base === "night") {
     return (
-      <WidgetFrame frame={frame} label="Calendário do dia">
+      <WidgetFrame frame={frame} label={tx("calendarioDoDia")}>
         <div className="absolute inset-0 flex items-center justify-center gap-[1.6em] px-[1.6em]" style={{ background: "linear-gradient(145deg,#1b2433,#0b1018)", color: "#eef2f7" }}>
           <span className="text-[6.2em] leading-none font-semibold tabular-nums" style={{ color: "#5cc4ff", textShadow: "0 0.04em 0.3em rgba(92,196,255,.35)" }}>
             {day}
@@ -67,7 +69,7 @@ export function DateWidget({ style = "page", frame }: { style?: string; frame?: 
 
   // desenho comum: faixa do mês em cima e o dia grande (ao lado do dia da semana no retangular; embaixo no quadrado)
   return (
-    <WidgetFrame frame={frame} label="Calendário do dia" shape={shape}>
+    <WidgetFrame frame={frame} label={tx("calendarioDoDia")} shape={shape}>
       <div className="absolute inset-0 flex flex-col" style={{ background: sk.bg, color: sk.ink }}>
         {/* faixa do mês, como na folha de um calendário de parede */}
         <div className={`flex shrink-0 items-center justify-between ${square ? "px-[1em] py-[0.6em]" : "px-[1.4em] py-[0.55em]"}`} style={{ background: page ? "linear-gradient(180deg,#e0524a,#c33a32)" : sk.accent, color: page ? "#fff" : sk.onAccent }}>

@@ -4,6 +4,7 @@ import { useEffect, useState, type ElementType, type FormEvent } from "react";
 import type { UnlockResult } from "@/lib/mural";
 import { Avatar } from "./Avatar";
 import { ShareButton } from "./ShareButton";
+import { useTranslations } from "next-intl";
 
 type Props = {
   question: string;
@@ -50,6 +51,7 @@ const LockIcon = () => (
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
 export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
+  const tx = useTranslations("components.UnlockPanel");
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -101,24 +103,24 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     if (unlocked || open) return null;
     if (blocked)
       return (
-        <section aria-label="Mural bloqueado" className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+        <section aria-label={tx("muralBloqueado")} className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
           <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
             <LockIcon />
           </span>
-          <h2 className="font-title mt-[0.9em] text-[1.7em] leading-tight font-semibold">Mural bloqueado</h2>
+          <h2 className="font-title mt-[0.9em] text-[1.7em] leading-tight font-semibold">{tx("muralBloqueado")}</h2>
           <p role="status" className="mt-[0.6em] text-[1em] text-white/80">
             {blockedText}
           </p>
         </section>
       );
     return (
-      <section aria-label="Acesso ao mural" className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+      <section aria-label={tx("acessoAoMural")} className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
         <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
           <LockIcon />
         </span>
         <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? "Mural compartilhado" : "Mural privado"}</p>
         <h2 className="font-title mt-[0.45em] text-[1.9em] leading-tight font-semibold [overflow-wrap:anywhere]">{question}</h2>
-        {password && <p className="mt-[0.6em] text-[0.95em] text-white/75">Digite a senha para entrar.</p>}
+        {password && <p className="mt-[0.6em] text-[0.95em] text-white/75">{tx("digiteASenhaParaEntrar")}</p>}
         <form onSubmit={submit} noValidate className="mt-[1.2em] text-left">
           <label htmlFor={inputId} className="sr-only">
             {question}
@@ -159,7 +161,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
 
   return (
     <section
-      aria-label="Acesso ao mural"
+      aria-label={tx("acessoAoMural")}
       className={
         dark
           ? "rounded-[1.1em] border border-white/15 bg-[#1c1510]/70 p-[1.2em] text-[#f6efe2] shadow-[0_0.6em_2em_rgba(0,0,0,.45)] backdrop-blur-md"
@@ -176,7 +178,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words lg:text-[1.45em]">{owner ? `@${owner}` : title}</span>
               {plus && (
-                <span className="mt-[0.35em] inline-block rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">PINZ+</span>
+                <span className="mt-[0.35em] inline-block rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-[0.8em] py-[0.3em] text-[0.7em] leading-none font-bold tracking-wide text-[#3a2300] shadow-[0_0.15em_0.5em_rgba(150,90,0,.4)]">{tx("pinz")}</span>
               )}
             </p>
           </Wrap>
@@ -205,7 +207,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       )}
       {profileOnly ? null : open ? null : unlocked ? (
         <div className="rise" role="status">
-          <p className="text-[1.05em] leading-tight font-semibold">🔓 Mural desbloqueado</p>
+          <p className="text-[1.05em] leading-tight font-semibold">{tx("muralDesbloqueado")}</p>
         </div>
       ) : blocked ? (
         <div role="status" className="rise">

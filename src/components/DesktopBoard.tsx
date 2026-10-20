@@ -15,6 +15,7 @@ import { PlanLimit } from "./PlanLimit";
 import { Sidebar } from "./Sidebar";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import type { ViewProps } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
 export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve de fundo desfocado: a versão pequena basta
@@ -24,6 +25,7 @@ export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve d
  * Fica desfocado até a pessoa acertar a pergunta de desbloqueio.
  */
 export function DesktopBoard(props: ViewProps) {
+  const tx = useTranslations("components.DesktopBoard");
   const lockForm = props.locked ? props.panel("dark", "form") : null;
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
@@ -45,7 +47,7 @@ export function DesktopBoard(props: ViewProps) {
 
         <div className="relative h-full w-[min(100%,150dvh)] shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2]">
 
-        <nav aria-label="Informações do mural" className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
+        <nav aria-label={tx("informacoesDoMural")} className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && !locked && props.muralInfo?.title && (
@@ -67,18 +69,18 @@ export function DesktopBoard(props: ViewProps) {
             )}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
-              <ShareButton reward iconOnly title="Convidar pessoas para ver este mural" text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
+              <ShareButton reward iconOnly title={tx("convidarPessoasParaVerEste")} text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />
             )}
           </div>
           <div className="pointer-events-auto flex items-center gap-2">
             {/* acessibilidade em destaque só na tela de entrada (sem login); depois do login vale o que a conta salvou e o atalho fica no menu da conta */}
             {!account && (
-              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label="Acessibilidade" title="Acessibilidade" className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-3.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label={tx("acessibilidade")} title={tx("acessibilidade")} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-3.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
                 <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <circle cx="12" cy="4.5" r="1.8" />
                   <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
                 </svg>
-                <span>Acessibilidade</span>
+                <span>{tx("acessibilidade")}</span>
               </button>
             )}
             {/* pesquisar usuários e notificações: no canto superior direito, no mural do dono e no de visitas */}

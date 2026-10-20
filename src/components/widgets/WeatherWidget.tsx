@@ -4,6 +4,7 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import type { SceneId } from "./scenes";
 import { useViewerCoords } from "@/lib/geo";
 import { describe, Marquee, tempTint, useWeather, WeatherGlyph, WidgetFrame, type WeatherKind } from "./core";
+import { useTranslations } from "next-intl";
 
 export type WeatherStyle = "nature" | "pixel" | "tech" | "sky" | "rain" | "night";
 const MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, monospace';
@@ -26,12 +27,13 @@ function sceneFor(style: string, kind: WeatherKind, night: boolean, temp: number
 
 /** Clima quadrado (12 × 12 em): o desenho do tempo em cima, a temperatura grande no meio e a cidade e o tempo embaixo. */
 function WeatherSquare({ st, scene, kind, night, temp, label, cityName, d, frame, tint }: { tint: string | null; st: string; scene: SceneId; kind: WeatherKind; night: boolean; temp: string; label: string; cityName: string; d: ReturnType<typeof describe> | null; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.WeatherWidget");
   const pixel = st === "pixel";
   const tech = st === "tech";
   const font = pixel ? "var(--font-silk), monospace" : tech ? MONO : undefined;
   const glyphKind: WeatherKind = st === "rain" ? (d && d.kind !== "clear" && d.kind !== "partly" ? d.kind : "rain") : kind;
   return (
-    <WidgetFrame frame={frame} label="Clima" scene={scene} shape="square">
+    <WidgetFrame frame={frame} label={tx("clima")} scene={scene} shape="square">
       {tint && <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: tint }} />}
       <div className="absolute inset-0 flex flex-col items-center justify-between px-[1em] pt-[0.8em] pb-[0.9em] text-center" style={tech ? { fontFamily: MONO, textTransform: "uppercase", letterSpacing: "0.06em" } : undefined}>
         <span className={`${tech ? "size-[3.4em] text-[#5cf0ff]" : "size-[4.2em] text-white"}`}>
@@ -53,6 +55,7 @@ function WeatherSquare({ st, scene, kind, night, temp, label, cityName, d, frame
 
 /** Clima: cinco estilos, em formato retangular ou quadrado. O tempo agora na cidade escolhida pelo dono, sempre atualizado. */
 export function WeatherWidget({ style = "sky", city, lat, lon, frame, preview = false }: { style?: string; city?: string; lat?: number; lon?: number; frame?: string | null; /** prévia (loja, formulário): usa só a cidade escolhida, sem pedir a localização de quem vê */ preview?: boolean }) {
+  const tx = useTranslations("components.widgets.WeatherWidget");
   // o tempo é o do lugar onde QUEM VÊ está (o navegador pergunta uma vez); sem permissão, vale a cidade escolhida pelo dono
   const ownerSample = lat === undefined || lon === undefined || (lat === 0 && lon === 0);
   const viewer = useViewerCoords(!preview && !ownerSample);
@@ -78,7 +81,7 @@ export function WeatherWidget({ style = "sky", city, lat, lon, frame, preview = 
   // rain: a cidade em cima, à esquerda; a temperatura grande embaixo; nuvem com gotas à direita
   if (st === "rain") {
     return (
-      <WidgetFrame frame={frame} label="Clima" scene="rain">
+      <WidgetFrame frame={frame} label={tx("clima")} scene="rain">
         {tint && <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: tint }} />}
         <p className="absolute top-[0.9em] left-[1.3em] max-w-[11em] truncate text-[0.95em] font-medium opacity-90">{cityName}</p>
         <div className="absolute bottom-[0.9em] left-[1.3em] leading-none">
@@ -95,7 +98,7 @@ export function WeatherWidget({ style = "sky", city, lat, lon, frame, preview = 
   }
 
   return (
-    <WidgetFrame frame={frame} label="Clima" scene={scene}>
+    <WidgetFrame frame={frame} label={tx("clima")} scene={scene}>
       {tint && <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: tint }} />}
       <div className="absolute inset-0 flex items-center gap-[0.7em] pr-[5em] pl-[1.5em]" style={tech ? { fontFamily: MONO, textTransform: "uppercase", letterSpacing: "0.06em" } : undefined}>
         <p className="shrink-0 tabular-nums" style={{ fontSize: pixel ? "3.9em" : "4.5em", fontWeight: 700, fontFamily: font, lineHeight: 1 }}>

@@ -10,11 +10,13 @@ import { MessageView } from "../messages/MessageView";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
 
 export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: { reason: ReportReason; details: string; block: boolean }) => void; onCancel: () => void; /** dentro de uma janela própria: sem moldura nem título */ inModal?: boolean }) {
+  const tx = useTranslations("components.account.PinsModal");
   const [reason, setReason] = useState<ReportReason>("ofensa");
   const [details, setDetails] = useState("");
   const [block, setBlock] = useState(true);
@@ -26,26 +28,24 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
         onSend({ reason, details: details.trim(), block });
       }}
     >
-      {!inModal && <p className="text-sm font-semibold">Denunciar</p>}
-      <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} aria-label="Motivo" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm">
+      {!inModal && <p className="text-sm font-semibold">{tx("denunciar")}</p>}
+      <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} aria-label={tx("motivo")} className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm">
         {REPORT_REASONS.map((r) => (
           <option key={r.id} value={r.id}>
             {r.label}
           </option>
         ))}
       </select>
-      <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={inModal ? 4 : 2} placeholder="O que aconteceu? (opcional)" className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm" />
+      <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={inModal ? 4 : 2} placeholder={tx("oQueAconteceuOpcional")} className="w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm" />
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="mt-1 size-4" />
-        <span>Bloquear quem enviou</span>
+        <span>{tx("bloquearQuemEnviou")}</span>
       </label>
       <div className="flex gap-2">
         <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
-          Denunciar
-        </button>
+          {tx("denunciar")}</button>
         <button type="button" onClick={onCancel} className="cursor-pointer rounded-lg border border-[#d9c9ad] px-3 py-1.5 text-sm font-semibold">
-          Cancelar
-        </button>
+          {tx("cancelar")}</button>
       </div>
     </form>
   );
@@ -56,6 +56,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
  * (os que passaram do prazo de validade do mural e saíram dele: dá para colocar de volta).
  */
 export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals", ttlDays = null, onTtlSaved }: { /** validade atual dos pins de outras pessoas neste mural (null = sem prazo) */ ttlDays?: 7 | 15 | 30 | null; /** a validade mudou aqui: atualiza os dados do mural */ onTtlSaved?: () => void; /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
+  const tx = useTranslations("components.account.PinsModal");
   const [section, setSection] = useState<"approvals" | "archived">("approvals");
   const [archived, setArchived] = useState<ArchivedPin[] | null>(null);
   const [archNote, setArchNote] = useState<{ ok: boolean; text: string } | null>(null);
@@ -162,16 +163,13 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         {tab === "pending" ? (
           <>
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>
-              Excluir
-            </button>
+              {tx("excluir")}</button>
             {full && (
-              <button type="button" className={btn} disabled={busy === p.id} title="Aprova e deixa em segredo (os visitantes veem o pin borrado)" onClick={() => void approve(p.id, true)}>
-                Aprovar como segredo
-              </button>
+              <button type="button" className={btn} disabled={busy === p.id} title={tx("aprovaEDeixaEmSegredo")} onClick={() => void approve(p.id, true)}>
+                {tx("aprovarComoSegredo")}</button>
             )}
             <button type="button" className={primary} disabled={busy === p.id} onClick={() => void approve(p.id, false)}>
-              Aprovar
-            </button>
+              {tx("aprovar")}</button>
           </>
         ) : (
           <>
@@ -181,21 +179,19 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
               </button>
             )}
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>
-              Remover
-            </button>
+              {tx("remover")}</button>
           </>
         )}
         <button type="button" className={`${btn} !border-[#c0463a]/50 !text-[#a23b2a]`} disabled={busy === p.id} onClick={() => setReporting(reporting === p.id ? null : p.id)}>
-          🚩 Denunciar
-        </button>
+          {tx("denunciar2")}</button>
       </div>
       {reporting === p.id && <ReportBox onCancel={() => setReporting(null)} onSend={(r) => run(p.id, () => reportPin(sb, p.id, r.reason, r.details, r.block))} />}
     </div>
   );
 
   return (
-    <Modal open={open} onClose={onClose} title="Meus pins" wide>
-      <div role="tablist" aria-label="Meus pins" className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
+    <Modal open={open} onClose={onClose} title={tx("meusPins")} wide>
+      <div role="tablist" aria-label={tx("meusPins")} className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
         {(
           [
             ["approvals", "Aprovações", pending.length],
@@ -209,10 +205,10 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         ))}
       </div>
       {ask && (
-        <div role="dialog" aria-label="Tempo de exibição dos pinz" className="mb-4 rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-4 text-[#2f2218]">
-          <p className="font-title text-lg font-semibold">Por quanto tempo os pins ficam no mural?</p>
-          <p className="mt-1 text-sm text-[#4a3826]">Os pins que outras pessoas colocam podem sair do mural depois de um tempo. Eles não são apagados: ficam guardados em Meus pins &gt; Arquivados, e você coloca de volta quando quiser. Seus próprios pins nunca saem. Dá para mudar depois em Editar mural.</p>
-          <div role="radiogroup" aria-label="Validade" className="mt-3 space-y-2">
+        <div role="dialog" aria-label={tx("tempoDeExibicaoDosPinz")} className="mb-4 rounded-2xl border border-[#ecd9a0] bg-[#fff6dd] p-4 text-[#2f2218]">
+          <p className="font-title text-lg font-semibold">{tx("porQuantoTempoOsPins")}</p>
+          <p className="mt-1 text-sm text-[#4a3826]">{tx("osPinsQueOutrasPessoas")}</p>
+          <div role="radiogroup" aria-label={tx("validade")} className="mt-3 space-y-2">
             {(
               [
                 [7, "7 dias"],
@@ -228,11 +224,9 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
           </div>
           <div className="mt-3 flex gap-2">
             <button type="button" className={`${btn} flex-1`} onClick={() => setAsk(null)}>
-              Voltar
-            </button>
+              {tx("voltar")}</button>
             <button type="button" className={`${primary} flex-1`} disabled={busy === ask.id} onClick={() => void confirmAsk()}>
-              Salvar e aprovar
-            </button>
+              {tx("salvarEAprovar")}</button>
           </div>
         </div>
       )}
@@ -244,11 +238,11 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
             </p>
           )}
           {!archived ? (
-            <CardSkeleton label="Carregando os pins" />
+            <CardSkeleton label={tx("carregandoOsPins")} />
           ) : archived.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin arquivado. Quando algum pin ultrapassar o tempo limite de exibição definido em Editar mural, ele vem para esta tela. Aqui você pode visualizá-lo e, com um clique, colocá-lo de volta no mural, no mesmo lugar onde estava. Se esse lugar estiver ocupado, ele vai para o primeiro espaço livre; se o mural estiver cheio, avisamos.</p>
+            <p className="py-8 text-center text-sm text-[#6b5440]">{tx("nenhumPinArquivadoQuandoAlgum")}</p>
           ) : (
-            <Carousel label="Pins arquivados">
+            <Carousel label={tx("pinsArquivados")}>
               {archived.map((a) => (
                 <div key={a.id} className="text-center">
                   <div className="grid min-h-[15rem] place-items-center py-3 text-[min(21px,5vw)]">
@@ -279,9 +273,9 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         </p>
       )}
       {!pins ? (
-        <CardSkeleton label="Carregando os pins" />
+        <CardSkeleton label={tx("carregandoOsPins")} />
       ) : list.length === 0 ? (
-        <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin aguardando aprovação no momento. Quando alguém colocar um pin no seu mural, ele aparece aqui.</p>
+        <p className="py-8 text-center text-sm text-[#6b5440]">{tx("nenhumPinAguardandoAprovacaoNo")}</p>
       ) : (
         <>
           {tab === "pending" && (

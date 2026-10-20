@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { confirmEmailCode, markCompanyWelcome, sendEmailCode, setFinalizing, type ConfirmFailure } from "@/lib/reserved";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "./ui";
+import { useTranslations } from "next-intl";
 
 const TEXT: Record<ConfirmFailure, string> = {
   wrong_code: "Código incorreto ou vencido. Confira o e-mail ou peça um novo código.",
@@ -18,6 +19,7 @@ const TEXT: Record<ConfirmFailure, string> = {
  * `onDone` recebe o nome de usuário já definido.
  */
 export function CodeStep({ email, nick, password, onDone, onBack }: { email: string; nick: string; password: string; onDone: (nickname: string) => void; onBack: () => void }) {
+  const tx = useTranslations("components.CodeStep");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,13 +61,13 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
   }
 
   return (
-    <section aria-label="Confirmar e-mail" className="rounded-2xl bg-[#fbf6ea] p-4 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
-      <p className="font-title text-xl font-semibold">Confirme seu e-mail ✉️</p>
+    <section aria-label={tx("confirmarEMail")} className="rounded-2xl bg-[#fbf6ea] p-4 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
+      <p className="font-title text-xl font-semibold">{tx("confirmeSeuEMail")}</p>
       <p role="status" className="mt-2 text-[#4a3826]">
         Um código foi enviado para <strong>{email}</strong>. Confirme para ter acesso à conta: sem a confirmação, você não consegue entrar.
       </p>
       <form onSubmit={submit} noValidate className="mt-4 space-y-3">
-        <Field label="Código" error={error}>
+        <Field label={tx("codigo")} error={error}>
           {(id) => <input id={id} value={code} onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 10)); setError(null); }} inputMode="numeric" autoComplete="one-time-code" placeholder="000000" className={`${inputClass} text-center text-xl tracking-[0.4em]`} />}
         </Field>
         {info && <p className="text-sm text-[#2f6a3c]">{info}</p>}
@@ -77,8 +79,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
             {wait > 0 ? `Enviar outro código (${wait}s)` : "Enviar outro código"}
           </button>
           <button type="button" onClick={() => { setFinalizing(false); onBack(); }} className={`${ghostButton} flex-1`}>
-            Voltar
-          </button>
+            {tx("voltar")}</button>
         </div>
       </form>
     </section>

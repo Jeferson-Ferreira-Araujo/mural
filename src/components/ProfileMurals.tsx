@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import { getProfileMurals, type ProfileMurals as Profile } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AuthShell, ghostButton, Spinner } from "@/components/ui";
+import { useTranslations } from "next-intl";
 
 /** Página da pessoa (só para quem entrou na conta): abre direto o primeiro mural dela. */
 export function ProfileMurals({ nick }: { nick: string }) {
+  const tx = useTranslations("components.ProfileMurals");
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
 
@@ -31,10 +33,9 @@ export function ProfileMurals({ nick }: { nick: string }) {
   if (!profile) {
     return (
       <AuthShell>
-        <h1 className="font-title text-2xl font-semibold">Pessoa não encontrada</h1>
+        <h1 className="font-title text-2xl font-semibold">{tx("pessoaNaoEncontrada")}</h1>
         <Link href="/" className={`${ghostButton} mt-6`}>
-          Voltar
-        </Link>
+          {tx("voltar")}</Link>
       </AuthShell>
     );
   }
@@ -43,7 +44,7 @@ export function ProfileMurals({ nick }: { nick: string }) {
     <AuthShell>
       <h1 className="font-title text-2xl font-semibold">Murais de {profile.nickname}</h1>
       {profile.murals.length === 0 ? (
-        <p className="mt-3 text-[#4a3826]">Essa pessoa ainda não criou nenhum mural.</p>
+        <p className="mt-3 text-[#4a3826]">{tx("essaPessoaAindaNaoCriou")}</p>
       ) : (
         <ul className="mt-5 space-y-3">
           {profile.murals.map((m) => (

@@ -7,12 +7,14 @@ import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
+import { useTranslations } from "next-intl";
 
 /**
  * Primeiro mural da conta nova (que já nasce pronto, com nome padrão): pergunta o nome, se é público ou privado (com a pergunta de segurança)
  * e por quanto tempo ficam os pins de outras pessoas. Tudo dá para mudar depois em Meus murais.
  */
 export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boolean; onClose: () => void; mural: OwnMural | null; onSaved: () => void }) {
+  const tx = useTranslations("components.account.MuralSetupModal");
   const [title, setTitle] = useState("");
   const [privacy, setPrivacy] = useState<Privacy>({ priv: false, question: "", answer: "" });
   const [ttl, setTtl] = useState<PinTtl>(null);
@@ -49,10 +51,10 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Configure seu mural" label="Configure seu mural">
+    <Modal open={open} onClose={onClose} title={tx("configureSeuMural")} label={tx("configureSeuMural")}>
       <form onSubmit={save} noValidate className="space-y-4">
-        <p className="text-sm text-[#4a3826]">Seu mural já está no ar. Escolha o nome, quem pode abrir e por quanto tempo ficam os pins de outras pessoas. Você muda tudo depois em Meus murais.</p>
-        <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
+        <p className="text-sm text-[#4a3826]">{tx("seuMuralJaEstaNo")}</p>
+        <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exViagemDe2026")} className={inputClass} />}</Field>
         <PrivacyField value={privacy} onChange={setPrivacy} />
         <PinTtlField value={ttl} onChange={setTtl} />
         {error && (
@@ -62,8 +64,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
         )}
         <div className="flex gap-2">
           <button type="button" onClick={onClose} disabled={busy} className={`${ghostButton} flex-1`}>
-            Depois
-          </button>
+            {tx("depois")}</button>
           <button type="submit" disabled={busy} className={`${primaryButton} flex-1`}>
             {busy ? "Salvando…" : "Salvar"}
           </button>

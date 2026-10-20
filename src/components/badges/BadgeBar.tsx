@@ -5,6 +5,7 @@ import { BADGES, badgeSrc } from "@/lib/badges";
 import { BADGE_CATEGORY, BADGE_CATEGORIES } from "@/lib/badgeCategories";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
+import { useTranslations } from "next-intl";
 
 
 /**
@@ -13,6 +14,7 @@ import { useBadges } from "./BadgeContext";
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
 export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
+  const tx = useTranslations("components.badges.BadgeBar");
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   const [openCat, setOpenCat] = useState<string | null>(null); // categoria com o painel aberto (abre para cima)
   const box = useRef<HTMLElement>(null);
@@ -99,19 +101,19 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   };
   const openList = ordered.find(([c]) => c === openCat)?.[1] ?? null;
   const storeBtn = (
-        <button type="button" onClick={openStore} data-tour="store" aria-label="Loja de Bottons" title="Loja" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+        <button type="button" onClick={openStore} data-tour="store" aria-label={tx("lojaDeBottons")} title={tx("loja")} className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
             <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8" />
           </svg>
-          <span className="text-[11px] leading-none font-bold">Loja</span>
+          <span className="text-[11px] leading-none font-bold">{tx("loja")}</span>
         </button>
   );
   const rewardsBtn = (
-        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_REWARDS_EVENT))} data-tour="rewards" aria-label="Ganhar créditos" title="Ganhar créditos" className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_REWARDS_EVENT))} data-tour="rewards" aria-label={tx("ganharCreditos")} title={tx("ganharCreditos")} className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/moeda.webp" alt="" aria-hidden draggable={false} className="pointer-events-none size-5 select-none object-contain" />
-          <span className="text-[11px] leading-none font-bold">Ganhar</span>
+          <span className="text-[11px] leading-none font-bold">{tx("ganhar")}</span>
         </button>
   );
   const strip = (
@@ -145,7 +147,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
       </ul>
   );
   const block = (
-    <section ref={box} data-badge-bar data-tour="badges" aria-label="Seus Bottons" className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
+    <section ref={box} data-badge-bar data-tour="badges" aria-label={tx("seusBottons")} className={`relative rounded-2xl border border-white/15 bg-[#1c1510]/80 px-3 py-2 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.45)] backdrop-blur-md ${className}`}>
       {/* painel dos bottons de aniversário: abre para cima da barra; arraste um deles para o mural */}
       {openCat && openList && (
         <div ref={panel} role="dialog" aria-label={catLabel(openCat)} className={`absolute bottom-full left-0 z-30 mb-2 max-h-[46dvh] w-max max-w-full overflow-y-auto rounded-2xl border border-white/15 bg-[#1c1510]/95 p-3 text-white shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.55)] backdrop-blur-md ${draggingNew ? "invisible" : ""}`}>
@@ -179,14 +181,12 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
       {/* arrastando um botton que já está no mural: avisa onde soltar para devolvê-lo */}
       {draggingId && (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
-          Solte aqui para tirar do mural
-        </div>
+          {tx("solteAquiParaTirarDo")}</div>
       )}
       {/* arrastando um botton novo: avisa para soltar no mural */}
       {draggingNew && !draggingId && (
         <div aria-hidden className="pointer-events-none absolute inset-0 z-10 grid place-items-center rounded-2xl border-2 border-dashed border-[#f2c230] bg-[#1c1510]/90 px-3 text-center text-sm font-bold text-[#f7f0dd]">
-          Solte o pin no mural
-        </div>
+          {tx("solteOPinNoMural")}</div>
       )}
       <div className="flex items-center gap-2">
         {storeBtn}

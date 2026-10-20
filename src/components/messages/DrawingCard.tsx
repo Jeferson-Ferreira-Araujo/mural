@@ -1,11 +1,13 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
+import { useTranslations } from "next-intl";
 
 /** Desenho feito pela pessoa: folha de papel presa com fita. `src` = imagem do desenho; sem `src`, mostra uma folha em branco. */
 export function DrawingCard({ caption, src, font, tape }: { caption: string; src?: string; font?: HandId; tape?: TapeColor }) {
+  const tx = useTranslations("components.messages.DrawingCard");
   const hand = handOf(font);
   return (
-    <article aria-label="Desenho" className="paper-grain shadow-paper relative w-[15em] bg-[#fdfcf7] p-[0.7em]" style={{ borderRadius: "0.15em" }}>
+    <article aria-label={tx("desenho")} className="paper-grain shadow-paper relative w-[15em] bg-[#fdfcf7] p-[0.7em]" style={{ borderRadius: "0.15em" }}>
       <Tape className="-top-[0.8em] left-1/2 -translate-x-1/2" rotate={2} tone={tape ? tapeOf(tape).tone : undefined} />
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-white shadow-[inset_0_0_0.25em_rgba(0,0,0,.25)]">
         {src ? (

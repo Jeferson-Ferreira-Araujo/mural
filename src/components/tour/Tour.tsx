@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { createPortal } from "react-dom";
 import { useBackClose } from "@/lib/backStack";
 import { TOUR_STEPS, type TourStep } from "./steps";
+import { useTranslations } from "next-intl";
 
 const PAD = 8;
 const GIVE_UP_MS = 6000;
@@ -23,6 +24,7 @@ function findVisible(sel: string): HTMLElement | null {
  * esperam o elemento surgir. Quando há uma janela aberta, o tour é desenhado dentro dela (a janela fica acima de tudo e deixaria o tour escondido).
  */
 export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tx = useTranslations("components.tour.Tour");
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [i, setI] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
@@ -172,7 +174,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
   const btn = "cursor-pointer rounded-xl px-4 py-2.5 text-sm font-bold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
   const content = (
-    <div className="pointer-events-none fixed inset-0 z-[2000]" role="dialog" aria-modal="true" aria-label="Tour pelo Pinz">
+    <div className="pointer-events-none fixed inset-0 z-[2000]" role="dialog" aria-modal="true" aria-label={tx("tourPeloPinz")}>
       {/* bloqueia toques durante o tour; nos passos interativos só o destaque fica livre para tocar */}
       {step.act && rect ? (
         <>
@@ -211,7 +213,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         </p>
         <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{step.title}</h2>
         <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{step.text}</p>
-        {giveUp && waitingEl && <p className="mt-2 text-[13px] font-semibold text-[#8c3022]">Não encontrei esta parte na tela. Se você fechou a janela, toque em Voltar e siga de novo.</p>}
+        {giveUp && waitingEl && <p className="mt-2 text-[13px] font-semibold text-[#8c3022]">{tx("naoEncontreiEstaParteNa")}</p>}
         {step.chips && (
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
             {step.chips.map((c) => (
@@ -230,14 +232,12 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         <div className="mt-3.5 flex items-center gap-2">
           {!last && (
             <button type="button" onClick={onClose} className={`${btn} px-2 text-[#6b5440] underline-offset-2 hover:underline`}>
-              Pular tour
-            </button>
+              {tx("pularTour")}</button>
           )}
           <span className="flex-1" />
           {i > 0 && (
             <button type="button" onClick={prev} className={`${btn} border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-white`}>
-              Voltar
-            </button>
+              {tx("voltar")}</button>
           )}
           {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque; os de escolha esperam a pessoa tocar em Próximo */}
           {(!step.act || step.manual) && (

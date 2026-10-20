@@ -18,6 +18,7 @@ import { DisplayChooser } from "../badges/DisplayChooser";
 import { DrawForm } from "./DrawForm";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
+import { useTranslations } from "next-intl";
 
 type Props = {
   open: boolean;
@@ -87,6 +88,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
  * O formato escolhido fica no cabeçalho (seta de voltar à esquerda, nome do formato no centro).
  */
 function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sending = false, used, onSend, onTried, triedAlready, onClose, format, onFormat, signAs, error }: Omit<Props, "open"> & { format: MessageType | null; onFormat: (f: MessageType | null) => void }) {
+  const tx = useTranslations("components.composer.ComposerDialog");
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
   // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
@@ -146,14 +148,14 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       className={`space-y-5 ${format !== "draw" ? "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-x-8 lg:space-y-0" : ""}`}
     >
       {/* prévia sempre no topo (e visível ao rolar): já mostra um exemplo antes de digitar */}
-      {format !== "draw" && <section aria-label="Prévia" className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3 lg:top-0 lg:z-auto lg:col-start-1 lg:row-start-1 lg:m-0 lg:self-start lg:bg-transparent lg:p-0">
+      {format !== "draw" && <section aria-label={tx("previa")} className="sticky -top-5 z-10 -mx-5 -mt-5 bg-[#fbf6ea] px-5 pt-4 pb-3 lg:top-0 lg:z-auto lg:col-start-1 lg:row-start-1 lg:m-0 lg:self-start lg:bg-transparent lg:p-0">
         <div className="rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-3 py-3 lg:flex lg:min-h-[30rem] lg:flex-col lg:justify-center lg:py-8">
-          <p className="mb-2 text-center text-[10px] font-semibold tracking-wide text-[#8a7b69] uppercase">Prévia no mural</p>
-          {hasPos && <p className="mb-2 text-center text-xs text-[#6b5440]">Toque na silhueta para mudar onde o pin prende.</p>}
+          <p className="mb-2 text-center text-[10px] font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("previaNoMural")}</p>
+          {hasPos && <p className="mb-2 text-center text-xs text-[#6b5440]">{tx("toqueNaSilhuetaParaMudar")}</p>}
           <div className="flex justify-center">
             <div className="text-[11px] lg:text-[17px]">
               {capsule.enabled ? (
-                <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">🔒 No mural ela aparece como uma cápsula fechada até a data escolhida.</p>
+                <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">{tx("noMuralElaApareceComo")}</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
                 <FastenerPicker value={hasPos ? { onPick: setPos } : null}>
@@ -186,6 +188,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 }
 
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
+  const tx = useTranslations("components.composer.ComposerDialog");
   const ref = useRef<HTMLDialogElement>(null);
   useBackClose(open, onClose); // voltar (Android) fecha esta janela em vez de sair do mural
   const [format, setFormat] = useState<MessageType | null>(null);
@@ -214,7 +217,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose(); // clique no fundo escuro
       }}
-      aria-label="Deixar uma mensagem"
+      aria-label={tx("deixarUmaMensagem")}
       className={`m-auto max-h-[92dvh] w-[min(94vw,36rem)] ${wide ? "lg:w-[min(94vw,62rem)]" : ""} overflow-hidden rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60 max-sm:mb-0 max-sm:max-h-[94dvh] max-sm:w-full max-sm:max-w-none max-sm:rounded-b-none`}
     >
       {open && (
@@ -222,7 +225,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
           {/* cabeçalho: voltar (esquerda) · formato escolhido (centro) · fechar (direita) */}
           <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center border-b border-[#e6d8bd] px-4 py-3">
             {format ? (
-              <button type="button" onClick={() => setFormat(null)} aria-label="Voltar e trocar o formato" className={`${ghostButton} !size-9 !rounded-lg !p-0`}>
+              <button type="button" onClick={() => setFormat(null)} aria-label={tx("voltarETrocarOFormato")} className={`${ghostButton} !size-9 !rounded-lg !p-0`}>
                 <svg viewBox="0 0 24 24" className="mx-auto size-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="m15 5-7 7 7 7" />
                 </svg>
@@ -231,14 +234,14 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
               <span />
             )}
             <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Coloque um PIN"}</p>
-            <button type="button" onClick={onClose} aria-label="Fechar" className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
+            <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>
           </div>
           <div className="overflow-y-auto px-5 py-5">
             {/* dono clicando num espaço livre do próprio mural: duas abas, Pins (padrão) e Displays (os que ele já comprou) */}
             {!format && rest.displays && rest.fixedSlot != null && (
-              <div role="tablist" aria-label="O que colocar neste espaço" className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+              <div role="tablist" aria-label={tx("oQueColocarNesteEspaco")} className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
                 {(
                   [
                     ["pins", "Pins"],

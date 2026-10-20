@@ -6,9 +6,11 @@ import { cleanNickname, NICK_RE, nicknameAvailable } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Brand } from "./Brand";
 import { BOARD_IMAGE } from "./DesktopBoard";
+import { useTranslations } from "next-intl";
 
 /** Fundo e cartão centralizado usados nas telas de conta (entrar, criar, painel). */
 export function AuthShell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+  const tx = useTranslations("components.ui");
   return (
     <div className="relative grid min-h-dvh grid-cols-[minmax(0,1fr)] place-items-center overflow-x-hidden bg-[#2a1a0e] px-3 py-6 sm:px-4 sm:py-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -18,8 +20,8 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
         <div className="relative mb-2 flex justify-center">
           <Link
             href="/"
-            aria-label="Voltar ao início"
-            title="Voltar ao início"
+            aria-label={tx("voltarAoInicio")}
+            title={tx("voltarAoInicio")}
             className="absolute top-0 left-0 inline-flex h-10 items-center gap-0.5 rounded-xl pr-2 pl-1 text-sm font-medium text-[#fbf3e2]/75 transition hover:text-[#fbf3e2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]"
           >
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -33,7 +35,7 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
           {children}
         </main>
         <p className="mt-3 text-center text-xs text-[#fbf3e2]/70">
-          <Link href="/privacidade" className="underline hover:text-[#fbf3e2]">Privacidade</Link> · <Link href="/termos" className="underline hover:text-[#fbf3e2]">Termos de uso</Link>
+          <Link href="/privacidade" className="underline hover:text-[#fbf3e2]">{tx("privacidade")}</Link> · <Link href="/termos" className="underline hover:text-[#fbf3e2]">{tx("termosDeUso")}</Link>
         </p>
       </div>
     </div>
@@ -129,10 +131,11 @@ export function NicknameField({
   state: NickState;
   autoFocus?: boolean;
 }) {
+  const tx = useTranslations("components.ui");
   const bad = state === "taken" || state === "invalid" || state === "denied";
   return (
     <Field
-      label="Nome de usuário"
+      label={tx("nomeDeUsuario")}
       error={bad ? nickMessage[state] : null}
       hint={nickMessage[state]}
     >
@@ -145,7 +148,7 @@ export function NicknameField({
           autoCapitalize="none"
           spellCheck={false}
           maxLength={30}
-          placeholder="seu_usuario"
+          placeholder={tx("seuUsuario")}
           autoFocus={autoFocus}
           aria-invalid={bad}
           className={inputClass}

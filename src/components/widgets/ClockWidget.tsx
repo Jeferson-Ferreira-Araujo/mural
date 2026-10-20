@@ -3,6 +3,7 @@
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { Corner, ClockIcon, CLOCK_ZONES, isNightHour, MoonIcon, sceneForHour, SunIcon, useNow, WidgetFrame, type Now } from "./core";
 import { Skyline } from "./scenes";
+import { useTranslations } from "next-intl";
 
 export type ClockStyle = "sunset" | "flip" | "minimal" | "analog" | "pixel";
 
@@ -34,6 +35,7 @@ function Flip({ v }: { v: string }) {
 
 /** Relógio quadrado (12 × 12 em): os mesmos cinco estilos, com a hora em cima e a data embaixo. */
 function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: Now | null; time: string; wd: string; place: string | null | undefined; hour: number; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.ClockWidget");
   const dm = n ? `${n.day} ${n.monthShort.charAt(0).toUpperCase()}${n.monthShort.slice(1)}` : "";
   const secDeg = ((n?.second ?? 0) / 60) * 360;
   const minDeg = ((n?.minute ?? 0) + (n?.second ?? 0) / 60) * 6;
@@ -41,7 +43,7 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
 
   if (st === "flip") {
     return (
-      <WidgetFrame frame={frame} label="Relógio" shape="square">
+      <WidgetFrame frame={frame} label={tx("relogio")} shape="square">
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.9em]" style={{ background: "linear-gradient(145deg,#1d1d20,#0b0b0d)", color: "#f4f4f4" }}>
           <div className="flex gap-[0.6em]">
             <Flip v={n?.hh ?? "--"} />
@@ -61,7 +63,7 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
   if (st === "minimal" || st === "analog") {
     const analog = st === "analog";
     return (
-      <WidgetFrame frame={frame} label="Relógio" shape="square">
+      <WidgetFrame frame={frame} label={tx("relogio")} shape="square">
         <div className="absolute inset-0" style={{ background: analog ? "linear-gradient(145deg,#12301f,#0a1f14)" : "linear-gradient(145deg,#f4e6c6,#e3c993)", color: analog ? "#f1e6c8" : "#3a2a12" }}>
           <Leaves dark={analog} />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.7em] px-[1em]">
@@ -106,7 +108,7 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
 
   if (st === "pixel") {
     return (
-      <WidgetFrame frame={frame} label="Relógio" shape="square">
+      <WidgetFrame frame={frame} label={tx("relogio")} shape="square">
         <div className="absolute inset-0 overflow-hidden" style={{ background: "linear-gradient(180deg,#0a0f2e 0%,#1d2160 55%,#6a3a78 85%,#d9784a 100%)", color: "#fff" }}>
           <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden shapeRendering="crispEdges">
             {[
@@ -151,7 +153,7 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
   // sunset (padrão): paisagem dinâmica
   const scene = sceneForHour(hour);
   return (
-    <WidgetFrame frame={frame} label="Relógio" scene={scene} shape="square">
+    <WidgetFrame frame={frame} label={tx("relogio")} scene={scene} shape="square">
       <Corner side="left">
         <ClockIcon />
       </Corner>
@@ -171,6 +173,7 @@ function ClockSquare({ st, n, time, wd, place, hour, frame }: { st: string; n: N
 
 /** Relógio: cinco estilos, em formato retangular ou quadrado. A hora passa sozinha (atualiza a cada poucos segundos). */
 export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame }: { style?: string; tz?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.ClockWidget");
   const zone = CLOCK_ZONES.some((z) => z.id === tz) ? tz : "America/Sao_Paulo";
   const n = useNow(zone, 1000);
   const hour = n?.hour ?? 21;
@@ -183,7 +186,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
 
   if (style === "flip") {
     return (
-      <WidgetFrame frame={frame} label="Relógio">
+      <WidgetFrame frame={frame} label={tx("relogio")}>
         <div className="absolute inset-0 flex items-center justify-center gap-[1.3em] px-[1.4em]" style={{ background: "linear-gradient(145deg,#1d1d20,#0b0b0d)", color: "#f4f4f4" }}>
           <div className="flex gap-[0.6em]">
             <Flip v={n?.hh ?? "--"} />
@@ -205,7 +208,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
     const minDeg = ((n?.minute ?? 0) + (n?.second ?? 0) / 60) * 6;
     const hourDeg = (((n?.hour ?? 0) % 12) + (n?.minute ?? 0) / 60) * 30;
     return (
-      <WidgetFrame frame={frame} label="Relógio">
+      <WidgetFrame frame={frame} label={tx("relogio")}>
         <div className="absolute inset-0" style={{ background: analog ? "linear-gradient(145deg,#12301f,#0a1f14)" : "linear-gradient(145deg,#f4e6c6,#e3c993)", color: analog ? "#f1e6c8" : "#3a2a12" }}>
           <Leaves dark={analog} />
           <div className="absolute inset-0 flex items-center justify-center gap-[1.4em] px-[2em]">
@@ -254,7 +257,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
 
   if (style === "pixel") {
     return (
-      <WidgetFrame frame={frame} label="Relógio">
+      <WidgetFrame frame={frame} label={tx("relogio")}>
         <div className="absolute inset-0 overflow-hidden" style={{ background: "linear-gradient(180deg,#0a0f2e 0%,#1d2160 55%,#6a3a78 85%,#d9784a 100%)", color: "#fff" }}>
           <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="absolute inset-0 size-full" aria-hidden shapeRendering="crispEdges">
             {[
@@ -300,7 +303,7 @@ export function ClockWidget({ style = "sunset", tz = "America/Sao_Paulo", frame 
   // sunset (padrão): paisagem dinâmica
   const scene = sceneForHour(hour);
   return (
-    <WidgetFrame frame={frame} label="Relógio" scene={scene}>
+    <WidgetFrame frame={frame} label={tx("relogio")} scene={scene}>
       <Corner side="left">
         <ClockIcon />
       </Corner>

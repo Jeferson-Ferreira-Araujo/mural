@@ -1,19 +1,21 @@
 "use client";
 
 import { gridFor } from "@/lib/slots";
+import { useTranslations } from "next-intl";
 
 /**
  * "Onde colocar?": um mini quadro com todos os espaços. O visitante escolhe qualquer espaço livre (não precisa ser em ordem).
  * Ocupado = pin já colado; bloqueado = o plano do dono ainda não libera.
  */
 export function SlotPicker({ capacity, available, taken, value, onChange }: { capacity: number; available: number; taken: number[]; value: number | null; onChange: (slot: number) => void }) {
+  const tx = useTranslations("components.composer.SlotPicker");
   const { cols } = gridFor(capacity);
   const used = new Set(taken);
 
   return (
     <fieldset>
-      <legend className="text-sm font-semibold text-[#4a3826]">Onde você quer colocar?</legend>
-      <div role="radiogroup" aria-label="Espaço do mural" className="mx-auto mt-2 grid max-w-sm gap-1.5 rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/60 p-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+      <legend className="text-sm font-semibold text-[#4a3826]">{tx("ondeVoceQuerColocar")}</legend>
+      <div role="radiogroup" aria-label={tx("espacoDoMural")} className="mx-auto mt-2 grid max-w-sm gap-1.5 rounded-xl border border-[#d9c9ad] bg-[#e9d8b6]/60 p-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: capacity }, (_, i) => {
           const occupied = used.has(i);
           const locked = !occupied && i >= available;

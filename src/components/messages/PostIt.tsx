@@ -1,6 +1,7 @@
 import type { PostItColor } from "@/lib/types";
 import { handOf, type HandId, type PinColor, type PinPos } from "@/lib/style";
 import { PinSlot } from "./fasteners";
+import { useTranslations } from "next-intl";
 
 const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blue" }> = {
   yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "red" },
@@ -11,11 +12,12 @@ const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blu
 };
 
 export function PostIt({ color, text, font, pin, pos }: { color: PostItColor; text: string; font?: HandId; pin?: PinColor; pos?: PinPos }) {
+  const tx = useTranslations("components.messages.PostIt");
   const c = palette[color];
   const hand = handOf(font);
   return (
     <article
-      aria-label="Post-it"
+      aria-label={tx("postIt")}
       className="paper-grain curl shadow-paper relative flex h-[13.5em] w-[14em] flex-col px-[1.3em] pt-[2.1em] pb-[1.1em]"
       style={{
         background: `linear-gradient(180deg, ${c.bg} 0%, ${c.bg} 86%, ${c.edge} 100%)`,

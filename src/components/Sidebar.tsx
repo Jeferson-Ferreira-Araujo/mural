@@ -3,6 +3,7 @@ import { FitSidebar } from "./FitSidebar";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import { LanguagePicker } from "./LanguagePicker";
 import type { ViewProps } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 const icon = "size-[2.1em]";
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
@@ -21,12 +22,13 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
 export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account, menu }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** atalhos da conta (desktop) */ menu?: React.ReactNode; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean }) {
+  const tx = useTranslations("components.Sidebar");
   return (
     <aside
       className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[30em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
-      <h1 className="sr-only">Pinz</h1>
+      <h1 className="sr-only">{tx("pinz")}</h1>
       {/* em qualquer monitor, a letra da coluna diminui até o conteúdo caber na altura, sem barra de rolagem */}
       <FitSidebar />
       {/* vendo o mural de outra pessoa: seta para voltar ao seu mural (sem fundo), antes do logo */}
@@ -49,8 +51,8 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       <div className="flex justify-center">
         <Brand className="h-[clamp(4.2rem,11dvh,10rem)]" />
       </div>
-      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">Seu mural digital</p>}
-      {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>}
+      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">{tx("seuMuralDigital")}</p>}
+      {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
       {!account && <LanguagePicker className="mx-auto mt-[0.8em]" />}
@@ -75,10 +77,10 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
 
       {/* os números do site aparecem só na tela inicial de login (sem conta e sem mural aberto) */}
       {siteStats && !compact && !account && (
-        <ul className="mt-[0.9em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[0.7em] text-[#2f2218]" aria-label="Pinz em números">
+        <ul className="mt-[0.9em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[0.7em] text-[#2f2218]" aria-label={tx("pinzEmNumeros")}>
           <Stat
             value={siteStats.murals}
-            label="murais"
+            label={tx("murais")}
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -88,7 +90,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
           />
           <Stat
             value={siteStats.cards}
-            label="PINZ colocados"
+            label={tx("pinzColocados")}
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <path d="M5 4h14v12l-4 4H5V4Z" />

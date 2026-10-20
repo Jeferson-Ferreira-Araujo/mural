@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
+import { useTranslations } from "next-intl";
 
 /** Uma data importante marcada no calendário. `yearly`: repete todo ano (aniversário, Natal…). */
 export type CalDate = { date: string; label: string; yearly: boolean };
@@ -56,6 +57,7 @@ const SKINS: Record<string, Skin> = {
  * Cinco estilos, em formato retangular ou quadrado.
  */
 export function CalendarWidget({ style = "paper", dates, frame }: { style?: string; dates?: CalDate[]; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.CalendarWidget");
   const today = useToday();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
@@ -123,19 +125,17 @@ export function CalendarWidget({ style = "paper", dates, frame }: { style?: stri
   );
 
   return (
-    <WidgetFrame frame={frame} label="Calendário" shape={shape}>
+    <WidgetFrame frame={frame} label={tx("calendario")} shape={shape}>
       <div className="absolute inset-0 flex" style={{ background: sk.bg, color: ink }}>
         {monthPane}
         {/* próximas datas (só no retangular) */}
         {!square && (
           <div className="flex min-w-0 flex-1 flex-col border-l px-[0.8em] pt-[0.8em] pb-[0.5em]" style={{ borderColor: sk.edge }}>
             <p className="text-[0.62em] font-bold tracking-wider uppercase" style={{ color: soft }}>
-              Datas marcadas
-            </p>
+              {tx("datasMarcadas")}</p>
             {upcoming.length === 0 ? (
               <p className="mt-[0.8em] text-[0.8em] leading-snug" style={{ color: soft }}>
-                Nenhuma data marcada
-              </p>
+                {tx("nenhumaDataMarcada")}</p>
             ) : (
               <ul className="mt-[0.5em] space-y-[0.45em]">
                 {upcoming.map(({ c, at }) => (

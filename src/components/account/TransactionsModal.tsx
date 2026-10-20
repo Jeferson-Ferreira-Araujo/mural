@@ -8,6 +8,7 @@ import { brl, fetchTransactions, PAY_STATUS, type Transactions, type TxPayment }
 import { PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS } from "@/lib/plans";
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 const date = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
@@ -35,6 +36,7 @@ export function StatusChip({ status }: { status: string }) {
 
 /** "Minhas compras": o que a pessoa já pagou (o histórico de uso dos créditos saiu: confundia). */
 export function TransactionsModal({ open, onClose, credits }: { open: boolean; onClose: () => void; credits: number }) {
+  const txt = useTranslations("components.account.TransactionsModal");
   const [tx, setTx] = useState<Transactions | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -50,9 +52,9 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
   const sub = tx?.subscription;
 
   return (
-    <Modal open={open} onClose={onClose} title="Minhas compras" wide>
+    <Modal open={open} onClose={onClose} title={txt("minhasCompras")} wide>
       {failed ? (
-        <p className="py-6 text-center text-sm text-[#a23b2a]">Não foi possível carregar agora. Tente de novo.</p>
+        <p className="py-6 text-center text-sm text-[#a23b2a]">{txt("naoFoiPossivelCarregarAgora")}</p>
       ) : !tx ? (
         <ListSkeleton rows={4} />
       ) : (
@@ -72,15 +74,15 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
 
           {sub && (
             <p className="rounded-xl border border-[#e8d9a8] bg-[#fff6d6] px-3 py-2 text-sm">
-              <strong>Assinatura PINZ+:</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
+              <strong>{txt("assinaturaPinz")}</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
               {sub.paidUntil ? ` · vale até ${new Date(sub.paidUntil).toLocaleDateString("pt-BR")}` : ""}
             </p>
           )}
 
-          <section aria-label="Pagamentos">
-            <h3 className="font-title text-base font-semibold">Pagamentos</h3>
+          <section aria-label={txt("pagamentos")}>
+            <h3 className="font-title text-base font-semibold">{txt("pagamentos")}</h3>
             {tx.payments.length === 0 ? (
-              <p className="mt-1 text-sm text-[#6b5440]">Você ainda não fez nenhum pagamento.</p>
+              <p className="mt-1 text-sm text-[#6b5440]">{txt("voceAindaNaoFezNenhum")}</p>
             ) : (
               <ul className="mt-2 divide-y divide-[#e6d8bd] rounded-2xl border border-[#e1d3ba] bg-white/70">
                 {tx.payments.map((p) => (

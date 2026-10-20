@@ -9,6 +9,7 @@ import { MuralSwitcher } from "./MuralSwitcher";
 import { MobileMural } from "./MobileMural";
 import { MobileLanding } from "./MobileLanding";
 import type { ViewProps } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 /**
  * Celular/tablet (retrato).
@@ -17,6 +18,7 @@ import type { ViewProps } from "./viewProps";
  * - Demonstração (sem dono): os controles e, abaixo, o mesmo quadro arrastável.
  */
 export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, panel, onCompose, landing = false, opening = false, board, capacity, muralInfo, onChangeMural, welcome, account, guestNext, muralSwitch, share, follow, onNotify, boardPending }: ViewProps) {
+  const tx = useTranslations("components.MobileCarousel");
   const look = boardById(board);
   const bgX = look.cork.left + look.cork.width / 2;
   const bgY = look.cork.top + look.cork.height / 2;
@@ -49,9 +51,9 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
       <main className="mx-auto flex min-h-dvh max-w-4xl flex-col pt-4 pb-6 [font-size:16px]">
         <div className={`flex flex-1 flex-col transition-[gap] duration-500 ${landing ? "justify-center gap-6" : "gap-4"}`}>
           <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
-            <h1 className="sr-only">Pinz</h1>
+            <h1 className="sr-only">{tx("pinz")}</h1>
             <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
-            {landing && <p className="intro-form text-center font-[family-name:var(--font-jakarta)] text-[1.2rem] leading-tight font-semibold tracking-wide text-[#f6efe2] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.6)]">Seu mural digital</p>}
+            {landing && <p className="intro-form text-center font-[family-name:var(--font-jakarta)] text-[1.2rem] leading-tight font-semibold tracking-wide text-[#f6efe2] [text-shadow:0_0.1em_0.5em_rgba(0,0,0,.6)]">{tx("seuMuralDigital")}</p>}
           </header>
 
           {/* busca, escolha do mural e pergunta de desbloqueio (e os controles da demonstração) */}

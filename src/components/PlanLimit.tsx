@@ -6,12 +6,14 @@ import { PAY_EVENT } from "@/lib/payments";
 import { isDisplayKey } from "@/lib/badges";
 import { useBadges } from "./badges/BadgeContext";
 import { Modal } from "./account/Modal";
+import { useTranslations } from "next-intl";
 
 /**
  * Plano FREE, no próprio mural: contador de pins (ex.: 3/15) com um "?" que explica o limite e leva à assinatura do PINZ+.
  * `glass`: sobre o quadro (celular); sem ele: pílula clara (desktop).
  */
 export function PlanLimit({ used: pins, glass = false, className = "" }: { used: number; glass?: boolean; className?: string }) {
+  const tx = useTranslations("components.PlanLimit");
   const max = PLANS.free.slots;
   const { badges } = useBadges();
   const used = pins + badges.filter((b) => b.kind === "display" || isDisplayKey(b.key)).length; // o limite do gratuito conta pins e displays
@@ -40,13 +42,13 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
         </span>
       </button>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Limite do plano" label="Limite do plano">
+      <Modal open={open} onClose={() => setOpen(false)} title={tx("limiteDoPlano")} label={tx("limiteDoPlano")}>
         <div className="space-y-4 text-sm text-[#2f2218]">
           <p>
-            Você está usando <strong>{used}</strong> de <strong>{max}</strong> pins e displays do seu mural. Esse é o limite da conta <strong>FREE</strong>, que inclui 1 mural.
+            Você está usando <strong>{used}</strong> de <strong>{max}</strong> pins e displays do seu mural. Esse é o limite da conta <strong>{tx("free")}</strong>, que inclui 1 mural.
           </p>
           <div className="rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] p-4">
-            <p className="font-bold">Com o PINZ+ você tem:</p>
+            <p className="font-bold">{tx("comOPinzVoceTem")}</p>
             <ul className="mt-2 space-y-1.5">
               {["Pins e displays sem limite", "Até 10 murais", "Vídeo, voz e local nos pins", "Pins em segredo e mais Bottons"].map((t) => (
                 <li key={t} className="flex gap-2">

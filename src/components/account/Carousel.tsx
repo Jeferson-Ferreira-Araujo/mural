@@ -1,9 +1,11 @@
 "use client";
 
 import { Children, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 /** Carrossel simples: um item por vez, desliza com o dedo (ou pelas setas), com pontinhos embaixo. */
 export function Carousel({ children, label }: { children: ReactNode; label: string }) {
+  const tx = useTranslations("components.account.Carousel");
   const slides = Children.toArray(children);
   const n = slides.length;
   const ref = useRef<HTMLDivElement>(null);
@@ -30,7 +32,7 @@ export function Carousel({ children, label }: { children: ReactNode; label: stri
     <div role="region" aria-roledescription="carrossel" aria-label={label}>
       <div className="flex items-center gap-2">
         {n > 1 && (
-          <button type="button" aria-label="Anterior" disabled={i <= 0} onClick={() => go(i - 1)} className={`${arrow} max-sm:hidden`}>
+          <button type="button" aria-label={tx("anterior")} disabled={i <= 0} onClick={() => go(i - 1)} className={`${arrow} max-sm:hidden`}>
             ‹
           </button>
         )}
@@ -55,7 +57,7 @@ export function Carousel({ children, label }: { children: ReactNode; label: stri
           ))}
         </div>
         {n > 1 && (
-          <button type="button" aria-label="Próximo" disabled={i >= n - 1} onClick={() => go(i + 1)} className={`${arrow} max-sm:hidden`}>
+          <button type="button" aria-label={tx("proximo")} disabled={i >= n - 1} onClick={() => go(i + 1)} className={`${arrow} max-sm:hidden`}>
             ›
           </button>
         )}

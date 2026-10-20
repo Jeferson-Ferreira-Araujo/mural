@@ -6,6 +6,7 @@ import { baseStyle } from "@/lib/displayShape";
 import { usePoll } from "@/lib/poll";
 import { useInDetail } from "../board/ListEditContext";
 import { WidgetFrame } from "./core";
+import { useTranslations } from "next-intl";
 
 /** Estilos da enquete: papel (claro), noite (escuro) e colorido. */
 const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string; fill: string; mine: string; tag: string }> = {
@@ -19,6 +20,7 @@ const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string;
  * ao tocar no display abre o detalhe, onde as opções viram botões para votar (dá para trocar o voto).
  */
 export function PollWidget({ style = "q-paper", title, options, badgeId, frame }: { style?: string; title?: string; options?: string[]; badgeId?: string; frame?: string | null }) {
+  const tx = useTranslations("components.widgets.PollWidget");
   const inDetail = useInDetail();
   const sk = SKINS[baseStyle(style)] ?? SKINS.paper;
   const opts = (options && options.length >= 2 ? options : ["Sim", "Não"]).slice(0, 4);
@@ -39,11 +41,10 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
   }
 
   return (
-    <WidgetFrame frame={frame} label="Enquete" shape="square">
+    <WidgetFrame frame={frame} label={tx("enquete")} shape="square">
       <div className="absolute inset-0 flex flex-col px-[0.9em] pt-[0.8em] pb-[0.75em]" style={{ background: sk.bg, color: sk.ink }}>
         <p className="text-[0.62em] font-extrabold tracking-[0.18em] uppercase" style={{ color: sk.tag }}>
-          Enquete
-        </p>
+          {tx("enquete")}</p>
         <p className="mt-[0.15em] line-clamp-3 text-[1.08em] leading-[1.15] font-extrabold [overflow-wrap:anywhere]" title={question}>
           {question}
         </p>
@@ -56,7 +57,7 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
                 <span aria-hidden className="absolute inset-y-0 left-0 transition-[width] duration-700 ease-out" style={{ width: `${pct}%`, background: sk.fill }} />
                 <span className="relative flex w-full items-center gap-[0.4em]">
                   {chosen && (
-                    <svg viewBox="0 0 24 24" className="size-[1em] shrink-0" fill="none" stroke={sk.mine} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-label="Seu voto">
+                    <svg viewBox="0 0 24 24" className="size-[1em] shrink-0" fill="none" stroke={sk.mine} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-label={tx("seuVoto")}>
                       <path d="m5 12.5 4.5 4.5L19 7.5" />
                     </svg>
                   )}
@@ -79,20 +80,17 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
           })}
         </div>
         {askLogin && (
-          <div role="alertdialog" aria-label="Entre para votar" className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-[0.6em] rounded-[1.1em] px-[1em] text-center" style={{ background: "rgba(10,10,15,.88)", color: "#fff" }}>
-            <p className="text-[1.05em] leading-tight font-extrabold">Para votar você precisa de uma conta</p>
-            <p className="text-[0.78em] leading-snug opacity-85">É rápido e gratuito. Depois de entrar, você volta para esta enquete.</p>
+          <div role="alertdialog" aria-label={tx("entreParaVotar")} className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-[0.6em] rounded-[1.1em] px-[1em] text-center" style={{ background: "rgba(10,10,15,.88)", color: "#fff" }}>
+            <p className="text-[1.05em] leading-tight font-extrabold">{tx("paraVotarVocePrecisaDe")}</p>
+            <p className="text-[0.78em] leading-snug opacity-85">{tx("eRapidoEGratuitoDepois")}</p>
             <div className="mt-[0.2em] flex w-full gap-[0.5em]">
               <a href={loginUrl(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/", false)} className="flex-1 rounded-[0.6em] bg-[#d9a21b] py-[0.55em] text-[0.9em] font-extrabold text-[#2a1c12]">
-                Entrar
-              </a>
+                {tx("entrar")}</a>
               <a href={loginUrl(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/", true)} className="flex-1 rounded-[0.6em] bg-white/15 py-[0.55em] text-[0.9em] font-extrabold text-white">
-                Criar conta
-              </a>
+                {tx("criarConta")}</a>
             </div>
             <button type="button" onClick={() => setAskLogin(false)} className="cursor-pointer text-[0.78em] font-semibold underline opacity-80">
-              Agora não
-            </button>
+              {tx("agoraNao")}</button>
           </div>
         )}
         <p className="mt-[0.45em] flex items-center justify-between text-[0.66em] font-semibold" style={{ color: sk.sub }} aria-live="polite">

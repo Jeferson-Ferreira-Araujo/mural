@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { formatCountdown, remainingMs } from "@/lib/capsule";
 import { Pin } from "./fasteners";
+import { useTranslations } from "next-intl";
 
 /**
  * Cápsula PINZ ainda fechada: um envelope lacrado com a contagem regressiva.
  * Só recebe a data de abertura — o conteúdo nem existe aqui (veja `ClosedCapsuleItem`).
  */
 export function ClosedCapsule({ opensAt }: { opensAt: string }) {
+  const tx = useTranslations("components.messages.ClosedCapsule");
   // a contagem só roda no navegador (evita diferença entre servidor e cliente)
   const [left, setLeft] = useState<string | null>(null);
   useEffect(() => {
@@ -20,7 +22,7 @@ export function ClosedCapsule({ opensAt }: { opensAt: string }) {
 
   return (
     <article
-      aria-label="Cápsula PINZ fechada"
+      aria-label={tx("capsulaPinzFechada")}
       className="paper-grain shadow-paper relative h-[13.5em] w-[14em] bg-[#ecdcb6]"
       style={{ borderRadius: "0.25em" }}
     >
@@ -41,7 +43,7 @@ export function ClosedCapsule({ opensAt }: { opensAt: string }) {
       </span>
 
       <div className="absolute inset-x-0 bottom-0 px-[1em] pb-[0.9em] text-center">
-        <p className="font-hand text-[1.4em] leading-[1.05] text-[#3b2a14]">Você recebeu uma mensagem fechada.</p>
+        <p className="font-hand text-[1.4em] leading-[1.05] text-[#3b2a14]">{tx("voceRecebeuUmaMensagemFechada")}</p>
         <p className="mt-[0.5em] font-mono text-[0.72em] leading-snug text-[#5a4527]" aria-live="off">
           Abre em: {left ?? "…"}
         </p>

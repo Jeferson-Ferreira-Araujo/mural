@@ -4,9 +4,11 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Spinner, AuthShell } from "@/components/ui";
 import { takePayReturn } from "@/lib/payments";
+import { useTranslations } from "next-intl";
 
 /** Volta do Mercado Pago: não mostra tela própria; leva a pessoa de volta de onde ela saiu, com o resultado num modal. */
 function Back() {
+  const tx = useTranslations("app.pagamento.page");
   const router = useRouter();
   const q = useSearchParams();
   useEffect(() => {
@@ -17,7 +19,7 @@ function Back() {
   }, [q, router]);
   return (
     <AuthShell>
-      <Spinner label="Voltando para o Pinz…" />
+      <Spinner label={tx("voltandoParaOPinz")} />
     </AuthShell>
   );
 }

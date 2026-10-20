@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { claimReward, getRewards, type RewardId, type RewardTask } from "@/lib/rewards";
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -12,6 +13,7 @@ function Coin({ className = "size-5" }: { className?: string }) {
 
 /** Tarefas que dão créditos: cada uma vale uma vez por conta e o crédito entra na hora em que ela é feita. */
 export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tx = useTranslations("components.account.RewardsModal");
   const [tasks, setTasks] = useState<RewardTask[] | null>(null);
 
   const load = useCallback(async () => {
@@ -33,12 +35,12 @@ export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => 
   }, [open, load]);
 
   return (
-    <Modal open={open} onClose={onClose} title="Ganhe créditos">
+    <Modal open={open} onClose={onClose} title={tx("ganheCreditos")}>
       {tasks === null ? (
         <ListSkeleton rows={3} />
       ) : (
         <>
-          <p className="text-[15px] leading-snug text-[#4a3826]">Faça as tarefas e ganhe créditos na hora.</p>
+          <p className="text-[15px] leading-snug text-[#4a3826]">{tx("facaAsTarefasEGanhe")}</p>
           <ul className="mt-3 space-y-2">
             {tasks.map((t) => (
               <li key={t.id} className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 ${t.done ? "border-[#bfe0c7] bg-[#eef8f0]" : "border-[#e1d3ba] bg-white/70"}`}>

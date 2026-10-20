@@ -19,6 +19,7 @@ import { FREE_MURAL } from "@/lib/slots";
 import { spotLight } from "@/lib/spot";
 import { COMPOSE_AUTO_EVENT } from "../AddPinButton";
 import type { PinPlace } from "../composer/types";
+import { useTranslations } from "next-intl";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -97,6 +98,7 @@ export function BoardCanvas({
   contain?: boolean;
   children?: ReactNode;
 }) {
+  const tx = useTranslations("components.board.BoardCanvas");
   const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
   const { cols, rows } = gridFor(capacity);
   const layout = layoutSlots(items, capacity); // cada pin no espaço escolhido por quem o colou
@@ -636,10 +638,10 @@ export function BoardCanvas({
               </div>
               {/* mural sem nenhum pin e sem nenhum display: bilhete padrão no meio (o mesmo em qualquer plano, sem edição) */}
               {hasSelection && unlocked && !locked && loading && (
-                <div role="status" aria-label="Carregando mural" className="pointer-events-none absolute inset-0 z-[3] grid place-items-center">
+                <div role="status" aria-label={tx("carregandoMural")} className="pointer-events-none absolute inset-0 z-[3] grid place-items-center">
                   {/* círculo girando, grande e dourado, sem texto */}
                   <span aria-hidden className="block animate-spin rounded-full border-white/25 border-t-[#f2c230] border-r-[#f2c230]/70 drop-shadow-[0_0.2em_0.5em_rgba(0,0,0,.5)]" style={{ width: "9cqw", height: "9cqw", borderWidth: "1.1cqw", borderStyle: "solid" }} />
-                  <span className="sr-only">Carregando mural…</span>
+                  <span className="sr-only">{tx("carregandoMural2")}</span>
                 </div>
               )}
               {hasSelection && unlocked && !locked && !loading && items.length === 0 && !badges.some((b) => b.kind === "display") && (

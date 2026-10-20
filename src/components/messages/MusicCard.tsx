@@ -5,6 +5,7 @@ import type { PlayerColor } from "@/lib/types";
 import { embedFor } from "@/lib/embed";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
+import { useTranslations } from "next-intl";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
@@ -35,6 +36,7 @@ export function MusicCard({
   link?: string;
   color?: PlayerColor;
 }) {
+  const tx = useTranslations("components.messages.MusicCard");
   const look = PLAYER_PALETTE[color];
   const embed = embedFor(link);
   // pins novos não têm nome nem artista: a tela mostra de onde vem a música
@@ -138,7 +140,7 @@ export function MusicCard({
   const mark = { color: look.icon, opacity: 0.8 };
 
   return (
-    <article aria-label="Música" className="relative w-[14em]">
+    <article aria-label={tx("musica")} className="relative w-[14em]">
       {/* corpo do MP3 player (horizontal) */}
       <div
         className="relative flex items-stretch gap-[0.55em] rounded-[1.2em] p-[0.6em]"
@@ -160,7 +162,7 @@ export function MusicCard({
         <div className="relative min-w-0 flex-1 rounded-[0.7em] bg-black p-[0.18em]" style={{ boxShadow: "inset 0 0 0 0.07em rgba(255,255,255,.1), 0 0.08em 0.1em rgba(255,255,255,.35), inset 0 0.2em 0.5em rgba(0,0,0,.9)" }}>
           <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-[0.5em] px-[0.55em] py-[0.45em] text-[#d9ecff]" style={{ background: "linear-gradient(180deg, #0f2a4d 0%, #0a1c36 100%)" }}>
             <div className="flex items-center justify-between font-mono text-[0.5em] leading-none text-[#8fc2ff]">
-              <span>♪ Tocando</span>
+              <span>{tx("tocando")}</span>
               <span aria-hidden className="relative inline-block h-[0.85em] w-[1.5em] rounded-[0.15em] border border-current">
                 <span className="absolute inset-[0.12em] right-[0.3em] rounded-[0.05em] bg-current" />
               </span>
@@ -188,7 +190,7 @@ export function MusicCard({
             </div>
 
             <div>
-              <div className="relative h-[0.18em] rounded-full bg-white/20" role="progressbar" aria-label="Progresso da música" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
+              <div className="relative h-[0.18em] rounded-full bg-white/20" role="progressbar" aria-label={tx("progressoDaMusica")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
                 <span className="absolute inset-y-0 left-0 rounded-full bg-[#5db2ff]" style={{ width: `${ratio * 100}%` }} />
                 <span className="absolute top-1/2 size-[0.46em] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" style={{ left: `${ratio * 100}%` }} />
               </div>
@@ -207,8 +209,7 @@ export function MusicCard({
         <div className="relative size-[5.3em] shrink-0 self-center rounded-full" style={{ background: `radial-gradient(circle at 50% 30%, ${look.btn[0]}, ${look.btn[1]} 85%)`, boxShadow: "inset 0 0.1em 0.1em rgba(255,255,255,.5), inset 0 -0.14em 0.2em rgba(0,0,0,.45), 0 0.16em 0.3em rgba(0,0,0,.5)" }}>
           {/* marcas da roda (só enfeite do aparelho) */}
           <span aria-hidden className="absolute top-[0.4em] left-1/2 -translate-x-1/2 font-mono text-[0.42em] leading-none font-bold tracking-wider" style={mark}>
-            MENU
-          </span>
+            {tx("menu")}</span>
           <svg aria-hidden viewBox="0 0 24 24" className="absolute top-1/2 left-[0.5em] size-[0.8em] -translate-y-1/2" style={mark} fill="currentColor">
             <path d="M12 6v12L3 12l9-6Zm9 0v12l-9-6 9-6Z" />
           </svg>

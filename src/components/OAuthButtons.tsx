@@ -5,6 +5,7 @@ import { callbackUrl } from "@/lib/auth";
 import { OAUTH_LABEL, OAUTH_PROVIDERS, type OAuthProvider } from "@/lib/oauth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ghostButton } from "./ui";
+import { useTranslations } from "next-intl";
 
 function GoogleLogo() {
   return (
@@ -35,6 +36,7 @@ function AppleLogo() {
 
 /** Botões "Continuar com…" (só os provedores ligados). `onError` recebe o texto do erro, se houver. */
 export function OAuthButtons({ onError, className = "" }: { onError: (msg: string | null) => void; className?: string }) {
+  const tx = useTranslations("components.OAuthButtons");
   const [busy, setBusy] = useState<OAuthProvider | null>(null);
   // voltou do Google pelo botão "voltar": o navegador restaura a página com o botão preso em "Abrindo…"
   useEffect(() => {
@@ -62,7 +64,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
 
   return (
     <div className={className}>
-      <p className="text-center text-sm text-[#6b5440]">Continuar com</p>
+      <p className="text-center text-sm text-[#6b5440]">{tx("continuarCom")}</p>
       {/* só os ícones, lado a lado (cabem 3 ou mais na mesma linha) */}
       <div className="mt-2 flex items-center justify-center gap-3">
         {OAUTH_PROVIDERS.map((p) => (
@@ -76,7 +78,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
             className={`${ghostButton} grid h-12 min-w-0 flex-1 place-items-center bg-white/70 !px-0 disabled:opacity-60 sm:max-w-[6.5rem]`}
           >
             {busy === p ? (
-              <span className="text-xs font-semibold">Abrindo…</span>
+              <span className="text-xs font-semibold">{tx("abrindo")}</span>
             ) : p === "google" ? (
               <GoogleLogo />
             ) : p === "facebook" ? (
@@ -89,7 +91,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
           </button>
         ))}
       </div>
-      <p className="pt-3 text-center text-sm text-[#6b5440]">ou</p>
+      <p className="pt-3 text-center text-sm text-[#6b5440]">{tx("ou")}</p>
     </div>
   );
 }

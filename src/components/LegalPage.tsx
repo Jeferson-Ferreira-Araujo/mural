@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { AuthShell } from "./ui";
+import { useTranslations } from "next-intl";
 
 const CONTACT = CONTACT_EMAIL;
 
 export function LegalPage({ title, updated, children }: { title: string; updated: string; children: ReactNode }) {
+  const tx = useTranslations("components.LegalPage");
   return (
     <AuthShell wide>
       <h1 className="font-title text-2xl font-semibold">{title}</h1>
@@ -13,7 +15,7 @@ export function LegalPage({ title, updated, children }: { title: string; updated
         {children}
         {CONTACT && (
           <section>
-            <h2>Contato</h2>
+            <h2>{tx("contato")}</h2>
             <p>
               Dúvidas ou pedidos sobre seus dados: <a className="font-semibold underline" href={`mailto:${CONTACT}`}>{CONTACT}</a>.
             </p>

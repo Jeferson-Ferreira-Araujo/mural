@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
+import { useTranslations } from "next-intl";
 
 const BARS = 26;
 
@@ -67,6 +68,7 @@ function usePeaks(src: string | undefined, seed: number) {
  * `src` = áudio gravado/escolhido pela pessoa (toca de verdade); sem `src`, é um exemplo com tempo simulado.
  */
 export function VoiceNote({ caption, duration, src, color = "cream" }: { caption: string; duration?: string; src?: string; color?: PlayerColor }) {
+  const tx = useTranslations("components.messages.VoiceNote");
   const look = PLAYER_PALETTE[color];
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -114,7 +116,7 @@ export function VoiceNote({ caption, duration, src, color = "cream" }: { caption
   const ratio = dur > 0 ? clamp(cur / dur, 0, 1) : 0;
 
   return (
-    <article aria-label="Mensagem de voz" className="relative w-[14em]">
+    <article aria-label={tx("mensagemDeVoz")} className="relative w-[14em]">
       {src && (
         <audio
           ref={audioRef}
@@ -194,7 +196,7 @@ export function VoiceNote({ caption, duration, src, color = "cream" }: { caption
             <div
               role="slider"
               tabIndex={0}
-              aria-label="Posição da mensagem de voz"
+              aria-label={tx("posicaoDaMensagemDeVoz")}
               aria-valuemin={0}
               aria-valuemax={Math.round(dur)}
               aria-valuenow={Math.round(cur)}

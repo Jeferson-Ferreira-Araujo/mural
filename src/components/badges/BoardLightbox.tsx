@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 
 /** Mural em tela cheia (para ver os detalhes de perto). Fechar volta exatamente para onde a pessoa estava. */
 export function BoardLightbox({ image, name, onClose }: { image: string | null; name: string; onClose: () => void }) {
+  const tx = useTranslations("components.badges.BoardLightbox");
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current;
@@ -31,7 +33,7 @@ export function BoardLightbox({ image, name, onClose }: { image: string | null; 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={image} alt={`Mural ${name}`} draggable={false} className="max-h-full max-w-full rounded-xl object-contain shadow-[0_1rem_3rem_rgba(0,0,0,.6)]" />
           <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold text-white">{name}</p>
-          <button type="button" onClick={onClose} aria-label="Fechar" className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-black/60 text-2xl text-white transition hover:bg-black/80 active:scale-90 sm:top-5 sm:right-5">
+          <button type="button" onClick={onClose} aria-label={tx("fechar")} className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-black/60 text-2xl text-white transition hover:bg-black/80 active:scale-90 sm:top-5 sm:right-5">
             ×
           </button>
         </div>

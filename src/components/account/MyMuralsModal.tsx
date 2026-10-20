@@ -7,12 +7,14 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
 import { SuccessPopup } from "./SuccessPopup";
+import { useTranslations } from "next-intl";
 
 /**
  * Meus murais: a lista dos murais da conta. Tocar num deles abre a edição (nome, pergunta de segurança e resposta, tipo do mural),
  * com o botão de voltar para a lista.
  */
 export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, onChanged, onDeleted }: { /** botão "Criar novo mural" (só quem pode criar mais um) */ onNewMural?: () => void; open: boolean; onClose: () => void; murals: OwnMural[]; /** mural aberto agora: se for apagado, sai dele */ currentId?: string; onChanged: () => void; onDeleted: () => void }) {
+  const tx = useTranslations("components.account.MyMuralsModal");
   const [editId, setEditId] = useState<string | null>(null);
   const [boards, setBoards] = useState<Record<string, string>>({});
   const [confirmId, setConfirmId] = useState<string | null>(null); // mural que a pessoa quer apagar (pede confirmação)
@@ -130,16 +132,15 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
 
   return (
     <>
-    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label="Meus murais" wide overlay={confirmId && toDelete ? (
-        <div role="alertdialog" aria-label="Apagar mural" className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#2a1c12]/55 p-5 backdrop-blur-sm">
+    <Modal open={open} onClose={onClose} title={editing ? "" : "Meus murais"} label={tx("meusMurais")} wide overlay={confirmId && toDelete ? (
+        <div role="alertdialog" aria-label={tx("apagarMural")} className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-[#2a1c12]/55 p-5 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl bg-[#fbf6ea] p-5 text-center shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
             <p className="font-title text-xl font-semibold">Apagar “{toDelete.title}”?</p>
-            <p className="mt-2 text-sm text-[#4a3826]">Os bottons serão devolvidos a você, os Pinz serão perdidos e não será mais possível acessar esse mural.</p>
+            <p className="mt-2 text-sm text-[#4a3826]">{tx("osBottonsSeraoDevolvidosA")}</p>
             {err && <p role="alert" className="mt-2 text-sm text-[#a23b2a]">{err}</p>}
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => (setConfirmId(null), setErr(null))} disabled={busy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                Cancelar
-              </button>
+                {tx("cancelar")}</button>
               <button type="button" onClick={() => void remove()} disabled={busy} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
                 {busy ? "Apagando…" : "Apagar"}
               </button>
@@ -172,7 +173,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
           />
         </div>
       ) : murals.length === 0 ? (
-        <p className="py-6 text-center text-sm text-[#6b5440]">Você ainda não criou nenhum mural.</p>
+        <p className="py-6 text-center text-sm text-[#6b5440]">{tx("voceAindaNaoCriouNenhum")}</p>
       ) : (
         <div>
           {/* discreto, no topo à direita, acima do primeiro mural */}
@@ -215,7 +216,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                         if (e.key === "ArrowDown") (e.preventDefault(), void move(i, 1));
                       }}
                       aria-label={`Mudar a ordem de ${m.title}: arraste (ou use as setas do teclado)`}
-                      title="Arraste para mudar a ordem"
+                      title={tx("arrasteParaMudarAOrdem")}
                       className={`grid w-7 shrink-0 touch-none place-items-center rounded-lg pt-6 text-[#8a7b69] transition hover:bg-black/5 hover:text-[#4a3826] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${drag?.id === m.id ? "cursor-grabbing" : "cursor-grab"}`}
                     >
                       <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="currentColor">
@@ -250,7 +251,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                     </span>
                   </button>
                   <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">
-                    <button type="button" onClick={() => setEditId(m.id)} aria-label={`Editar ${m.title}`} title="Editar" className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
+                    <button type="button" onClick={() => setEditId(m.id)} aria-label={`Editar ${m.title}`} title={tx("editar")} className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
                       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
                         <path d="m14 8 3 3" />
@@ -258,7 +259,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                     </button>
                     {/* o principal (o primeiro mural) nunca pode ser apagado */}
                     {i > 0 && (
-                      <button type="button" onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`Apagar ${m.title}`} title="Apagar" className="grid size-10 cursor-pointer place-items-center rounded-lg border border-[#e3b3a8] bg-white text-[#a23b2a] transition hover:bg-[#fbeae5]">
+                      <button type="button" onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`Apagar ${m.title}`} title={tx("apagar")} className="grid size-10 cursor-pointer place-items-center rounded-lg border border-[#e3b3a8] bg-white text-[#a23b2a] transition hover:bg-[#fbeae5]">
                         <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
                         </svg>

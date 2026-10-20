@@ -14,6 +14,7 @@ import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 import { GridSkeleton } from "../Skeleton";
+import { useTranslations } from "next-intl";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -22,16 +23,17 @@ const MAX_QTY = 20;
 
 /** Escolhe quantas unidades comprar (− n +). */
 function Qty({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
+  const tx = useTranslations("components.badges.StoreModal");
   const b = "grid size-7 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-base font-bold leading-none text-[#4a3826] hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40";
   return (
     <div role="group" aria-label={label} className="mt-2 flex items-center justify-center gap-2">
-      <button type="button" aria-label="Menos uma" disabled={value <= 1} onClick={() => onChange(value - 1)} className={b}>
+      <button type="button" aria-label={tx("menosUma")} disabled={value <= 1} onClick={() => onChange(value - 1)} className={b}>
         −
       </button>
       <span aria-live="polite" className="min-w-6 text-center text-sm font-bold tabular-nums">
         {value}
       </span>
-      <button type="button" aria-label="Mais uma" disabled={value >= MAX_QTY} onClick={() => onChange(value + 1)} className={b}>
+      <button type="button" aria-label={tx("maisUma")} disabled={value >= MAX_QTY} onClick={() => onChange(value + 1)} className={b}>
         +
       </button>
     </div>
@@ -163,6 +165,7 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
  * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PINZ+ (sem limite), não se vende.
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
+  const tx = useTranslations("components.badges.StoreModal");
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria
@@ -237,7 +240,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     <Modal
       open={open}
       onClose={onClose}
-      title="Loja"
+      title={tx("loja")}
       xl
       aside={
         // os créditos ficam sempre no cabeçalho, ao lado do botão de fechar: dá para ver o saldo sendo gasto
@@ -249,11 +252,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       }
     >
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
-      <section ref={packs} aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
+      <section ref={packs} aria-label={tx("comprarCreditos")} className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
         <header className="flex items-center gap-3 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
           <Coin className="size-9 sm:size-10" />
-          <h3 className="font-title text-2xl font-semibold">Pacotes de crédito</h3>
-          {!PAYMENTS_ENABLED && <span className="text-xs text-[#6b5440]">Compra de créditos: em breve</span>}
+          <h3 className="font-title text-2xl font-semibold">{tx("pacotesDeCredito")}</h3>
+          {!PAYMENTS_ENABLED && <span className="text-xs text-[#6b5440]">{tx("compraDeCreditosEmBreve")}</span>}
         </header>
         <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pt-5 pb-3 [scrollbar-width:none] sm:grid sm:grid-cols-4 sm:overflow-visible sm:p-4 [&::-webkit-scrollbar]:hidden">
           {CREDIT_PACKS.map((p, i) => (
@@ -264,7 +267,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <Coin className={COIN_SIZE[i] ?? "size-10"} />
                 <p className="text-left leading-none">
                   <span className="font-title block text-3xl font-semibold">{p.credits}</span>
-                  <span className="text-xs text-[#8a7b69]">créditos</span>
+                  <span className="text-xs text-[#8a7b69]">{tx("creditos")}</span>
                 </p>
               </div>
               <div className="mt-3 flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2">
@@ -286,14 +289,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           className="mb-5 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-4 py-3 text-left text-[#3a2300] shadow-[0_0.2rem_0.7rem_rgba(150,90,0,.35)] transition active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
         >
           <span>
-            <span className="block text-base font-extrabold">Assinar PINZ+</span>
-            <span className="block text-xs font-semibold opacity-80">Pins e displays sem limite, mais murais e mais tipos de pin</span>
+            <span className="block text-base font-extrabold">{tx("assinarPinz")}</span>
+            <span className="block text-xs font-semibold opacity-80">{tx("pinsEDisplaysSemLimite")}</span>
           </span>
-          <span className="shrink-0 rounded-lg bg-[#3a2300] px-3 py-1.5 text-sm font-bold text-[#fff4cc]">R$ 9,90/mês</span>
+          <span className="shrink-0 rounded-lg bg-[#3a2300] px-3 py-1.5 text-sm font-bold text-[#fff4cc]">{tx("r990Mes")}</span>
         </button>
       )}
 
-      <div role="tablist" aria-label="Loja" className="mb-4 grid grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+      <div role="tablist" aria-label={tx("loja")} className="mb-4 grid grid-cols-3 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
         {(
           [
             ["pins", "Bottons"],
@@ -308,10 +311,10 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       </div>
 
       {!inventory ? (
-        <GridSkeleton count={9} label="Carregando a loja" />
+        <GridSkeleton count={9} label={tx("carregandoALoja")} />
       ) : tab === "pins" ? (
         <>
-          <div role="tablist" aria-label="Categorias de Bottons" className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
+          <div role="tablist" aria-label={tx("categoriasDeBottons")} className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
               <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => (setFilter(c.id), setPage(0))} className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
                 {c.text}
@@ -319,7 +322,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             ))}
           </div>
           {shown.length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#6b5440]">Nenhum botton nesta categoria ainda.</p>
+            <p className="py-6 text-center text-sm text-[#6b5440]">{tx("nenhumBottonNestaCategoriaAinda")}</p>
           ) : (
             <>
             <div ref={listTop} className="scroll-mt-2" />
@@ -340,7 +343,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         {cost}
                       </span>
                     )}
-                    {newKeys.has(b.key) && <span className="absolute top-1.5 left-1.5 z-10 rounded-full bg-[#e8554a] px-1.5 py-px text-[9px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.3)]">Novo</span>}
+                    {newKeys.has(b.key) && <span className="absolute top-1.5 left-1.5 z-10 rounded-full bg-[#e8554a] px-1.5 py-px text-[9px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.3)]">{tx("novo")}</span>}
                     <div className="grid h-16 w-full place-items-center">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))", animation: just ? "buy-wiggle 0.9s ease" : undefined }} />
@@ -348,7 +351,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <p className="mt-1 w-full truncate text-xs font-semibold">{name}</p>
                     <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={`Quantidade de ${name}`} />
                     {just ? (
-                      <p className="mt-2 w-full rounded-lg bg-[#3aa655] px-2 py-1.5 text-xs font-bold text-white">✓ Comprado!</p>
+                      <p className="mt-2 w-full rounded-lg bg-[#3aa655] px-2 py-1.5 text-xs font-bold text-white">{tx("comprado")}</p>
                     ) : (
                       <button
                         type="button"
@@ -380,16 +383,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               })}
             </ul>
             {pages > 1 && (
-              <nav aria-label="Páginas de bottons" className="mt-4 flex items-center justify-center gap-3">
+              <nav aria-label={tx("paginasDeBottons")} className="mt-4 flex items-center justify-center gap-3">
                 <button type="button" disabled={pageSafe === 0} onClick={() => goPage(pageSafe - 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
-                  ‹ Anterior
-                </button>
+                  {tx("anterior")}</button>
                 <span className="text-sm font-semibold tabular-nums text-[#6b5440]">
                   {pageSafe + 1} de {pages}
                 </span>
                 <button type="button" disabled={pageSafe >= pages - 1} onClick={() => goPage(pageSafe + 1)} className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-40">
-                  Próxima ›
-                </button>
+                  {tx("proxima")}</button>
               </nav>
             )}
             </>
@@ -397,7 +398,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </>
       ) : tab === "formats" && !displayCat ? (
         // 1º passo: o tipo de display (cada estilo é vendido separadamente, dentro do tipo)
-        <ul className="grid gap-3 sm:grid-cols-2" aria-label="Tipos de display">
+        <ul className="grid gap-3 sm:grid-cols-2" aria-label={tx("tiposDeDisplay")}>
           {DISPLAY_CATS.filter((c) => isDisplayOn(c.id)).map((c) => {
             const items = products.filter((p) => p.id.startsWith(c.id + ":"));
             const styles = new Set(items.map((p) => baseStyle(p.id.split(":")[1]))).size; // estilos diferentes (retangular e quadrado do mesmo estilo contam uma vez)
@@ -425,7 +426,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               </li>
             );
           })}
-          {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">Em breve, novos displays por aqui.</li>}
+          {products.length === 0 && <li className="col-span-full py-6 text-center text-sm text-[#6b5440]">{tx("emBreveNovosDisplaysPor")}</li>}
         </ul>
       ) : tab === "formats" ? (
         <>
@@ -475,7 +476,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       )}
                     </div>
                     {shapes.length > 1 && (
-                      <div role="radiogroup" aria-label="Formato" className="mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                      <div role="radiogroup" aria-label={tx("formato")} className="mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
                         {shapes.map((sh) => (
                           <button key={sh} type="button" role="radio" aria-checked={shape === sh} onClick={() => setShapePick((m) => ({ ...m, [key]: sh }))} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
                             {SHAPE_LABEL[sh]}
@@ -525,7 +526,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     type="button"
                     onClick={() => setViewBoard({ image: b.image, name: b.name })}
                     aria-label={`Ver o mural ${b.name} em tela cheia`}
-                    title="Ver em tela cheia"
+                    title={tx("verEmTelaCheia")}
                     className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/40 text-white/90 opacity-80 backdrop-blur-sm transition hover:bg-black/65 hover:opacity-100 active:scale-90"
                   >
                     <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -533,7 +534,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   </button>
-                  {NEW_BOARDS.includes(b.id) && <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">Novo</span>}
+                  {NEW_BOARDS.includes(b.id) && <span className="absolute top-2 left-2 rounded-full bg-[#e8554a] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-white uppercase shadow-[0_0.15rem_0.4rem_rgba(0,0,0,.35)]">{tx("novo")}</span>}
                 </div>
                 <div className="p-3">
                   <div className="flex items-center justify-between gap-2">
@@ -571,7 +572,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           ref={(d) => {
             if (d && !d.open) d.showModal();
           }}
-          aria-label="Créditos insuficientes"
+          aria-label={tx("creditosInsuficientes")}
           onClose={() => setShort(null)}
           onClick={(e) => e.target === e.currentTarget && setShort(null)}
           className="m-auto w-[min(92vw,22rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
@@ -579,14 +580,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           {short.offer ? (
             // sugestão no próprio aviso: o pacote de R$ 25 (o mais vendido), para a pessoa ter ideia do quanto dá para comprar
             <div className="rounded-3xl border border-[#ecd9a0] bg-[#fffaf0] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
-              <h2 className="font-title text-2xl leading-tight font-semibold">Que tal este pacote?</h2>
+              <h2 className="font-title text-2xl leading-tight font-semibold">{tx("queTalEstePacote")}</h2>
               <div className="relative mt-4 rounded-2xl border border-[#e8d9b0] bg-white px-4 pt-5 pb-4">
                 {sug.note && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#2f9e5a] px-2.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-white shadow-sm">{sug.note}</span>}
                 <div className="flex items-center justify-center gap-3">
                   <Coin className="size-14" />
                   <p className="text-left leading-none">
                     <span className="font-title block text-4xl font-semibold">{sug.credits}</span>
-                    <span className="text-sm text-[#8a7b69]">créditos</span>
+                    <span className="text-sm text-[#8a7b69]">{tx("creditos")}</span>
                   </p>
                 </div>
                 <p className="mt-3 text-2xl font-bold">{sug.price}</p>
@@ -594,8 +595,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <p className="mt-3 text-sm text-[#4a3826]">Com {sug.credits} créditos você leva bastante coisa: vários bottons, displays e até um fundo de mural.</p>
               <div className="mt-4 flex gap-2">
                 <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                  Agora não
-                </button>
+                  {tx("agoraNao")}</button>
                 <button
                   type="button"
                   disabled={!PAYMENTS_ENABLED}
@@ -612,21 +612,19 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           ) : (
           <div className="rounded-3xl border border-[#ecd9a0] bg-[#fffaf0] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
             <Coin className="mx-auto size-14" />
-            <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">Créditos insuficientes</h2>
+            <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">{tx("creditosInsuficientes")}</h2>
             <p className="mt-2 text-sm text-[#4a3826]">
               Você não tem crédito suficiente para comprar <strong>{short.name}</strong>. Faltam <strong>{short.cost - credits}</strong> {short.cost - credits === 1 ? "crédito" : "créditos"}.
             </p>
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                Agora não
-              </button>
+                {tx("agoraNao")}</button>
               <button
                 type="button"
                 onClick={() => setShort({ ...short, offer: true })}
                 className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a]"
               >
-                Adquirir créditos
-              </button>
+                {tx("adquirirCreditos")}</button>
             </div>
           </div>
           )}

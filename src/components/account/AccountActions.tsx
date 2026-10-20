@@ -10,12 +10,13 @@ const base = "relative grid h-11 min-w-11 shrink-0 cursor-pointer place-items-ce
 
 /** Ícones do cabeçalho de quem está logado: pesquisar murais e abrir o menu da conta. `tone`: light = fundo claro; dark = sobre a imagem do mural. */
 export function AccountActions({ account, tone = "light", className = "", menu = true }: { account: AccountApi; tone?: "light" | "dark"; className?: string; /** false: sem o botão do menu (no desktop os atalhos ficam na coluna bege) */ menu?: boolean }) {
+  const tx = useTranslations("components.account.AccountActions");
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
       {/* desktop: o sino de notificações fica à esquerda do botão de pesquisar (no celular ele está no cabeçalho) */}
       {!menu && account.notifications && (
-        <button type="button" onClick={account.notifications.onOpen} data-tour="bell" aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"} title="Notificações" className={`${base} ${look}`}>
+        <button type="button" onClick={account.notifications.onOpen} data-tour="bell" aria-label={account.notifications.count ? `Notificações (${account.notifications.count} novas)` : "Notificações"} title={tx("notificacoes")} className={`${base} ${look}`}>
           <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
             <path d="M10 20a2.2 2.2 0 0 0 4 0" />
@@ -27,14 +28,14 @@ export function AccountActions({ account, tone = "light", className = "", menu =
           )}
         </button>
       )}
-      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
+      <button type="button" onClick={account.onSearch} data-tour="search" aria-label={tx("pesquisarUsuarios")} className={`${base} grid-flow-col gap-2 px-4 text-sm font-semibold ${look}`}>
         <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
         Pesquisar usuários
       </button>
-      {menu && <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look}`}>
+      {menu && <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title={tx("menu")} className={`${base} ${look}`}>
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
@@ -50,9 +51,10 @@ export function AccountActions({ account, tone = "light", className = "", menu =
 
 /** Só o botão do menu da conta (no celular ele fica no canto esquerdo da tela). */
 export function AccountMenuButton({ account, tone = "light", className = "" }: { account: AccountApi; tone?: "light" | "dark"; className?: string }) {
+  const tx = useTranslations("components.account.AccountActions");
   const look = tone === "dark" ? "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" : "border border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white";
   return (
-    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={`${base} ${look} ${className}`}>
+    <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title={tx("menu")} className={`${base} ${look} ${className}`}>
       <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
@@ -70,9 +72,10 @@ const iconSvg = { viewBox: "0 0 24 24", className: "size-5", fill: "none", strok
 
 /** Cabeçalho do mural no celular: à esquerda o menu (e o atalho para o seu mural quando você está no de outra pessoa); à direita a lupa (busca) e o sino. O logo fica no meio (quem usa). */
 export function MobileHeaderLeft({ account }: { account: AccountApi }) {
+  const tx = useTranslations("components.account.AccountActions");
   return (
     <div className="flex items-center gap-1.5">
-      <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title="Menu" className={iconBtn}>
+      <button type="button" onClick={account.onMenu} data-tour="menu" aria-label={account.badge ? `Menu (${account.badge} pins para aprovar)` : "Menu"} title={tx("menu")} className={iconBtn}>
         <svg {...iconSvg} className="size-6" strokeWidth={2.4}>
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
@@ -83,7 +86,7 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
         )}
       </button>
       {account.onHome && !account.atHome && (
-        <button type="button" onClick={account.onHome} aria-label="Ir para o meu mural" title="Meu mural" className={iconBtn}>
+        <button type="button" onClick={account.onHome} aria-label={tx("irParaOMeuMural")} title={tx("meuMural")} className={iconBtn}>
           <svg {...iconSvg}>
             <path d="M3 11.5 12 4l9 7.5" />
             <path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-5.5h4v5.5h3.5a1 1 0 0 0 1-1V10" />
@@ -95,17 +98,18 @@ export function MobileHeaderLeft({ account }: { account: AccountApi }) {
 }
 
 export function MobileHeaderRight({ account }: { account: AccountApi }) {
+  const tx = useTranslations("components.account.AccountActions");
   const bell = account.notifications;
   return (
     <div className="flex items-center gap-1.5">
-      <button type="button" onClick={account.onSearch} data-tour="search" aria-label="Pesquisar usuários" title="Pesquisar usuários" className={iconBtn}>
+      <button type="button" onClick={account.onSearch} data-tour="search" aria-label={tx("pesquisarUsuarios")} title={tx("pesquisarUsuarios")} className={iconBtn}>
         <svg {...iconSvg} strokeWidth={2.4}>
           <circle cx="11" cy="11" r="6.5" />
           <path d="m20 20-4.2-4.2" />
         </svg>
       </button>
       {bell && (
-        <button type="button" onClick={bell.onOpen} data-tour="bell" aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title="Notificações" className={iconBtn}>
+        <button type="button" onClick={bell.onOpen} data-tour="bell" aria-label={bell.count ? `Notificações (${bell.count} novas)` : "Notificações"} title={tx("notificacoes")} className={iconBtn}>
           <svg {...iconSvg} className="size-5.5">
             <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z" />
             <path d="M10 20a2.2 2.2 0 0 0 4 0" />

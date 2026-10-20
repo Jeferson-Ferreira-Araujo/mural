@@ -11,6 +11,7 @@ import { DisplayCard, splitDisplayId } from "../widgets";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
+import { useTranslations } from "next-intl";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** tamanho em % do botton que está sendo arrastado */ scale?: number };
 
@@ -812,6 +813,7 @@ export function BadgeProvider({
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
 function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; onDetail: (id: string) => void; /** display de leitura: mais ou menos páginas lidas, sem abrir a edição */ onPages: (id: string, delta: number) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+  const tx = useTranslations("components.badges.BadgeContext");
   const [g, setG] = useState<{ cx: number; cy: number; Rx: number; Ry: number } | null>(null);
   useEffect(() => {
     let raf = 0;
@@ -876,17 +878,17 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
         style={{ left: sLeft, top: sTop, width: SW }}
       >
         <div className="flex w-full items-center justify-center gap-1">
-          <span aria-hidden className="text-sm leading-none opacity-80" title="Anti-horário">
+          <span aria-hidden className="text-sm leading-none opacity-80" title={tx("antiHorario")}>
             ↺
           </span>
-          <TouchSlider value={deg} min={-MAX_TILT} max={MAX_TILT} onChange={(v) => onTilt(id, v)} onEnd={() => onTiltEnd(id)} length={SW - 50} label="Inclinar o botton: para a esquerda gira no sentido anti-horário, para a direita no horário" />
-          <span aria-hidden className="text-sm leading-none opacity-80" title="Horário">
+          <TouchSlider value={deg} min={-MAX_TILT} max={MAX_TILT} onChange={(v) => onTilt(id, v)} onEnd={() => onTiltEnd(id)} length={SW - 50} label={tx("inclinarOBottonParaA")} />
+          <span aria-hidden className="text-sm leading-none opacity-80" title={tx("horario")}>
             ↻
           </span>
         </div>
         <button
           type="button"
-          aria-label="Restaurar: deixa o botton reto"
+          aria-label={tx("restaurarDeixaOBottonReto")}
           disabled={deg === 0}
           onClick={() => {
             onTilt(id, 0);
@@ -894,29 +896,28 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
           }}
           className="mt-1.5 mb-0.5 min-h-8 cursor-pointer rounded-lg px-4 py-1.5 text-xs leading-none font-semibold text-[#f6c93f] transition hover:bg-white/10 active:bg-white/20 disabled:cursor-default disabled:text-white/40 disabled:hover:bg-transparent"
         >
-          Restaurar
-        </button>
+          {tx("restaurar")}</button>
       </div>
 
       <div
         data-badge-controls
         role="toolbar"
-        aria-label="Tamanho e posição do botton"
+        aria-label={tx("tamanhoEPosicaoDoBotton")}
         onPointerEnter={() => onKeep(id)}
         onPointerLeave={() => onKeep(null)}
         className="fixed z-[350] flex touch-none flex-col items-center gap-0.5 rounded-full bg-[#17110c]/92 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
         style={{ left: pLeft, top: pTop, width: W, height: Hh }}
       >
         {/* tamanho: em cima maior, embaixo menor (o menor é o tamanho de sempre) */}
-        <span aria-hidden className="mt-1.5 size-2.5 rounded-full bg-white/80" title="Maior" />
-        <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label="Tamanho do botton: para cima maior, para baixo menor" />
-        <span aria-hidden className="size-1.5 rounded-full bg-white/80" title="Menor" />
+        <span aria-hidden className="mt-1.5 size-2.5 rounded-full bg-white/80" title={tx("maior")} />
+        <TouchSlider vertical value={scale} min={MIN_SCALE} max={MAX_SCALE} onChange={(v) => onScale(id, v)} onEnd={() => onScaleEnd(id)} length={TRACK} label={tx("tamanhoDoBottonParaCima")} />
+        <span aria-hidden className="size-1.5 rounded-full bg-white/80" title={tx("menor")} />
       </div>
 
       <div
         data-badge-controls
         role="toolbar"
-        aria-label="Ações do botton"
+        aria-label={tx("acoesDoBotton")}
         onPointerEnter={() => onKeep(id)}
         onPointerLeave={() => onKeep(null)}
         className="fixed z-[350] flex touch-none flex-col items-center justify-center gap-0.5 rounded-full bg-[#17110c]/92 p-[3px] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] backdrop-blur"
@@ -926,7 +927,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
           <>
             {/* páginas lidas: toque soma/tira uma; segurando, anda rápido */}
             <PagesStep dir={1} onStep={(d) => onPages(id, d)} />
-            <span className="text-[11px] leading-none font-extrabold tabular-nums" aria-live="polite" title="Páginas lidas">
+            <span className="text-[11px] leading-none font-extrabold tabular-nums" aria-live="polite" title={tx("paginasLidas")}>
               {badge.data?.read ?? 0}
             </span>
             <PagesStep dir={-1} onStep={(d) => onPages(id, d)} />
@@ -934,20 +935,20 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
           </>
         )}
         {isDisp && (
-          <button type="button" onClick={() => onDetail(id)} aria-label="Ver o display em tamanho grande" title="Ver em tamanho grande" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onDetail(id)} aria-label={tx("verODisplayEmTamanho")} title={tx("verEmTamanhoGrande")} className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
             </svg>
           </button>
         )}
         {canEdit && (
-          <button type="button" onClick={() => onEdit(id)} aria-label="Editar o display: contorno, horário ou cidade" title="Editar" className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
+          <button type="button" onClick={() => onEdit(id)} aria-label={tx("editarODisplayContornoHorario")} title={tx("editar")} className="grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />
             </svg>
           </button>
         )}
-        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o display do mural" : "Tirar o botton do mural (volta para a barra)"} title="Tirar do mural" className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
+        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o display do mural" : "Tirar o botton do mural (volta para a barra)"} title={tx("tirarDoMural")} className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
@@ -956,8 +957,8 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
       <button
         type="button"
         data-badge-controls
-        aria-label="Fechar as opções do botton"
-        title="Fechar"
+        aria-label={tx("fecharAsOpcoesDoBotton")}
+        title={tx("fechar")}
         onClick={onClose}
         className="fixed z-[350] grid size-8 cursor-pointer place-items-center rounded-full bg-[#17110c]/92 text-white shadow-[0_0.25rem_0.8rem_rgba(0,0,0,.5)] backdrop-blur transition hover:bg-black active:scale-90"
         style={{ left: pLeft + W / 2 - 16, top: pTop - 38 }}
@@ -1021,6 +1022,7 @@ const visibleLayer = () => visibleOne("[data-badge-layer]") as HTMLElement | nul
  * Só vale sobre espaços livres (os espaços que o pin cobrir deixam de receber post-its, fotos e vídeos).
  */
 function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: string; data: DisplayPayload; onCancel: () => void; onDrop: (x: number, y: number, slots: number[], rect?: { left: number; right: number; top: number; bottom: number }) => void; notify: (m: string) => void }) {
+  const tx = useTranslations("components.badges.BadgeContext");
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [size, setSize] = useState({ w: 120, h: 120 });
   const [state, setState] = useState<"ok" | "bad">("ok");
@@ -1089,11 +1091,10 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
   const cardStyle: CSSProperties = { fontSize: size.w / NATURAL_W[shapeOfStyle(data.style)] + "px", outline: dragging ? "3px solid " + ring : "none", outlineOffset: "4px", borderRadius: "1.4em" };
 
   return createPortal(
-    <div className="fixed inset-0 z-[380]" role="dialog" aria-label="Posicionar o display no mural">
+    <div className="fixed inset-0 z-[380]" role="dialog" aria-label={tx("posicionarODisplayNoMural")}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]" />
       <p className="absolute top-4 left-1/2 w-[min(92vw,26rem)] -translate-x-1/2 rounded-2xl bg-[#17110c]/92 px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_0.4rem_1.4rem_rgba(0,0,0,.5)]">
-        Arraste o display e solte onde você quiser no mural
-      </p>
+        {tx("arrasteODisplayESolte")}</p>
       <div
         onPointerDown={start}
         className="absolute touch-none select-none"
@@ -1104,8 +1105,7 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
         </div>
       </div>
       <button type="button" onClick={onCancel} className="absolute bottom-6 left-1/2 -translate-x-1/2 cursor-pointer rounded-xl bg-white/90 px-5 py-2.5 text-sm font-bold text-[#2a1c12] shadow-[0_0.3rem_1rem_rgba(0,0,0,.5)] transition hover:bg-white active:scale-95">
-        Cancelar
-      </button>
+        {tx("cancelar")}</button>
     </div>,
     document.body,
   );

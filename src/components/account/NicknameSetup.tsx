@@ -7,6 +7,7 @@ import { saveOnboarding, PROFILE_STEP_DONE_KEY } from "@/lib/onboarding";
 import { primaryButton, NicknameField, useNicknameStatus } from "../ui";
 import { AvatarUploader } from "../AvatarUploader";
 import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, isUnder13, toIso } from "./BirthField";
+import { useTranslations } from "next-intl";
 
 const ERROR: Record<string, string> = {
   nickname_taken: "Esse nome de usuário já está em uso.",
@@ -20,6 +21,7 @@ const ERROR: Record<string, string> = {
  * `suggested` é o nome automático criado a partir do e-mail.
  */
 export function NicknameSetup({ open, suggested, onDone }: { open: boolean; suggested: string; onDone: (nickname: string) => void }) {
+  const tx = useTranslations("components.account.NicknameSetup");
   const ref = useRef<HTMLDialogElement>(null);
   const [nick, setNick] = useState(suggested);
   const [busy, setBusy] = useState(false);
@@ -81,13 +83,13 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
     <dialog
       ref={ref}
       onCancel={(e) => e.preventDefault()} // Esc não fecha: a escolha é obrigatória
-      aria-label="Complete o seu perfil"
+      aria-label={tx("completeOSeuPerfil")}
       className="m-auto max-h-[94dvh] w-[min(94vw,28rem)] overflow-y-auto rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-0 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/70"
     >
       {open && (
         <form onSubmit={submit} noValidate className="space-y-4 p-6">
-          <h2 className="font-title text-xl font-semibold">Complete o seu perfil</h2>
-          <p className="text-[15px] text-[#4a3826]">Escolha o seu nome de usuário: é assim que as pessoas vão te encontrar e abrir o seu mural. Depois de salvo, não dá para mudar.</p>
+          <h2 className="font-title text-xl font-semibold">{tx("completeOSeuPerfil")}</h2>
+          <p className="text-[15px] text-[#4a3826]">{tx("escolhaOSeuNomeDe")}</p>
           <NicknameField value={nick} onChange={(v) => { setNick(v); setError(null); }} state={nick === suggested ? "ok" : state} autoFocus />
           <AvatarUploader nickname={nick || suggested} />
           <BirthField value={birth} onChange={(v) => { setBirth(v); setError(null); }} />

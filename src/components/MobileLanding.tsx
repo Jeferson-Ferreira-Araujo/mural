@@ -9,6 +9,7 @@ import { Brand } from "./Brand";
 import { authIntent } from "./AuthForm";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import type { ViewProps } from "./viewProps";
+import { useTranslations } from "next-intl";
 
 /**
  * Tela inicial no celular para quem ainda não entrou: o mesmo mural de exemplo do computador, completo e navegável (arrastar, pinça, aproximar),
@@ -23,6 +24,7 @@ function Chevron() {
 }
 
 export function MobileLanding({ items, plan, board, capacity, hasSelection, unlocked, locked, onCompose, onNotify, panel, boardPending }: Pick<ViewProps, "items" | "plan" | "board" | "capacity" | "hasSelection" | "unlocked" | "locked" | "onCompose" | "onNotify" | "boardPending"> & { panel: (tone: "dark" | "light", part?: "form") => ReactNode }) {
+  const tx = useTranslations("components.MobileLanding");
   const look = boardById(board);
   const [open, setOpen] = useState(false);
   // o quadro só aparece depois de montado e com o fundo sorteado: antes disso a página do servidor mostrava um pedaço do primeiro quadro, ampliado, no canto
@@ -51,8 +53,8 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={boardImageS(look)} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-md" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#140a04]/70 via-transparent to-[#140a04]/60" />
-      <h1 className="sr-only">Pinz</h1>
-      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label="Acessibilidade" title="Acessibilidade" className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-full bg-[#17110c]/70 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur transition active:scale-95">
+      <h1 className="sr-only">{tx("pinz")}</h1>
+      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label={tx("acessibilidade")} title={tx("acessibilidade")} className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-full bg-[#17110c]/70 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur transition active:scale-95">
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <circle cx="12" cy="4.5" r="1.8" />
           <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
@@ -66,12 +68,12 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m4 6 7 3M5 14l6-1.500" />
           </svg>
-          <span>Seu mural digital</span>
+          <span>{tx("seuMuralDigital")}</span>
           <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0 text-[#f2c230]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <path d="m20 6-7 3M19 14l-6-1.500" />
           </svg>
         </p>
-        <p className="mx-auto max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>
+        <p className="mx-auto max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
@@ -89,7 +91,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
               <path d="M12 5v14M5 12h14" />
             </svg>
           </span>
-          <span className="flex-1 text-center text-lg font-bold">Criar meu mural</span>
+          <span className="flex-1 text-center text-lg font-bold">{tx("criarMeuMural")}</span>
           <Chevron />
         </button>
         <button type="button" onClick={() => show("login")} className="mt-2.5 flex h-12 w-full cursor-pointer items-center gap-3 rounded-2xl border border-[#d9c9ad] bg-white px-3 text-[#2f2218] transition hover:bg-[#fffdf7] active:scale-[0.99]">
@@ -97,7 +99,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
             <circle cx="12" cy="8" r="3.5" />
             <path d="M5 20c.8-3.600 3.500-5.500 7-5.500s6.200 1.900 7 5.500" />
           </svg>
-          <span className="flex-1 text-center text-base font-bold">Já tenho conta — Entrar</span>
+          <span className="flex-1 text-center text-base font-bold">{tx("jaTenhoContaEntrar")}</span>
           <Chevron />
         </button>
       </section>
@@ -108,13 +110,13 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
         onClick={(e) => {
           if (e.target === e.currentTarget) setOpen(false);
         }}
-        aria-label="Entrar ou criar conta"
+        aria-label={tx("entrarOuCriarConta")}
         className="m-auto max-h-[94dvh] w-[min(94vw,30rem)] overflow-y-auto bg-transparent p-0 backdrop:bg-black/70"
       >
         {open && (
           <div>
             <div className="mb-2 flex justify-end">
-              <button type="button" onClick={() => setOpen(false)} aria-label="Fechar" className="grid size-10 cursor-pointer place-items-center rounded-full bg-white/90 text-2xl text-[#2f2218] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.4)]">
+              <button type="button" onClick={() => setOpen(false)} aria-label={tx("fechar")} className="grid size-10 cursor-pointer place-items-center rounded-full bg-white/90 text-2xl text-[#2f2218] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.4)]">
                 ×
               </button>
             </div>

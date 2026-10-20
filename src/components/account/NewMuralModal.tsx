@@ -9,6 +9,7 @@ import { getProfilePrivacy } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
+import { useTranslations } from "next-intl";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -20,6 +21,7 @@ function Coin({ className = "size-5" }: { className?: string }) {
  * Público ou privado é do perfil (Perfil → Privacidade): o mural novo já nasce com a mesma regra.
  */
 export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean; onClose: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
+  const tx = useTranslations("components.account.NewMuralModal");
   const [title, setTitle] = useState("");
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
@@ -112,7 +114,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const price = buying ? priceOf(buying) : 0;
 
   return (
-    <Modal open={open} onClose={onClose} title="Novo mural" label="Novo mural" wide>
+    <Modal open={open} onClose={onClose} title={tx("novoMural")} label={tx("novoMural")} wide>
       {target ? (
         <div className="space-y-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -131,8 +133,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           )}
           <div className="flex gap-2">
             <button type="button" onClick={() => (setBuying(null), setError(null))} disabled={busy} className={`${ghostButton} flex-1`}>
-              Cancelar
-            </button>
+              {tx("cancelar")}</button>
             <button type="button" onClick={() => void confirmBuy()} disabled={busy || credits < price} className={`${primaryButton} flex-1`}>
               {busy ? "Comprando…" : "Comprar"}
             </button>
@@ -142,7 +143,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
         <form onSubmit={create} className="space-y-4" noValidate>
           <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <span className="text-sm font-semibold">Tipo do mural</span>
+              <span className="text-sm font-semibold">{tx("tipoDoMural")}</span>
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold" aria-label={`${credits} créditos`}>
                 <Coin />
                 {credits}
@@ -152,7 +153,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
               <div
                 ref={strip}
                 role="radiogroup"
-                aria-label="Tipo do mural"
+                aria-label={tx("tipoDoMural")}
                 onScroll={(e) => {
                   // o tipo que está à vista no carrossel é o escolhido para criar (sem botão de selecionar)
                   const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
@@ -207,7 +208,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
             </div>
           </fieldset>
 
-          <Field label="Nome do mural">{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Viagem de 2026" className={inputClass} />}</Field>
+          <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exViagemDe2026")} className={inputClass} />}</Field>
           <PrivacyField value={privacy} onChange={setPrivacy} />
           <PinTtlField value={ttl} onChange={setTtl} />
 

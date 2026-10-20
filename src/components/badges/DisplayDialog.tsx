@@ -10,6 +10,7 @@ import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { Field, inputClass, primaryButton } from "../ui";
+import { useTranslations } from "next-intl";
 
 const SAMPLE: Record<string, Partial<DisplayData>> = {
   bible: { text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" },
@@ -36,6 +37,7 @@ const isoPlus = (days: number) => {
  * `onSubmit` recebe os dados prontos para o servidor.
  */
 export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
+  const tx = useTranslations("components.badges.DisplayDialog");
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
@@ -168,7 +170,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
         </div>
 
         {product === "clock" && (
-          <Field label="Horário de qual lugar?">
+          <Field label={tx("horarioDeQualLugar")}>
             {(id) => (
               <select id={id} value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass}>
                 {CLOCK_ZONES.map((z) => (
@@ -189,14 +191,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                 {city.address && <p className="truncate text-sm text-[#6b5440]">{city.address}</p>}
               </div>
               <button type="button" onClick={() => setCity(null)} className="shrink-0 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-                Trocar
-              </button>
+                {tx("trocar")}</button>
             </div>
           ) : (
             <div>
               <label htmlFor="display-city" className="mb-1.5 block text-sm font-semibold">
-                De qual cidade?
-              </label>
+                {tx("deQualCidade")}</label>
               <div className="flex gap-2">
                 <input
                   id="display-city"
@@ -208,7 +208,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                       void search();
                     }
                   }}
-                  placeholder="Ex: Goiânia, GO"
+                  placeholder={tx("exGoianiaGo")}
                   className={inputClass}
                   maxLength={100}
                   autoComplete="off"
@@ -217,7 +217,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                   {searching ? "Buscando…" : "Buscar"}
                 </button>
               </div>
-              {searched && hits.length === 0 && !err && <p className="mt-2 text-sm text-[#6b5440]">Nenhuma cidade encontrada. Tente outro nome.</p>}
+              {searched && hits.length === 0 && !err && <p className="mt-2 text-sm text-[#6b5440]">{tx("nenhumaCidadeEncontradaTenteOutro")}</p>}
               {hits.length > 0 && (
                 <ul className="mt-2 space-y-1.5">
                   {hits.map((h, i) => (
@@ -235,15 +235,15 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
         {product === "countdown" && (
           <div className="space-y-3">
-            <Field label="Título do contador">
-              {(id) => <input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder="Ex: Formatura, Natal, Aniversário" className={inputClass} autoComplete="off" />}
+            <Field label={tx("tituloDoContador")}>
+              {(id) => <input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder={tx("exFormaturaNatalAniversario")} className={inputClass} autoComplete="off" />}
             </Field>
             <div className="flex gap-2">
               <div className="min-w-0 flex-1">
-                <Field label="Data">{(id) => <input id={id} type="date" value={cdDate} onChange={(e) => setCdDate(e.target.value)} className={inputClass} />}</Field>
+                <Field label={tx("data")}>{(id) => <input id={id} type="date" value={cdDate} onChange={(e) => setCdDate(e.target.value)} className={inputClass} />}</Field>
               </div>
               <div className="w-32 shrink-0">
-                <Field label="Hora (opcional)">{(id) => <input id={id} type="time" value={cdTime} onChange={(e) => setCdTime(e.target.value)} className={inputClass} />}</Field>
+                <Field label={tx("horaOpcional")}>{(id) => <input id={id} type="time" value={cdTime} onChange={(e) => setCdTime(e.target.value)} className={inputClass} />}</Field>
               </div>
             </div>
           </div>
@@ -255,37 +255,36 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
               <div className="grid h-28 w-[4.7rem] shrink-0 place-items-center overflow-hidden rounded-lg border border-dashed border-[#c9b48a] bg-white/60">
                 {bkPreview || bkCover ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={bkPreview ?? bkCover ?? ""} alt="Capa escolhida" className="size-full object-cover" />
+                  <img src={bkPreview ?? bkCover ?? ""} alt={tx("capaEscolhida")} className="size-full object-cover" />
                 ) : (
-                  <span className="px-1 text-center text-[11px] leading-tight text-[#6b5440]">Sem capa</span>
+                  <span className="px-1 text-center text-[11px] leading-tight text-[#6b5440]">{tx("semCapa")}</span>
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-2">
-                <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label="Escolher a foto da capa" />
+                <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label={tx("escolherAFotoDaCapa")} />
                 <button type="button" onClick={() => bkInput.current?.click()} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-3 py-2 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                   {bkPreview || bkCover ? "Trocar a capa" : "Escolher a foto da capa"}
                 </button>
                 {(bkPreview || bkCover) && (
                   <button type="button" onClick={() => { setBkFile(null); setBkCover(null); }} className="ml-2 cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
-                    Tirar
-                  </button>
+                    {tx("tirar")}</button>
                 )}
               </div>
             </div>
-            <Field label="Nome do livro (opcional)">
-              {(id) => <input id={id} value={bkTitle} onChange={(e) => setBkTitle(e.target.value)} maxLength={40} placeholder="Ex: O Pequeno Príncipe" className={inputClass} autoComplete="off" />}
+            <Field label={tx("nomeDoLivroOpcional")}>
+              {(id) => <input id={id} value={bkTitle} onChange={(e) => setBkTitle(e.target.value)} maxLength={40} placeholder={tx("exOPequenoPrincipe")} className={inputClass} autoComplete="off" />}
             </Field>
             <div className="flex gap-2">
               <div className="min-w-0 flex-1">
-                <Field label="Páginas lidas">{(id) => <input id={id} type="number" inputMode="numeric" min={0} max={10000} value={bkRead} onChange={(e) => setBkRead(e.target.value)} className={inputClass} />}</Field>
+                <Field label={tx("paginasLidas")}>{(id) => <input id={id} type="number" inputMode="numeric" min={0} max={10000} value={bkRead} onChange={(e) => setBkRead(e.target.value)} className={inputClass} />}</Field>
               </div>
               <div className="min-w-0 flex-1">
-                <Field label="Total de páginas">{(id) => <input id={id} type="number" inputMode="numeric" min={1} max={10000} value={bkPages} onChange={(e) => setBkPages(e.target.value)} className={inputClass} />}</Field>
+                <Field label={tx("totalDePaginas")}>{(id) => <input id={id} type="number" inputMode="numeric" min={1} max={10000} value={bkPages} onChange={(e) => setBkPages(e.target.value)} className={inputClass} />}</Field>
               </div>
             </div>
             <div>
-              <p className="mb-1.5 text-sm font-semibold">Como mostrar o progresso</p>
-              <div role="radiogroup" aria-label="Como mostrar o progresso" className="grid grid-cols-3 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+              <p className="mb-1.5 text-sm font-semibold">{tx("comoMostrarOProgresso")}</p>
+              <div role="radiogroup" aria-label={tx("comoMostrarOProgresso")} className="grid grid-cols-3 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
                 {(
                   [
                     ["count", "Páginas"],
@@ -304,23 +303,23 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
         {product === "poll" && (
           <div className="space-y-3">
-            <Field label="Pergunta da enquete">
-              {(id) => <input id={id} value={plTitle} onChange={(e) => setPlTitle(e.target.value)} maxLength={90} placeholder="Ex: Você gosta de pizza com abacaxi?" className={inputClass} autoComplete="off" />}
+            <Field label={tx("perguntaDaEnquete")}>
+              {(id) => <input id={id} value={plTitle} onChange={(e) => setPlTitle(e.target.value)} maxLength={90} placeholder={tx("exVoceGostaDePizza")} className={inputClass} autoComplete="off" />}
             </Field>
             <div className="space-y-2">
-              <p className="text-sm font-semibold">As duas respostas</p>
+              <p className="text-sm font-semibold">{tx("asDuasRespostas")}</p>
               {([0, 1] as const).map((i) => (
                 <input key={i} value={plOptions[i] ?? ""} onChange={(e) => setPlOptions((l) => [0, 1].map((j) => (j === i ? e.target.value : (l[j] ?? ""))))} maxLength={40} aria-label={`Resposta ${i + 1}`} placeholder={i === 0 ? "Ex: Sim" : "Ex: Não"} className={inputClass} autoComplete="off" />
               ))}
             </div>
-            {editing && <p className="text-xs text-[#8a7b69]">Mudar as respostas zera os votos. Só mudar a pergunta mantém os votos.</p>}
+            {editing && <p className="text-xs text-[#8a7b69]">{tx("mudarAsRespostasZeraOs")}</p>}
           </div>
         )}
 
         {product === "top3" && (
           <div className="space-y-3">
-            <Field label="Tema do seu top 3">
-              {(id) => <input id={id} value={t3Title} onChange={(e) => setT3Title(e.target.value)} maxLength={30} placeholder="Ex: Minhas comidas favoritas" className={inputClass} autoComplete="off" />}
+            <Field label={tx("temaDoSeuTop3")}>
+              {(id) => <input id={id} value={t3Title} onChange={(e) => setT3Title(e.target.value)} maxLength={30} placeholder={tx("exMinhasComidasFavoritas")} className={inputClass} autoComplete="off" />}
             </Field>
             {([0, 1, 2] as const).map((i) => (
               <Field key={i} label={`${i + 1}º lugar`}>
@@ -334,17 +333,17 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
         {product === "daycount" && (
           <div className="space-y-3">
-            <Field label="Nome (o que está contando)">
-              {(id) => <input id={id} value={dcTitle} onChange={(e) => setDcTitle(e.target.value)} maxLength={30} placeholder="Ex: Juntos há, Sem fumar, Casa nova" className={inputClass} autoComplete="off" />}
+            <Field label={tx("nomeOQueEstaContando")}>
+              {(id) => <input id={id} value={dcTitle} onChange={(e) => setDcTitle(e.target.value)} maxLength={30} placeholder={tx("exJuntosHaSemFumar")} className={inputClass} autoComplete="off" />}
             </Field>
-            <Field label="Desde quando?">{(id) => <input id={id} type="date" value={dcSince} onChange={(e) => setDcSince(e.target.value)} className={inputClass} />}</Field>
+            <Field label={tx("desdeQuando")}>{(id) => <input id={id} type="date" value={dcSince} onChange={(e) => setDcSince(e.target.value)} className={inputClass} />}</Field>
           </div>
         )}
 
         {product === "calendar" && (
           <div className="space-y-2">
-            <p className="text-sm font-semibold">Datas importantes</p>
-            {dates.length === 0 && <p className="text-sm text-[#6b5440]">Nenhuma data ainda. Adicione aniversários, viagens, prazos…</p>}
+            <p className="text-sm font-semibold">{tx("datasImportantes")}</p>
+            {dates.length === 0 && <p className="text-sm text-[#6b5440]">{tx("nenhumaDataAindaAdicioneAniversarios")}</p>}
             <ul className="space-y-2">
               {dates.map((d, i) => (
                 <li key={i} className="space-y-1.5 rounded-xl border border-[#e1d3ba] bg-white/60 p-2.5">
@@ -360,7 +359,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                       value={d.label}
                       onChange={(e) => setDates((l) => l.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))}
                       maxLength={30}
-                      placeholder="Ex: Aniversário da Ana"
+                      placeholder={tx("exAniversarioDaAna")}
                       aria-label={`Nome da data ${i + 1}`}
                       className={`${inputClass} min-w-0 !px-2.5 !py-2 !text-sm`}
                     />
@@ -379,18 +378,17 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
             </ul>
             {dates.length < 12 && (
               <button type="button" onClick={() => setDates((l) => [...l, { date: "", label: "", yearly: true }])} className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-dashed border-[#c9b48a] px-3 py-2 text-sm font-semibold text-[#4a3826] transition hover:bg-white/70">
-                + Adicionar data
-              </button>
+                {tx("adicionarData")}</button>
             )}
           </div>
         )}
 
-        {product === "calendar" && <p className="text-sm text-[#6b5440]">Mostra o mês de hoje com as datas marcadas e, ao lado, as próximas. Dá para voltar e editar quando quiser.</p>}
-        {product === "cookie" && <p className="text-sm text-[#6b5440]">Quem tocar no biscoito quebra e lê uma mensagem; tocar de novo traz outro biscoito.</p>}
+        {product === "calendar" && <p className="text-sm text-[#6b5440]">{tx("mostraOMesDeHoje")}</p>}
+        {product === "cookie" && <p className="text-sm text-[#6b5440]">{tx("quemTocarNoBiscoitoQuebra")}</p>}
 
-        {(product === "bible" || product === "motivation") && <p className="text-sm text-[#6b5440]">Na prévia vai um exemplo. O texto muda sozinho todo dia, à meia-noite.</p>}
-        {product === "clock" && <p className="text-sm text-[#6b5440]">A hora passa sozinha, com a data de hoje.</p>}
-        {product === "weather" && <p className="text-sm text-[#6b5440]">Quem vê o mural vê o tempo do lugar onde está (se permitir a localização). Sem permissão, vale esta cidade.</p>}
+        {(product === "bible" || product === "motivation") && <p className="text-sm text-[#6b5440]">{tx("naPreviaVaiUmExemplo")}</p>}
+        {product === "clock" && <p className="text-sm text-[#6b5440]">{tx("aHoraPassaSozinhaCom")}</p>}
+        {product === "weather" && <p className="text-sm text-[#6b5440]">{tx("quemVeOMuralVe")}</p>}
 
         {(err || error) && (
           <p role="alert" className="text-sm text-[#a23b2a]">

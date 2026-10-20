@@ -23,6 +23,7 @@ import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
 import { useFeatureFlags } from "@/lib/features";
 import { useBadges } from "./badges/BadgeContext";
+import { useTranslations } from "next-intl";
 
 type Props = {
   items: BoardItem[];
@@ -56,6 +57,7 @@ type Props = {
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
+  const tx = useTranslations("components.MobileMural");
   const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
   const canAdd = unlocked && !locked && hasSelection && !!onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
   const look = boardById(board);
@@ -69,7 +71,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e]">
       {/* topo: logo + menu */}
       <header className={`relative z-30 h-14 shrink-0 items-center bg-[#f2e8d3] px-4 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.25)] ${account ? "grid grid-cols-[1fr_auto_1fr]" : "flex justify-between"}`}>
-        <h1 className="sr-only">Pinz</h1>
+        <h1 className="sr-only">{tx("pinz")}</h1>
         {account ? (
           <>
             <MobileHeaderLeft account={account} />
@@ -100,14 +102,13 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             {/* conta FREE no próprio mural: atalho para assinar o PINZ+ mensal */}
             {account?.atHome && plan === "free" && PAYMENTS_ENABLED && (
               <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))} className="cursor-pointer rounded-lg bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2.5 py-0.5 text-[11px] font-bold tracking-wide whitespace-nowrap text-[#3a2300] uppercase shadow-[0_0.1rem_0.4rem_rgba(150,90,0,.35)] transition active:scale-95">
-                Assinar PINZ+
-              </button>
+                {tx("assinarPinz")}</button>
             )}
           </span>
         </div>
         {/* à direita, na linha da foto: quantos seguidores a pessoa tem (o botão Seguir fica sobre o quadro) */}
         {!locked && info.followers != null && (
-          <button type="button" onClick={() => setFollowersOpen(true)} aria-label="Ver os seguidores" className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">
+          <button type="button" onClick={() => setFollowersOpen(true)} aria-label={tx("verOsSeguidores")} className="shrink-0 cursor-pointer text-center text-[#2a1c12] transition active:scale-95">
             <span className="flex items-center justify-end gap-2">
               {!!info.topFollowers?.length && (
                 <span className="flex -space-x-2" aria-hidden>
@@ -146,7 +147,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* PINZ+: Compartilhar sobe para o canto superior esquerdo (o "novo mural" agora é a 1ª opção do menu Meus murais) */}
         {shareTop && share && onNotify && !follow && (
           <div className="absolute top-3 left-3 z-20">
-            <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+            <ShareButton reward title={tx("compartilharEsteMural")} text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label={tx("compartilhar")} />
           </div>
         )}
         <PannableBoard
@@ -165,7 +166,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             share && onNotify && !shareTop ? (
               <div className="flex items-center gap-2">
                 {share && onNotify && !shareTop && (
-                  <ShareButton reward title="Compartilhar este mural" text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label="Compartilhar" />
+                  <ShareButton reward title={tx("compartilharEsteMural")} text={share.text} path={share.path} onNotify={onNotify} className="h-11 gap-2 bg-[#17110c]/85 px-4 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" label={tx("compartilhar")} />
                 )}
               </div>
             ) : undefined

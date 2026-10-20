@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { A11Y_DEFAULT, A11Y_OPEN_EVENT, applyA11y, colorMatrix, loadA11y, saveA11y, type A11y, type ColorMode } from "@/lib/a11y";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./account/Modal";
+import { useTranslations } from "next-intl";
 
 const COLOR_OPTIONS: { id: ColorMode; label: string; hint: string }[] = [
   { id: "none", label: "Desligado", hint: "Cores normais" },
@@ -32,6 +33,7 @@ function Switch({ on, label, hint, onChange }: { on: boolean; label: string; hin
  * Também guarda os filtros de cor (SVG) usados para o daltonismo.
  */
 export function A11yHost() {
+  const tx = useTranslations("components.A11yHost");
   const [s, setS] = useState<A11y>(A11Y_DEFAULT);
   const [open, setOpen] = useState(false);
   const synced = useRef<string | null>(null); // conta cuja escolha já foi buscada
@@ -95,14 +97,14 @@ export function A11yHost() {
         </defs>
       </svg>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Acessibilidade">
+      <Modal open={open} onClose={() => setOpen(false)} title={tx("acessibilidade")}>
         <div className="space-y-5 text-[#2f2218]">
-          <p className="text-sm text-[#4a3826]">Queremos que o Pinz seja uma ótima experiência para todos. Por isso, criamos estas opções.</p>
+          <p className="text-sm text-[#4a3826]">{tx("queremosQueOPinzSeja")}</p>
 
-          <section aria-label="Daltonismo">
-            <h3 className="font-title text-base font-semibold">Daltonismo</h3>
-            <p className="text-xs text-[#6b5440]">Corrige as cores da tela para o seu tipo de visão.</p>
-            <div role="radiogroup" aria-label="Tipo de daltonismo" className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+          <section aria-label={tx("daltonismo")}>
+            <h3 className="font-title text-base font-semibold">{tx("daltonismo")}</h3>
+            <p className="text-xs text-[#6b5440]">{tx("corrigeAsCoresDaTela")}</p>
+            <div role="radiogroup" aria-label={tx("tipoDeDaltonismo")} className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
               {COLOR_OPTIONS.map((o) => (
                 <button key={o.id} type="button" role="radio" aria-checked={s.color === o.id} onClick={() => patch({ color: o.id })} className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-left transition ${s.color === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}>
                   <span className="block text-sm font-bold">{o.label}</span>
@@ -112,9 +114,9 @@ export function A11yHost() {
             </div>
           </section>
 
-          <section aria-label="Tamanho do texto">
-            <h3 className="font-title text-base font-semibold">Tamanho do texto</h3>
-            <div role="radiogroup" aria-label="Tamanho do texto" className="mt-2 grid grid-cols-2 gap-1.5">
+          <section aria-label={tx("tamanhoDoTexto")}>
+            <h3 className="font-title text-base font-semibold">{tx("tamanhoDoTexto")}</h3>
+            <div role="radiogroup" aria-label={tx("tamanhoDoTexto")} className="mt-2 grid grid-cols-2 gap-1.5">
               {(
                 [
                   [0, "Normal", "text-sm"],
@@ -128,16 +130,15 @@ export function A11yHost() {
             </div>
           </section>
 
-          <section aria-label="Leitura" className="space-y-2">
-            <Switch on={s.contrast} label="Contraste alto" hint="Cores mais fortes, para ver melhor os textos" onChange={(v) => patch({ contrast: v })} />
-            <Switch on={s.font} label="Fonte de leitura fácil" hint="Letras desenhadas para não serem confundidas (ajuda na dislexia e na baixa visão)" onChange={(v) => patch({ font: v })} />
-            <Switch on={s.spacing} label="Mais espaço entre letras e linhas" hint="O texto fica menos apertado" onChange={(v) => patch({ spacing: v })} />
-            <Switch on={s.calm} label="Reduzir animações" hint="Menos movimento na tela" onChange={(v) => patch({ calm: v })} />
+          <section aria-label={tx("leitura")} className="space-y-2">
+            <Switch on={s.contrast} label={tx("contrasteAlto")} hint={tx("coresMaisFortesParaVer")} onChange={(v) => patch({ contrast: v })} />
+            <Switch on={s.font} label={tx("fonteDeLeituraFacil")} hint={tx("letrasDesenhadasParaNaoSerem")} onChange={(v) => patch({ font: v })} />
+            <Switch on={s.spacing} label={tx("maisEspacoEntreLetrasE")} hint={tx("oTextoFicaMenosApertado")} onChange={(v) => patch({ spacing: v })} />
+            <Switch on={s.calm} label={tx("reduzirAnimacoes")} hint={tx("menosMovimentoNaTela")} onChange={(v) => patch({ calm: v })} />
           </section>
 
           <button type="button" onClick={() => commit({ ...A11Y_DEFAULT })} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-white">
-            Restaurar o padrão
-          </button>
+            {tx("restaurarOPadrao")}</button>
         </div>
       </Modal>
     </>

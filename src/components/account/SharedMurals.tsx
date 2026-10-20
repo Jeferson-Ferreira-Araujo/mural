@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { deleteSharedMural, listSharedMurals, respondSharedInvite, setSharedPassword, SHARED_ERROR_TEXT, type SharedFailure, type SharedMural } from "@/lib/shared";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ghostButton, inputClass, primaryButton } from "../ui";
+import { useTranslations } from "next-intl";
 
 const iconBtn = "grid size-10 shrink-0 cursor-pointer place-items-center rounded-lg border border-[#d9c9ad] bg-white text-[#4a3826] transition hover:bg-[#efe4cf] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50";
 const ic = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
@@ -13,6 +14,7 @@ const ic = { viewBox: "0 0 24 24", className: "size-5", fill: "none", stroke: "c
  * Para criar um, a pessoa vai ao perfil da outra ("Solicitar mural compartilhado").
  */
 export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChanged: () => void; onNotify: (m: string) => void }) {
+  const tx = useTranslations("components.account.SharedMurals");
   const sb = getBrowserSupabase();
   const [list, setList] = useState<SharedMural[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -68,19 +70,17 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
   return (
     <div className="space-y-5 text-[15px]">
       {invites.length > 0 && (
-        <section aria-label="Convites recebidos" className="space-y-2">
-          <h3 className="font-title text-base font-semibold">Convites para você</h3>
+        <section aria-label={tx("convitesRecebidos")} className="space-y-2">
+          <h3 className="font-title text-base font-semibold">{tx("convitesParaVoce")}</h3>
           {invites.map((m) => (
             <div key={m.id} className={card}>
               <p className="font-bold">{m.title}</p>
               <p className="text-sm text-[#6b5440]">@{m.owner} quer compartilhar um mural com você.</p>
               <div className="mt-3 flex gap-2">
                 <button type="button" disabled={busy} onClick={() => void respond(m, false)} className={`${ghostButton} flex-1`}>
-                  Recusar
-                </button>
+                  {tx("recusar")}</button>
                 <button type="button" disabled={busy} onClick={() => void respond(m, true)} className={`${primaryButton} flex-1`}>
-                  Aceitar
-                </button>
+                  {tx("aceitar")}</button>
               </div>
             </div>
           ))}
@@ -94,11 +94,11 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
       )}
 
       {list && mine.length === 0 && invites.length === 0 && (
-        <p className="py-4 text-center text-sm text-[#6b5440]">Você ainda não tem murais compartilhados. Para criar um, abra o perfil da outra pessoa e toque em “Solicitar mural compartilhado”.</p>
+        <p className="py-4 text-center text-sm text-[#6b5440]">{tx("voceAindaNaoTemMurais")}</p>
       )}
 
       {mine.length > 0 && (
-        <ul aria-label="Murais compartilhados" className="space-y-2">
+        <ul aria-label={tx("muraisCompartilhados")} className="space-y-2">
           {mine.map((m) => {
             const who = m.mine ? m.partner : m.owner;
             return (
@@ -106,7 +106,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                 <div className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold">
-                      {m.locked && <span aria-label="Bloqueado: os dois participantes precisam ter o PINZ+ ativo">🔒 </span>}
+                      {m.locked && <span aria-label={tx("bloqueadoOsDoisParticipantesPrecisam")}>🔒 </span>}
                       {m.title}
                     </p>
                     <p className="truncate text-sm text-[#6b5440]">
@@ -115,7 +115,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </p>
                   </div>
                   {m.mine && m.status === "accepted" && (
-                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={`Alterar a senha de ${m.title}`} title="Alterar senha" className={iconBtn}>
+                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={`Alterar a senha de ${m.title}`} title={tx("alterarSenha")} className={iconBtn}>
                       <svg {...ic}>
                         <circle cx="8" cy="15" r="4" />
                         <path d="m11 12 8-8M16 7l3 3M14 9l2 2" />
@@ -141,11 +141,10 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                 {confirmId === m.id && (
                   <div role="alertdialog" aria-label={m.status === "pending" ? "Cancelar convite" : "Apagar mural"} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
                     <p className="text-sm font-semibold text-[#6b2a1d]">{m.status === "pending" ? "Cancelar este convite?" : `Apagar “${m.title}” para as duas pessoas?`}</p>
-                    {m.status !== "pending" && <p className="mt-1 text-sm text-[#6b2a1d]">Todos os pins serão perdidos e não será mais possível acessar esse mural.</p>}
+                    {m.status !== "pending" && <p className="mt-1 text-sm text-[#6b2a1d]">{tx("todosOsPinsSeraoPerdidos")}</p>}
                     <div className="mt-3 flex gap-2">
                       <button type="button" disabled={busy} onClick={() => setConfirmId(null)} className={`${ghostButton} flex-1`}>
-                        Voltar
-                      </button>
+                        {tx("voltar")}</button>
                       <button type="button" disabled={busy} onClick={() => void remove(m)} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
                         {busy ? "Apagando…" : m.status === "pending" ? "Cancelar convite" : "Apagar"}
                       </button>
@@ -154,10 +153,9 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                 )}
                 {changing === m.id && (
                   <div className="mt-3 flex gap-2">
-                    <input type="password" autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="Nova senha (mín. 6)" aria-label="Nova senha" className={inputClass} />
+                    <input type="password" autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder={tx("novaSenhaMin6")} aria-label={tx("novaSenha")} className={inputClass} />
                     <button type="button" disabled={busy || newPw.length < 6} onClick={() => void savePassword(m)} className={`${primaryButton} !w-auto shrink-0 px-4`}>
-                      Salvar
-                    </button>
+                      {tx("salvar")}</button>
                   </div>
                 )}
               </li>

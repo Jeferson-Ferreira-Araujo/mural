@@ -6,6 +6,7 @@ import { cancelSubscription, fetchSubscription, PAY_EVENT, startCheckout, type S
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
+import { useTranslations } from "next-intl";
 
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
@@ -32,13 +33,14 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
 };
 
 function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; footer?: ReactNode }) {
+  const tx = useTranslations("components.account.PlansModal");
   const p = PLANS[id];
   const full = id === "full";
   return (
     <article className={`rounded-2xl border-2 p-5 ${full ? "border-[#e0b04a] bg-[#fff8e4]" : "border-[#d9c9ad] bg-white/70"}`}>
       <header className="flex items-center justify-between gap-2">
         <PlanBadge plan={id} />
-        {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">Seu plano</span>}
+        {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">{tx("seuPlano")}</span>}
       </header>
       <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
       {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? "Cobrança em breve" : "Para sempre"}</p>}
@@ -49,7 +51,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
               {f.on ? "✓" : "–"}
             </span>
             <span className={f.on ? "" : "line-through decoration-[#c9b68f]"}>{f.text}</span>
-            {!f.on && <span className="sr-only"> (não incluso)</span>}
+            {!f.on && <span className="sr-only"> {tx("naoIncluso")}</span>}
           </li>
         ))}
       </ul>
@@ -63,6 +65,7 @@ const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(
 
 /** Planos em carrossel: o que cada um custa e inclui; com a cobrança ligada, também assina o PINZ+ e compra créditos. */
 export function PlansModal({ open, onClose, plan, credits }: { open: boolean; onClose: () => void; plan: PlanId; credits: number }) {
+  const tx = useTranslations("components.account.PlansModal");
   const [sub, setSub] = useState<Subscription>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
@@ -121,8 +124,8 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   ) : undefined;
 
   return (
-    <Modal open={open} onClose={onClose} title="Planos">
-      <Carousel label="Planos">
+    <Modal open={open} onClose={onClose} title={tx("planos")}>
+      <Carousel label={tx("planos")}>
         <PlanCard id="free" current={plan === "free"} />
         <PlanCard id="full" current={plan === "full"} footer={plusFooter} />
       </Carousel>
@@ -152,21 +155,19 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
       </div>
       <dialog
         ref={cancelRef}
-        aria-label="Cancelar a assinatura"
+        aria-label={tx("cancelarAAssinatura")}
         onClose={() => setConfirmCancel(false)}
         onClick={(e) => e.target === e.currentTarget && setConfirmCancel(false)}
         className="m-auto w-[min(92vw,23rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
       >
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
-          <h2 className="font-title text-2xl leading-tight font-semibold">Cancelar a assinatura?</h2>
-          <p className="mt-2 text-sm text-[#4a3826]">Você continua com o PINZ+ até o fim do período já pago. Depois disso, não há nova cobrança e a conta volta ao plano gratuito.</p>
+          <h2 className="font-title text-2xl leading-tight font-semibold">{tx("cancelarAAssinatura2")}</h2>
+          <p className="mt-2 text-sm text-[#4a3826]">{tx("voceContinuaComOPinz")}</p>
           <div className="mt-4 flex gap-2">
             <button type="button" onClick={() => setConfirmCancel(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-              Manter assinatura
-            </button>
+              {tx("manterAssinatura")}</button>
             <button type="button" onClick={() => void cancel()} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022]">
-              Cancelar assinatura
-            </button>
+              {tx("cancelarAssinatura")}</button>
           </div>
         </div>
       </dialog>

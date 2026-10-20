@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { Field, inputClass } from "../ui";
+import { useTranslations } from "next-intl";
 
 /** DD/MM/AAAA digitado -> AAAA-MM-DD, ou null se a data não existe. */
 export function toIso(text: string): string | null {
@@ -31,16 +32,17 @@ export const BIRTH_ERROR = { too_young: "O Pinz é para maiores de 13 anos.", in
 
 /** Data de nascimento: dá para digitar (as barras entram sozinhas) ou escolher no calendário. `value` fica em dd/mm/aaaa. */
 export function BirthField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const tx = useTranslations("components.account.BirthField");
   const picker = useRef<HTMLInputElement>(null);
   const today = useRef(new Date().toISOString().slice(0, 10));
   return (
     <div>
-      <Field label="Data de nascimento">
+      <Field label={tx("dataDeNascimento")}>
         {(id) => (
           <div className="relative">
-            <input id={id} inputMode="numeric" autoComplete="bday" placeholder="dd/mm/aaaa" maxLength={10} value={value} onChange={(e) => onChange(maskDate(e.target.value))} className={`${inputClass} pr-12`} />
+            <input id={id} inputMode="numeric" autoComplete="bday" placeholder={tx("ddMmAaaa")} maxLength={10} value={value} onChange={(e) => onChange(maskDate(e.target.value))} className={`${inputClass} pr-12`} />
             {/* calendário para quem prefere escolher */}
-            <button type="button" aria-label="Escolher a data no calendário" onClick={() => picker.current?.showPicker?.()} className="absolute inset-y-0 right-1 grid w-11 cursor-pointer place-items-center text-[#6b5440] hover:text-[#2f2218]">
+            <button type="button" aria-label={tx("escolherADataNoCalendario")} onClick={() => picker.current?.showPicker?.()} className="absolute inset-y-0 right-1 grid w-11 cursor-pointer place-items-center text-[#6b5440] hover:text-[#2f2218]">
               <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <rect x="3.5" y="5" width="17" height="15" rx="2" />
                 <path d="M3.5 10h17M8 3v4M16 3v4" />

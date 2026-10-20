@@ -10,10 +10,12 @@ import { NicknameSetup } from "@/components/account/NicknameSetup";
 import { muralUrl, uniqueSlug } from "@/lib/mural";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { AddressBox, AuthShell, Field, ghostButton, inputClass, primaryButton, QuestionSuggestions, Spinner } from "@/components/ui";
+import { useTranslations } from "next-intl";
 
 const STEPS = ["Nome", "Pergunta", "Mural"] as const;
 
 export default function CriarMural() {
+  const tx = useTranslations("app.criar.page");
   const router = useRouter();
   const { session, loading } = useSession();
   const [ready, setReady] = useState(false);
@@ -92,8 +94,7 @@ export default function CriarMural() {
             {plus ? `O limite do PINZ+ é de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. O PINZ+ permite ter até 10 murais."}
           </p>
           <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
-            Ir para o meu mural
-          </Link>
+            {tx("irParaOMeuMural")}</Link>
         </div>
         {nickSetup}
       </AuthShell>
@@ -103,7 +104,7 @@ export default function CriarMural() {
   return (
     <AuthShell wide>
       {nickSetup}
-      <ol className="mb-6 flex gap-1.5 sm:gap-2" aria-label="Etapas">
+      <ol className="mb-6 flex gap-1.5 sm:gap-2" aria-label={tx("etapas")}>
         {STEPS.map((label, i) => (
           <li key={label} className="min-w-0 flex-1" aria-current={i === step ? "step" : undefined}>
             <span className={`block h-1.5 rounded-full ${i <= step ? "bg-[#1f232b]" : "bg-[#e1d3ba]"}`} />
@@ -125,8 +126,8 @@ export default function CriarMural() {
         {step === 0 && (
           <>
             <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
-            <Field label="Nome do mural" hint="Escreva o nome completo, do jeito que quiser.">
-              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder="Ex: Mural Jeferson" className={inputClass} autoFocus />}
+            <Field label={tx("nomeDoMural")} hint={tx("escrevaONomeCompletoDo")}>
+              {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exMuralJeferson")} className={inputClass} autoFocus />}
             </Field>
             {error && (
               <p role="alert" className="text-sm text-[#a23b2a]">
@@ -138,19 +139,19 @@ export default function CriarMural() {
 
         {step === 1 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">Quer deixar o mural privado?</h1>
-            <p className="text-[#4a3826]">Opcional. Crie uma pergunta que só quem é próximo de você saiba responder. Se deixar em branco aqui e você já tiver uma pergunta, este mural usa a mesma; sem pergunta nenhuma, qualquer pessoa com o link abre o mural.</p>
-            <Field label="Pergunta (opcional)">
+            <h1 className="font-title text-2xl font-semibold">{tx("querDeixarOMuralPrivado")}</h1>
+            <p className="text-[#4a3826]">{tx("opcionalCrieUmaPerguntaQue")}</p>
+            <Field label={tx("perguntaOpcional")}>
               {(id) => (
                 <>
-                  <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder="Ex: Qual era meu apelido na escola?" className={inputClass} autoFocus />
+                  <input id={id} value={question} onChange={(e) => setQuestion(e.target.value)} maxLength={140} placeholder={tx("exQualEraMeuApelido")} className={inputClass} autoFocus />
                   <QuestionSuggestions onPick={setQuestion} />
                 </>
               )}
             </Field>
             {question.trim() !== "" && (
-              <Field label="Resposta" hint="Quem for responder precisa digitar exatamente assim, com os mesmos acentos e pontuação (só maiúsculas e minúsculas não importam).">
-                {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder="Ex: Jéf" autoComplete="off" className={inputClass} />}
+              <Field label={tx("resposta")} hint={tx("quemForResponderPrecisaDigitar")}>
+                {(id) => <input id={id} value={answer} onChange={(e) => setAnswer(e.target.value)} maxLength={100} placeholder={tx("exJef")} autoComplete="off" className={inputClass} />}
               </Field>
             )}
           </>
@@ -158,21 +159,21 @@ export default function CriarMural() {
 
         {step === 2 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">Tudo certo?</h1>
+            <h1 className="font-title text-2xl font-semibold">{tx("tudoCerto")}</h1>
             <dl className="space-y-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-5 text-[15px]">
               <div>
-                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Mural</dt>
+                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("mural")}</dt>
                 <dd className="font-title text-xl font-semibold">{title.trim()}</dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">Acesso</dt>
+                <dt className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("acesso")}</dt>
                 {question.trim() ? (
                   <>
                     <dd>{question.trim()}</dd>
                     <dd className="text-[#6b5440]">Resposta: {answer.trim()}</dd>
                   </>
                 ) : (
-                  <dd>Público: qualquer pessoa com o link abre</dd>
+                  <dd>{tx("publicoQualquerPessoaComO")}</dd>
                 )}
               </div>
             </dl>
@@ -188,8 +189,7 @@ export default function CriarMural() {
         <div className="flex flex-wrap gap-3 pt-1">
           {step > 0 && (
             <button type="button" onClick={() => setStep(step - 1)} className={ghostButton}>
-              Voltar
-            </button>
+              {tx("voltar")}</button>
           )}
           <button type="submit" disabled={!canNext || busy} className={`${primaryButton} flex-1`}>
             {step < 2 ? "Continuar" : busy ? "Criando…" : "Criar meu mural"}

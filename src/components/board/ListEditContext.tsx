@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ghostButton, inputClass, primaryButton } from "../ui";
+import { useTranslations } from "next-intl";
 
 export type ListData = { id: string; title: string; items: { text: string; done: boolean }[] };
 
@@ -19,6 +20,7 @@ export const useInDetail = () => useContext(DetailCtx);
 const MAX_ITEMS = 3;
 
 function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListData) => Promise<boolean>; onClose: () => void }) {
+  const tx = useTranslations("components.board.ListEditContext");
   const ref = useRef<HTMLDialogElement>(null);
   const [title, setTitle] = useState(list.title);
   const [items, setItems] = useState(list.items.map((i) => ({ ...i })));
@@ -49,10 +51,10 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      aria-label="Editar lista"
+      aria-label={tx("editarLista")}
       className="m-auto max-h-[92dvh] w-[min(94vw,30rem)] overflow-y-auto rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-[#2f2218] shadow-[0_2rem_5rem_rgba(0,0,0,.55)] backdrop:bg-black/60"
     >
-      <h3 className="font-title text-lg font-semibold">Editar lista</h3>
+      <h3 className="font-title text-lg font-semibold">{tx("editarLista")}</h3>
       <label className="mt-4 block text-sm font-semibold">
         Título
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={32} className={`${inputClass} mt-1.5 font-normal`} />
@@ -78,19 +80,16 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
         </ul>
         {items.length < MAX_ITEMS && (
           <button type="button" onClick={() => setItems((arr) => [...arr, { text: "", done: false }])} className="mt-2 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
-            + Adicionar item
-          </button>
+            {tx("adicionarItem")}</button>
         )}
       </fieldset>
       {err && (
         <p role="alert" className="mt-3 text-sm text-[#a23b2a]">
-          Não foi possível salvar agora. Tente de novo.
-        </p>
+          {tx("naoFoiPossivelSalvarAgora")}</p>
       )}
       <div className="mt-5 flex gap-2">
         <button type="button" onClick={onClose} className={`${ghostButton} flex-1`}>
-          Cancelar
-        </button>
+          {tx("cancelar")}</button>
         <button type="button" disabled={!canSave} onClick={() => void save()} className={`${primaryButton} flex-1`}>
           {busy ? "Salvando…" : "Salvar"}
         </button>

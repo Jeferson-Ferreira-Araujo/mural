@@ -9,9 +9,11 @@ import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { BOARDS } from "@/lib/boards";
 import { PAY_EVENT } from "@/lib/payments";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
+import { useTranslations } from "next-intl";
 
 /** Editar o mural: tipo (fundo), nome e excluir. Público/privado e a pergunta de segurança são do PERFIL (Perfil → Privacidade). */
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
+  const tx = useTranslations("components.account.MuralSettings");
   const [title, setTitle] = useState(mural.title);
   const plus = mural.plan === "full";
   const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
@@ -171,12 +173,12 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     <div>
       <form onSubmit={save} className="space-y-4" noValidate>
         <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
-          <legend className="mb-2 text-sm font-semibold">Tipo do mural</legend>
+          <legend className="mb-2 text-sm font-semibold">{tx("tipoDoMural")}</legend>
           <div className="relative">
             <div
               ref={strip}
               role="radiogroup"
-              aria-label="Tipo do mural"
+              aria-label={tx("tipoDoMural")}
               onScroll={(e) => {
                 // o tipo que está à vista no carrossel é o escolhido (sem botão de selecionar)
                 const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
@@ -223,7 +225,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           )}
         </fieldset>
 
-        <Field label="Nome do mural">{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
+        <Field label={tx("nomeDoMural")}>{(fid) => <input id={fid} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} className={inputClass} />}</Field>
 
         <PrivacyField value={privacy} onChange={setPrivacy} />
 
@@ -240,23 +242,23 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
               }}
               className="size-5 cursor-pointer accent-[#d98a2b]"
             />
-            <span>Mensagem de boas-vindas</span>
-            {!plus && <span className="rounded-md bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2300] uppercase">PINZ+</span>}
+            <span>{tx("mensagemDeBoasVindas")}</span>
+            {!plus && <span className="rounded-md bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2300] uppercase">{tx("pinz")}</span>}
           </label>
           {plus && welcomeOn && (
             <div className="mt-2">
               <textarea
                 id="mural-welcome"
-                aria-label="Mensagem de boas-vindas"
+                aria-label={tx("mensagemDeBoasVindas")}
                 value={welcome}
                 onChange={(e) => setWelcome(e.target.value.slice(0, 280))}
                 rows={4}
                 maxLength={280}
-                placeholder="Um recado que aparece para quem entrar no seu mural (depois de acertar a resposta)"
+                placeholder={tx("umRecadoQueAparecePara")}
                 className={`${inputClass} resize-none`}
               />
               <div className="mt-1 flex items-center justify-between text-xs text-[#8a7b69]">
-                <span>Aparece como uma janela quando a pessoa entra.</span>
+                <span>{tx("apareceComoUmaJanelaQuando")}</span>
                 <span className="tabular-nums">{welcome.length}/280</span>
               </div>
             </div>
@@ -277,21 +279,19 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       <div className="mt-6 border-t border-[#e1d3ba] pt-4">
         {confirmReset ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
-            <p className="text-sm font-semibold text-[#6b2a1c]">Resetar este mural?</p>
-            <p className="mt-1 text-sm text-[#6b2a1c]">Todos os recados (pins) serão perdidos. Isso não pode ser desfeito.</p>
+            <p className="text-sm font-semibold text-[#6b2a1c]">{tx("resetarEsteMural")}</p>
+            <p className="mt-1 text-sm text-[#6b2a1c]">{tx("todosOsRecadosPinsSerao")}</p>
             <div className="mt-3 flex gap-2">
               <button type="button" onClick={reset} disabled={busy} className="cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8a3123] disabled:opacity-60">
                 {busy ? "Resetando…" : "Sim, resetar"}
               </button>
               <button type="button" onClick={() => setConfirmReset(false)} disabled={busy} className={`${ghostButton} !px-4 !py-2 text-sm`}>
-                Cancelar
-              </button>
+                {tx("cancelar")}</button>
             </div>
           </div>
         ) : (
           <button type="button" onClick={() => setConfirmReset(true)} className="w-full cursor-pointer rounded-xl border border-[#e3b3a8] bg-white/60 px-4 py-3 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
-            Resetar mural
-          </button>
+            {tx("resetarMural")}</button>
         )}
       </div>
 
@@ -299,20 +299,17 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       <div className={`mt-4 ${canDelete ? "" : "hidden"}`}>
         {!canDelete ? null : confirmDelete ? (
           <div role="alert" className="rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
-            <p className="text-sm text-[#6b2a1c]">Excluir este mural apaga também os acessos e todas as mensagens dele. Isso não pode ser desfeito.</p>
+            <p className="text-sm text-[#6b2a1c]">{tx("excluirEsteMuralApagaTambem")}</p>
             <div className="mt-3 flex gap-2">
               <button type="button" onClick={remove} disabled={busy} className="cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2 text-sm font-semibold text-white hover:bg-[#8a3123] disabled:opacity-60">
-                Sim, excluir
-              </button>
+                {tx("simExcluir")}</button>
               <button type="button" onClick={() => setConfirmDelete(false)} className={`${ghostButton} !px-4 !py-2 text-sm`}>
-                Cancelar
-              </button>
+                {tx("cancelar")}</button>
             </div>
           </div>
         ) : (
           <button type="button" onClick={() => setConfirmDelete(true)} className="w-full cursor-pointer rounded-xl border border-[#e3b3a8] bg-white/60 px-4 py-3 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
-            Excluir este mural
-          </button>
+            {tx("excluirEsteMural")}</button>
         )}
       </div>
     </div>

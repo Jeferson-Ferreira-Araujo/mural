@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Field } from "../ui";
+import { useTranslations } from "next-intl";
 
 export type PinTtl = 7 | 15 | 30 | null;
 
@@ -17,6 +18,7 @@ const OPTIONS: { value: PinTtl; label: string }[] = [
  * As opções abrem no próprio campo (e não na lista do sistema, como o select nativo do celular).
  */
 export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: PinTtl) => void }) {
+  const tx = useTranslations("components.account.PinTtlField");
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const current = OPTIONS.find((o) => o.value === value) ?? OPTIONS[0];
@@ -37,7 +39,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
   }, [open]);
 
   return (
-    <Field label="Tempo de exibição dos pinz" hint={<span className="text-xs text-[#8a7b69]">Depois do prazo o pin sai do mural, mas fica guardado em Meus pins.</span>}>
+    <Field label={tx("tempoDeExibicaoDosPinz")} hint={<span className="text-xs text-[#8a7b69]">{tx("depoisDoPrazoOPin")}</span>}>
       {(id) => (
         <div ref={box} className="overflow-hidden rounded-xl border border-[#d9c9ad] bg-white">
           <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base">
