@@ -24,6 +24,7 @@ import type { MuralSwitch } from "./MuralSwitcher";
 import { useFeatureFlags } from "@/lib/features";
 import { useBadges } from "./badges/BadgeContext";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 type Props = {
   items: BoardItem[];
@@ -57,6 +58,7 @@ type Props = {
  * o quadro ocupa a tela e se navega arrastando (toque duplo amplia, botão "Afastar" afasta); para deixar um pin, toca-se no espaço vazio do quadro.
  */
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
+  const tl = useLit();
   const tx = useTranslations("components.MobileMural");
   const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
   const canAdd = unlocked && !locked && hasSelection && !!onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
@@ -135,7 +137,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass />}
           <MuralNameMenu
             title={info.title}
-            label={account?.onNewMural ? "Meus murais" : "Murais"}
+            label={account?.onNewMural ? tl("Meus murais") : tl("Murais")}
             onCreate={account?.onNewMural}
             sw={muralSwitch}
             showShared={!!account?.atHome}

@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export type ListData = { id: string; title: string; items: { text: string; done: boolean }[] };
 
@@ -20,6 +21,7 @@ export const useInDetail = () => useContext(DetailCtx);
 const MAX_ITEMS = 3;
 
 function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListData) => Promise<boolean>; onClose: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.board.ListEditContext");
   const ref = useRef<HTMLDialogElement>(null);
   const [title, setTitle] = useState(list.title);
@@ -90,7 +92,7 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
         <button type="button" onClick={onClose} className={`${ghostButton} flex-1`}>
           {tx("cancelar")}</button>
         <button type="button" disabled={!canSave} onClick={() => void save()} className={`${primaryButton} flex-1`}>
-          {busy ? "Salvando…" : "Salvar"}
+          {busy ? "Salvando…" : tl("Salvar")}
         </button>
       </div>
     </dialog>

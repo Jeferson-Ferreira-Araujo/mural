@@ -20,6 +20,7 @@ import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "../badges/SecretCover";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
 type Over = { id: string; key: number; rot: number; rx: number; ry: number; wr: number };
@@ -100,6 +101,7 @@ export type WidgetEntry = { id: string; widget: true; data: DisplayData };
 export type DetailEntry = BoardItem | WidgetEntry;
 
 export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }: { items: DetailEntry[]; index: number | null; onIndex: (i: number) => void; onClose: () => void; /** quadro do mural: o fundo da imagem de compartilhar é ele, desfocado */ board?: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.board.PinDetail");
   const ref = useRef<HTMLDialogElement>(null);
   const open = index !== null && !!items[index];
@@ -392,7 +394,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? tx("m_aprovaEDeixaEmSegredo") : tx("m_segredoEDoPinz")} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
-                        {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PINZ+)"}
+                        {mod.plan === "full" ? tl("Aprovar como segredo") : "Segredo (PINZ+)"}
                       </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">

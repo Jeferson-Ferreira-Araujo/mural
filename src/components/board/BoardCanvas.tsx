@@ -20,6 +20,7 @@ import { spotLight } from "@/lib/spot";
 import { COMPOSE_AUTO_EVENT } from "../AddPinButton";
 import type { PinPlace } from "../composer/types";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Os 28 espaços fixos da lousa: grade de 7 colunas × 4 linhas (5 × 3 no quadro antigo de 15), com inclinações de mural real.
@@ -98,6 +99,7 @@ export function BoardCanvas({
   contain?: boolean;
   children?: ReactNode;
 }) {
+  const tl = useLit();
   const tx = useTranslations("components.board.BoardCanvas");
   const dense = capacity > 15; // quadro denso (28): cards pequenos, clique no pin para ler
   const { cols, rows } = gridFor(capacity);
@@ -191,10 +193,10 @@ export function BoardCanvas({
     // quem atrapalha: os outros pins e os displays (o retângulo real de cada um)
     const obstacles: { box: Box | DOMRect; what: string }[] = [];
     for (const other of wrap.querySelectorAll<HTMLElement>("[data-pin-id]")) {
-      if (other.dataset.pinId !== id && vis(other)) obstacles.push({ box: pinBox(other), what: "outro pin" }); // cartão + tachinha + folga
+      if (other.dataset.pinId !== id && vis(other)) obstacles.push({ box: pinBox(other), what: tl("outro pin") }); // cartão + tachinha + folga
     }
     for (const d of layer.querySelectorAll<HTMLElement>("[data-badge-kind='display']")) {
-      if (vis(d)) obstacles.push({ box: d.getBoundingClientRect(), what: "um display" });
+      if (vis(d)) obstacles.push({ box: d.getBoundingClientRect(), what: tl("um display") });
     }
     // o pin se ajusta sozinho: se passou da borda ou invadiu um vizinho, desliza o mínimo para o lado (até uma distância razoável)
     const t = 0.02; // quase nenhuma tolerância: a folga de verdade já vem do retângulo dos pins (tachinha e margem)

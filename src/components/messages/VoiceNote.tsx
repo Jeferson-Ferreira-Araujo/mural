@@ -5,6 +5,7 @@ import type { PlayerColor } from "@/lib/types";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const BARS = 26;
 
@@ -68,6 +69,7 @@ function usePeaks(src: string | undefined, seed: number) {
  * `src` = áudio gravado/escolhido pela pessoa (toca de verdade); sem `src`, é um exemplo com tempo simulado.
  */
 export function VoiceNote({ caption, duration, src, color = "cream" }: { caption: string; duration?: string; src?: string; color?: PlayerColor }) {
+  const tl = useLit();
   const tx = useTranslations("components.messages.VoiceNote");
   const look = PLAYER_PALETTE[color];
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -176,7 +178,7 @@ export function VoiceNote({ caption, duration, src, color = "cream" }: { caption
               <button
                 type="button"
                 onClick={toggle}
-                aria-label={playing ? "Pausar mensagem de voz" : "Ouvir mensagem de voz"}
+                aria-label={playing ? tl("Pausar mensagem de voz") : tl("Ouvir mensagem de voz")}
                 className="grid size-[1.9em] shrink-0 cursor-pointer place-items-center rounded-full border border-white/55 text-white transition hover:bg-white/10 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white"
               >
                 {playing ? (

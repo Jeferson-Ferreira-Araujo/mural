@@ -251,16 +251,16 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     <span aria-hidden className="font-bold text-[#2f6a3c]">
                       ✓
                     </span>
-                    {t}
+                    {tl(t)}
                   </li>
                 ))}
               </ul>
               <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">{tx("escolhaOSeuPlano")}</p>
               <div className="space-y-3.5">
-                {planCard("plus", "Mensal (assinatura)", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago.")}
-                {planCard("plus_month", "1 mês", PLUS_PRICE_CENTS, "pagamento único", "Só quer usar por um mês? Pague uma vez com Pix ou cartão, sem renovação automática.")}
-                {planCard("plus_annual", "Anual", PLUS_ANNUAL_CENTS, "por ano", `Equivale a ${brl(Math.round(PLUS_ANNUAL_CENTS / 12))} por mês. Pix ou cartão, sem renovação automática.`, `Economize ${Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100)}%`)}
-                {planCard("plus_life", "Vitalício", PLUS_LIFETIME_CENTS, "pagamento único", "Pague uma vez e use para sempre. Pix ou cartão.")}
+                {planCard("plus", tl("Mensal (assinatura)"), PLUS_PRICE_CENTS, tl("por mês"), tl("Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago."))}
+                {planCard("plus_month", tl("1 mês"), PLUS_PRICE_CENTS, tl("pagamento único"), tl("Só quer usar por um mês? Pague uma vez com Pix ou cartão, sem renovação automática."))}
+                {planCard("plus_annual", tl("Anual"), PLUS_ANNUAL_CENTS, tl("por ano"), tx("x_annualNote", { v0: brl(Math.round(PLUS_ANNUAL_CENTS / 12)) }), tx("x_save", { pct: Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100) }))}
+                {planCard("plus_life", tl("Vitalício"), PLUS_LIFETIME_CENTS, tl("pagamento único"), tl("Pague uma vez e use para sempre. Pix ou cartão."))}
               </div>
               <button
                 type="button"
@@ -320,7 +320,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 <div className="mt-4 space-y-2.5">
                   <p className="text-sm font-semibold text-[#6b5440]">{tx("comoVoceQuerPagar")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} flex items-center justify-center gap-2`}>
-                    {busy === "pix" ? "Gerando o Pix…" : "Pix · confirma na hora"}
+                    {busy === "pix" ? "Gerando o Pix…" : tl("Pix · confirma na hora")}
                   </button>
                   <button type="button" disabled={busy !== null} onClick={() => setStep("card")} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-bold text-[#2f2218] transition hover:bg-white disabled:opacity-60">
                     {tx("cartaoDeCreditoOuDebito")}</button>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Field } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export type PinTtl = 7 | 15 | 30 | null;
 
@@ -19,6 +20,7 @@ const OPTIONS: { value: PinTtl; label: string }[] = [
  */
 export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: PinTtl) => void }) {
   const tx = useTranslations("components.account.PinTtlField");
+  const tl = useLit();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const current = OPTIONS.find((o) => o.value === value) ?? OPTIONS[0];
@@ -43,7 +45,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
       {(id) => (
         <div ref={box} className="overflow-hidden rounded-xl border border-[#d9c9ad] bg-white">
           <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base">
-            <span>{current.label}</span>
+            <span>{tl(current.label)}</span>
             <svg viewBox="0 0 24 24" className={`size-5 shrink-0 text-[#8a7b69] transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m6 9 6 6 6-6" />
             </svg>
@@ -62,7 +64,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
                       }}
                       className={`flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base transition hover:bg-[#fff6dd] ${on ? "bg-[#fff6dd] font-semibold" : ""}`}
                     >
-                      {o.label}
+                      {tl(o.label)}
                       {on && (
                         <svg viewBox="0 0 24 24" className="size-5 shrink-0 text-[#d9a21b]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <path d="m5 12.5 4.5 4.5L19 7.5" />

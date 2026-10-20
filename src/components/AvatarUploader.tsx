@@ -6,12 +6,14 @@ import { claimReward, getRewards } from "@/lib/rewards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Avatar } from "./Avatar";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Foto de perfil do dono (aparece no mural e na busca). Quem acabou de criar o mural é convidado a enviar a primeira.
  * A foto é recortada em quadrado e reduzida no próprio navegador antes de ir para o servidor.
  */
 export function AvatarUploader({ nickname, plus = false }: { nickname: string; plus?: boolean }) {
+  const tl = useLit();
   const tx = useTranslations("components.AvatarUploader");
   const [url, setUrl] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -58,7 +60,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
     try {
       await removeAvatar(getBrowserSupabase());
       setUrl(null);
-      setMsg({ ok: true, text: "Foto removida." });
+      setMsg({ ok: true, text: tl("Foto removida.") });
     } catch {
       setMsg({ ok: false, text: tx("m_naoFoiPossivelRemoverAgora") });
     } finally {
@@ -75,7 +77,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
         <p className="text-sm font-bold">{url ? tx("m_suaFoto") : tx("m_adicioneUmaFoto")}</p>
         <div className="mt-1.5 flex flex-wrap gap-2">
           <button type="button" className={btn} disabled={busy || !ready} onClick={() => input.current?.click()}>
-            {busy ? "Enviando…" : url ? "Alterar foto" : "Escolher foto"}
+            {busy ? "Enviando…" : url ? tl("Alterar foto") : tl("Escolher foto")}
           </button>
           {url && (
             <button type="button" className={btn} disabled={busy} onClick={remove}>

@@ -5,6 +5,7 @@ import { Avatar } from "../Avatar";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useTag } from "@/i18n/useTag";
 
 export type GiftNote = { id: string; actor?: string; avatar?: string | null; /** aniversário: "plus" (conta FREE ganhou o PINZ+ no mês) ou "badges" (PINZ+ ganhou bottons) */ birthday?: "plus" | "badges"; until?: string };
 
@@ -45,8 +46,9 @@ function Confetti() {
 /** Avisa a pessoa que ganhou um presente: 1 mês de PINZ+ de alguém ou o presente de aniversário (ao vivo ou no próximo login). */
 export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** nome de quem está entrando (aniversário) */ name?: string | null; onClose: () => void }) {
   const tx = useTranslations("components.account.GiftModal");
+  const tag = useTag();
   const bday = gift?.birthday;
-  const until = gift?.until ? new Date(gift.until).toLocaleDateString("pt-BR", { day: "numeric", month: "long", timeZone: "America/Sao_Paulo" }) : null;
+  const until = gift?.until ? new Date(gift.until).toLocaleDateString(tag, { day: "numeric", month: "long", timeZone: "America/Sao_Paulo" }) : null;
   return (
     <Modal open={!!gift} onClose={onClose} title={bday ? "" : tx("m_voceGanhouUmPresente")} label={bday ? tx("m_felizAniversario") : undefined}>
       {gift && bday ? (

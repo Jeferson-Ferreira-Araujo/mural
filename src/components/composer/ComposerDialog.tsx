@@ -190,6 +190,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
 }
 
 export function ComposerDialog({ open, onClose, ...rest }: Props) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.ComposerDialog");
   const ref = useRef<HTMLDialogElement>(null);
   useBackClose(open, onClose); // voltar (Android) fecha esta janela em vez de sair do mural
@@ -246,7 +247,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
               <div role="tablist" aria-label={tx("oQueColocarNesteEspaco")} className="mb-4 grid grid-cols-2 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
                 {(
                   [
-                    ["pins", "Pins"],
+                    ["pins", tl("Pins")],
                     ["displays", "Displays"],
                   ] as const
                 ).map(([id, text]) => (

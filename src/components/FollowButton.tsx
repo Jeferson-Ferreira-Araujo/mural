@@ -2,9 +2,11 @@
 
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Seguir / Seguindo (estrela): acesso rápido ao mural da pessoa pelo menu "Seguindo". */
 export function FollowButton({ follow, compact = false, glass = false, className = "" }: { follow: NonNullable<ViewProps["follow"]>; compact?: boolean; /** sobre o quadro (celular): fundo escuro translúcido, igual aos botões Aproximar e Compartilhar */ glass?: boolean; className?: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.FollowButton");
   const on = follow.following;
   return (
@@ -13,7 +15,7 @@ export function FollowButton({ follow, compact = false, glass = false, className
       onClick={follow.onToggle}
       disabled={follow.busy}
       aria-pressed={on}
-      aria-label={on ? "Deixar de seguir" : "Seguir"}
+      aria-label={on ? tl("Deixar de seguir") : "Seguir"}
       title={on ? tx("m_seguindoToqueParaDeixarDe") : "Seguir"}
       className={`inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl font-semibold transition active:scale-95 disabled:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${compact ? "h-9 px-3 text-sm" : "h-11 px-4 text-sm"} ${glass ? (on ? "bg-[#f4c542] text-[#2a1c12] shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)]" : "bg-[#17110c]/85 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur") : on ? "bg-[#f4c542] text-[#2a1c12]" : "border border-[#d9c9ad] bg-[#fbf6ea] text-[#2a1c12] hover:bg-white"} ${className}`}
     >

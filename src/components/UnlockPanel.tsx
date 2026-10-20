@@ -5,6 +5,7 @@ import type { UnlockResult } from "@/lib/mural";
 import { Avatar } from "./Avatar";
 import { ShareButton } from "./ShareButton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 type Props = {
   question: string;
@@ -51,6 +52,7 @@ const LockIcon = () => (
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
 export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
+  const tl = useLit();
   const tx = useTranslations("components.UnlockPanel");
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
@@ -191,7 +193,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             <ul className={`grid grid-flow-col auto-cols-fr divide-x rounded-[0.9em] border py-[0.7em] text-center ${dark ? "divide-white/10 border-white/10 text-white/60" : "divide-[#e6d8bd] border-[#e6d8bd] bg-white/40 text-[#8a7b69]"}`}>
               {(
                 [
-                  visits !== undefined && [visits, visits === 1 ? "visualização" : "visualizações"],
+                  visits !== undefined && [visits, visits === 1 ? tl("visualização") : tl("visualizações")],
                   followers != null && [followers, followers === 1 ? "seguidor" : "seguidores"],
                   placed != null && [placed, placed === 1 ? "PINZ colocado" : "PINZ colocados"],
                 ].filter(Boolean) as [number, string][]

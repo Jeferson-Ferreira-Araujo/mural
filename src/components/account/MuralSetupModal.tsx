@@ -68,7 +68,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
           <button type="button" onClick={onClose} disabled={busy} className={`${ghostButton} flex-1`}>
             {tx("depois")}</button>
           <button type="submit" disabled={busy} className={`${primaryButton} flex-1`}>
-            {busy ? "Salvando…" : "Salvar"}
+            {busy ? "Salvando…" : tl("Salvar")}
           </button>
         </div>
       </form>

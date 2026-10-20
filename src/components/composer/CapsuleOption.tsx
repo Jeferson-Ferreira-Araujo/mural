@@ -2,6 +2,7 @@
 
 import { inputClass } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export type CapsuleValue = { enabled: boolean; at: string };
 
@@ -25,6 +26,7 @@ export function capsuleDateOk(v: CapsuleValue, now = Date.now()) {
  * Só é renderizado quando o mural é PINZ+ (o visitante nunca vê isso em um mural FREE).
  */
 export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChange: (v: CapsuleValue) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.CapsuleOption");
   const min = toLocalInput(new Date(Date.now() + MIN_AHEAD_MS));
   const quick = (days: number) => toLocalInput(new Date(Date.now() + days * 86_400_000));
@@ -54,7 +56,7 @@ export function CapsuleOption({ value, onChange }: { value: CapsuleValue; onChan
             className={inputClass}
           />
           <div className="flex flex-wrap gap-2">
-            {([["Em 1 dia", 1], ["Em 1 semana", 7], ["Em 1 mês", 30]] as const).map(([label, d]) => (
+            {([[tl("Em 1 dia"), 1], [tl("Em 1 semana"), 7], [tl("Em 1 mês"), 30]] as const).map(([label, d]) => (
               <button key={label} type="button" onClick={() => onChange({ ...value, at: quick(d) })} className="cursor-pointer rounded-lg border border-[#d9c9ad] bg-white/70 px-3 py-1 text-xs font-semibold hover:bg-white">
                 {label}
               </button>

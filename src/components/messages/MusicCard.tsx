@@ -6,6 +6,7 @@ import { embedFor } from "@/lib/embed";
 import { CaptionNote } from "./CaptionNote";
 import { PLAYER_PALETTE } from "./playerPalette";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
@@ -36,11 +37,12 @@ export function MusicCard({
   link?: string;
   color?: PlayerColor;
 }) {
+  const tl = useLit();
   const tx = useTranslations("components.messages.MusicCard");
   const look = PLAYER_PALETTE[color];
   const embed = embedFor(link);
   // pins novos não têm nome nem artista: a tela mostra de onde vem a música
-  const label = title || (embed ? (embed.provider === "spotify" ? "Spotify" : "YouTube") : "Minha música");
+  const label = title || (embed ? (embed.provider === "spotify" ? "Spotify" : "YouTube") : tl("Minha música"));
   const [open, setOpen] = useState(false); // player embutido aberto
   const [playing, setPlaying] = useState(false); // tocando de verdade (vem do próprio player)
   const [cur, setCur] = useState(0);

@@ -83,6 +83,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
 
 // ---------- Texto (papel) ----------
 export function TextForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [variant, setVariant] = useState<"letter" | "notebook">("letter");
   const [text, setText] = useState("");
@@ -92,7 +93,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label={tx("tipoDePapel")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
-        {([["letter", "Papel liso"], ["notebook", "Folha de caderno"]] as const).map(([v, label]) => (
+        {([["letter", "Papel liso"], ["notebook", tl("Folha de caderno")]] as const).map(([v, label]) => (
           <button
             key={v}
             type="button"
@@ -405,6 +406,7 @@ function formatDuration(sec: number) {
 }
 
 export function VideoForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [mode, setMode] = useState<"file" | "youtube">("file");
   const [link, setLink] = useState("");
@@ -464,7 +466,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label={tx("origemDoVideo")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
-        {([["file", "Enviar arquivo"], ["youtube", "Link do YouTube"]] as const).map(([v, label]) => (
+        {([["file", tl("Enviar arquivo")], ["youtube", tl("Link do YouTube")]] as const).map(([v, label]) => (
           <button key={v} type="button" role="radio" aria-checked={mode === v} onClick={() => setMode(v)} className={`cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${mode === v ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
             {label}
           </button>
@@ -509,6 +511,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
  *
  */
 export function VoiceForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [src, setSrc] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | undefined>();
@@ -617,7 +620,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
               </button>
             )}
             <label className="cursor-pointer rounded-xl border border-[#d9c9ad] px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf] focus-within:outline-2 focus-within:outline-[#d98a2b]">
-              {canRecord ? "ou escolher um arquivo" : tx("m_escolherUmArquivoDeAudio")}
+              {canRecord ? tl("ou escolher um arquivo") : tx("m_escolherUmArquivoDeAudio")}
               <input type="file" accept="audio/*" onChange={(e) => pickFile(e.target.files?.[0])} className="sr-only" />
             </label>
           </div>
@@ -639,6 +642,7 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
 
 /** Escolhe um lugar buscando pelo nome; o resultado vira um mini aparelho de mapa. */
 export function PlaceForm({ onChange }: { onChange: DraftChange }) {
+  const tl = useLit();
   const tx = useTranslations("components.composer.forms");
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<PlaceHit[]>([]);
@@ -669,7 +673,7 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
       onChange(
         place
           ? { type: "place", name: place.name, address: place.address, lat: place.lat, lon: place.lon, caption: caption.trim(), playerColor: color }
-          : ({ type: "place", name: "Nome do lugar", address: "", lat: 0, lon: 0, caption: caption.trim(), playerColor: color, blank: true } as unknown as DraftMessage),
+          : ({ type: "place", name: tl("Nome do lugar"), address: "", lat: 0, lon: 0, caption: caption.trim(), playerColor: color, blank: true } as unknown as DraftMessage),
         { empty: !place },
       ),
     [place, caption, color, onChange],

@@ -7,6 +7,7 @@ import { Avatar } from "../Avatar";
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
   const tx = useTranslations("components.account.PeopleModals");
@@ -23,6 +24,7 @@ function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
 
 /** Seguindo e Seguidores (duas abas): quem você segue, com acesso rápido ao mural, e quem segue você; a busca no topo filtra a lista da aba aberta. */
 export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose: () => void; /** seu nome de usuário (para listar os seguidores) */ nick: string }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PeopleModals");
   const [tab, setTab] = useState<"following" | "followers">("following");
   const [following, setFollowing_] = useState<PersonLite[] | null>(null);
@@ -71,7 +73,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          aria-label={tab === "following" ? tx("m_buscarEntreQuemVoceSegue") : "Buscar entre seus seguidores"}
+          aria-label={tab === "following" ? tx("m_buscarEntreQuemVoceSegue") : tl("Buscar entre seus seguidores")}
           autoComplete="off"
           className="w-full rounded-xl border border-[#d9c9ad] bg-white py-2.5 pr-11 pl-3.5 text-[15px] outline-none [&::-webkit-search-cancel-button]:appearance-none focus:border-[#d98a2b] focus:ring-2 focus:ring-[#d98a2b]/30"
         />

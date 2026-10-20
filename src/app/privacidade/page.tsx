@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export const metadata: Metadata = { title: "Política de Privacidade", alternates: { canonical: "/privacidade" }, robots: { index: true, follow: true } };
 
 export default function Privacidade() {
+  const tl = useLit();
   const tx = useTranslations("app.privacidade.page");
   return (
-    <LegalPage title="Política de Privacidade" updated="12 de outubro de 2026">
+    <LegalPage title={tl("Política de Privacidade")} updated="12 de outubro de 2026">
       <p>{tx("x_oPinzPinzDigitalE")}</p>
 
       <section>

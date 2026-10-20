@@ -47,7 +47,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [dates, setDates] = useState<CalDate[]>([]); // calendário: datas importantes
   // leitura de livro: capa (já enviada ou foto nova escolhida), nome, páginas e jeito de mostrar
   const [plTitle, setPlTitle] = useState(""); // enquete: pergunta e as duas respostas
-  const [plOptions, setPlOptions] = useState<string[]>(["Sim", "Não"]);
+  const [plOptions, setPlOptions] = useState<string[]>([wt.defYes, wt.defNo]);
   const [t3Title, setT3Title] = useState(""); // top 3: tema e três itens
   const [t3Items, setT3Items] = useState<string[]>(["", "", ""]);
   const [bkTitle, setBkTitle] = useState("");
@@ -77,7 +77,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
     setPlTitle(initial?.title ?? "");
-    setPlOptions(initial?.options && initial.options.length >= 2 ? initial.options.slice(0, 2) : ["Sim", "Não"]);
+    setPlOptions(initial?.options && initial.options.length >= 2 ? initial.options.slice(0, 2) : [wt.defYes, wt.defNo]);
     setT3Title(initial?.title ?? "");
     setT3Items([0, 1, 2].map((i) => initial?.items?.[i] ?? ""));
     setBkTitle(initial?.title ?? "");
@@ -139,7 +139,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
     ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
-    ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || ["Sim", "Não"][i]) } : {}),
+    ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || [wt.defYes, wt.defNo][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
@@ -267,7 +267,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
               <div className="min-w-0 flex-1 space-y-2">
                 <input ref={bkInput} type="file" accept="image/*" hidden onChange={(e) => pickCover(e.target.files?.[0])} aria-label={tx("escolherAFotoDaCapa")} />
                 <button type="button" onClick={() => bkInput.current?.click()} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9c9ad] bg-white px-3 py-2 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-                  {bkPreview || bkCover ? "Trocar a capa" : "Escolher a foto da capa"}
+                  {bkPreview || bkCover ? "Trocar a capa" : tl("Escolher a foto da capa")}
                 </button>
                 {(bkPreview || bkCover) && (
                   <button type="button" onClick={() => { setBkFile(null); setBkCover(null); }} className="ml-2 cursor-pointer text-sm font-semibold text-[#a23b2a] underline">
@@ -291,7 +291,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
               <div role="radiogroup" aria-label={tx("comoMostrarOProgresso")} className="grid grid-cols-3 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
                 {(
                   [
-                    ["count", "Páginas"],
+                    ["count", tl("Páginas")],
                     ["bar", "Barra"],
                     ["both", "Os dois"],
                   ] as const
@@ -399,7 +399,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
           </p>
         )}
         <button type="button" disabled={busy || uploading || !ready} onClick={() => void submit()} className={primaryButton}>
-          {uploading ? "Enviando a capa…" : busy ? "Salvando…" : editing ? "Salvar" : "Escolher o lugar"}
+          {uploading ? "Enviando a capa…" : busy ? "Salvando…" : editing ? tl("Salvar") : "Escolher o lugar"}
         </button>
       </div>
     </Modal>

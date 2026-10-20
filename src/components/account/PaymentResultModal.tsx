@@ -3,6 +3,7 @@
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Resultado da volta do Mercado Pago: aparece por cima da loja (ou do mural), sem sair da tela onde a pessoa estava. */
 export const PAY_RESULTS: Record<string, { icon: string; title: string; body: string }> = {
@@ -14,6 +15,7 @@ export const PAY_RESULTS: Record<string, { icon: string; title: string; body: st
 
 export function PaymentResultModal({ result, onClose }: { result: string | null; onClose: () => void }) {
   const tx = useTranslations("components.account.PaymentResultModal");
+  const tl = useLit();
   const r = result ? PAY_RESULTS[result] : undefined;
   return (
     <Modal open={!!r} onClose={onClose} title="">
@@ -22,8 +24,8 @@ export function PaymentResultModal({ result, onClose }: { result: string | null;
           <p aria-hidden className="text-5xl">
             {r.icon}
           </p>
-          <h2 className="font-title mt-3 text-2xl font-semibold">{r.title}</h2>
-          <p className="mt-2 text-[#4a3826]">{r.body}</p>
+          <h2 className="font-title mt-3 text-2xl font-semibold">{tl(r.title)}</h2>
+          <p className="mt-2 text-[#4a3826]">{tl(r.body)}</p>
           <button type="button" onClick={onClose} className={`${primaryButton} mt-6`}>
             {tx("continuar")}</button>
         </div>

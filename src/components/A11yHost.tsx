@@ -5,6 +5,7 @@ import { A11Y_DEFAULT, A11Y_OPEN_EVENT, applyA11y, colorMatrix, loadA11y, saveA1
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./account/Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const COLOR_OPTIONS: { id: ColorMode; label: string; hint: string }[] = [
   { id: "none", label: "Desligado", hint: "Cores normais" },
@@ -34,6 +35,7 @@ function Switch({ on, label, hint, onChange }: { on: boolean; label: string; hin
  */
 export function A11yHost() {
   const tx = useTranslations("components.A11yHost");
+  const tl = useLit();
   const [s, setS] = useState<A11y>(A11Y_DEFAULT);
   const [open, setOpen] = useState(false);
   const synced = useRef<string | null>(null); // conta cuja escolha já foi buscada
@@ -107,8 +109,8 @@ export function A11yHost() {
             <div role="radiogroup" aria-label={tx("tipoDeDaltonismo")} className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
               {COLOR_OPTIONS.map((o) => (
                 <button key={o.id} type="button" role="radio" aria-checked={s.color === o.id} onClick={() => patch({ color: o.id })} className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-left transition ${s.color === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}>
-                  <span className="block text-sm font-bold">{o.label}</span>
-                  <span className="block text-xs text-[#6b5440]">{o.hint}</span>
+                  <span className="block text-sm font-bold">{tl(o.label)}</span>
+                  <span className="block text-xs text-[#6b5440]">{tl(o.hint)}</span>
                 </button>
               ))}
             </div>

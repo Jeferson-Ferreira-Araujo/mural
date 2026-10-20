@@ -358,7 +358,11 @@
         "m_publico": "Público",
         "x_apagar": "Apagar “{v0}”?",
         "x_voltarParaMeusMurais": "Voltar para Meus murais",
-        "x_criarNovoMural": "Criar novo mural"
+        "x_criarNovoMural": "Criar novo mural",
+        "x_reorder": "Mudar a ordem de {title}: arraste (ou use as setas do teclado)",
+        "x_editTitle": "Editar {title}{locked, select, yes { (com pergunta de segurança)} other {}}",
+        "x_edit": "Editar {title}",
+        "x_delete": "Apagar {title}"
       },
       "NewMuralModal": {
         "novoMural": "Novo mural",
@@ -445,7 +449,9 @@
         "m_gerarUmNovoCodigo": "Gerar um novo código",
         "x_quemRecebeGanha30Dias": "Quem recebe ganha 30 dias de PINZ+ na hora e é avisado. Vale só para outro usuário, por {v0}.",
         "x_osDadosDoCartaoSao": "Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{v0}",
-        "x_aguardandoOPagamento": "Aguardando o pagamento… {v0}:{v1}"
+        "x_aguardandoOPagamento": "Aguardando o pagamento… {v0}:{v1}",
+        "x_annualNote": "Equivale a {v0} por mês. Pix ou cartão, sem renovação automática.",
+        "x_save": "Economize {pct}%"
       },
       "PeopleModals": {
         "seguidoresESeguindo": "Seguidores e seguindo",
@@ -593,7 +599,10 @@
         "m_pinsColocadosNoMural": "pins colocados no mural",
         "m_enviarDenuncia": "Enviar denúncia",
         "x_umMuralSoDeVoces": "Um mural só de vocês dois. Você define o nome e a senha e <s0>@{v0}</s0> recebe o convite. Os dois precisam ter o PINZ+.",
-        "x_aDenunciaEAnonimaNao": "A denúncia é anônima: <s0>@{v0}</s0> não sabe quem denunciou. Nossa equipe analisa e decide o que fazer."
+        "x_aDenunciaEAnonimaNao": "A denúncia é anônima: <s0>@{v0}</s0> não sabe quem denunciou. Nossa equipe analisa e decide o que fazer.",
+        "x_shareText": "Veja o perfil de @{nick} no Pinz: {url}",
+        "x_shareTitle": "Perfil de @{nick} no Pinz",
+        "x_shareText2": "Veja o perfil de @{nick} no Pinz!"
       },
       "RewardsModal": {
         "ganheCreditos": "Ganhe créditos",
@@ -635,7 +644,8 @@
         "pagamentos": "Pagamentos",
         "voceAindaNaoFezNenhum": "Você ainda não fez nenhum pagamento.",
         "m_valeAte": "· vale até {v0}",
-        "x_duvidaSobreUmaCobrancaEnvie": "Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para <s0>{v0}</s0>."
+        "x_duvidaSobreUmaCobrancaEnvie": "Dúvida sobre uma cobrança? Envie o número do pagamento (Nº) para <s0>{v0}</s0>.",
+        "x_credits": "{n} créditos"
       }
     },
     "AvatarUploader": {

@@ -6,6 +6,7 @@ import { Marquee, WidgetFrame } from "./core";
 import { SHARED_SKINS, type Skin } from "./skins";
 import { useTranslations } from "next-intl";
 import { useWT } from "./wt";
+import { useLit } from "@/i18n/literal";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -43,6 +44,7 @@ function useTick(): number | null {
  * Chegando a hora mostra wt.arrived; depois do dia, há quanto tempo foi. Cinco estilos, em formato retangular ou quadrado.
  */
 export function CountdownWidget({ style = "neon", title, target, time, frame }: { style?: string; title?: string; target?: string; time?: string; frame?: string | null }) {
+  const tl = useLit();
   const tx = useTranslations("components.widgets.CountdownWidget");
   const wt = useWT();
   const now = useTick();
@@ -81,7 +83,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
         {arrived ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
             <p className={`leading-none font-extrabold ${square ? "text-[2.4em]" : "text-[2.6em]"}`} style={{ color: skin.accent, textShadow: skin.glow }}>
-              {ago >= 1 ? tx("m_jaPassou") : "Chegou o dia!"}
+              {ago >= 1 ? tx("m_jaPassou") : tl("Chegou o dia!")}
             </p>
             {ago >= 1 && (
               <p className="mt-[0.35em] text-[1.1em] font-semibold" style={{ color: skin.sub }}>

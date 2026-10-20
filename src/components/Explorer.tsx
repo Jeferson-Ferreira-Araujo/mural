@@ -545,7 +545,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       setBoardLoaded(true);
       void fetchBadges(sb, { nick, slug }, token).then((b) => b && setBadges((prev) => (JSON.stringify(prev) === JSON.stringify(b) ? prev : b)));
     }
-    else if (!loadedRef.current) relock("Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar."); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
+    else if (!loadedRef.current) relock(tl("Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar.")); // na abertura: o desbloqueio guardado não vale mais (senha trocada ou vencido)
   }, [nick, slug, token, relock]);
 
   // avisos em tempo real: quando chega algo para esta conta (pin novo, aprovação, seguidor, reação), o servidor manda um sinal sem conteúdo
@@ -606,7 +606,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       // o canal é aberto: qualquer um poderia mandar um aviso falso. Por isso o aviso só vale se o servidor confirmar que o acesso caiu
       .on("broadcast", { event: "revoked" }, () => {
         if (!nick || !slug || !token) return;
-        void checkGrantClient(sb, { nick, slug }, token).then((ok) => !ok && relock("O dono mudou a pergunta do mural. Responda de novo para continuar."));
+        void checkGrantClient(sb, { nick, slug }, token).then((ok) => !ok && relock(tl("O dono mudou a pergunta do mural. Responda de novo para continuar.")));
       })
       .subscribe();
     return () => {
@@ -804,7 +804,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     }
     if (res.reason === "not_authenticated") return SEND_ERROR_TEXT.not_authenticated;
     if (res.reason === "not_unlocked") {
-      const msg = "Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar.";
+      const msg = tl("Por segurança, o mural voltou a ser privado. Responda a pergunta para continuar.");
       relock(msg);
       return msg;
     }
@@ -1304,7 +1304,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               📦
             </div>
             <p className="font-title text-xl leading-snug font-semibold">
-              {archivedNote.count} {archivedNote.count === 1 ? tx("m_pinFoiArquivado") : "pins foram arquivados"}
+              {archivedNote.count} {archivedNote.count === 1 ? tx("m_pinFoiArquivado") : tl("pins foram arquivados")}
             </p>
             <p className="text-[15px] text-[#4a3826]">
               {tx("x_doPrazoDeValidadeDo", { count: archivedNote.count, v1: archivedNote.title })}</p>

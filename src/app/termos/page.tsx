@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export const metadata: Metadata = { title: "Termos de Uso", alternates: { canonical: "/termos" }, robots: { index: true, follow: true } };
 
 export default function Termos() {
+  const tl = useLit();
   const tx = useTranslations("app.termos.page");
   return (
-    <LegalPage title="Termos de Uso" updated="6 de outubro de 2026">
+    <LegalPage title={tl("Termos de Uso")} updated="6 de outubro de 2026">
       <p>{tx("x_aoCriarUmaContaOu")}</p>
 
       <section>

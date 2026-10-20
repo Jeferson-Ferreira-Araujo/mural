@@ -124,7 +124,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </button>
                   )}
                   {m.status === "accepted" && (
-                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Visualizar ${m.title}`} title={m.locked ? "Bloqueado: os dois precisam ter o PINZ+" : tx("m_visualizarOMural")} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
+                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Visualizar ${m.title}`} title={m.locked ? tl("Bloqueado: os dois precisam ter o PINZ+") : tx("m_visualizarOMural")} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
                       <svg {...ic}>
                         <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
                         <circle cx="12" cy="12" r="3" />
@@ -132,7 +132,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </a>
                   )}
                   {m.mine && (
-                    <button type="button" disabled={busy} onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`${m.status === "pending" ? "Cancelar o convite de" : "Apagar"} ${m.title}`} title={m.status === "pending" ? "Cancelar convite" : "Apagar"} className={`${iconBtn} !border-[#e3b3a8] !text-[#a23b2a] hover:!bg-[#fbeae5]`}>
+                    <button type="button" disabled={busy} onClick={() => (setErr(null), setConfirmId(m.id))} aria-label={`${m.status === "pending" ? tl("Cancelar o convite de") : tl("Apagar")} ${m.title}`} title={m.status === "pending" ? tl("Cancelar convite") : tl("Apagar")} className={`${iconBtn} !border-[#e3b3a8] !text-[#a23b2a] hover:!bg-[#fbeae5]`}>
                       <svg {...ic}>
                         <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
                       </svg>
@@ -140,14 +140,14 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                   )}
                 </div>
                 {confirmId === m.id && (
-                  <div role="alertdialog" aria-label={m.status === "pending" ? "Cancelar convite" : tx("m_apagarMural")} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
+                  <div role="alertdialog" aria-label={m.status === "pending" ? tl("Cancelar convite") : tx("m_apagarMural")} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
                     <p className="text-sm font-semibold text-[#6b2a1d]">{m.status === "pending" ? tx("m_cancelarEsteConvite") : tx("m_apagarParaAsDuasPessoas", { v0: m.title })}</p>
                     {m.status !== "pending" && <p className="mt-1 text-sm text-[#6b2a1d]">{tx("todosOsPinsSeraoPerdidos")}</p>}
                     <div className="mt-3 flex gap-2">
                       <button type="button" disabled={busy} onClick={() => setConfirmId(null)} className={`${ghostButton} flex-1`}>
                         {tx("voltar")}</button>
                       <button type="button" disabled={busy} onClick={() => void remove(m)} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:opacity-60">
-                        {busy ? "Apagando…" : m.status === "pending" ? "Cancelar convite" : "Apagar"}
+                        {busy ? "Apagando…" : m.status === "pending" ? tl("Cancelar convite") : tl("Apagar")}
                       </button>
                     </div>
                   </div>

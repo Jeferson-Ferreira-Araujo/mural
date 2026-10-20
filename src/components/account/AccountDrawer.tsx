@@ -23,6 +23,8 @@ import { PlansModal } from "./PlansModal";
 import { ProfileModal } from "./ProfileModal";
 import { RewardsModal } from "./RewardsModal";
 import { SharedMurals } from "./SharedMurals";
+import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
 type ModalId = "pins" | "plans" | "profile" | "edit" | "mymurals" | "numbers" | "shared" | "following" | "visitors" | "install" | "rewards";
 
@@ -123,7 +125,9 @@ export function AccountDrawer({
   /** sino: quantas notificações novas e como abrir a lista */
   notifications?: { count: number; onOpen: () => void };
 }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.AccountDrawer");
+  const tag = useTag();
   const t = useTranslations("menu");
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
@@ -451,14 +455,14 @@ export function AccountDrawer({
         <dl className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
           {(
             [
-              ["visitas nos seus murais", metrics?.visits],
-              ["pins nos seus murais", metrics?.inMine],
-              ["pins que você colocou em murais de outras pessoas", metrics?.placed],
+              [tl("visitas nos seus murais"), metrics?.visits],
+              [tl("pins nos seus murais"), metrics?.inMine],
+              [tl("pins que você colocou em murais de outras pessoas"), metrics?.placed],
             ] as const
           ).map(([label, v]) => (
             <div key={label} className="rounded-xl bg-[#f1e7d2]/70 px-3 py-4">
-              <dd className="text-3xl font-semibold tabular-nums">{v == null ? "–" : v.toLocaleString("pt-BR")}</dd>
-              <dt className="mt-1 text-sm text-[#6b5440]">{label}</dt>
+              <dd className="text-3xl font-semibold tabular-nums">{v == null ? "–" : v.toLocaleString(tag)}</dd>
+              <dt className="mt-1 text-sm text-[#6b5440]">{tl(label)}</dt>
             </div>
           ))}
         </dl>

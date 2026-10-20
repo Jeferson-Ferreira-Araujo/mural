@@ -9,8 +9,10 @@ import { PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS } from "@/lib/p
 import { Modal } from "./Modal";
 import { ListSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
-const date = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+const date = (iso: string, tag: string) => new Date(iso).toLocaleString(tag, { dateStyle: "short", timeStyle: "short" });
 
 /** Texto legível de um movimento de créditos. */
 export function ledgerLabel(reason: string): string {
@@ -29,14 +31,17 @@ export function ledgerLabel(reason: string): string {
 export const payTitle = (p: Pick<TxPayment, "kind" | "credits"> & { cents?: number }) => (p.kind === "plus" ? (p.cents === PLUS_ANNUAL_CENTS ? "PINZ+ anual" : p.cents === PLUS_LIFETIME_CENTS ? "PINZ+ vitalício" : p.cents === PLUS_GIFT_CENTS ? "Presente: 1 mês de PINZ+" : "Assinatura PINZ+ (mensalidade)") : `${p.credits ?? ""} créditos`);
 
 export function StatusChip({ status }: { status: string }) {
+  const tl = useLit();
   const s = PAY_STATUS[status] ?? { text: status, tone: "wait" as const };
   const tone = s.tone === "ok" ? "bg-[#e3f4e7] text-[#1f6b36]" : s.tone === "bad" ? "bg-[#f8e1dc] text-[#a23b2a]" : "bg-[#fdf0cf] text-[#8a5a00]";
-  return <span className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${tone}`}>{s.text}</span>;
+  return <span className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${tone}`}>{tl(s.text)}</span>;
 }
 
 /** "Minhas compras": o que a pessoa já pagou (o histórico de uso dos créditos saiu: confundia). */
 export function TransactionsModal({ open, onClose, credits }: { open: boolean; onClose: () => void; credits: number }) {
+  const tl = useLit();
   const txt = useTranslations("components.account.TransactionsModal");
+  const tag = useTag();
   const [tx, setTx] = useState<Transactions | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -61,9 +66,9 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
         <div className="space-y-5">
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
-              ["Total pago", brl(total)],
-              ["Créditos comprados", String(bought)],
-              ["Saldo atual", String(credits)],
+              [tl("Total pago"), brl(total)],
+              [tl("Créditos comprados"), String(bought)],
+              [tl("Saldo atual"), String(credits)],
             ].map(([k, v]) => (
               <div key={k} className="rounded-2xl border border-[#e1d3ba] bg-white/70 p-3">
                 <p className="font-title text-xl font-semibold">{v}</p>
@@ -75,7 +80,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
           {sub && (
             <p className="rounded-xl border border-[#e8d9a8] bg-[#fff6d6] px-3 py-2 text-sm">
               <strong>{txt("assinaturaPinz")}</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
-              {sub.paidUntil ? txt("m_valeAte", { v0: new Date(sub.paidUntil).toLocaleDateString("pt-BR") }) : ""}
+              {sub.paidUntil ? txt("m_valeAte", { v0: new Date(sub.paidUntil).toLocaleDateString(tag) }) : ""}
             </p>
           )}
 
@@ -88,9 +93,9 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
                 {tx.payments.map((p) => (
                   <li key={p.ref} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2.5 text-sm">
                     <div className="min-w-0">
-                      <p className="font-semibold">{payTitle({ ...p, cents: p.cents })}</p>
+                      <p className="font-semibold">{p.kind === "plus" ? tl(payTitle({ ...p, cents: p.cents })) : txt("x_credits", { n: p.credits ?? "" })}</p>
                       <p className="text-xs text-[#6b5440]">
-                        {date(p.at)} · Nº {p.ref}
+                        {date(p.at, tag)} · Nº {p.ref}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

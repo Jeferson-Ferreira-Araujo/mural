@@ -10,9 +10,11 @@ import { BOARDS } from "@/lib/boards";
 import { PAY_EVENT } from "@/lib/payments";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /** Editar o mural: tipo (fundo), nome e excluir. Público/privado e a pergunta de segurança são do PERFIL (Perfil → Privacidade). */
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.MuralSettings");
   const [title, setTitle] = useState(mural.title);
   const plus = mural.plan === "full";
@@ -271,7 +273,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
           </p>
         )}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : "Salvar"}
+          {busy ? "Salvando…" : tl("Salvar")}
         </button>
       </form>
 

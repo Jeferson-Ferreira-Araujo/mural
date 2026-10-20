@@ -12,6 +12,7 @@ import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
 import { useTag } from "@/i18n/useTag";
+import { useLit } from "@/i18n/literal";
 
 const btn = "cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-45";
 const primary = "cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-45";
@@ -57,6 +58,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
  * (os que passaram do prazo de validade do mural e saíram dele: dá para colocar de volta).
  */
 export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals", ttlDays = null, onTtlSaved }: { /** validade atual dos pins de outras pessoas neste mural (null = sem prazo) */ ttlDays?: 7 | 15 | 30 | null; /** a validade mudou aqui: atualiza os dados do mural */ onTtlSaved?: () => void; /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PinsModal");
   const tag = useTag();
   const [section, setSection] = useState<"approvals" | "archived">("approvals");
@@ -196,7 +198,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
       <div role="tablist" aria-label={tx("meusPins")} className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
         {(
           [
-            ["approvals", "Aprovações", pending.length],
+            ["approvals", tl("Aprovações"), pending.length],
             ["archived", "Arquivados", archived?.length ?? null],
           ] as const
         ).map(([id, label, n]) => (
@@ -215,7 +217,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
               [
                 [7, "7 dias"],
                 [30, "30 dias"],
-                [null, "Não apagar: os pins ficam para sempre"],
+                [null, tl("Não apagar: os pins ficam para sempre")],
               ] as const
             ).map(([v, label]) => (
               <label key={String(v)} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-semibold ${choice === v ? "border-[#d9a21b] bg-white" : "border-[#e1d3ba] bg-white/60"}`}>

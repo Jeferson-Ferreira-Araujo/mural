@@ -6,10 +6,12 @@ import { NATURAL_W, shapeOfStyle } from "@/lib/displayShape";
 import { SecretCover } from "./SecretCover";
 import { DisplayCard } from "../widgets";
 import { useBadges } from "./BadgeContext";
+import { useLit } from "@/i18n/literal";
 
 const HOLD_MS = 380; // tempo de segurar um widget no celular para movê-lo
 
 function PlacedItem({ b }: { b: PlacedBadge }) {
+  const tl = useLit();
   const ctx = useBadges();
   const { begin, draggingId, select } = ctx;
   const editable = ctx.editable && b.mine !== false; // no mural compartilhado, o botom da outra pessoa só ela mexe
@@ -93,7 +95,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-id={b.id}
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
-        {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": "Ver o display em tamanho grande", onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
+        {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": tl("Ver o display em tamanho grande"), onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
         className={`group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : b.hidden ? "" : "pointer-events-auto cursor-zoom-in"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
       >

@@ -8,6 +8,7 @@ import { Carousel } from "./Carousel";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
@@ -35,6 +36,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
 
 function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; footer?: ReactNode }) {
   const tx = useTranslations("components.account.PlansModal");
+  const tl = useLit();
   const p = PLANS[id];
   const full = id === "full";
   return (
@@ -43,7 +45,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
         <PlanBadge plan={id} />
         {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">{tx("seuPlano")}</span>}
       </header>
-      <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
+      <p className="font-title mt-3 text-3xl font-semibold">{tl(p.price)}</p>
       {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? tx("m_cobrancaEmBreve") : tx("m_paraSempre")}</p>}
       <ul className="mt-4 space-y-2 text-sm">
         {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
@@ -51,7 +53,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
             <span aria-hidden className={`mt-0.5 font-bold ${f.on ? "text-[#2f6a3c]" : "text-[#b0a08a]"}`}>
               {f.on ? "✓" : "–"}
             </span>
-            <span className={f.on ? "" : "line-through decoration-[#c9b68f]"}>{f.text}</span>
+            <span className={f.on ? "" : "line-through decoration-[#c9b68f]"}>{tl(f.text)}</span>
             {!f.on && <span className="sr-only"> {tx("naoIncluso")}</span>}
           </li>
         ))}
@@ -62,11 +64,12 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
 }
 
 const btn = "mt-4 w-full cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-50";
-const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("pt-BR") : "");
+const fmtDate = (iso: string | null, tag: string) => (iso ? new Date(iso).toLocaleDateString(tag) : "");
 
 /** Planos em carrossel: o que cada um custa e inclui; com a cobrança ligada, também assina o PINZ+ e compra créditos. */
 export function PlansModal({ open, onClose, plan, credits }: { open: boolean; onClose: () => void; plan: PlanId; credits: number }) {
   const tl = useLit();
+  const tag = useTag();
   const tx = useTranslations("components.account.PlansModal");
   const [sub, setSub] = useState<Subscription>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -110,18 +113,18 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   const subscribed = sub?.status === "authorized";
   const plusFooter = !PAYMENTS_ENABLED ? undefined : subscribed ? (
     <div className="mt-4 text-sm">
-      <p className="font-semibold text-[#2f6a3c]">{tx("x_assinaturaAtiva", { v0: sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil)}` : "" })}</p>
+      <p className="font-semibold text-[#2f6a3c]">{tx("x_assinaturaAtiva", { v0: sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil, tag)}` : "" })}</p>
       <button type="button" disabled={busy !== null} onClick={() => setConfirmCancel(true)} className="mt-2 cursor-pointer text-xs font-semibold text-[#a23b2a] underline disabled:opacity-50">
-        {busy === "cancel" ? "Cancelando…" : "Cancelar assinatura"}
+        {busy === "cancel" ? "Cancelando…" : tl("Cancelar assinatura")}
       </button>
     </div>
   ) : sub?.status === "once" && sub.active ? (
-    <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? tx("m_pinzVitalicioParaSempre") : tx("m_pinzAtivoAte", { v0: fmtDate(sub.paidUntil) })}</p>
+    <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? tx("m_pinzVitalicioParaSempre") : tx("m_pinzAtivoAte", { v0: fmtDate(sub.paidUntil, tag) })}</p>
   ) : sub?.status === "cancelled" && sub.active ? (
-    <p className="mt-4 text-sm font-semibold text-[#6b5440]">{tx("x_assinaturaCanceladaPinzAte", { v0: fmtDate(sub.paidUntil) })}</p>
+    <p className="mt-4 text-sm font-semibold text-[#6b5440]">{tx("x_assinaturaCanceladaPinzAte", { v0: fmtDate(sub.paidUntil, tag) })}</p>
   ) : plan === "free" ? (
     <button type="button" disabled={busy !== null} onClick={() => void buy("plus")} className={btn}>
-      {busy === "plus" ? "Abrindo o pagamento…" : "Ver os planos do PINZ+"}
+      {busy === "plus" ? "Abrindo o pagamento…" : tl("Ver os planos do PINZ+")}
     </button>
   ) : undefined;
 

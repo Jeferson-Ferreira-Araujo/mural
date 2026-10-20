@@ -4,6 +4,7 @@ import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
 import { useWT } from "./wt";
+import { useLit } from "@/i18n/literal";
 
 /** Estilos do Top 3: pódio (papel claro), noite (escuro) e neon (roxo e rosa). */
 const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string; edge: string; title: string; glow: string }> = {
@@ -32,12 +33,13 @@ function Spark({ side, color, size }: { side: "left" | "right"; color: string; s
  * Textos parados, em até duas linhas. Três estilos, em formato retangular ou quadrado; o 1º lugar ganha destaque dourado.
  */
 export function Top3Widget({ style = "podium", title, items, frame }: { style?: string; title?: string; items?: string[]; frame?: string | null }) {
+  const tl = useLit();
   const tx = useTranslations("components.widgets.Top3Widget");
   const wt = useWT();
   const shape = shapeOfStyle(style);
   const square = shape === "square";
   const sk = SKINS[baseStyle(style)] ?? SKINS.podium;
-  const theme = (title ?? "").trim() || "Meu top 3";
+  const theme = (title ?? "").trim() || tl("Meu top 3");
   const list = [0, 1, 2].map((i) => (items?.[i] ?? "").trim());
 
   const gold = "#f0b323";

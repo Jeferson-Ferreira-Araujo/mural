@@ -2,6 +2,7 @@
 
 import { Field, inputClass } from "../ui";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export type Privacy = { priv: boolean; question: string; answer: string };
 
@@ -16,6 +17,7 @@ export function privacyError(p: Privacy, hadAnswer: boolean): string | null {
 
 /** Pergunta de segurança DESTE mural: público (qualquer pessoa abre) ou privado (só abre quem acerta a resposta). */
 export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v: Privacy) => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PrivacyField");
   return (
     <fieldset className="min-w-0 space-y-3">
@@ -23,7 +25,7 @@ export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v
       <div role="radiogroup" aria-label={tx("quemPodeAbrirEsteMural")} className="grid grid-cols-2 gap-2">
         {(
           [
-            [false, "🌐 Público"],
+            [false, tl("🌐 Público")],
             [true, "🔒 Privado"],
           ] as const
         ).map(([val, label]) => (

@@ -4,6 +4,7 @@ import { baseStyle } from "@/lib/displayShape";
 import { WidgetFrame } from "./core";
 import { useTranslations } from "next-intl";
 import { useWT } from "./wt";
+import { useLit } from "@/i18n/literal";
 
 export type BookView = "count" | "bar" | "both";
 
@@ -30,6 +31,7 @@ function Placeholder({ color }: { color: string }) {
  * como barra ou como os dois, conforme o dono escolher.
  */
 export function BookWidget({ style = "paper", title, cover, pages, read, view = "both", frame }: { style?: string; title?: string; cover?: string; pages?: number; read?: number; view?: string; frame?: string | null }) {
+  const tl = useLit();
   const tx = useTranslations("components.widgets.BookWidget");
   const wt = useWT();
   const sk = SKINS[baseStyle(style)] ?? SKINS.paper;
@@ -48,7 +50,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
         <div className="relative grid h-full max-w-full aspect-[2/3] place-items-center overflow-hidden rounded-[0.45em]" style={{ background: sk.coverBg, boxShadow: `0 0.2em 0.55em rgba(0,0,0,.35), inset 0 0 0 0.06em ${sk.edge}` }}>
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={cover} alt={name ? `Capa de ${name}` : "Capa do livro"} draggable={false} className="absolute inset-0 size-full object-cover" />
+            <img src={cover} alt={name ? `Capa de ${name}` : tl("Capa do livro")} draggable={false} className="absolute inset-0 size-full object-cover" />
           ) : (
             <Placeholder color={sk.ink} />
           )}

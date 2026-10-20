@@ -13,6 +13,7 @@ import { Modal } from "./Modal";
 import { CardSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
 const REASONS: { id: ProfileReportReason; label: string }[] = [
   { id: "ofensa", label: "Ofensa ou discurso de ódio" },
@@ -65,6 +66,7 @@ const Action = ({ title, hint, onClick, tone, children }: { title: string; hint:
 export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, showStats, onNotify, startView = "summary", isOwner = false }: { /** quem está vendo é o dono deste perfil (garante o botão Editar perfil) */ isOwner?: boolean; /** tela com que a janela abre ("shared" = direto no convite para o mural compartilhado) */ startView?: "summary" | "shared"; open: boolean; onClose: () => void; nick: string; logged: boolean; /** quem está vendo tem o PINZ+ */ viewerPlus: boolean; showStats: boolean; onNotify: (m: string) => void }) {
   const tl = useLit();
   const tx = useTranslations("components.account.ProfileSummaryModal");
+  const tag = useTag();
   const [data, setData] = useState<ProfileSummary | null>(null);
   const [view, setView] = useState<"summary" | "shared" | "report">("summary");
   const [busy, setBusy] = useState(false);
@@ -121,13 +123,13 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     onClose();
   }
 
-  const heading = view === "shared" ? "Mural compartilhado" : view === "report" ? "Denunciar perfil" : "Perfil";
+  const heading = view === "shared" ? tl("Mural compartilhado") : view === "report" ? tl("Denunciar perfil") : tl("Perfil");
   const profileUrl = () => `${window.location.origin}/${data?.nickname ?? nick}`;
 
   async function shareProfile() {
     if (sharing || !data) return;
     const url = profileUrl();
-    const text = `Veja o perfil de @${data.nickname} no Pinz: ${url}`;
+    const text = tx("x_shareText", { nick: data.nickname, url });
     setSharing(true);
     try {
       if (cardRef.current) {
@@ -142,7 +144,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       setSharing(false);
     }
     try {
-      if (navigator.share) await navigator.share({ title: `Perfil de @${data.nickname} no Pinz`, text: `Veja o perfil de @${data.nickname} no Pinz!`, url });
+      if (navigator.share) await navigator.share({ title: tx("x_shareTitle", { nick: data.nickname }), text: tx("x_shareText2", { nick: data.nickname }), url });
       else {
         await navigator.clipboard.writeText(url);
         onNotify(tl("Link copiado!"));
@@ -174,7 +176,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           {showStats && (
             <div className="flex gap-2.5">
               {data.followers != null && (
-                <Stat tone="pink" value={data.followers.toLocaleString("pt-BR")} label={data.followers === 1 ? "seguidor" : "seguidores"}>
+                <Stat tone="pink" value={data.followers.toLocaleString(tag)} label={data.followers === 1 ? tl("seguidor") : tl("seguidores")}>
                   <svg {...icon} fill="currentColor" stroke="none">
                     <circle cx="12" cy="8" r="3.2" />
                     <circle cx="5.5" cy="9.5" r="2.4" />
@@ -183,13 +185,13 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                   </svg>
                 </Stat>
               )}
-              <Stat tone="blue" value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? tx("m_visualizacao") : tx("m_visualizacoes")}>
+              <Stat tone="blue" value={data.views.toLocaleString(tag)} label={data.views === 1 ? tx("m_visualizacao") : tx("m_visualizacoes")}>
                 <svg {...icon} strokeWidth="2.4">
                   <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </Stat>
-              <Stat tone="green" value={(data.received ?? 0).toLocaleString("pt-BR")} label={(data.received ?? 0) === 1 ? tx("m_pinColocadoNoMural") : tx("m_pinsColocadosNoMural")}>
+              <Stat tone="green" value={(data.received ?? 0).toLocaleString(tag)} label={(data.received ?? 0) === 1 ? tx("m_pinColocadoNoMural") : tx("m_pinsColocadosNoMural")}>
                 <svg {...icon} fill="currentColor" stroke="none">
                   <path d="M14.500 2.500 21.500 9.500c.6.6.2 1.500-.6 1.600l-2.300.2-3.700 3.700.4 3.400c.1.8-.8 1.200-1.400.7L9.600 15.600 4 21.200 2.800 20 8.400 14.400 5.400 11c-.5-.6-.1-1.500.7-1.400l3.400.4 3.700-3.700.2-2.300c.1-.8 1-1.200 1.600-.6Z" />
                 </svg>
@@ -202,7 +204,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
                 {tx("convidarParaOMuralCompartilhado")}</button>
             )}
-            <Action tone="purple" title={sharing ? "Preparando a imagem…" : "Compartilhar perfil"} hint={tx("enviaUmCartaoDeVisita")} onClick={() => void shareProfile()}>
+            <Action tone="purple" title={sharing ? "Preparando a imagem…" : tl("Compartilhar perfil")} hint={tx("enviaUmCartaoDeVisita")} onClick={() => void shareProfile()}>
               <svg {...icon}>
                 <circle cx="18" cy="5" r="2.6" />
                 <circle cx="6" cy="12" r="2.6" />
@@ -261,7 +263,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             </p>
           )}
           <button type="submit" disabled={busy || !viewerPlus || !title.trim() || password.length < 6} className={primaryButton}>
-            {busy ? "Enviando…" : "Enviar convite"}
+            {busy ? "Enviando…" : tl("Enviar convite")}
           </button>
         </form>
       ) : (
@@ -273,7 +275,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             {REASONS.map((r) => (
               <label key={r.id} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm ${reason === r.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70"}`}>
                 <input type="radio" name="reason" checked={reason === r.id} onChange={() => setReason(r.id)} className="accent-[#d9a21b]" />
-                {r.label}
+                {tl(r.label)}
               </label>
             ))}
           </fieldset>
@@ -304,9 +306,9 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             {showStats && (
               <div style={{ marginTop: 22, display: "flex", gap: 14, width: "100%" }}>
                 {([
-                  ...(data.followers != null ? [{ v: data.followers.toLocaleString("pt-BR"), l: data.followers === 1 ? "seguidor" : "seguidores", bg: "#fbe4e2" }] : []),
-                  { v: data.views.toLocaleString("pt-BR"), l: "visualizações", bg: "#e0ecf8" },
-                  { v: (data.received ?? 0).toLocaleString("pt-BR"), l: "pins colocados no mural", bg: "#e3f1de" },
+                  ...(data.followers != null ? [{ v: data.followers.toLocaleString(tag), l: data.followers === 1 ? tl("seguidor") : tl("seguidores"), bg: "#fbe4e2" }] : []),
+                  { v: data.views.toLocaleString(tag), l: tl("visualizações"), bg: "#e0ecf8" },
+                  { v: (data.received ?? 0).toLocaleString(tag), l: tl("pins colocados no mural"), bg: "#e3f1de" },
                 ] as { v: string; l: string; bg: string }[])
                   .map(({ v, l, bg }) => (
                     <div key={l} style={{ flex: 1, background: bg, borderRadius: 18, padding: "14px 6px", display: "flex", flexDirection: "column", alignItems: "center" }}>

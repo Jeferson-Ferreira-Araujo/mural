@@ -16,6 +16,7 @@ import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
+import { useLit } from "@/i18n/literal";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -167,6 +168,7 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
  * Com créditos se compram Bottons (e unidades extras) e Fundos de mural. Mais de um mural é do PINZ+ (sem limite), não se vende.
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
+  const tl = useLit();
   const tx = useTranslations("components.badges.StoreModal");
   const demoLocale = useLocale() as DemoLocale;
   const [tab, setTab] = useState<Tab>("pins");
@@ -276,7 +278,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <div className="mt-3 flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2">
                 <p className="text-lg font-bold whitespace-nowrap">{p.price}</p>
                 <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="grow cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
-                  {!PAYMENTS_ENABLED ? "Em breve" : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
+                  {!PAYMENTS_ENABLED ? tl("Em breve") : busy === `credits:${p.id}` ? "Abrindo…" : "Comprar"}
                 </button>
               </div>
             </li>
@@ -303,7 +305,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         {(
           [
             ["pins", "Bottons"],
-            ["boards", "Murais"],
+            ["boards", tl("Murais")],
             ["formats", "Displays"],
           ] as const
         ).map(([id, text]) => (
@@ -607,7 +609,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   }}
                   className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {PAYMENTS_ENABLED ? "Comprar" : "Em breve"}
+                  {PAYMENTS_ENABLED ? "Comprar" : tl("Em breve")}
                 </button>
               </div>
             </div>
