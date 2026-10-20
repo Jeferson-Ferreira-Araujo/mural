@@ -115,3 +115,16 @@ export function randomMural(nowMs: number, locale: DemoLocale = "pt"): BoardItem
   }
   return items;
 }
+
+/** Troca só os textos dos cartões de exemplo que já estão na tela pelo idioma novo (posição, assinatura e marcações da lista continuam). */
+export function relocalize(items: BoardItem[], locale: DemoLocale): BoardItem[] {
+  const pool = new Map<string, BoardItem>([...buildPool(0, locale).items, ...extraPool(locale)].map((i) => [i.id, i]));
+  return items.map((it) => {
+    const src = pool.get(it.id.replace(/-b$/, "")) as Record<string, unknown> | undefined;
+    if (!src) return it;
+    const r = { ...it } as Record<string, unknown>;
+    for (const k of ["text", "caption", "title", "name"]) if (k in src && k in r) r[k] = src[k];
+    if (Array.isArray(src.items) && Array.isArray(r.items)) r.items = (r.items as { text: string; done: boolean }[]).map((x, i) => ({ ...x, text: (src.items as { text: string }[])[i]?.text ?? x.text }));
+    return r as BoardItem;
+  });
+}

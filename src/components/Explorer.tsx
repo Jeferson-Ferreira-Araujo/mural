@@ -3,7 +3,7 @@
 import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isDisplayOn } from "./widgets";
-import { buildPool, randomMural } from "@/data/mock";
+import { buildPool, randomMural, relocalize } from "@/data/mock";
 import { decorLayout } from "@/data/decorDisplays";
 import {
   checkGrantClient,
@@ -58,7 +58,7 @@ import { BoardLoadingProvider } from "./board/BoardLoadingContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
 import { buyBadgeQty, buyBoard, buyMuralSlot, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
-import { StoreModal, type BuyItem } from "./badges/StoreModal";
+import { StoreModal, sampleFor, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
 import { fetchNotifications, markAllRead, notificationText, unreadCount, type Notification } from "@/lib/notifications";
@@ -91,6 +91,8 @@ const EXPORT_IMAGE_ENABLED = false;
 export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
   const tx = useTranslations("components.Explorer");
   const demoLocale = useLocale() as DemoLocale;
+  const localeRef = useRef(demoLocale);
+  localeRef.current = demoLocale;
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
   // /entrar?next=…: guarda o mural que a pessoa queria abrir; já logada, vai direto para ele
@@ -1034,7 +1036,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
-    const d = decorLayout(randomMural(Date.now(), demoLocale), demoLocale);
+    const d = decorLayout(randomMural(Date.now(), localeRef.current), localeRef.current);
     const pick = BOARDS[Math.floor(Math.random() * BOARDS.length)];
     let done = false;
     const show = () => {
@@ -1056,6 +1058,11 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       img.onload = null;
       img.onerror = null;
     };
+  }, []);
+  // trocar o idioma só troca os textos do mural de exemplo: nada é sorteado de novo, os cartões e displays ficam onde estão
+  useEffect(() => {
+    setDecor((prev) => relocalize(prev, demoLocale));
+    setDecorBadges((prev) => prev.map((b) => (b.kind === "display" && b.data ? { ...b, data: sampleFor(String(b.data.product), String(b.data.style ?? ""), demoLocale) as typeof b.data } : b)));
   }, [demoLocale]);
   // endereço de um mural (/nick/slug): enquanto ele abre, a lousa fica escondida (nada de mostrar outro quadro por meio segundo)
   const boardPendingNow = (!selected && (initialRef ? !openFailed : !decorBoard)) || (!!selected && resolving);
