@@ -18,6 +18,23 @@ const names = { en: EN, es: ES };
 const base = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "src", "data", "promessas.json"), "utf8"));
 const clean = (t) => t.replace(/\s+/g, " ").replace(/\[[^\]]*\]/g, "").trim();
 
+/** Salmos: o versículo 1 de muitas edições traz o título ("Salmo de David", "A Song of Ascents") antes do texto; tira o título. A Reina-Valera 1909 também escreve a primeira palavra em MAIÚSCULAS: volta ao normal. */
+function tidy(text, lang, isPsalmVerse1) {
+  let t = text;
+  if (isPsalmVerse1) {
+    if (lang === "en") {
+      const title = /^(?:(?:A (?:Psalm|Song|Maskil|Miktam|Prayer|Praise)[^.]*|For the Chief Musician[^.]*|By [A-Z][^.]*|According to [^.]*|Of David|To the tune of [^.]*)\.\s*)+/;
+      t = t.replace(title, "");
+    } else if (lang === "es") {
+      const m = /^(?:Salmo|Cántico|Al Músico|Masquil|Mictam|Oración|Para el Músico)[^]*?[.:]\s+(?=[A-ZÁÉÍÓÚÑ]{2,}(?![A-Za-zÁÉÍÓÚÑáéíóúñ]))/.exec(t);
+      if (m) t = t.slice(m[0].length);
+    }
+  }
+  if (lang === "es") t = t.replace(/^([A-ZÁÉÍÓÚÑ]{2,})(?![A-Za-zÁÉÍÓÚÑáéíóúñ])/, (w) => w.charAt(0) + w.slice(1).toLowerCase());
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+
 for (const lang of ["en", "es"]) {
   const out = [];
   for (const it of base) {
@@ -31,7 +48,7 @@ for (const lang of ["en", "es"]) {
     for (let v = a; v <= z; v++) {
       const f = chap?.verses.find((x) => x.verse === v);
       if (!f) throw new Error(`versículo inexistente (${lang}): ${it.referencia}`);
-      verses.push(clean(f.text));
+      verses.push(tidy(clean(f.text), lang, bi === 18 && v === 1));
     }
     out.push({ promessa: verses.join(" "), referencia: `${names[lang][bi]} ${c}:${a}${z > a ? "-" + z : ""}` });
   }

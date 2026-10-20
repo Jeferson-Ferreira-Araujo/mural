@@ -2103,7 +2103,17 @@
     "h1ys5o4e": "/month",
     "hac4ntu": "/year",
     "h1ew9juz": "Pay by card",
-    "htmg6lm": "You'll be taken to a secure Stripe page to complete the payment."
+    "htmg6lm": "You'll be taken to a secure Stripe page to complete the payment.",
+    "h1778pue": "Add a profile photo",
+    "h1z5iub": "Upload your photo in Profile.",
+    "h15x9jp": "Follow someone",
+    "h3sy5xi": "Open someone's board and tap Follow.",
+    "hgaru2b": "Leave a pin on someone's board",
+    "h1d7nr99": "Visit another person's board and place a pin.",
+    "hvi0i3z": "Someone creates an account with your board link",
+    "hlcp6y0": "Share your board: you earn 5 credits when someone creates an account with your link.",
+    "h1lihnvz": "Someone creates an account with the link of one of your pins",
+    "hvq1ljo": "Share a pin: you earn 5 credits when someone creates an account with your link."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

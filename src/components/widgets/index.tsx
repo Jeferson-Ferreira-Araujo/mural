@@ -14,7 +14,8 @@ import { SHARED_SKIN_INFO } from "./skins";
 import { Top3Widget } from "./Top3Widget";
 import { baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { promessaDoDia, usePromessaDoDia } from "@/lib/promessas";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localizeDaily } from "@/data/dailyPhrases";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
 export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** top 3 */ items?: string[]; /** enquete */ options?: string[]; id?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
@@ -129,6 +130,7 @@ function BibleCard({ data }: { data: DisplayData }) {
 
 /** Para compartilhar/ler fora do cartão: o versículo do dia no lugar do que o servidor guardou. */
 export const withLiveText = (data: DisplayData, locale = "pt"): DisplayData => {
+  if (data.product === "motivation") return { ...data, ...localizeDaily(data.text, data.ref, locale) };
   if (data.product !== "bible") return data;
   const p = promessaDoDia(new Date(), locale);
   return { ...data, text: p.promessa, ref: p.referencia };
@@ -137,11 +139,12 @@ export const withLiveText = (data: DisplayData, locale = "pt"): DisplayData => {
 /** O widget certo para cada produto da loja (versículo, frase, relógio, clima), no estilo escolhido. */
 export function DisplayCard({ data, preview = false, badgeId }: { data: DisplayData; /** id do display no mural (a enquete usa para contar os votos; sem ele mostra um exemplo) */ badgeId?: string; /** prévia (loja, formulário, escolha): o clima usa só a cidade escolhida, sem pedir a localização de quem vê */ preview?: boolean }) {
   const tx = useTranslations("components.widgets.index");
+  const dl = localizeDaily(data.text, data.ref, useLocale());
   switch (data.product) {
     case "bible":
       return <BibleCard data={data} />;
     case "motivation":
-      return <TextWidget style={data.style} text={data.text} reference={data.ref} frame={data.frame} label={tx("fraseDoDia")} />;
+      return <TextWidget style={data.style} text={dl.text} reference={dl.ref} frame={data.frame} label={tx("fraseDoDia")} />;
     case "clock":
       return <ClockWidget style={data.style} tz="local" frame={data.frame} />;
     case "calendar":

@@ -52,7 +52,15 @@ import { preconnect } from "react-dom";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = (await getLocale()) as Locale;
-  const messages = await getMessages();
+  const all = (await getMessages()) as Record<string, unknown>;
+  // só vai para o navegador o que os componentes de cliente usam: as páginas legais e os metadados são montados no servidor
+  const { meta: _meta, app: appAll, ...rest } = all;
+  void _meta;
+  const { privacidade: _p, termos: _t, exclusao_de_dados: _e, ...app } = (appAll ?? {}) as Record<string, unknown>;
+  void _p;
+  void _t;
+  void _e;
+  const messages = { ...rest, app };
   // abre a conexão com o servidor de dados (login, pins, imagens enviadas) já no começo: a primeira busca sai mais rápido
   if (process.env.NEXT_PUBLIC_SUPABASE_URL) preconnect(process.env.NEXT_PUBLIC_SUPABASE_URL, { crossOrigin: "anonymous" });
   return (

@@ -2103,7 +2103,17 @@
     "h1ys5o4e": "/mes",
     "hac4ntu": "/año",
     "h1ew9juz": "Pagar con tarjeta",
-    "htmg6lm": "Te llevaremos a una página segura de Stripe para completar el pago."
+    "htmg6lm": "Te llevaremos a una página segura de Stripe para completar el pago.",
+    "h1778pue": "Poner una foto de perfil",
+    "h1z5iub": "Sube tu foto en Perfil.",
+    "h15x9jp": "Seguir a alguien",
+    "h3sy5xi": "Abre el mural de una persona y toca Seguir.",
+    "hgaru2b": "Dejar un pin en el mural de alguien",
+    "h1d7nr99": "Visita el mural de otra persona y coloca un pin.",
+    "hvi0i3z": "Alguien crea una cuenta con el enlace de tu mural",
+    "hlcp6y0": "Comparte tu mural: ganas 5 créditos cuando alguien crea una cuenta con tu enlace.",
+    "h1lihnvz": "Alguien crea una cuenta con el enlace de un pin tuyo",
+    "hvq1ljo": "Comparte un pin: ganas 5 créditos cuando alguien crea una cuenta con tu enlace."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
