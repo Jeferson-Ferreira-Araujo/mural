@@ -14,8 +14,11 @@ export function FitSidebar() {
     const fit = () => {
       raf = 0;
       el.style.fontSize = "";
+      el.style.maxWidth = "";
       if (window.matchMedia("(orientation: portrait)").matches) return; // em pé, a coluna vai para cima e tem a própria altura
       let fs = parseFloat(getComputedStyle(el).fontSize) || 14;
+      // a largura máxima (30em) não pode encolher junto com a letra: senão sobra faixa desfocada nas laterais do mural
+      el.style.maxWidth = `${fs * 30}px`;
       const h0 = el.scrollHeight;
       while (el.scrollHeight > el.clientHeight + 1 && fs > 8.5) {
         fs -= 0.5;
@@ -38,6 +41,7 @@ export function FitSidebar() {
       mo.disconnect();
       if (raf) cancelAnimationFrame(raf);
       el.style.fontSize = "";
+      el.style.maxWidth = "";
     };
   }, []);
   return null;
