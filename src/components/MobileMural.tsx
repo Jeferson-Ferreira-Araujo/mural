@@ -25,6 +25,7 @@ import { useFeatureFlags } from "@/lib/features";
 import { useBadges } from "./badges/BadgeContext";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
 type Props = {
   items: BoardItem[];
@@ -60,6 +61,7 @@ type Props = {
 export function MobileMural({ items, plan, board, capacity, hasSelection, unlocked, onCompose, info, onChangeMural, account, guestNext, muralSwitch, locked = false, lockPanel, share, follow, onNotify }: Props) {
   const tl = useLit();
   const tx = useTranslations("components.MobileMural");
+  const tag = useTag();
   const shareTop = !!(account?.onNewMural || account?.atHome); // dono no próprio mural: Compartilhar fica no canto superior esquerdo
   const canAdd = unlocked && !locked && hasSelection && !!onCompose; // botão "+ pin": o dono no próprio mural e quem visita um mural desbloqueado
   const look = boardById(board);
@@ -93,7 +95,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* de quem é o mural + quantos PINZ */}
       <div className="relative z-20 flex shrink-0 items-center gap-3 bg-[#e8dcc2] px-4 py-2 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.2)]">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={`Ver o perfil de @${info.owner}`} className="shrink-0 cursor-pointer transition active:scale-95 disabled:cursor-default">
+          <button type="button" onClick={info.onProfile} disabled={!info.onProfile} aria-label={tx("x_viewProfile", { owner: info.owner })} className="shrink-0 cursor-pointer transition active:scale-95 disabled:cursor-default">
             <Avatar src={info.avatar} name={info.owner} plus={info.plus} className="size-11" />
           </button>
           <span className="flex min-w-0 flex-col items-start gap-1">
@@ -119,7 +121,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
                   ))}
                 </span>
               )}
-              <strong className="text-lg leading-none font-bold">{info.followers.toLocaleString("pt-BR")}</strong>
+              <strong className="text-lg leading-none font-bold">{info.followers.toLocaleString(tag)}</strong>
             </span>
             <span className="mt-0.5 block text-right text-[11px] leading-tight text-[#6b5440]">{info.followers === 1 ? "seguidor" : "seguidores"}</span>
           </button>

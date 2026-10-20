@@ -329,7 +329,7 @@ export function BoardCanvas({
     const em = (parseFloat(getComputedStyle(el).fontSize) || 10) * mv.k; // tamanho de 1em na tela (com o zoom)
     const full = { left: mv.rect.left + mv.dx, right: mv.rect.right + mv.dx, top: mv.rect.top + mv.dy, bottom: mv.rect.bottom + mv.dy };
     const sol = solve(full, em, id, { slot: item.slot, cx: (mv.rect.left + mv.rect.right) / 2 - (item.ox ?? 0) * em, cy: (mv.rect.top + mv.rect.bottom) / 2 - (item.oy ?? 0) * em });
-    if ("error" in sol) return m.notify(sol.error);
+    if ("error" in sol) return m.notify(tl(sol.error));
     // nenhum pin fica com botton por cima: os que estiverem na área de destino voltam para a barra
     removeOver(sol.box);
     void m.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
@@ -404,7 +404,7 @@ export function BoardCanvas({
     const hw = 4 * em;
     const hh = 4 * em;
     const sol = solve({ left: x - hw, right: x + hw, top: y - hh, bottom: y + hh }, em);
-    if ("error" in sol) return say(sol.error);
+    if ("error" in sol) return say(tl(sol.error));
     onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
   };
   const boardPointerDown = (e: React.PointerEvent) => {
@@ -552,7 +552,7 @@ export function BoardCanvas({
                                     setDetail(detailIndexOf(item.id));
                                   }
                                 }}
-                                aria-label={`Ver em detalhe: ${isSealed(item) ? "Cápsula PINZ" : isHidden(item) ? "Pin em segredo" : typeLabel[item.type]}`}
+                                aria-label={tx("x_viewDetail", { what: isSealed(item) ? tl("Cápsula PINZ") : isHidden(item) ? tl("Pin em segredo") : tl(typeLabel[item.type]) })}
                                 className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
                               >
                                 <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.18]">

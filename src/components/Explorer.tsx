@@ -92,6 +92,9 @@ const EXPORT_IMAGE_ENABLED = false;
 export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
   const tl = useLit();
   const tx = useTranslations("components.Explorer");
+  const tn = useTranslations("notifications");
+  const tnRef = useRef(tn);
+  tnRef.current = tn;
   const demoLocale = useLocale() as DemoLocale;
   const localeRef = useRef(demoLocale);
   localeRef.current = demoLocale;
@@ -567,7 +570,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           if (l.notifOpen) setNotifs(list);
           showGift(list);
           const latest = list.find((n) => !n.read);
-          if (latest) l.notify(notificationText(latest));
+          if (latest) l.notify(notificationText(latest, tnRef.current));
           if (latest?.kind === "reward" || latest?.kind === "gift" || latest?.kind === "birthday") void reloadInventory();
           if (latest?.kind === "gift" || (latest?.kind === "birthday" && latest.data.gift === "plus")) {
             void reloadOwn(); // o presente de PINZ+ muda o plano do mural

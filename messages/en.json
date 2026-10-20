@@ -673,7 +673,9 @@
         "m_bottonArrasteParaOMural": "Button {v0}: drag onto the board",
         "m_disponivel": "{v0} available",
         "m_semUnidadesDisponiveis": "{v0}: no units available",
-        "m_arrasteParaOMural": "{v0}: drag onto the board"
+        "m_arrasteParaOMural": "{v0}: drag onto the board",
+        "x_openCat": "{cat} ({n} buttons): open the list",
+        "x_catTitle": "{cat}: {n} buttons"
       },
       "BadgeContext": {
         "antiHorario": "Counterclockwise",
@@ -749,7 +751,8 @@
         "excluir": "Delete",
         "m_imagemSalvaAgoraESo": "Image saved! Now just post it.",
         "m_naoFoiPossivelGerarA": "We couldn't generate the image right now.",
-        "m_segredoEDoPinz": "Secret is a PINZ+ feature"
+        "m_segredoEDoPinz": "Secret is a PINZ+ feature",
+        "x_reading": "I'm reading{hasTitle, select, yes { “{title}”} other { a book}}: {read} of {pages} pages ({pct}%)."
       },
       "DisplayDialog": {
         "horarioDeQualLugar": "Time of which place?",
@@ -846,7 +849,11 @@
         "x_de": "{v0} of {v1}",
         "x_displays": "Displays",
         "x_comCreditosVoceLevaBastante": "With {v0} credits you get plenty: several buttons, displays and even a board background.",
-        "x_voceNaoTemCreditoSuficiente": "You don't have enough credits to buy <s0>{v0}</s0>. You need <s1>{v1}</s1> {v2}."
+        "x_voceNaoTemCreditoSuficiente": "You don't have enough credits to buy <s0>{v0}</s0>. You need <s1>{v1}</s1> {v2}.",
+        "x_all": "All ({n})",
+        "x_qty": "Quantity of {name}",
+        "x_botton": "Button {key}",
+        "x_boardBg": "{name} background"
       }
     },
     "board": {
@@ -862,7 +869,8 @@
         "m_naoHaEspacoLivrePara": "There's no free space for a pin right now. Double-click (or hold) on an empty spot on the board.",
         "m_muralQuadro": "Board: {v0} frame",
         "m_colocarUmPinNaLinha": "Place a pin in row {v0}, column {v1}",
-        "m_nenhumPinPorAquiAinda": "No pins here yet. Be the first to place one!"
+        "m_nenhumPinPorAquiAinda": "No pins here yet. Be the first to place one!",
+        "x_viewDetail": "View details: {what}"
       },
       "ListEditContext": {
         "editarLista": "Edit list",
@@ -928,7 +936,14 @@
         "m_noPinzVoceEscolheQuais": "With PINZ+ you choose which pins are blurred for visitors.",
         "m_visivelDeixarEmBlur": "👁 Visible — make blurred",
         "x_aguardandoSuaAprovacao": "Waiting for your approval <s0>{v0}</s0>",
-        "x_noMural": "On the board ({v0})"
+        "x_noMural": "On the board ({v0})",
+        "x_slot": "· spot {n}",
+        "x_report": "🚩 Report",
+        "x_reportTitle": "Report",
+        "x_reason": "Reason",
+        "x_whatHappened": "What happened? (optional)",
+        "x_block": "Block the sender (they won't be able to place pins on this board anymore)",
+        "x_cancel": "Cancel"
       },
       "ReactionBar": {
         "naoFoiPossivelReagirAgora": "We couldn't react right now.",
@@ -1195,7 +1210,8 @@
         "localNoMapa": "Place on the map",
         "abrirNoGoogleMaps": "Open in Google Maps",
         "aproximarOMapa": "Zoom in the map",
-        "afastarOMapa": "Zoom out the map"
+        "afastarOMapa": "Zoom out the map",
+        "x_openMaps": "Open {name} in Google Maps"
       },
       "PolaroidPhoto": {
         "foto": "Photo"
@@ -1236,13 +1252,15 @@
       "assinarPinz": "Subscribe to PINZ+",
       "verOsSeguidores": "See followers",
       "compartilharEsteMural": "Share this board",
-      "compartilhar": "Share"
+      "compartilhar": "Share",
+      "x_viewProfile": "View @{owner}'s profile"
     },
     "MuralNameMenu": {
       "criarNovoMural": "Create a new board",
       "aberto": "✓ open",
       "compartilhados": "Shared",
-      "x_com": "with @{v0}"
+      "x_com": "with @{v0}",
+      "x_otherBoards": "{title}: see other boards"
     },
     "MuralScreen": {
       "aguardeUmPouco": "Wait a moment",
@@ -1274,7 +1292,8 @@
       "free": "FREE",
       "comOPinzVoceTem": "With PINZ+ you get:",
       "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month",
-      "x_voceEstaUsandoDePins": "You are using <s0>{v0}</s0> of <s1>{v1}</s1> pins and displays on your board. That is the limit of the <s2>FREE</s2> account, which includes 1 board."
+      "x_voceEstaUsandoDePins": "You are using <s0>{v0}</s0> of <s1>{v1}</s1> pins and displays on your board. That is the limit of the <s2>FREE</s2> account, which includes 1 board.",
+      "x_usedAria": "{used} of {max} items used. Learn more about the plan limit"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person not found",
@@ -1334,14 +1353,20 @@
       "m_muralPrivado": "Private board",
       "m_digiteASenha": "Type the password...",
       "m_digiteSuaResposta": "Type your answer...",
-      "x_muralBloqueado": "<n0></n0>Board locked"
+      "x_muralBloqueado": "<n0></n0>Board locked",
+      "x_viewProfile": "View @{owner}'s profile",
+      "x_shareProfileTitle": "Share @{owner}'s profile",
+      "x_shareProfileText": "See @{owner}'s profile on Pinz!",
+      "x_wait": "In {m, plural, one {# minute} other {# minutes}} you can try to access again.",
+      "x_wrongMany": "Looks like you don't know {who}. Try again in 30 minutes."
     },
     "widgets": {
       "BookWidget": {
         "leituraDeLivro": "Book reading",
         "progressoDaLeitura": "Reading progress",
         "m_livroConcluido": "book finished",
-        "m_paginasLidas": "pages read"
+        "m_paginasLidas": "pages read",
+        "x_coverOf": "Cover of {name}"
       },
       "CalendarWidget": {
         "calendario": "Calendar",
@@ -2017,6 +2042,44 @@
     "hmoepna": "Deuteranopia",
     "hfa5idg": "Tritanopia",
     "h1ja3kig": "Zoom in the board",
-    "hxtlvhh": "Zoom out the board"
+    "hxtlvhh": "Zoom out the board",
+    "h31eqm2": "square",
+    "husd2zt": "Tall",
+    "h1gesfdr": "Cookie",
+    "h12cpyk4": "Quote",
+    "hjaf9ns": "Poll",
+    "h1rnk6ao": "Countdown",
+    "hbdjwcl": "Top 3",
+    "h255mbw": "Flip Clock",
+    "hfwmiwg": "Minimal",
+    "hbuimbb": "Pixel",
+    "h1otk1ya": "Night",
+    "h58nlh7": "Floral",
+    "h1fndf3q": "Natural",
+    "hfs9eyi": "Clean and elegant look.",
+    "hvqy6ej": "Modern and inspiring style.",
+    "h1s8fs49": "Light and positive.",
+    "heormug": "Cozy and special.",
+    "h1x0tv7n": "Clean and sophisticated.",
+    "hkisj43": "Use a YouTube link, like https://youtu.be/… or https://www.youtube.com/watch?v=…",
+    "h10dc4r4": "The photo can be up to 8 MB.",
+    "h5azz8d": "The photo can be up to 12 MB.",
+    "h1tqmotc": "Choose an image file."
+  },
+  "notifications": {
+    "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
+    "pinApproved": "@{actor} approved your PINZ",
+    "gift": "🎁 {hasActor, select, yes {@{actor}} other {Someone}} gifted you 1 month of PINZ+!",
+    "birthdayPlus": "🎂 Happy birthday! You got PINZ+ until the end of the month.",
+    "birthdayBadges": "🎂 Happy birthday! You got birthday buttons.",
+    "archived": "📦 {count, plural, one {# pin was archived} other {# pins were archived}} on the board “{mural}”: past the display time",
+    "reward": "+{credits} {credits, plural, one {credit} other {credits}}: {hasActor, select, yes {@{actor}} other {someone}} created an account with the link you shared",
+    "follow": "@{actor} started following you",
+    "reaction": "@{actor} reacted {emoji} to your pin on @{nick}'s board",
+    "listDone": "checked “{text}”",
+    "listUndone": "unchecked “{text}”",
+    "listAnd": "and",
+    "listNone": "changed something",
+    "list": "@{actor} {what} in your list “{list}”"
   }
 }

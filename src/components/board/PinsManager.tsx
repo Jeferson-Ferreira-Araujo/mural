@@ -60,7 +60,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold">
-          {formatInfo[p.type].label} <span className={`font-normal ${muted}`}>· espaço {(p.slot ?? 0) + 1}</span>
+          {tl(formatInfo[p.type].label)} <span className={`font-normal ${muted}`}>{tx("x_slot", { n: (p.slot ?? 0) + 1 })}</span>
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           {children}
@@ -76,7 +76,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
               setBlock(true);
             }}
           >
-            🚩 Denunciar
+            {tx("x_report")}
           </button>
         </div>
         {reporting === p.id && (
@@ -88,31 +88,31 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
               setReporting(null);
             }}
           >
-            <p className="text-sm font-semibold">Denunciar</p>
+            <p className="text-sm font-semibold">{tx("x_reportTitle")}</p>
             <label className="block text-sm">
-              Motivo
+              {tx("x_reason")}
               <select value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} className="mt-1 w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm text-[#2f2218]">
                 {REPORT_REASONS.map((r) => (
                   <option key={r.id} value={r.id}>
-                    {r.label}
+                    {tl(r.label)}
                   </option>
                 ))}
               </select>
             </label>
             <label className="block text-sm">
-              O que aconteceu? (opcional)
+              {tx("x_whatHappened")}
               <textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={300} rows={2} className="mt-1 w-full rounded-lg border border-[#d9c9ad] bg-white px-2 py-2 text-sm text-[#2f2218]" />
             </label>
             <label className="flex items-start gap-2 text-sm">
               <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)} className="mt-1 size-4" />
-              <span>Bloquear quem enviou (não poderá mais colocar pins neste mural)</span>
+              <span>{tx("x_block")}</span>
             </label>
             <div className="flex gap-2">
               <button type="submit" className="cursor-pointer rounded-lg bg-[#a23b2a] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#8c3022]">
-                Denunciar
+                {tx("x_reportTitle")}
               </button>
               <button type="button" className={btn} onClick={() => setReporting(null)}>
-                Cancelar
+                {tx("x_cancel")}
               </button>
             </div>
           </form>

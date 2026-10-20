@@ -110,7 +110,7 @@ export function PlaceCard({
               href={mapsUrl(lat, lon)}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Abrir ${name} no Google Maps`}
+              aria-label={tx("x_openMaps", { name })}
               title={tx("abrirNoGoogleMaps")}
               className="absolute top-[0.45em] right-[0.45em] grid size-[1.9em] place-items-center rounded-[0.5em] bg-white/95 text-[#2f3a4a] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-[#2a6fd6]"
               style={{ boxShadow: "0 0.15em 0.4em rgba(0,0,0,.3)" }}

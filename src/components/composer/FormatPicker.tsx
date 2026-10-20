@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { formatInfo, type MessageType } from "@/lib/types";
+import { useLit } from "@/i18n/literal";
 
 /** Miniaturas que lembram cada formato físico (sem ícones genéricos iguais). */
 const THUMBS: Record<MessageType, ReactNode> = {
@@ -76,6 +77,7 @@ const THUMBS: Record<MessageType, ReactNode> = {
 
 /** Escolha do formato. Mostra SÓ os formatos liberados neste mural (o visitante nunca vê o que não está disponível). */
 export function FormatPicker({ formats, onPick }: { formats: readonly MessageType[]; onPick: (f: MessageType) => void }) {
+  const tl = useLit();
   const card = "flex h-full w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border border-[#e1d3ba] bg-white/60 px-3 py-4 text-center transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
     <div>
@@ -89,7 +91,7 @@ export function FormatPicker({ formats, onPick }: { formats: readonly MessageTyp
               className={card}
             >
               <span className="grid h-12 place-items-center">{THUMBS[f]}</span>
-              <span className="text-sm font-bold">{formatInfo[f].label}</span>
+              <span className="text-sm font-bold">{tl(formatInfo[f].label)}</span>
             </button>
           </li>
         ))}

@@ -47,7 +47,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
         setReward(null);
       }
     } catch (e) {
-      setMsg({ ok: false, text: e instanceof Error ? e.message : tx("m_naoFoiPossivelEnviarA") });
+      setMsg({ ok: false, text: e instanceof Error ? tl(e.message) : tx("m_naoFoiPossivelEnviarA") });
     } finally {
       setBusy(false);
       if (input.current) input.current.value = "";

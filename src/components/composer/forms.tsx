@@ -474,7 +474,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
         ))}
       </div>
       {mode === "youtube" ? (
-        <Field label={tx("linkDoVideoNoYoutube")} error={link.trim() && !ytOk ? "Use um link do YouTube, como https://youtu.be/… ou https://www.youtube.com/watch?v=…" : null} hint={tx("oVideoTocaAquiMesmo")}>
+        <Field label={tx("linkDoVideoNoYoutube")} error={link.trim() && !ytOk ? tl("Use um link do YouTube, como https://youtu.be/… ou https://www.youtube.com/watch?v=…") : null} hint={tx("oVideoTocaAquiMesmo")}>
           {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={200} placeholder={tx("httpsWwwYoutubeComWatch")} className={inputClass} />}
         </Field>
       ) : (

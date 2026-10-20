@@ -6,6 +6,7 @@ import { BADGE_CATEGORY, BADGE_CATEGORIES } from "@/lib/badgeCategories";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
 import { useBadges } from "./BadgeContext";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 
 /**
@@ -15,6 +16,7 @@ import { useTranslations } from "next-intl";
  */
 export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
   const tx = useTranslations("components.badges.BadgeBar");
+  const tl = useLit();
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
   const [openCat, setOpenCat] = useState<string | null>(null); // categoria com o painel aberto (abre para cima)
   const box = useRef<HTMLElement>(null);
@@ -69,7 +71,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
   const groupedKeys = new Set(groups.flatMap(([, l]) => l.map((b) => b.key)));
   const plain = mine.filter((b) => !groupedKeys.has(b.key));
   const ordered = [...groups].sort(([ca, la], [cb, lb]) => (ca === "aniversario" ? -1 : cb === "aniversario" ? 1 : mine.indexOf(la[0]) - mine.indexOf(lb[0])));
-  const catLabel = (id: string) => BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id;
+  const catLabel = (id: string) => tl(BADGE_CATEGORIES.find((c) => c.id === id)?.label ?? id);
   const groupBtn = (cat: string, list: typeof mine) => {
     // sem nenhum disponível (todos já estão no mural): o ícone fica apagado, como os bottons de fora do grupo
     const out = list.every((b) => stock(b.key).left === 0);
@@ -81,8 +83,8 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           type="button"
           onClick={(e) => toggleCat(cat, e.currentTarget)}
           aria-expanded={open}
-          aria-label={`${catLabel(cat)} (${list.length} bottons): abrir a lista`}
-          title={`${catLabel(cat)}: ${list.length} bottons`}
+          aria-label={tx("x_openCat", { cat: catLabel(cat), n: list.length })}
+          title={tx("x_catTitle", { cat: catLabel(cat), n: list.length })}
           className={`relative grid h-14 w-14 cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 ${open ? "bg-white/10" : ""}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -126,7 +128,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
             <li key={b.key} className="relative shrink-0">
               <button
                 type="button"
-                aria-label={out ? tx("m_bottonSemUnidadesDisponiveis", { v0: b.name ?? b.key }) : tx("m_bottonArrasteParaOMural", { v0: b.name ?? b.key })}
+                aria-label={out ? tx("m_bottonSemUnidadesDisponiveis", { v0: b.name ? tl(b.name) : b.key }) : tx("m_bottonArrasteParaOMural", { v0: b.name ? tl(b.name) : b.key })}
                 onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                 onDragStart={(e) => e.preventDefault()}
                 className={`grid h-14 w-14 touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
@@ -160,8 +162,8 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
                 <li key={b.key} className="relative">
                   <button
                     type="button"
-                    aria-label={out ? tx("m_semUnidadesDisponiveis", { v0: b.name ?? b.key }) : tx("m_arrasteParaOMural", { v0: b.name ?? b.key })}
-                    title={b.name}
+                    aria-label={out ? tx("m_semUnidadesDisponiveis", { v0: b.name ? tl(b.name) : b.key }) : tx("m_arrasteParaOMural", { v0: b.name ? tl(b.name) : b.key })}
+                    title={b.name ? tl(b.name) : undefined}
                     onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget, true)}
                     onDragStart={(e) => e.preventDefault()}
                     className={`grid h-14 w-14 touch-none place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}

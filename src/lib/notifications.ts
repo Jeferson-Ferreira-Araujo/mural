@@ -31,17 +31,19 @@ export async function markAllRead(sb: SupabaseClient): Promise<void> {
 }
 
 /** "@fulano marcou “Malas” e desmarcou “Passagens” na lista “Viagem”" / "@fulano reagiu ❤️ ao seu pin no mural de @beltrano" */
-export function notificationText(n: Notification): string {
-  if (n.kind === "pin_new") return `@${n.data.actor} deixou um PINZ no mural “${n.data.muralTitle ?? n.data.muralNick}”${n.data.pending ? " · aguardando a sua aprovação" : ""}`;
-  if (n.kind === "pin_approved") return `@${n.data.actor} aprovou o seu PINZ`;
-  if (n.kind === "gift") return `🎁 ${n.data.actor ? `@${n.data.actor}` : "Alguém"} te presenteou com 1 mês de PINZ+!`;
-  if (n.kind === "birthday") return n.data.gift === "plus" ? "🎂 Feliz aniversário! Você ganhou o PINZ+ até o fim do mês." : "🎂 Feliz aniversário! Você ganhou bottons de aniversário.";
-  if (n.kind === "archived") return `📦 ${n.data.count} ${n.data.count === 1 ? "pin foi arquivado" : "pins foram arquivados"} no mural “${n.data.muralTitle ?? n.data.muralSlug}”: passou do prazo de validade`;
-  if (n.kind === "reward") return `+${n.data.credits} crédito${n.data.credits > 1 ? "s" : ""}: ${n.data.actor ? `@${n.data.actor}` : "alguém"} criou uma conta pelo link que você compartilhou`;
-  if (n.kind === "follow") return `@${n.data.actor} começou a seguir você`;
-  if (n.kind === "reaction") return `@${n.data.actor} reagiu ${reactionEmoji(n.data.emoji)} ao seu pin no mural de @${n.data.muralNick}`;
+export type NotifT = (key: string, values?: Record<string, string | number>) => string;
+
+export function notificationText(n: Notification, t: NotifT): string {
+  if (n.kind === "pin_new") return t("pinNew", { actor: n.data.actor, mural: n.data.muralTitle ?? n.data.muralNick, pending: n.data.pending ? "yes" : "no" });
+  if (n.kind === "pin_approved") return t("pinApproved", { actor: n.data.actor });
+  if (n.kind === "gift") return t("gift", { hasActor: n.data.actor ? "yes" : "no", actor: n.data.actor ?? "" });
+  if (n.kind === "birthday") return n.data.gift === "plus" ? t("birthdayPlus") : t("birthdayBadges");
+  if (n.kind === "archived") return t("archived", { count: n.data.count, mural: n.data.muralTitle ?? n.data.muralSlug });
+  if (n.kind === "reward") return t("reward", { credits: n.data.credits, hasActor: n.data.actor ? "yes" : "no", actor: n.data.actor ?? "" });
+  if (n.kind === "follow") return t("follow", { actor: n.data.actor });
+  if (n.kind === "reaction") return t("reaction", { actor: n.data.actor, emoji: reactionEmoji(n.data.emoji), nick: n.data.muralNick });
   const d = n.data;
-  const parts = d.items.map((i) => `${i.done ? "marcou" : "desmarcou"} “${i.text}”`);
-  const what = parts.length > 1 ? `${parts.slice(0, -1).join(", ")} e ${parts[parts.length - 1]}` : (parts[0] ?? "mexeu");
-  return `@${d.actor} ${what} na sua lista “${d.listTitle}”`;
+  const parts = d.items.map((i) => t(i.done ? "listDone" : "listUndone", { text: i.text }));
+  const what = parts.length > 1 ? `${parts.slice(0, -1).join(", ")} ${t("listAnd")} ${parts[parts.length - 1]}` : (parts[0] ?? t("listNone"));
+  return t("list", { actor: d.actor, what, list: d.listTitle });
 }

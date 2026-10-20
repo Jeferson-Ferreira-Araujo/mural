@@ -160,7 +160,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
         <MessageView message={{ ...p, pending: false, ownerHidden: false, ownerReview: false }} />
       </div>
       <p className="mt-2 text-sm font-semibold">
-        {formatInfo[p.type].label} <span className="font-normal text-[#6b5440]">{tx("x_espaco", { v0: (p.slot ?? 0) + 1 })}</span>
+        {tl(formatInfo[p.type].label)} <span className="font-normal text-[#6b5440]">{tx("x_espaco", { v0: (p.slot ?? 0) + 1 })}</span>
         {p.signedBy && <span className="font-normal text-[#6b5440]"> {tx("x_assinadoPor", { v0: p.signedBy })}</span>}
       </p>
       <div className="mt-3 flex flex-wrap justify-center gap-2">
@@ -253,7 +253,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
                     <MessageView message={{ ...(a.content as object), id: a.id, type: a.type, slot: 0, pending: false, ownerHidden: false, ownerReview: false, signedBy: a.author ?? undefined } as never} />
                   </div>
                   <p className="mt-2 text-sm font-semibold">
-                    {formatInfo[a.type as keyof typeof formatInfo]?.label ?? a.type}
+                    {tl(formatInfo[a.type as keyof typeof formatInfo]?.label ?? a.type)}
                     {a.author && <span className="font-normal text-[#6b5440]"> {tx("x_de", { v0: a.author })}</span>}
                   </p>
                   <p className="text-xs text-[#6b5440]">

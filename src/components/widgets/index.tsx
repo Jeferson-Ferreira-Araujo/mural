@@ -112,11 +112,11 @@ export const splitDisplayId = (id: string) => {
   return { product, style };
 };
 /** "Relógio · Relógio dinâmico" (o quadrado leva "(quadrado)") */
-export const displayName = (id: string) => {
+export const displayName = (id: string, tl: (s: string) => string = (s) => s) => {
   const { product, style } = splitDisplayId(id);
   const cat = DISPLAY_CATS.find((x) => x.id === product);
   const st = stylesOf(product).find((x) => x.id === baseStyle(style));
-  return `${cat?.single ?? product}${st ? ` · ${st.name}` : ""}${shapeOfStyle(style) === "square" ? " (quadrado)" : ""}`;
+  return `${tl(cat?.single ?? product)}${st ? ` · ${tl(st.name)}` : ""}${shapeOfStyle(style) === "square" ? ` (${tl("quadrado")})` : ""}`;
 };
 export const defaultStyle = (product: string) => stylesOf(product)[0]?.id ?? "";
 

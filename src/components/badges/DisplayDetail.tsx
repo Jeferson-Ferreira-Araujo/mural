@@ -35,7 +35,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
   const live = withLiveText(data);
   const pages = Math.max(1, data.pages ?? 1);
   const readN = Math.min(pages, Math.max(0, data.read ?? 0));
-  const bookText = data.product === "book" ? `Estou lendo${data.title ? ` “${data.title}”` : " um livro"}: ${readN} de ${pages} páginas (${Math.round((readN / pages) * 100)}%).` : null;
+  const bookText = data.product === "book" ? tx("x_reading", { hasTitle: data.title ? "yes" : "no", title: data.title ?? "", read: readN, pages, pct: Math.round((readN / pages) * 100) }) : null;
   const text = live.text ? `“${live.text}”${live.ref ? ` — ${live.ref}` : ""}` : bookText;
 
   async function share() {
@@ -58,7 +58,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
     setBusy(true);
     setMsg(null);
     try {
-      const res = await deliverImage(await cardToPng(cardRef.current), "pinz-display", "Crie seu mural agora, acesse: https://pinz.digital");
+      const res = await deliverImage(await cardToPng(cardRef.current), "pinz-display", tl("Crie seu mural agora, acesse: https://pinz.digital"));
       if (res === "downloaded") setMsg(tx("m_imagemSalvaAgoraESo"));
     } catch {
       setMsg(tx("m_naoFoiPossivelGerarA"));
@@ -67,7 +67,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
     }
   }
 
-  const title = NAME[data.product] ?? tl("Display");
+  const title = tl(NAME[data.product] ?? "Display");
   return (
     <Modal open onClose={onClose} title={title} label={title}>
       <div className="space-y-4">

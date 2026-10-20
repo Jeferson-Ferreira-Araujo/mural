@@ -157,12 +157,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       const up = await uploadBookCover(getBrowserSupabase(), bkFile);
       onSubmit({ ...rest, cover: up.url, approval: up.approval } as DisplayData);
     } catch (e) {
-      setErr(e instanceof InappropriateCover ? tx("m_essaImagemNaoPodeSer") : e instanceof Error ? e.message : tx("m_naoFoiPossivelEnviarA"));
+      setErr(e instanceof InappropriateCover ? tx("m_essaImagemNaoPodeSer") : e instanceof Error ? tl(e.message) : tx("m_naoFoiPossivelEnviarA"));
     } finally {
       setUploading(false);
     }
   }
-  const title = displayName(product + ":" + style);
+  const title = displayName(product + ":" + style, tl);
 
   return (
     <Modal open={open} onClose={onClose} title={title} label={title}>

@@ -236,7 +236,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             ) : (
               <span />
             )}
-            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : tx("m_coloqueUmPin")}</p>
+            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? tl(formatInfo[format].label) : tx("m_coloqueUmPin")}</p>
             <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>

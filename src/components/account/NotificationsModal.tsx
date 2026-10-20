@@ -14,6 +14,7 @@ const when = (iso: string, tag: string) => new Date(iso).toLocaleString(tag, { d
 export function NotificationsModal({ open, onClose, items }: { open: boolean; onClose: () => void; items: Notification[] | null }) {
   const tl = useLit();
   const tx = useTranslations("components.account.NotificationsModal");
+  const tn = useTranslations("notifications");
   const tag = useTag();
   return (
     <Modal open={open} onClose={onClose} title={tx("notificacoes")}>
@@ -27,7 +28,7 @@ export function NotificationsModal({ open, onClose, items }: { open: boolean; on
             <li key={n.id} className={`rounded-2xl border p-3.5 ${n.read ? "border-[#e1d3ba] bg-white/60" : "border-[#e0b04a] bg-[#fff6dd]"}`}>
               <div className="flex items-start gap-3">
                 {"actor" in n.data && n.data.actor && <Avatar src={"avatar" in n.data ? n.data.avatar : null} name={n.data.actor} className="size-10 shrink-0" />}
-                <p className="min-w-0 flex-1 text-[15px] leading-snug">{notificationText(n)}</p>
+                <p className="min-w-0 flex-1 text-[15px] leading-snug">{notificationText(n, tn)}</p>
               </div>
               <p className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-[#8a7b69]">
                 <span>{when(n.createdAt, tag)}</span>

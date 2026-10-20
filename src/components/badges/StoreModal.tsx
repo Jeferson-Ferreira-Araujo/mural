@@ -12,7 +12,7 @@ import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 import { useBackClose } from "@/lib/backStack";
 import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
-import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
+import { DISPLAY_CATS, defaultStyle, displayName, isDisplayOn } from "../widgets";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
@@ -202,8 +202,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     window.setTimeout(() => listTop.current?.scrollIntoView({ block: "start", behavior: "smooth" }), 30); // volta ao começo da lista; só ela troca, a loja não recarrega
   };
   const chips: { id: string; text: string }[] = [
-    { id: "all", text: `Todos (${all.length})` },
-    ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: c.label })),
+    { id: "all", text: tx("x_all", { n: all.length }) },
+    ...BADGE_CATEGORIES.map((c) => ({ id: c.id, text: tl(c.label) })),
   ];
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const products = (inventory?.pinProducts ?? []).filter((p) => isDisplayOn(p.id.split(":")[0]));
@@ -337,7 +337,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 const owned = c.starter || c.owned;
                 const n = qtyOf(b.key);
                 const cost = owned ? c.unitPrice * n : c.price + c.unitPrice * (n - 1);
-                const name = b.name ?? `Botton ${b.key}`;
+                const name = b.name ? tl(b.name) : tx("x_botton", { key: b.key });
                 const just = done?.id === `p${b.key}`;
                 return (
                   <li key={b.key} className={`relative flex flex-col items-center rounded-2xl border p-2.5 text-center transition-colors ${just ? "border-[#3aa655] bg-[#effbf1] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba] bg-white/70"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
@@ -354,7 +354,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))", animation: just ? "buy-wiggle 0.9s ease" : undefined }} />
                     </div>
                     <p className="mt-1 w-full truncate text-xs font-semibold">{name}</p>
-                    <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={`Quantidade de ${name}`} />
+                    <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={tx("x_qty", { name })} />
                     {just ? (
                       <p className="mt-2 w-full rounded-lg bg-[#3aa655] px-2 py-1.5 text-xs font-bold text-white">{tx("comprado")}</p>
                     ) : (
@@ -441,7 +441,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <path d="M19 12H5M11 6l-6 6 6 6" />
               </svg>
               {tx("x_displays")}</button>
-            <h3 className="font-title text-base font-semibold">{DISPLAY_CATS.find((c) => c.id === displayCat)?.label}</h3>
+            <h3 className="font-title text-base font-semibold">{tl(DISPLAY_CATS.find((c) => c.id === displayCat)?.label ?? "")}</h3>
           </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {(() => {
@@ -455,7 +455,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               const p = inCat.find((x) => x.id === `${displayCat}:${withShape(base, shape)}`);
               if (!p) return null;
               const just = done?.id === `f${p.id}`;
-              const name = p.name.replace(/ \(quadrado\)$/i, "");
+              const name = displayName(p.id, tl).replace(/ \([^)]*\)$/, "");
               return (
                 <li key={key} className={`relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
                   {just && <Confetti key={done.at} />}
@@ -489,7 +489,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </div>
                     )}
                     {!p.owned && (
-                      <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: tx("m_liberadoJaEstaNaEscolha"), spent: p.price })} className={`${buyBtn} mt-2`}>
+                      <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: displayName(p.id, tl), text: tx("m_liberadoJaEstaNaEscolha"), spent: p.price })} className={`${buyBtn} mt-2`}>
                         {busy === `f${p.id}` ? tl("Comprando…") : tl("Comprar")}
                       </button>
                     )}
@@ -524,12 +524,12 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={b.image} alt={`Fundo ${b.name}`} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                  <img src={b.image} alt={tx("x_boardBg", { name: tl(b.name) })} className="aspect-[3/2] w-full object-cover" draggable={false} />
                   {/* ver o mural em tela cheia (discreto, no centro da foto) */}
                   <button
                     type="button"
-                    onClick={() => setViewBoard({ image: b.image, name: b.name })}
-                    aria-label={tx("m_verOMuralEmTela", { v0: b.name })}
+                    onClick={() => setViewBoard({ image: b.image, name: tl(b.name) })}
+                    aria-label={tx("m_verOMuralEmTela", { v0: tl(b.name) })}
                     title={tx("verEmTelaCheia")}
                     className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/40 text-white/90 opacity-80 backdrop-blur-sm transition hover:bg-black/65 hover:opacity-100 active:scale-90"
                   >
@@ -542,7 +542,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 </div>
                 <div className="p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-title text-base font-semibold">{b.name}</p>
+                    <p className="font-title text-base font-semibold">{tl(b.name)}</p>
                     {!owned ? (
                       <p className="flex items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: info?.price ?? 25 })}>
                         <Coin className="size-5" />
@@ -558,7 +558,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     )}
                   </div>
                   {owned ? null : (
-                    <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: tx("m_liberadoApliqueEmEditarMural"), img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
+                    <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: tx("x_boardBg", { name: tl(b.name) }), text: tx("m_liberadoApliqueEmEditarMural"), img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
                       {busy === `t${b.id}` ? tl("Comprando…") : tl("Comprar")}
                     </button>
                   )}

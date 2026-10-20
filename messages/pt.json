@@ -673,7 +673,9 @@
         "m_bottonArrasteParaOMural": "Botton {v0}: arraste para o mural",
         "m_disponivel": "{v0} disponível{v1}",
         "m_semUnidadesDisponiveis": "{v0}: sem unidades disponíveis",
-        "m_arrasteParaOMural": "{v0}: arraste para o mural"
+        "m_arrasteParaOMural": "{v0}: arraste para o mural",
+        "x_openCat": "{cat} ({n} bottons): abrir a lista",
+        "x_catTitle": "{cat}: {n} bottons"
       },
       "BadgeContext": {
         "antiHorario": "Anti-horário",
@@ -749,7 +751,8 @@
         "excluir": "Excluir",
         "m_imagemSalvaAgoraESo": "Imagem salva! Agora é só postar.",
         "m_naoFoiPossivelGerarA": "Não foi possível gerar a imagem agora.",
-        "m_segredoEDoPinz": "Segredo é do PINZ+"
+        "m_segredoEDoPinz": "Segredo é do PINZ+",
+        "x_reading": "Estou lendo{hasTitle, select, yes { “{title}”} other { um livro}}: {read} de {pages} páginas ({pct}%)."
       },
       "DisplayDialog": {
         "horarioDeQualLugar": "Horário de qual lugar?",
@@ -846,7 +849,11 @@
         "x_de": "{v0} de {v1}",
         "x_displays": "Displays",
         "x_comCreditosVoceLevaBastante": "Com {v0} créditos você leva bastante coisa: vários bottons, displays e até um fundo de mural.",
-        "x_voceNaoTemCreditoSuficiente": "Você não tem crédito suficiente para comprar <s0>{v0}</s0>. Faltam <s1>{v1}</s1> {v2}."
+        "x_voceNaoTemCreditoSuficiente": "Você não tem crédito suficiente para comprar <s0>{v0}</s0>. Faltam <s1>{v1}</s1> {v2}.",
+        "x_all": "Todos ({n})",
+        "x_qty": "Quantidade de {name}",
+        "x_botton": "Botton {key}",
+        "x_boardBg": "Fundo {name}"
       }
     },
     "board": {
@@ -862,7 +869,8 @@
         "m_naoHaEspacoLivrePara": "Não há espaço livre para um pin agora. Dê dois cliques (ou segure) num ponto vazio do mural.",
         "m_muralQuadro": "Mural: quadro {v0}",
         "m_colocarUmPinNaLinha": "Colocar um pin na linha {v0}, coluna {v1}",
-        "m_nenhumPinPorAquiAinda": "Nenhum pin por aqui ainda. Seja o primeiro a colocar!"
+        "m_nenhumPinPorAquiAinda": "Nenhum pin por aqui ainda. Seja o primeiro a colocar!",
+        "x_viewDetail": "Ver em detalhe: {what}"
       },
       "ListEditContext": {
         "editarLista": "Editar lista",
@@ -928,7 +936,14 @@
         "m_noPinzVoceEscolheQuais": "No PINZ+ você escolhe quais pins ficam em blur para os visitantes.",
         "m_visivelDeixarEmBlur": "👁 Visível — deixar em blur",
         "x_aguardandoSuaAprovacao": "Aguardando sua aprovação <s0>{v0}</s0>",
-        "x_noMural": "No mural ({v0})"
+        "x_noMural": "No mural ({v0})",
+        "x_slot": "· espaço {n}",
+        "x_report": "🚩 Denunciar",
+        "x_reportTitle": "Denunciar",
+        "x_reason": "Motivo",
+        "x_whatHappened": "O que aconteceu? (opcional)",
+        "x_block": "Bloquear quem enviou (não poderá mais colocar pins neste mural)",
+        "x_cancel": "Cancelar"
       },
       "ReactionBar": {
         "naoFoiPossivelReagirAgora": "Não foi possível reagir agora.",
@@ -1195,7 +1210,8 @@
         "localNoMapa": "Local no mapa",
         "abrirNoGoogleMaps": "Abrir no Google Maps",
         "aproximarOMapa": "Aproximar o mapa",
-        "afastarOMapa": "Afastar o mapa"
+        "afastarOMapa": "Afastar o mapa",
+        "x_openMaps": "Abrir {name} no Google Maps"
       },
       "PolaroidPhoto": {
         "foto": "Foto"
@@ -1236,13 +1252,15 @@
       "assinarPinz": "Assinar PINZ+",
       "verOsSeguidores": "Ver os seguidores",
       "compartilharEsteMural": "Compartilhar este mural",
-      "compartilhar": "Compartilhar"
+      "compartilhar": "Compartilhar",
+      "x_viewProfile": "Ver o perfil de @{owner}"
     },
     "MuralNameMenu": {
       "criarNovoMural": "Criar novo mural",
       "aberto": "✓ aberto",
       "compartilhados": "Compartilhados",
-      "x_com": "com @{v0}"
+      "x_com": "com @{v0}",
+      "x_otherBoards": "{title}: ver outros murais"
     },
     "MuralScreen": {
       "aguardeUmPouco": "Aguarde um pouco",
@@ -1274,7 +1292,8 @@
       "free": "FREE",
       "comOPinzVoceTem": "Com o PINZ+ você tem:",
       "m_assinarOPinzPorR": "Assinar o PINZ+ por R$ 9,90/mês",
-      "x_voceEstaUsandoDePins": "Você está usando <s0>{v0}</s0> de <s1>{v1}</s1> pins e displays do seu mural. Esse é o limite da conta <s2>FREE</s2>, que inclui 1 mural."
+      "x_voceEstaUsandoDePins": "Você está usando <s0>{v0}</s0> de <s1>{v1}</s1> pins e displays do seu mural. Esse é o limite da conta <s2>FREE</s2>, que inclui 1 mural.",
+      "x_usedAria": "{used} de {max} itens usados. Saiba mais sobre o limite do plano"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Pessoa não encontrada",
@@ -1334,14 +1353,20 @@
       "m_muralPrivado": "Mural privado",
       "m_digiteASenha": "Digite a senha...",
       "m_digiteSuaResposta": "Digite sua resposta...",
-      "x_muralBloqueado": "<n0></n0>Mural bloqueado"
+      "x_muralBloqueado": "<n0></n0>Mural bloqueado",
+      "x_viewProfile": "Ver o perfil de @{owner}",
+      "x_shareProfileTitle": "Compartilhar o perfil de @{owner}",
+      "x_shareProfileText": "Veja o perfil de @{owner} no Pinz!",
+      "x_wait": "Em {m, plural, one {# minuto} other {# minutos}} você poderá tentar acessar novamente.",
+      "x_wrongMany": "Pelo jeito você não conhece {who}, tente novamente em 30 minutos."
     },
     "widgets": {
       "BookWidget": {
         "leituraDeLivro": "Leitura de livro",
         "progressoDaLeitura": "Progresso da leitura",
         "m_livroConcluido": "livro concluído",
-        "m_paginasLidas": "páginas lidas"
+        "m_paginasLidas": "páginas lidas",
+        "x_coverOf": "Capa de {name}"
       },
       "CalendarWidget": {
         "calendario": "Calendário",
@@ -1413,5 +1438,21 @@
       "x_noPhoto": "Sem foto: {name}"
     }
   },
-  "lit": {}
+  "lit": {},
+  "notifications": {
+    "pinNew": "@{actor} deixou um PINZ no mural “{mural}”{pending, select, yes { · aguardando a sua aprovação} other {}}",
+    "pinApproved": "@{actor} aprovou o seu PINZ",
+    "gift": "🎁 {hasActor, select, yes {@{actor}} other {Alguém}} te presenteou com 1 mês de PINZ+!",
+    "birthdayPlus": "🎂 Feliz aniversário! Você ganhou o PINZ+ até o fim do mês.",
+    "birthdayBadges": "🎂 Feliz aniversário! Você ganhou bottons de aniversário.",
+    "archived": "📦 {count, plural, one {# pin foi arquivado} other {# pins foram arquivados}} no mural “{mural}”: passou do prazo de validade",
+    "reward": "+{credits} {credits, plural, one {crédito} other {créditos}}: {hasActor, select, yes {@{actor}} other {alguém}} criou uma conta pelo link que você compartilhou",
+    "follow": "@{actor} começou a seguir você",
+    "reaction": "@{actor} reagiu {emoji} ao seu pin no mural de @{nick}",
+    "listDone": "marcou “{text}”",
+    "listUndone": "desmarcou “{text}”",
+    "listAnd": "e",
+    "listNone": "mexeu",
+    "list": "@{actor} {what} na sua lista “{list}”"
+  }
 }

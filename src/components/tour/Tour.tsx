@@ -213,8 +213,8 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         <p className="text-[11px] font-bold tracking-wide text-[#8a7b69] uppercase">
           {tx("x_de", { v0: i + 1, v1: steps.length })}
         </p>
-        <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{step.title}</h2>
-        <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{step.text}</p>
+        <h2 className="font-title mt-0.5 text-lg leading-tight font-semibold">{tl(step.title)}</h2>
+        <p className="mt-1 text-[15px] leading-snug text-[#4a3826]">{tl(step.text)}</p>
         {giveUp && waitingEl && <p className="mt-2 text-[13px] font-semibold text-[#8c3022]">{tx("naoEncontreiEstaParteNa")}</p>}
         {step.chips && (
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
@@ -228,7 +228,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
         {step.act && step.hint && !giveUp && (
           <p className="mt-2 flex items-center gap-2 rounded-lg bg-[#fff3cf] px-2.5 py-1.5 text-[13px] font-bold text-[#6b4a05]">
             <span aria-hidden className="text-base">👆</span>
-            {step.hint}
+            {tl(step.hint)}
           </p>
         )}
         <div className="mt-3.5 flex items-center gap-2">

@@ -6,6 +6,7 @@ import { Avatar } from "./Avatar";
 import { ShareButton } from "./ShareButton";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 
 type Props = {
   question: string;
@@ -54,6 +55,7 @@ const LockIcon = () => (
 export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
   const tl = useLit();
   const tx = useTranslations("components.UnlockPanel");
+  const tag = useTag();
   const [answer, setAnswer] = useState("");
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -69,9 +71,9 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     const t = window.setTimeout(() => (setBlockMsg(null), setTick((n) => n + 1)), ms + 200);
     return () => window.clearTimeout(t);
   }, [blockedUntil]);
-  const blockedText = blocked ? blockMsg ?? (() => { const m = Math.max(1, Math.ceil(((blockedUntil ?? 0) - Date.now()) / 60000)); return `Em ${m} ${m === 1 ? "minuto" : "minutos"} você poderá tentar acessar novamente.`; })() : "";
+  const blockedText = blocked ? blockMsg ?? (() => { const m = Math.max(1, Math.ceil(((blockedUntil ?? 0) - Date.now()) / 60000)); return tx("x_wait", { m }); })() : "";
   const Wrap: ElementType = onProfile ? "button" : "div"; // foto e nome abrem o resumo do perfil
-  const wrapProps = onProfile ? { type: "button" as const, onClick: onProfile, "aria-label": `Ver o perfil de @${owner}` } : {};
+  const wrapProps = onProfile ? { type: "button" as const, onClick: onProfile, "aria-label": tx("x_viewProfile", { owner: owner ?? "" }) } : {};
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -87,7 +89,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     if (res.reason === "wrong" && password) setHint(tx("m_senhaIncorreta"));
     else if (res.reason === "wrong") {
       if ((res.fails ?? 0) >= 3) {
-        setBlockMsg(`Pelo jeito você não conhece ${owner ? `@${owner}` : "essa pessoa"}, tente novamente em 30 minutos.`);
+        setBlockMsg(tx("x_wrongMany", { who: owner ? `@${owner}` : tl("essa pessoa") }));
         setHint(null);
         setAnswer("");
         onBlock?.(res.retryAfter ?? 1800);
@@ -185,7 +187,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             </p>
           </Wrap>
           {shareProfile && (
-            <ShareButton iconOnly title={`Compartilhar o perfil de @${owner}`} text={`Veja o perfil de @${owner} no Pinz!`} path={shareProfile.path} onNotify={shareProfile.onNotify} className={`shrink-0 !size-[2.6em] border ${dark ? "border-white/15 bg-white/10 text-white hover:bg-white/20" : "border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white"}`} />
+            <ShareButton iconOnly title={tx("x_shareProfileTitle", { owner: owner ?? "" })} text={tx("x_shareProfileText", { owner: owner ?? "" })} path={shareProfile.path} onNotify={shareProfile.onNotify} className={`shrink-0 !size-[2.6em] border ${dark ? "border-white/15 bg-white/10 text-white hover:bg-white/20" : "border-[#d9c9ad] bg-white/60 text-[#2a1c12] hover:bg-white"}`} />
           )}
           </div>
           {/* números do perfil, juntos: visualizações (visitantes diferentes que abriram o mural), seguidores e PINZ que a pessoa já colocou */}
@@ -199,7 +201,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
                 ].filter(Boolean) as [number, string][]
               ).map(([n, label]) => (
                 <li key={label} className="min-w-0 px-[0.4em]">
-                  <span className={`block text-[1.5em] leading-none font-semibold ${dark ? "text-white" : "text-[#2f2218]"}`}>{n.toLocaleString("pt-BR")}</span>
+                  <span className={`block text-[1.5em] leading-none font-semibold ${dark ? "text-white" : "text-[#2f2218]"}`}>{n.toLocaleString(tag)}</span>
                   <span className="mt-[0.35em] block text-[0.78em] leading-tight">{label}</span>
                 </li>
               ))}

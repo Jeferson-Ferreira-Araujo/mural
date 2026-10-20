@@ -6,6 +6,7 @@ import { DISPLAY_CATS, DisplayCard, displayName, splitDisplayId } from "../widge
 import { sampleFor } from "./StoreModal";
 import { useTranslations, useLocale } from "next-intl";
 import type { DemoLocale } from "@/data/demoText";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Aba "Displays" do compositor (clicou num espaço livre do próprio mural): os displays que a pessoa já comprou.
@@ -14,6 +15,7 @@ import type { DemoLocale } from "@/data/demoText";
  */
 export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick: (id: string) => void; onStore: () => void }) {
   const tx = useTranslations("components.badges.DisplayChooser");
+  const tl = useLit();
   const demoLocale = useLocale() as DemoLocale;
   const [cat, setCat] = useState<string | null>(null);
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada estilo (retangular por padrão)
@@ -83,7 +85,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
                     </span>
                   </span>
                   <span className="block px-3 pt-3">
-                    <span className="block font-title text-base font-semibold">{displayName(`${product}:${base}`)}</span>
+                    <span className="block font-title text-base font-semibold">{displayName(`${product}:${base}`, tl)}</span>
                   </span>
                 </div>
                 {shapes.length > 1 ? (

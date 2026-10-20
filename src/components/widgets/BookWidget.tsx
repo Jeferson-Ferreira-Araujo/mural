@@ -50,7 +50,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
         <div className="relative grid h-full max-w-full aspect-[2/3] place-items-center overflow-hidden rounded-[0.45em]" style={{ background: sk.coverBg, boxShadow: `0 0.2em 0.55em rgba(0,0,0,.35), inset 0 0 0 0.06em ${sk.edge}` }}>
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={cover} alt={name ? `Capa de ${name}` : tl("Capa do livro")} draggable={false} className="absolute inset-0 size-full object-cover" />
+            <img src={cover} alt={name ? tx("x_coverOf", { name }) : tl("Capa do livro")} draggable={false} className="absolute inset-0 size-full object-cover" />
           ) : (
             <Placeholder color={sk.ink} />
           )}

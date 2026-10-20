@@ -31,7 +31,7 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label={`${used} de ${max} itens usados. Saiba mais sobre o limite do plano`}
+        aria-label={tx("x_usedAria", { used, max })}
         className={`inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl px-3.5 text-sm font-semibold transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${
           glass ? "bg-[#17110c]/85 text-white shadow-[0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur" : "bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white"
         } ${className}`}

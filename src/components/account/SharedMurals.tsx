@@ -50,7 +50,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     const ok = await deleteSharedMural(sb, m.id);
     setBusy(false);
     setConfirmId(null);
-    if (!ok) return setErr(SHARED_ERROR_TEXT.error);
+    if (!ok) return setErr(tl(SHARED_ERROR_TEXT.error));
     await reload();
   }
 

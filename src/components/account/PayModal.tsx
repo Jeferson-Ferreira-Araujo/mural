@@ -82,7 +82,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
     setError(null);
     const r = await startPix(target, target === "gift" ? recipient : undefined);
     setBusy(null);
-    if ("error" in r) return setError(r.error);
+    if ("error" in r) return setError(tl(r.error));
     setCharge(r);
     setStep("pix");
   }, [target, recipient]);
@@ -138,7 +138,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     resolve();
                     setStep("review");
                   } else {
-                    setError(res.message ?? tx("m_oPagamentoFoiRecusadoTente"));
+                    setError((res.message ? tl(res.message) : undefined) ?? tx("m_oPagamentoFoiRecusadoTente"));
                     reject();
                   }
                 })();
