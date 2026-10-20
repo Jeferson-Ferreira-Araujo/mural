@@ -177,6 +177,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   // os lançamentos mais recentes (maiores números) ganham o selo "Novo"
   const newKeys = new Set([...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT).map((b) => b.key));
   const [done, setDone] = useState<Done | null>(null);
+  const [short, setShort] = useState<{ cost: number; name: string } | null>(null); // item que a pessoa quis comprar sem ter créditos suficientes
+  const packs = useRef<HTMLElement>(null);
   // ordem: os novos antes (mais novo primeiro); depois os demais na ordem de sempre. Comprar não muda a posição do botton na lista
   const shown = (filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter)).slice().sort((a, b) => {
     const na = newKeys.has(a.key);
@@ -212,6 +214,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   }, [done]);
 
   async function buy(id: string, item: BuyItem, win: { title: string; text: string; img?: string; spent: number }) {
+    // sem créditos suficientes: o botão continua ativo e avisa, com o caminho para adquirir créditos
+    if (credits < win.spent) {
+      setShort({ cost: win.spent, name: win.title });
+      return;
+    }
     setBusy(id);
     const ok = await onBuy(item);
     setBusy(null);
@@ -241,7 +248,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       }
     >
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
-      <section aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
+      <section ref={packs} aria-label="Comprar créditos" className="mb-5 overflow-hidden rounded-3xl border border-[#ecd9a0] bg-gradient-to-b from-[#fff4cc] to-[#fff9e6]">
         <header className="flex items-center gap-3 border-b border-[#ecd9a0]/70 px-4 py-3 sm:px-5">
           <Coin className="size-9 sm:size-10" />
           <h3 className="font-title text-2xl font-semibold">Pacotes de crédito</h3>
@@ -344,8 +351,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     ) : (
                       <button
                         type="button"
-                        disabled={busy === `p${b.key}` || !can(cost)}
-                        title={can(cost) ? undefined : "Créditos insuficientes"}
+                        disabled={busy === `p${b.key}`}
                         aria-label={`${owned ? "Comprar mais " + n + " de" : "Comprar"} ${name} por ${cost} crédito${cost > 1 ? "s" : ""}`}
                         onClick={() =>
                           buy(
@@ -477,7 +483,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </div>
                     )}
                     {!p.owned && (
-                      <button type="button" disabled={busy === `f${p.id}` || !can(p.price)} title={can(p.price) ? undefined : "Créditos insuficientes"} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colocar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
+                      <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colocar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
                         {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
                       </button>
                     )}
@@ -546,7 +552,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     )}
                   </div>
                   {owned ? null : (
-                    <button type="button" disabled={busy === `t${b.id}` || !can(info?.price ?? 25)} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
+                    <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
                       {busy === `t${b.id}` ? "Comprando…" : "Comprar"}
                     </button>
                   )}
@@ -558,6 +564,41 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         </>
       )}
       <BoardLightbox image={viewBoard?.image ?? null} name={viewBoard?.name ?? ""} onClose={() => setViewBoard(null)} />
+
+      {short && (
+        <dialog
+          ref={(d) => {
+            if (d && !d.open) d.showModal();
+          }}
+          aria-label="Créditos insuficientes"
+          onClose={() => setShort(null)}
+          onClick={(e) => e.target === e.currentTarget && setShort(null)}
+          className="m-auto w-[min(92vw,22rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
+        >
+          <div className="rounded-3xl border border-[#ecd9a0] bg-[#fffaf0] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
+            <Coin className="mx-auto size-14" />
+            <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">Créditos insuficientes</h2>
+            <p className="mt-2 text-sm text-[#4a3826]">
+              Você não tem crédito suficiente para comprar <strong>{short.name}</strong>. Faltam <strong>{short.cost - credits}</strong> {short.cost - credits === 1 ? "crédito" : "créditos"}.
+            </p>
+            <div className="mt-4 flex gap-2">
+              <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+                Agora não
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShort(null);
+                  window.setTimeout(() => packs.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60); // mostra os pacotes de crédito
+                }}
+                className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a]"
+              >
+                Adquirir créditos
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </Modal>
   );
 }
