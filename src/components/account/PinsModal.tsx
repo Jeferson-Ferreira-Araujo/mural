@@ -58,7 +58,7 @@ export function ReportBox({ onSend, onCancel, inModal = false }: { onSend: (r: {
 export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored, startSection = "approvals", ttlDays = null, onTtlSaved }: { /** validade atual dos pins de outras pessoas neste mural (null = sem prazo) */ ttlDays?: 7 | 15 | 30 | null; /** a validade mudou aqui: atualiza os dados do mural */ onTtlSaved?: () => void; /** aba com que abre */ startSection?: "approvals" | "archived"; open: boolean; onClose: () => void; muralId: string; plan: PlanId; onPending: (n: number) => void; /** um pin guardado voltou ao mural */ onRestored?: () => void }) {
   const [section, setSection] = useState<"approvals" | "archived">("approvals");
   const [archived, setArchived] = useState<ArchivedPin[] | null>(null);
-  const [archNote, setArchNote] = useState<string | null>(null);
+  const [archNote, setArchNote] = useState<{ ok: boolean; text: string } | null>(null);
   // primeira aprovação neste mural: antes de aprovar, explica a validade dos pins de outras pessoas e deixa escolher (7 dias, 30 dias ou nunca apagar)
   const askedKey = `pinz:ttl-asked:${muralId}`;
   const [ask, setAsk] = useState<{ id: string; secret: boolean } | null>(null);
@@ -119,10 +119,21 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
     setBusy(id);
     setArchNote(null);
     const res = await restoreArchivedPin(getBrowserSupabase(), id);
+    const title = archived?.find((p) => p.id === id)?.mural_title ?? "";
     if (res.ok) {
       setArchived((l) => (l ?? []).filter((p) => p.id !== id));
       onRestored?.();
-    } else setArchNote(res.reason === "no_space" ? "Não há espaço livre no mural para colocar este pin de volta." : res.reason === "plan_limit" ? "O mural chegou ao limite de pins do plano." : "Não foi possível colocar de volta agora. Tente de novo.");
+      setArchNote({ ok: true, text: res.samePlace ? `Pin colocado de volta no mural “${res.muralTitle}”, no mesmo lugar de antes (espaço ${res.slot + 1}).` : `O espaço ${(res.originalSlot ?? 0) + 1} já estava ocupado. O pin foi colocado no mural “${res.muralTitle}”, no espaço ${res.slot + 1}.` });
+    } else
+      setArchNote({
+        ok: false,
+        text:
+          res.reason === "no_space"
+            ? `O pin não pode ser colocado de volta porque o mural “${title}” está cheio: não há nenhum espaço livre.`
+            : res.reason === "plan_limit"
+              ? `O pin não pode ser colocado de volta porque o mural “${title}” chegou ao limite de pins do plano.`
+              : "Não foi possível colocar de volta agora. Tente de novo.",
+      });
     setBusy(null);
   }
 
@@ -228,14 +239,14 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
       {section === "archived" ? (
         <>
           {archNote && (
-            <p role="alert" className="mb-3 text-sm text-[#a23b2a]">
-              {archNote}
+            <p role={archNote.ok ? "status" : "alert"} className={`mb-3 rounded-xl border px-3 py-2 text-sm ${archNote.ok ? "border-[#cfe6d3] bg-[#f1faf2] text-[#1f4d2b]" : "border-[#e3b3a8] bg-[#fbeae5] text-[#a23b2a]"}`}>
+              {archNote.text}
             </p>
           )}
           {!archived ? (
             <CardSkeleton label="Carregando os pins" />
           ) : archived.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin arquivado. Quando você define uma validade para os pins de outras pessoas (em Editar mural), os que passam do prazo saem do mural e ficam aqui, para você colocar de volta quando quiser.</p>
+            <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum pin arquivado. Quando algum pin ultrapassar o tempo limite de exibição definido em Editar mural, ele vem para esta tela. Aqui você pode visualizá-lo e, com um clique, colocá-lo de volta no mural, no mesmo lugar onde estava. Se esse lugar estiver ocupado, ele vai para o primeiro espaço livre; se o mural estiver cheio, avisamos.</p>
           ) : (
             <Carousel label="Pins arquivados">
               {archived.map((a) => (
@@ -247,7 +258,9 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
                     {formatInfo[a.type as keyof typeof formatInfo]?.label ?? a.type}
                     {a.author && <span className="font-normal text-[#6b5440]"> · de @{a.author}</span>}
                   </p>
-                  <p className="text-xs text-[#6b5440]">Saiu do mural em {new Date(a.archived_at).toLocaleDateString("pt-BR")}</p>
+                  <p className="text-xs text-[#6b5440]">
+                    Mural “{a.mural_title}”{a.slot != null ? ` · estava no espaço ${a.slot + 1}` : ""} · saiu em {new Date(a.archived_at).toLocaleDateString("pt-BR")}
+                  </p>
                   <div className="mt-3 flex justify-center">
                     <button type="button" className={primary} disabled={busy === a.id} onClick={() => void restore(a.id)}>
                       {busy === a.id ? "Colocando…" : "Colocar de volta no mural"}

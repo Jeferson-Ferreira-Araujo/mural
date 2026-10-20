@@ -163,7 +163,7 @@ export async function setMuralPinTtl(sb: SupabaseClient, muralId: string, days: 
 }
 
 /** Pin que passou do prazo e está guardado (fora do mural) à espera de o dono colocar de volta. */
-export type ArchivedPin = { id: string; type: string; content: Record<string, unknown>; author: string | null; created_at: string; archived_at: string };
+export type ArchivedPin = { id: string; type: string; content: Record<string, unknown>; author: string | null; created_at: string; archived_at: string; /** espaço onde o pin estava (0 = primeiro) */ slot: number | null; mural_title: string };
 
 export async function listArchivedPins(sb: SupabaseClient, muralId: string): Promise<ArchivedPin[] | null> {
   const { data, error } = await sb.rpc("list_archived_pins", { p_mural_id: muralId });
@@ -171,8 +171,15 @@ export async function listArchivedPins(sb: SupabaseClient, muralId: string): Pro
   return data as ArchivedPin[];
 }
 
-export async function restoreArchivedPin(sb: SupabaseClient, id: string): Promise<{ ok: true } | { ok: false; reason: "no_space" | "plan_limit" | "error" }> {
-  const { error } = await sb.rpc("restore_archived_pin", { p_id: id });
-  if (!error) return { ok: true };
-  return { ok: false, reason: error.message.includes("no_space") ? "no_space" : error.message.includes("plan_limit") ? "plan_limit" : "error" };
+export type RestoredPin = { ok: true; slot: number; originalSlot: number | null; samePlace: boolean; muralTitle: string };
+
+/** Coloca de volta: tenta o mesmo lugar de antes; se estiver ocupado, usa o primeiro espaço livre; sem espaço, falha com "no_space". */
+export async function restoreArchivedPin(sb: SupabaseClient, id: string): Promise<RestoredPin | { ok: false; reason: "no_space" | "plan_limit" | "error" }> {
+  const { data, error } = await sb.rpc("restore_archived_pin", { p_id: id });
+  if (!error && data) {
+    const d = data as { slot: number; original_slot: number | null; same_place: boolean; mural_title: string };
+    return { ok: true, slot: d.slot, originalSlot: d.original_slot, samePlace: d.same_place, muralTitle: d.mural_title };
+  }
+  const msg = error?.message ?? "";
+  return { ok: false, reason: msg.includes("no_space") ? "no_space" : msg.includes("plan_limit") ? "plan_limit" : "error" };
 }
