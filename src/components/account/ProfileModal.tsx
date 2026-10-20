@@ -2,12 +2,11 @@
 
 import { forgetGeoChoice } from "@/lib/geo";
 import { useState, type FormEvent } from "react";
-import { passwordProblem } from "@/lib/password";
+import { callbackUrl, rememberNext } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
-import { PasswordHints } from "../PasswordHints";
 import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 
@@ -97,22 +96,25 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     setDelErr(err?.error === "admin" ? "Contas de administrador não podem ser excluídas por aqui." : err?.error === "rate_limited" ? "Muitas tentativas. Tente de novo mais tarde." : "Não foi possível excluir agora. Tente de novo ou fale com o suporte.");
   }
 
-  async function save(e: FormEvent) {
-    e.preventDefault();
+  // entrou só pelo Google? Não tem senha do Pinz para trocar
+  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    void getBrowserSupabase()
+      .auth.getUser()
+      .then(({ data }) => setHasPassword(data.user ? (data.user.identities ?? []).some((i) => i.provider === "email") : null));
+  }, [open]);
+  async function sendResetLink() {
     setMsg(null);
-    const problem = passwordProblem(pw, { email, username: nick });
-    if (problem) return setMsg({ ok: false, text: problem });
-    if (pw !== pw2) return setMsg({ ok: false, text: "As senhas não são iguais." });
     setBusy(true);
-    const { error } = await getBrowserSupabase().auth.updateUser({ password: pw });
+    rememberNext("/auth/nova-senha"); // o e-mail volta pelo mesmo caminho do login e cai direto na tela da nova senha
+    const { error } = await getBrowserSupabase().auth.resetPasswordForEmail(email, { redirectTo: callbackUrl() });
     setBusy(false);
     if (error) {
-      setMsg({ ok: false, text: /same|different/i.test(error.message) ? "A nova senha precisa ser diferente da atual." : /weak|password/i.test(error.message) ? "Senha muito fraca. Use letras, números e símbolos." : "Não foi possível trocar a senha agora. Tente de novo." });
-      return;
+      rememberNext(null);
+      return setMsg({ ok: false, text: "Não foi possível enviar o link agora. Tente de novo daqui a pouco." });
     }
-    setPw("");
-    setPw2("");
-    setMsg({ ok: true, text: "Senha alterada!" });
+    setMsg({ ok: true, text: `Enviamos um link para ${email}. Ele vale por pouco tempo: abra no mesmo navegador.` });
   }
 
   return (
@@ -149,29 +151,24 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       </dl>
 
 
-      <form onSubmit={save} noValidate className="mt-5 space-y-3">
-        <h3 className="font-title text-base font-semibold">Mudar senha</h3>
-        <Field label="Nova senha">
-          {(id) => (
-            <div className="relative">
-              <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw} onChange={(e) => { setPw(e.target.value); setMsg(null); }} className={`${inputClass} pr-20`} />
-              <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show} className="absolute inset-y-0 right-3 cursor-pointer text-sm font-semibold text-[#6b5440] hover:text-[#2f2218]">
-                {show ? "Ocultar" : "Mostrar"}
-              </button>
-            </div>
-          )}
-        </Field>
-        <PasswordHints password={pw} email={email} username={nick} />
-        <Field label="Repita a nova senha">{(id) => <input id={id} type={show ? "text" : "password"} autoComplete="new-password" value={pw2} onChange={(e) => { setPw2(e.target.value); setMsg(null); }} className={inputClass} />}</Field>
-        {msg && (
-          <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
-            {msg.text}
-          </p>
+      <section aria-label="Senha" className="mt-5 space-y-3">
+        <h3 className="font-title text-base font-semibold">Senha</h3>
+        {hasPassword === false ? (
+          <p className="text-sm text-[#4a3826]">Você entra com o Google, então não há senha do Pinz para trocar.</p>
+        ) : (
+          <>
+            <p className="text-sm text-[#4a3826]">Para sua segurança, a troca é feita por um link enviado para <strong className="break-all">{email}</strong>.</p>
+            {msg && (
+              <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-[#2f6a3c]" : "text-[#a23b2a]"}`}>
+                {msg.text}
+              </p>
+            )}
+            <button type="button" onClick={() => void sendResetLink()} disabled={busy || !email} className={primaryButton}>
+              {busy ? "Enviando…" : "Enviar link para trocar a senha"}
+            </button>
+          </>
         )}
-        <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : "Salvar nova senha"}
-        </button>
-      </form>
+      </section>
 
       {VISIT_TOGGLE_ENABLED && (
         <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
