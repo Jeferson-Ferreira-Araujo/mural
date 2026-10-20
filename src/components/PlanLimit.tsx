@@ -8,6 +8,8 @@ import { useBadges } from "./badges/BadgeContext";
 import { Modal } from "./account/Modal";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { PLUS_PRICE_CENTS } from "@/lib/plans";
+import { useMoney } from "@/lib/useMoney";
 
 /**
  * Plano FREE, no próprio mural: contador de pins (ex.: 3/15) com um "?" que explica o limite e leva à assinatura do PINZ+.
@@ -15,6 +17,7 @@ import { useLit } from "@/i18n/literal";
  */
 export function PlanLimit({ used: pins, glass = false, className = "" }: { used: number; glass?: boolean; className?: string }) {
   const tl = useLit();
+  const money = useMoney();
   const tx = useTranslations("components.PlanLimit");
   const max = PLANS.free.slots;
   const { badges } = useBadges();
@@ -67,7 +70,7 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
             onClick={subscribe}
             className="w-full cursor-pointer rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-4 py-3 text-sm font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.7rem_rgba(150,90,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {!PAYMENTS_ENABLED ? tl("PINZ+ em breve") : tx("m_assinarOPinzPorR")}
+            {!PAYMENTS_ENABLED ? tl("PINZ+ em breve") : tx("x_subscribe", { price: money(PLUS_PRICE_CENTS) })}
           </button>
         </div>
       </Modal>

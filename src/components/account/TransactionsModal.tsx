@@ -11,6 +11,7 @@ import { ListSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { useTag } from "@/i18n/useTag";
+import { formatMoney } from "@/lib/money";
 
 const date = (iso: string, tag: string) => new Date(iso).toLocaleString(tag, { dateStyle: "short", timeStyle: "short" });
 
@@ -52,7 +53,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
   }, [open]);
 
   const paid = (tx?.payments ?? []).filter((p) => p.status === "approved");
-  const total = paid.reduce((n, p) => n + p.cents, 0);
+  const totals = (Object.entries(paid.reduce<Record<string, number>>((m, p) => ({ ...m, [p.currency ?? "BRL"]: (m[p.currency ?? "BRL"] ?? 0) + p.cents }), {})) as ["BRL" | "USD", number][]).map(([cur, n]) => formatMoney(n, cur, tag)).join(" + ") || formatMoney(0, "BRL", tag);
   const bought = paid.reduce((n, p) => n + (p.credits ?? 0), 0);
   const sub = tx?.subscription;
 
@@ -66,7 +67,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
         <div className="space-y-5">
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
-              [tl("Total pago"), brl(total)],
+              [tl("Total pago"), totals],
               [tl("Créditos comprados"), String(bought)],
               [tl("Saldo atual"), String(credits)],
             ].map(([k, v]) => (
@@ -99,7 +100,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <strong>{brl(p.cents)}</strong>
+                      <strong>{formatMoney(p.cents, p.currency ?? "BRL", tag)}</strong>
                       <StatusChip status={p.status} />
                     </div>
                   </li>

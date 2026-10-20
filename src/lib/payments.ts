@@ -1,4 +1,5 @@
 import { getBrowserSupabase } from "./supabase";
+import { loadPayInfo } from "./useMoney";
 
 export type Subscription = { status: "pending" | "authorized" | "paused" | "cancelled" | "once"; paidUntil: string | null; active: boolean } | null;
 
@@ -58,7 +59,8 @@ export function takePayReturn(): string | null {
 
 /** Abre o pagamento no Mercado Pago. `product` = "plus" ou "credits:<id do pacote>". Em caso de sucesso, a página vai para o Mercado Pago. */
 export async function startCheckout(product: string): Promise<string | null> {
-  const r = await post("/api/pay/checkout", { product });
+  const info = await loadPayInfo();
+  const r = await post(info.provider === "stripe" ? "/api/pay/stripe/checkout" : "/api/pay/checkout", { product });
   if (r.ok && typeof r.data.url === "string") {
     rememberReturn();
     window.location.assign(r.data.url);
@@ -77,7 +79,7 @@ export async function cancelSubscription(): Promise<boolean> {
   return (await post("/api/pay/cancel")).ok;
 }
 
-export type TxPayment = { ref: string; kind: "credits" | "plus"; cents: number; credits: number | null; status: string; at: string };
+export type TxPayment = { ref: string; kind: "credits" | "plus"; cents: number; currency?: "BRL" | "USD"; credits: number | null; status: string; at: string };
 export type TxLedger = { delta: number; reason: string; at: string };
 export type Transactions = { payments: TxPayment[]; ledger: TxLedger[]; subscription: Subscription };
 
@@ -85,6 +87,17 @@ export type Transactions = { payments: TxPayment[]; ledger: TxLedger[]; subscrip
 export async function fetchTransactions(): Promise<Transactions | null> {
   const { data, error } = await getBrowserSupabase().rpc("my_transactions");
   return error || !data ? null : (data as Transactions);
+}
+
+/** Pagamento em dólar pela Stripe (só quando o servidor mandou usar a Stripe). */
+export async function startStripe(product: string, recipient?: string): Promise<string | null> {
+  const r = await post("/api/pay/stripe/checkout", { product, ...(recipient ? { recipient } : {}) });
+  if (r.ok && typeof r.data.url === "string") {
+    rememberReturn();
+    window.location.assign(r.data.url);
+    return null;
+  }
+  return PAY_ERROR[String(r.data.error)] ?? MESSAGE[String(r.data.error)] ?? "Não foi possível abrir o pagamento agora. Tente de novo.";
 }
 
 export const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

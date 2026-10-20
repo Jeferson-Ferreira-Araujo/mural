@@ -17,6 +17,7 @@ import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
+import { useMoney } from "@/lib/useMoney";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -170,6 +171,7 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.StoreModal");
+  const money = useMoney();
   const demoLocale = useLocale() as DemoLocale;
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
@@ -276,7 +278,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 </p>
               </div>
               <div className="mt-3 flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2">
-                <p className="text-lg font-bold whitespace-nowrap">{p.price}</p>
+                <p className="text-lg font-bold whitespace-nowrap">{money(p.cents)}</p>
                 <button type="button" disabled={!PAYMENTS_ENABLED || busy !== null} onClick={() => void buyCredits(p.id)} className="grow cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2 text-sm font-bold text-[#3a2a08] transition hover:bg-[#fad45a] active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50">
                   {!PAYMENTS_ENABLED ? tl("Em breve") : busy === `credits:${p.id}` ? tl("Abrindo…") : tl("Comprar")}
                 </button>
@@ -594,7 +596,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <span className="text-sm text-[#8a7b69]">{tx("creditos")}</span>
                   </p>
                 </div>
-                <p className="mt-3 text-2xl font-bold">{sug.price}</p>
+                <p className="mt-3 text-2xl font-bold">{money(sug.cents)}</p>
               </div>
               <p className="mt-3 text-sm text-[#4a3826]">{tx("x_comCreditosVoceLevaBastante", { v0: sug.credits })}</p>
               <div className="mt-4 flex gap-2">

@@ -191,7 +191,8 @@
         "x_seusDireitos": "Seus direitos",
         "x_vocePodePedirAcessoCorrecao": "Você pode pedir acesso, correção ou exclusão dos seus dados e da sua conta, e apagar seus pins a qualquer momento pelo próprio mural. Guardamos os dados enquanto a conta existir; denúncias e registros de segurança podem ficar guardados pelo tempo necessário para proteger outras pessoas.",
         "x_criancas": "Crianças",
-        "x_oPinzNaoEDestinado": "O Pinz não é destinado a menores de 13 anos."
+        "x_oPinzNaoEDestinado": "O Pinz não é destinado a menores de 13 anos.",
+        "x_stripePagamentosEmDolar": "Stripe: pagamentos em dólar para quem está fora da América Latina e de Portugal. Os dados do cartão são informados direto na Stripe; o Pinz não os recebe nem os guarda, só o resultado do pagamento."
       }
     },
     "termos": {
@@ -206,7 +207,7 @@
         "x_naoEPermitidoPublicarConteudo": "Não é permitido publicar conteúdo ilegal, que assedie, ameace ou exponha outras pessoas, que viole direitos de terceiros ou que contenha nudez ou violência. Você declara ter o direito de publicar o que envia e nos autoriza a armazená-lo e exibi-lo no mural conforme sua escolha.",
         "x_pinsPodemSerDenunciadosPodemos": "Pins podem ser denunciados. Podemos remover conteúdo e suspender contas que violem estes termos.",
         "x_pagamentos": "Pagamentos",
-        "x_oPinzEUmaAssinatura": "O PINZ+ é uma assinatura mensal (R$ 9,90) cobrada pelo Mercado Pago, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.",
+        "x_oPinzEUmaAssinatura": "O PINZ+ é uma assinatura mensal (R$ 9,90, ou o valor equivalente em dólar para quem paga pela Stripe) cobrada pelo Mercado Pago ou pela Stripe, e os créditos são vendidos em pacotes avulsos. Os valores aparecem antes da compra.",
         "x_vocePodeCancelarAAssinatura": "Você pode cancelar a assinatura quando quiser, pelo próprio Pinz, sem multa. O PINZ+ continua até o fim do período já pago e não há novas cobranças.",
         "x_vocePodeDesistirDeUma": "Você pode desistir de uma compra em até 7 dias, como prevê o Código de Defesa do Consumidor, e pedir o reembolso pelo contato do Pinz. Créditos já gastos na loja são descontados.",
         "x_seAAssinaturaDeixarDe": "Se a assinatura deixar de ser paga, a conta volta ao plano gratuito: seus pins continuam, mas os recursos do PINZ+ ficam indisponíveis.",
@@ -1294,7 +1295,8 @@
       "comOPinzVoceTem": "Com o PINZ+ você tem:",
       "m_assinarOPinzPorR": "Assinar o PINZ+ por R$ 9,90/mês",
       "x_voceEstaUsandoDePins": "Você está usando <s0>{v0}</s0> de <s1>{v1}</s1> pins e displays do seu mural. Esse é o limite da conta <s2>FREE</s2>, que inclui 1 mural.",
-      "x_usedAria": "{used} de {max} itens usados. Saiba mais sobre o limite do plano"
+      "x_usedAria": "{used} de {max} itens usados. Saiba mais sobre o limite do plano",
+      "x_subscribe": "Assinar o PINZ+ por {price}/mês"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Pessoa não encontrada",

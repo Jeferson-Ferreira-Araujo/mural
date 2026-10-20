@@ -191,7 +191,8 @@
         "x_seusDireitos": "Your rights",
         "x_vocePodePedirAcessoCorrecao": "You can request access, correction or deletion of your data and account, and delete your pins at any time from the board itself. We keep the data while the account exists; reports and security logs may be kept for as long as needed to protect other people.",
         "x_criancas": "Children",
-        "x_oPinzNaoEDestinado": "Pinz is not intended for children under 13."
+        "x_oPinzNaoEDestinado": "Pinz is not intended for children under 13.",
+        "x_stripePagamentosEmDolar": "Stripe: payments in US dollars for people outside Latin America and Portugal. Card data is entered directly on Stripe; Pinz neither receives nor stores it, only the payment result."
       }
     },
     "termos": {
@@ -206,7 +207,7 @@
         "x_naoEPermitidoPublicarConteudo": "It is not allowed to publish illegal content, content that harasses, threatens or exposes other people, that violates third-party rights or that contains nudity or violence. You declare that you have the right to publish what you send.",
         "x_pinsPodemSerDenunciadosPodemos": "Pins can be reported. We may remove content and suspend accounts that violate these terms.",
         "x_pagamentos": "Payments",
-        "x_oPinzEUmaAssinatura": "PINZ+ is a monthly subscription (R$ 9.90) charged by Mercado Pago, and credits are sold in separate packs. Prices appear before purchase.",
+        "x_oPinzEUmaAssinatura": "PINZ+ is a monthly subscription (R$ 9.90, or the equivalent amount in US dollars for those paying through Stripe) charged by Mercado Pago or Stripe, and credits are sold in separate packs. Prices appear before purchase.",
         "x_vocePodeCancelarAAssinatura": "You can cancel the subscription at any time, from within Pinz, with no penalty. PINZ+ continues until the end of the period already paid and there are no new charges.",
         "x_vocePodeDesistirDeUma": "You can withdraw from a purchase within 7 days, as provided by the Brazilian Consumer Protection Code, and request a refund through Pinz contact. Credits already spent in the store are deducted.",
         "x_seAAssinaturaDeixarDe": "If the subscription stops being paid, the account returns to the free plan: your pins stay, but PINZ+ features become unavailable.",
@@ -1294,7 +1295,8 @@
       "comOPinzVoceTem": "With PINZ+ you get:",
       "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month",
       "x_voceEstaUsandoDePins": "You are using <s0>{v0}</s0> of <s1>{v1}</s1> pins and displays on your board. That is the limit of the <s2>FREE</s2> account, which includes 1 board.",
-      "x_usedAria": "{used} of {max} items used. Learn more about the plan limit"
+      "x_usedAria": "{used} of {max} items used. Learn more about the plan limit",
+      "x_subscribe": "Subscribe to PINZ+ for {price}/month"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person not found",
@@ -2097,7 +2099,11 @@
     "hgltusb": "Handwriting",
     "h15zgxng": "Approve",
     "ha8quai": "Reject",
-    "hsh6nr1": "Remove"
+    "hsh6nr1": "Remove",
+    "h1ys5o4e": "/month",
+    "hac4ntu": "/year",
+    "h1ew9juz": "Pay by card",
+    "htmg6lm": "You'll be taken to a secure Stripe page to complete the payment."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

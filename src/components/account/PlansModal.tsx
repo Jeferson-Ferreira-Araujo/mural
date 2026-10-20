@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, type PlanId } from "@/lib/plans";
+import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, PLUS_PRICE_CENTS, type PlanId } from "@/lib/plans";
 import { cancelSubscription, fetchSubscription, PAY_EVENT, startCheckout, type Subscription } from "@/lib/payments";
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
@@ -9,6 +9,7 @@ import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { useTag } from "@/i18n/useTag";
+import { useMoney } from "@/lib/useMoney";
 
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
@@ -37,6 +38,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
 function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; footer?: ReactNode }) {
   const tx = useTranslations("components.account.PlansModal");
   const tl = useLit();
+  const money = useMoney();
   const p = PLANS[id];
   const full = id === "full";
   return (
@@ -45,7 +47,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
         <PlanBadge plan={id} />
         {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">{tx("seuPlano")}</span>}
       </header>
-      <p className="font-title mt-3 text-3xl font-semibold">{tl(p.price)}</p>
+      <p className="font-title mt-3 text-3xl font-semibold">{full ? money(PLUS_PRICE_CENTS) + tl("/mês") : tl(p.price)}</p>
       {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? tx("m_cobrancaEmBreve") : tx("m_paraSempre")}</p>}
       <ul className="mt-4 space-y-2 text-sm">
         {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
@@ -70,6 +72,7 @@ const fmtDate = (iso: string | null, tag: string) => (iso ? new Date(iso).toLoca
 export function PlansModal({ open, onClose, plan, credits }: { open: boolean; onClose: () => void; plan: PlanId; credits: number }) {
   const tl = useLit();
   const tag = useTag();
+  const money = useMoney();
   const tx = useTranslations("components.account.PlansModal");
   const [sub, setSub] = useState<Subscription>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -147,7 +150,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
           {CREDIT_PACKS.map((c) => (
             <li key={c.id} className="flex items-center gap-2 rounded-lg border border-[#d9c9ad] bg-[#f3ead8] px-3 py-1 text-sm">
               <span>
-                {tx.rich("x_creditos", { v0: c.credits, v1: c.price, s0: (c) => <strong>{c}</strong> })}
+                {tx.rich("x_creditos", { v0: c.credits, v1: money(c.cents), s0: (c) => <strong>{c}</strong> })}
               </span>
               {PAYMENTS_ENABLED && (
                 <button type="button" disabled={busy !== null} onClick={() => void buy(`credits:${c.id}`)} className="cursor-pointer rounded-md bg-[#d9a21b] px-2 py-0.5 text-xs font-bold text-[#2a1c12] hover:bg-[#e6ae22] disabled:opacity-50">

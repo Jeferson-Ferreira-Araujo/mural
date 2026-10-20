@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "@/lib/plans";
-import { pixStatus, startPix, type PixCharge } from "@/lib/payments";
+import { pixStatus, startPix, startStripe, type PixCharge } from "@/lib/payments";
 import { getMpPublicKey, loadMpSdk, payCard, paySubscription } from "@/lib/cardPay";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
@@ -10,6 +10,7 @@ import { Modal } from "./Modal";
 import { Skeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { useMoney, usePayInfo } from "@/lib/useMoney";
 
 type Step = "plans" | "gift" | "choose" | "pix" | "card" | "review" | "done" | "expired";
 
@@ -39,6 +40,8 @@ const GIFT_ERROR: Record<string, string> = {
 export function PayModal({ product, onClose, onPaid }: { product: string | null; onClose: () => void; /** o pagamento foi confirmado: atualiza saldo e plano da tela */ onPaid: () => void }) {
   const tl = useLit();
   const tx = useTranslations("components.account.PayModal");
+  const { provider } = usePayInfo();
+  const money = useMoney();
   const [step, setStep] = useState<Step>("choose");
   const [target, setTarget] = useState<string | null>(null); // o que está sendo pago: "credits:<id>", "plus" (mensal), "plus_annual", "plus_life" ou "gift"
   const [recipient, setRecipient] = useState(""); // presente: nome de usuário de quem recebe
@@ -73,7 +76,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
     if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: tx("m_presentePara1MesDe", { v0: recipient }), suffix: "", done: tx("m_jaTem1MesDe", { v0: recipient }), title: tx("m_presentearComPinz") };
     return null;
   })();
-  const price = info ? brl(info.cents) + info.suffix : "";
+  const price = info ? money(info.cents) + (info.suffix ? tl(info.suffix) : "") : "";
   const plusTarget = target === "plus";
 
   const createPix = useCallback(async () => {
@@ -210,7 +213,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
       onClick={() => {
         setTarget(id);
         setError(null);
-        setStep(id === "plus" ? "card" : "choose");
+        setStep(id === "plus" && provider !== "stripe" ? "card" : "choose");
       }}
       className="relative flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] px-4 py-3 text-left transition hover:bg-[#fff1cc] active:scale-[0.99]"
     >
@@ -220,7 +223,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
         <span className="block text-xs text-[#6b5440]">{note}</span>
       </span>
       <span className="shrink-0 text-right">
-        <span className="block text-lg font-extrabold">{brl(cents)}</span>
+        <span className="block text-lg font-extrabold">{money(cents)}</span>
         <span className="block text-xs font-semibold text-[#6b5440]">{suffix}</span>
       </span>
     </button>
@@ -259,7 +262,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               <div className="space-y-3.5">
                 {planCard("plus", tl("Mensal (assinatura)"), PLUS_PRICE_CENTS, tl("por mês"), tl("Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago."))}
                 {planCard("plus_month", tl("1 mês"), PLUS_PRICE_CENTS, tl("pagamento único"), tl("Só quer usar por um mês? Pague uma vez com Pix ou cartão, sem renovação automática."))}
-                {planCard("plus_annual", tl("Anual"), PLUS_ANNUAL_CENTS, tl("por ano"), tx("x_annualNote", { v0: brl(Math.round(PLUS_ANNUAL_CENTS / 12)) }), tx("x_save", { pct: Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100) }))}
+                {planCard("plus_annual", tl("Anual"), PLUS_ANNUAL_CENTS, tl("por ano"), tx("x_annualNote", { v0: money(Math.round(PLUS_ANNUAL_CENTS / 12)) }), tx("x_save", { pct: Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100) }))}
                 {planCard("plus_life", tl("Vitalício"), PLUS_LIFETIME_CENTS, tl("pagamento único"), tl("Pague uma vez e use para sempre. Pix ou cartão."))}
               </div>
               <button
@@ -274,13 +277,13 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <span className="block text-base font-extrabold">{tx("presentearAlguem")}</span>
                   <span className="block text-xs text-[#6b5440]">{tx("t1MesDePinzPara")}</span>
                 </span>
-                <span className="shrink-0 text-lg font-extrabold">{brl(PLUS_GIFT_CENTS)}</span>
+                <span className="shrink-0 text-lg font-extrabold">{money(PLUS_GIFT_CENTS)}</span>
               </button>
             </div>
           ) : step === "gift" ? (
             <div>
               <p className="font-title text-xl font-semibold">{tx("presentearCom1MesDe")}</p>
-              <p className="mt-1 text-sm text-[#4a3826]">{tx("x_quemRecebeGanha30Dias", { v0: brl(PLUS_GIFT_CENTS) })}</p>
+              <p className="mt-1 text-sm text-[#4a3826]">{tx("x_quemRecebeGanha30Dias", { v0: money(PLUS_GIFT_CENTS) })}</p>
               <label htmlFor="gift-nick" className="mt-4 block text-sm font-semibold">
                 {tx("nomeDeUsuarioDaPessoa")}</label>
               <input
@@ -316,7 +319,31 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 </div>
               )}
 
-              {step === "choose" && (
+              {step === "choose" && provider === "stripe" && (
+                <div className="mt-4 space-y-2.5">
+                  <p className="text-sm text-[#6b5440]">{tl("Você será levado a uma página segura da Stripe para concluir o pagamento.")}</p>
+                  <button
+                    type="button"
+                    disabled={busy !== null}
+                    onClick={() => {
+                      setBusy("pix");
+                      setError(null);
+                      void startStripe(target ?? "", target === "gift" ? recipient : undefined).then((err) => {
+                        if (err) (setBusy(null), setError(tl(err)));
+                      });
+                    }}
+                    className={`${primaryButton} flex items-center justify-center gap-2`}
+                  >
+                    {busy ? tl("Abrindo…") : tl("Pagar com cartão")}
+                  </button>
+                  {fromPlans && (
+                    <button type="button" onClick={() => setStep(target === "gift" ? "gift" : "plans")} className={ghost}>
+                      {tx("voltar")}</button>
+                  )}
+                </div>
+              )}
+
+              {step === "choose" && provider !== "stripe" && (
                 <div className="mt-4 space-y-2.5">
                   <p className="text-sm font-semibold text-[#6b5440]">{tx("comoVoceQuerPagar")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} flex items-center justify-center gap-2`}>

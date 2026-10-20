@@ -63,6 +63,7 @@ export default function Privacidade() {
           <li>{tx("x_resendEnvioDosEMails")}</li>
           <li>{tx("x_cloudflareProtecaoEEntregaDo")}</li>
           <li>{tx("x_mercadoPagoPagamentosDaAssinatura")}</li>
+          <li>{tx("x_stripePagamentosEmDolar")}</li>
         </ul>
         <p className="mt-2">{tx("x_essesServicosTratamOsDados")}</p>
       </section>
