@@ -72,7 +72,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
             const id = `${product}:${withShape(base, shape)}`;
             return (
               <li key={key} className={card.replace("cursor-pointer ", "")}>
-                <button type="button" onClick={() => onPick(id)} className="flex w-full cursor-pointer flex-col text-left">
+                <div className="flex w-full flex-col text-left">
                   <span className="grid min-h-[11rem] w-full place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                     <span className="pointer-events-none text-[9px]">
                       <span className="relative block">
@@ -82,9 +82,8 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
                   </span>
                   <span className="block px-3 pt-3">
                     <span className="block font-title text-base font-semibold">{displayName(`${product}:${base}`)}</span>
-                    <span className="mt-0.5 block text-xs text-[#6b5440]">{shapes.length === 1 && shape === "square" ? "Quadrado · " : ""}Toque para colocar neste espaço</span>
                   </span>
-                </button>
+                </div>
                 {shapes.length > 1 ? (
                   <div role="radiogroup" aria-label="Formato" className="m-3 mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
                     {shapes.map((sh) => (
@@ -93,9 +92,10 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
                       </button>
                     ))}
                   </div>
-                ) : (
-                  <span className="block pb-3" />
-                )}
+                ) : null}
+                <button type="button" onClick={() => onPick(id)} className="m-3 mt-2 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2c313b] active:scale-[0.99]">
+                  Colocar display
+                </button>
               </li>
             );
           })}
