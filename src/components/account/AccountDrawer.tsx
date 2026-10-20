@@ -406,7 +406,6 @@ export function AccountDrawer({
             </svg>
           </span>
           <h2 className="font-title mt-3 text-2xl font-semibold">Sair da conta?</h2>
-          <p className="mt-2 text-sm text-[#4a3826]">Você volta para a tela de entrada. Seus murais e pins continuam guardados.</p>
           <div className="mt-4 flex gap-2">
             <button type="button" onClick={() => setConfirmOut(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
               Cancelar
