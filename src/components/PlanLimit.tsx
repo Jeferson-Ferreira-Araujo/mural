@@ -44,7 +44,7 @@ export function PlanLimit({ used, glass = false, className = "" }: { used: numbe
           <div className="rounded-2xl border-2 border-[#e0b04a] bg-[#fff8e4] p-4">
             <p className="font-bold">Com o PINZ+ você tem:</p>
             <ul className="mt-2 space-y-1.5">
-              {["Todos os 28 espaços em cada mural", "Até 10 murais", "Vídeo, voz e local nos pins", "Pins em segredo e mais Bottons"].map((t) => (
+              {["Mais pins em cada mural", "Até 10 murais", "Vídeo, voz e local nos pins", "Pins em segredo e mais Bottons"].map((t) => (
                 <li key={t} className="flex gap-2">
                   <span aria-hidden className="font-bold text-[#2f6a3c]">
                     ✓

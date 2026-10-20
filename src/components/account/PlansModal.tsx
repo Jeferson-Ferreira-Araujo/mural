@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, type PlanId } from "@/lib/plans";
 import { cancelSubscription, fetchSubscription, PAY_EVENT, startCheckout, type Subscription } from "@/lib/payments";
 import { PlanBadge } from "../board/PlanBadge";
@@ -21,7 +21,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   ],
   full: [
     { text: "Até 10 murais", on: true },
-    { text: "28 espaços em cada mural", on: true },
+    { text: "Mais pins em cada mural (o gratuito tem 15)", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Vídeo, voz e local", on: true },
@@ -85,8 +85,17 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
     }
   }
 
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const cancelRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = cancelRef.current;
+    if (!d) return;
+    if (confirmCancel && !d.open) d.showModal();
+    if (!confirmCancel && d.open) d.close();
+  }, [confirmCancel]);
+
   async function cancel() {
-    if (!window.confirm("Cancelar a assinatura PINZ+? Você continua com o PINZ+ até o fim do período já pago.")) return;
+    setConfirmCancel(false);
     setBusy("cancel");
     setMsg((await cancelSubscription()) ? "Assinatura cancelada. O PINZ+ continua até o fim do período pago." : "Não foi possível cancelar agora. Tente de novo.");
     setSub(await fetchSubscription());
@@ -97,7 +106,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   const plusFooter = !PAYMENTS_ENABLED ? undefined : subscribed ? (
     <div className="mt-4 text-sm">
       <p className="font-semibold text-[#2f6a3c]">Assinatura ativa{sub?.paidUntil ? ` · renova por volta de ${fmtDate(sub.paidUntil)}` : ""}</p>
-      <button type="button" disabled={busy !== null} onClick={() => void cancel()} className="mt-2 cursor-pointer text-xs font-semibold text-[#a23b2a] underline disabled:opacity-50">
+      <button type="button" disabled={busy !== null} onClick={() => setConfirmCancel(true)} className="mt-2 cursor-pointer text-xs font-semibold text-[#a23b2a] underline disabled:opacity-50">
         {busy === "cancel" ? "Cancelando…" : "Cancelar assinatura"}
       </button>
     </div>
@@ -141,6 +150,26 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
           ))}
         </ul>
       </div>
+      <dialog
+        ref={cancelRef}
+        aria-label="Cancelar a assinatura"
+        onClose={() => setConfirmCancel(false)}
+        onClick={(e) => e.target === e.currentTarget && setConfirmCancel(false)}
+        className="m-auto w-[min(92vw,23rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
+      >
+        <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
+          <h2 className="font-title text-2xl leading-tight font-semibold">Cancelar a assinatura?</h2>
+          <p className="mt-2 text-sm text-[#4a3826]">Você continua com o PINZ+ até o fim do período já pago. Depois disso, não há nova cobrança e a conta volta ao plano gratuito.</p>
+          <div className="mt-4 flex gap-2">
+            <button type="button" onClick={() => setConfirmCancel(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+              Manter assinatura
+            </button>
+            <button type="button" onClick={() => void cancel()} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022]">
+              Cancelar assinatura
+            </button>
+          </div>
+        </div>
+      </dialog>
     </Modal>
   );
 }

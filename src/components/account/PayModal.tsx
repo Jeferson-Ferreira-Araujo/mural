@@ -15,7 +15,7 @@ const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "c
 
 /** Vantagens do PINZ+ (mostradas antes de pedir qualquer dado de pagamento). */
 const BENEFITS = [
-  "Todos os espaços do mural (28, em vez de 15)",
+  "Mais pins em cada mural (o plano gratuito tem 15)",
   "Até 10 murais",
   "Pins de desenho, música, vídeo, voz e local",
   "Pins em segredo (borrados) para os visitantes",
@@ -253,7 +253,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
               </ul>
               <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">Escolha o seu plano</p>
               <div className="space-y-3.5">
-                {planCard("plus", "Mensal", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser.")}
+                {planCard("plus", "Mensal", PLUS_PRICE_CENTS, "por mês", "Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago.")}
                 {planCard("plus_annual", "Anual", PLUS_ANNUAL_CENTS, "por ano", `Equivale a ${brl(Math.round(PLUS_ANNUAL_CENTS / 12))} por mês. Pix ou cartão, sem renovação automática.`, `Economize ${Math.round((1 - PLUS_ANNUAL_CENTS / (PLUS_PRICE_CENTS * 12)) * 100)}%`)}
                 {planCard("plus_life", "Vitalício", PLUS_LIFETIME_CENTS, "pagamento único", "Pague uma vez e use para sempre. Pix ou cartão.")}
               </div>

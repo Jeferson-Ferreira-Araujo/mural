@@ -9,7 +9,6 @@ import { getProfilePrivacy } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
-import { useFeatureFlags } from "@/lib/features";
 
 function Coin({ className = "size-5" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -25,10 +24,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
   const [credits, setCredits] = useState(0);
-  const [slotsPrice, setSlotsPrice] = useState(25); // preço do mural de 42 espaços
-  const [size, setSize] = useState<28 | 42>(28);
-  const flags = useFeatureFlags();
-  const big = flags.mural_42 === true; // mural de 42 espaços: desligado por padrão (o administrador liga em Recursos)
   const [ttl, setTtl] = useState<PinTtl>(null);
   // pergunta de segurança do mural novo: já vem igual à do seu primeiro mural, e dá para mudar
   const [privacy, setPrivacy] = useState<Privacy>({ priv: false, question: "", answer: "" });
@@ -42,7 +37,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     fetchInventory(getBrowserSupabase()).then((inv) => {
       setOffers(inv?.boards ?? []);
       setCredits(inv?.credits ?? 0);
-      setSlotsPrice(inv?.slotsPrice ?? 25);
     });
 
   useEffect(() => {
@@ -52,7 +46,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     setBuying(null);
     setSlide(0);
     setError(null);
-    setSize(28);
     setTtl(null);
     setPrivacy({ priv: false, question: "", answer: "" });
     void getProfilePrivacy(getBrowserSupabase()).then((p) => p && setPrivacy({ priv: p.private, question: p.question, answer: p.answer }));
@@ -97,18 +90,16 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     e.preventDefault();
     if (busy) return;
     if (!title.trim()) return setError("Preencha o nome do mural.");
-    if (!big && size === 42) setSize(28);
-    if (big && size === 42 && credits < slotsPrice) return setError("Créditos insuficientes para o mural de 42 espaços: faltam " + (slotsPrice - credits) + ".");
     const perr = privacyError(privacy, false);
     if (perr) return setError(perr);
     setBusy(true);
     setError(null);
     const sb = getBrowserSupabase();
-    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "", p_slots: big ? size : 28 } /* o mural novo segue a privacidade do perfil */);
+    const { data, error: err } = await sb.rpc("create_mural", { p_title: title.trim(), p_question: "", p_answer: "", p_slots: 28 } /* o mural novo segue a privacidade do perfil */);
     const created = data as { slug?: string; id?: string } | null;
     if (err || !created?.slug || !created.id) {
       setBusy(false);
-      setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : err?.message.includes("no_credits") ? "Créditos insuficientes para o mural de 42 espaços." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : "Não foi possível criar o mural agora. Tente de novo.");
       return;
     }
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
@@ -220,40 +211,6 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           <PrivacyField value={privacy} onChange={setPrivacy} />
           <PinTtlField value={ttl} onChange={setTtl} />
 
-          {/* tamanho: 28 espaços (padrão) ou 42, que é comprado com créditos e só existe criando um mural novo */}
-          {big && (
-          <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
-            <legend className="mb-2 text-sm font-semibold">Tamanho do mural</legend>
-            <div role="radiogroup" aria-label="Tamanho do mural" className="grid grid-cols-2 gap-2">
-              {(
-                [
-                  [28, "28 espaços", "Padrão, incluído no PINZ+"],
-                  [42, "42 espaços", "Mural maior, para mais pins"],
-                ] as const
-              ).map(([n, name, hint]) => (
-                <button
-                  key={n}
-                  type="button"
-                  role="radio"
-                  aria-checked={size === n}
-                  onClick={() => (setSize(n), setError(null))}
-                  className={`cursor-pointer rounded-xl border-2 p-3 text-left transition ${size === n ? "border-[#d9a21b] bg-[#fff6dd] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}
-                >
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-bold">{name}</span>
-                    {n === 42 && (
-                      <span className="inline-flex items-center gap-1 text-sm font-bold" aria-label={`${slotsPrice} créditos`}>
-                        <Coin className="size-4" />
-                        {slotsPrice}
-                      </span>
-                    )}
-                  </span>
-                  <span className="mt-0.5 block text-[11px] text-[#6b5440]">{hint}</span>
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          )}
 
           {error && (
             <p role="alert" className="text-sm text-[#a23b2a]">
@@ -261,7 +218,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
             </p>
           )}
           <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : "Compre este tipo de mural para criar com ele"} className={primaryButton}>
-            {busy ? "Criando…" : size === 42 ? "Criar mural de 42 espaços (" + slotsPrice + " créditos)" : "Criar mural"}
+            {busy ? "Criando…" : "Criar mural"}
           </button>
         </form>
       )}
