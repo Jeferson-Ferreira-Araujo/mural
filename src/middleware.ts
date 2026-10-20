@@ -42,6 +42,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(retry) } });
   }
   const res = NextResponse.next();
+  res.headers.set("x-rl-key", key);
   res.headers.set("x-ratelimit-remaining", String(Math.max(0, max - h.n)));
   return res;
 }
