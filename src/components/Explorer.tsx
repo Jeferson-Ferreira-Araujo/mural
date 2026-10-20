@@ -77,7 +77,8 @@ import { SearchBox } from "./SearchBox";
 import { Toast } from "./Toast";
 import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import type { DemoLocale } from "@/data/demoText";
 
 
 /** "Salvar imagem do mural" fica desligado por enquanto (a qualidade da imagem ainda está em estudo). Ligue para reabrir no menu da conta. */
@@ -89,6 +90,7 @@ const EXPORT_IMAGE_ENABLED = false;
  */
 export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { nick: string; slug: string }; /** aba do formulário de entrada quando a página é /entrar */ authMode?: "login" | "signup"; /** /entrar?next=…: para onde voltar depois do login */ nextPath?: string }) {
   const tx = useTranslations("components.Explorer");
+  const demoLocale = useLocale() as DemoLocale;
   const { session, loading: sessionLoading } = useSession();
   const logged = !!session;
   // /entrar?next=…: guarda o mural que a pessoa queria abrir; já logada, vai direto para ele
@@ -765,7 +767,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     },
     [loadBoard],
   );
-  const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0).items);
+  const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0, demoLocale).items);
   // marcar/desmarcar um item da lista: aparece na hora e o servidor confirma (se falhar, volta)
   const toggleListItem = useCallback(
     async (id: string, index: number) => {
@@ -1032,7 +1034,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   // a cada carregamento da tela inicial, o mural de exemplo aparece em um quadro diferente (sorteado no navegador, depois da hidratação)
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
-    const d = decorLayout(randomMural(Date.now()));
+    const d = decorLayout(randomMural(Date.now(), demoLocale), demoLocale);
     const pick = BOARDS[Math.floor(Math.random() * BOARDS.length)];
     let done = false;
     const show = () => {
@@ -1054,7 +1056,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       img.onload = null;
       img.onerror = null;
     };
-  }, []);
+  }, [demoLocale]);
   // endereço de um mural (/nick/slug): enquanto ele abre, a lousa fica escondida (nada de mostrar outro quadro por meio segundo)
   const boardPendingNow = (!selected && (initialRef ? !openFailed : !decorBoard)) || (!!selected && resolving);
   useEffect(() => {

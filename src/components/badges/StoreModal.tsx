@@ -14,7 +14,8 @@ import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, isDisplayOn } from "../widgets";
 import { GridSkeleton } from "../Skeleton";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
 
 export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
@@ -70,35 +71,36 @@ function Confetti() {
 }
 
 /** Amostra de cada pin da loja, como aparece no mural. */
-export function sampleFor(product: string, style?: string): DisplayData {
+export function sampleFor(product: string, style?: string, locale: DemoLocale = "pt"): DisplayData {
   const st = style || defaultStyle(product);
+  const L = SAMPLE_TEXT[locale];
   switch (product) {
     case "bible":
-      return { product, style: st, text: "Tudo posso naquele que me fortalece.", ref: "Filipenses 4:13" };
+      return { product, style: st, text: L.bibleText, ref: L.bibleRef };
     case "motivation":
-      return { product, style: st, text: "Disciplina de hoje é o resultado de amanhã." };
+      return { product, style: st, text: L.motivation };
     case "clock":
       return { product, style: st, tz: "America/Sao_Paulo" };
     case "calendar": {
       const n = new Date();
       const iso = (d: number) => `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-      return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: "Aniversário", yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: "Viagem", yearly: true }] };
+      return { product, style: st, dates: [{ date: iso(Math.min(28, n.getDate() + 4)), label: L.birthday, yearly: true }, { date: iso(Math.min(28, n.getDate() + 11)), label: L.trip, yearly: true }] };
     }
     case "poll":
-      return { product, style: st, title: "Você gosta de pizza com abacaxi?", options: ["Sim", "Não"] };
+      return { product, style: st, title: L.poll, options: [L.yes, L.no] };
     case "top3":
-      return { product, style: st, title: "Comidas favoritas", items: ["Lasanha", "Pizza", "Sorvete"] };
+      return { product, style: st, title: L.top3, items: L.food };
     case "book":
-      return { product, style: st, title: "O Pequeno Príncipe", pages: 96, read: 42, view: "both" };
+      return { product, style: st, title: L.book, pages: 96, read: 42, view: "both" };
     case "daycount": {
       const d = new Date();
       d.setDate(d.getDate() - 245);
-      return { product, style: st, title: "Juntos há", since: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
+      return { product, style: st, title: L.together, since: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
     }
     case "countdown": {
       const d = new Date();
       d.setDate(d.getDate() + 30);
-      return { product, style: st, title: "Título do contador", target: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, time: "08:00" };
+      return { product, style: st, title: L.counter, target: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, time: "08:00" };
     }
     case "cookie":
     case "date":
@@ -166,6 +168,7 @@ const COIN_SIZE = ["size-9", "size-10", "size-11", "size-12"];
  */
 export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean; onClose: () => void; inventory: BadgeInventory | null; onBuy: (item: BuyItem) => Promise<boolean> }) {
   const tx = useTranslations("components.badges.StoreModal");
+  const demoLocale = useLocale() as DemoLocale;
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria
@@ -412,7 +415,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                     <span className="pointer-events-none text-[9px]">
                       <span className="relative block">
-                        <DisplayCard data={sampleFor(c.id)} preview />
+                        <DisplayCard data={sampleFor(c.id, undefined, demoLocale)} preview />
                       </span>
                     </span>
                   </span>
@@ -459,7 +462,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <div className="grid min-h-[11.5rem] place-items-center bg-[#e9d8b6]/70 px-4 py-6">
                     <div className="text-[9px]">
                       <div className="relative">
-                        <DisplayCard data={sampleFor(displayCat ?? "", p.id.split(":")[1])} preview />
+                        <DisplayCard data={sampleFor(displayCat ?? "", p.id.split(":")[1], demoLocale)} preview />
                       </div>
                     </div>
                   </div>

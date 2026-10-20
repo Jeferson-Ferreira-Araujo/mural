@@ -1,5 +1,6 @@
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
 import { isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { localizeDemo, type DemoLocale } from "./demoText";
 
 /**
  * Dados MOCKADOS — apenas para demonstração do frontend (sem banco, sem envio real).
@@ -22,7 +23,7 @@ const SEED_VAULT: Record<string, Message> = {
   },
 };
 
-export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<string, Message> } {
+export function buildPool(nowMs: number, locale: DemoLocale = "pt"): { items: BoardItem[]; vault: Record<string, Message> } {
   const items: BoardItem[] = [
     { id: "m1", type: "postit", color: "yellow", text: "Você sempre foi uma das pessoas mais incríveis que conheci. ❤️" },
     {
@@ -67,12 +68,12 @@ export function buildPool(nowMs: number): { items: BoardItem[]; vault: Record<st
     { id: "m13", type: "voice", caption: "Sua voz sempre me faz sorrir! ♡", duration: "0:27" },
     { id: "m14", type: "place", name: "Cristo Redentor", address: "Rio de Janeiro - RJ", lat: -22.951916, lon: -43.210487, caption: "Um dos lugares que mais amo!" },
   ];
-  return { items, vault: { ...SEED_VAULT } };
+  return { items: items.map((i) => localizeDemo(i, locale)), vault: Object.fromEntries(Object.entries(SEED_VAULT).map(([k, v]) => [k, localizeDemo(v, locale)])) };
 }
 
 
 /** Mais exemplos, todos diferentes dos de cima: a página inicial mostra o quadro cheio sem nenhum pin repetido. */
-function extraPool(): BoardItem[] {
+function extraPool(locale: DemoLocale = "pt"): BoardItem[] {
   return [
     { id: "x1", type: "postit", color: "orange", text: "Seu abraço é o melhor lugar do mundo. Volta logo! 🤗" },
     { id: "x2", type: "text", variant: "letter", text: "Passou tanto tempo e eu ainda lembro da nossa risada. Que saudade de você, viu?" },
@@ -86,12 +87,12 @@ function extraPool(): BoardItem[] {
     { id: "x11", type: "video", caption: "Olha como a gente era novo!", duration: "0:18" },
     { id: "x12", type: "place", name: "Pão de Açúcar", address: "Rio de Janeiro - RJ", lat: -22.948, lon: -43.1566, caption: "Vamos voltar lá um dia?" },
     { id: "x13", type: "postit", color: "blue", text: "Você faz qualquer segunda-feira ficar melhor. 💙" },
-  ];
+  ].map((i) => localizeDemo(i as BoardItem, locale));
 }
 
 /** Os primeiros `count` itens do pool que o plano permite (formatos e cápsula). */
-export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = BOARD_CAPACITY): { items: BoardItem[]; vault: Record<string, Message> } {
-  const { items: base, vault } = buildPool(nowMs);
+export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = BOARD_CAPACITY, locale: DemoLocale = "pt"): { items: BoardItem[]; vault: Record<string, Message> } {
+  const { items: base, vault } = buildPool(nowMs, locale);
   let items = base;
   if (capacity > base.length) {
     // quadro de teste com mais espaços: repete os cartões de exemplo, em outra ordem, com ids novos
@@ -105,9 +106,9 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
 }
 
 /** Mural de exemplo aleatório (todos os espaços, em ordem embaralhada) para a página inicial: sem espaços vazios. */
-export function randomMural(nowMs: number): BoardItem[] {
+export function randomMural(nowMs: number, locale: DemoLocale = "pt"): BoardItem[] {
   // 28 espaços = os 15 exemplos + 13 extras, todos diferentes (nada de cartão repetido na tela)
-  const items = [...buildPool(nowMs).items, ...extraPool()].slice(0, BOARD_CAPACITY);
+  const items = [...buildPool(nowMs, locale).items, ...extraPool(locale)].slice(0, BOARD_CAPACITY);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];

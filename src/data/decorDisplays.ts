@@ -1,4 +1,5 @@
 import { sampleFor } from "@/components/badges/StoreModal";
+import type { DemoLocale } from "./demoText";
 import { WIDGET_STYLES } from "@/components/widgets";
 import { BADGE_EM, BADGES, type PlacedBadge } from "@/lib/badges";
 import { hasShapes, withShape } from "@/lib/displayShape";
@@ -95,7 +96,7 @@ function place(chosen: { wide: boolean }[], apart: boolean): number[][] | null {
 }
 
 /** Sorteia os displays e tira dos pins de exemplo os espaços que eles cobrem; devolve os displays prontos para a camada de bottons. */
-export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: PlacedBadge[] } {
+export function decorLayout(items: BoardItem[], locale: DemoLocale = "pt"): { items: BoardItem[]; badges: PlacedBadge[] } {
   let chosen: { spec: (typeof POOL)[number]; shape: "wide" | "square" }[] = [];
   let slots: number[][] | null = null;
   // várias tentativas até caber tudo com folga entre eles; se não der, aceita encostados
@@ -130,7 +131,7 @@ export function decorLayout(items: BoardItem[]): { items: BoardItem[]; badges: P
       id: s.product === "poll" ? "" : `decor-${i}`,
       key: s.key,
       kind: "display",
-      data: sampleFor(s.product, s.style),
+      data: sampleFor(s.product, s.style, locale),
       slots: s.slots,
       scale: s.scale,
       rotation: s.rotation,

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, DisplayCard, displayName, splitDisplayId } from "../widgets";
 import { sampleFor } from "./StoreModal";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import type { DemoLocale } from "@/data/demoText";
 
 /**
  * Aba "Displays" do compositor (clicou num espaço livre do próprio mural): os displays que a pessoa já comprou.
@@ -13,6 +14,7 @@ import { useTranslations } from "next-intl";
  */
 export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick: (id: string) => void; onStore: () => void }) {
   const tx = useTranslations("components.badges.DisplayChooser");
+  const demoLocale = useLocale() as DemoLocale;
   const [cat, setCat] = useState<string | null>(null);
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada estilo (retangular por padrão)
 
@@ -42,7 +44,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
     <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
       <span className="pointer-events-none text-[9px]">
         <span className="relative block">
-          <DisplayCard data={sampleFor(product, style)} key={id} preview />
+          <DisplayCard data={sampleFor(product, style, demoLocale)} key={id} preview />
         </span>
       </span>
     </span>
@@ -77,7 +79,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
                   <span className="grid min-h-[11rem] w-full place-items-center bg-[#e9d8b6]/70 px-4 py-5">
                     <span className="pointer-events-none text-[9px]">
                       <span className="relative block">
-                        <DisplayCard data={sampleFor(product, withShape(base, shape))} preview />
+                        <DisplayCard data={sampleFor(product, withShape(base, shape), demoLocale)} preview />
                       </span>
                     </span>
                   </span>
