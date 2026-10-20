@@ -177,7 +177,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   // os lançamentos mais recentes (maiores números) ganham o selo "Novo"
   const newKeys = new Set([...all].sort((a, b) => b.key - a.key).slice(0, NEW_BADGES_COUNT).map((b) => b.key));
   const [done, setDone] = useState<Done | null>(null);
-  const [short, setShort] = useState<{ cost: number; name: string } | null>(null); // item que a pessoa quis comprar sem ter créditos suficientes
+  const [short, setShort] = useState<{ cost: number; name: string; offer?: boolean } | null>(null); // item que a pessoa quis comprar sem ter créditos suficientes
   const packs = useRef<HTMLElement>(null);
   // ordem: os novos antes (mais novo primeiro); depois os demais na ordem de sempre. Comprar não muda a posição do botton na lista
   const shown = (filter === "all" ? all : all.filter((b) => BADGE_CATEGORY[b.key] === filter)).slice().sort((a, b) => {
@@ -231,6 +231,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: `credits:${id}` } })); // a janela de pagamento (Pix ou cartão) abre por cima da loja
   }
   const can = (cost: number) => credits >= cost;
+  const sug = CREDIT_PACKS.find((p) => p.id === "c29") ?? CREDIT_PACKS[CREDIT_PACKS.length - 1]; // pacote sugerido no aviso de créditos insuficientes (R$ 25)
 
   return (
     <Modal
@@ -575,6 +576,40 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           onClick={(e) => e.target === e.currentTarget && setShort(null)}
           className="m-auto w-[min(92vw,22rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
         >
+          {short.offer ? (
+            // sugestão no próprio aviso: o pacote de R$ 25 (o mais vendido), para a pessoa ter ideia do quanto dá para comprar
+            <div className="rounded-3xl border border-[#ecd9a0] bg-[#fffaf0] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
+              <h2 className="font-title text-2xl leading-tight font-semibold">Que tal este pacote?</h2>
+              <div className="relative mt-4 rounded-2xl border border-[#e8d9b0] bg-white px-4 pt-5 pb-4">
+                {sug.note && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-[#2f9e5a] px-2.5 py-0.5 text-[11px] font-bold whitespace-nowrap text-white shadow-sm">{sug.note}</span>}
+                <div className="flex items-center justify-center gap-3">
+                  <Coin className="size-14" />
+                  <p className="text-left leading-none">
+                    <span className="font-title block text-4xl font-semibold">{sug.credits}</span>
+                    <span className="text-sm text-[#8a7b69]">créditos</span>
+                  </p>
+                </div>
+                <p className="mt-3 text-2xl font-bold">{sug.price}</p>
+              </div>
+              <p className="mt-3 text-sm text-[#4a3826]">Com {sug.credits} créditos você leva bastante coisa: vários bottons, displays e até um fundo de mural.</p>
+              <div className="mt-4 flex gap-2">
+                <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
+                  Agora não
+                </button>
+                <button
+                  type="button"
+                  disabled={!PAYMENTS_ENABLED}
+                  onClick={() => {
+                    setShort(null);
+                    buyCredits(sug.id);
+                  }}
+                  className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {PAYMENTS_ENABLED ? "Comprar" : "Em breve"}
+                </button>
+              </div>
+            </div>
+          ) : (
           <div className="rounded-3xl border border-[#ecd9a0] bg-[#fffaf0] p-5 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.45)]">
             <Coin className="mx-auto size-14" />
             <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">Créditos insuficientes</h2>
@@ -587,16 +622,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setShort(null);
-                  window.setTimeout(() => packs.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60); // mostra os pacotes de crédito
-                }}
+                onClick={() => setShort({ ...short, offer: true })}
                 className="flex-1 cursor-pointer rounded-xl bg-[#f6c93f] px-4 py-2.5 text-sm font-bold text-[#3a2a08] hover:bg-[#fad45a]"
               >
                 Adquirir créditos
               </button>
             </div>
           </div>
+          )}
         </dialog>
       )}
     </Modal>
