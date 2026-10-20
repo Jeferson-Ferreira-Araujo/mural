@@ -41,7 +41,9 @@ export function middleware(req: NextRequest) {
     const retry = Math.max(1, Math.ceil((h.reset - now) / 1000));
     return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(retry) } });
   }
-  return NextResponse.next();
+  const res = NextResponse.next();
+  res.headers.set("x-ratelimit-remaining", String(Math.max(0, max - h.n)));
+  return res;
 }
 
 export const config = { matcher: "/api/:path*" };
