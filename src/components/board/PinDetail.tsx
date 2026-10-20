@@ -119,7 +119,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const revealBtn = () => (
     <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
       {showSecret ? <EyeClosed /> : <EyeOpen />}
-      {showSecret ? (widget ? "Esconder display" : "Esconder PIN") : widget ? "Revelar display" : "Revelar PIN"}
+      {showSecret ? (widget ? "Esconder display" : tx("m_esconderPin")) : widget ? "Revelar display" : tx("m_revelarPin")}
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
@@ -236,9 +236,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     try {
       const blob = await cardToPng(cardRef.current);
       const res = await deliverImage(blob, "pinz-pin", `Crie seu mural agora, acesse: https://pinz.digital`);
-      if (res === "downloaded") setShareMsg("Imagem salva! Agora é só postar.");
+      if (res === "downloaded") setShareMsg(tx("m_imagemSalvaAgoraESo"));
     } catch {
-      setShareMsg("Não foi possível gerar a imagem agora.");
+      setShareMsg(tx("m_naoFoiPossivelGerarA"));
     } finally {
       setSharing(false);
     }
@@ -359,7 +359,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
-              {item.ownerReview ? "Aguardando a sua aprovação" : "Aguardando liberação do dono do mural"}
+              {item.ownerReview ? tx("m_aguardandoASuaAprovacao") : tx("m_aguardandoLiberacaoDoDonoDo")}
             </p>
           )}
           {!mod && item && !isSealed(item) && !isHidden(item) && item.mine && (
@@ -377,7 +377,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <button
                 type="button"
                 disabled={busy || mod?.plan !== "full"}
-                title={mod?.plan === "full" ? "" : "Segredo é do PINZ+"}
+                title={mod?.plan === "full" ? "" : tx("m_segredoEDoPinz")}
                 onClick={() => {
                   setShowSecret(false);
                   void run(() => setDisplaySecret(widget.id, !widgetHidden), false);
@@ -395,7 +395,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                   <>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost}`}>
                       {tx("recusar")}</button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "Aprova e deixa em segredo: os visitantes veem o pin borrado" : "Segredo é do PINZ+"} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? tx("m_aprovaEDeixaEmSegredo") : tx("m_segredoEDoPinz")} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
                         {mod.plan === "full" ? "Aprovar como segredo" : "Segredo (PINZ+)"}
@@ -410,7 +410,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       <Trash />
                       <span className="hidden sm:inline">{tx("excluirPin")}</span>
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : "Segredo é do PINZ+"} onClick={() => {
+                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : tx("m_segredoEDoPinz")} onClick={() => {
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
                     }} className={`${ghost}`}>

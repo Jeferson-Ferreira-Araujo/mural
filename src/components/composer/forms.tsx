@@ -51,7 +51,7 @@ export function PostItForm({ onChange }: { onChange: DraftChange }) {
   const [font, setFont] = useState<HandId>("caveat");
   const [pin, setPin] = useState<PinColor | null>(null); // null = a tachinha padrão da cor do post-it
   const defaultPin: PinColor = color === "orange" || color === "blue" ? "blue" : "red";
-  useEffect(() => onChange({ type: "postit", color, text: text.trim() || "Seu recado aparece aqui", font, ...(pin ? { pin } : {}) }, { empty: !text.trim() }), [color, text, font, pin, onChange]);
+  useEffect(() => onChange({ type: "postit", color, text: text.trim() || tx("m_seuRecadoApareceAqui"), font, ...(pin ? { pin } : {}) }, { empty: !text.trim() }), [color, text, font, pin, onChange]);
   return (
     <div className="space-y-4">
       <fieldset data-tour="postit-color">
@@ -87,7 +87,7 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
   const [text, setText] = useState("");
   const [font, setFont] = useState<HandId>("caveat");
   const [tape, setTape] = useState<TapeColor>("yellow");
-  useEffect(() => onChange({ type: "text", variant, text: text.trim() || "Sua mensagem aparece aqui.", font, tape }, { empty: !text.trim() }), [variant, text, font, tape, onChange]);
+  useEffect(() => onChange({ type: "text", variant, text: text.trim() || tx("m_suaMensagemApareceAqui"), font, tape }, { empty: !text.trim() }), [variant, text, font, tape, onChange]);
   return (
     <div className="space-y-4">
       <div role="radiogroup" aria-label={tx("tipoDePapel")} className="inline-flex rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
@@ -126,7 +126,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
     onChange(
       {
         type: "list",
-        title: title.trim() || "Sua lista",
+        title: title.trim() || tx("m_suaLista"),
         items: (filled.length ? filled : ["Primeiro item", "Segundo item"]).map((text) => ({ text, done: false })),
         font,
         tape,
@@ -242,7 +242,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
       });
     } catch {
       setOn(false);
-      onError("Não foi possível abrir a câmera. Permita o acesso nas configurações do navegador ou escolha um arquivo.");
+      onError(tx("m_naoFoiPossivelAbrirA"));
     }
   }
 
@@ -261,7 +261,7 @@ function CameraCapture({ onPhoto, onError }: { onPhoto: (f: File) => void; onErr
     g.drawImage(v, 0, 0);
     c.toBlob(
       (b) => {
-        if (!b) return onError("Não foi possível tirar a foto. Tente de novo.");
+        if (!b) return onError(tx("m_naoFoiPossivelTirarA"));
         stop();
         setOn(false);
         onPhoto(new File([b], `foto-${Date.now()}.jpg`, { type: "image/jpeg" }));
@@ -315,7 +315,7 @@ export function PhotoForm({ onChange }: { onChange: DraftChange }) {
     if (!original.type.startsWith("image/")) return setError("Escolha um arquivo de imagem.");
     setError(null);
     const file = await downscalePhoto(original); // foto da câmera: reduz sozinha, sem o usuário precisar saber o tamanho
-    if (file.size > MAX_PHOTO_MB * 1024 * 1024) return setError(`Esta foto ficou grande demais (${(file.size / 1048576).toFixed(0)} MB). Tente outra.`);
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) return setError(tx("m_estaFotoFicouGrandeDemais", { v0: (file.size / 1048576).toFixed(0) }));
     if (prev.current) URL.revokeObjectURL(prev.current);
     const url = URL.createObjectURL(file);
     prev.current = url;
@@ -379,8 +379,8 @@ export function MusicForm({ onChange }: { onChange: DraftChange }) {
   );
   return (
     <div className="space-y-4">
-      <Field label={tx("linkDaMusica")} error={link.trim() && !linkOk ? "Use um link que comece com http:// ou https://" : null} hint={
-          looking ? "Buscando o nome e a duração…" : meta ? `Encontrada: ${meta.title}${meta.artist ? ` · ${meta.artist}` : ""}${meta.duration ? ` · ${meta.duration}` : ""}` : "Spotify e YouTube tocam aqui mesmo no mural (com nome e duração); outros links abrem em outra aba."
+      <Field label={tx("linkDaMusica")} error={link.trim() && !linkOk ? tx("m_useUmLinkQueComece") : null} hint={
+          looking ? tx("m_buscandoONomeEA") : meta ? `Encontrada: ${meta.title}${meta.artist ? ` · ${meta.artist}` : ""}${meta.duration ? ` · ${meta.duration}` : ""}` : tx("m_spotifyEYoutubeTocamAqui")
         }>
         {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={300} placeholder={tx("https")} className={inputClass} />}
       </Field>
@@ -419,7 +419,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
 
   async function pick(original: File | undefined) {
     if (!original) return;
-    if (!original.type.startsWith("video/")) return setError("Escolha um arquivo de vídeo.");
+    if (!original.type.startsWith("video/")) return setError(tx("m_escolhaUmArquivoDeVideo"));
     setError(null);
     setNote(null);
     setSrc(null);
@@ -428,24 +428,24 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
     try {
       const info = await probeVideo(original);
       secs = Number.isFinite(info.duration) ? info.duration : undefined;
-      if (secs && secs > MAX_VIDEO_SEC) return setError(`O vídeo pode ter até ${MAX_VIDEO_SEC} segundos (este tem ${formatDuration(secs)}). Corte um trecho e tente de novo.`);
+      if (secs && secs > MAX_VIDEO_SEC) return setError(tx("m_oVideoPodeTerAte", { v0: MAX_VIDEO_SEC, v1: formatDuration(secs) }));
       if (needsCompression(original, info)) {
         if (canCompressVideo()) {
           // vídeos de celular são enormes: reduz aqui mesmo (resolução menor, qualidade boa) antes de enviar
           setProgress(0);
           file = await compressVideo(original, setProgress);
           setProgress(null);
-          if (file !== original) setNote(`Vídeo otimizado: de ${mb(original.size)} para ${mb(file.size)}.`);
+          if (file !== original) setNote(tx("m_videoOtimizadoDePara", { v0: mb(original.size), v1: mb(file.size) }));
         } else if (original.size > MAX_VIDEO_MB * 1024 * 1024) {
-          return setError(`Este vídeo tem ${mb(original.size)} e seu navegador não consegue reduzi-lo. Use o Chrome, ou grave um vídeo mais curto (até ${MAX_VIDEO_MB} MB).`);
+          return setError(tx("m_esteVideoTemESeu", { v0: mb(original.size), v1: MAX_VIDEO_MB }));
         }
       }
     } catch {
       setProgress(null);
-      if (original.size > MAX_VIDEO_MB * 1024 * 1024) return setError("Não foi possível reduzir este vídeo. Tente um mais curto ou em outra resolução.");
+      if (original.size > MAX_VIDEO_MB * 1024 * 1024) return setError(tx("m_naoFoiPossivelReduzirEste"));
     }
     setProgress(null);
-    if (file.size > MAX_VIDEO_MB * 1024 * 1024) return setError(`Mesmo reduzido, o vídeo ficou com ${mb(file.size)} (o limite é ${MAX_VIDEO_MB} MB). Tente um vídeo mais curto.`);
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) return setError(tx("m_mesmoReduzidoOVideoFicou", { v0: mb(file.size), v1: MAX_VIDEO_MB }));
     if (prev.current) URL.revokeObjectURL(prev.current);
     const url = URL.createObjectURL(file);
     prev.current = url;
@@ -474,7 +474,7 @@ export function VideoForm({ onChange }: { onChange: DraftChange }) {
           {(id) => <input id={id} value={link} onChange={(e) => setLink(e.target.value)} inputMode="url" maxLength={200} placeholder={tx("httpsWwwYoutubeComWatch")} className={inputClass} />}
         </Field>
       ) : (
-        <Field label={tx("video")} hint={`Até ${MAX_VIDEO_SEC} segundos. Vídeos grandes são otimizados aqui mesmo, antes de enviar.`}>
+        <Field label={tx("video")} hint={tx("m_ateSegundosVideosGrandesSao", { v0: MAX_VIDEO_SEC })}>
           {(id) => <input id={id} type="file" accept="video/*" onChange={(e) => pick(e.target.files?.[0])} className="block w-full cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[#1f232b] file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-white" />}
         </Field>
       )}
@@ -565,14 +565,14 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
       }, 1000);
     } catch (e) {
       const denied = e instanceof DOMException && (e.name === "NotAllowedError" || e.name === "SecurityError");
-      setError(denied ? "Permita o uso do microfone para gravar." : "Não foi possível usar o microfone. Você pode escolher um arquivo de áudio.");
+      setError(denied ? tx("m_permitaOUsoDoMicrofone") : tx("m_naoFoiPossivelUsarO"));
     }
   }
 
   function pickFile(file: File | undefined) {
     if (!file) return;
-    if (!file.type.startsWith("audio/")) return setError("Escolha um arquivo de áudio.");
-    if (file.size > MAX_AUDIO_MB * 1024 * 1024) return setError(`O áudio pode ter até ${MAX_AUDIO_MB} MB.`);
+    if (!file.type.startsWith("audio/")) return setError(tx("m_escolhaUmArquivoDeAudio"));
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) return setError(tx("m_oAudioPodeTerAte", { v0: MAX_AUDIO_MB }));
     setError(null);
     const url = URL.createObjectURL(file);
     replaceAudio(url);
@@ -612,11 +612,11 @@ export function VoiceForm({ onChange }: { onChange: DraftChange }) {
             {canRecord && (
               <button type="button" onClick={start} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c313b]">
                 <span aria-hidden className="size-2.5 rounded-full bg-[#ff5a4d]" />
-                {src ? "Gravar de novo" : "Gravar"}
+                {src ? tx("m_gravarDeNovo") : "Gravar"}
               </button>
             )}
             <label className="cursor-pointer rounded-xl border border-[#d9c9ad] px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf] focus-within:outline-2 focus-within:outline-[#d98a2b]">
-              {canRecord ? "ou escolher um arquivo" : "Escolher um arquivo de áudio"}
+              {canRecord ? "ou escolher um arquivo" : tx("m_escolherUmArquivoDeAudio")}
               <input type="file" accept="audio/*" onChange={(e) => pickFile(e.target.files?.[0])} className="sr-only" />
             </label>
           </div>
@@ -650,14 +650,14 @@ export function PlaceForm({ onChange }: { onChange: DraftChange }) {
 
   async function search() {
     const q = query.trim();
-    if (q.length < 3) return setError("Digite pelo menos 3 letras do nome do lugar.");
+    if (q.length < 3) return setError(tx("m_digitePeloMenos3Letras"));
     setError(null);
     setSearching(true);
     try {
       setHits(await searchPlaces(q));
       setSearched(true);
     } catch {
-      setError("Não foi possível buscar agora. Tente de novo em instantes.");
+      setError(tx("m_naoFoiPossivelBuscarAgora"));
     } finally {
       setSearching(false);
     }

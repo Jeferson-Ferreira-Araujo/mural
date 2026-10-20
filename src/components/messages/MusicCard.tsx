@@ -230,7 +230,7 @@ export function MusicCard({
           <button
             type="button"
             onClick={onPlay}
-            aria-label={embed ? (playing ? "Pausar a música" : "Ouvir a música aqui") : link ? "Ouvir a música (abre o link)" : playing ? "Pausar" : "Reproduzir"}
+            aria-label={embed ? (playing ? tx("m_pausarAMusica") : tx("m_ouvirAMusicaAqui")) : link ? tx("m_ouvirAMusicaAbreO") : playing ? "Pausar" : "Reproduzir"}
             className="absolute top-1/2 left-1/2 grid size-[2.3em] -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full transition active:scale-95 active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f4c542]"
             style={{ color: look.icon, background: keyBg, boxShadow: `${key}, 0 0 0 0.1em rgba(0,0,0,.28)` }}
           >

@@ -1,4 +1,5 @@
-"use client";
+
+import { useTranslations } from "next-intl";"use client";
 
 /** Evento que pede ao mural visível para escolher um ponto livre e abrir o compositor (Pins e Displays), sem precisar tocar no mural. */
 export const COMPOSE_AUTO_EVENT = "pinz:compose-auto";
@@ -8,13 +9,14 @@ export const COMPOSE_AUTO_EVENT = "pinz:compose-auto";
  * O ponto vem sozinho (o espaço livre mais perto do centro do mural); para escolher o ponto, é só clicar duas vezes (ou segurar) no mural.
  */
 export function AddPinButton({ className = "", visitor = false }: { className?: string; /** visita no mural de outra pessoa: só pins (sem displays) */ visitor?: boolean }) {
+  const tx = useTranslations("components.AddPinButton");
   return (
     <button
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent(COMPOSE_AUTO_EVENT))}
-      aria-label={visitor ? "Deixar um pin neste mural" : "Colocar um pin ou um display no mural"}
+      aria-label={visitor ? tx("m_deixarUmPinNesteMural") : tx("m_colocarUmPinOuUm")}
       data-tour="add"
-      title={visitor ? "Deixar um pin" : "Colocar um pin ou display"}
+      title={visitor ? tx("m_deixarUmPin") : tx("m_colocarUmPinOuDisplay")}
       className={`pointer-events-auto grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd] ${className}`}
     >
       <svg viewBox="0 0 28 28" className="size-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

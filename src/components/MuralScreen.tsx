@@ -47,7 +47,7 @@ export function MuralScreen({ composer, ...view }: Props) {
     composer.mode === "hidden"
       ? null
       : composer.mode === "soon"
-        ? () => onNotify("Em breve: o envio de mensagens chega na próxima etapa.")
+        ? () => onNotify(tx("m_emBreveOEnvioDe"))
         : async (s?: number, pl?: PinPlace) => {
             // visitante sem conta: antes de começar, avisa que publicar exige conta
             if (composer.mode === "demo" && !composer.signAs && composer.signupHref) {
@@ -103,7 +103,7 @@ export function MuralScreen({ composer, ...view }: Props) {
               }
               setOpen(false);
               window.dispatchEvent(new CustomEvent("pinz:expect-new")); // o quadro destaca onde o pin entrou
-              onNotify(composer.sentNote ?? (p.capsuleAt ? "Cápsula fechada e colocada no mural! 🔒" : "Seu PINZ foi colocado no mural! 📌"));
+              onNotify(composer.sentNote ?? (p.capsuleAt ? tx("m_capsulaFechadaEColocadaNo") : tx("m_seuPinzFoiColocadoNo")));
             } finally {
               setSending(false);
             }

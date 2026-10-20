@@ -76,7 +76,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     const res = await buyBoard(getBrowserSupabase(), buying);
     if (!res.ok) {
       setBusy(false);
-      setError(res.reason === "no_credits" ? "Créditos insuficientes para este mural." : res.reason === "plus_required" ? "Comprar murais é para quem assina o PINZ+." : "Não foi possível comprar agora. Tente de novo.");
+      setError(res.reason === "no_credits" ? tx("m_creditosInsuficientesParaEsteMural") : res.reason === "plus_required" ? tx("m_comprarMuraisEParaQuem") : tx("m_naoFoiPossivelComprarAgora"));
       return;
     }
     await load();
@@ -91,7 +91,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   async function create(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
-    if (!title.trim()) return setError("Preencha o nome do mural.");
+    if (!title.trim()) return setError(tx("m_preenchaONomeDoMural"));
     const perr = privacyError(privacy, false);
     if (perr) return setError(perr);
     setBusy(true);
@@ -101,7 +101,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
     const created = data as { slug?: string; id?: string } | null;
     if (err || !created?.slug || !created.id) {
       setBusy(false);
-      setError(err?.message.includes("mural_limit") ? "Você chegou ao limite de murais." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err?.message.includes("mural_limit") ? tx("m_voceChegouAoLimiteDe") : tx("m_naoFoiPossivelCriarO"));
       return;
     }
     if (board !== DEFAULT_BOARD) await sb.rpc("set_mural_board", { p_mural_id: created.id, p_board: board });
@@ -144,7 +144,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
           <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
             <div className="mb-2 flex items-center justify-between gap-3">
               <span className="text-sm font-semibold">{tx("tipoDoMural")}</span>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold" aria-label={`${credits} créditos`}>
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold" aria-label={tx("m_creditos", { v0: credits })}>
                 <Coin />
                 {credits}
               </span>
@@ -192,7 +192,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                   key={d}
                   type="button"
                   onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
-                  aria-label={d < 0 ? "Tipo anterior" : "Próximo tipo"}
+                  aria-label={d < 0 ? "Tipo anterior" : tx("m_proximoTipo")}
                   className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
                   <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -218,8 +218,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
               {error}
             </p>
           )}
-          <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : "Compre este tipo de mural para criar com ele"} className={primaryButton}>
-            {busy ? "Criando…" : "Criar mural"}
+          <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : tx("m_compreEsteTipoDeMural")} className={primaryButton}>
+            {busy ? "Criando…" : tx("m_criarMural")}
           </button>
         </form>
       )}

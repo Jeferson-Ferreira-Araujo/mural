@@ -39,7 +39,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     const res = await respondSharedInvite(sb, m.id, accept);
     setBusy(false);
     if (!res.ok) return fail(res.reason);
-    onNotify(accept ? "Convite aceito! Abra o mural com a senha combinada." : "Convite recusado.");
+    onNotify(accept ? tx("m_conviteAceitoAbraOMural") : "Convite recusado.");
     await reload();
   }
 
@@ -60,7 +60,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     if (!res.ok) return fail(res.reason);
     setChanging(null);
     setNewPw("");
-    onNotify("Senha trocada. As duas pessoas precisam usar a nova.");
+    onNotify(tx("m_senhaTrocadaAsDuasPessoas"));
   }
 
   const invites = (list ?? []).filter((m) => !m.mine && m.status === "pending");
@@ -115,7 +115,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </p>
                   </div>
                   {m.mine && m.status === "accepted" && (
-                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={`Alterar a senha de ${m.title}`} title={tx("alterarSenha")} className={iconBtn}>
+                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={tx("m_alterarASenhaDe", { v0: m.title })} title={tx("alterarSenha")} className={iconBtn}>
                       <svg {...ic}>
                         <circle cx="8" cy="15" r="4" />
                         <path d="m11 12 8-8M16 7l3 3M14 9l2 2" />
@@ -123,7 +123,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </button>
                   )}
                   {m.status === "accepted" && (
-                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Visualizar ${m.title}`} title={m.locked ? "Bloqueado: os dois precisam ter o PINZ+" : "Visualizar o mural"} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
+                    <a href={m.locked ? undefined : `/${m.owner}/${m.slug}`} aria-disabled={m.locked} aria-label={`Visualizar ${m.title}`} title={m.locked ? "Bloqueado: os dois precisam ter o PINZ+" : tx("m_visualizarOMural")} className={`${iconBtn} ${m.locked ? "pointer-events-none opacity-50" : ""}`}>
                       <svg {...ic}>
                         <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
                         <circle cx="12" cy="12" r="3" />
@@ -139,8 +139,8 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                   )}
                 </div>
                 {confirmId === m.id && (
-                  <div role="alertdialog" aria-label={m.status === "pending" ? "Cancelar convite" : "Apagar mural"} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
-                    <p className="text-sm font-semibold text-[#6b2a1d]">{m.status === "pending" ? "Cancelar este convite?" : `Apagar “${m.title}” para as duas pessoas?`}</p>
+                  <div role="alertdialog" aria-label={m.status === "pending" ? "Cancelar convite" : tx("m_apagarMural")} className="mt-3 rounded-xl border border-[#e3b3a8] bg-[#fbeae5] p-3">
+                    <p className="text-sm font-semibold text-[#6b2a1d]">{m.status === "pending" ? tx("m_cancelarEsteConvite") : tx("m_apagarParaAsDuasPessoas", { v0: m.title })}</p>
                     {m.status !== "pending" && <p className="mt-1 text-sm text-[#6b2a1d]">{tx("todosOsPinsSeraoPerdidos")}</p>}
                     <div className="mt-3 flex gap-2">
                       <button type="button" disabled={busy} onClick={() => setConfirmId(null)} className={`${ghostButton} flex-1`}>

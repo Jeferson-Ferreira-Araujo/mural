@@ -38,13 +38,13 @@ export default function NovaSenha() {
     setMsg(null);
     const problem = passwordProblem(pw, { email });
     if (problem) return setMsg(problem);
-    if (pw !== pw2) return setMsg("As senhas não são iguais.");
+    if (pw !== pw2) return setMsg(tx("m_asSenhasNaoSaoIguais"));
     setBusy(true);
     const sb = getBrowserSupabase();
     const { error } = await sb.auth.updateUser({ password: pw });
     if (error) {
       setBusy(false);
-      return setMsg(error.message.toLowerCase().includes("same") ? "Escolha uma senha diferente da atual." : "Não foi possível trocar a senha agora. Peça um novo link e tente de novo.");
+      return setMsg(error.message.toLowerCase().includes("same") ? tx("m_escolhaUmaSenhaDiferenteDa") : tx("m_naoFoiPossivelTrocarA"));
     }
     router.replace(await homeRouteFor(sb));
   }
@@ -88,7 +88,7 @@ export default function NovaSenha() {
           </p>
         )}
         <button type="submit" disabled={busy} className={primaryButton}>
-          {busy ? "Salvando…" : "Salvar nova senha"}
+          {busy ? "Salvando…" : tx("m_salvarNovaSenha")}
         </button>
       </form>
     </AuthShell>

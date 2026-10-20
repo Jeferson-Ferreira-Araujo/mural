@@ -110,14 +110,14 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
   async function search() {
     const q = query.trim();
-    if (q.length < 3) return setErr("Digite pelo menos 3 letras do nome da cidade.");
+    if (q.length < 3) return setErr(tx("m_digitePeloMenos3Letras"));
     setErr(null);
     setSearching(true);
     try {
       setHits(await searchPlaces(q));
       setSearched(true);
     } catch {
-      setErr("Não foi possível buscar agora. Tente de novo em instantes.");
+      setErr(tx("m_naoFoiPossivelBuscarAgora"));
     } finally {
       setSearching(false);
     }
@@ -130,13 +130,13 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "clock" ? { tz } : {}),
     ...(product === "calendar" ? { dates: dates.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d.date)) } : {}),
     // na prévia, enquanto não preencheu, aparece um exemplo (30 dias adiante)
-    ...(product === "countdown" ? { title: cdTitle.trim() || "Seu evento", target: /^\d{4}-\d{2}-\d{2}$/.test(cdDate) ? cdDate : isoPlus(30), time: cdTime || "00:00" } : {}),
+    ...(product === "countdown" ? { title: cdTitle.trim() || tx("m_seuEvento"), target: /^\d{4}-\d{2}-\d{2}$/.test(cdDate) ? cdDate : isoPlus(30), time: cdTime || "00:00" } : {}),
     ...(product === "book"
       ? { title: bkTitle.trim(), pages: Number(bkPages) > 0 ? Math.round(Number(bkPages)) : 320, read: bkPages && bkRead !== "" ? Math.round(Number(bkRead)) : bkPages ? 0 : 120, view: bkView, ...(bkPreview || bkCover ? { cover: bkPreview ?? bkCover ?? undefined } : {}) }
       : {}),
     ...(product === "top3" ? { title: t3Title.trim() || "Comidas favoritas", items: t3Items.map((x, i) => x.trim() || ["Lasanha", "Pizza", "Sorvete"][i]) } : {}),
-    ...(product === "poll" ? { title: plTitle.trim() || "Você gosta de pizza com abacaxi?", options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || ["Sim", "Não"][i]) } : {}),
-    ...(product === "daycount" ? { title: dcTitle.trim() || "Juntos há", since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
+    ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || ["Sim", "Não"][i]) } : {}),
+    ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const data: DisplayData = { ...base, style };
@@ -153,7 +153,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       const up = await uploadBookCover(getBrowserSupabase(), bkFile);
       onSubmit({ ...rest, cover: up.url, approval: up.approval } as DisplayData);
     } catch (e) {
-      setErr(e instanceof InappropriateCover ? "Essa imagem não pôde ser usada. Escolha outra foto de capa." : e instanceof Error ? e.message : "Não foi possível enviar a capa agora.");
+      setErr(e instanceof InappropriateCover ? tx("m_essaImagemNaoPodeSer") : e instanceof Error ? e.message : tx("m_naoFoiPossivelEnviarA"));
     } finally {
       setUploading(false);
     }
@@ -309,7 +309,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
             <div className="space-y-2">
               <p className="text-sm font-semibold">{tx("asDuasRespostas")}</p>
               {([0, 1] as const).map((i) => (
-                <input key={i} value={plOptions[i] ?? ""} onChange={(e) => setPlOptions((l) => [0, 1].map((j) => (j === i ? e.target.value : (l[j] ?? ""))))} maxLength={40} aria-label={`Resposta ${i + 1}`} placeholder={i === 0 ? "Ex: Sim" : "Ex: Não"} className={inputClass} autoComplete="off" />
+                <input key={i} value={plOptions[i] ?? ""} onChange={(e) => setPlOptions((l) => [0, 1].map((j) => (j === i ? e.target.value : (l[j] ?? ""))))} maxLength={40} aria-label={`Resposta ${i + 1}`} placeholder={i === 0 ? "Ex: Sim" : tx("m_exNao")} className={inputClass} autoComplete="off" />
               ))}
             </div>
             {editing && <p className="text-xs text-[#8a7b69]">{tx("mudarAsRespostasZeraOs")}</p>}
@@ -360,7 +360,7 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
                       onChange={(e) => setDates((l) => l.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))}
                       maxLength={30}
                       placeholder={tx("exAniversarioDaAna")}
-                      aria-label={`Nome da data ${i + 1}`}
+                      aria-label={tx("m_nomeDaData", { v0: i + 1 })}
                       className={`${inputClass} min-w-0 !px-2.5 !py-2 !text-sm`}
                     />
                     <button type="button" aria-label={`Tirar a data ${i + 1}`} onClick={() => setDates((l) => l.filter((_, j) => j !== i))} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[#a23b2a] hover:bg-black/5">

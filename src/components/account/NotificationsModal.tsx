@@ -29,7 +29,7 @@ export function NotificationsModal({ open, onClose, items }: { open: boolean; on
                 <span>{when(n.createdAt)}</span>
                 {n.kind !== "reward" && n.kind !== "gift" && n.kind !== "birthday" && n.kind !== "archived" && (
                   <a href={n.kind === "follow" ? `/${n.data.actor}` : `/${n.data.muralNick}/${n.data.muralSlug}`} className="font-semibold text-[#4a3826] underline">
-                    {n.kind === "follow" ? "Ver o perfil" : "Ver o mural"}
+                    {n.kind === "follow" ? "Ver o perfil" : tx("m_verOMural")}
                   </a>
                 )}
               </p>

@@ -15,7 +15,7 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
       className={`rounded-[1em] border px-[1.1em] py-[0.95em] ${dark ? "border-[#e0a02f]/50 bg-[#3a2a0c]/80 text-[#fff1cf] backdrop-blur" : "border-[#e0b04a] bg-[#fff1cf] text-[#4a3000]"}`}
     >
       <p className="flex items-center gap-[0.5em] text-[1.05em] font-bold">
-        <span aria-hidden>📌</span> {planLimit > 0 ? `Você chegou ao limite de ${planLimit} pins do plano gratuito.` : "Seu mural está cheio."}
+        <span aria-hidden>📌</span> {planLimit > 0 ? tx("m_voceChegouAoLimiteDe", { v0: planLimit }) : tx("m_seuMuralEstaCheio")}
       </p>
       <p className="mt-[0.3em] text-[0.92em]">
         {tries > 0 ? (
@@ -23,10 +23,10 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
             <strong>{tries}</strong> {tries === 1 ? "pessoa tentou" : "pessoas tentaram"} deixar um PINZ.
           </>
         ) : (
-          "Ninguém tentou deixar um PINZ ainda."
+          tx("m_ninguemTentouDeixarUmPinz")
         )}
       </p>
-      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{planLimit > 0 ? "Assine o PINZ+ para colocar pins e displays sem limite." : "Em breve: use créditos para abrir outro mural."}</p>
+      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{planLimit > 0 ? tx("m_assineOPinzParaColocar") : tx("m_emBreveUseCreditosPara")}</p>
     </section>
   );
 }

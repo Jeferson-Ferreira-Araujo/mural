@@ -131,7 +131,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     try {
       if (sessionStorage.getItem("pinz:reactivated") === "1") {
         sessionStorage.removeItem("pinz:reactivated");
-        notify("Bem-vindo de volta! Sua conta foi reativada.");
+        notify(tx("m_bemVindoDeVoltaSua"));
       }
     } catch {}
   }, [session, notify]);
@@ -339,9 +339,9 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     if (ok) setFollowers((n) => (n === null ? n : Math.max(0, n + (next ? 1 : -1))));
     if (!ok) {
       setFollowingState(!next);
-      notify("Não foi possível agora. Tente de novo.");
+      notify(tx("m_naoFoiPossivelAgoraTente"));
     } else {
-      notify(next ? `Você segue @${followNick}. Ele fica em Seguindo, no menu.` : `Você deixou de seguir @${followNick}.`);
+      notify(next ? tx("m_voceSegueEleFicaEm", { v0: followNick }) : tx("m_voceDeixouDeSeguir", { v0: followNick }));
       if (next) void claimReward("follow");
     }
   }, [followNick, followBusy, following, notify]);
@@ -374,7 +374,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   useEffect(() => {
     const h = (e: Event) => {
       const d = (e as CustomEvent<{ title: string; credits: number }>).detail;
-      notify(`+${d.credits} crédito${d.credits > 1 ? "s" : ""}: ${d.title}`);
+      notify(tx("m_credito", { v0: d.credits, v1: d.credits > 1 ? "s" : "", v2: d.title }));
       void reloadInventory();
     };
     window.addEventListener(REWARD_EVENT, h);
@@ -516,7 +516,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       setItems([]);
       setBoardLoaded(false);
       autoKey.current = null;
-      if (!openMural_) notify(selected?.kind === "shared" ? "Por segurança, digite a senha do mural de novo." : why); // mural público volta a entrar sozinho, sem aviso
+      if (!openMural_) notify(selected?.kind === "shared" ? tx("m_porSegurancaDigiteASenha") : why); // mural público volta a entrar sozinho, sem aviso
       // a pergunta pode ter mudado: mostra a atual
       if (nick && slug) void getPublicMural(getBrowserSupabase(), { nick, slug }).then((m) => m && setSelected(m));
     },
@@ -625,7 +625,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const afterModeration = useCallback(
     async (ok: boolean, done: string) => {
       if (!ok) {
-        notify("Não foi possível concluir agora. Tente de novo.");
+        notify(tx("m_naoFoiPossivelConcluirAgora"));
         return false;
       }
       notify(done);
@@ -639,8 +639,8 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     () => ({
       plan: (isMember ? "full" : (own.find((m) => m.slug === slug)?.plan ?? "free")) as "free" | "full",
       moderate: async (id: string, approve: boolean, secret = false) =>
-        afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? "Pin aprovado como segredo." : "Pin aprovado! Já aparece para todos.") : "Pin recusado."),
-      remove: async (id: string) => afterModeration(await moderatePin(getBrowserSupabase(), id, false, false), "Pin apagado."),
+        afterModeration(await moderatePin(getBrowserSupabase(), id, approve, secret), approve ? (secret ? tx("m_pinAprovadoComoSegredo") : tx("m_pinAprovadoJaAparecePara")) : tx("m_pinRecusado")),
+      remove: async (id: string) => afterModeration(await moderatePin(getBrowserSupabase(), id, false, false), tx("m_pinApagado")),
       move: async (id: string, slot: number) => {
         // a tela muda na hora (troca os dois espaços); o servidor confirma em seguida e, se falhar, recarrega o quadro como estava
         moveSeq.current++;
@@ -655,7 +655,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         const { error } = await getBrowserSupabase().rpc("move_pin", { p_id: id, p_slot: slot });
         moveSeq.current++;
         if (error) {
-          notify("Não foi possível mover o pin agora.");
+          notify(tx("m_naoFoiPossivelMoverO"));
           await loadBoard();
           return false;
         }
@@ -668,14 +668,14 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         const { error } = await getBrowserSupabase().rpc("place_pin", { p_id: id, p_slot: slot, p_ox: ox, p_oy: oy, p_cov: cov });
         moveSeq.current++;
         if (error) {
-          notify(error.message.includes("slot_taken") ? "Não dá para soltar aqui: o lugar acabou de ser ocupado." : `Não foi possível mover o pin agora (${error.message.slice(0, 80)}).`);
+          notify(error.message.includes("slot_taken") ? tx("m_naoDaParaSoltarAqui") : tx("m_naoFoiPossivelMoverO2", { v0: error.message.slice(0, 80) }));
           await loadBoard();
           return false;
         }
         return true;
       },
-      setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? "Pin em segredo." : "Pin visível para todos."),
-      report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), "Denúncia enviada e pin removido."),
+      setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? tx("m_pinEmSegredo") : tx("m_pinVisivelParaTodos")),
+      report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), tx("m_denunciaEnviadaEPinRemovido")),
     }),
     [afterModeration, own, slug, isMember, notify, loadBoard],
   );
@@ -699,15 +699,15 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const exportImage = useCallback(async () => {
     if (exporting.current) return;
     const el = visibleBoardElement();
-    if (!el) return notify("Abra o mural para gerar a imagem.");
+    if (!el) return notify(tx("m_abraOMuralParaGerar"));
     exporting.current = true;
-    notify("Gerando a imagem do mural…");
+    notify(tx("m_gerandoAImagemDoMural"));
     try {
       const blob = await boardToImage(el);
       const res = await deliverImage(blob, `pinz-${slug ?? "mural"}`);
       if (res !== "canceled") notify(res === "shared" ? "Imagem pronta! 📸" : "Imagem salva! 📸");
     } catch {
-      notify("Não foi possível gerar a imagem agora. Tente de novo.");
+      notify(tx("m_naoFoiPossivelGerarA"));
     } finally {
       exporting.current = false;
     }
@@ -748,11 +748,11 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       const sb = getBrowserSupabase();
       const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? `Botton liberado com ${item.qty} unidades! Já está na sua barra.` : "Botton liberado! Já está na sua barra.") : item.kind === "board" ? "Fundo liberado! Aplique em Editar mural." : item.kind === "product" ? "Display liberado! Ele já está na aba Displays ao clicar num espaço livre." : "Mural extra liberado! Crie o novo mural.");
+        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : "+1 unidade adicionada.") : item.kind === "badge" ? (item.qty > 1 ? tx("m_bottonLiberadoComUnidadesJa", { v0: item.qty }) : tx("m_bottonLiberadoJaEstaNa")) : item.kind === "board" ? tx("m_fundoLiberadoApliqueEmEditar") : item.kind === "product" ? tx("m_displayLiberadoEleJaEsta") : tx("m_muralExtraLiberadoCrieO"));
         await reloadInventory();
         return true;
       }
-      notify(res.reason === "no_credits" ? "Créditos insuficientes." : res.reason === "plus_required" ? "Mural extra é para quem assina o PINZ+." : "Não foi possível concluir a compra agora.");
+      notify(res.reason === "no_credits" ? tx("m_creditosInsuficientes") : res.reason === "plus_required" ? tx("m_muralExtraEParaQuem") : tx("m_naoFoiPossivelConcluirA"));
       return false;
     },
     [notify, reloadInventory],
@@ -781,7 +781,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       const ok = await updateListPin(getBrowserSupabase(), id, list.title, next);
       if (!ok) {
         setItems((prev) => prev.map((it) => (it.id === id && "items" in it ? { ...it, items: list.items } : it)));
-        notify("Não foi possível marcar agora. Tente de novo.");
+        notify(tx("m_naoFoiPossivelMarcarAgora"));
       }
     },
     [items, notify, decor],
@@ -816,7 +816,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       setLoading(false);
       if (!m) {
         setOpenFailed(true);
-        notify("Não foi possível abrir esse mural.");
+        notify(tx("m_naoFoiPossivelAbrirEsse"));
         return;
       }
       setUnlocked(stillOk);
@@ -855,7 +855,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       const profile = await getProfileMurals(getBrowserSupabase(), n);
       setLoading(false);
       if (!profile || profile.murals.length === 0) {
-        notify("Essa pessoa ainda não tem murais.");
+        notify(tx("m_essaPessoaAindaNaoTem"));
         return;
       }
       // abre o primeiro mural; os outros ficam no rodapé (setas)
@@ -927,7 +927,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             password={isMember}
             key={`${selected.nickname}/${selected.slug}/form`}
             owner={selected.nickname}
-            question={isMember ? "Senha do mural" : selected.question}
+            question={isMember ? tx("m_senhaDoMural") : selected.question}
             open={selected.open || isOwner}
             unlocked={unlocked}
             onSubmit={submitAnswer}
@@ -1007,7 +1007,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               visits={selected.kind === "shared" ? undefined : selected.stats.visited}
               followers={selected.kind === "shared" ? null : followers}
               placed={selected.kind === "shared" ? null : placed}
-              question={isMember ? "Senha do mural" : selected.question}
+              question={isMember ? tx("m_senhaDoMural") : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}
               onSubmit={submitAnswer}
@@ -1173,7 +1173,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={selected ? badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product))) : decorBadges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
-          welcome={isMember && selected ? `Este é o mural compartilhado entre @${selected.nickname} e @${myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "")}. Deixem pins que mostrem momentos importantes da vida de vocês.` : undefined}
+          welcome={isMember && selected ? tx("m_esteEOMuralCompartilhado", { v0: selected.nickname, v1: myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "") }) : undefined}
           items={revealed ? shownItems : isShared ? (isMember ? sharedLayout : []) : selected ? lockedLayout : decorDemo}
           plan={revealed ? (selected?.plan ?? "free") : "full"}
           showMeter={revealed}
@@ -1189,7 +1189,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           boardPending={boardPendingNow}
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
           follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
-          share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: `Mural de @${selected.nickname} no Pinz`, text: `Venha ver o mural de @${selected.nickname} no Pinz!`, path: `/${nick}/${slug}` } : null}
+          share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: tx("m_muralDeNoPinz", { v0: selected.nickname }), text: tx("m_venhaVerOMuralDe", { v0: selected.nickname }), path: `/${nick}/${slug}` } : null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null, topFollowers: unlocked && !isShared ? topFollowers : [], onProfile: isShared ? undefined : () => setProfileOpen(true) } : undefined}
           onChangeMural={clear}
           panel={panel}
@@ -1202,7 +1202,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               ? {
                   mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
                   onSend: onSendPin,
-                  sentNote: "Pin colocado no seu mural! 📌",
+                  sentNote: tx("m_pinColocadoNoSeuMural"),
                   onTried: () => undefined,
                   triedAlready: false,
                   signAs: myNick,
@@ -1211,7 +1211,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               ? {
                   mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                   onSend: onSendPin,
-                  sentNote: isMember ? "Pin colocado no mural de vocês! 📌" : "Pin enviado! Ele aparece para todos quando o dono aprovar. ⏳",
+                  sentNote: isMember ? tx("m_pinColocadoNoMuralDe") : tx("m_pinEnviadoEleAparecePara"),
                   onTried: () => {
                     setTried(true);
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
@@ -1294,10 +1294,10 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               📦
             </div>
             <p className="font-title text-xl leading-snug font-semibold">
-              {archivedNote.count} {archivedNote.count === 1 ? "pin foi arquivado" : "pins foram arquivados"}
+              {archivedNote.count} {archivedNote.count === 1 ? tx("m_pinFoiArquivado") : "pins foram arquivados"}
             </p>
             <p className="text-[15px] text-[#4a3826]">
-              {archivedNote.count === 1 ? "Ele passou" : "Eles passaram"} do prazo de validade do mural “{archivedNote.title}”. Toque abaixo para ver {archivedNote.count === 1 ? "o pin arquivado" : "os pins arquivados"} e, se quiser, colocar de volta no mural.
+              {archivedNote.count === 1 ? "Ele passou" : "Eles passaram"} do prazo de validade do mural “{archivedNote.title}”. Toque abaixo para ver {archivedNote.count === 1 ? tx("m_oPinArquivado") : "os pins arquivados"} e, se quiser, colocar de volta no mural.
             </p>
             <div className="flex gap-2">
               <button type="button" onClick={() => closeArchivedNote(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">

@@ -33,8 +33,8 @@ export function FirstTimeTip({ uid, createdAt, ready, nick, company = false }: {
   }
 
   return (
-    <Modal open={open} onClose={close} title={`Olá ${company ? companyDisplayName(nick) : nick}`}>
-      <p className="mb-4 text-[15px] leading-relaxed">{company ? "Que bom ter você por aqui. Esperamos que essa seja uma experiência muito boa para você e seus clientes." : "Que bom ter você por aqui! Veja como usar:"}</p>
+    <Modal open={open} onClose={close} title={tx("m_ola", { v0: company ? companyDisplayName(nick) : nick })}>
+      <p className="mb-4 text-[15px] leading-relaxed">{company ? tx("m_queBomTerVocePor") : tx("m_queBomTerVocePor2")}</p>
       <ul className="space-y-3 text-[15px]">
         <li className="flex gap-3">
           <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#f1e7d2] text-lg">

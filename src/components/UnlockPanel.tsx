@@ -75,28 +75,28 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     e.preventDefault();
     if (busy) return;
     if (!answer.trim()) {
-      setHint(password ? "Digite a senha para entrar." : "Escreva uma resposta para entrar.");
+      setHint(password ? tx("m_digiteASenhaParaEntrar") : tx("m_escrevaUmaRespostaParaEntrar"));
       return;
     }
     setBusy(true);
     const res = await onSubmit(answer);
     setBusy(false);
     if (res.ok) return;
-    if (res.reason === "wrong" && password) setHint("Senha incorreta.");
+    if (res.reason === "wrong" && password) setHint(tx("m_senhaIncorreta"));
     else if (res.reason === "wrong") {
       if ((res.fails ?? 0) >= 3) {
         setBlockMsg(`Pelo jeito você não conhece ${owner ? `@${owner}` : "essa pessoa"}, tente novamente em 30 minutos.`);
         setHint(null);
         setAnswer("");
         onBlock?.(res.retryAfter ?? 1800);
-      } else setHint(res.fails === 2 ? "Eita, ainda não acertou." : "Essa não é a resposta, tente novamente.");
+      } else setHint(res.fails === 2 ? tx("m_eitaAindaNaoAcertou") : tx("m_essaNaoEAResposta"));
     } else if (res.reason === "rate_limited") {
-      if (password) setHint(`Muitas tentativas. Tente novamente em ${Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60))} min.`);
+      if (password) setHint(tx("m_muitasTentativasTenteNovamenteEm", { v0: Math.max(1, Math.ceil((res.retryAfter ?? 600) / 60)) }));
       else {
         setBlockMsg(null);
         onBlock?.(res.retryAfter ?? 1800);
       }
-    } else setHint("Não foi possível verificar agora. Tente de novo.");
+    } else setHint(tx("m_naoFoiPossivelVerificarAgora"));
   }
 
   if (part === "form") {
@@ -118,7 +118,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
         <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
           <LockIcon />
         </span>
-        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? "Mural compartilhado" : "Mural privado"}</p>
+        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? tx("m_muralCompartilhado") : tx("m_muralPrivado")}</p>
         <h2 className="font-title mt-[0.45em] text-[1.9em] leading-tight font-semibold [overflow-wrap:anywhere]">{question}</h2>
         {password && <p className="mt-[0.6em] text-[0.95em] text-white/75">{tx("digiteASenhaParaEntrar")}</p>}
         <form onSubmit={submit} noValidate className="mt-[1.2em] text-left">
@@ -136,7 +136,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             }}
             type={password ? "password" : "text"}
             autoComplete={password ? "current-password" : "off"}
-            placeholder={password ? "Digite a senha..." : "Digite sua resposta..."}
+            placeholder={password ? tx("m_digiteASenha") : tx("m_digiteSuaResposta")}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
             className="w-full rounded-[0.7em] border border-transparent bg-[#e9e5df] px-[1em] py-[0.8em] text-[1.05em] text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#f2c230]/80"
@@ -235,7 +235,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             }}
             type={password ? "password" : "text"}
             autoComplete={password ? "current-password" : "off"}
-            placeholder={password ? "Digite a senha..." : "Digite sua resposta..."}
+            placeholder={password ? tx("m_digiteASenha") : tx("m_digiteSuaResposta")}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
             className={`mt-[0.8em] w-full rounded-[0.6em] border px-[0.9em] py-[0.7em] text-[1em] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#d98a2b]/70 ${

@@ -79,7 +79,7 @@ export function CountdownWidget({ style = "neon", title, target, time, frame }: 
         {arrived ? (
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
             <p className={`leading-none font-extrabold ${square ? "text-[2.4em]" : "text-[2.6em]"}`} style={{ color: skin.accent, textShadow: skin.glow }}>
-              {ago >= 1 ? "Já passou" : "Chegou o dia!"}
+              {ago >= 1 ? tx("m_jaPassou") : "Chegou o dia!"}
             </p>
             {ago >= 1 && (
               <p className="mt-[0.35em] text-[1.1em] font-semibold" style={{ color: skin.sub }}>

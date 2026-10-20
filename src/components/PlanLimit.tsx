@@ -66,7 +66,7 @@ export function PlanLimit({ used: pins, glass = false, className = "" }: { used:
             onClick={subscribe}
             className="w-full cursor-pointer rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] px-4 py-3 text-sm font-extrabold text-[#2a1c12] shadow-[0_0.2rem_0.7rem_rgba(150,90,0,.35),inset_0_1px_0_rgba(255,255,255,.55)] ring-1 ring-[#e39a0b]/60 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {!PAYMENTS_ENABLED ? "PINZ+ em breve" : "Assinar o PINZ+ por R$ 9,90/mês"}
+            {!PAYMENTS_ENABLED ? "PINZ+ em breve" : tx("m_assinarOPinzPorR")}
           </button>
         </div>
       </Modal>

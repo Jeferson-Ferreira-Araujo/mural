@@ -55,7 +55,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid }: { op
   }
 
   return (
-    <Modal open={open} onClose={() => finish(false)} title={step === "profile" ? `Olá, ${nick}!` : "Vamos colocar o seu primeiro pin?"}>
+    <Modal open={open} onClose={() => finish(false)} title={step === "profile" ? tx("m_ola", { v0: nick }) : tx("m_vamosColocarOSeuPrimeiro")}>
       {step === "profile" ? (
         <>
           <p className="text-[15px] leading-snug text-[#4a3826]">{tx("completeOSeuPerfilPara")}</p>

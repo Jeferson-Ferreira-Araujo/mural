@@ -82,7 +82,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
     setBusy(a.id);
     const ok = await setMuralPinTtl(getBrowserSupabase(), muralId, choice);
     setBusy(null);
-    if (!ok) return setError("Não foi possível salvar a validade agora. Tente de novo.");
+    if (!ok) return setError(tx("m_naoFoiPossivelSalvarA"));
     try {
       localStorage.setItem(askedKey, "1");
     } catch {}
@@ -99,7 +99,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
 
   const load = useCallback(async () => {
     const list = await listOwnerPins(getBrowserSupabase(), muralId);
-    if (!list) return setError("Não foi possível carregar os pins agora.");
+    if (!list) return setError(tx("m_naoFoiPossivelCarregarOs"));
     setPins(list);
     onPending(list.filter((p) => p.status === "pending").length);
   }, [muralId, onPending]);
@@ -124,16 +124,16 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
     if (res.ok) {
       setArchived((l) => (l ?? []).filter((p) => p.id !== id));
       onRestored?.();
-      setArchNote({ ok: true, text: res.samePlace ? `Pin colocado de volta no mural “${res.muralTitle}”, no mesmo lugar de antes (espaço ${res.slot + 1}).` : `O espaço ${(res.originalSlot ?? 0) + 1} já estava ocupado. O pin foi colocado no mural “${res.muralTitle}”, no espaço ${res.slot + 1}.` });
+      setArchNote({ ok: true, text: res.samePlace ? tx("m_pinColocadoDeVoltaNo", { v0: res.muralTitle, v1: res.slot + 1 }) : tx("m_oEspacoJaEstavaOcupado", { v0: (res.originalSlot ?? 0) + 1, v1: res.muralTitle, v2: res.slot + 1 }) });
     } else
       setArchNote({
         ok: false,
         text:
           res.reason === "no_space"
-            ? `O pin não pode ser colocado de volta porque o mural “${title}” está cheio: não há nenhum espaço livre.`
+            ? tx("m_oPinNaoPodeSer", { v0: title })
             : res.reason === "plan_limit"
-              ? `O pin não pode ser colocado de volta porque o mural “${title}” chegou ao limite de pins do plano.`
-              : "Não foi possível colocar de volta agora. Tente de novo.",
+              ? tx("m_oPinNaoPodeSer2", { v0: title })
+              : tx("m_naoFoiPossivelColocarDe"),
       });
     setBusy(null);
   }
@@ -143,7 +143,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
     setBusy(id);
     setError(null);
     setReporting(null);
-    if (!(await action())) setError("Não foi possível concluir. Tente de novo.");
+    if (!(await action())) setError(tx("m_naoFoiPossivelConcluirTente"));
     await load();
     setBusy(null);
   }
@@ -175,7 +175,7 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
           <>
             {full && (
               <button type="button" role="switch" aria-checked={!p.hiddenFromVisitors} className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => setPinHidden(sb, p.id, !p.hiddenFromVisitors))}>
-                {p.hiddenFromVisitors ? "🔒 Segredo — mostrar" : "👁 Visível — deixar em segredo"}
+                {p.hiddenFromVisitors ? "🔒 Segredo — mostrar" : tx("m_visivelDeixarEmSegredo")}
               </button>
             )}
             <button type="button" className={btn} disabled={busy === p.id} onClick={() => run(p.id, () => moderatePin(sb, p.id, false))}>
@@ -253,11 +253,11 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
                     {a.author && <span className="font-normal text-[#6b5440]"> · de @{a.author}</span>}
                   </p>
                   <p className="text-xs text-[#6b5440]">
-                    Mural “{a.mural_title}”{a.slot != null ? ` · estava no espaço ${a.slot + 1}` : ""} · saiu em {new Date(a.archived_at).toLocaleDateString("pt-BR")}
+                    Mural “{a.mural_title}”{a.slot != null ? tx("m_estavaNoEspaco", { v0: a.slot + 1 }) : ""} · saiu em {new Date(a.archived_at).toLocaleDateString("pt-BR")}
                   </p>
                   <div className="mt-3 flex justify-center">
                     <button type="button" className={primary} disabled={busy === a.id} onClick={() => void restore(a.id)}>
-                      {busy === a.id ? "Colocando…" : "Colocar de volta no mural"}
+                      {busy === a.id ? "Colocando…" : tx("m_colocarDeVoltaNoMural")}
                     </button>
                   </div>
                 </div>
@@ -282,10 +282,10 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
             <p className="mb-3 text-center text-xs text-[#6b5440]">
               Nada aparece no mural antes de você aprovar. Confira se não há informação sigilosa ou ofensiva.
               <br />
-              Tempo de exibição dos pinz: <strong>{ttlDays ? `${ttlDays} dias` : "sem prazo (ficam para sempre)"}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
+              Tempo de exibição dos pinz: <strong>{ttlDays ? `${ttlDays} dias` : tx("m_semPrazoFicamParaSempre")}</strong>. Quem passa do prazo vai para Arquivados; mude em Editar mural.
             </p>
           )}
-          <Carousel label={tab === "pending" ? "Pins para aprovar" : "Pins no mural"}>
+          <Carousel label={tab === "pending" ? tx("m_pinsParaAprovar") : tx("m_pinsNoMural")}>
             {list.map((p) => (
               <div key={p.id}>{card(p)}</div>
             ))}

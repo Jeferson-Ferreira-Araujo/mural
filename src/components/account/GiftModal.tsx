@@ -48,7 +48,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
   const bday = gift?.birthday;
   const until = gift?.until ? new Date(gift.until).toLocaleDateString("pt-BR", { day: "numeric", month: "long", timeZone: "America/Sao_Paulo" }) : null;
   return (
-    <Modal open={!!gift} onClose={onClose} title={bday ? "" : "Você ganhou um presente!"} label={bday ? "Feliz aniversário!" : undefined}>
+    <Modal open={!!gift} onClose={onClose} title={bday ? "" : tx("m_voceGanhouUmPresente")} label={bday ? tx("m_felizAniversario") : undefined}>
       {gift && bday ? (
         <div className="relative space-y-4 text-center text-[#2f2218]">
           <Confetti />
@@ -70,7 +70,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
                 <li className="flex gap-2">
                   <span aria-hidden>✨</span>
                   <span>
-                    <strong>PINZ+ liberado{until ? ` até ${until}` : " até o fim do mês"}</strong>, de presente.
+                    <strong>PINZ+ liberado{until ? tx("m_ate", { v0: until }) : tx("m_ateOFimDoMes")}</strong>, de presente.
                   </span>
                 </li>
                 <li className="flex gap-2">
@@ -107,7 +107,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
               🎁
             </div>
             {gift.actor && <Avatar src={gift.avatar ?? null} name={gift.actor} className="mx-auto size-16" />}
-            <p className="text-base font-semibold">{gift.actor ? `@${gift.actor}` : "Alguém"} te presenteou com 1 mês de PINZ+!</p>
+            <p className="text-base font-semibold">{gift.actor ? `@${gift.actor}` : tx("m_alguem")} te presenteou com 1 mês de PINZ+!</p>
             <p className="text-sm text-[#4a3826]">{tx("seuPinzJaEstaAtivo")}</p>
             <button type="button" onClick={onClose} className={`${primaryButton} w-full`}>
               {tx("obrigado")}</button>

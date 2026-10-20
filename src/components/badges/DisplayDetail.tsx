@@ -57,9 +57,9 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
     setMsg(null);
     try {
       const res = await deliverImage(await cardToPng(cardRef.current), "pinz-display", "Crie seu mural agora, acesse: https://pinz.digital");
-      if (res === "downloaded") setMsg("Imagem salva! Agora é só postar.");
+      if (res === "downloaded") setMsg(tx("m_imagemSalvaAgoraESo"));
     } catch {
-      setMsg("Não foi possível gerar a imagem agora.");
+      setMsg(tx("m_naoFoiPossivelGerarA"));
     } finally {
       setBusy(false);
     }
@@ -104,7 +104,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
             <button
               type="button"
               disabled={busy || (!!mod && mod.plan !== "full")}
-              title={!mod || mod.plan === "full" ? "" : "Segredo é do PINZ+"}
+              title={!mod || mod.plan === "full" ? "" : tx("m_segredoEDoPinz")}
               onClick={async () => {
                 setBusy(true);
                 setReveal(false);

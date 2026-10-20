@@ -35,7 +35,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
-    if (!/^\d{6,10}$/.test(code.trim())) return setError("Digite o código de 6 números que enviamos para o seu e-mail.");
+    if (!/^\d{6,10}$/.test(code.trim())) return setError(tx("m_digiteOCodigoDe6"));
     setBusy(true);
     setError(null);
     const res = await confirmEmailCode(getBrowserSupabase(), email, code, password);
@@ -55,9 +55,9 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
     setInfo(null);
     const ok = await sendEmailCode(getBrowserSupabase(), email, nick);
     if (ok) {
-      setInfo("Enviamos um novo código.");
+      setInfo(tx("m_enviamosUmNovoCodigo"));
       setWait(45);
-    } else setError("Não foi possível enviar o código agora. Tente de novo em instantes.");
+    } else setError(tx("m_naoFoiPossivelEnviarO"));
   }
 
   return (
@@ -76,7 +76,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
         </button>
         <div className="flex gap-2">
           <button type="button" onClick={resend} disabled={wait > 0} className={`${ghostButton} flex-1 disabled:opacity-60`}>
-            {wait > 0 ? `Enviar outro código (${wait}s)` : "Enviar outro código"}
+            {wait > 0 ? tx("m_enviarOutroCodigoS", { v0: wait }) : tx("m_enviarOutroCodigo")}
           </button>
           <button type="button" onClick={() => { setFinalizing(false); onBack(); }} className={`${ghostButton} flex-1`}>
             {tx("voltar")}</button>

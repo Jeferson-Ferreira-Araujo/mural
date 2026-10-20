@@ -97,7 +97,7 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
           <span>
             {total} {total === 1 ? "voto" : "votos"}
           </span>
-          <span>{err ? "Não foi possível votar agora" : demo ? "" : inDetail ? (!logged ? "Entre para votar" : mine !== null ? "Toque para trocar o voto" : "Toque numa opção") : mine !== null ? "Você já votou" : "Toque para votar"}</span>
+          <span>{err ? tx("m_naoFoiPossivelVotarAgora") : demo ? "" : inDetail ? (!logged ? tx("m_entreParaVotar") : mine !== null ? tx("m_toqueParaTrocarOVoto") : tx("m_toqueNumaOpcao")) : mine !== null ? tx("m_voceJaVotou") : tx("m_toqueParaVotar")}</span>
         </p>
       </div>
     </WidgetFrame>

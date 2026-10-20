@@ -43,7 +43,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
         {current && <span className="rounded-lg bg-[#1f232b] px-2.5 py-1 text-[11px] font-bold text-white">{tx("seuPlano")}</span>}
       </header>
       <p className="font-title mt-3 text-3xl font-semibold">{p.price}</p>
-      {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? "Cobrança em breve" : "Para sempre"}</p>}
+      {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? tx("m_cobrancaEmBreve") : tx("m_paraSempre")}</p>}
       <ul className="mt-4 space-y-2 text-sm">
         {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
           <li key={f.text} className={`flex items-start gap-2 ${f.on ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>
@@ -100,7 +100,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
   async function cancel() {
     setConfirmCancel(false);
     setBusy("cancel");
-    setMsg((await cancelSubscription()) ? "Assinatura cancelada. O PINZ+ continua até o fim do período pago." : "Não foi possível cancelar agora. Tente de novo.");
+    setMsg((await cancelSubscription()) ? tx("m_assinaturaCanceladaOPinzContinua") : tx("m_naoFoiPossivelCancelarAgora"));
     setSub(await fetchSubscription());
     setBusy(null);
   }
@@ -114,7 +114,7 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
       </button>
     </div>
   ) : sub?.status === "once" && sub.active ? (
-    <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? "PINZ+ vitalício · para sempre" : `PINZ+ ativo até ${fmtDate(sub.paidUntil)}`}</p>
+    <p className="mt-4 text-sm font-semibold text-[#2f6a3c]">{sub.paidUntil && new Date(sub.paidUntil).getFullYear() >= 9000 ? tx("m_pinzVitalicioParaSempre") : tx("m_pinzAtivoAte", { v0: fmtDate(sub.paidUntil) })}</p>
   ) : sub?.status === "cancelled" && sub.active ? (
     <p className="mt-4 text-sm font-semibold text-[#6b5440]">Assinatura cancelada · PINZ+ até {fmtDate(sub.paidUntil)}</p>
   ) : plan === "free" ? (

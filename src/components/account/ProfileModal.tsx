@@ -45,12 +45,12 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
   async function savePrivacy() {
     setPrivErr(null);
     const q = question.trim();
-    if (priv && q.length < 3) return setPrivErr(q === "" ? "Escreva a pergunta de segurança." : "A pergunta precisa ter pelo menos 3 letras.");
+    if (priv && q.length < 3) return setPrivErr(q === "" ? tx("m_escrevaAPerguntaDeSeguranca") : "A pergunta precisa ter pelo menos 3 letras.");
     if (priv && !answer.trim() && !hadAnswer) return setPrivErr("Digite a resposta.");
     setPrivBusy(true);
     const ok = await saveProfilePrivacy(getBrowserSupabase(), priv, priv ? q : "", priv && answer.trim() ? answer.trim() : null);
     setPrivBusy(false);
-    if (!ok) return setPrivErr("Não foi possível salvar. Confira os campos e tente de novo.");
+    if (!ok) return setPrivErr(tx("m_naoFoiPossivelSalvarConfira"));
     setHadAnswer(priv);
     onPrivacySaved?.();
     setFlash(true);
@@ -103,7 +103,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     }
     setDelBusy(false);
     const err = (await res?.json().catch(() => null)) as { error?: string } | null;
-    setDelErr(err?.error === "admin" ? "Contas de administrador não podem ser excluídas por aqui." : err?.error === "rate_limited" ? "Muitas tentativas. Tente de novo mais tarde." : "Não foi possível excluir agora. Tente de novo ou fale com o suporte.");
+    setDelErr(err?.error === "admin" ? tx("m_contasDeAdministradorNaoPodem") : err?.error === "rate_limited" ? tx("m_muitasTentativasTenteDeNovo") : tx("m_naoFoiPossivelExcluirAgora"));
   }
 
   // entrou só pelo Google? Não tem senha do Pinz para trocar
@@ -122,9 +122,9 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     setBusy(false);
     if (error) {
       rememberNext(null);
-      return setMsg({ ok: false, text: "Não foi possível enviar o link agora. Tente de novo daqui a pouco." });
+      return setMsg({ ok: false, text: tx("m_naoFoiPossivelEnviarO") });
     }
-    setMsg({ ok: true, text: `Enviamos um link para ${email}. Ele vale por pouco tempo: abra no mesmo navegador.` });
+    setMsg({ ok: true, text: tx("m_enviamosUmLinkParaEle", { v0: email }) });
   }
 
   return (
@@ -174,7 +174,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
               </p>
             )}
             <button type="button" onClick={() => void sendResetLink()} disabled={busy || !email} className={primaryButton}>
-              {busy ? "Enviando…" : "Enviar link para trocar a senha"}
+              {busy ? "Enviando…" : tx("m_enviarLinkParaTrocarA")}
             </button>
           </>
         )}
@@ -243,7 +243,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
               }} disabled={delBusy} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
                     {tx("cancelar")}</button>
                   <button type="button" onClick={() => void deleteAccount()} disabled={delBusy || delText.trim().toUpperCase() !== "EXCLUIR"} className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#8c3022] disabled:cursor-not-allowed disabled:opacity-50">
-                    {delBusy ? "Excluindo…" : "Excluir conta"}
+                    {delBusy ? "Excluindo…" : tx("m_excluirConta")}
                   </button>
                 </div>
               </div>

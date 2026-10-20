@@ -126,7 +126,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
             <li key={b.key} className="relative shrink-0">
               <button
                 type="button"
-                aria-label={out ? `Botton ${b.name ?? b.key}: sem unidades disponíveis` : `Botton ${b.name ?? b.key}: arraste para o mural`}
+                aria-label={out ? tx("m_bottonSemUnidadesDisponiveis", { v0: b.name ?? b.key }) : tx("m_bottonArrasteParaOMural", { v0: b.name ?? b.key })}
                 onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                 onDragStart={(e) => e.preventDefault()}
                 className={`grid h-14 w-14 touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
@@ -136,7 +136,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
               </button>
               {/* quantidade que a pessoa ainda tem para colocar */}
               <span
-                aria-label={`${st.left ?? 0} disponível${st.left === 1 ? "" : "is"}`}
+                aria-label={tx("m_disponivel", { v0: st.left ?? 0, v1: st.left === 1 ? "" : "is" })}
                 className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md px-1 text-[10px] leading-[1.15rem] font-bold text-white shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.45)] ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}
               >
                 {st.left ?? 0}
@@ -160,7 +160,7 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
                 <li key={b.key} className="relative">
                   <button
                     type="button"
-                    aria-label={out ? `${b.name ?? b.key}: sem unidades disponíveis` : `${b.name ?? b.key}: arraste para o mural`}
+                    aria-label={out ? tx("m_semUnidadesDisponiveis", { v0: b.name ?? b.key }) : tx("m_arrasteParaOMural", { v0: b.name ?? b.key })}
                     title={b.name}
                     onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget, true)}
                     onDragStart={(e) => e.preventDefault()}

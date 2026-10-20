@@ -242,7 +242,7 @@ export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) 
           {/* passos com ação não têm "Próximo": o tour segue quando a pessoa faz o toque; os de escolha esperam a pessoa tocar em Próximo */}
           {(!step.act || step.manual) && (
             <button type="button" onClick={next} disabled={!!step.manual && !acted} autoFocus={!step.act} className={`${btn} bg-[#d9a21b] text-[#2a1c12] hover:bg-[#e6ae22] disabled:cursor-not-allowed disabled:opacity-40`}>
-              {last ? "Concluir" : "Próximo"}
+              {last ? "Concluir" : tx("m_proximo")}
             </button>
           )}
         </div>

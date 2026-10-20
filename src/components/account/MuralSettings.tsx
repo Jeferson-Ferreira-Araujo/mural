@@ -87,7 +87,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     e.preventDefault();
     setMsg(null);
     if (!title.trim()) {
-      setMsg({ ok: false, text: "Preencha o nome do mural." });
+      setMsg({ ok: false, text: tx("m_preenchaONomeDoMural") });
       return;
     }
     setBusy(true);
@@ -95,14 +95,14 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     const { error } = await sb.rpc("update_mural", { p_id: mural.id, p_title: title.trim() });
     if (error) {
       setBusy(false);
-      setMsg({ ok: false, text: "Não foi possível salvar. Confira os campos e tente de novo." });
+      setMsg({ ok: false, text: tx("m_naoFoiPossivelSalvarConfira") });
       return;
     }
     if (board && board !== currentBoard) {
       const { error: eb } = await sb.rpc("set_mural_board", { p_mural_id: mural.id, p_board: board });
       if (eb) {
         setBusy(false);
-        setMsg({ ok: false, text: "Salvei o nome, mas não foi possível trocar o tipo (compre-o na loja)." });
+        setMsg({ ok: false, text: tx("m_salveiONomeMasNao") });
         return;
       }
       setCurrentBoard(board);
@@ -118,7 +118,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       const { error: ep } = await sb.rpc("set_mural_privacy", { p_mural_id: mural.id, p_private: privacy.priv, p_question: privacy.priv ? privacy.question.trim() : "", p_answer: privacy.priv && privacy.answer.trim() ? privacy.answer.trim() : null });
       if (ep) {
         setBusy(false);
-        setMsg({ ok: false, text: "Não foi possível salvar a pergunta de segurança. Confira os campos e tente de novo." });
+        setMsg({ ok: false, text: tx("m_naoFoiPossivelSalvarA") });
         return;
       }
     }
@@ -126,7 +126,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       const { error: et } = await sb.rpc("set_mural_pin_ttl", { p_mural_id: mural.id, p_days: ttl });
       if (et) {
         setBusy(false);
-        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a validade dos pins." });
+        setMsg({ ok: false, text: tx("m_salveiORestoMasNao") });
         return;
       }
     }
@@ -136,7 +136,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
       const { error: ew } = await sb.rpc("set_welcome_message", { p_mural_id: mural.id, p_text: wanted });
       if (ew) {
         setBusy(false);
-        setMsg({ ok: false, text: "Salvei o resto, mas não foi possível salvar a mensagem de boas-vindas. Ela pode ter até 280 letras." });
+        setMsg({ ok: false, text: tx("m_salveiORestoMasNao2") });
         return;
       }
     }
@@ -150,10 +150,10 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     setBusy(false);
     setConfirmReset(false);
     if (error) {
-      setMsg({ ok: false, text: "Não foi possível resetar o mural. Tente de novo." });
+      setMsg({ ok: false, text: tx("m_naoFoiPossivelResetarO") });
       return;
     }
-    setMsg({ ok: true, text: "Mural resetado. Todos os recados foram apagados." });
+    setMsg({ ok: true, text: tx("m_muralResetadoTodosOsRecados") });
     window.dispatchEvent(new Event("pinz:reload-board"));
     onSaved();
   }
@@ -163,7 +163,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
     const { error } = await getBrowserSupabase().rpc("delete_mural", { p_id: mural.id });
     setBusy(false);
     if (error) {
-      setMsg({ ok: false, text: "Não foi possível excluir. Tente de novo." });
+      setMsg({ ok: false, text: tx("m_naoFoiPossivelExcluirTente") });
       return;
     }
     onDeleted();
@@ -207,7 +207,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
                   key={d}
                   type="button"
                   onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
-                  aria-label={d < 0 ? "Tipo anterior" : "Próximo tipo"}
+                  aria-label={d < 0 ? "Tipo anterior" : tx("m_proximoTipo")}
                   className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
                   <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

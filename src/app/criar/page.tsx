@@ -68,7 +68,7 @@ export default function CriarMural() {
     });
     if (err) {
       setBusy(false);
-      setError(err.message.includes("mural_limit") ? plus ? `Você chegou ao limite de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. Com o PINZ+ você pode ter até 10." : "Não foi possível criar o mural agora. Tente de novo.");
+      setError(err.message.includes("mural_limit") ? plus ? tx("m_voceChegouAoLimiteDe", { v0: PLUS_MAX_MURALS }) : tx("m_oPlanoGratuitoInclui1") : tx("m_naoFoiPossivelCriarO"));
       return;
     }
     router.replace(await homeRouteFor(sb)); // vai para o mural novo; segue "Criando…" até a navegação terminar
@@ -89,9 +89,9 @@ export default function CriarMural() {
     return (
       <AuthShell>
         <div className="rounded-3xl border border-[#e6d8bd] bg-[#fbf6ea] p-6 text-center text-[#2f2218] shadow-[0_1rem_3rem_rgba(0,0,0,.35)]">
-          <h1 className="font-title text-2xl font-semibold">{plus ? "Todos os seus murais estão no ar" : "Seu mural já está no ar"}</h1>
+          <h1 className="font-title text-2xl font-semibold">{plus ? tx("m_todosOsSeusMuraisEstao") : tx("m_seuMuralJaEstaNo")}</h1>
           <p className="mt-2 text-sm text-[#6b5440]">
-            {plus ? `O limite do PINZ+ é de ${PLUS_MAX_MURALS} murais.` : "O plano gratuito inclui 1 mural. O PINZ+ permite ter até 10 murais."}
+            {plus ? tx("m_oLimiteDoPinzE", { v0: PLUS_MAX_MURALS }) : tx("m_oPlanoGratuitoInclui12")}
           </p>
           <Link href={savedNick && taken[0] ? `/${savedNick}/${taken[0]}` : "/"} className={`${primaryButton} mt-5`}>
             {tx("irParaOMeuMural")}</Link>
@@ -125,7 +125,7 @@ export default function CriarMural() {
       >
         {step === 0 && (
           <>
-            <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? "Vamos criar mais um mural" : "Como o seu mural vai se chamar?"}</h1>
+            <h1 className="font-title text-2xl font-semibold">{taken.length > 0 ? tx("m_vamosCriarMaisUmMural") : tx("m_comoOSeuMuralVai")}</h1>
             <Field label={tx("nomeDoMural")} hint={tx("escrevaONomeCompletoDo")}>
               {(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exMuralJeferson")} className={inputClass} autoFocus />}
             </Field>
@@ -192,7 +192,7 @@ export default function CriarMural() {
               {tx("voltar")}</button>
           )}
           <button type="submit" disabled={!canNext || busy} className={`${primaryButton} flex-1`}>
-            {step < 2 ? "Continuar" : busy ? "Criando…" : "Criar meu mural"}
+            {step < 2 ? "Continuar" : busy ? "Criando…" : tx("m_criarMeuMural")}
           </button>
         </div>
       </form>

@@ -84,7 +84,7 @@ export function BookWidget({ style = "paper", title, cover, pages, read, view = 
               )}
               {mode === "count" && (
                 <span className="block text-[0.42em] font-semibold tracking-wide uppercase" style={{ color: sk.sub }}>
-                  {finished ? "livro concluído" : "páginas lidas"}
+                  {finished ? tx("m_livroConcluido") : tx("m_paginasLidas")}
                 </span>
               )}
             </p>

@@ -98,7 +98,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     setBusy(false);
     if (error) {
       setOrder(null);
-      return setErr("Não foi possível mudar a ordem agora. Tente de novo.");
+      return setErr(tx("m_naoFoiPossivelMudarA"));
     }
     onChanged();
     window.setTimeout(() => setOrder(null), 400); // dá tempo de a lista nova chegar
@@ -113,7 +113,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     setErr(null);
     const { error } = await getBrowserSupabase().rpc("set_mural_order", { p_ids: ids });
     setBusy(false);
-    if (error) return setErr("Não foi possível mudar a ordem agora. Tente de novo.");
+    if (error) return setErr(tx("m_naoFoiPossivelMudarA"));
     onChanged();
   }
 
@@ -123,7 +123,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     setErr(null);
     const { error } = await getBrowserSupabase().rpc("delete_mural", { p_id: toDelete.id });
     setBusy(false);
-    if (error) return setErr("Não foi possível apagar agora. Tente de novo.");
+    if (error) return setErr(tx("m_naoFoiPossivelApagarAgora"));
     const wasCurrent = toDelete.id === currentId;
     setConfirmId(null);
     onChanged();
@@ -247,7 +247,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                           <path d="M3 12h18M12 3c2.5 2.6 3.7 5.600 3.700 9s-1.200 6.400-3.700 9c-2.500-2.600-3.700-5.600-3.700-9s1.200-6.400 3.700-9Z" />
                         </svg>
                       )}
-                      {m.question ? "Privado" : "Público"}
+                      {m.question ? "Privado" : tx("m_publico")}
                     </span>
                   </button>
                   <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">

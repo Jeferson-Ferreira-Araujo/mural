@@ -178,7 +178,7 @@ export function BoardCanvas({
   const solve = (full: Box, em: number, id?: string, home?: { slot: number; cx: number; cy: number }, maxSlide = 0.18): { error: string } | { slot: number; ox: number; oy: number; cov: number[]; box: Box } => {
     const wrap = root.current;
     const layer = wrap?.querySelector<HTMLElement>("[data-badge-layer]");
-    if (!wrap || !layer) return { error: "Não foi possível posicionar agora." };
+    if (!wrap || !layer) return { error: tx("m_naoFoiPossivelPosicionarAgora") };
     const w = full.right - full.left;
     const h = full.bottom - full.top;
     const lr = layer.getBoundingClientRect();
@@ -186,7 +186,7 @@ export function BoardCanvas({
     const padX = -lr.width * 0.012;
     const padY = -lr.height * 0.012;
     const bounds = { left: lr.left - padX, right: lr.right + padX, top: lr.top - padY, bottom: lr.bottom + padY };
-    if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: "O pin é grande demais para ficar aqui." };
+    if (w > bounds.right - bounds.left || h > bounds.bottom - bounds.top) return { error: tx("m_oPinEGrandeDemais") };
     const vis = (e: Element) => e.getBoundingClientRect().width > 0 && (e as HTMLElement).offsetParent !== null;
     // quem atrapalha: os outros pins e os displays (o retângulo real de cada um)
     const obstacles: { box: Box | DOMRect; what: string }[] = [];
@@ -215,7 +215,7 @@ export function BoardCanvas({
     // soltou longe demais do mural: não adianta ajustar
     const cx0 = (full.left + full.right) / 2;
     const cy0 = (full.top + full.bottom) / 2;
-    if (cx0 < bounds.left - w * 0.6 || cx0 > bounds.right + w * 0.6 || cy0 < bounds.top - h * 0.6 || cy0 > bounds.bottom + h * 0.6) return { error: "O pin precisa ficar dentro do mural." };
+    if (cx0 < bounds.left - w * 0.6 || cx0 > bounds.right + w * 0.6 || cy0 < bounds.top - h * 0.6 || cy0 > bounds.bottom + h * 0.6) return { error: tx("m_oPinPrecisaFicarDentro") };
     full = inside(full);
     const startBox = full; // daqui em diante só conta o quanto o pin precisou escorregar para não invadir os vizinhos
     let blocked = "";
@@ -237,8 +237,8 @@ export function BoardCanvas({
       const m = moves[0];
       full = inside({ left: full.left + m.dx, right: full.right + m.dx, top: full.top + m.dy, bottom: full.bottom + m.dy });
     }
-    if (blocked) return { error: "Não é possível colocar sobre pin ou display." };
-    if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * maxSlide) return { error: "Não cabe aqui: tente um lugar mais livre." }; // arrastando, o pin só escorrega um pouco (fica onde o dedo o deixou); o reencaixe automático pode escorregar mais
+    if (blocked) return { error: tx("m_naoEPossivelColocarSobre") };
+    if (Math.hypot((full.left + full.right) / 2 - (startBox.left + startBox.right) / 2, (full.top + full.bottom) / 2 - (startBox.top + startBox.bottom) / 2) > Math.max(w, h) * maxSlide) return { error: tx("m_naoCabeAquiTenteUm") }; // arrastando, o pin só escorrega um pouco (fica onde o dedo o deixou); o reencaixe automático pode escorregar mais
     type Touch = { slot: number; area: number; cx: number; cy: number };
     const touched: Touch[] = [];
     const area = (r: Box, box: Box) => {
@@ -263,9 +263,9 @@ export function BoardCanvas({
       const rc = core(r);
       const a = area(full, rc);
       if (a / size(rc) < 0.03) continue;
-      if (cell.hasAttribute("data-pin-id")) return { error: "Não é possível colocar sobre pin ou display." };
+      if (cell.hasAttribute("data-pin-id")) return { error: tx("m_naoEPossivelColocarSobre") };
       if (cell.hasAttribute("data-covered") && cell.dataset.coverBy !== id) {
-        if (cell.hasAttribute("data-cover-by")) return { error: "Não é possível colocar sobre pin ou display." };
+        if (cell.hasAttribute("data-cover-by")) return { error: tx("m_naoEPossivelColocarSobre") };
         // espaço reservado por um display: quem vale é o retângulo REAL do display (conferido acima, em "obstacles"); a lista de espaços que ele guardou
         // pode passar da área que ele ocupa de verdade (display movido ou redimensionado) e barrava lugares onde não há display nenhum
         continue;
@@ -293,14 +293,14 @@ export function BoardCanvas({
             best = { slot: Number(cell.dataset.slot), area: 0, cx, cy };
           }
         }
-        if (!best) return { error: "Não há espaço livre neste mural." };
+        if (!best) return { error: tx("m_naoHaEspacoLivreNeste") };
         touched.push(best);
       }
     }
     const anchor = touched.reduce((a, b) => (b.area > a.area ? b : a));
     const ox = Math.round((((full.left + full.right) / 2 - anchor.cx) / em) * 100) / 100;
     const oy = Math.round((((full.top + full.bottom) / 2 - anchor.cy) / em) * 100) / 100;
-    if (Math.abs(ox) > 400 || Math.abs(oy) > 400) return { error: "O pin precisa ficar dentro do mural." };
+    if (Math.abs(ox) > 400 || Math.abs(oy) > 400) return { error: tx("m_oPinPrecisaFicarDentro") };
     return { slot: anchor.slot, ox, oy, cov: touched.filter((x) => x.slot !== anchor.slot).map((x) => x.slot).slice(0, 8), box: full };
   };
 
@@ -455,7 +455,7 @@ export function BoardCanvas({
         const sol = solve({ left: p.x - 7 * em, right: p.x + 7 * em, top: p.y - 6.5 * em, bottom: p.y + 6.5 * em }, em);
         if (!("error" in sol)) return onCompose(sol.slot, { ox: sol.ox, oy: sol.oy, cov: sol.cov });
       }
-      say("Não há espaço livre para um pin agora. Dê dois cliques (ou segure) num ponto vazio do mural.");
+      say(tx("m_naoHaEspacoLivrePara"));
     };
     window.addEventListener(COMPOSE_AUTO_EVENT, h);
     return () => window.removeEventListener(COMPOSE_AUTO_EVENT, h);
@@ -577,7 +577,7 @@ export function BoardCanvas({
                 inert={locked}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={look.image} alt={`Mural: quadro ${look.name}`} className="absolute inset-0 size-full select-none" draggable={false} />
+                <img src={look.image} alt={tx("m_muralQuadro", { v0: look.name })} className="absolute inset-0 size-full select-none" draggable={false} />
 
                 <div
                   className="absolute"
@@ -616,7 +616,7 @@ export function BoardCanvas({
                               <button
                                 type="button"
                                 onClick={() => onCompose(i)}
-                                aria-label={`Colocar um pin na linha ${Math.floor(i / cols) + 1}, coluna ${(i % cols) + 1}`}
+                                aria-label={tx("m_colocarUmPinNaLinha", { v0: Math.floor(i / cols) + 1, v1: (i % cols) + 1 })}
                                 className={`block cursor-pointer rounded-[0.6em] transition hover:scale-105 hover:[&>div]:border-[#fff3d6] hover:[&>div]:bg-[#fff3d6]/40 focus-visible:outline-2 focus-visible:outline-offset-[0.2em] focus-visible:outline-[#f7f0dd] ${hint ? "animate-pulse" : ""}`}
                               >
                                 <EmptySlot />
@@ -648,7 +648,7 @@ export function BoardCanvas({
                 <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
                   {/* a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
                   <div className="-rotate-2" style={{ fontSize: "2.1cqw" }}>
-                    <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: "Nenhum pin por aqui ainda. Seja o primeiro a colocar!" }} />
+                    <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: tx("m_nenhumPinPorAquiAinda") }} />
                   </div>
                 </div>
               )}

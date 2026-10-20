@@ -32,7 +32,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
   async function save(e: FormEvent) {
     e.preventDefault();
     if (!mural || busy) return;
-    if (!title.trim()) return setError("Dê um nome ao mural.");
+    if (!title.trim()) return setError(tx("m_deUmNomeAoMural"));
     const perr = privacyError(privacy, false);
     if (perr) return setError(perr);
     setBusy(true);
@@ -45,7 +45,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
     ];
     const res = await Promise.all(steps);
     setBusy(false);
-    if (res.some((r) => r.error)) return setError("Não foi possível salvar tudo agora. Confira os campos e tente de novo.");
+    if (res.some((r) => r.error)) return setError(tx("m_naoFoiPossivelSalvarTudo"));
     onSaved();
     onClose();
   }

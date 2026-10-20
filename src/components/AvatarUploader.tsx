@@ -38,14 +38,14 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
     try {
       const blob = await processAvatar(file);
       setUrl(await uploadAvatar(getBrowserSupabase(), blob));
-      setMsg({ ok: true, text: "Foto salva! Ela já aparece no seu mural." });
+      setMsg({ ok: true, text: tx("m_fotoSalvaElaJaAparece") });
       const won = await claimReward("avatar");
       if (won) {
-        setMsg({ ok: true, text: `Foto salva! Você ganhou ${won.credits} créditos.` });
+        setMsg({ ok: true, text: tx("m_fotoSalvaVoceGanhouCreditos", { v0: won.credits }) });
         setReward(null);
       }
     } catch (e) {
-      setMsg({ ok: false, text: e instanceof Error ? e.message : "Não foi possível enviar a foto." });
+      setMsg({ ok: false, text: e instanceof Error ? e.message : tx("m_naoFoiPossivelEnviarA") });
     } finally {
       setBusy(false);
       if (input.current) input.current.value = "";
@@ -60,7 +60,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
       setUrl(null);
       setMsg({ ok: true, text: "Foto removida." });
     } catch {
-      setMsg({ ok: false, text: "Não foi possível remover agora." });
+      setMsg({ ok: false, text: tx("m_naoFoiPossivelRemoverAgora") });
     } finally {
       setBusy(false);
     }
@@ -72,7 +72,7 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
     <section aria-label={tx("suaFoto")} className={`mt-5 flex items-center gap-4 rounded-2xl border p-4 ${!ready || url ? "border-[#e1d3ba] bg-white/60" : "border-[#e0b04a] bg-[#fff6dd]"}`}>
       <Avatar src={url} name={nickname} plus={plus} className="size-[4.5rem]" />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-bold">{url ? "Sua foto" : "Adicione uma foto"}</p>
+        <p className="text-sm font-bold">{url ? tx("m_suaFoto") : tx("m_adicioneUmaFoto")}</p>
         <div className="mt-1.5 flex flex-wrap gap-2">
           <button type="button" className={btn} disabled={busy || !ready} onClick={() => input.current?.click()}>
             {busy ? "Enviando…" : url ? "Alterar foto" : "Escolher foto"}

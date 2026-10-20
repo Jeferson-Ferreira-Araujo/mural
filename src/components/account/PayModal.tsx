@@ -63,12 +63,12 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   const pack = target?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === target.slice(8)) : undefined;
   const info = (() => {
-    if (pack) return { cents: pack.cents, label: `Pinz · ${pack.credits} créditos`, suffix: "", done: `+${pack.credits} créditos já estão na sua conta.`, title: "Pagamento" };
-    if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · mensal", suffix: "/mês", done: "O seu mural agora é PINZ+. Aproveite!", title: "Assinar o PINZ+" };
-    if (target === "plus_month") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · 1 mês", suffix: "", done: "O seu mural agora é PINZ+ por 1 mês. Aproveite!", title: "PINZ+ por 1 mês" };
-    if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: "PINZ+ · anual", suffix: "/ano", done: "O seu mural agora é PINZ+ por 1 ano. Aproveite!", title: "PINZ+ anual" };
-    if (target === "plus_life") return { cents: PLUS_LIFETIME_CENTS, label: "PINZ+ · vitalício", suffix: "", done: "O seu mural agora é PINZ+ para sempre. Aproveite!", title: "PINZ+ vitalício" };
-    if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: `Presente para @${recipient} · 1 mês de PINZ+`, suffix: "", done: `@${recipient} já tem 1 mês de PINZ+ e foi avisado.`, title: "Presentear com PINZ+" };
+    if (pack) return { cents: pack.cents, label: tx("m_pinzCreditos", { v0: pack.credits }), suffix: "", done: tx("m_creditosJaEstaoNaSua", { v0: pack.credits }), title: "Pagamento" };
+    if (target === "plus") return { cents: PLUS_PRICE_CENTS, label: "PINZ+ · mensal", suffix: "/mês", done: tx("m_oSeuMuralAgoraE"), title: "Assinar o PINZ+" };
+    if (target === "plus_month") return { cents: PLUS_PRICE_CENTS, label: tx("m_pinz1Mes"), suffix: "", done: tx("m_oSeuMuralAgoraE2"), title: tx("m_pinzPor1Mes") };
+    if (target === "plus_annual") return { cents: PLUS_ANNUAL_CENTS, label: "PINZ+ · anual", suffix: "/ano", done: tx("m_oSeuMuralAgoraE3"), title: "PINZ+ anual" };
+    if (target === "plus_life") return { cents: PLUS_LIFETIME_CENTS, label: tx("m_pinzVitalicio"), suffix: "", done: tx("m_oSeuMuralAgoraE4"), title: tx("m_pinzVitalicio2") };
+    if (target === "gift") return { cents: PLUS_GIFT_CENTS, label: tx("m_presentePara1MesDe", { v0: recipient }), suffix: "", done: tx("m_jaTem1MesDe", { v0: recipient }), title: tx("m_presentearComPinz") };
     return null;
   })();
   const price = info ? brl(info.cents) + info.suffix : "";
@@ -87,13 +87,13 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   async function checkGift() {
     const nick = giftInput.trim().replace(/^@/, "");
-    if (!nick) return setError("Digite o nome de usuário da pessoa.");
+    if (!nick) return setError(tx("m_digiteONomeDeUsuario"));
     setGiftBusy(true);
     setError(null);
     const { data, error: err } = await getBrowserSupabase().rpc("gift_recipient", { p_nick: nick });
     setGiftBusy(false);
     const d = data as { ok?: boolean; nickname?: string; reason?: string } | null;
-    if (err || !d) return setError("Não foi possível conferir agora. Tente de novo.");
+    if (err || !d) return setError(tx("m_naoFoiPossivelConferirAgora"));
     if (!d.ok) return setError(GIFT_ERROR[String(d.reason)] ?? GIFT_ERROR.not_found);
     setRecipient(d.nickname ?? nick);
     setTarget("gift");
@@ -121,7 +121,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
           customization: { paymentMethods: { maxInstallments: 1 }, visual: { style: { theme: "default" }, texts: { formSubmit: (plusTarget ? "Assinar " : "Pagar ") + price } } },
           callbacks: {
             onReady: () => alive && setCardState("ready"),
-            onError: () => alive && setError("Não foi possível carregar o formulário do cartão."),
+            onError: () => alive && setError(tx("m_naoFoiPossivelCarregarO")),
             onSubmit: (d: { token: string; payment_method_id: string; issuer_id?: string | number; payer?: { identification?: { type?: string; number?: string } } }) =>
               new Promise<void>((resolve, reject) => {
                 void (async () => {
@@ -136,7 +136,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                     resolve();
                     setStep("review");
                   } else {
-                    setError(res.message ?? "O pagamento foi recusado. Tente outro cartão.");
+                    setError(res.message ?? tx("m_oPagamentoFoiRecusadoTente"));
                     reject();
                   }
                 })();
@@ -348,7 +348,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <div id="pinz-card-brick" />
                   <button type="button" onClick={() => setStep(plusTarget ? "plans" : "choose")} className={ghost}>
                     {tx("voltar")}</button>
-                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plusTarget ? " Renova todo mês; cancele quando quiser em Planos." : ""}</p>
+                  <p className="mt-1 text-center text-xs text-[#8a7b69]">Os dados do cartão são digitados direto no Mercado Pago e não passam pelo Pinz.{plusTarget ? tx("m_renovaTodoMesCanceleQuando") : ""}</p>
                 </div>
               )}
 
@@ -372,7 +372,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   )}
                   <p className="mt-3 text-sm text-[#4a3826]">{tx("abraOAppDoSeu")}</p>
                   <button type="button" onClick={() => void copy()} className={`${primaryButton} mt-3`}>
-                    {copied ? "Código copiado!" : "Copiar código Pix"}
+                    {copied ? tx("m_codigoCopiado") : tx("m_copiarCodigoPix")}
                   </button>
                   <p className="mt-3 flex items-center justify-center gap-2 text-sm font-semibold text-[#6b5440]" aria-live="polite">
                     <span aria-hidden className="size-2.5 animate-pulse rounded-full bg-[#d9a21b]" />
@@ -386,7 +386,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                 <div className="mt-4 text-center">
                   <p className="text-[15px] text-[#4a3826]">{tx("esseCodigoExpirouOuNao")}</p>
                   <button type="button" disabled={busy !== null} onClick={() => void createPix()} className={`${primaryButton} mt-4`}>
-                    {busy ? "Gerando…" : "Gerar um novo código"}
+                    {busy ? "Gerando…" : tx("m_gerarUmNovoCodigo")}
                   </button>
                 </div>
               )}

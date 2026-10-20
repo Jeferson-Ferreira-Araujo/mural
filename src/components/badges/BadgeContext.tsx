@@ -190,6 +190,7 @@ export function BadgeProvider({
   onDisplaysChanged?: () => void;
   children: ReactNode;
 }) {
+  const tx = useTranslations("components.badges.BadgeContext");
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [draggingNew, setDraggingNew] = useState(false);
@@ -214,7 +215,7 @@ export function BadgeProvider({
         const st = live.current.stock(src.key);
         if (!st.owned || st.left === 0) {
           // esgotado: só não arrasta, sem aviso; botton da loja ainda não comprado: avisa
-          if (!st.owned) live.current.notify("Este botton é da loja. Libere com créditos para usar.");
+          if (!st.owned) live.current.notify(tx("m_esteBottonEDaLoja"));
           return;
         }
       }
@@ -331,7 +332,7 @@ export function BadgeProvider({
             void removeBadge(getBrowserSupabase(), src.id).then((ok) => {
               if (!ok) {
                 setBadges(() => prev);
-                notify("Não foi possível tirar o botton agora.");
+                notify(tx("m_naoFoiPossivelTirarO"));
               }
               live.current.onSynced?.(); // só agora o servidor já contou a devolução: atualiza o número da barra
             });
@@ -339,19 +340,19 @@ export function BadgeProvider({
           return;
         }
         if (drop.kind === "physical") {
-          notify("Não é possível colocar sobre pin ou display.");
+          notify(tx("m_naoEPossivelColocarSobre"));
           return sendBack(at);
         }
         if (drop.kind === "badge") {
-          notify("Não é possível colocar sobre pin ou display.");
+          notify(tx("m_naoEPossivelColocarSobre"));
           return sendBack(at);
         }
         if (drop.kind === "out") {
-          notify("Solte o botton sobre o mural.");
+          notify(tx("m_solteOBottonSobreO"));
           return sendBack(at);
         }
         if (drop.kind === "occupied") {
-          notify("Não é possível colocar sobre pin ou display.");
+          notify(tx("m_naoEPossivelColocarSobre"));
           return sendBack(at);
         }
         setGhost(null);
@@ -364,7 +365,7 @@ export function BadgeProvider({
           void updateDisplayLayout(getBrowserSupabase(), src.id, drop.x, drop.y, src.scale ?? DISPLAY_SCALE, drop.slots ?? []).then((r) => {
             if (!r.ok) {
               if (before) setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, ...before } : b)));
-              notify(r.taken ? "Esse lugar acabou de receber um pin. Escolha outro." : "Não foi possível mover o display agora.");
+              notify(r.taken ? tx("m_esseLugarAcabouDeReceber") : tx("m_naoFoiPossivelMoverO"));
             }
             live.current.onDisplaysChanged?.();
           });
@@ -373,13 +374,13 @@ export function BadgeProvider({
         if (src.kind === "placed") {
           setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y } : b)));
           void moveBadge(getBrowserSupabase(), src.id, drop.x, drop.y).then((ok) => {
-            if (!ok) notify("Não foi possível mover o botton agora.");
+            if (!ok) notify(tx("m_naoFoiPossivelMoverO2"));
           });
           return;
         }
         if (!mid) return;
         if (cur.length >= MAX_BADGES) {
-          notify(`O mural aceita até ${MAX_BADGES} Bottons.`);
+          notify(tx("m_oMuralAceitaAteBottons", { v0: MAX_BADGES }));
           return sendBack(at);
         }
         const tmp = `tmp-${Date.now()}`;
@@ -387,7 +388,7 @@ export function BadgeProvider({
         void addBadge(getBrowserSupabase(), mid, src.key, drop.x, drop.y).then((res) => {
           if ("error" in res) {
             setBadges((l) => l.filter((b) => b.id !== tmp));
-            notify(res.error === "sold_out" ? "Sem unidades: compre mais deste botton na loja ou tire um do mural." : res.error === "not_owned" ? "Este botton é da loja. Libere com créditos para usar." : "Não foi possível colocar o botton agora.");
+            notify(res.error === "sold_out" ? tx("m_semUnidadesCompreMaisDeste") : res.error === "not_owned" ? tx("m_esteBottonEDaLoja") : tx("m_naoFoiPossivelColocarO"));
           } else setBadges((l) => l.map((b) => (b.id === tmp ? { ...b, id: res.id } : b)));
           live.current.onSynced?.();
         });
@@ -457,7 +458,7 @@ export function BadgeProvider({
         void _r;
         void _p;
         void updateDisplayData(getBrowserSupabase(), id, clean).then((ok) => {
-          if (!ok) live.current.notify("Não foi possível salvar as páginas agora.");
+          if (!ok) live.current.notify(tx("m_naoFoiPossivelSalvarAs"));
         });
       }, 600);
     },
@@ -472,7 +473,7 @@ export function BadgeProvider({
     void removeBadge(getBrowserSupabase(), id).then((ok) => {
       if (!ok) {
         setBadges(() => prev);
-        notify("Não foi possível tirar o botton agora.");
+        notify(tx("m_naoFoiPossivelTirarO"));
       }
       live.current.onSynced?.();
     });
@@ -481,7 +482,7 @@ export function BadgeProvider({
   const setDisplaySecret = useCallback(async (id: string, hidden: boolean) => {
     const ok = await setDisplayHidden(getBrowserSupabase(), id, hidden);
     if (ok) setBadges((l) => l.map((b) => (b.id === id ? { ...b, hidden } : b)));
-    else live.current.notify(hidden ? "Segredo é do PINZ+." : "Não foi possível mudar agora.");
+    else live.current.notify(hidden ? tx("m_segredoEDoPinz") : tx("m_naoFoiPossivelMudarAgora"));
     return ok;
   }, [setBadges]);
 
@@ -504,7 +505,7 @@ export function BadgeProvider({
       if (ok) tiltSaved.current[id] = deg;
       else {
         setBadges((l) => l.map((x) => (x.id === id ? { ...x, rotation: before } : x)));
-        notify("Não foi possível inclinar o botton agora.");
+        notify(tx("m_naoFoiPossivelInclinarO"));
       }
     });
   }, [setBadges]);
@@ -549,15 +550,15 @@ export function BadgeProvider({
         const drop = evaluate(r.left + r.width / 2, r.top + r.height / 2, w, h, layer, el, isDisp);
         if (drop.kind === "occupied") {
           back();
-          return notify("Não é possível colocar sobre pin ou display.");
+          return notify(tx("m_naoEPossivelColocarSobre"));
         }
         if (drop.kind === "physical") {
           back();
-          return notify("Não é possível colocar sobre pin ou display.");
+          return notify(tx("m_naoEPossivelColocarSobre"));
         }
         if (drop.kind === "badge") {
           back();
-          return notify("Não é possível colocar sobre pin ou display.");
+          return notify(tx("m_naoEPossivelColocarSobre"));
         }
         if (drop.kind === "ok") {
           nx = drop.x;
@@ -582,7 +583,7 @@ export function BadgeProvider({
           if (d2.rect) removeOverRef.current?.(d2.rect, 0.02);
         } else if (d2.kind === "occupied") {
           back();
-          return notify("Não é possível colocar sobre pin ou display.");
+          return notify(tx("m_naoEPossivelColocarSobre"));
         }
         void lr;
       }
@@ -591,7 +592,7 @@ export function BadgeProvider({
         if (res.ok) scaleSaved.current[id] = pct;
         else {
           back();
-          notify(res.taken ? "Esse lugar acabou de receber um pin." : "Não foi possível mudar o tamanho agora.");
+          notify(res.taken ? tx("m_esseLugarAcabouDeReceber2") : tx("m_naoFoiPossivelMudarO"));
         }
         live.current.onDisplaysChanged?.();
       });
@@ -604,7 +605,7 @@ export function BadgeProvider({
         if (Math.abs(nx - b.x) > 0.05 || Math.abs(ny - b.y) > 0.05) void moveBadge(sb, id, nx, ny); // só grava a posição se ela mudou de verdade
       } else {
         back();
-        notify("Não foi possível mudar o tamanho agora.");
+        notify(tx("m_naoFoiPossivelMudarO"));
       }
     });
   }, [setBadges]);
@@ -635,7 +636,7 @@ export function BadgeProvider({
   async function placeAtSlot(product: string, data: DisplayPayload, slot: number) {
     const layer = visibleLayer();
     const slotEl = [...document.querySelectorAll<HTMLElement>("[data-slot]")].find((el) => visible(el) && Number(el.dataset.slot) === slot);
-    if (!layer || !slotEl) return live.current.notify("Não foi possível colocar o display agora.");
+    if (!layer || !slotEl) return live.current.notify(tx("m_naoFoiPossivelColocarO2"));
     const lr = layer.getBoundingClientRect();
     const em = parseFloat(getComputedStyle(layer).fontSize) || 10;
     const sc = lr.width / (layer.offsetWidth || lr.width);
@@ -650,7 +651,7 @@ export function BadgeProvider({
       const d = evaluate(cx + dx, cy, w, h, layer, undefined, true, true);
       if (d.kind === "ok" && (d.slots ?? []).includes(slot)) return placeDisplay(product, data, d.x, d.y, d.slots ?? [], d.rect);
     }
-    live.current.notify("Não há espaço livre ao redor para colocar este display aqui. Tente outro espaço.");
+    live.current.notify(tx("m_naoHaEspacoLivreAo"));
   }
   const openDetail = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);
@@ -707,7 +708,7 @@ export function BadgeProvider({
     void _p;
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
     if ("error" in res) {
-      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "plan_limit" ? "O plano gratuito permite até 15 pins e displays no mural. Com o PINZ+ não há esse limite." : res.error === "limit" ? "O mural chegou ao máximo de itens." : res.error === "not_owned" ? "Este display é da loja. Libere com créditos para usar." : "Não foi possível colocar o display agora.");
+      live.current.notify(res.error === "taken" ? tx("m_esseLugarAcabouDeReceber") : res.error === "plan_limit" ? tx("m_oPlanoGratuitoPermiteAte") : res.error === "limit" ? tx("m_oMuralChegouAoMaximo") : res.error === "not_owned" ? tx("m_esteDisplayEDaLoja") : tx("m_naoFoiPossivelColocarO2"));
       live.current.onDisplaysChanged?.();
       return;
     }
@@ -948,7 +949,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
             </svg>
           </button>
         )}
-        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? "Tirar o display do mural" : "Tirar o botton do mural (volta para a barra)"} title={tx("tirarDoMural")} className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
+        <button type="button" onClick={() => onRemove(id)} aria-label={isDisp ? tx("m_tirarODisplayDoMural") : tx("m_tirarOBottonDoMural")} title={tx("tirarDoMural")} className={`mb-0.5 grid size-7 cursor-pointer place-items-center rounded-full text-white transition hover:bg-white/20 active:scale-90`}>
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
@@ -974,6 +975,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
 
 /** Botão de mais ou menos páginas: um toque muda uma página; segurando, repete cada vez mais rápido. */
 function PagesStep({ dir, onStep }: { dir: 1 | -1; onStep: (d: number) => void }) {
+  const tx = useTranslations("components.badges.BadgeContext");
   const timer = useRef<number | null>(null);
   const stop = () => {
     if (timer.current !== null) {
@@ -999,8 +1001,8 @@ function PagesStep({ dir, onStep }: { dir: 1 | -1; onStep: (d: number) => void }
   return (
     <button
       type="button"
-      aria-label={dir > 0 ? "Mais uma página lida" : "Menos uma página lida"}
-      title={dir > 0 ? "Mais páginas" : "Menos páginas"}
+      aria-label={dir > 0 ? tx("m_maisUmaPaginaLida") : tx("m_menosUmaPaginaLida")}
+      title={dir > 0 ? tx("m_maisPaginas") : tx("m_menosPaginas")}
       onPointerDown={start}
       onPointerUp={stop}
       onPointerLeave={stop}
@@ -1078,7 +1080,7 @@ function PlacingOverlay({ product, data, onCancel, onDrop, notify }: { product: 
       const d = check(x, y);
       if (!d) return;
       if (d.kind === "ok") return onDrop(d.x, d.y, d.slots ?? [], d.rect);
-      notify(d.kind === "occupied" || d.kind === "badge" ? "Não é possível colocar sobre pin ou display." : "Solte o display sobre o mural.");
+      notify(d.kind === "occupied" || d.kind === "badge" ? tx("m_naoEPossivelColocarSobre") : tx("m_solteODisplaySobreO"));
       const lr = layerRef.current?.getBoundingClientRect();
       if (lr) setPos({ x: lr.left + lr.width / 2, y: lr.top + lr.height / 2 }); // volta ao centro
       setState("ok");

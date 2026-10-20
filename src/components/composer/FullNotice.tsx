@@ -22,7 +22,7 @@ export function FullNotice({ planLimit = false, onTried, triedAlready, onClose }
         </div>
       </div>
 
-      <h3 className="font-title text-2xl font-semibold">{planLimit ? "Este mural chegou ao limite do plano." : "Este PINZ está lotado."}</h3>
+      <h3 className="font-title text-2xl font-semibold">{planLimit ? tx("m_esteMuralChegouAoLimite") : tx("m_estePinzEstaLotado")}</h3>
       {planLimit && <p className="mt-2 text-sm text-[#6b5440]">{tx("oPlanoGratuitoTemUm")}</p>}
       {sent ? (
         <>

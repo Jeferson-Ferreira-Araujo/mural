@@ -180,7 +180,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         </p>
       )}
       <button type="submit" data-tour="compose-send" disabled={!canSend} className={primaryButton}>
-        {sending ? "Colocando…" : capsule.enabled ? "Fechar a cápsula e colocar no mural" : "Colocar no mural"}
+        {sending ? "Colocando…" : capsule.enabled ? tx("m_fecharACapsulaEColocar") : tx("m_colocarNoMural")}
       </button>
       </div>
     </form>
@@ -233,7 +233,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             ) : (
               <span />
             )}
-            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : "Coloque um PIN"}</p>
+            <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? formatInfo[format].label : tx("m_coloqueUmPin")}</p>
             <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
               ×
             </button>

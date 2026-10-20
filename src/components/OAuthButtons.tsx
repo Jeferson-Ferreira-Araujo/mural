@@ -58,7 +58,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
     const { error } = await getBrowserSupabase().auth.signInWithOAuth({ provider, options: { redirectTo: callbackUrl() } });
     if (error) {
       setBusy(null);
-      onError(`Não foi possível entrar com ${OAUTH_LABEL[provider].replace("Continuar com ", "")}.`);
+      onError(tx("m_naoFoiPossivelEntrarCom", { v0: OAUTH_LABEL[provider].replace("Continuar com ", "") }));
     }
   }
 

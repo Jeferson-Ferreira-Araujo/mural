@@ -75,7 +75,7 @@ export function TransactionsModal({ open, onClose, credits }: { open: boolean; o
           {sub && (
             <p className="rounded-xl border border-[#e8d9a8] bg-[#fff6d6] px-3 py-2 text-sm">
               <strong>{txt("assinaturaPinz")}</strong> {sub.status === "authorized" ? "ativa" : sub.status === "cancelled" ? "cancelada" : sub.status}
-              {sub.paidUntil ? ` · vale até ${new Date(sub.paidUntil).toLocaleDateString("pt-BR")}` : ""}
+              {sub.paidUntil ? txt("m_valeAte", { v0: new Date(sub.paidUntil).toLocaleDateString("pt-BR") }) : ""}
             </p>
           )}
 

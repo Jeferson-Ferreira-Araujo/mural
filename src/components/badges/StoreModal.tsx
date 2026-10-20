@@ -244,7 +244,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       xl
       aside={
         // os créditos ficam sempre no cabeçalho, ao lado do botão de fechar: dá para ver o saldo sendo gasto
-        <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={`Seu saldo: ${credits} créditos`}>
+        <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={tx("m_seuSaldoCreditos", { v0: credits })}>
           <Coin className="size-6" />
           <Balance value={credits} at={done?.at ?? 0} className="inline-block text-base tabular-nums" />
           <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" />
@@ -356,14 +356,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <button
                         type="button"
                         disabled={busy === `p${b.key}`}
-                        aria-label={`${owned ? "Comprar mais " + n + " de" : "Comprar"} ${name} por ${cost} crédito${cost > 1 ? "s" : ""}`}
+                        aria-label={tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : "Comprar", v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
                         onClick={() =>
                           buy(
                             `p${b.key}`,
                             owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n },
                             {
                               title: name,
-                              text: owned ? `+${n} unidade${n > 1 ? "s" : ""} já disponível${n > 1 ? "s" : ""} na sua barra de bottons.` : n > 1 ? `liberado com ${n} unidades! Já está na sua barra de bottons.` : "liberado! Já está na sua barra de bottons.",
+                              text: owned ? tx("m_unidadeJaDisponivelNaSua", { v0: n, v1: n > 1 ? "s" : "", v2: n > 1 ? "s" : "" }) : n > 1 ? tx("m_liberadoComUnidadesJaEsta", { v0: n }) : tx("m_liberadoJaEstaNaSua"),
                               img: badgeSrc(b.key),
                               spent: cost,
                             },
@@ -467,9 +467,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-title text-base font-semibold">{name}</p>
                       {p.owned ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{p.price === 0 ? "✓ Grátis" : "✓ Comprado"}</span>
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{p.price === 0 ? tx("m_gratis") : "✓ Comprado"}</span>
                       ) : (
-                        <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${p.price} créditos`}>
+                        <p className="flex items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: p.price })}>
                           <Coin className="size-5" />
                           {p.price}
                         </p>
@@ -485,7 +485,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </div>
                     )}
                     {!p.owned && (
-                      <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: "liberado! Já está na escolha de formatos ao colocar um pin.", spent: p.price })} className={`${buyBtn} mt-2`}>
+                      <button type="button" disabled={busy === `f${p.id}`} onClick={() => buy(`f${p.id}`, { kind: "product", id: p.id }, { title: name + (shape === "square" ? " (quadrado)" : ""), text: tx("m_liberadoJaEstaNaEscolha"), spent: p.price })} className={`${buyBtn} mt-2`}>
                         {busy === `f${p.id}` ? "Comprando…" : "Comprar"}
                       </button>
                     )}
@@ -525,7 +525,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <button
                     type="button"
                     onClick={() => setViewBoard({ image: b.image, name: b.name })}
-                    aria-label={`Ver o mural ${b.name} em tela cheia`}
+                    aria-label={tx("m_verOMuralEmTela", { v0: b.name })}
                     title={tx("verEmTelaCheia")}
                     className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/40 text-white/90 opacity-80 backdrop-blur-sm transition hover:bg-black/65 hover:opacity-100 active:scale-90"
                   >
@@ -540,7 +540,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-title text-base font-semibold">{b.name}</p>
                     {!owned ? (
-                      <p className="flex items-center gap-1 text-sm font-bold" aria-label={`${info?.price ?? 25} créditos`}>
+                      <p className="flex items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: info?.price ?? 25 })}>
                         <Coin className="size-5" />
                         {info?.price ?? 25}
                       </p>
@@ -549,12 +549,12 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <path d="m5 12.5 4.5 4.5L19 7.5" />
                         </svg>
-                        {b.id === "cortica" ? "Padrão" : "Comprado"}
+                        {b.id === "cortica" ? tx("m_padrao") : "Comprado"}
                       </span>
                     )}
                   </div>
                   {owned ? null : (
-                    <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: "liberado! Aplique em Editar mural.", img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
+                    <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: `Fundo ${b.name}`, text: tx("m_liberadoApliqueEmEditarMural"), img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
                       {busy === `t${b.id}` ? "Comprando…" : "Comprar"}
                     </button>
                   )}
@@ -614,7 +614,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             <Coin className="mx-auto size-14" />
             <h2 className="font-title mt-3 text-2xl leading-tight font-semibold">{tx("creditosInsuficientes")}</h2>
             <p className="mt-2 text-sm text-[#4a3826]">
-              Você não tem crédito suficiente para comprar <strong>{short.name}</strong>. Faltam <strong>{short.cost - credits}</strong> {short.cost - credits === 1 ? "crédito" : "créditos"}.
+              Você não tem crédito suficiente para comprar <strong>{short.name}</strong>. Faltam <strong>{short.cost - credits}</strong> {short.cost - credits === 1 ? tx("m_credito") : tx("m_creditos2")}.
             </p>
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => setShort(null)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">

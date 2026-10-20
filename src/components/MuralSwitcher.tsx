@@ -54,7 +54,7 @@ export function MuralPager({ sw, className = "", tone = "light" }: { sw?: MuralS
         <button type="button" aria-label={tx("muralAnterior")} onClick={() => go(i - 1)} className={arrow}>
           {chevron("m15 5-7 7 7 7")}
         </button>
-        <span className="min-w-[2.4em] text-center text-base leading-none font-bold tabular-nums" aria-label={`Mural ${i + 1} de ${sw.items.length}`}>
+        <span className="min-w-[2.4em] text-center text-base leading-none font-bold tabular-nums" aria-label={tx("m_muralDe", { v0: i + 1, v1: sw.items.length })}>
           {i + 1}/{sw.items.length}
         </span>
         <button type="button" aria-label={tx("proximoMural")} onClick={() => go(i + 1)} className={arrow}>

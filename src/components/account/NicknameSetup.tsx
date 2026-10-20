@@ -68,7 +68,7 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
     setBusy(false);
     if (err || typeof data !== "string") {
       const key = Object.keys(ERROR).find((k) => err?.message.includes(k));
-      return setError(key ? ERROR[key] : "Não foi possível salvar agora. Tente de novo.");
+      return setError(key ? ERROR[key] : tx("m_naoFoiPossivelSalvarAgora"));
     }
     const sb = getBrowserSupabase();
     if (iso) await saveOnboarding(sb, iso, false); // a data é opcional: se falhar, o nome já salvo segue valendo

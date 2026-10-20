@@ -200,6 +200,7 @@ const QUESTION_SUGGESTIONS = [
 
 /** Botão que abre uma lista de sugestões de pergunta; ao escolher, preenche o campo. */
 export function QuestionSuggestions({ onPick }: { onPick: (q: string) => void }) {
+  const tx = useTranslations("components.ui");
   const [open, setOpen] = useState(false);
   const listId = useId();
   return (
@@ -211,7 +212,7 @@ export function QuestionSuggestions({ onPick }: { onPick: (q: string) => void })
         aria-controls={listId}
         className="cursor-pointer text-sm font-semibold text-[#6b5440] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
       >
-        💡 {open ? "Esconder sugestões" : "Ver sugestões de perguntas"}
+        💡 {open ? tx("m_esconderSugestoes") : tx("m_verSugestoesDePerguntas")}
       </button>
       {open && (
         <ul id={listId} className="rise mt-2 flex flex-col gap-1.5">

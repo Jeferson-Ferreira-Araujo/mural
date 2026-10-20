@@ -103,7 +103,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setBusy(false);
     if (!res.ok) return setErr(SHARED_ERROR_TEXT[res.reason]);
     if (board !== DEFAULT_BOARD) await getBrowserSupabase().rpc("set_mural_board", { p_mural_id: res.id, p_board: board });
-    onNotify(`Convite enviado para @${nick}! O mural abre quando a pessoa aceitar.`);
+    onNotify(tx("m_conviteEnviadoParaOMural", { v0: nick }));
     onClose();
   }
 
@@ -114,8 +114,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setErr(null);
     const ok = await reportProfile(getBrowserSupabase(), nick, reason, details.trim());
     setBusy(false);
-    if (!ok) return setErr("Não foi possível enviar a denúncia agora. Tente de novo.");
-    onNotify("Denúncia enviada. Obrigado por avisar: nossa equipe vai analisar.");
+    if (!ok) return setErr(tx("m_naoFoiPossivelEnviarA"));
+    onNotify(tx("m_denunciaEnviadaObrigadoPorAvisar"));
     onClose();
   }
 
@@ -131,7 +131,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
       if (cardRef.current) {
         const blob = await cardToPng(cardRef.current);
         const res = await deliverImage(blob, `pinz-${data.nickname}`, text);
-        if (res === "downloaded") onNotify("Imagem salva! Agora é só compartilhar.");
+        if (res === "downloaded") onNotify(tx("m_imagemSalvaAgoraESo"));
         return;
       }
     } catch {
@@ -181,13 +181,13 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                   </svg>
                 </Stat>
               )}
-              <Stat tone="blue" value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? "visualização" : "visualizações"}>
+              <Stat tone="blue" value={data.views.toLocaleString("pt-BR")} label={data.views === 1 ? tx("m_visualizacao") : tx("m_visualizacoes")}>
                 <svg {...icon} strokeWidth="2.4">
                   <path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12Z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </Stat>
-              <Stat tone="green" value={(data.received ?? 0).toLocaleString("pt-BR")} label={(data.received ?? 0) === 1 ? "pin colocado no mural" : "pins colocados no mural"}>
+              <Stat tone="green" value={(data.received ?? 0).toLocaleString("pt-BR")} label={(data.received ?? 0) === 1 ? tx("m_pinColocadoNoMural") : tx("m_pinsColocadosNoMural")}>
                 <svg {...icon} fill="currentColor" stroke="none">
                   <path d="M14.500 2.500 21.500 9.500c.6.6.2 1.500-.6 1.600l-2.300.2-3.700 3.700.4 3.400c.1.8-.8 1.200-1.400.7L9.600 15.600 4 21.200 2.800 20 8.400 14.400 5.400 11c-.5-.6-.1-1.500.7-1.400l3.400.4 3.700-3.700.2-2.300c.1-.8 1-1.200 1.600-.6Z" />
                 </svg>
@@ -284,7 +284,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
             </p>
           )}
           <button type="submit" disabled={busy} className="w-full cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60">
-            {busy ? "Enviando…" : "Enviar denúncia"}
+            {busy ? "Enviando…" : tx("m_enviarDenuncia")}
           </button>
         </form>
       )}

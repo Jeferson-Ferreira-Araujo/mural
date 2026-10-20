@@ -9,9 +9,10 @@ import { ListSkeleton } from "../Skeleton";
 import { useTranslations } from "next-intl";
 
 function Row({ p, action }: { p: PersonLite; action?: React.ReactNode }) {
+  const tx = useTranslations("components.account.PeopleModals");
   return (
     <li className="flex items-center gap-3 rounded-2xl border border-[#e1d3ba] bg-white/70 p-2.5">
-      <a href={`/${p.nickname}`} className="flex min-w-0 flex-1 items-center gap-3" aria-label={`Abrir o mural de @${p.nickname}`}>
+      <a href={`/${p.nickname}`} className="flex min-w-0 flex-1 items-center gap-3" aria-label={tx("m_abrirOMuralDe", { v0: p.nickname })}>
         <Avatar src={p.avatar} name={p.nickname} plus={p.plus} className="size-11 shrink-0" />
         <span className="min-w-0 truncate text-base font-bold">@{p.nickname}</span>
       </a>
@@ -70,7 +71,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          aria-label={tab === "following" ? "Buscar entre quem você segue" : "Buscar entre seus seguidores"}
+          aria-label={tab === "following" ? tx("m_buscarEntreQuemVoceSegue") : "Buscar entre seus seguidores"}
           autoComplete="off"
           className="w-full rounded-xl border border-[#d9c9ad] bg-white py-2.5 pr-11 pl-3.5 text-[15px] outline-none [&::-webkit-search-cancel-button]:appearance-none focus:border-[#d98a2b] focus:ring-2 focus:ring-[#d98a2b]/30"
         />
@@ -83,7 +84,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
         <ListSkeleton rows={5} />
       ) : shown.length === 0 ? (
         <p className="py-6 text-center text-sm text-[#6b5440]">
-          {term ? "Ninguém encontrado com esse nome." : tab === "following" ? "Você ainda não segue ninguém. Toque em “Seguir” no mural de uma pessoa para ter acesso rápido a ele aqui." : "Nenhum seguidor para mostrar."}
+          {term ? tx("m_ninguemEncontradoComEsseNome") : tab === "following" ? tx("m_voceAindaNaoSegueNinguem") : tx("m_nenhumSeguidorParaMostrar")}
         </p>
       ) : (
         <ul className="space-y-2.5">

@@ -78,7 +78,9 @@
         "page": {
           "ops": "Oops!",
           "voltarParaOLogin": "Back to log in",
-          "entrando": "Logging in…"
+          "entrando": "Logging in…",
+          "m_oLinkExpirouOuJa": "The link expired or was already used. Request a new one.",
+          "m_naoFoiPossivelConcluirO": "We couldn't complete the login. Open the link in the same browser where you requested it, or request a new one."
         }
       },
       "nova_senha": {
@@ -87,7 +89,11 @@
           "esteLinkJaFoiUsado": "This link has already been used or has expired. Log in to your account and request a new one in Edit profile.",
           "irParaOLogin": "Go to log in",
           "novaSenha": "New password",
-          "repitaANovaSenha": "Repeat the new password"
+          "repitaANovaSenha": "Repeat the new password",
+          "m_asSenhasNaoSaoIguais": "The passwords don't match.",
+          "m_escolhaUmaSenhaDiferenteDa": "Choose a password different from the current one.",
+          "m_naoFoiPossivelTrocarA": "We couldn't change the password right now. Request a new link and try again.",
+          "m_salvarNovaSenha": "Save new password"
         }
       }
     },
@@ -109,7 +115,17 @@
         "mural": "Board",
         "acesso": "Access",
         "publicoQualquerPessoaComO": "Public: anyone with the link can open it",
-        "voltar": "Back"
+        "voltar": "Back",
+        "m_voceChegouAoLimiteDe": "You have reached the limit of {v0} boards.",
+        "m_oPlanoGratuitoInclui1": "The free plan includes 1 board. With PINZ+ you can have up to 10.",
+        "m_naoFoiPossivelCriarO": "We couldn't create the board right now. Please try again.",
+        "m_todosOsSeusMuraisEstao": "All your boards are live",
+        "m_seuMuralJaEstaNo": "Your board is already live",
+        "m_oLimiteDoPinzE": "The PINZ+ limit is {v0} boards.",
+        "m_oPlanoGratuitoInclui12": "The free plan includes 1 board. PINZ+ lets you have up to 10 boards.",
+        "m_vamosCriarMaisUmMural": "Let's create one more board",
+        "m_comoOSeuMuralVai": "What will your board be called?",
+        "m_criarMeuMural": "Create my board"
       }
     },
     "loading": {
@@ -152,7 +168,10 @@
         "pesquisarUsuarios": "Search users",
         "menu": "Menu",
         "irParaOMeuMural": "Go to my board",
-        "meuMural": "My board"
+        "meuMural": "My board",
+        "m_notificacoesNovas": "Notifications ({v0} new)",
+        "m_notificacoes": "Notifications",
+        "m_menuPinsParaAprovar": "Menu ({v0} pins to approve)"
       },
       "AccountDrawer": {
         "editarMural": "Edit board",
@@ -179,7 +198,10 @@
         "zoom": "Zoom:",
         "mover": "Move:",
         "bottons": "Buttons:",
-        "entendi": "Got it"
+        "entendi": "Got it",
+        "m_ola": "Hello {v0}",
+        "m_queBomTerVocePor": "So glad to have you here. We hope this is a great experience for you and your customers.",
+        "m_queBomTerVocePor2": "So glad to have you here! Here's how to use it:"
       },
       "GiftModal": {
         "oPinzDesejaAVoce": "Pinz wishes you an amazing day and a year full of messages, photos and special moments. Congratulations!",
@@ -190,7 +212,12 @@
         "elesEstaoNoPrimeiroBotao": "They are in the first button of your buttons bar (the one with the little arrow on top). Tap it, choose one and drag it onto the board.",
         "aproveitar": "Enjoy!",
         "seuPinzJaEstaAtivo": "Your PINZ+ is already active. Enjoy all the benefits.",
-        "obrigado": "Thank you!"
+        "obrigado": "Thank you!",
+        "m_voceGanhouUmPresente": "You got a gift!",
+        "m_felizAniversario": "Happy birthday!",
+        "m_ate": "until {v0}",
+        "m_ateOFimDoMes": "until the end of the month",
+        "m_alguem": "Someone"
       },
       "Modal": {
         "voltarAoMenu": "Back to menu",
@@ -209,14 +236,26 @@
         "resetarMural": "Reset board",
         "excluirEsteMuralApagaTambem": "Deleting this board also erases its access and all its messages. This cannot be undone.",
         "simExcluir": "Yes, delete",
-        "excluirEsteMural": "Delete this board"
+        "excluirEsteMural": "Delete this board",
+        "m_preenchaONomeDoMural": "Fill in the board name.",
+        "m_naoFoiPossivelSalvarConfira": "We couldn't save. Check the fields and try again.",
+        "m_salveiONomeMasNao": "I saved the name, but couldn't change the type (buy it in the store).",
+        "m_naoFoiPossivelSalvarA": "We couldn't save the security question. Check the fields and try again.",
+        "m_salveiORestoMasNao": "I saved the rest, but couldn't save the pin display time.",
+        "m_salveiORestoMasNao2": "I saved the rest, but couldn't save the welcome message. It can have up to 280 characters.",
+        "m_naoFoiPossivelResetarO": "We couldn't reset the board. Try again.",
+        "m_muralResetadoTodosOsRecados": "Board reset. All messages were deleted.",
+        "m_naoFoiPossivelExcluirTente": "We couldn't delete. Try again.",
+        "m_proximoTipo": "Next type"
       },
       "MuralSetupModal": {
         "configureSeuMural": "Set up your board",
         "seuMuralJaEstaNo": "Your board is already live. Choose its name, who can open it and how long other people's pins stay. You can change everything later in My boards.",
         "nomeDoMural": "Board name",
         "exViagemDe2026": "E.g.: 2026 trip",
-        "depois": "Later"
+        "depois": "Later",
+        "m_deUmNomeAoMural": "Give the board a name.",
+        "m_naoFoiPossivelSalvarTudo": "We couldn't save everything right now. Check the fields and try again."
       },
       "MyMuralsModal": {
         "meusMurais": "My boards",
@@ -226,29 +265,46 @@
         "voceAindaNaoCriouNenhum": "You haven't created any board yet.",
         "arrasteParaMudarAOrdem": "Drag to change the order",
         "editar": "Edit",
-        "apagar": "Delete"
+        "apagar": "Delete",
+        "m_naoFoiPossivelMudarA": "We couldn't change the order right now. Try again.",
+        "m_naoFoiPossivelApagarAgora": "We couldn't delete right now. Try again.",
+        "m_publico": "Public"
       },
       "NewMuralModal": {
         "novoMural": "New board",
         "cancelar": "Cancel",
         "tipoDoMural": "Board type",
         "nomeDoMural": "Board name",
-        "exViagemDe2026": "E.g.: 2026 trip"
+        "exViagemDe2026": "E.g.: 2026 trip",
+        "m_creditosInsuficientesParaEsteMural": "Not enough credits for this board.",
+        "m_comprarMuraisEParaQuem": "Buying boards is for PINZ+ subscribers.",
+        "m_naoFoiPossivelComprarAgora": "We couldn't buy right now. Try again.",
+        "m_preenchaONomeDoMural": "Fill in the board name.",
+        "m_voceChegouAoLimiteDe": "You have reached the board limit.",
+        "m_naoFoiPossivelCriarO": "We couldn't create the board right now. Please try again.",
+        "m_creditos": "{v0} credits",
+        "m_proximoTipo": "Next type",
+        "m_compreEsteTipoDeMural": "Buy this board type to create with it",
+        "m_criarMural": "Create board"
       },
       "NicknameSetup": {
         "completeOSeuPerfil": "Complete your profile",
-        "escolhaOSeuNomeDe": "Choose your username: this is how people will find you and open your board. Once saved, it can't be changed."
+        "escolhaOSeuNomeDe": "Choose your username: this is how people will find you and open your board. Once saved, it can't be changed.",
+        "m_naoFoiPossivelSalvarAgora": "We couldn't save right now. Try again."
       },
       "NotificationsModal": {
         "notificacoes": "Notifications",
         "carregandoAsNotificacoes": "Loading notifications",
-        "nenhumaNotificacaoPorEnquanto": "No notifications for now."
+        "nenhumaNotificacaoPorEnquanto": "No notifications for now.",
+        "m_verOMural": "View the board"
       },
       "OnboardingModal": {
         "completeOSeuPerfilPara": "Complete your profile so people recognize you.",
         "agoraNao": "Not now",
         "euVouTeGuiarTocando": "I'll guide you, tapping along with you, to place your first pin on your board. It takes about 1 minute.",
-        "comecar": "Start"
+        "comecar": "Start",
+        "m_ola": "Hello, {v0}!",
+        "m_vamosColocarOSeuPrimeiro": "Shall we place your first pin?"
       },
       "PaymentResultModal": {
         "continuar": "Continue"
@@ -272,7 +328,28 @@
         "qrCodeDoPix": "Pix QR code",
         "abraOAppDoSeu": "Open your bank app, choose Pix and scan the QR code, or use Pix copy and paste.",
         "assimQueVocePagarEsta": "As soon as you pay, this screen confirms on its own.",
-        "esseCodigoExpirouOuNao": "This code expired or was not completed. Nothing was charged."
+        "esseCodigoExpirouOuNao": "This code expired or was not completed. Nothing was charged.",
+        "m_pinzCreditos": "Pinz · {v0} credits",
+        "m_creditosJaEstaoNaSua": "+{v0} credits are already in your account.",
+        "m_oSeuMuralAgoraE": "Your board is now PINZ+. Enjoy!",
+        "m_pinz1Mes": "PINZ+ · 1 month",
+        "m_oSeuMuralAgoraE2": "Your board is now PINZ+ for 1 month. Enjoy!",
+        "m_pinzPor1Mes": "PINZ+ for 1 month",
+        "m_oSeuMuralAgoraE3": "Your board is now PINZ+ for 1 year. Enjoy!",
+        "m_pinzVitalicio": "PINZ+ · lifetime",
+        "m_oSeuMuralAgoraE4": "Your board is now PINZ+ forever. Enjoy!",
+        "m_pinzVitalicio2": "PINZ+ lifetime",
+        "m_presentePara1MesDe": "Gift for @{v0} · 1 month of PINZ+",
+        "m_jaTem1MesDe": "@{v0} now has 1 month of PINZ+ and was notified.",
+        "m_presentearComPinz": "Gift PINZ+",
+        "m_digiteONomeDeUsuario": "Type the person's username.",
+        "m_naoFoiPossivelConferirAgora": "We couldn't check right now. Try again.",
+        "m_naoFoiPossivelCarregarO": "We couldn't load the card form.",
+        "m_oPagamentoFoiRecusadoTente": "The payment was declined. Try another card.",
+        "m_renovaTodoMesCanceleQuando": "Renews every month; cancel anytime in Plans.",
+        "m_codigoCopiado": "Code copied!",
+        "m_copiarCodigoPix": "Copy Pix code",
+        "m_gerarUmNovoCodigo": "Generate a new code"
       },
       "PeopleModals": {
         "seguidoresESeguindo": "Followers and following",
@@ -282,7 +359,12 @@
         "nenhumSeguidorParaMostrar": "No followers to show.",
         "visitantes": "Visitors",
         "voceDesligouAparecerComoVisitante": "You turned off “Appear as a visitor” in Profile. Whoever turns it off also can't see who visited their boards. Turn it back on there to see the list.",
-        "ninguemComContaVisitouSeus": "Nobody with an account has visited your boards yet."
+        "ninguemComContaVisitouSeus": "Nobody with an account has visited your boards yet.",
+        "m_abrirOMuralDe": "Open @{v0}'s board",
+        "m_buscarEntreQuemVoceSegue": "Search among people you follow",
+        "m_ninguemEncontradoComEsseNome": "Nobody found with that name.",
+        "m_voceAindaNaoSegueNinguem": "You don't follow anyone yet. Tap “Follow” on someone's board to have quick access to it here.",
+        "m_nenhumSeguidorParaMostrar": "No followers to show."
       },
       "PinsModal": {
         "denunciar": "Report",
@@ -306,7 +388,21 @@
         "carregandoOsPins": "Loading pins",
         "nenhumPinArquivadoQuandoAlgum": "No archived pins. When a pin goes past the display time set in Edit board, it comes to this screen. Here you can view it and, with one click, put it back on the board in the same place where it was. If that place is taken, it goes to the first free spot; if the board is full, we'll let you know.",
         "pinsArquivados": "Archived pins",
-        "nenhumPinAguardandoAprovacaoNo": "No pins waiting for approval right now. When someone places a pin on your board, it shows up here."
+        "nenhumPinAguardandoAprovacaoNo": "No pins waiting for approval right now. When someone places a pin on your board, it shows up here.",
+        "m_naoFoiPossivelSalvarA": "We couldn't save the display time right now. Try again.",
+        "m_naoFoiPossivelCarregarOs": "We couldn't load the pins right now.",
+        "m_pinColocadoDeVoltaNo": "Pin put back on the board “{v0}”, in the same place as before (spot {v1}).",
+        "m_oEspacoJaEstavaOcupado": "Spot {v0} was already taken. The pin was placed on the board “{v1}”, in spot {v2}.",
+        "m_oPinNaoPodeSer": "The pin can't be put back because the board “{v0}” is full: there is no free spot.",
+        "m_oPinNaoPodeSer2": "The pin can't be put back because the board “{v0}” reached the plan's pin limit.",
+        "m_naoFoiPossivelColocarDe": "We couldn't put it back right now. Try again.",
+        "m_naoFoiPossivelConcluirTente": "We couldn't complete this. Try again.",
+        "m_visivelDeixarEmSegredo": "👁 Visible — make secret",
+        "m_estavaNoEspaco": "· was in spot {v0}",
+        "m_colocarDeVoltaNoMural": "Put back on the board",
+        "m_semPrazoFicamParaSempre": "no time limit (they stay forever)",
+        "m_pinsParaAprovar": "Pins to approve",
+        "m_pinsNoMural": "Pins on the board"
       },
       "PinTtlField": {
         "tempoDeExibicaoDosPinz": "Pin display time",
@@ -320,7 +416,13 @@
         "cancelarAAssinatura2": "Cancel the subscription?",
         "voceContinuaComOPinz": "You keep PINZ+ until the end of the period already paid. After that there are no new charges and the account goes back to the free plan.",
         "manterAssinatura": "Keep subscription",
-        "cancelarAssinatura": "Cancel subscription"
+        "cancelarAssinatura": "Cancel subscription",
+        "m_cobrancaEmBreve": "Billing coming soon",
+        "m_paraSempre": "Forever",
+        "m_assinaturaCanceladaOPinzContinua": "Subscription cancelled. PINZ+ continues until the end of the paid period.",
+        "m_naoFoiPossivelCancelarAgora": "We couldn't cancel right now. Try again.",
+        "m_pinzVitalicioParaSempre": "PINZ+ lifetime · forever",
+        "m_pinzAtivoAte": "PINZ+ active until {v0}"
       },
       "PrivacyField": {
         "quemPodeAbrirEsteMural": "Who can open this board",
@@ -344,7 +446,16 @@
         "t30Dias": "30 days",
         "totalmenteApagada": "completely deleted",
         "excluir": "DELETE",
-        "cancelar": "Cancel"
+        "cancelar": "Cancel",
+        "m_escrevaAPerguntaDeSeguranca": "Write the security question.",
+        "m_naoFoiPossivelSalvarConfira": "We couldn't save. Check the fields and try again.",
+        "m_contasDeAdministradorNaoPodem": "Administrator accounts can't be deleted here.",
+        "m_muitasTentativasTenteDeNovo": "Too many attempts. Try again later.",
+        "m_naoFoiPossivelExcluirAgora": "We couldn't delete right now. Try again or contact support.",
+        "m_naoFoiPossivelEnviarO": "We couldn't send the link right now. Try again shortly.",
+        "m_enviamosUmLinkParaEle": "We sent a link to {v0}. It is valid for a short time: open it in the same browser.",
+        "m_enviarLinkParaTrocarA": "Send link to change password",
+        "m_excluirConta": "Delete account"
       },
       "ProfileSummaryModal": {
         "voltar": "Back",
@@ -363,11 +474,21 @@
         "qualEOProblema": "What is the problem?",
         "detalhesOpcional": "Details (optional)",
         "crieSeuMuralECompartilhe": "Create your board and share moments!",
-        "pinzDigital": "pinz.digital"
+        "pinzDigital": "pinz.digital",
+        "m_conviteEnviadoParaOMural": "Invitation sent to @{v0}! The board opens when they accept.",
+        "m_naoFoiPossivelEnviarA": "We couldn't send the report right now. Try again.",
+        "m_denunciaEnviadaObrigadoPorAvisar": "Report sent. Thanks for letting us know: our team will review it.",
+        "m_imagemSalvaAgoraESo": "Image saved! Now just share it.",
+        "m_visualizacao": "view",
+        "m_visualizacoes": "views",
+        "m_pinColocadoNoMural": "pin placed on the board",
+        "m_pinsColocadosNoMural": "pins placed on the board",
+        "m_enviarDenuncia": "Send report"
       },
       "RewardsModal": {
         "ganheCreditos": "Earn credits",
-        "facaAsTarefasEGanhe": "Do the tasks and earn credits instantly."
+        "facaAsTarefasEGanhe": "Do the tasks and earn credits instantly.",
+        "m_credito": "{v0} credit{v1}"
       },
       "SearchDialog": {
         "pesquisarUsuarios": "Search users",
@@ -386,20 +507,34 @@
         "voltar": "Back",
         "novaSenhaMin6": "New password (min. 6)",
         "novaSenha": "New password",
-        "salvar": "Save"
+        "salvar": "Save",
+        "m_conviteAceitoAbraOMural": "Invitation accepted! Open the board with the agreed password.",
+        "m_senhaTrocadaAsDuasPessoas": "Password changed. Both people need to use the new one.",
+        "m_alterarASenhaDe": "Change the password of {v0}",
+        "m_visualizarOMural": "View the board",
+        "m_apagarMural": "Delete board",
+        "m_cancelarEsteConvite": "Cancel this invitation?",
+        "m_apagarParaAsDuasPessoas": "Delete “{v0}” for both people?"
       },
       "TransactionsModal": {
         "minhasCompras": "My purchases",
         "naoFoiPossivelCarregarAgora": "We couldn't load this right now. Try again.",
         "assinaturaPinz": "PINZ+ subscription:",
         "pagamentos": "Payments",
-        "voceAindaNaoFezNenhum": "You haven't made any payment yet."
+        "voceAindaNaoFezNenhum": "You haven't made any payment yet.",
+        "m_valeAte": "· valid until {v0}"
       }
     },
     "AvatarUploader": {
       "suaFoto": "Your photo",
       "remover": "Remove",
-      "escolherFotoDePerfil": "Choose profile photo"
+      "escolherFotoDePerfil": "Choose profile photo",
+      "m_fotoSalvaElaJaAparece": "Photo saved! It already shows on your board.",
+      "m_fotoSalvaVoceGanhouCreditos": "Photo saved! You earned {v0} credits.",
+      "m_naoFoiPossivelEnviarA": "We couldn't upload the photo.",
+      "m_naoFoiPossivelRemoverAgora": "We couldn't remove it right now.",
+      "m_suaFoto": "Your photo",
+      "m_adicioneUmaFoto": "Add a photo"
     },
     "badges": {
       "BadgeBar": {
@@ -409,7 +544,12 @@
         "ganhar": "Earn",
         "seusBottons": "Your buttons",
         "solteAquiParaTirarDo": "Drop here to remove from the board",
-        "solteOPinNoMural": "Drop the pin on the board"
+        "solteOPinNoMural": "Drop the pin on the board",
+        "m_bottonSemUnidadesDisponiveis": "Button {v0}: no units available",
+        "m_bottonArrasteParaOMural": "Button {v0}: drag onto the board",
+        "m_disponivel": "{v0} available",
+        "m_semUnidadesDisponiveis": "{v0}: no units available",
+        "m_arrasteParaOMural": "{v0}: drag onto the board"
       },
       "BadgeContext": {
         "antiHorario": "Counterclockwise",
@@ -432,10 +572,40 @@
         "fechar": "Close",
         "posicionarODisplayNoMural": "Position the display on the board",
         "arrasteODisplayESolte": "Drag the display and drop it wherever you want on the board",
-        "cancelar": "Cancel"
+        "cancelar": "Cancel",
+        "m_esteBottonEDaLoja": "This button is from the store. Unlock it with credits to use it.",
+        "m_naoFoiPossivelTirarO": "We couldn't remove the button right now.",
+        "m_naoEPossivelColocarSobre": "You can't place it over a pin or display.",
+        "m_solteOBottonSobreO": "Drop the button on the board.",
+        "m_esseLugarAcabouDeReceber": "That spot just received a pin. Choose another.",
+        "m_naoFoiPossivelMoverO": "We couldn't move the display right now.",
+        "m_naoFoiPossivelMoverO2": "We couldn't move the button right now.",
+        "m_oMuralAceitaAteBottons": "The board accepts up to {v0} buttons.",
+        "m_semUnidadesCompreMaisDeste": "No units: buy more of this button in the store or remove one from the board.",
+        "m_naoFoiPossivelColocarO": "We couldn't place the button right now.",
+        "m_naoFoiPossivelSalvarAs": "We couldn't save the pages right now.",
+        "m_segredoEDoPinz": "Secret is a PINZ+ feature.",
+        "m_naoFoiPossivelMudarAgora": "We couldn't change it right now.",
+        "m_naoFoiPossivelInclinarO": "We couldn't tilt the button right now.",
+        "m_esseLugarAcabouDeReceber2": "That spot just received a pin.",
+        "m_naoFoiPossivelMudarO": "We couldn't change the size right now.",
+        "m_naoFoiPossivelColocarO2": "We couldn't place the display right now.",
+        "m_naoHaEspacoLivreAo": "There's no free space around to place this display here. Try another spot.",
+        "m_oPlanoGratuitoPermiteAte": "The free plan allows up to 15 pins and displays on the board. With PINZ+ there is no such limit.",
+        "m_oMuralChegouAoMaximo": "The board reached the maximum number of items.",
+        "m_esteDisplayEDaLoja": "This display is from the store. Unlock it with credits to use it.",
+        "m_tirarODisplayDoMural": "Remove the display from the board",
+        "m_tirarOBottonDoMural": "Remove the button from the board (it goes back to the bar)",
+        "m_maisUmaPaginaLida": "One more page read",
+        "m_menosUmaPaginaLida": "One less page read",
+        "m_maisPaginas": "More pages",
+        "m_menosPaginas": "Fewer pages",
+        "m_solteODisplaySobreO": "Drop the display on the board."
       },
       "BoardLightbox": {
-        "fechar": "Close"
+        "fechar": "Close",
+        "m_muralEmTelaCheia": "Board {v0} full screen",
+        "m_mural": "Board {v0}"
       },
       "DisplayChooser": {
         "voceAindaNaoTemDisplays": "You don't have any displays yet. They show a clock, weather, quote or verse of the day on your board.",
@@ -451,7 +621,10 @@
         "acessePinzDigital": "Visit: pinz.digital",
         "temCertezaQueDesejaExcluir": "Are you sure you want to delete this display from the board? You can place it again later.",
         "cancelar": "Cancel",
-        "excluir": "Delete"
+        "excluir": "Delete",
+        "m_imagemSalvaAgoraESo": "Image saved! Now just post it.",
+        "m_naoFoiPossivelGerarA": "We couldn't generate the image right now.",
+        "m_segredoEDoPinz": "Secret is a PINZ+ feature"
       },
       "DisplayDialog": {
         "horarioDeQualLugar": "Time of which place?",
@@ -489,7 +662,16 @@
         "quemTocarNoBiscoitoQuebra": "Whoever taps the cookie breaks it and reads a message; tapping again brings another cookie.",
         "naPreviaVaiUmExemplo": "The preview shows an example. The text changes on its own every day at midnight.",
         "aHoraPassaSozinhaCom": "The time updates on its own, with today's date.",
-        "quemVeOMuralVe": "Whoever views the board sees the weather of where they are (if they allow location). Without permission, this city is used."
+        "quemVeOMuralVe": "Whoever views the board sees the weather of where they are (if they allow location). Without permission, this city is used.",
+        "m_digitePeloMenos3Letras": "Type at least 3 letters of the city name.",
+        "m_naoFoiPossivelBuscarAgora": "We couldn't search right now. Try again shortly.",
+        "m_seuEvento": "Your event",
+        "m_voceGostaDePizzaCom": "Do you like pineapple on pizza?",
+        "m_juntosHa": "Together for",
+        "m_essaImagemNaoPodeSer": "That image couldn't be used. Choose another cover photo.",
+        "m_naoFoiPossivelEnviarA": "We couldn't upload the cover right now.",
+        "m_exNao": "E.g.: No",
+        "m_nomeDaData": "Date name {v0}"
       },
       "SecretCover": {
         "displayEmSegredo": "Secret display",
@@ -521,13 +703,36 @@
         "creditosInsuficientes": "Not enough credits",
         "queTalEstePacote": "How about this pack?",
         "agoraNao": "Not now",
-        "adquirirCreditos": "Get credits"
+        "adquirirCreditos": "Get credits",
+        "m_seuSaldoCreditos": "Your balance: {v0} credits",
+        "m_porCredito": "{v0} {v1} for {v2} credit{v3}",
+        "m_unidadeJaDisponivelNaSua": "+{v0} unit{v1} now available in your buttons bar.",
+        "m_liberadoComUnidadesJaEsta": "unlocked with {v0} units! It's already in your buttons bar.",
+        "m_liberadoJaEstaNaSua": "unlocked! It's already in your buttons bar.",
+        "m_gratis": "✓ Free",
+        "m_creditos": "{v0} credits",
+        "m_liberadoJaEstaNaEscolha": "unlocked! It's already in the format choice when placing a pin.",
+        "m_verOMuralEmTela": "View the {v0} board full screen",
+        "m_padrao": "Default",
+        "m_liberadoApliqueEmEditarMural": "unlocked! Apply it in Edit board.",
+        "m_credito": "credit",
+        "m_creditos2": "credits"
       }
     },
     "board": {
       "BoardCanvas": {
         "carregandoMural": "Loading board",
-        "carregandoMural2": "Loading board…"
+        "carregandoMural2": "Loading board…",
+        "m_naoFoiPossivelPosicionarAgora": "We couldn't position it right now.",
+        "m_oPinEGrandeDemais": "The pin is too big to fit here.",
+        "m_oPinPrecisaFicarDentro": "The pin must stay inside the board.",
+        "m_naoEPossivelColocarSobre": "You can't place it over a pin or display.",
+        "m_naoCabeAquiTenteUm": "It doesn't fit here: try a freer spot.",
+        "m_naoHaEspacoLivreNeste": "There is no free space on this board.",
+        "m_naoHaEspacoLivrePara": "There's no free space for a pin right now. Double-click (or hold) on an empty spot on the board.",
+        "m_muralQuadro": "Board: {v0} frame",
+        "m_colocarUmPinNaLinha": "Place a pin in row {v0}, column {v1}",
+        "m_nenhumPinPorAquiAinda": "No pins here yet. Be the first to place one!"
       },
       "ListEditContext": {
         "editarLista": "Edit list",
@@ -536,7 +741,12 @@
         "cancelar": "Cancel"
       },
       "OwnerAlert": {
-        "avisoParaODonoDo": "Notice for the board owner"
+        "avisoParaODonoDo": "Notice for the board owner",
+        "m_voceChegouAoLimiteDe": "You reached the free plan limit of {v0} pins.",
+        "m_seuMuralEstaCheio": "Your board is full.",
+        "m_ninguemTentouDeixarUmPinz": "Nobody tried to leave a PINZ yet.",
+        "m_assineOPinzParaColocar": "Subscribe to PINZ+ to place unlimited pins and displays.",
+        "m_emBreveUseCreditosPara": "Coming soon: use credits to open another board."
       },
       "PinDetail": {
         "verMensagemEmDetalhe": "View message in detail",
@@ -558,7 +768,15 @@
         "temCertezaQueDesejaExcluir": "Are you sure you want to delete this pin? This action cannot be undone.",
         "cancelar": "Cancel",
         "excluir": "Delete",
-        "temCertezaQueDesejaExcluir2": "Are you sure you want to delete this display from the board? You can place it again later."
+        "temCertezaQueDesejaExcluir2": "Are you sure you want to delete this display from the board? You can place it again later.",
+        "m_esconderPin": "Hide PIN",
+        "m_revelarPin": "Reveal PIN",
+        "m_imagemSalvaAgoraESo": "Image saved! Now just post it.",
+        "m_naoFoiPossivelGerarA": "We couldn't generate the image right now.",
+        "m_aguardandoASuaAprovacao": "Waiting for your approval",
+        "m_aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release",
+        "m_segredoEDoPinz": "Secret is a PINZ+ feature",
+        "m_aprovaEDeixaEmSegredo": "Approves and keeps it secret: visitors see the pin blurred"
       },
       "PinsManager": {
         "nenhumPinAindaQuandoAlguem": "No pins yet. When someone places one, it shows up here for you to approve.",
@@ -568,7 +786,12 @@
         "recusar": "Decline",
         "pinsNoMural": "Pins on the board",
         "visivelParaOsVisitantes": "👁 Visible to visitors",
-        "remover": "Remove"
+        "remover": "Remove",
+        "m_aprovaEDeixaEmBlur": "Approves and blurs it for visitors",
+        "m_disponivelNoPinz": "Available in PINZ+",
+        "m_escolhaQuaisFicamVisiveisE": "Choose which ones are visible and which are blurred for visitors. Blurred ones still take up the space, and the content is not sent.",
+        "m_noPinzVoceEscolheQuais": "With PINZ+ you choose which pins are blurred for visitors.",
+        "m_visivelDeixarEmBlur": "👁 Visible — make blurred"
       },
       "ReactionBar": {
         "naoFoiPossivelReagirAgora": "We couldn't react right now.",
@@ -576,6 +799,10 @@
       },
       "SlotMarker": {
         "bloqueado": "locked"
+      },
+      "PannableBoard": {
+        "m_aproximarOMural": "Zoom in the board",
+        "m_afastarOMural": "Zoom out the board"
       }
     },
     "Brand": {
@@ -586,7 +813,12 @@
       "confirmarEMail": "Confirm email",
       "confirmeSeuEMail": "Confirm your email ✉️",
       "codigo": "Code",
-      "voltar": "Back"
+      "voltar": "Back",
+      "m_digiteOCodigoDe6": "Type the 6-digit code we sent to your email.",
+      "m_enviamosUmNovoCodigo": "We sent a new code.",
+      "m_naoFoiPossivelEnviarO": "We couldn't send the code right now. Try again shortly.",
+      "m_enviarOutroCodigoS": "Send another code ({v0}s)",
+      "m_enviarOutroCodigo": "Send another code"
     },
     "composer": {
       "CapsuleOption": {
@@ -603,7 +835,10 @@
         "deixarUmaMensagem": "Leave a message",
         "voltarETrocarOFormato": "Go back and change the format",
         "fechar": "Close",
-        "oQueColocarNesteEspaco": "What to place in this spot"
+        "oQueColocarNesteEspaco": "What to place in this spot",
+        "m_fecharACapsulaEColocar": "Close the capsule and place on the board",
+        "m_colocarNoMural": "Place on the board",
+        "m_coloqueUmPin": "Place a PIN"
       },
       "DrawForm": {
         "areaDeDesenho": "Drawing area",
@@ -654,7 +889,31 @@
         "exCristoRedentorRioDe": "E.g.: Christ the Redeemer, Rio de Janeiro",
         "nenhumLugarEncontradoTenteIncluir": "No place found. Try including the city.",
         "resultados": "Results",
-        "exUmLugarQueMais": "E.g.: A place I love most!"
+        "exUmLugarQueMais": "E.g.: A place I love most!",
+        "m_seuRecadoApareceAqui": "Your message appears here",
+        "m_suaMensagemApareceAqui": "Your message appears here.",
+        "m_suaLista": "Your list",
+        "m_naoFoiPossivelAbrirA": "We couldn't open the camera. Allow access in the browser settings or choose a file.",
+        "m_naoFoiPossivelTirarA": "We couldn't take the photo. Try again.",
+        "m_estaFotoFicouGrandeDemais": "This photo is too large ({v0} MB). Try another.",
+        "m_useUmLinkQueComece": "Use a link that starts with http:// or https://",
+        "m_buscandoONomeEA": "Fetching the name and duration…",
+        "m_spotifyEYoutubeTocamAqui": "Spotify and YouTube play right here on the board (with name and duration); other links open in another tab.",
+        "m_escolhaUmArquivoDeVideo": "Choose a video file.",
+        "m_oVideoPodeTerAte": "The video can be up to {v0} seconds long (this one is {v1}). Trim a section and try again.",
+        "m_videoOtimizadoDePara": "Video optimized: from {v0} to {v1}.",
+        "m_esteVideoTemESeu": "This video is {v0} and your browser can't shrink it. Use Chrome, or record a shorter video (up to {v1} MB).",
+        "m_naoFoiPossivelReduzirEste": "We couldn't shrink this video. Try a shorter one or a lower resolution.",
+        "m_mesmoReduzidoOVideoFicou": "Even after shrinking, the video is {v0} (the limit is {v1} MB). Try a shorter video.",
+        "m_ateSegundosVideosGrandesSao": "Up to {v0} seconds. Large videos are optimized right here before uploading.",
+        "m_permitaOUsoDoMicrofone": "Allow microphone access to record.",
+        "m_naoFoiPossivelUsarO": "We couldn't use the microphone. You can choose an audio file.",
+        "m_escolhaUmArquivoDeAudio": "Choose an audio file.",
+        "m_oAudioPodeTerAte": "The audio can be up to {v0} MB.",
+        "m_gravarDeNovo": "Record again",
+        "m_escolherUmArquivoDeAudio": "Choose an audio file",
+        "m_digitePeloMenos3Letras": "Type at least 3 letters of the place name.",
+        "m_naoFoiPossivelBuscarAgora": "We couldn't search right now. Try again shortly."
       },
       "FullNotice": {
         "oPlanoGratuitoTemUm": "The free plan has a limit of 15 pins and displays. To have more, the owner needs PINZ+.",
@@ -662,7 +921,9 @@
         "fechar": "Close",
         "aviseODonoQueVoce": "Let the owner know you stopped by.",
         "euTenteiDeixarUmPinz": "I tried to leave a PINZ",
-        "naoCustaNada": "It costs nothing."
+        "naoCustaNada": "It costs nothing.",
+        "m_esteMuralChegouAoLimite": "This board reached the plan limit.",
+        "m_estePinzEstaLotado": "This PINZ is full."
       },
       "SlotPicker": {
         "ondeVoceQuerColocar": "Where do you want to place it?",
@@ -691,7 +952,47 @@
       "esseMuralEstaBloqueadoNecessario": "🔒 This board is locked: all participants need an active Plus account.",
       "pinsArquivados": "Archived pins",
       "depois": "Later",
-      "verArquivados": "View archived"
+      "verArquivados": "View archived",
+      "m_bemVindoDeVoltaSua": "Welcome back! Your account has been reactivated.",
+      "m_naoFoiPossivelAgoraTente": "We couldn't do it right now. Try again.",
+      "m_voceSegueEleFicaEm": "You follow @{v0}. They appear under Following, in the menu.",
+      "m_voceDeixouDeSeguir": "You unfollowed @{v0}.",
+      "m_credito": "+{v0} credit{v1}: {v2}",
+      "m_porSegurancaDigiteASenha": "For security, type the board password again.",
+      "m_naoFoiPossivelConcluirAgora": "We couldn't finish right now. Try again.",
+      "m_pinAprovadoComoSegredo": "Pin approved as secret.",
+      "m_pinAprovadoJaAparecePara": "Pin approved! It now shows for everyone.",
+      "m_pinRecusado": "Pin rejected.",
+      "m_pinApagado": "Pin deleted.",
+      "m_naoFoiPossivelMoverO": "We couldn't move the pin right now.",
+      "m_naoDaParaSoltarAqui": "You can't drop it here: the spot was just taken.",
+      "m_naoFoiPossivelMoverO2": "We couldn't move the pin right now ({v0}).",
+      "m_pinEmSegredo": "Pin set to secret.",
+      "m_pinVisivelParaTodos": "Pin visible to everyone.",
+      "m_denunciaEnviadaEPinRemovido": "Report sent and pin removed.",
+      "m_abraOMuralParaGerar": "Open the board to generate the image.",
+      "m_gerandoAImagemDoMural": "Generating the board image…",
+      "m_naoFoiPossivelGerarA": "We couldn't generate the image right now. Try again.",
+      "m_bottonLiberadoComUnidadesJa": "Button unlocked with {v0} units! It's already in your bar.",
+      "m_bottonLiberadoJaEstaNa": "Button unlocked! It's already in your bar.",
+      "m_fundoLiberadoApliqueEmEditar": "Background unlocked! Apply it in Edit board.",
+      "m_displayLiberadoEleJaEsta": "Display unlocked! It's already in the Displays tab when you click a free spot.",
+      "m_muralExtraLiberadoCrieO": "Extra board unlocked! Create the new board.",
+      "m_creditosInsuficientes": "Not enough credits.",
+      "m_muralExtraEParaQuem": "Extra boards are for PINZ+ subscribers.",
+      "m_naoFoiPossivelConcluirA": "We couldn't complete the purchase right now.",
+      "m_naoFoiPossivelMarcarAgora": "We couldn't mark it right now. Try again.",
+      "m_naoFoiPossivelAbrirEsse": "We couldn't open that board.",
+      "m_essaPessoaAindaNaoTem": "This person has no boards yet.",
+      "m_senhaDoMural": "Board password",
+      "m_esteEOMuralCompartilhado": "This is the board shared between @{v0} and @{v1}. Leave pins that show important moments of your lives.",
+      "m_muralDeNoPinz": "@{v0}'s board on Pinz",
+      "m_venhaVerOMuralDe": "Come see @{v0}'s board on Pinz!",
+      "m_pinColocadoNoSeuMural": "Pin placed on your board! 📌",
+      "m_pinColocadoNoMuralDe": "Pin placed on your shared board! 📌",
+      "m_pinEnviadoEleAparecePara": "Pin sent! It shows for everyone once the owner approves. ⏳",
+      "m_pinFoiArquivado": "pin was archived",
+      "m_oPinArquivado": "the archived pin"
     },
     "LegalPage": {
       "contato": "Contact"
@@ -717,13 +1018,19 @@
         "reacaoDoDonoDoMural": "Board owner's reaction",
         "segredoOsVisitantesVeemEste": "Secret: visitors see this pin blurred",
         "segredo": "Secret",
-        "abertaDeUmaCapsulaPinz": "Opened from a PINZ Capsule"
+        "abertaDeUmaCapsulaPinz": "Opened from a PINZ Capsule",
+        "m_irAoMuralDe": "Go to @{v0}'s board",
+        "m_aguardandoASuaAprovacao": "Waiting for your approval",
+        "m_aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release"
       },
       "MusicCard": {
         "musica": "Music",
         "tocando": "♪ Playing",
         "progressoDaMusica": "Song progress",
-        "menu": "MENU"
+        "menu": "MENU",
+        "m_pausarAMusica": "Pause the music",
+        "m_ouvirAMusicaAqui": "Listen to the music here",
+        "m_ouvirAMusicaAbreO": "Listen to the music (opens the link)"
       },
       "PaperNote": {
         "texto": "Text"
@@ -786,23 +1093,29 @@
       "crieUmaContaParaPublicar": "Create an account to post",
       "paraDeixarUmPinNeste": "To leave a pin on this board you need an account. It's quick, and then you come right back here.",
       "criarMinhaConta": "Create my account",
-      "jaTenhoConta": "I already have an account"
+      "jaTenhoConta": "I already have an account",
+      "m_emBreveOEnvioDe": "Coming soon: sending messages arrives in the next step.",
+      "m_capsulaFechadaEColocadaNo": "Capsule closed and placed on the board! 🔒",
+      "m_seuPinzFoiColocadoNo": "Your PINZ was placed on the board! 📌"
     },
     "MuralSwitcher": {
       "muraisDestaPessoa": "This person's boards",
       "muralAnterior": "Previous board",
       "proximoMural": "Next board",
-      "murais": "Boards"
+      "murais": "Boards",
+      "m_muralDe": "Board {v0} of {v1}"
     },
     "OAuthButtons": {
       "continuarCom": "Continue with",
       "abrindo": "Opening…",
-      "ou": "or"
+      "ou": "or",
+      "m_naoFoiPossivelEntrarCom": "We couldn't sign in with {v0}."
     },
     "PlanLimit": {
       "limiteDoPlano": "Plan limit",
       "free": "FREE",
-      "comOPinzVoceTem": "With PINZ+ you get:"
+      "comOPinzVoceTem": "With PINZ+ you get:",
+      "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person not found",
@@ -828,7 +1141,8 @@
         "tourPeloPinz": "Pinz tour",
         "naoEncontreiEstaParteNa": "I couldn't find this part on the screen. If you closed the window, tap Back and follow along again.",
         "pularTour": "Skip tour",
-        "voltar": "Back"
+        "voltar": "Back",
+        "m_proximo": "Next"
       }
     },
     "ui": {
@@ -836,19 +1150,34 @@
       "privacidade": "Privacy",
       "termosDeUso": "Terms of use",
       "nomeDeUsuario": "Username",
-      "seuUsuario": "your_username"
+      "seuUsuario": "your_username",
+      "m_esconderSugestoes": "Hide suggestions",
+      "m_verSugestoesDePerguntas": "See question suggestions"
     },
     "UnlockPanel": {
       "muralBloqueado": "Board locked",
       "acessoAoMural": "Board access",
       "digiteASenhaParaEntrar": "Type the password to enter.",
       "pinz": "PINZ+",
-      "muralDesbloqueado": "🔓 Board unlocked"
+      "muralDesbloqueado": "🔓 Board unlocked",
+      "m_digiteASenhaParaEntrar": "Type the password to enter.",
+      "m_escrevaUmaRespostaParaEntrar": "Write an answer to enter.",
+      "m_senhaIncorreta": "Wrong password.",
+      "m_eitaAindaNaoAcertou": "Oops, not right yet.",
+      "m_essaNaoEAResposta": "That's not the answer, try again.",
+      "m_muitasTentativasTenteNovamenteEm": "Too many attempts. Try again in {v0} min.",
+      "m_naoFoiPossivelVerificarAgora": "We couldn't verify right now. Try again.",
+      "m_muralCompartilhado": "Shared board",
+      "m_muralPrivado": "Private board",
+      "m_digiteASenha": "Type the password...",
+      "m_digiteSuaResposta": "Type your answer..."
     },
     "widgets": {
       "BookWidget": {
         "leituraDeLivro": "Book reading",
-        "progressoDaLeitura": "Reading progress"
+        "progressoDaLeitura": "Reading progress",
+        "m_livroConcluido": "book finished",
+        "m_paginasLidas": "pages read"
       },
       "CalendarWidget": {
         "calendario": "Calendar",
@@ -859,16 +1188,22 @@
         "relogio": "Clock"
       },
       "CookieWidget": {
-        "biscoitoDaSorte": "Fortune cookie"
+        "biscoitoDaSorte": "Fortune cookie",
+        "m_biscoitoDaSorteTocarPara": "Fortune cookie: tap to get another",
+        "m_biscoitoDaSorteTocarPara2": "Fortune cookie: tap to break",
+        "m_toqueParaOutroBiscoito": "Tap for another cookie",
+        "m_toqueParaQuebrar": "Tap to break"
       },
       "CountdownWidget": {
-        "contadorRegressivo": "Countdown"
+        "contadorRegressivo": "Countdown",
+        "m_jaPassou": "Already passed"
       },
       "DateWidget": {
         "calendarioDoDia": "Day calendar"
       },
       "DaysWidget": {
-        "contadorDeDias": "Day counter"
+        "contadorDeDias": "Day counter",
+        "m_comecaEm": "starts in"
       },
       "index": {
         "versiculoDoDia": "Verse of the day",
@@ -882,7 +1217,13 @@
         "eRapidoEGratuitoDepois": "It's quick and free. After logging in, you come back to this poll.",
         "entrar": "Log in",
         "criarConta": "Sign up",
-        "agoraNao": "Not now"
+        "agoraNao": "Not now",
+        "m_naoFoiPossivelVotarAgora": "We couldn't vote right now",
+        "m_entreParaVotar": "Sign in to vote",
+        "m_toqueParaTrocarOVoto": "Tap to change your vote",
+        "m_toqueNumaOpcao": "Tap an option",
+        "m_voceJaVotou": "You already voted",
+        "m_toqueParaVotar": "Tap to vote"
       },
       "Top3Widget": {
         "top3": "Top 3"
@@ -890,6 +1231,15 @@
       "WeatherWidget": {
         "clima": "Weather"
       }
+    },
+    "AddPinButton": {
+      "m_deixarUmPinNesteMural": "Leave a pin on this board",
+      "m_colocarUmPinOuUm": "Place a pin or a display on the board",
+      "m_deixarUmPin": "Leave a pin",
+      "m_colocarUmPinOuDisplay": "Place a pin or display"
+    },
+    "FollowButton": {
+      "m_seguindoToqueParaDeixarDe": "Following (tap to unfollow)"
     }
   }
 }

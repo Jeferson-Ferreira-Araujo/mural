@@ -134,7 +134,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
               <Row key={p.id} p={p}>
                 <button type="button" className={primary} disabled={busyId === p.id} onClick={() => onApprove(p.id, false)}>
                   {tx("aprovar")}</button>
-                <button type="button" className={btn} disabled={busyId === p.id || !full} title={full ? "Aprova e deixa em blur para quem visita" : "Disponível no PINZ+"} onClick={() => onApprove(p.id, true)}>
+                <button type="button" className={btn} disabled={busyId === p.id || !full} title={full ? tx("m_aprovaEDeixaEmBlur") : tx("m_disponivelNoPinz")} onClick={() => onApprove(p.id, true)}>
                   {full ? "Aprovar em blur" : "🔒 Aprovar em blur (PINZ+)"}
                 </button>
                 <button type="button" className={btn} disabled={busyId === p.id} onClick={() => onReject(p.id)}>
@@ -148,7 +148,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
       {approved.length > 0 && (
         <section aria-label={tx("pinsNoMural")}>
           <h3 className="text-sm font-bold">No mural ({approved.length})</h3>
-          <p className={`mt-1 text-xs ${muted}`}>{full ? "Escolha quais ficam visíveis e quais ficam em blur para quem visita. Os em blur continuam ocupando o espaço, e o conteúdo não é enviado." : "No PINZ+ você escolhe quais pins ficam em blur para os visitantes."}</p>
+          <p className={`mt-1 text-xs ${muted}`}>{full ? tx("m_escolhaQuaisFicamVisiveisE") : tx("m_noPinzVoceEscolheQuais")}</p>
           <ul className="mt-3 space-y-2">
             {approved.map((p) => (
               <Row key={p.id} p={p}>
@@ -161,7 +161,7 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
                     onClick={() => onSetHidden(p.id, !p.hiddenFromVisitors)}
                     className={btn}
                   >
-                    {p.hiddenFromVisitors ? "🔒 Em blur — mostrar" : "👁 Visível — deixar em blur"}
+                    {p.hiddenFromVisitors ? "🔒 Em blur — mostrar" : tx("m_visivelDeixarEmBlur")}
                   </button>
                 ) : (
                   <span className={`self-center text-xs ${muted}`}>{tx("visivelParaOsVisitantes")}</span>

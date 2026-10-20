@@ -26,7 +26,7 @@ export default function AuthCallback() {
         // sessão pode já existir (ex.: página recarregada)
         const { data } = await sb.auth.getSession();
         if (!data.session) {
-          setError("O link expirou ou já foi usado. Peça um novo.");
+          setError(tx("m_oLinkExpirouOuJa"));
           return;
         }
       } else {
@@ -38,7 +38,7 @@ export default function AuthCallback() {
             router.replace(takeNext() ?? (await homeRouteFor(sb)));
             return;
           }
-          setError("Não foi possível concluir o login. Abra o link no mesmo navegador em que você o pediu, ou peça um novo.");
+          setError(tx("m_naoFoiPossivelConcluirO"));
           return;
         }
       }

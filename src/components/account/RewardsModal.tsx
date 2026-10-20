@@ -51,7 +51,7 @@ export function RewardsModal({ open, onClose }: { open: boolean; onClose: () => 
                   <span className={`block text-[15px] leading-tight font-bold ${t.done ? "text-[#2f6a3c]" : ""}`}>{t.title}</span>
                   <span className="block text-xs text-[#6b5440]">{t.done ? "Ganho" : t.hint}</span>
                 </span>
-                <span className={`flex shrink-0 items-center gap-1 text-sm font-bold ${t.done ? "text-[#2f6a3c]" : ""}`} aria-label={`${t.credits} crédito${t.credits > 1 ? "s" : ""}`}>
+                <span className={`flex shrink-0 items-center gap-1 text-sm font-bold ${t.done ? "text-[#2f6a3c]" : ""}`} aria-label={tx("m_credito", { v0: t.credits, v1: t.credits > 1 ? "s" : "" })}>
                   <Coin className="size-5" />+{t.credits}
                 </span>
               </li>

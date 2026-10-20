@@ -83,7 +83,7 @@ export function CookieWidget({ style = "classic", frame }: { style?: string; fra
       <div
         role="button"
         tabIndex={0}
-        aria-label={broken ? "Biscoito da sorte: tocar para pegar outro" : "Biscoito da sorte: tocar para quebrar"}
+        aria-label={broken ? tx("m_biscoitoDaSorteTocarPara") : tx("m_biscoitoDaSorteTocarPara2")}
         onClick={toggle}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(e)}
         className="pointer-events-auto absolute inset-0 cursor-pointer select-none"
@@ -118,7 +118,7 @@ export function CookieWidget({ style = "classic", frame }: { style?: string; fra
           <span className="line-clamp-2">{msg}</span>
         </p>
         <p className="pointer-events-none absolute inset-x-0 bottom-[0.7em] text-center text-[0.7em] font-semibold tracking-wide uppercase" style={{ color: red ? "#f1d68a" : "#7a5a20", opacity: 0.85 }}>
-          {broken ? "Toque para outro biscoito" : "Toque para quebrar"}
+          {broken ? tx("m_toqueParaOutroBiscoito") : tx("m_toqueParaQuebrar")}
         </p>
       </div>
     </WidgetFrame>
