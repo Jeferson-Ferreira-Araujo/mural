@@ -176,7 +176,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* botão flutuante de colocar pin: centralizado, acima da barra de bottons, maior para dar destaque */}
         {canAdd && (
           <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center">
-            <AddPinButton visitor={!account?.atHome} className="!size-16 !rounded-2xl [&>svg]:!size-10" />
+            <AddPinButton visitor={!account?.atHome} className="!size-12 !rounded-xl [&>svg]:!size-8" />
           </div>
         )}
         {locked && lockPanel && (

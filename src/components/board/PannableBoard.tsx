@@ -521,9 +521,9 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
           data-tour="zoom"
           aria-label={zoomedOut ? "Aproximar o mural" : "Afastar o mural"}
           title={zoomedOut ? "Aproximar" : "Afastar"}
-          className={`absolute ${controlPos} z-20 inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-4 text-sm font-semibold text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+          className={`absolute ${controlPos} z-20 inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-3 text-[13px] font-semibold sm:h-11 sm:gap-2 sm:px-4 sm:text-sm text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
-          <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <svg viewBox="0 0 24 24" className="size-4 shrink-0 sm:size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             {/* lupa: "+" para aproximar, "−" para ver tudo */}
             <circle cx="11" cy="11" r="6.5" />
             <path d="m20 20-4.2-4.2" />
