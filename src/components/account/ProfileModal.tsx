@@ -148,9 +148,6 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         </div>
       </dl>
 
-      <p className="mt-5 rounded-2xl border border-[#e1d3ba] bg-white/60 p-3 text-sm text-[#4a3826]">
-        A pergunta de segurança agora é <strong>de cada mural</strong>: para mudar, abra <strong>Meus murais</strong> e toque em editar no mural.
-      </p>
 
       <form onSubmit={save} noValidate className="mt-5 space-y-3">
         <h3 className="font-title text-base font-semibold">Mudar senha</h3>
