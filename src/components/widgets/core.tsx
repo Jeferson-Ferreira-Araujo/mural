@@ -141,8 +141,8 @@ export function useNow(tz: string, tickMs = 5000): Now | null {
   return now;
 }
 
-/** A paisagem acompanha a hora: amanhecer, dia, entardecer e noite. */
-export const sceneForHour = (h: number): SceneId => (h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 17 ? "day" : h >= 17 && h < 19 ? "dusk" : "night");
+/** A paisagem acompanha a hora: amanhecer (5h-7h), manhã e começo da tarde com sol (7h-15h), entardecer (15h-19h) e noite (19h-5h). */
+export const sceneForHour = (h: number): SceneId => (h >= 5 && h < 7 ? "dawn" : h >= 7 && h < 15 ? "day" : h >= 15 && h < 19 ? "dusk" : "night");
 export const isNightHour = (h: number) => h < 5 || h >= 19;
 
 // ---------- clima ----------

@@ -27,7 +27,7 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "natural", name: "Natural", hint: "Aconchegante e especial." },
   ],
   clock: [
-    { id: "sunset", name: "Súnset", hint: "Paisagem dinâmica." },
+    { id: "sunset", name: "Relógio dinâmico", hint: "O fundo muda com a hora: sol de manhã, entardecer à tarde e noite." },
     { id: "flip", name: "Flip Clock", hint: "Estilo retrô moderno." },
     { id: "minimal", name: "Minimal", hint: "Clean e sofisticado." },
     { id: "analog", name: "Analógico", hint: "Clássico e elegante." },
@@ -110,7 +110,7 @@ export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
   return { product, style };
 };
-/** "Relógio · Súnset" (o quadrado leva "(quadrado)") */
+/** "Relógio · Relógio dinâmico" (o quadrado leva "(quadrado)") */
 export const displayName = (id: string) => {
   const { product, style } = splitDisplayId(id);
   const cat = DISPLAY_CATS.find((x) => x.id === product);

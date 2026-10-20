@@ -96,7 +96,7 @@ export function sampleFor(product: string, style?: string): DisplayData {
     case "countdown": {
       const d = new Date();
       d.setDate(d.getDate() + 30);
-      return { product, style: st, title: "Viagem dos sonhos", target: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, time: "08:00" };
+      return { product, style: st, title: "Título do contador", target: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, time: "08:00" };
     }
     case "cookie":
     case "date":

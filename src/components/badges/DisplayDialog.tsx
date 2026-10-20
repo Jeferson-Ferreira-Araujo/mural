@@ -235,8 +235,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
 
         {product === "countdown" && (
           <div className="space-y-3">
-            <Field label="Nome do evento">
-              {(id) => <input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder="Ex: Viagem, Formatura, Natal" className={inputClass} autoComplete="off" />}
+            <Field label="Título do contador">
+              {(id) => <input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder="Ex: Formatura, Natal, Aniversário" className={inputClass} autoComplete="off" />}
             </Field>
             <div className="flex gap-2">
               <div className="min-w-0 flex-1">
