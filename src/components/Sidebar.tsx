@@ -1,6 +1,7 @@
 import { Brand } from "./Brand";
 import { FitSidebar } from "./FitSidebar";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
+import { LanguagePicker } from "./LanguagePicker";
 import type { ViewProps } from "./viewProps";
 
 const icon = "size-[2.1em]";
@@ -52,6 +53,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">Compartilhe momentos especiais, receba recados personalizados e decore do seu jeito.</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
+      {!account && <LanguagePicker className="mx-auto mt-[0.8em]" />}
 
       {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar usuário" já se explica */}
       {panelTitle && (

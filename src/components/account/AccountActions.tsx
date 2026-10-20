@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { loginUrl } from "@/lib/auth";
 
 export type AccountApi = { onSearch: () => void; onMenu: () => void; /** leva ao próprio mural */ onHome?: () => void; /** já está vendo o próprio mural (o botão de voltar não aparece) */ atHome?: boolean; badge?: number; /** PINZ+: botão "Novo mural" no cabeçalho do mural (celular) */ onNewMural?: () => void; /** sino de notificações */ notifications?: { count: number; onOpen: () => void } };
@@ -122,13 +123,14 @@ export function MobileHeaderRight({ account }: { account: AccountApi }) {
 
 /** Quem chegou por link e ainda não tem conta: Entrar / Criar conta (voltam para este mural). */
 export function GuestLinks({ next, className = "" }: { next: string; className?: string }) {
+  const t = useTranslations("auth");
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Link href={loginUrl(next)} className="rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2 text-sm font-semibold text-[#2f2218] transition hover:bg-white">
-        Entrar
+        {t("tabLogin")}
       </Link>
       <Link href={loginUrl(next, true)} className="rounded-xl bg-[#1f232b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#2c313b]">
-        Criar conta
+        {t("tabSignup")}
       </Link>
     </div>
   );

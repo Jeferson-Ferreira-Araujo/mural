@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Atkinson_Hyperlegible, Caveat, Indie_Flower, Kalam, Patrick_Hand, Playfair_Display, Plus_Jakarta_Sans, Reenie_Beanie, Silkscreen } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { A11yHost } from "@/components/A11yHost";
+import { LOCALE_TAGS, type Locale } from "@/i18n/config";
 import { PwaRegister } from "@/components/PwaRegister";
 import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import { SITE_HOST } from "@/lib/mural";
@@ -41,12 +44,14 @@ export const viewport: Viewport = {
 
 import { preconnect } from "react-dom";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = (await getLocale()) as Locale;
+  const messages = await getMessages();
   // abre a conexão com o servidor de dados (login, pins, imagens enviadas) já no começo: a primeira busca sai mais rápido
   if (process.env.NEXT_PUBLIC_SUPABASE_URL) preconnect(process.env.NEXT_PUBLIC_SUPABASE_URL, { crossOrigin: "anonymous" });
   return (
     <html
-      lang="pt-BR"
+      lang={LOCALE_TAGS[locale]}
       suppressHydrationWarning
       className={`${jakarta.variable} ${playfair.variable} ${silkscreen.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable} ${atkinson.variable}`}
     >
@@ -55,8 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1")document.documentElement.dataset.intro="play"}catch(e){}` }} />
         {/* acessibilidade: o tamanho do texto, a fonte e o contraste escolhidos já valem na primeira pintura */}
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT }} />
-        {children}
-        <A11yHost />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+          <A11yHost />
+        </NextIntlClientProvider>
         <PwaRegister />
       </body>
     </html>

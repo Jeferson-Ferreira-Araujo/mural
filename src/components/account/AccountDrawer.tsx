@@ -2,6 +2,8 @@
 
 import { useBackClose } from "@/lib/backStack";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { LanguagePicker } from "../LanguagePicker";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
 import { getPublicMural } from "@/lib/mural";
@@ -121,6 +123,7 @@ export function AccountDrawer({
   /** sino: quantas notificações novas e como abrir a lista */
   notifications?: { count: number; onOpen: () => void };
 }) {
+  const t = useTranslations("menu");
   const ref = useRef<HTMLDialogElement>(null);
   const mural = murals.find((m) => m.slug === currentSlug) ?? murals[0];
   const account = { ...getAccount(), plan: mural?.plan ?? getAccount().plan }; // o plano vale por mural (definido no banco)
@@ -222,8 +225,8 @@ export function AccountDrawer({
     <>
               <Row
                 onClick={() => setModal("profile")}
-                label="Editar perfil"
-                hint="Foto, senha e dados da conta"
+                label={t("profile")}
+                hint={t("profileHint")}
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="8" r="3.5" />
@@ -235,8 +238,8 @@ export function AccountDrawer({
                 <>
                   <Row
                     onClick={() => setModal("mymurals")}
-                    label="Meus murais"
-                    hint="Gerencie, personalize e acesse seus murais."
+                    label={t("myMurals")}
+                    hint={t("myMuralsHint")}
                     icon={
                       <svg {...ic}>
                         <rect x="4" y="3.5" width="16" height="11" rx="1.5" />
@@ -247,7 +250,7 @@ export function AccountDrawer({
                   {VISITORS_ENABLED && (
                     <Row
                       onClick={() => setModal("visitors")}
-                      label="Visitantes"
+                      label={t("visitors")}
                       icon={
                         <svg {...ic}>
                           <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
@@ -258,8 +261,8 @@ export function AccountDrawer({
                   )}
                   <Row
                     onClick={() => (setPinsStart("approvals"), setModal("pins"))}
-                    label="Meus pins"
-                    hint={pendingCount > 0 ? `${pendingCount} aguardando a sua aprovação` : "Aprovações e pins guardados"}
+                    label={t("myPins")}
+                    hint={pendingCount > 0 ? t("pending", { count: pendingCount }) : t("approvalsHint")}
                     badge={pendingCount}
                     icon={
                       <svg {...ic}>
@@ -271,8 +274,8 @@ export function AccountDrawer({
                   {account.plan === "full" && (
                   <Row
                     onClick={() => setModal("shared")}
-                    label="Mural compartilhado"
-                    hint={sharedInvites > 0 ? `${sharedInvites} convite${sharedInvites > 1 ? "s" : ""} para você` : "Um mural só de vocês dois (PINZ+)"}
+                    label={t("shared")}
+                    hint={sharedInvites > 0 ? t("invites", { count: sharedInvites }) : t("sharedHint")}
                     badge={sharedInvites}
                     icon={
                       <svg {...ic}>
@@ -285,8 +288,8 @@ export function AccountDrawer({
                   )}
                   <Row
                     onClick={() => setModal("numbers")}
-                    label="Métricas"
-                    hint="Visitas e pins colocados."
+                    label={t("metrics")}
+                    hint={t("metricsHint")}
                     icon={
                       <svg {...ic}>
                         <path d="M5 20V10M12 20V4M19 20v-7" />
@@ -301,8 +304,8 @@ export function AccountDrawer({
                     onClose();
                     onExportImage();
                   }}
-                  label="Salvar imagem do mural"
-                  hint="Uma imagem em alta qualidade para postar"
+                  label={t("saveImage")}
+                  hint={t("saveImageHint")}
                   icon={
                     <svg {...ic}>
                       <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
@@ -314,8 +317,8 @@ export function AccountDrawer({
               )}
               <Row
                 onClick={() => setModal("following")}
-                label="Seguidores e seguindo"
-                hint="Quem segue você e quem você segue."
+                label={t("followers")}
+                hint={t("followersHint")}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -324,8 +327,8 @@ export function AccountDrawer({
               />
               <Row
                 onClick={() => setModal("rewards")}
-                label="Ganhe créditos"
-                hint="Tarefas que dão créditos na hora."
+                label={t("earn")}
+                hint={t("earnHint")}
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
@@ -335,8 +338,8 @@ export function AccountDrawer({
               />
               <Row
                 onClick={() => setModal("plans")}
-                label="Planos"
-                hint={`Seu plano atual: ${account.plan === "full" ? "PINZ+" : "FREE"}.`}
+                label={t("plans")}
+                hint={t("plansHint", { plan: account.plan === "full" ? "PINZ+" : "FREE" })}
                 icon={
                   <svg {...ic}>
                     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
@@ -346,8 +349,8 @@ export function AccountDrawer({
               {isAdmin && (
                 <Row
                   onClick={() => window.location.assign("/admin")}
-                  label="Administrar site"
-                  hint="Usuários, murais, créditos e recursos"
+                  label={t("admin")}
+                  hint={t("adminHint")}
                   icon={
                     <svg {...ic}>
                       <path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" />
@@ -364,8 +367,8 @@ export function AccountDrawer({
                       void app.install();
                     } else setModal("install");
                   }}
-                  label="Instalar o app"
-                  hint="Pinz na tela inicial, em tela cheia"
+                  label={t("install")}
+                  hint={t("installHint")}
                   icon={
                     <svg {...ic}>
                       <path d="M12 4v10M8 10.5l4 4 4-4" />
@@ -379,8 +382,8 @@ export function AccountDrawer({
                   onClose();
                   window.setTimeout(() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT)), 300);
                 }}
-                label="Acessibilidade"
-                hint="Daltonismo, texto maior e contraste"
+                label={t("accessibility")}
+                hint={t("accessibilityHint")}
                 icon={
                   <svg {...ic}>
                     <circle cx="12" cy="4.5" r="1.8" />
@@ -394,7 +397,7 @@ export function AccountDrawer({
     <>
       <dialog
         ref={outRef}
-        aria-label="Sair da conta"
+        aria-label={t("signOut")}
         onClose={() => setConfirmOut(false)}
         onClick={(e) => e.target === e.currentTarget && setConfirmOut(false)}
         className="m-auto w-[min(92vw,22rem)] max-w-none overflow-visible rounded-3xl border-0 bg-transparent p-0 backdrop:bg-[#2a1c12]/65 backdrop:backdrop-blur-sm"
@@ -405,10 +408,10 @@ export function AccountDrawer({
               <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
             </svg>
           </span>
-          <h2 className="font-title mt-3 text-2xl font-semibold">Sair da conta?</h2>
+          <h2 className="font-title mt-3 text-2xl font-semibold">{t("signOutQuestion")}</h2>
           <div className="mt-4 flex gap-2">
             <button type="button" onClick={() => setConfirmOut(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-[#efe4cf]">
-              Cancelar
+              {t("keep")}
             </button>
             <button
               type="button"
@@ -418,7 +421,7 @@ export function AccountDrawer({
               }}
               className="flex-1 cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#2c313b]"
             >
-              Sair
+              {t("signOutConfirm")}
             </button>
           </div>
         </div>
@@ -475,12 +478,13 @@ export function AccountDrawer({
   if (inline) {
     return (
       <CompactCtx.Provider value>
-        <nav aria-label="Menu da conta" data-tour="menu" className="space-y-[0.45em]">
+        <nav aria-label={t("accountMenu")} data-tour="menu" className="space-y-[0.45em]">
           {rows}
         </nav>
         <button type="button" onClick={() => setConfirmOut(true)} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
-          Sair da conta
+          {t("signOut")}
         </button>
+        <LanguagePicker className="mx-auto mt-[0.8em] flex w-fit" />
         {modals}
       </CompactCtx.Provider>
     );
@@ -494,7 +498,7 @@ export function AccountDrawer({
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
-        aria-label="Menu da conta"
+        aria-label={t("accountMenu")}
         className="fixed inset-y-0 right-auto left-0 m-0 mr-auto drawer-slide h-dvh max-h-none w-[min(26rem,calc(100vw-3.5rem))] max-w-none overflow-hidden rounded-none border-r border-[#e6d8bd] bg-[#f7efdc] p-0 text-[#2f2218] shadow-[1rem_0_4rem_rgba(0,0,0,.45)] backdrop:bg-black/50 sm:rounded-r-3xl"
       >
         {(open || closing) && (
@@ -503,11 +507,11 @@ export function AccountDrawer({
             <header className="relative flex shrink-0 items-center gap-4 px-5 pt-5 pb-3">
               <Avatar src={avatar} name={nick} plus={account.plan === "full"} className="size-[4.4rem] shrink-0" />
               <div className="min-w-0 flex-1 pr-8">
-                <p className="text-xs font-semibold tracking-[0.12em] text-[#8a7b69] uppercase">Sua conta</p>
+                <p className="text-xs font-semibold tracking-[0.12em] text-[#8a7b69] uppercase">{t("yourAccount")}</p>
                 <p className="font-title text-[1.7rem] leading-tight font-semibold [overflow-wrap:anywhere]">{nick}</p>
                 {account.plan === "full" && <PlanBadge plan="full" className="mt-1" />}
               </div>
-              <button type="button" onClick={onClose} aria-label="Fechar menu" className="absolute top-3 right-3 grid size-9 cursor-pointer place-items-center rounded-lg text-[#6b5440] transition hover:bg-black/5 hover:text-[#2f2218] active:scale-95">
+              <button type="button" onClick={onClose} aria-label={t("closeMenu")} className="absolute top-3 right-3 grid size-9 cursor-pointer place-items-center rounded-lg text-[#6b5440] transition hover:bg-black/5 hover:text-[#2f2218] active:scale-95">
                 <svg aria-hidden viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
                   <path d="M6 6l12 12M18 6 6 18" />
                 </svg>
@@ -515,7 +519,7 @@ export function AccountDrawer({
             </header>
 
             <div className={`relative flex min-h-0 flex-1 flex-col ${modal ? "hidden" : ""}`}>
-              <nav ref={navRef} onScroll={checkMore} aria-label="Menu da conta" className="flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 [scrollbar-color:#cdbb97_transparent] [scrollbar-width:thin]">
+              <nav ref={navRef} onScroll={checkMore} aria-label={t("accountMenu")} className="flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 [scrollbar-color:#cdbb97_transparent] [scrollbar-width:thin]">
                 {rows}
               </nav>
               {moreBelow && (
@@ -535,8 +539,9 @@ export function AccountDrawer({
                 <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
                 </svg>
-                Sair da conta
+                {t("signOut")}
               </button>
+              <LanguagePicker className="mx-auto mt-2 flex w-fit" />
               <p className="mt-2 text-center text-[11px] text-[#a09080]">Desenvolvido por Jeferson Araújo</p>
             </footer>
           </div>
