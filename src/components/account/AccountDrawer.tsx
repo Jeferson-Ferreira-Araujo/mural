@@ -12,7 +12,6 @@ import { useInstall } from "@/lib/install";
 import { Avatar } from "../Avatar";
 import { PlanBadge } from "../board/PlanBadge";
 import { EmbedCtx, Modal } from "./Modal";
-import { TOUR_EVENT } from "@/lib/onboarding";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import { MuralSettings } from "./MuralSettings";
 import { MyMuralsModal } from "./MyMuralsModal";
@@ -331,20 +330,6 @@ export function AccountDrawer({
                   <svg {...ic}>
                     <circle cx="12" cy="12" r="8.5" />
                     <path d="M12 7.5v9M9.5 10c0-1 1.1-1.800 2.500-1.800s2.500.8 2.500 1.800-1.100 1.600-2.500 1.900-2.500.9-2.500 1.900 1.100 1.800 2.500 1.800 2.500-.8 2.500-1.800" />
-                  </svg>
-                }
-              />
-              <Row
-                onClick={() => {
-                  onClose();
-                  window.setTimeout(() => window.dispatchEvent(new CustomEvent(TOUR_EVENT)), 300);
-                }}
-                label="Tour pelo Pinz"
-                hint="Descubra todas as funcionalidades."
-                icon={
-                  <svg {...ic}>
-                    <circle cx="12" cy="12" r="8.5" />
-                    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
                   </svg>
                 }
               />
