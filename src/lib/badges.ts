@@ -188,11 +188,11 @@ export async function addBadge(sb: SupabaseClient, muralId: string, key: number,
 
 export type DisplayPayload = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; dates?: { date: string; label: string; yearly: boolean }[]; /** contador regressivo: nome, data (AAAA-MM-DD) e hora (HH:MM) */ title?: string; target?: string; time?: string; /** contador de dias: data de início (AAAA-MM-DD) */ since?: string; /** leitura de livro: capa (endereço), páginas no total, páginas lidas e como mostrar */ cover?: string; pages?: number; read?: number; view?: string; /** top 3: os três itens */ items?: string[]; /** enquete: as opções */ options?: string[]; /** id do display colocado (só no cliente: a enquete precisa dele para contar os votos) */ id?: string };
 
-export async function addDisplay(sb: SupabaseClient, muralId: string, product: string, data: Record<string, unknown>, x: number, y: number, slots: number[]): Promise<{ id: string } | { error: "taken" | "limit" | "not_owned" | "error" }> {
+export async function addDisplay(sb: SupabaseClient, muralId: string, product: string, data: Record<string, unknown>, x: number, y: number, slots: number[]): Promise<{ id: string } | { error: "taken" | "limit" | "plan_limit" | "not_owned" | "error" }> {
   const { data: res, error } = await sb.rpc("add_display", { p_mural_id: muralId, p_product: product, p_data: data, p_x: x, p_y: y, p_slots: slots });
   if (!error && res && (res as { id?: string }).id) return { id: (res as { id: string }).id };
   const m = error?.message ?? "";
-  return { error: m.includes("slot_taken") ? "taken" : m.includes("badge_limit") ? "limit" : m.includes("product_not_owned") ? "not_owned" : "error" };
+  return { error: m.includes("slot_taken") ? "taken" : m.includes("plan_limit") ? "plan_limit" : m.includes("badge_limit") ? "limit" : m.includes("product_not_owned") ? "not_owned" : "error" };
 }
 
 export async function updateDisplayData(sb: SupabaseClient, id: string, data: Record<string, unknown>): Promise<boolean> {

@@ -15,7 +15,7 @@ const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "c
 
 /** Vantagens do PINZ+ (mostradas antes de pedir qualquer dado de pagamento). */
 const BENEFITS = [
-  "Mais pins em cada mural (o plano gratuito tem 15)",
+  "Pins e displays sem limite (o plano gratuito tem 15)",
   "Até 10 murais",
   "Pins de desenho, música, vídeo, voz e local",
   "Pins em segredo (borrados) para os visitantes",

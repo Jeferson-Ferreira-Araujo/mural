@@ -706,7 +706,7 @@ export function BadgeProvider({
     void _p;
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
     if ("error" in res) {
-      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "limit" ? "O mural chegou ao máximo de itens." : res.error === "not_owned" ? "Este display é da loja. Libere com créditos para usar." : "Não foi possível colocar o display agora.");
+      live.current.notify(res.error === "taken" ? "Esse lugar acabou de receber um pin. Escolha outro." : res.error === "plan_limit" ? "O plano gratuito permite até 15 pins e displays no mural. Com o PINZ+ não há esse limite." : res.error === "limit" ? "O mural chegou ao máximo de itens." : res.error === "not_owned" ? "Este display é da loja. Libere com créditos para usar." : "Não foi possível colocar o display agora.");
       live.current.onDisplaysChanged?.();
       return;
     }

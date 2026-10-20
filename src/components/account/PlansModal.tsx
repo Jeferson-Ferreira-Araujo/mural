@@ -10,7 +10,7 @@ import { Modal } from "./Modal";
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
     { text: "1 mural", on: true },
-    { text: "15 espaços no mural", on: true },
+    { text: "Até 15 pins e displays no mural", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "10 Bottons (1 unidade de cada)", on: true },
     { text: "Vídeo, voz e local", on: false },
@@ -21,7 +21,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   ],
   full: [
     { text: "Até 10 murais", on: true },
-    { text: "Mais pins em cada mural (o gratuito tem 15)", on: true },
+    { text: "Pins e displays sem limite (o gratuito tem 15)", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Vídeo, voz e local", on: true },

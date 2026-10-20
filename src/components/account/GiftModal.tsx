@@ -77,7 +77,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden>🔒</span>
-                  <span>Segredo nos pins, mensagem de boas-vindas, mural compartilhado e mais espaços no mural.</span>
+                  <span>Segredo nos pins, mensagem de boas-vindas, mural compartilhado e pins e displays sem limite.</span>
                 </li>
               </ul>
             ) : (

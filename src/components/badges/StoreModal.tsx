@@ -287,7 +287,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         >
           <span>
             <span className="block text-base font-extrabold">Assinar PINZ+</span>
-            <span className="block text-xs font-semibold opacity-80">Todos os espaços, mais murais e mais tipos de pin</span>
+            <span className="block text-xs font-semibold opacity-80">Pins e displays sem limite, mais murais e mais tipos de pin</span>
           </span>
           <span className="shrink-0 rounded-lg bg-[#3a2300] px-3 py-1.5 text-sm font-bold text-[#fff4cc]">R$ 9,90/mês</span>
         </button>
