@@ -140,7 +140,6 @@ export function PlansModal({ open, onClose, plan, credits }: { open: boolean; on
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-xs text-[#6b5440]">Créditos compram Bottons e Fundos de mural na Loja.</p>
       </div>
     </Modal>
   );
