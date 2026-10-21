@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "@/lib/plans";
-import { pixStatus, startPix, startStripe, type PixCharge } from "@/lib/payments";
+import { pixStatus, startPix, type PixCharge } from "@/lib/payments";
+import { StripeEmbed } from "./StripeEmbed";
 import { getMpPublicKey, loadMpSdk, payCard, paySubscription } from "@/lib/cardPay";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { primaryButton } from "../ui";
@@ -321,21 +322,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
               {step === "choose" && provider === "stripe" && (
                 <div className="mt-4 space-y-2.5">
-                  <p className="text-sm text-[#6b5440]">{tl("Você será levado a uma página segura da Stripe para concluir o pagamento.")}</p>
-                  <button
-                    type="button"
-                    disabled={busy !== null}
-                    onClick={() => {
-                      setBusy("pix");
-                      setError(null);
-                      void startStripe(target ?? "", target === "gift" ? recipient : undefined).then((err) => {
-                        if (err) (setBusy(null), setError(tl(err)));
-                      });
-                    }}
-                    className={`${primaryButton} flex items-center justify-center gap-2`}
-                  >
-                    {busy ? tl("Abrindo…") : tl("Pagar com cartão")}
-                  </button>
+                  <StripeEmbed product={target ?? ""} recipient={target === "gift" ? recipient : undefined} />
                   {fromPlans && (
                     <button type="button" onClick={() => setStep(target === "gift" ? "gift" : "plans")} className={ghost}>
                       {tx("voltar")}</button>

@@ -101,6 +101,16 @@ export async function startStripe(product: string, recipient?: string): Promise<
   return PAY_ERROR[String(r.data.error)] ?? MESSAGE[String(r.data.error)] ?? "Não foi possível abrir o pagamento agora. Tente de novo.";
 }
 
+/** Cria a sessão de pagamento da Stripe para abrir DENTRO do Pinz. Devolve o segredo da sessão, ou o texto do erro. */
+export async function stripeClientSecret(product: string, recipient?: string): Promise<{ secret: string } | { error: string }> {
+  const r = await post("/api/pay/stripe/checkout", { product, embedded: true, ...(recipient ? { recipient } : {}) });
+  if (r.ok && typeof r.data.clientSecret === "string") {
+    rememberReturn();
+    return { secret: r.data.clientSecret };
+  }
+  return { error: PAY_ERROR[String(r.data.error)] ?? MESSAGE[String(r.data.error)] ?? "Não foi possível abrir o pagamento agora. Tente de novo." };
+}
+
 export const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 export const PAY_STATUS: Record<string, { text: string; tone: "ok" | "wait" | "bad" }> = {
   approved: { text: "Aprovado", tone: "ok" },

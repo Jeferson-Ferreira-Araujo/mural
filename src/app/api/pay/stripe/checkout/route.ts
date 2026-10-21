@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   if (authErr || !uid || !email) return fail(401, "not_authenticated");
   if (!allow(`pay:${uid}`, 10, 60_000)) return fail(429, "rate_limited");
 
-  const body = (await req.json().catch(() => ({}))) as { product?: string; recipient?: string };
+  const body = (await req.json().catch(() => ({}))) as { product?: string; recipient?: string; embedded?: boolean };
   const product = String(body.product ?? "");
   const monthly = product === "plus";
   const item = itemForProduct(monthly ? "plus_month" : product);
@@ -64,7 +64,8 @@ export async function POST(req: Request) {
   const ref = monthly ? uid : refFor(uid, item, recipientId);
   const kindPath = item.kind === "credits" ? "creditos" : "plus";
   const priceData = { currency: currency.toLowerCase(), unit_amount: cents, product_data: { name: titleFor(monthly ? "plus" : item.id, item.credits, currency === "BRL") }, ...(monthly ? { recurring: { interval: "month" } } : {}) };
-  const r = await stripeApi<{ url?: string }>("/v1/checkout/sessions", {
+  const embedded = body.embedded === true; // o pagamento abre dentro do próprio Pinz (Stripe Embedded Checkout)
+  const r = await stripeApi<{ url?: string; client_secret?: string }>("/v1/checkout/sessions", {
     method: "POST",
     idempotencyKey: `${uid}:${product}:${Math.floor(Date.now() / 60_000)}`,
     body: {
@@ -72,12 +73,14 @@ export async function POST(req: Request) {
       client_reference_id: ref,
       customer_email: email,
       line_items: [{ quantity: 1, price_data: priceData }],
-      success_url: `${SITE_URL}/pagamento?produto=${kindPath}&status=ok`,
-      cancel_url: `${SITE_URL}/pagamento?produto=${kindPath}&status=falhou`,
+      ...(embedded
+        ? { ui_mode: "embedded_page", return_url: `${SITE_URL}/pagamento?produto=${kindPath}&status=ok` }
+        : { success_url: `${SITE_URL}/pagamento?produto=${kindPath}&status=ok`, cancel_url: `${SITE_URL}/pagamento?produto=${kindPath}&status=falhou` }),
       metadata: { ref },
       ...(monthly ? { subscription_data: { metadata: { ref } } } : { payment_intent_data: { metadata: { ref } } }),
     },
   });
+  if (embedded) return r.ok && r.data.client_secret ? NextResponse.json({ clientSecret: r.data.client_secret }) : fail(502, "provider_error");
   if (!r.ok || !r.data.url) return fail(502, "provider_error");
   return NextResponse.json({ url: r.data.url });
 }
