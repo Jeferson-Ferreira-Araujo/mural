@@ -521,6 +521,15 @@ export function AccountDrawer({
             <div className={`relative flex min-h-0 flex-1 flex-col ${modal ? "hidden" : ""}`}>
               <nav ref={navRef} onScroll={checkMore} aria-label={t("accountMenu")} className="flex-1 space-y-2.5 overflow-y-auto bg-[#f7efdc] px-4 pt-2 pb-4 [scrollbar-color:#cdbb97_transparent] [scrollbar-width:thin]">
                 {rows}
+                {/* sair da conta: no fim da lista do menu */}
+                <div className="mt-3 border-t border-dashed border-[#d9c9ad] pt-3">
+                <button type="button" onClick={() => setConfirmOut(true)} className="relative z-10 mx-auto flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#8a5a50] transition hover:bg-[#f1e3d6] active:scale-[0.99]">
+                  <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
+                  </svg>
+                  {t("signOut")}
+                </button>
+                </div>
               </nav>
               {moreBelow && (
                 <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 flex h-14 items-end justify-center bg-gradient-to-t from-[#f7efdc] via-[#f7efdc]/85 to-transparent pb-1 text-[#8a7b69]">
@@ -534,13 +543,6 @@ export function AccountDrawer({
             <div ref={setSlot} className={`relative min-h-0 flex-1 overflow-hidden bg-[#f7efdc] ${modal ? "" : "hidden"}`} />
 
             <footer className={`relative shrink-0 overflow-hidden bg-[#f7efdc] px-5 pt-3 pb-4 ${modal ? "hidden" : ""}`}>
-              <div className="mb-3 border-t border-dashed border-[#d9c9ad]" aria-hidden />
-              <button type="button" onClick={() => setConfirmOut(true)} className="relative z-10 mx-auto flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-[#8a5a50] transition hover:bg-[#f1e3d6] active:scale-[0.99]">
-                <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H9M15 8l4 4-4 4M19 12H9" />
-                </svg>
-                {t("signOut")}
-              </button>
               <p className="mt-2 text-center text-[11px] text-[#a09080]">{tx.rich("x_devBy", { s0: (c) => <a href="https://www.instagram.com/jefersontecinfo?rpxt=MTBoM3lwbzFseWZ3cg==" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2 hover:text-[#6b5440]">{c}</a> })}</p>
             </footer>
           </div>
