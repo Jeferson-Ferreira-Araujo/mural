@@ -1041,7 +1041,9 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const [decorBoard, setDecorBoard] = useState<string | null>(null);
   useEffect(() => {
     const d = decorLayout(randomMural(Date.now(), localeRef.current), localeRef.current);
-    const pick = BOARDS[Math.floor(Math.random() * BOARDS.length)];
+    // ?quadro=cortica na tela inicial fixa o quadro do exemplo (para conferir um quadro específico)
+    const forced = new URLSearchParams(window.location.search).get("quadro");
+    const pick = BOARDS.find((b) => b.id === forced) ?? BOARDS[Math.floor(Math.random() * BOARDS.length)];
     let done = false;
     const show = () => {
       if (done) return;
