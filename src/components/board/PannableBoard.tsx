@@ -186,6 +186,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         // ampliado = o mural preenche a altura da área (a tela do celular é alta e o mural, largo): aparece o centro, com as bordas cortadas dos lados
         const s0 = startZoomedRef.current && r.width < 700 ? Math.min(defS, Math.max(minS, r.height / WORLD_H)) : minS;
         view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
+        // o quadro ficou visível só agora (ex.: a tela terminou de carregar): a dica de arrastar tenta de novo, para não perder a vez do dia
+        window.setTimeout(() => startHintRef.current(false), 900);
       } else {
         const { x, y, s } = view.current;
         const { minS } = limits();
@@ -268,6 +270,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
   // o mural pode ficar pronto (medido) depois de a tela montar: tenta de novo quando ele aparece
   useEffect(() => {
     const t = window.setTimeout(() => startHintRef.current(false), 1200);
+    const t2 = window.setTimeout(() => startHintRef.current(false), 3000);
+    const t3 = window.setTimeout(() => startHintRef.current(false), 6000);
     const ask = () => {
       hintDone.current = false;
       startHintRef.current(true);
@@ -275,6 +279,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     window.addEventListener("pinz:pan-hint", ask);
     return () => {
       window.clearTimeout(t);
+      window.clearTimeout(t2);
+      window.clearTimeout(t3);
       window.removeEventListener("pinz:pan-hint", ask);
       hintTimers.current.forEach((x) => window.clearTimeout(x));
       hintTimers.current = [];
