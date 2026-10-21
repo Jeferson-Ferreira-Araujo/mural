@@ -32,6 +32,9 @@ export const BOARDS: readonly BoardInfo[] = [
 /** Versão pequena do fundo (480 px), gerada sozinha por scripts/board-thumbs.mjs a cada build: só para fundos DESFOCADOS (o mural em si usa sempre a imagem grande). */
 export const boardImageS = (b: BoardInfo) => b.image.replace(/.webp/, "-s.webp");
 
+/** Quanto a cena panorâmica passa de cada lado do quadro 3:2, em unidades do mundo do mural (1200×800): (1920 − 1200) / 2. */
+export const WIDE_EXTRA = 360;
+
 export const DEFAULT_BOARD: BoardId = "cortica";
 
 export const boardById = (id?: string | null): BoardInfo => BOARDS.find((b) => b.id === id) ?? BOARDS[0];

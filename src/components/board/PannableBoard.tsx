@@ -20,7 +20,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const tl = useLit();
   const tx = useTranslations("components.board.PannableBoard");
   const box = useRef<HTMLDivElement>(null);
@@ -30,6 +30,8 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
   startZoomedRef.current = startZoomed;
   const wideRef = useRef(wideZoom);
   wideRef.current = wideZoom;
+  const extraRef = useRef(scene?.extra ?? 0);
+  extraRef.current = scene?.extra ?? 0;
   const swiped = useRef(false); // já trocou de mural nesta arrastada
   swipeRef.current = onSwipe;
   const world = useRef<HTMLDivElement>(null);
@@ -67,9 +69,10 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
       const { w, h } = size.current;
       const { minS, maxS } = limits();
       const ss = Math.min(maxS, Math.max(minS, s));
+      const ex = extraRef.current * ss; // a cena panorâmica passa do quadro dos dois lados
       const sw = WORLD_W * ss;
       const sh = WORLD_H * ss;
-      const cx = sw <= w ? (w - sw) / 2 : Math.min(0, Math.max(w - sw, x));
+      const cx = sw + 2 * ex <= w ? (w - sw) / 2 : Math.min(ex, Math.max(w - sw - ex, x));
       const cy = sh <= h ? (h - sh) / 2 : Math.min(0, Math.max(h - sh, y));
       return { x: cx, y: cy, s: ss };
     },
@@ -495,6 +498,17 @@ export function PannableBoard({ children, ambient, cornerLeft, controlPos = "rig
         <img src={ambient} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 size-full scale-110 object-cover opacity-80 blur-md" />
       )}
       <div ref={world} className="absolute top-0 left-0 origin-top-left [container-type:size]" style={{ width: WORLD_W, height: WORLD_H }}>
+        {scene && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={scene.src}
+            alt=""
+            aria-hidden
+            draggable={false}
+            className="pointer-events-none absolute max-w-none select-none"
+            style={{ left: -scene.extra, top: 0, width: WORLD_W + 2 * scene.extra, height: WORLD_H, filter: scene.blur ? "blur(11px) saturate(0.85)" : "none", transition: "filter 700ms ease-out" }}
+          />
+        )}
         {children}
       </div>
 

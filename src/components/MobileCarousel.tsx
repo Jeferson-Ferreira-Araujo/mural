@@ -1,6 +1,6 @@
 "use client";
 
-import { boardById, boardImageS } from "@/lib/boards";
+import { boardById, boardImageS, WIDE_EXTRA } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
@@ -62,7 +62,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
           {demoBoard && (
             <div className="mx-auto w-[min(94vw,36rem)] space-y-3">
               <div className="h-[68dvh] overflow-hidden rounded-2xl border border-white/15 shadow-[0_0.8rem_2rem_rgba(0,0,0,.45)]">
-                <PannableBoard ambient={boardImageS(look)}>
+                <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA } : undefined}>
                   <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} onCompose={onCompose} onNotify={onNotify} contain />
                 </PannableBoard>
               </div>

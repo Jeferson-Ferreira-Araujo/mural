@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { AddPinButton } from "./AddPinButton";
-import { boardById, boardImageS } from "@/lib/boards";
+import { boardById, boardImageS, WIDE_EXTRA } from "@/lib/boards";
 import type { PlanId } from "@/lib/plans";
 import type { BoardItem } from "@/lib/types";
 import { Avatar } from "./Avatar";
@@ -166,6 +166,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
             muralSwitch.onSelect(to);
           } : undefined}
           ambient={boardImageS(look)}
+          scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined}
           cornerLeft={
             share && onNotify && !shareTop ? (
               <div className="flex items-center gap-2">

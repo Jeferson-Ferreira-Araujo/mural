@@ -1,6 +1,6 @@
 "use client";
 
-import { boardById, DEFAULT_BOARD, boardImageS } from "@/lib/boards";
+import { boardById, DEFAULT_BOARD, boardImageS, WIDE_EXTRA } from "@/lib/boards";
 import { AddPinButton } from "./AddPinButton";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
@@ -64,11 +64,6 @@ export function DesktopBoard(props: ViewProps) {
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={boardImageS(look)} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-md" />
-        {/* quadro panorâmico: a cena inteira, na altura da tela e centralizada; o miolo (3:2) é exatamente o mural, as pontas viram cenário em tela cheia */}
-        {look.wide && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={look.wide} alt="" aria-hidden draggable={false} className="pointer-events-none absolute top-0 left-1/2 h-full w-auto max-w-none -translate-x-1/2 select-none portrait:hidden" style={{ filter: locked ? "blur(11px) saturate(0.85)" : "none", transition: "filter 700ms ease-out" }} />
-        )}
 
         {/* aba na beirada: recolhe o menu lateral (o mural fica centralizado) ou o mostra de novo */}
         <button
@@ -129,7 +124,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={boardImageS(look)} controlPos="right-[2.2vw] bottom-5" hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
+        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[2.2vw] bottom-5" hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain>
           {locked &&
             (lockForm ? (
