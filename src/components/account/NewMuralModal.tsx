@@ -123,7 +123,20 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const price = buying ? priceOf(buying) : 0;
 
   return (
-    <Modal open={open} onClose={onClose} title={tx("novoMural")} label={tx("novoMural")} wide>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={tx("novoMural")}
+      label={tx("novoMural")}
+      wide
+      aside={
+        // saldo de créditos no cabeçalho, ao lado do botão de fechar
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-2.5 py-1 text-sm font-semibold" aria-label={tx("m_creditos", { v0: credits })}>
+          <Coin />
+          {credits}
+        </span>
+      }
+    >
       {target ? (
         <div className="space-y-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -149,12 +162,8 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       ) : (
         <form onSubmit={create} className="space-y-4" noValidate>
           <fieldset className="mx-auto w-full max-w-[26rem] min-w-0">
-            <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="mb-2">
               <span className="text-sm font-semibold">{tx("tipoDoMural")}</span>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold" aria-label={tx("m_creditos", { v0: credits })}>
-                <Coin />
-                {credits}
-              </span>
             </div>
             <div className="relative">
               <div
