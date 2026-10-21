@@ -53,7 +53,7 @@ function Row({ icon, label, hint, badge, onClick }: { icon: ReactNode; label: st
           {badge > 99 ? "99+" : badge}
         </span>
       )}
-      <svg viewBox="0 0 24 24" className={`shrink-0 text-[#8a7b69] ${compact ? "hidden" : "size-4"}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+      <svg viewBox="0 0 24 24" className={`shrink-0 text-[#8a7b69] ${compact ? "size-[1.1em]" : "size-4"}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
         <path d="m9 6 6 6-6 6" />
       </svg>
     </button>
@@ -479,7 +479,7 @@ export function AccountDrawer({
   if (inline) {
     return (
       <CompactCtx.Provider value>
-        <nav aria-label={t("accountMenu")} data-tour="menu" className="grid grid-cols-2 gap-[0.5em] [&>*:last-child:nth-child(odd)]:col-span-2">
+        <nav aria-label={t("accountMenu")} data-tour="menu" className="space-y-[0.45em]">
           {rows}
         </nav>
         <button type="button" onClick={() => setConfirmOut(true)} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
