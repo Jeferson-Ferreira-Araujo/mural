@@ -515,7 +515,7 @@
       },
       "PinTtlField": {
         "tempoDeExibicaoDosPinz": "Pin display time",
-        "depoisDoPrazoOPin": "After the time is up the pin leaves the board but stays saved in My pins."
+        "depoisDoPrazoOPin": "After this period the pin is archived and its spot on the board is freed."
       },
       "PlansModal": {
         "seuPlano": "Your plan",

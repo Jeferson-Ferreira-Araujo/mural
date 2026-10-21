@@ -515,7 +515,7 @@
       },
       "PinTtlField": {
         "tempoDeExibicaoDosPinz": "Tiempo de exhibición de los pins",
-        "depoisDoPrazoOPin": "Pasado el plazo, el pin sale del mural pero queda guardado en Mis pins."
+        "depoisDoPrazoOPin": "Pasado este período, el pin se archiva y su espacio en el mural queda libre."
       },
       "PlansModal": {
         "seuPlano": "Tu plan",
