@@ -377,7 +377,6 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   <div id="pinz-card-brick" />
                   <button type="button" onClick={() => setStep(plusTarget ? "plans" : "choose")} className={ghost}>
                     {tx("voltar")}</button>
-                  <p className="mt-1 text-center text-xs text-[#8a7b69]">{tx("x_osDadosDoCartaoSao", { v0: plusTarget ? tx("m_renovaTodoMesCanceleQuando") : "" })}</p>
                 </div>
               )}
 
