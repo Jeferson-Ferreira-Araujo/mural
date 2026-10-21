@@ -1,6 +1,5 @@
 import { Brand } from "./Brand";
 import { FitSidebar } from "./FitSidebar";
-import { SidebarMore } from "./SidebarMore";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import { LanguagePicker } from "./LanguagePicker";
 import type { ViewProps } from "./viewProps";
@@ -26,13 +25,12 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
   const tx = useTranslations("components.Sidebar");
   return (
     <aside
-      data-collapsed={collapsed} data-account={!!account} className="paper-grain data-[account=true]:text-[clamp(16px,calc(0.5vw+8px),21px)] landscape:data-[collapsed=true]:!hidden relative z-20 flex h-full w-[clamp(300px,15.5vw,380px)] min-w-[300px] flex-none flex-col overflow-x-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[32em]"
+      data-collapsed={collapsed} data-account={!!account} className="paper-grain data-[account=true]:text-[clamp(14px,calc(0.4vw+7.5px),17px)] data-[account=true]:[scrollbar-color:#cdbb97_transparent] data-[account=true]:[scrollbar-width:thin] landscape:data-[collapsed=true]:!hidden relative z-20 flex h-full w-[clamp(300px,15.5vw,380px)] min-w-[300px] flex-none flex-col overflow-x-hidden overflow-y-auto data-[account=false]:[scrollbar-width:none] data-[account=false]:[&::-webkit-scrollbar]:hidden portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[32em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">{tx("pinz")}</h1>
       {/* em qualquer monitor, a letra da coluna diminui até o conteúdo caber na altura, sem barra de rolagem */}
       <FitSidebar />
-      {account && <SidebarMore />}
       {/* vendo o mural de outra pessoa: seta para voltar ao seu mural (sem fundo), antes do logo */}
       {account?.onHome && !account.atHome && (
         <div className="mb-[0.8em] flex items-center">

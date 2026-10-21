@@ -177,7 +177,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
         <header className={`flex flex-col gap-[0.5em] ${open || profileOnly ? "" : `mb-[0.9em] border-b pb-[0.8em] ${dark ? "border-white/10" : "border-[#e6d8bd]"}`}`}>
           <div className="flex items-center justify-between gap-[0.6em]">
           <Wrap {...wrapProps} className={`flex min-w-0 items-center gap-[0.7em] text-left ${onProfile ? "cursor-pointer rounded-xl transition hover:opacity-80 active:scale-[0.98]" : ""}`}>
-            {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[3.6em]" />}
+            {owner && <Avatar src={avatar} name={owner} plus={plus} className="size-[2.6em] lg:size-[4.1em]" />}
             <p className="min-w-0">
               {/* só o @ de quem é: o nome do mural fica no topo do quadro (desktop) */}
               <span className="block text-[0.95em] leading-tight font-bold break-words lg:text-[1.45em]">{owner ? `@${owner}` : title}</span>
