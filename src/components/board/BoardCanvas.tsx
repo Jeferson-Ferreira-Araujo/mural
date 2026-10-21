@@ -649,7 +649,7 @@ export function BoardCanvas({
               {hasSelection && unlocked && !locked && !loading && items.length === 0 && !badges.some((b) => b.kind === "display") && (
                 <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
                   {/* a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
-                  <div className="-rotate-2" style={{ fontSize: "2.1cqw" }}>
+                  <div className="-rotate-2" style={{ fontSize: "1.4cqw" }}>
                     <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: tx("m_nenhumPinPorAquiAinda") }} />
                   </div>
                 </div>
