@@ -111,7 +111,7 @@ body {
 @media (hover: hover) {
   .pinned:hover {
     transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 0.35em)) rotate(calc(var(--rot, 0deg) * 0.4)) scale(1.025);
-    z-index: 60 !important; /* acima da camada dos bottons e displays (z 40): o pin aumentado passa por cima deles */
+    z-index: 39 !important; /* acima dos outros pins, mas ABAIXO da camada dos bottons e displays (z 40): um botton em cima do pin continua sendo alcançável (se o pin passasse por cima, escondia o botton e não dava para pegá-lo) */
   }
   .pinned:hover .shadow-paper {
     box-shadow:
