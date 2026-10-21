@@ -12,6 +12,7 @@ import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 export type DragSrc = { kind: "new"; key: number } | { kind: "placed"; id: string; key: number; /** tamanho em % do botton que está sendo arrastado */ scale?: number };
 
@@ -59,7 +60,7 @@ const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão 
 const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
 export const useBadges = () => useContext(BadgeCtx);
 
-type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
+type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "tack" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
 type Ghost = { key: number; x: number; y: number; w: number; h: number; state: "ok" | "bad"; /** inclinação do botton já colocado: o arraste mostra o botton como ele é */ rot?: number; back?: { x: number; y: number } };
 
 /** Espaços do quadro que um retângulo (em px) cobre: qualquer pedaço visível já conta. `taken` = os que já têm pin. */
@@ -156,7 +157,7 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     if (t.right < lr.left || t.left > lr.right || t.bottom < lr.top || t.top > lr.bottom) continue; // tachinha de fora do mural (ex.: amostra de uma janela)
     const tx0 = t.left + t.width / 2;
     const ty0 = t.top + t.height / 2;
-    if (br.left < tx0 + t.width * 0.3 && br.right > tx0 - t.width * 0.3 && br.top < ty0 + t.height * 0.3 && br.bottom > ty0 - t.height * 0.3) return { kind: "physical" };
+    if (br.left < tx0 + t.width * 0.3 && br.right > tx0 - t.width * 0.3 && br.top < ty0 + t.height * 0.3 && br.bottom > ty0 - t.height * 0.3) return { kind: "tack" };
   }
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
@@ -200,6 +201,7 @@ export function BadgeProvider({
   children: ReactNode;
 }) {
   const tx = useTranslations("components.badges.BadgeContext");
+  const tl = useLit();
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [draggingNew, setDraggingNew] = useState(false);
@@ -347,6 +349,10 @@ export function BadgeProvider({
             });
           } else sendBack(at);
           return;
+        }
+        if (drop.kind === "tack") {
+          notify(tl("Um botton não pode ficar sobre o alfinete de um pin. Solte-o um pouco ao lado."));
+          return sendBack(at);
         }
         if (drop.kind === "physical") {
           notify(tx("m_naoEPossivelColocarSobre"));
@@ -560,6 +566,10 @@ export function BadgeProvider({
         if (drop.kind === "occupied") {
           back();
           return notify(tx("m_naoEPossivelColocarSobre"));
+        }
+        if (drop.kind === "tack") {
+          back();
+          return notify(tl("Um botton não pode ficar sobre o alfinete de um pin. Solte-o um pouco ao lado."));
         }
         if (drop.kind === "physical") {
           back();
