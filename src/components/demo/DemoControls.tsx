@@ -1,6 +1,6 @@
 "use client";
 
-import { BOARDS, canChangeBoard, type BoardId } from "@/lib/boards";
+import { BOARDS, boardPreview, canChangeBoard, type BoardId } from "@/lib/boards";
 import { PLANS, slotsFor, type PlanId } from "@/lib/plans";
 import type { ReactNode } from "react";
 import type { Tone } from "../viewProps";
@@ -129,7 +129,7 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
                 title={b.name}
                 onClick={() => (locked ? onBoardLocked() : onBoard(b.id))}
                 className={`relative aspect-[3/2] cursor-pointer overflow-hidden rounded-[0.5em] border-2 bg-cover bg-center transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#d98a2b] ${active ? "border-[#d98a2b] ring-1 ring-[#d98a2b]" : dark ? "border-white/20" : "border-[#d9c9ad]"}`}
-                style={{ backgroundImage: `url(${b.image})` }}
+                style={{ backgroundImage: `url(${boardPreview(b)})` }}
               >
                 {locked && (
                   <span className="absolute inset-0 grid place-items-center bg-black/55 text-[0.8em] text-white" aria-hidden>

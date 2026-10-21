@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BADGES, badgeSrc, type BadgeInventory } from "@/lib/badges";
 import { BADGE_CATEGORIES, BADGE_CATEGORY, NEW_BADGES_COUNT, STORE_DUPLICATES } from "@/lib/badgeCategories";
-import { BOARDS, NEW_BOARDS } from "@/lib/boards";
+import { BOARDS, NEW_BOARDS, boardPreview } from "@/lib/boards";
 import { BoardLightbox } from "./BoardLightbox";
 import { CREDIT_PACKS, PAYMENTS_ENABLED } from "@/lib/plans";
 import { startCheckout } from "@/lib/payments";
@@ -526,11 +526,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={b.image} alt={tx("x_boardBg", { name: tl(b.name) })} className="aspect-[3/2] w-full object-cover" draggable={false} />
+                  <img src={boardPreview(b)} alt={tx("x_boardBg", { name: tl(b.name) })} className="aspect-[12/5] w-full object-cover" draggable={false} />
                   {/* ver o mural em tela cheia (discreto, no centro da foto) */}
                   <button
                     type="button"
-                    onClick={() => setViewBoard({ image: b.image, name: tl(b.name) })}
+                    onClick={() => setViewBoard({ image: boardPreview(b), name: tl(b.name) })}
                     aria-label={tx("m_verOMuralEmTela", { v0: tl(b.name) })}
                     title={tx("verEmTelaCheia")}
                     className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/40 text-white/90 opacity-80 backdrop-blur-sm transition hover:bg-black/65 hover:opacity-100 active:scale-90"

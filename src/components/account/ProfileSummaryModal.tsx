@@ -5,7 +5,7 @@ import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { createSharedMural, SHARED_ERROR_TEXT } from "@/lib/shared";
 import { getProfileSummary, reportProfile, type ProfileReportReason, type ProfileSummary } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
+import { BOARDS, DEFAULT_BOARD, boardPreview } from "@/lib/boards";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { Avatar } from "../Avatar";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
@@ -238,7 +238,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
                     className={`relative w-[7.5rem] shrink-0 cursor-pointer snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full rounded-lg object-cover" />
+                    <img src={boardPreview(bd)} alt="" draggable={false} className="aspect-[12/5] w-full rounded-lg object-cover" />
                     {on && (
                       <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow">
                         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">

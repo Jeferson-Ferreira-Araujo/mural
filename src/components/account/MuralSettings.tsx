@@ -6,7 +6,7 @@ import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
-import { BOARDS } from "@/lib/boards";
+import { BOARDS, boardPreview } from "@/lib/boards";
 import { PAY_EVENT } from "@/lib/payments";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
@@ -195,7 +195,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
                 return (
                   <div key={bd.id} role="radio" aria-checked={on} aria-label={tl(bd.name)} className="relative block w-full shrink-0 snap-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={bd.image} alt="" draggable={false} className="aspect-[3/2] w-full object-cover" />
+                    <img src={boardPreview(bd)} alt="" draggable={false} className="aspect-[12/5] w-full object-cover" />
                     <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent px-3 pt-10 pb-3">
                       <span className="min-w-0 truncate text-base font-bold text-white">{tl(bd.name)}</span>
                     </div>

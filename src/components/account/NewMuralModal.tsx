@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
+import { BOARDS, DEFAULT_BOARD, boardPreview } from "@/lib/boards";
 import { buyBoard, fetchInventory, type BoardOffer } from "@/lib/badges";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
@@ -120,7 +120,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       {target ? (
         <div className="space-y-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={target.image} alt="" draggable={false} className="mx-auto aspect-[3/2] w-56 rounded-xl object-cover shadow" />
+          <img src={boardPreview(target)} alt="" draggable={false} className="mx-auto aspect-[12/5] w-56 rounded-xl object-cover shadow" />
           <p className="text-center text-base font-semibold">
             {tx.rich("x_comprarOMuralPorCreditos", { v0: target.name, v1: price, s0: (c) => <span className="whitespace-nowrap">{c}</span> })}</p>
           <p className="flex items-center justify-center gap-1.5 text-sm text-[#6b5440]">
@@ -169,7 +169,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                   return (
                     <div key={bd.id} role="radio" aria-checked={on} aria-label={tl(bd.name)} className="relative block w-full shrink-0 snap-center overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={bd.image} alt="" draggable={false} className={`aspect-[3/2] w-full object-cover ${has ? "" : "opacity-70"}`} />
+                      <img src={boardPreview(bd)} alt="" draggable={false} className={`aspect-[12/5] w-full object-cover ${has ? "" : "opacity-70"}`} />
                       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent px-3 pt-10 pb-3">
                         <span className="min-w-0 truncate text-base font-bold text-white">{tl(bd.name)}</span>
                         {!has ? (

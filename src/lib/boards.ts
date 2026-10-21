@@ -32,6 +32,9 @@ export const boardImageS = (b: BoardInfo) => b.image.replace(/.webp/, "-s.webp")
 /** Quanto a cena panorâmica passa de cada lado do quadro 3:2, em unidades do mundo do mural (1200×800): (1920 − 1200) / 2. */
 export const WIDE_EXTRA = 360;
 
+/** Imagem para mostrar o quadro INTEIRO (a cena panorâmica 2,4:1, com o cenário dos lados) em miniaturas e listas; sem ela, o recorte do mural. */
+export const boardPreview = (b: BoardInfo) => b.wide ?? b.image;
+
 export const DEFAULT_BOARD: BoardId = "cortica";
 
 export const boardById = (id?: string | null): BoardInfo => BOARDS.find((b) => b.id === id) ?? BOARDS[0];

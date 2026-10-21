@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { OwnMural } from "@/lib/auth";
-import { boardById } from "@/lib/boards";
+import { boardById, boardPreview } from "@/lib/boards";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./Modal";
 import { MuralSettings } from "./MuralSettings";
@@ -233,7 +233,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                   <button type="button" onClick={() => setEditId(m.id)} className="relative w-44 max-w-[62%] min-w-0 shrink-0 cursor-pointer text-left" aria-label={tx("x_editTitle", { title: m.title, locked: m.question ? "yes" : "no" })} title={m.title}>
                     <span className="mb-1 block h-5 max-w-44 truncate text-sm leading-5 font-bold">{m.title}</span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={b.image} alt="" draggable={false} className="aspect-[3/2] w-full max-w-44 rounded-lg object-cover" />
+                    <img src={boardPreview(b)} alt="" draggable={false} className="aspect-[12/5] w-full max-w-44 rounded-lg object-cover" />
                     {/* abaixo da imagem: se o mural é público ou privado (com pergunta de segurança) */}
                     <span className={`mt-1.5 flex items-center gap-1 text-xs font-semibold ${m.question ? "text-[#8a5a10]" : "text-[#2f6a3c]"}`}>
                       {m.question ? (
