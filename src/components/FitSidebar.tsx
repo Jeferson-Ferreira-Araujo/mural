@@ -15,12 +15,19 @@ export function FitSidebar() {
       raf = 0;
       el.style.fontSize = "";
       el.style.maxWidth = "";
+      el.style.removeProperty("--logo-k");
       if (window.matchMedia("(orientation: portrait)").matches) return; // em pé, a coluna vai para cima e tem a própria altura
       if (el.dataset.account === "true") return; // com login: letra grande e a coluna rola (uma seta avisa que há mais opções)
       let fs = parseFloat(getComputedStyle(el).fontSize) || 14;
       // a largura máxima (40em) não pode encolher junto com a letra: senão sobra faixa desfocada nas laterais do mural
       el.style.maxWidth = `${fs * 40}px`;
       const h0 = el.scrollHeight;
+      // primeiro o logo cede um pouco (até 60%); só depois a letra da coluna encolhe
+      let k = 1;
+      while (el.scrollHeight > el.clientHeight + 1 && k > 0.6) {
+        k -= 0.05;
+        el.style.setProperty("--logo-k", k.toFixed(2));
+      }
       const floor = 8.5; // os textos de cada idioma têm a mesma altura, então a letra encolhe igual em qualquer um; sem barra de rolagem
       while (el.scrollHeight > el.clientHeight + 1 && fs > floor) {
         fs -= 0.5;
@@ -53,6 +60,7 @@ export function FitSidebar() {
       if (raf) cancelAnimationFrame(raf);
       el.style.fontSize = "";
       el.style.maxWidth = "";
+      el.style.removeProperty("--logo-k");
     };
   }, []);
   return null;

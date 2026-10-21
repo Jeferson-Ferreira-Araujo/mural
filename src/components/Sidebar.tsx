@@ -5,7 +5,7 @@ import { LanguagePicker } from "./LanguagePicker";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
 
-const icon = "size-[2.1em]";
+const icon = "size-8";
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
 function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
@@ -13,8 +13,8 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
     <li className="flex items-center justify-center gap-[0.7em]">
       <span className="shrink-0 text-[#4a3826]">{Icon}</span>
       <span className="min-w-0 text-center">
-        <span className="font-title block text-[1.6em] leading-none font-semibold">{value}</span>
-        <span className="mt-[0.2em] block text-[0.78em] leading-tight text-[#6b5440]">{label}</span>
+        <span className="font-title block text-[1.5rem] leading-none font-semibold">{value}</span>
+        <span className="mt-[0.2em] block text-[0.8rem] leading-tight text-[#6b5440]">{label}</span>
       </span>
     </li>
   );
@@ -48,12 +48,12 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
       <div className={`flex flex-col gap-[0.9em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[clamp(5.5rem,16dvh,13rem)]" />
+        <Brand className="h-[calc(clamp(5.5rem,16dvh,13rem)*var(--logo-k,1))]" />
       </div>
-      {!compact && <p className="text-center text-[0.95em] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
+      {!compact && <p className="text-center text-[14px] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
-      {!account && <LanguagePicker className="mx-auto mt-[0.8em] lg:landscape:!absolute lg:landscape:top-[0.9em] lg:landscape:right-[1.1em] lg:landscape:!mt-0 lg:landscape:!w-auto" />}
+      {!account && <LanguagePicker variant="icon" className="!absolute top-[0.8em] right-[0.8em] z-30 !mx-0 !w-auto !max-w-none" />}
 
       {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar usuário" já se explica */}
       {panelTitle && (

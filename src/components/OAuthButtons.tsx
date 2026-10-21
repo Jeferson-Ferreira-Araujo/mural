@@ -21,7 +21,7 @@ function GoogleLogo() {
 
 function FacebookLogo() {
   return (
-    <svg viewBox="0 0 24 24" className="size-6 shrink-0" aria-hidden>
+    <svg viewBox="0 0 24 24" className="size-5 shrink-0" aria-hidden>
       <path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12Z" />
     </svg>
   );
@@ -70,7 +70,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
     <div className={className}>
       <p className="text-center text-sm text-[#6b5440]">{tx("continuarCom")}</p>
       {/* só os ícones, lado a lado (cabem 3 ou mais na mesma linha) */}
-      <div className="mt-2 flex items-center justify-center gap-3">
+      <div className="mt-1.5 flex items-center justify-center gap-3">
         {OAUTH_PROVIDERS.map((p) => (
           <button
             key={p}
@@ -79,7 +79,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
             onClick={() => void go(p)}
             aria-label={tl(OAUTH_LABEL[p])}
             title={tl(OAUTH_LABEL[p])}
-            className={`${ghostButton} grid h-12 min-w-0 flex-1 place-items-center bg-white/70 !px-0 disabled:opacity-60 sm:max-w-[6.5rem]`}
+            className={`${ghostButton} grid h-9 min-w-0 flex-1 place-items-center bg-white/70 !px-0 disabled:opacity-60 sm:max-w-[6.5rem]`}
           >
             {busy === p ? (
               <span className="text-xs font-semibold">{tx("abrindo")}</span>
@@ -95,7 +95,7 @@ export function OAuthButtons({ onError, className = "" }: { onError: (msg: strin
           </button>
         ))}
       </div>
-      <p className="pt-3 text-center text-sm text-[#6b5440]">{tx("ou")}</p>
+      <p className="pt-2 text-center text-sm text-[#6b5440]">{tx("ou")}</p>
     </div>
   );
 }
