@@ -54,16 +54,14 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
 
   const limits = useCallback(() => {
     const { w, h } = size.current;
-    const fitS = Math.min(w / WORLD_W, h / WORLD_H); // o mural (quadro 3:2) inteiro à vista: ponto de partida e do botão Afastar/Aproximar
-    // com a cena panorâmica dá para afastar mais um pouco, até a imagem inteira caber na largura (ex.: com o menu lateral aberto)
-    const minS = extraRef.current > 0 ? Math.min(fitS, w / (WORLD_W + 2 * extraRef.current)) : fitS;
+    const minS = Math.min(w / WORLD_W, h / WORLD_H);
     // o máximo é o mesmo tanto que o botão "Aproximar" amplia: mais que isso não deixa
     // celular: ~2 cartões (de 130) por largura de tela, o post-it ocupa cerca de 48% da largura (37% foi o aprovado em 11/out; 3× mais travava ao afastar; o dono pediu "um pouco mais");
     // telas largas (desktop): ~1,25 cartão, senão a ampliação fica enorme
     const perScreen = w >= 700 ? wideRef.current : 1.6;
-    const defS = Math.max(fitS, w / (130 * perScreen));
-    const maxS = Math.max(fitS * 1.001, defS);
-    return { minS, fitS, maxS, defS };
+    const defS = Math.max(minS, w / (130 * perScreen));
+    const maxS = Math.max(minS * 1.001, defS);
+    return { minS, maxS, defS };
   }, []);
 
   const clampView = useCallback(
@@ -133,7 +131,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         }, 34);
       } else el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${s})`;
       if (promoteTimer.current) window.clearTimeout(promoteTimer.current);
-      const out = s <= limits().fitS * 1.02;
+      const out = s <= limits().minS * 1.02;
       // com o mural inteiro à vista a camada fica como está: soltá-la fazia o navegador redesenhar tudo de uma vez (a "piscada" ao afastar)
       promoteTimer.current = out
         ? null
@@ -184,17 +182,17 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       if (!ready.current && r.width > 0) {
         ready.current = true;
         // começa mostrando o mural inteiro (o botão "Aproximar", a pinça e o toque duplo ampliam); no celular, com startZoomed, já abre ampliado e centralizado
-        const { fitS, defS } = limits();
+        const { minS, defS } = limits();
         // ampliado = o mural preenche a altura da área (a tela do celular é alta e o mural, largo): aparece o centro, com as bordas cortadas dos lados
-        const s0 = startZoomedRef.current && r.width < 700 ? Math.min(defS, Math.max(fitS, r.height / WORLD_H)) : fitS;
+        const s0 = startZoomedRef.current && r.width < 700 ? Math.min(defS, Math.max(minS, r.height / WORLD_H)) : minS;
         view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
         // o quadro ficou visível só agora (ex.: a tela terminou de carregar): a dica de arrastar tenta de novo, para não perder a vez do dia
         window.setTimeout(() => startHintRef.current(false), 900);
       } else {
         const { x, y, s } = view.current;
-        const { fitS } = limits();
+        const { minS } = limits();
         // mural inteiro à vista: a área mudou de tamanho (ex.: menu lateral recolhido ou quadro panorâmico carregado), então o quadro volta ao centro
-        view.current = s <= fitS * 1.02 ? clampView((r.width - WORLD_W * s) / 2, (r.height - WORLD_H * s) / 2, s) : clampView(x, y, s);
+        view.current = s <= minS * 1.02 ? clampView((r.width - WORLD_W * s) / 2, (r.height - WORLD_H * s) / 2, s) : clampView(x, y, s);
       }
       apply(false);
     };
@@ -209,8 +207,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     if (!startZoomed || touched.current || !ready.current) return;
     const { w, h } = size.current;
     if (w <= 0 || w >= 700) return;
-    const { fitS, defS } = limits();
-    const s0 = Math.min(defS, Math.max(fitS, h / WORLD_H));
+    const { minS, defS } = limits();
+    const s0 = Math.min(defS, Math.max(minS, h / WORLD_H));
     view.current = clampView((w - WORLD_W * s0) / 2, (h - WORLD_H * s0) / 2, s0);
     apply(false);
   }, [startZoomed, apply, clampView, limits]);
@@ -233,8 +231,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       hintDone.current = true;
       if (force) {
         // volta ao zoom e ao centro, para a dica partir do ponto certo
-        const { fitS, defS } = limits();
-        const s0 = Math.min(defS, Math.max(fitS, h / WORLD_H));
+        const { minS, defS } = limits();
+        const s0 = Math.min(defS, Math.max(minS, h / WORLD_H));
         view.current = clampView((w - WORLD_W * s0) / 2, (h - WORLD_H * s0) / 2, s0);
         apply(true);
       }
@@ -310,10 +308,10 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
 
   const doubleTapZoom = useCallback(
     (cx: number, cy: number) => {
-      const { defS, fitS } = limits();
+      const { defS, minS } = limits();
       const s = view.current.s;
       // perto do máximo: volta ao padrão; senão, amplia onde tocou
-      const target = s >= defS * 0.85 ? (s > defS * 1.05 ? defS : fitS) : Math.min(defS, Math.max(s * 2.2, defS * 1.8));
+      const target = s >= defS * 0.85 ? (s > defS * 1.05 ? defS : minS) : Math.min(defS, Math.max(s * 2.2, defS * 1.8));
       zoomTo(target, cx, cy, true);
     },
     [limits, zoomTo],
@@ -488,10 +486,10 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
 
   function toggleZoom() {
     const { w, h } = size.current;
-    const { fitS, defS } = limits();
+    const { minS, defS } = limits();
     const cx = w / 2;
     const cy = h / 2;
-    zoomTo(zoomedOutRef.current ? defS : fitS, cx, cy, true);
+    zoomTo(zoomedOutRef.current ? defS : minS, cx, cy, true);
   }
 
   return (
