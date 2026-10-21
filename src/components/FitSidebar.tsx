@@ -40,9 +40,13 @@ export function FitSidebar() {
     // a abertura animada mexe no tamanho das coisas por alguns instantes: confere de novo depois dela, para a letra não ficar menor do que precisa
     const timers = [400, 1200, 2600, 5000].map((ms) => window.setTimeout(schedule, ms));
     window.addEventListener("load", schedule);
+    // a abertura animada marca o <html> (data-intro) enquanto toca e ao terminar: confere de novo nos dois momentos
+    const mo2 = new MutationObserver(schedule);
+    mo2.observe(document.documentElement, { attributes: true, attributeFilter: ["data-intro", "class"] });
     return () => {
       ro.disconnect();
       mo.disconnect();
+      mo2.disconnect();
       timers.forEach((t) => window.clearTimeout(t));
       window.removeEventListener("load", schedule);
       if (raf) cancelAnimationFrame(raf);
