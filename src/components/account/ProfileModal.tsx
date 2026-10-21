@@ -2,7 +2,7 @@
 
 import { forgetGeoChoice } from "@/lib/geo";
 import { useRef, useState, type FormEvent } from "react";
-import { callbackUrl, rememberNext } from "@/lib/auth";
+import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
@@ -101,7 +101,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     if (res?.ok) {
       forgetGeoChoice(); // conta excluída: a escolha de localização deste aparelho também
       await sb.auth.signOut();
-      window.location.assign("/");
+      window.location.assign(afterSignOutUrl());
       return;
     }
     setDelBusy(false);

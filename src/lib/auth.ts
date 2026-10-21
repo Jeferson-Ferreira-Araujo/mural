@@ -88,6 +88,9 @@ export function takeNext(): string | null {
 }
 
 /** Endereço do login que volta para `next` depois de entrar. */
+/** Depois de sair da conta: no desktop a tela principal já é o login; no celular (ou tela em pé) vai direto para a página de login. */
+export const afterSignOutUrl = () => (window.matchMedia("(min-width: 1024px) and (orientation: landscape)").matches ? "/" : "/entrar?modo=entrar");
+
 export const loginUrl = (next: string, signup = false) => `/entrar?${signup ? "" : "modo=entrar&"}next=${encodeURIComponent(next)}`;
 
 export const callbackUrl =() => `${window.location.origin}/auth/callback`;

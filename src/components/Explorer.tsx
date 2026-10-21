@@ -24,7 +24,7 @@ import {
 import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
 import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
-import { getOwnMurals, getOwnProfile, homeRouteFor, loginUrl, rememberNext, safeNext, takeNext, useSession, type OwnMural } from "@/lib/auth";
+import { getOwnMurals, getOwnProfile, afterSignOutUrl, homeRouteFor, loginUrl, rememberNext, safeNext, takeNext, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
@@ -1172,7 +1172,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         }}
         onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
         onSignOut={() => {
-          void getBrowserSupabase().auth.signOut().then(() => window.location.replace("/")); // volta para a tela principal do site: a mudança brusca deixa claro que saiu
+          void getBrowserSupabase().auth.signOut().then(() => window.location.replace(afterSignOutUrl())); // desktop: tela principal; celular: página de login (a mudança brusca deixa claro que saiu)
         }}
       />
     ) : undefined;
@@ -1274,7 +1274,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             }}
             onDeleted={() => void homeRouteFor(getBrowserSupabase()).then((to) => window.location.assign(to))}
             onSignOut={() => {
-              void getBrowserSupabase().auth.signOut().then(() => window.location.replace("/")); // volta para a tela principal do site: a mudança brusca deixa claro que saiu
+              void getBrowserSupabase().auth.signOut().then(() => window.location.replace(afterSignOutUrl())); // desktop: tela principal; celular: página de login (a mudança brusca deixa claro que saiu)
             }}
           />
           {everProfile && selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
