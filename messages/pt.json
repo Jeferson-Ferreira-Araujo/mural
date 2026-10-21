@@ -571,7 +571,8 @@
         "m_excluirConta": "Excluir conta",
         "x_paraSuaSegurancaATroca": "Para sua segurança, a troca é feita por um link enviado para <s0>{v0}</s0>.",
         "x_suaContaFicaraInativaPor": "Sua conta ficará inativa por <s0>30 dias</s0> e, depois disso, será <s1>totalmente apagada</s1>, com murais, pins e bottons. Depois do prazo, não dá para desfazer.",
-        "x_paraConfirmarDigiteExcluir": "Para confirmar, digite <s0>EXCLUIR</s0>"
+        "x_paraConfirmarDigiteExcluir": "Para confirmar, digite <s0>EXCLUIR</s0>",
+        "x_language": "Idioma"
       },
       "ProfileSummaryModal": {
         "voltar": "Voltar",

@@ -571,7 +571,8 @@
         "m_excluirConta": "Delete account",
         "x_paraSuaSegurancaATroca": "For your security, the change is done through a link sent to <s0>{v0}</s0>.",
         "x_suaContaFicaraInativaPor": "Your account will be inactive for <s0>30 days</s0> and after that will be <s1>completely deleted</s1>, with boards, pins and buttons. After the deadline, it can't be undone.",
-        "x_paraConfirmarDigiteExcluir": "To confirm, type <s0>DELETE</s0>"
+        "x_paraConfirmarDigiteExcluir": "To confirm, type <s0>DELETE</s0>",
+        "x_language": "Language"
       },
       "ProfileSummaryModal": {
         "voltar": "Back",

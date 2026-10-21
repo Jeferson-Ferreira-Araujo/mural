@@ -571,7 +571,8 @@
         "m_excluirConta": "Eliminar cuenta",
         "x_paraSuaSegurancaATroca": "Por tu seguridad, el cambio se hace con un enlace enviado a <s0>{v0}</s0>.",
         "x_suaContaFicaraInativaPor": "Tu cuenta quedará inactiva por <s0>30 días</s0> y después será <s1>eliminada por completo</s1>, con murales, pins y botones. Pasado el plazo, no se puede deshacer.",
-        "x_paraConfirmarDigiteExcluir": "Para confirmar, escribe <s0>ELIMINAR</s0>"
+        "x_paraConfirmarDigiteExcluir": "Para confirmar, escribe <s0>ELIMINAR</s0>",
+        "x_language": "Idioma"
       },
       "ProfileSummaryModal": {
         "voltar": "Volver",

@@ -11,6 +11,7 @@ import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { LanguagePicker } from "../LanguagePicker";
 
 /** Interruptor "Aparecer como visitante" no Perfil: desligado por enquanto (quem já tinha escolhido mantém a escolha; para religar, troque para true). */
 const VISIT_TOGGLE_ENABLED = false;
@@ -161,6 +162,10 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
           <dd className="break-all">{email || "—"}</dd>
         </div>
       </dl>
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 text-sm">
+        <span className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("x_language")}</span>
+        <LanguagePicker />
+      </div>
 
 
       <section aria-label={tx("senha")} className="mt-5 space-y-3">

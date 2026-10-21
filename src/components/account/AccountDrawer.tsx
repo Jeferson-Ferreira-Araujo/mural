@@ -3,7 +3,6 @@
 import { useBackClose } from "@/lib/backStack";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { LanguagePicker } from "../LanguagePicker";
 import { getAccount } from "@/lib/account";
 import type { OwnMural } from "@/lib/auth";
 import { getPublicMural } from "@/lib/mural";
@@ -486,7 +485,6 @@ export function AccountDrawer({
         <button type="button" onClick={() => setConfirmOut(true)} className="mt-[0.6em] w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-[0.55em] text-[0.95em] font-semibold text-[#6b2a1c] transition hover:bg-white">
           {t("signOut")}
         </button>
-        <LanguagePicker className="mx-auto mt-[0.8em] flex w-fit" />
         {modals}
       </CompactCtx.Provider>
     );
@@ -543,7 +541,6 @@ export function AccountDrawer({
                 </svg>
                 {t("signOut")}
               </button>
-              <LanguagePicker className="mx-auto mt-2 flex w-fit" />
               <p className="mt-2 text-center text-[11px] text-[#a09080]">{tx.rich("x_devBy", { s0: (c) => <a href="https://www.instagram.com/jefersontecinfo?rpxt=MTBoM3lwbzFseWZ3cg==" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2 hover:text-[#6b5440]">{c}</a> })}</p>
             </footer>
           </div>
