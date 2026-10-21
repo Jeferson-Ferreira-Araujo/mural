@@ -30,7 +30,7 @@ export function PasswordHints({ password, email, username }: { password: string;
           </span>
         </div>
       )}
-      <ul className="space-y-0.5 text-xs">
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs">
         {checks.map((c) => (
           <li key={c.id} className={c.ok ? "text-[#2f6b3a]" : c.required ? "text-[#6b5440]" : "text-[#8a7b69]"}>
             <span aria-hidden>{c.ok ? "✓" : "○"}</span> {tl(c.label)}

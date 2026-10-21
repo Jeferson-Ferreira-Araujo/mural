@@ -25,7 +25,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
   const tx = useTranslations("components.Sidebar");
   return (
     <aside
-      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[40em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
+      className="paper-grain relative z-20 flex h-full min-w-[clamp(290px,23vw,360px)] max-w-[40em] flex-[1000_0_0] flex-col overflow-x-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[26em]"
       style={{ backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%)" }}
     >
       <h1 className="sr-only">{tx("pinz")}</h1>
@@ -48,7 +48,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
       <div className={`flex flex-col gap-[0.9em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[clamp(4.2rem,11dvh,10rem)]" />
+        <Brand className="h-[clamp(5.5rem,16dvh,13rem)]" />
       </div>
       {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">{tx("seuMuralDigital")}</p>}
       {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
