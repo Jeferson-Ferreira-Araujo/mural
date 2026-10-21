@@ -81,7 +81,7 @@ export function DesktopBoard(props: ViewProps) {
 
         <div className={`relative h-full shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2] ${look.wide ? "w-full" : "w-[min(100%,150dvh)]"}`}>
 
-        <nav aria-label={tx("informacoesDoMural")} className={`pointer-events-none absolute top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5 ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
+        <nav aria-label={tx("informacoesDoMural")} className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && !locked && props.muralInfo?.title && (
