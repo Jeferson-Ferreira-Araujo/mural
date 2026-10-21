@@ -544,7 +544,7 @@ export function AccountDrawer({
                 {t("signOut")}
               </button>
               <LanguagePicker className="mx-auto mt-2 flex w-fit" />
-              <p className="mt-2 text-center text-[11px] text-[#a09080]">{tx("desenvolvidoPorJefersonAraujo")}</p>
+              <p className="mt-2 text-center text-[11px] text-[#a09080]">{tx.rich("x_devBy", { s0: (c) => <a href="https://www.instagram.com/jefersontecinfo?rpxt=MTBoM3lwbzFseWZ3cg==" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-2 hover:text-[#6b5440]">{c}</a> })}</p>
             </footer>
           </div>
         )}

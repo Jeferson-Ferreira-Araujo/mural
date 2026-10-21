@@ -262,7 +262,8 @@
         "desenvolvidoPorJefersonAraujo": "Desenvolvido por Jeferson Araújo",
         "x_toqueNoBotaoCompartilharDo": "Toque no botão <s0>Compartilhar</s0> do Safari (o quadrado com a seta para cima).",
         "x_roleAListaEToque": "Role a lista e toque em <s0>Adicionar à Tela de Início</s0>.",
-        "x_confirmeEmAdicionarOPinz": "Confirme em <s0>Adicionar</s0>. O Pinz fica na sua tela inicial e abre em tela cheia."
+        "x_confirmeEmAdicionarOPinz": "Confirme em <s0>Adicionar</s0>. O Pinz fica na sua tela inicial e abre em tela cheia.",
+        "x_devBy": "Desenvolvido por <s0>Jeferson Araújo</s0>"
       },
       "BirthField": {
         "dataDeNascimento": "Data de nascimento",

@@ -262,7 +262,8 @@
         "desenvolvidoPorJefersonAraujo": "Developed by Jeferson Araújo",
         "x_toqueNoBotaoCompartilharDo": "Tap the <s0>Share</s0> button in Safari (the square with an arrow pointing up).",
         "x_roleAListaEToque": "Scroll the list and tap <s0>Add to Home Screen</s0>.",
-        "x_confirmeEmAdicionarOPinz": "Confirm with <s0>Add</s0>. Pinz stays on your home screen and opens full screen."
+        "x_confirmeEmAdicionarOPinz": "Confirm with <s0>Add</s0>. Pinz stays on your home screen and opens full screen.",
+        "x_devBy": "Developed by <s0>Jeferson Araújo</s0>"
       },
       "BirthField": {
         "dataDeNascimento": "Date of birth",
