@@ -2115,7 +2115,9 @@
     "hvi0i3z": "Someone creates an account with your board link",
     "hlcp6y0": "Share your board: you earn 5 credits when someone creates an account with your link.",
     "h1lihnvz": "Someone creates an account with the link of one of your pins",
-    "hvq1ljo": "Share a pin: you earn 5 credits when someone creates an account with your link."
+    "hvq1ljo": "Share a pin: you earn 5 credits when someone creates an account with your link.",
+    "h1ahpvgi": "Show the side menu",
+    "h19a21mw": "Hide the side menu"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

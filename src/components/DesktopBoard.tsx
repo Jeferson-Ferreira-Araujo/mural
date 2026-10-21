@@ -16,6 +16,10 @@ import { Sidebar } from "./Sidebar";
 import { A11Y_OPEN_EVENT } from "@/lib/a11y";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useLit } from "@/i18n/literal";
+
+const COLLAPSE_KEY = "pinz:sidebar-collapsed";
 
 /** Imagem da lousa (desktop). Original em /imagens/quadro-desktop.png; versão otimizada servida daqui. */
 export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve de fundo desfocado: a versão pequena basta
@@ -26,6 +30,22 @@ export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve d
  */
 export function DesktopBoard(props: ViewProps) {
   const tx = useTranslations("components.DesktopBoard");
+  const tl = useLit();
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
+    } catch {}
+  }, []);
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
+    } catch {}
+    // o mural se refaz na nova largura
+    window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+  };
   const lockForm = props.locked ? props.panel("dark", "form") : null;
   const { items, plan, showMeter, locked, hasSelection, unlocked, siteStats, board, capacity = BOARD_CAPACITY, share, panel, panelTitle, notice, onCompose, onNotify, account, guestNext, muralSwitch } = props;
   const look = boardById(board);
@@ -35,7 +55,7 @@ export function DesktopBoard(props: ViewProps) {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#3b2616] portrait:flex-col">
-      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} menu={props.sidebarMenu} />
+      <Sidebar compact={hasSelection} guestNext={guestNext} siteStats={siteStats} panel={panel} panelTitle={panelTitle} notice={notice} account={account} menu={props.sidebarMenu} collapsed={collapsed} />
 
       {/* bloco da direita: a lousa ocupa TODO o espaço; o topo e o botão ficam sobrepostos a ela */}
       {/* o mural ocupa a largura que a proporção 3:2 pede para caber inteiro na altura; o que sobrar vira a barra bege (até um limite) e,
@@ -44,6 +64,20 @@ export function DesktopBoard(props: ViewProps) {
         {/* ambiente: a mesma foto desfocada preenche as laterais */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={boardImageS(look)} alt="" aria-hidden className="absolute inset-0 size-full scale-110 object-cover opacity-80 blur-md" />
+
+        {/* aba na beirada: recolhe o menu lateral (o mural fica centralizado) ou o mostra de novo */}
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
+          title={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
+          className="absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
+        >
+          <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="m15 6-6 6 6 6" />
+          </svg>
+        </button>
 
         <div className="relative h-full w-[min(100%,150dvh)] shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2]">
 

@@ -2115,7 +2115,9 @@
     "hvi0i3z": "Alguien crea una cuenta con el enlace de tu mural",
     "hlcp6y0": "Comparte tu mural: ganas 5 créditos cuando alguien crea una cuenta con tu enlace.",
     "h1lihnvz": "Alguien crea una cuenta con el enlace de un pin tuyo",
-    "hvq1ljo": "Comparte un pin: ganas 5 créditos cuando alguien crea una cuenta con tu enlace."
+    "hvq1ljo": "Comparte un pin: ganas 5 créditos cuando alguien crea una cuenta con tu enlace.",
+    "h1ahpvgi": "Mostrar el menú lateral",
+    "h19a21mw": "Ocultar el menú lateral"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
