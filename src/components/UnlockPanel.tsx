@@ -192,7 +192,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
           </div>
           {/* números do perfil, juntos: visualizações (visitantes diferentes que abriram o mural), seguidores e PINZ que a pessoa já colocou */}
           {(open || unlocked) && (visits !== undefined || followers != null || placed != null) && (
-            <ul className={`grid grid-flow-col auto-cols-fr divide-x rounded-[0.9em] border py-[0.7em] text-center ${dark ? "divide-white/10 border-white/10 text-white/60" : "divide-[#e6d8bd] border-[#e6d8bd] bg-white/40 text-[#8a7b69]"}`}>
+            <ul className={`grid grid-flow-col auto-cols-fr divide-x rounded-[0.9em] border py-[0.7em] text-center ${shareProfile ? "" : "lg:landscape:hidden"} ${dark ? "divide-white/10 border-white/10 text-white/60" : "divide-[#e6d8bd] border-[#e6d8bd] bg-white/40 text-[#8a7b69]"}`}>
               {(
                 [
                   visits !== undefined && [visits, visits === 1 ? tl("visualização") : tl("visualizações")],
