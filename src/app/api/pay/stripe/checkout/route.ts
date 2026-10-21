@@ -5,7 +5,8 @@ import { PLUS_PRICE_CENTS } from "@/lib/plans";
 import { adminClient, SITE_URL } from "@/lib/mercadopago";
 import { usdCentsFor } from "@/lib/money";
 import { allow } from "@/lib/rateLimit";
-import { providerForCountry, stripeApi, stripeConfigured } from "@/lib/stripe";
+import { providerFor } from "@/lib/payProvider";
+import { stripeApi, stripeConfigured } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,7 +32,7 @@ function titleFor(id: string, credits?: number): string {
  */
 export async function POST(req: Request) {
   if (!stripeConfigured()) return fail(503, "unavailable");
-  if (providerForCountry(req.headers.get("cf-ipcountry")) !== "stripe") return fail(403, "wrong_provider");
+  if ((await providerFor(req)) !== "stripe") return fail(403, "wrong_provider");
 
   const jwt = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!jwt) return fail(401, "not_authenticated");

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { providerForCountry } from "@/lib/stripe";
+import { providerFor } from "@/lib/payProvider";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,6 +9,6 @@ export const dynamic = "force-dynamic";
  * O país vem do cabeçalho da Cloudflare; sem ele (ou com a Stripe desligada) vale o Mercado Pago.
  */
 export async function GET(req: Request) {
-  const provider = providerForCountry(req.headers.get("cf-ipcountry"));
-  return NextResponse.json({ provider, currency: provider === "stripe" ? "USD" : "BRL" }, { headers: { "Cache-Control": "private, max-age=600" } });
+  const provider = await providerFor(req);
+  return NextResponse.json({ provider, currency: provider === "stripe" ? "USD" : "BRL" }, { headers: { "Cache-Control": "private, no-store" } });
 }
