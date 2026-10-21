@@ -16,6 +16,7 @@ export function FitSidebar() {
       el.style.fontSize = "";
       el.style.maxWidth = "";
       if (window.matchMedia("(orientation: portrait)").matches) return; // em pé, a coluna vai para cima e tem a própria altura
+      if (el.dataset.account === "true") return; // com login: letra grande e a coluna rola (uma seta avisa que há mais opções)
       let fs = parseFloat(getComputedStyle(el).fontSize) || 14;
       // a largura máxima (40em) não pode encolher junto com a letra: senão sobra faixa desfocada nas laterais do mural
       el.style.maxWidth = `${fs * 40}px`;
