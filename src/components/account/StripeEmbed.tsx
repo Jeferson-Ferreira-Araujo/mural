@@ -87,14 +87,13 @@ export function StripeEmbed({ product, recipient }: { product: string; recipient
   return (
     <div>
       {/* aviso no topo: a pessoa vê, antes de qualquer dado, quem processa o pagamento */}
-      <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-[#cfe3d2] bg-[#eef7ef] px-3 py-2.5 text-[#1f4d2b]">
-        <svg viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <div className="mb-3 flex items-center gap-2.5 rounded-xl border border-[#cfe3d2] bg-[#eef7ef] px-3 py-2.5 text-[#1f4d2b]">
+        <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <rect x="5" y="11" width="14" height="9" rx="2" />
           <path d="M8 11V8a4 4 0 0 1 8 0v3" />
         </svg>
         <p className="text-sm leading-snug">
           <strong className="block">{tl("Pagamento seguro processado pela Stripe")}</strong>
-          <span className="text-[13px] opacity-90">{tl("Os dados do cartão são enviados direto à Stripe e não passam pelo Pinz.")}</span>
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/img/stripe.svg" alt="Stripe" width={72} height={30} draggable={false} className="ml-auto h-7 w-auto shrink-0 self-center select-none" />
