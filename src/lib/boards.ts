@@ -1,7 +1,7 @@
 import type { PlanId } from "./plans";
 
-/** Quadros (fundos) do mural (10 no total). O primeiro é o padrão de todo mural novo. Originais em /imagens/quadro-*.png. */
-export type BoardId = "cortica" | "criativo" | "geek" | "leitura" | "minimalista" | "familia" | "filmes" | "musica" | "pets" | "viagens";
+/** Quadros (fundos) do mural (7 no total). O primeiro é o padrão de todo mural novo. Originais em /imagens/quadro-*.png. */
+export type BoardId = "cortica" | "familia" | "filmes" | "geek" | "minimalista" | "musica" | "viagens";
 
 export type BoardInfo = {
   id: BoardId;
@@ -18,15 +18,12 @@ export type BoardInfo = {
 
 export const BOARDS: readonly BoardInfo[] = [
   { id: "cortica", name: "Cortiça", image: "/img/quadro-desktop.webp?v=3", wide: "/img/quadro-desktop-wide.webp?v=1", cork: { left: 3.4, top: 6.8, width: 93.3, height: 75.2 }, size: 1 },
-  { id: "criativo", name: "Criativo", image: "/img/quadro-criativo.webp?v=2", cork: { left: 12.6, top: 9.2, width: 75.4, height: 69.5 }, size: 1 },
-  { id: "geek", name: "Geek", image: "/img/quadro-geek.webp", cork: { left: 12.9, top: 8.2, width: 76, height: 71.1 }, size: 1 },
-  { id: "leitura", name: "Leitura", image: "/img/quadro-leitura.webp", cork: { left: 15.5, top: 9.3, width: 68.4, height: 65.6 }, size: 0.86 },
-  { id: "minimalista", name: "Minimalista", image: "/img/quadro-minimalista.webp", cork: { left: 12.4, top: 9.3, width: 76.2, height: 69.4 }, size: 1 },
-  { id: "familia", name: "Família", image: "/img/quadro-familia.webp", cork: { left: 12.6, top: 9.6, width: 77.2, height: 69.7 }, size: 1 },
-  { id: "filmes", name: "Filmes", image: "/img/quadro-filmes.webp", cork: { left: 13, top: 9.3, width: 73.9, height: 68.8 }, size: 1 },
-  { id: "musica", name: "Música", image: "/img/quadro-musica.webp", cork: { left: 12.4, top: 7.6, width: 75.2, height: 71.7 }, size: 1 },
-  { id: "pets", name: "Pets", image: "/img/quadro-pets.webp", cork: { left: 12, top: 9.8, width: 78.2, height: 69.8 }, size: 1 },
-  { id: "viagens", name: "Viagens", image: "/img/quadro-viagens.webp", cork: { left: 13, top: 9.8, width: 76.8, height: 69.3 }, size: 1 },
+  { id: "familia", name: "Acolhedor", image: "/img/quadro-familia.webp?v=3", wide: "/img/quadro-familia-wide.webp?v=1", cork: { left: 3.8, top: 6.4, width: 92.9, height: 75.3 }, size: 1 },
+  { id: "filmes", name: "Filmes", image: "/img/quadro-filmes.webp?v=3", wide: "/img/quadro-filmes-wide.webp?v=1", cork: { left: 5.6, top: 7.9, width: 88.8, height: 67.7 }, size: 1 },
+  { id: "geek", name: "Game", image: "/img/quadro-geek.webp?v=3", wide: "/img/quadro-geek-wide.webp?v=1", cork: { left: 3, top: 5.6, width: 93.7, height: 75.8 }, size: 1 },
+  { id: "minimalista", name: "Minimalista", image: "/img/quadro-minimalista.webp?v=3", wide: "/img/quadro-minimalista-wide.webp?v=1", cork: { left: 3.4, top: 7.3, width: 93.2, height: 74.2 }, size: 1 },
+  { id: "musica", name: "Música", image: "/img/quadro-musica.webp?v=3", wide: "/img/quadro-musica-wide.webp?v=1", cork: { left: 2.5, top: 7.4, width: 94.8, height: 70.8 }, size: 1 },
+  { id: "viagens", name: "Viagens", image: "/img/quadro-viagens.webp?v=3", wide: "/img/quadro-viagens-wide.webp?v=1", cork: { left: 3.5, top: 7.4, width: 93, height: 74.2 }, size: 1 },
 ];
 
 /** Versão pequena do fundo (480 px), gerada sozinha por scripts/board-thumbs.mjs a cada build: só para fundos DESFOCADOS (o mural em si usa sempre a imagem grande). */
@@ -43,4 +40,4 @@ export const boardById = (id?: string | null): BoardInfo => BOARDS.find((b) => b
 export const canChangeBoard = (plan: PlanId, credits: number) => plan === "full" || credits > 0;
 
 /** Murais lançados mais recentemente, do mais novo para o mais antigo: ganham o selo "Novo" e aparecem primeiro na loja. Ao lançar um mural, coloque-o no começo desta lista (e tire os mais velhos). */
-export const NEW_BOARDS: readonly BoardId[] = ["viagens", "pets", "musica"];
+export const NEW_BOARDS: readonly BoardId[] = ["viagens", "musica"];
