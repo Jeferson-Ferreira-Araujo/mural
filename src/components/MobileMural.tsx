@@ -180,7 +180,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
         {/* botão flutuante de colocar pin: centralizado, acima da barra de bottons, maior para dar destaque */}
-        {canAdd && (
+        {canAdd && !editBadges && (
           <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center">
             <AddPinButton visitor={!account?.atHome} className="!size-12 !rounded-xl [&>svg]:!size-8" />
           </div>
@@ -195,7 +195,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
       {/* rodapé: deixar um pin (visitante) ou a barra de pins decorativos (dono) */}
       {editBadges && (
         <footer className="relative z-20 flex shrink-0 flex-col items-center gap-2.5 px-4 pt-2 pb-[max(0.9rem,env(safe-area-inset-bottom))]">
-          {editBadges && <BadgeBar hideRewards className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
+          {editBadges && <BadgeBar hideRewards storeRight leading={canAdd ? <AddPinButton visitor={!account?.atHome} className="!size-14 [&>svg]:!size-8" /> : undefined} className="w-full !border-[#d9c9ad] !bg-[#2a1c12]" />}
         </footer>
       )}
     </div>
