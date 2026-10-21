@@ -96,6 +96,8 @@ export function StripeEmbed({ product, recipient }: { product: string; recipient
           <strong className="block">{tl("Pagamento seguro processado pela Stripe")}</strong>
           <span className="text-[13px] opacity-90">{tl("Os dados do cartão são enviados direto à Stripe e não passam pelo Pinz.")}</span>
         </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/img/stripe.svg" alt="Stripe" width={72} height={30} draggable={false} className="ml-auto h-7 w-auto shrink-0 self-center select-none" />
       </div>
       {!ready && !error && <p className="py-6 text-center text-sm text-[#6b5440]">{tl("Abrindo o pagamento…")}</p>}
       {error && (
