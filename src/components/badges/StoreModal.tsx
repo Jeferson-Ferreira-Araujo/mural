@@ -251,11 +251,14 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
       xl
       aside={
         // os créditos ficam sempre no cabeçalho, ao lado do botão de fechar: dá para ver o saldo sendo gasto
+        <div className="flex flex-col items-center gap-0.5">
+        <span className="text-[11px] leading-none font-medium whitespace-nowrap text-[#6b5440]">{tl("Seus créditos")}</span>
         <p className="relative flex items-center gap-1.5 rounded-full border border-[#ecd9a0] bg-[#fff4cc] py-1 pr-3 pl-1.5" aria-label={tx("m_seuSaldoCreditos", { v0: credits })}>
           <Coin className="size-6" />
           <Balance value={credits} at={done?.at ?? 0} className="inline-block text-base tabular-nums" />
           <Spent at={done?.at ?? 0} spent={done?.spent ?? 0} className="pointer-events-none absolute top-full right-2 mt-0.5 text-sm font-bold text-[#c0392b]" />
         </p>
+        </div>
       }
     >
       {/* créditos e pacotes: sempre à vista, sem entrar em outra aba */}
