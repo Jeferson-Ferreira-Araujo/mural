@@ -37,9 +37,14 @@ export function FitSidebar() {
     const mo = new MutationObserver(schedule);
     mo.observe(el, { childList: true, subtree: true });
     void document.fonts?.ready.then(schedule);
+    // a abertura animada mexe no tamanho das coisas por alguns instantes: confere de novo depois dela, para a letra não ficar menor do que precisa
+    const timers = [400, 1200, 2600, 5000].map((ms) => window.setTimeout(schedule, ms));
+    window.addEventListener("load", schedule);
     return () => {
       ro.disconnect();
       mo.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+      window.removeEventListener("load", schedule);
       if (raf) cancelAnimationFrame(raf);
       el.style.fontSize = "";
       el.style.maxWidth = "";
