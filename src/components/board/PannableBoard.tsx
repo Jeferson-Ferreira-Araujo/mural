@@ -188,7 +188,9 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
       } else {
         const { x, y, s } = view.current;
-        view.current = clampView(x, y, s);
+        const { minS } = limits();
+        // mural inteiro à vista: a área mudou de tamanho (ex.: menu lateral recolhido ou quadro panorâmico carregado), então o quadro volta ao centro
+        view.current = s <= minS * 1.02 ? clampView((r.width - WORLD_W * s) / 2, (r.height - WORLD_H * s) / 2, s) : clampView(x, y, s);
       }
       apply(false);
     };
