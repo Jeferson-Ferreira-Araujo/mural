@@ -10,12 +10,14 @@ export type BoardInfo = {
   image: string;
   /** Área útil do quadro dentro da imagem (em % da imagem): é onde os 28 espaços ficam. */
   cork: { left: number; top: number; width: number; height: number };
+  /** Versão panorâmica (2,4:1) da mesma cena: a imagem 3:2 acima é o recorte central dela (62,5% da largura). Se existir, o desktop a usa de fundo, em tela cheia. */
+  wide?: string;
   /** Tamanho dos cards neste quadro (1 = normal). Quadros com área menor usam cards menores para não ficarem grudados. */
   size: number;
 };
 
 export const BOARDS: readonly BoardInfo[] = [
-  { id: "cortica", name: "Cortiça", image: "/img/quadro-desktop.webp?v=2", cork: { left: 11.8, top: 8.4, width: 78.2, height: 73.4 }, size: 1 },
+  { id: "cortica", name: "Cortiça", image: "/img/quadro-desktop.webp?v=3", wide: "/img/quadro-desktop-wide.webp?v=1", cork: { left: 3.4, top: 6.8, width: 93.3, height: 75.2 }, size: 1 },
   { id: "criativo", name: "Criativo", image: "/img/quadro-criativo.webp?v=2", cork: { left: 12.6, top: 9.2, width: 75.4, height: 69.5 }, size: 1 },
   { id: "geek", name: "Geek", image: "/img/quadro-geek.webp", cork: { left: 12.9, top: 8.2, width: 76, height: 71.1 }, size: 1 },
   { id: "leitura", name: "Leitura", image: "/img/quadro-leitura.webp", cork: { left: 15.5, top: 9.3, width: 68.4, height: 65.6 }, size: 0.86 },
