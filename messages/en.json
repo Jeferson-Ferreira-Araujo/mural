@@ -2126,7 +2126,8 @@
     "h1389gpo": "Visitors must answer your security question to get access to your private board",
     "h14vhykg": "Your credits",
     "h9uuaxr": "✓ Yours",
-    "h1v6h617": "A button can't sit on a pin's tack. Drop it a little to the side."
+    "h1v6h617": "A button can't sit on a pin's tack. Drop it a little to the side.",
+    "h4jxtqa": "pins you placed"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

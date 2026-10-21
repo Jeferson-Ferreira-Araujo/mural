@@ -456,7 +456,7 @@ export function AccountDrawer({
             [
               [tl("visitas nos seus murais"), metrics?.visits],
               [tl("pins nos seus murais"), metrics?.inMine],
-              [tl("pins que você colocou em murais de outras pessoas"), metrics?.placed],
+              [tl("pins que você colocou"), metrics?.placed],
             ] as const
           ).map(([label, v]) => (
             <div key={label} className="rounded-xl bg-[#f1e7d2]/70 px-3 py-4">
