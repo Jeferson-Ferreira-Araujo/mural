@@ -132,6 +132,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       aside={
         // saldo de créditos no cabeçalho, ao lado do botão de fechar
         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-2.5 py-1 text-sm font-semibold" aria-label={tx("m_creditos", { v0: credits })}>
+          <span className="font-medium text-[#6b5440]">{tl("Seus créditos")}</span>
           <Coin />
           {credits}
         </span>
