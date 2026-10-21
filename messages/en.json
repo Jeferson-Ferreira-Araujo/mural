@@ -2124,7 +2124,8 @@
     "h2uws78": "View the board full screen",
     "h1r15wy2": "You do not own this board yet. Buy it with the button on the image to create with it.",
     "h1389gpo": "Visitors must answer your security question to get access to your private board",
-    "h14vhykg": "Your credits"
+    "h14vhykg": "Your credits",
+    "h9uuaxr": "✓ Yours"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

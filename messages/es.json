@@ -2124,7 +2124,8 @@
     "h2uws78": "Ver el mural en pantalla completa",
     "h1r15wy2": "Aún no tienes este mural. Cómpralo con el botón de la imagen para poder crear con él.",
     "h1389gpo": "Los visitantes deberán responder tu pregunta de seguridad para acceder a tu mural privado",
-    "h14vhykg": "Tus créditos"
+    "h14vhykg": "Tus créditos",
+    "h9uuaxr": "✓ Ya es tuyo"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
