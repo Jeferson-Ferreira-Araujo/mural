@@ -91,15 +91,9 @@ export function takeNext(): string | null {
 /** Depois de sair da conta: no desktop a tela principal já é o login; no celular (ou tela em pé) vai direto para a página de login. */
 export const afterSignOutUrl = () => (window.matchMedia("(min-width: 1024px) and (orientation: landscape)").matches ? "/" : "/entrar?modo=entrar");
 
-/** Sai da conta e vai embora da página (não espera a rede para sempre: se a resposta do servidor demorar, sai do mesmo jeito). */
-export async function signOutAndLeave(): Promise<void> {
-  const go = () => window.location.replace(afterSignOutUrl());
-  try {
-    await Promise.race([getBrowserSupabase().auth.signOut(), new Promise((r) => window.setTimeout(r, 2500))]);
-  } catch {
-    // sem rede ou sessão já inválida: sai do mesmo jeito
-  }
-  go();
+/** Sai da conta: vai para /sair, que encerra a sessão e leva ao login (a navegação é imediata, não depende do mural em que a pessoa estava). */
+export function signOutAndLeave(): void {
+  window.location.assign("/sair");
 }
 
 export const loginUrl = (next: string, signup = false) => `/entrar?${signup ? "" : "modo=entrar&"}next=${encodeURIComponent(next)}`;
