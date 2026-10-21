@@ -2118,7 +2118,9 @@
     "hvq1ljo": "Share a pin: you earn 5 credits when someone creates an account with your link.",
     "h1ahpvgi": "Show the side menu",
     "h19a21mw": "Hide the side menu",
-    "hzdp02n": "See more options"
+    "hzdp02n": "See more options",
+    "h1rcbone": "Secure payment processed by Stripe",
+    "h165so3u": "Your card details go straight to Stripe and never pass through Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

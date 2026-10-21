@@ -2118,7 +2118,9 @@
     "hvq1ljo": "Comparte un pin: ganas 5 créditos cuando alguien crea una cuenta con tu enlace.",
     "h1ahpvgi": "Mostrar el menú lateral",
     "h19a21mw": "Ocultar el menú lateral",
-    "hzdp02n": "Ver más opciones"
+    "hzdp02n": "Ver más opciones",
+    "h1rcbone": "Pago seguro procesado por Stripe",
+    "h165so3u": "Los datos de tu tarjeta van directo a Stripe y no pasan por Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

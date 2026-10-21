@@ -86,6 +86,17 @@ export function StripeEmbed({ product, recipient }: { product: string; recipient
 
   return (
     <div>
+      {/* aviso no topo: a pessoa vê, antes de qualquer dado, quem processa o pagamento */}
+      <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-[#cfe3d2] bg-[#eef7ef] px-3 py-2.5 text-[#1f4d2b]">
+        <svg viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <rect x="5" y="11" width="14" height="9" rx="2" />
+          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+        </svg>
+        <p className="text-sm leading-snug">
+          <strong className="block">{tl("Pagamento seguro processado pela Stripe")}</strong>
+          <span className="text-[13px] opacity-90">{tl("Os dados do cartão são enviados direto à Stripe e não passam pelo Pinz.")}</span>
+        </p>
+      </div>
       {!ready && !error && <p className="py-6 text-center text-sm text-[#6b5440]">{tl("Abrindo o pagamento…")}</p>}
       {error && (
         <p role="alert" className="rounded-xl bg-[#fde8e4] px-3 py-2 text-sm text-[#8a2a1c]">
