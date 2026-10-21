@@ -31,7 +31,7 @@ export function BoardLightbox({ image, name, onClose }: { image: string | null; 
       {image && (
         <div className="relative grid size-full place-items-center p-3 sm:p-6" onClick={onClose}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image} alt={tx("m_mural", { v0: name })} draggable={false} className="max-h-full max-w-full rounded-xl object-contain shadow-[0_1rem_3rem_rgba(0,0,0,.6)] portrait:max-h-none portrait:w-[calc(100dvh-1.5rem)] portrait:max-w-none portrait:rotate-90" />
+          <img src={image} alt={tx("m_mural", { v0: name })} draggable={false} className="max-h-full max-w-full rounded-xl object-contain shadow-[0_1rem_3rem_rgba(0,0,0,.6)] portrait:absolute portrait:top-1/2 portrait:left-1/2 portrait:max-h-none portrait:w-[calc(100dvh-1.5rem)] portrait:max-w-none portrait:-translate-x-1/2 portrait:-translate-y-1/2 portrait:rotate-90" />
           <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold text-white">{name}</p>
           <button type="button" onClick={onClose} aria-label={tx("fechar")} className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-black/60 text-2xl text-white transition hover:bg-black/80 active:scale-90 sm:top-5 sm:right-5">
             ×
