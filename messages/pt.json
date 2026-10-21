@@ -538,7 +538,7 @@
         "x_creditos": "<s0>{v0}</s0> créditos · {v1}"
       },
       "PrivacyField": {
-        "quemPodeAbrirEsteMural": "Quem pode abrir este mural",
+        "quemPodeAbrirEsteMural": "Visibilidade do mural",
         "perguntaDeSeguranca": "Pergunta de segurança",
         "exQualONomeDo": "Ex: Qual o nome do nosso cachorro?",
         "resposta": "Resposta",

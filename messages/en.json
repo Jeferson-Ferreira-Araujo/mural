@@ -538,7 +538,7 @@
         "x_creditos": "<s0>{v0}</s0> credits · {v1}"
       },
       "PrivacyField": {
-        "quemPodeAbrirEsteMural": "Who can open this board",
+        "quemPodeAbrirEsteMural": "Board visibility",
         "perguntaDeSeguranca": "Security question",
         "exQualONomeDo": "E.g.: What is our dog's name?",
         "resposta": "Answer",
@@ -2122,7 +2122,8 @@
     "h1rcbone": "Secure payment processed by Stripe",
     "h165so3u": "Your card details go straight to Stripe and never pass through Pinz.",
     "h2uws78": "View the board full screen",
-    "h1r15wy2": "You do not own this board yet. Buy it with the button on the image to create with it."
+    "h1r15wy2": "You do not own this board yet. Buy it with the button on the image to create with it.",
+    "h1389gpo": "Visitors must answer your security question to get access to your private board"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

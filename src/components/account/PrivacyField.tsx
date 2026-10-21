@@ -43,6 +43,7 @@ export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v
       </div>
       {value.priv && (
         <>
+          <p className="text-sm leading-snug text-[#6b5440]">{tl("Os visitantes deverão responder sua pergunta de segurança para ter acesso ao seu mural privado")}</p>
           <Field label={tx("perguntaDeSeguranca")}>{(id) => <input id={id} value={value.question} onChange={(e) => onChange({ ...value, question: e.target.value })} maxLength={140} placeholder={tx("exQualONomeDo")} className={inputClass} />}</Field>
           <Field label={tx("resposta")}>{(id) => <input id={id} value={value.answer} onChange={(e) => onChange({ ...value, answer: e.target.value })} maxLength={100} autoComplete="off" placeholder={tx("digiteAResposta")} className={inputClass} />}</Field>
         </>
