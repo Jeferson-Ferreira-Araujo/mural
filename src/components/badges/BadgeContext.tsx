@@ -149,6 +149,15 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
     if (BADGE_OK_TYPES.has(fp.dataset.pinType ?? "")) continue;
     if (share(fp.getBoundingClientRect()) > 0.15) return { kind: "physical" };
   }
+  // botton nunca fica sobre a tachinha (o alfinete) de um pin: vale o miolo da imagem, que tem margem transparente
+  for (const tk of document.querySelectorAll<HTMLElement>("[data-tack]")) {
+    const t = tk.getBoundingClientRect();
+    if (t.width <= 0 || tk.offsetParent === null) continue;
+    if (t.right < lr.left || t.left > lr.right || t.bottom < lr.top || t.top > lr.bottom) continue; // tachinha de fora do mural (ex.: amostra de uma janela)
+    const tx0 = t.left + t.width / 2;
+    const ty0 = t.top + t.height / 2;
+    if (br.left < tx0 + t.width * 0.3 && br.right > tx0 - t.width * 0.3 && br.top < ty0 + t.height * 0.3 && br.bottom > ty0 - t.height * 0.3) return { kind: "physical" };
+  }
   return { kind: "ok", x: ((cx - lr.left) / lr.width) * 100, y: ((cy - lr.top) / lr.height) * 100 };
 }
 
