@@ -48,7 +48,6 @@ export function buildPool(nowMs: number, locale: DemoLocale = "pt"): { items: Bo
     { id: "m5", type: "postit", color: "pink", text: "♡ Você tem um coração gigante e isso faz o mundo ser mais leve. Nunca mude!" },
     // --- a partir daqui, formatos PINZ+ ---
     { id: "m7", type: "video", caption: "Esse dia foi inesquecível!", duration: "0:24" },
-    { id: "cap1", sealed: true, opensAt: new Date(nowMs + 18 * DAY + 4 * HOUR + 37 * MIN + 20_000).toISOString() },
     // --- de volta aos formatos FREE ---
     { id: "m8", type: "text", variant: "notebook", text: "Lembro de tantas resenhas boas… que privilégio ter vivido isso com você." },
     { id: "m9", type: "postit", color: "blue", text: "Você me inspira a ser uma versão melhor de mim. Valeu por sempre estar por perto! ♡" },
