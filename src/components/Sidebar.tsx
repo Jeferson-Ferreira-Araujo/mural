@@ -50,8 +50,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       <div className="flex justify-center">
         <Brand className="h-[clamp(5.5rem,16dvh,13rem)]" />
       </div>
-      {!compact && <p className="intro-form -mt-[0.6em] text-center font-[family-name:var(--font-jakarta)] text-[1.15em] leading-tight font-semibold tracking-wide text-[#4a3826]">{tx("seuMuralDigital")}</p>}
-      {!compact && <p className="-mt-[0.4em] text-center text-[0.95em] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
+      {!compact && <p className="text-center text-[0.95em] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
       {!account && <LanguagePicker className="mx-auto mt-[0.8em] lg:landscape:!absolute lg:landscape:top-[0.9em] lg:landscape:right-[1.1em] lg:landscape:!mt-0 lg:landscape:!w-auto" />}
