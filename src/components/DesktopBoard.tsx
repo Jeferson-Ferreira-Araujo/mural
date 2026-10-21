@@ -139,13 +139,9 @@ export function DesktopBoard(props: ViewProps) {
 
         <div className={`pointer-events-none absolute bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5 ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
-          {canAdd && (
-            <div className="pointer-events-none flex w-[9.5rem] shrink-0 items-end">
-              <AddPinButton visitor={visitor} />
-            </div>
-          )}
+          {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
-            <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" />
+            <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} className="!size-14" /> : undefined} />
           </div>
           {/* à direita da barra ficam os botões + e − do zoom */}
           {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { BADGES, badgeSrc } from "@/lib/badges";
 import { BADGE_CATEGORY, BADGE_CATEGORIES } from "@/lib/badgeCategories";
 import { OPEN_REWARDS_EVENT } from "@/lib/rewards";
@@ -14,7 +14,7 @@ import { useLit } from "@/i18n/literal";
  * Arraste um deles para o mural; solte um que já está no mural sobre esta barra para tirá-lo (a unidade volta).
  * Cada pin tem 1 unidade + as extras compradas (esgota ao colocar, volta ao tirar do mural). Ninguém tem ilimitado. Mais Bottons e unidades: ícone da loja, fixo no início da barra.
  */
-export function BadgeBar({ className = "", hideRewards = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean }) {
+export function BadgeBar({ className = "", hideRewards = false, leading, storeRight = false }: { className?: string; /** celular: o "Ganhar créditos" fica no menu lateral, não na barra */ hideRewards?: boolean; /** desktop: botão que fica no começo da barra (ex.: "+ pin") */ leading?: ReactNode; /** desktop: a loja vai para o fim da barra (onde ficava o "Ganhar") e o começo fica com `leading` */ storeRight?: boolean }) {
   const tx = useTranslations("components.badges.BadgeBar");
   const tl = useLit();
   const { editable, begin, stock, openStore, acquiredAt, draggingId, draggingNew } = useBadges();
@@ -191,14 +191,21 @@ export function BadgeBar({ className = "", hideRewards = false }: { className?: 
           {tx("solteOPinNoMural")}</div>
       )}
       <div className="flex items-center gap-2">
-        {storeBtn}
-        <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+        {storeRight ? leading : storeBtn}
+        {(storeRight ? !!leading : true) && <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />}
         {strip}
-        {!hideRewards && (
+        {storeRight ? (
           <>
             <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
-            {rewardsBtn}
+            {storeBtn}
           </>
+        ) : (
+          !hideRewards && (
+            <>
+              <span aria-hidden className="h-9 w-px shrink-0 bg-white/20" />
+              {rewardsBtn}
+            </>
+          )
         )}
       </div>
     </section>
