@@ -2120,7 +2120,9 @@
     "h19a21mw": "Hide the side menu",
     "hzdp02n": "See more options",
     "h1rcbone": "Secure payment processed by Stripe",
-    "h165so3u": "Your card details go straight to Stripe and never pass through Pinz."
+    "h165so3u": "Your card details go straight to Stripe and never pass through Pinz.",
+    "h2uws78": "View the board full screen",
+    "h1r15wy2": "You do not own this board yet. Buy it with the button on the image to create with it."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

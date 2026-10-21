@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BOARDS, DEFAULT_BOARD, boardPreview } from "@/lib/boards";
+import { BOARDS, DEFAULT_BOARD, boardFull, boardPreview } from "@/lib/boards";
+import { BoardLightbox } from "../badges/BoardLightbox";
 import { buyBoard, fetchInventory, type BoardOffer } from "@/lib/badges";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
@@ -36,6 +37,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   const [error, setError] = useState<string | null>(null);
   const [slide, setSlide] = useState(0);
   const strip = useRef<HTMLDivElement>(null);
+  const [viewing, setViewing] = useState<{ image: string; name: string } | null>(null); // quadro em tela cheia (o olho no centro)
 
   const load = () =>
     fetchInventory(getBrowserSupabase()).then((inv) => {
@@ -58,17 +60,21 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
 
   const owns = (id: string) => id === DEFAULT_BOARD || offers.find((o) => o.id === id)?.owned === true;
   const priceOf = (id: string) => offers.find((o) => o.id === id)?.price ?? 25;
+  // primeiro os quadros que a pessoa já tem, depois os que ela pode comprar (a ordem de cada grupo é a da loja)
+  const ordered = [...BOARDS].sort((a, b) => Number(owns(b.id)) - Number(owns(a.id)));
+  const orderedRef = useRef(ordered);
+  orderedRef.current = ordered;
 
   // depois de comprar, o slide volta para o tipo comprado
   const scrollTo = (id: string) => {
-    const i = BOARDS.findIndex((b) => b.id === id);
     window.setTimeout(() => {
+      const i = orderedRef.current.findIndex((b) => b.id === id);
       const el = strip.current;
       if (el && i >= 0) {
         el.scrollTo({ left: i * el.clientWidth });
         setSlide(i);
       }
-    }, 50);
+    }, 150);
   };
 
   async function confirmBuy() {
@@ -93,6 +99,7 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
   async function create(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
+    if (!owns(board)) return setError(tl("Você ainda não tem este mural. Compre-o pelo botão da imagem para poder criar com ele."));
     if (!title.trim()) return setError(tx("m_preenchaONomeDoMural"));
     const perr = privacyError(privacy, false);
     if (perr) return setError(tl(perr));
@@ -158,12 +165,12 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                   // o tipo que está à vista no carrossel é o escolhido para criar (sem botão de selecionar)
                   const i = Math.round(e.currentTarget.scrollLeft / (e.currentTarget.clientWidth || 1));
                   setSlide(i);
-                  const bd = BOARDS[i];
+                  const bd = orderedRef.current[i];
                   if (bd) setBoard(bd.id);
                 }}
                 className="flex snap-x snap-mandatory overflow-x-auto rounded-2xl shadow-[0_0.5rem_1.4rem_rgba(60,35,10,.25)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
-                {BOARDS.map((bd) => {
+                {ordered.map((bd) => {
                   const has = owns(bd.id);
                   const on = board === bd.id;
                   return (
@@ -186,22 +193,38 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
                   );
                 })}
               </div>
+              {/* olho no centro: o quadro em tela cheia e deitado; ao fechar, a pessoa volta para esta mesma tela */}
+              <button
+                type="button"
+                onClick={() => {
+                  const bd = ordered[slide] ?? ordered[0];
+                  if (bd) setViewing({ image: boardFull(bd), name: tl(bd.name) });
+                }}
+                aria-label={tl("Ver o mural em tela cheia")}
+                title={tl("Ver o mural em tela cheia")}
+                className="absolute top-1/2 left-1/2 z-10 grid size-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-black/55 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.4)] backdrop-blur transition hover:bg-black/70 active:scale-95"
+              >
+                <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
               {([-1, 1] as const).map((d) => (
                 <button
                   key={d}
                   type="button"
                   onClick={() => strip.current?.scrollBy({ left: d * (strip.current?.clientWidth ?? 230), behavior: "smooth" })}
                   aria-label={d < 0 ? tl("Tipo anterior") : tx("m_proximoTipo")}
-                  className={`absolute top-1/2 z-10 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
+                  className={`absolute top-1/2 z-10 grid size-7 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/85 text-[#2a1c12] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-white active:scale-90 ${d < 0 ? "left-2" : "right-2"}`}
                 >
-                  <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d={d < 0 ? "m15 5-7 7 7 7" : "m9 5 7 7-7 7"} />
                   </svg>
                 </button>
               ))}
             </div>
             <div className="mt-2.5 flex justify-center gap-1.5" aria-hidden>
-              {BOARDS.map((bd, i) => (
+              {ordered.map((bd, i) => (
                 <span key={bd.id} className={`h-1.5 rounded-full transition-all ${i === slide ? "w-5 bg-[#d9a21b]" : "w-1.5 bg-[#cdbb97]"}`} />
               ))}
             </div>
@@ -217,11 +240,12 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
               {error}
             </p>
           )}
-          <button type="submit" disabled={busy || !owns(board)} title={owns(board) ? undefined : tx("m_compreEsteTipoDeMural")} className={primaryButton}>
+          <button type="submit" disabled={busy} className={primaryButton}>
             {busy ? tl("Criando…") : tx("m_criarMural")}
           </button>
         </form>
       )}
+      <BoardLightbox image={viewing?.image ?? null} name={viewing?.name ?? ""} onClose={() => setViewing(null)} />
     </Modal>
   );
 }
