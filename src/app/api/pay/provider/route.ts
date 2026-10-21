@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { providerFor } from "@/lib/payProvider";
+import { currencyForCountry } from "@/lib/money";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,5 +11,5 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: Request) {
   const provider = await providerFor(req);
-  return NextResponse.json({ provider, currency: provider === "stripe" ? "USD" : "BRL" }, { headers: { "Cache-Control": "private, no-store" } });
+  return NextResponse.json({ provider, currency: provider === "stripe" ? currencyForCountry(req.headers.get("cf-ipcountry")) : "BRL" }, { headers: { "Cache-Control": "private, no-store" } });
 }

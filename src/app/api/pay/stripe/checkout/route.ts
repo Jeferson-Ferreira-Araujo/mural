@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { giftRecipient, itemForProduct, refFor } from "@/lib/payCatalog";
 import { PLUS_PRICE_CENTS } from "@/lib/plans";
 import { adminClient, SITE_URL } from "@/lib/mercadopago";
-import { usdCentsFor } from "@/lib/money";
+import { currencyForCountry, priceIn } from "@/lib/money";
 import { allow } from "@/lib/rateLimit";
 import { providerFor } from "@/lib/payProvider";
 import { stripeApi, stripeConfigured } from "@/lib/stripe";
@@ -17,13 +17,13 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
 const fail = (status: number, error: string) => NextResponse.json({ error }, { status });
 
 /** Nome do produto no recibo da Stripe (em inglês: a cobrança é para quem está fora do Brasil). */
-function titleFor(id: string, credits?: number): string {
-  if (credits) return `Pinz — ${credits} credits`;
-  if (id === "plus") return "Pinz — PINZ+ (monthly)";
-  if (id === "plus_month") return "Pinz — PINZ+ for 1 month";
-  if (id === "plus_annual") return "Pinz — PINZ+ annual";
-  if (id === "plus_life") return "Pinz — PINZ+ lifetime";
-  return "Pinz — gift: 1 month of PINZ+";
+function titleFor(id: string, credits?: number, pt = false): string {
+  if (credits) return pt ? `Pinz — ${credits} créditos` : `Pinz — ${credits} credits`;
+  if (id === "plus") return pt ? "Pinz — PINZ+ (mensal)" : "Pinz — PINZ+ (monthly)";
+  if (id === "plus_month") return pt ? "Pinz — PINZ+ por 1 mês" : "Pinz — PINZ+ for 1 month";
+  if (id === "plus_annual") return pt ? "Pinz — PINZ+ anual" : "Pinz — PINZ+ annual";
+  if (id === "plus_life") return pt ? "Pinz — PINZ+ vitalício" : "Pinz — PINZ+ lifetime";
+  return pt ? "Pinz — presente: 1 mês de PINZ+" : "Pinz — gift: 1 month of PINZ+";
 }
 
 /**
@@ -58,10 +58,12 @@ export async function POST(req: Request) {
     return fail(409, "already_subscribed");
   }
 
-  const cents = usdCentsFor(monthly ? PLUS_PRICE_CENTS : item.cents);
+  const currency = currencyForCountry(req.headers.get("cf-ipcountry")); // reais no Brasil (cartão e Pix, conforme ativado no painel da Stripe), euro, libra etc. nos seus países e dólar no resto
+  const brlCents = monthly ? PLUS_PRICE_CENTS : item.cents;
+  const cents = priceIn(brlCents, currency);
   const ref = monthly ? uid : refFor(uid, item, recipientId);
   const kindPath = item.kind === "credits" ? "creditos" : "plus";
-  const priceData = { currency: "usd", unit_amount: cents, product_data: { name: titleFor(monthly ? "plus" : item.id, item.credits) }, ...(monthly ? { recurring: { interval: "month" } } : {}) };
+  const priceData = { currency: currency.toLowerCase(), unit_amount: cents, product_data: { name: titleFor(monthly ? "plus" : item.id, item.credits, currency === "BRL") }, ...(monthly ? { recurring: { interval: "month" } } : {}) };
   const r = await stripeApi<{ url?: string }>("/v1/checkout/sessions", {
     method: "POST",
     idempotencyKey: `${uid}:${product}:${Math.floor(Date.now() / 60_000)}`,

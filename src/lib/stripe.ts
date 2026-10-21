@@ -15,9 +15,13 @@ export const stripeConfigured = () => /^sk_(test|live)_/.test(KEY) && stripeWebh
 /** Países atendidos pelo Mercado Pago: América Latina e Portugal. Quem está fora disso paga pela Stripe (se ligada). */
 const MP_COUNTRIES = new Set(["BR", "AR", "CL", "CO", "MX", "PE", "UY", "BO", "PY", "EC", "VE", "CR", "PA", "DO", "GT", "HN", "NI", "SV", "CU", "PT"]);
 
+/** Chave de produção (sk_live_): a Stripe passa a atender todos os países e o Mercado Pago deixa de ser oferecido. Com chave de teste, só administradores veem a Stripe. */
+export const stripeLive = () => /^sk_live_/.test(KEY) && stripeWebhookSecret().startsWith("whsec_");
+
 /** Meio de pagamento pelo país (cabeçalho da Cloudflare). País desconhecido ou Stripe desligada: Mercado Pago. */
 export function providerForCountry(country: string | null | undefined): PayProvider {
   const cc = (country ?? "").toUpperCase();
+  if (stripeLive()) return "stripe";
   if (stripeConfigured() && /^[A-Z]{2}$/.test(cc) && cc !== "XX" && cc !== "T1" && !MP_COUNTRIES.has(cc)) return "stripe";
   return "mercadopago";
 }

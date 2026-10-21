@@ -1,5 +1,6 @@
 import { getBrowserSupabase } from "./supabase";
 import { loadPayInfo } from "./useMoney";
+import type { Currency } from "./money";
 
 export type Subscription = { status: "pending" | "authorized" | "paused" | "cancelled" | "once"; paidUntil: string | null; active: boolean } | null;
 
@@ -79,7 +80,7 @@ export async function cancelSubscription(): Promise<boolean> {
   return (await post("/api/pay/cancel")).ok;
 }
 
-export type TxPayment = { ref: string; kind: "credits" | "plus"; cents: number; currency?: "BRL" | "USD"; credits: number | null; status: string; at: string };
+export type TxPayment = { ref: string; kind: "credits" | "plus"; cents: number; currency?: Currency; credits: number | null; status: string; at: string };
 export type TxLedger = { delta: number; reason: string; at: string };
 export type Transactions = { payments: TxPayment[]; ledger: TxLedger[]; subscription: Subscription };
 

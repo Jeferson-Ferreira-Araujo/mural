@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getBrowserSupabase } from "./supabase";
 import { useTag } from "@/i18n/useTag";
-import { formatMoney, priceIn, type Currency, type PayProvider } from "./money";
+import { formatMoney, isCurrency, priceIn, type Currency, type PayProvider } from "./money";
 
 type Info = { provider: PayProvider; currency: Currency };
 const DEFAULT: Info = { provider: "mercadopago", currency: "BRL" };
@@ -18,7 +18,7 @@ export async function loadPayInfo(): Promise<Info> {
     pendingFor = token;
     pending = fetch("/api/pay/provider", { cache: "no-store", headers: token ? { Authorization: `Bearer ${token}` } : undefined })
       .then((r) => (r.ok ? (r.json() as Promise<Info>) : DEFAULT))
-      .then((d) => (d.provider === "stripe" && d.currency === "USD" ? d : DEFAULT))
+      .then((d) => (d.provider === "stripe" && isCurrency(d.currency) ? d : DEFAULT))
       .catch(() => DEFAULT);
   }
   return pending;
