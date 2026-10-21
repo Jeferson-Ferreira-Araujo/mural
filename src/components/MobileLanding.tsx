@@ -42,6 +42,14 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
     if (!open && d.open) d.close();
   }, [open]);
 
+  // página /entrar (ex.: depois de sair da conta): a folha do formulário já abre, na aba pedida (?modo=entrar = Entrar; sem isso, Criar conta)
+  useEffect(() => {
+    if (window.location.pathname !== "/entrar") return;
+    authIntent.mode = new URLSearchParams(window.location.search).get("modo") === "entrar" ? "login" : "signup";
+    authIntent.touched = true;
+    setOpen(true);
+  }, []);
+
   const show = (mode: "login" | "signup") => {
     authIntent.mode = mode;
     authIntent.touched = true;
