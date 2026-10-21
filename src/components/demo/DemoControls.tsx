@@ -128,7 +128,7 @@ export function DemoControls({ tone, plan, onPlan, count, onCount, view, onView,
                 aria-label={`Fundo ${b.name}${locked ? " (bloqueado)" : ""}`}
                 title={b.name}
                 onClick={() => (locked ? onBoardLocked() : onBoard(b.id))}
-                className={`relative aspect-[3/2] cursor-pointer overflow-hidden rounded-[0.5em] border-2 bg-cover bg-center transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#d98a2b] ${active ? "border-[#d98a2b] ring-1 ring-[#d98a2b]" : dark ? "border-white/20" : "border-[#d9c9ad]"}`}
+                className={`relative aspect-[12/5] cursor-pointer overflow-hidden rounded-[0.5em] border-2 bg-cover bg-center transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#d98a2b] ${active ? "border-[#d98a2b] ring-1 ring-[#d98a2b]" : dark ? "border-white/20" : "border-[#d9c9ad]"}`}
                 style={{ backgroundImage: `url(${boardPreview(b)})` }}
               >
                 {locked && (

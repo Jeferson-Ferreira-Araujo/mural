@@ -33,7 +33,9 @@ export const boardImageS = (b: BoardInfo) => b.image.replace(/.webp/, "-s.webp")
 export const WIDE_EXTRA = 360;
 
 /** Imagem para mostrar o quadro INTEIRO (a cena panorâmica 2,4:1, com o cenário dos lados) em miniaturas e listas; sem ela, o recorte do mural. */
-export const boardPreview = (b: BoardInfo) => b.wide ?? b.image;
+export const boardPreview = (b: BoardInfo) => (b.wide ? b.wide.replace(/.webp/, "-s.webp") : b.image); // versão pequena (480 px): miniaturas
+/** A mesma cena, em tamanho grande (para abrir em tela cheia). */
+export const boardFull = (b: BoardInfo) => b.wide ?? b.image;
 
 export const DEFAULT_BOARD: BoardId = "cortica";
 
