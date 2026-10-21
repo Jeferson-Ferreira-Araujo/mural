@@ -497,7 +497,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         // eslint-disable-next-line @next/next/no-img-element
         <img src={ambient} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 size-full scale-110 object-cover opacity-80 blur-md" />
       )}
-      <div ref={world} className="absolute top-0 left-0 origin-top-left [container-type:size]" style={{ width: WORLD_W, height: WORLD_H }}>
+      <div ref={world} className="absolute top-0 left-0 origin-top-left" style={{ width: WORLD_W, height: WORLD_H }}>
         {scene && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -509,7 +509,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
             style={{ left: -scene.extra, top: 0, width: WORLD_W + 2 * scene.extra, height: WORLD_H, filter: scene.blur ? "blur(11px) saturate(0.85)" : "none", transition: "filter 700ms ease-out" }}
           />
         )}
-        {children}
+        {/* o contêiner de medidas (cqw) fica por dentro: a cena panorâmica acima passa dos lados do quadro e não pode ser cortada por ele */}
+        <div className="absolute inset-0 [container-type:size]">{children}</div>
       </div>
 
       {hint && (
