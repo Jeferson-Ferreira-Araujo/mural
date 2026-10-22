@@ -108,24 +108,16 @@ body {
 .pinned.enter {
   animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-/* EXPERIMENTO (hover do pin): em vez de o pin crescer e subir, ganha um destaque em volta (sem mexer no tamanho nem na camada: os bottons nunca ficam escondidos).
-   Para VOLTAR à animação antiga (cresce e levanta), troque este bloco pelo que está no comentário logo abaixo.
 @media (hover: hover) {
   .pinned:hover {
     transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 0.35em)) rotate(calc(var(--rot, 0deg) * 0.4)) scale(1.025);
-    z-index: 39 !important;
+    z-index: 39 !important; /* acima dos outros pins, mas ABAIXO da camada dos bottons e displays (z 40): um botton em cima do pin continua sendo alcançável (se o pin passasse por cima, escondia o botton e não dava para pegá-lo) */
   }
   .pinned:hover .shadow-paper {
-    box-shadow: 0 0.08em 0.12em rgba(40, 20, 5, 0.25), 0.2em 0.9em 1em -0.1em rgba(40, 20, 5, 0.42), 0.5em 1.6em 1.8em -0.3em rgba(40, 20, 5, 0.3);
-  }
-}
-*/
-@media (hover: hover) {
-  .pinned:hover {
-    outline: 0.22em solid rgba(255, 214, 90, 0.95);
-    outline-offset: 0.18em;
-    border-radius: 0.5em;
-    box-shadow: 0 0 0.9em 0.15em rgba(255, 214, 90, 0.55);
+    box-shadow:
+      0 0.08em 0.12em rgba(40, 20, 5, 0.25),
+      0.2em 0.9em 1em -0.1em rgba(40, 20, 5, 0.42),
+      0.5em 1.6em 1.8em -0.3em rgba(40, 20, 5, 0.3);
   }
 }
 
