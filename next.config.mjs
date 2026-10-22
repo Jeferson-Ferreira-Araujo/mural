@@ -12,7 +12,27 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(self), payment=(), usb=(), interest-cohort=()" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+  { key: "Content-Security-Policy-Report-Only", value: csp },
 ];
+
+// Política de conteúdo (CSP): o navegador só carrega script, conexão e janela de fora dos endereços abaixo. Começa em modo "só avisa" (Report-Only):
+// violações aparecem no console do navegador sem bloquear nada; depois de conferir as telas, troque a chave para "Content-Security-Policy" para valer de verdade.
+const SUPABASE = "https://npylmcjxcosoytuhjrxu.supabase.co";
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://js.stripe.com https://sdk.mercadopago.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  `media-src 'self' blob: ${SUPABASE}`,
+  "font-src 'self' data:",
+  `connect-src 'self' ${SUPABASE} wss://npylmcjxcosoytuhjrxu.supabase.co https://api.stripe.com https://*.stripe.com https://*.mercadopago.com https://*.mercadolibre.com`,
+  "frame-src https://js.stripe.com https://*.stripe.com https://*.mercadopago.com https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
 
 const nextConfig = {
   output: "standalone", // servidor Node (necessário para /[slug] dinâmico)
