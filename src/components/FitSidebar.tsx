@@ -16,15 +16,21 @@ export function FitSidebar() {
       el.style.fontSize = "";
       el.style.maxWidth = "";
       el.style.removeProperty("--logo-k");
+      el.style.removeProperty("--form-k");
       if (window.matchMedia("(orientation: portrait)").matches) return; // em pé, a coluna vai para cima e tem a própria altura
       if (el.dataset.account === "true") return; // com login: letra grande e a coluna rola (uma seta avisa que há mais opções)
       let fs = parseFloat(getComputedStyle(el).fontSize) || 14;
       // a largura máxima (40em) não pode encolher junto com a letra: senão sobra faixa desfocada nas laterais do mural
       el.style.maxWidth = `${fs * 40}px`;
       const h0 = el.scrollHeight;
-      // primeiro o logo cede um pouco (até 60%); só depois a letra da coluna encolhe
+      // ordem de cessão quando a altura não basta: 1) o cartão do formulário encolhe (de 0,9 até 0,7); 2) o logo cede só um pouco (até 75%); 3) a letra da coluna
+      let fk = 0.9;
+      while (el.scrollHeight > el.clientHeight + 1 && fk > 0.7) {
+        fk -= 0.03;
+        el.style.setProperty("--form-k", fk.toFixed(2));
+      }
       let k = 1;
-      while (el.scrollHeight > el.clientHeight + 1 && k > 0.6) {
+      while (el.scrollHeight > el.clientHeight + 1 && k > 0.75) {
         k -= 0.05;
         el.style.setProperty("--logo-k", k.toFixed(2));
       }
@@ -61,6 +67,7 @@ export function FitSidebar() {
       el.style.fontSize = "";
       el.style.maxWidth = "";
       el.style.removeProperty("--logo-k");
+      el.style.removeProperty("--form-k");
     };
   }, []);
   return null;

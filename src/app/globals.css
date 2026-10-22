@@ -228,6 +228,13 @@ body.badge-dragging * {
     visibility: visible;
   }
 }
+/* desktop: o cartão de entrar/criar conta é um pouco menor (e a coluna o encolhe mais se a altura não bastar) */
+@media (orientation: landscape) {
+  aside .auth-card {
+    zoom: var(--form-k, 0.9);
+  }
+}
+
 .intro-form {
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
