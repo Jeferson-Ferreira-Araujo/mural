@@ -12,7 +12,7 @@ import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { Field, inputClass, primaryButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
-import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
+import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 
 const SAMPLE: Record<string, Partial<DisplayData>> = {
@@ -42,7 +42,7 @@ const isoPlus = (days: number) => {
 export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDialog");
-  const dLocale = useLocale() as DemoLocale;
+  const dLocale = demoLocaleOf(useLocale());
   const wt = useWT();
   const [frame, setFrame] = useState<FrameColor>("gold");
   const [tz, setTz] = useState("local");

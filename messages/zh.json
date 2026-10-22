@@ -1,0 +1,400 @@
+{
+  "common": {
+    "close": "关闭",
+    "cancel": "取消",
+    "save": "保存",
+    "language": "语言"
+  },
+  "auth": {
+    "aria": "登录或注册",
+    "tabLogin": "登录",
+    "tabSignup": "注册",
+    "email": "邮箱",
+    "emailPlaceholder": "you@email.com",
+    "password": "密码",
+    "show": "显示",
+    "hide": "隐藏",
+    "remember": "记住我",
+    "wait": "请稍候…",
+    "errors": {
+      "nickTaken": "该用户名已被使用。",
+      "nickInvalid": "请选择有效的用户名。",
+      "emailInvalid": "请输入有效的邮箱地址。",
+      "passwordRequired": "请输入密码。",
+      "codeFail": "暂时无法发送验证码，请稍后再试。",
+      "badCredentials": "邮箱或密码错误。",
+      "loginFail": "暂时无法登录，请再试一次。",
+      "emailExists": "该邮箱已注册账号，请使用密码登录。",
+      "weakPassword": "密码太弱。请使用字母、数字并增加长度。",
+      "nickJustTaken": "该用户名刚刚被占用，请换一个。",
+      "tooMany": "尝试次数过多，请稍等片刻再试。",
+      "signupFail": "暂时无法创建账号，请再试一次。"
+    },
+    "confirm": {
+      "title": "请确认你的邮箱 ✉️",
+      "body": "我们已向 <strong>{email}</strong> 发送了链接。确认后请回到这里登录。",
+      "done": "我已确认，让我进去"
+    }
+  },
+  "menu": {
+    "profile": "编辑个人资料",
+    "profileHint": "头像、密码和账号信息",
+    "myMurals": "我的留言板",
+    "myMuralsHint": "管理、定制并打开你的留言板。",
+    "myPins": "我的图钉",
+    "approvalsHint": "待审批和已归档的图钉",
+    "pending": "{count} 条等待你审批",
+    "visitors": "访客",
+    "shared": "共享留言板",
+    "metrics": "数据统计",
+    "metricsHint": "访问量和已贴的图钉。",
+    "saveImage": "保存留言板图片",
+    "followers": "粉丝和关注",
+    "followersHint": "谁关注了你，以及你关注了谁。",
+    "earn": "赚取积分",
+    "plans": "套餐",
+    "plansHint": "你当前的套餐：{plan}。",
+    "install": "安装应用",
+    "accessibility": "无障碍",
+    "accessibilityHint": "色盲、更大字号和对比度",
+    "admin": "管理网站",
+    "signOut": "退出登录",
+    "signOutQuestion": "要退出登录吗？",
+    "signOutConfirm": "退出登录",
+    "keep": "取消",
+    "yourAccount": "你的账号",
+    "sharedHint": "只属于你们两人的留言板（PINZ+）",
+    "invites": "{count, plural, other {你有 # 个邀请}}",
+    "saveImageHint": "一张适合发布的高清图片",
+    "earnHint": "可立即获得积分的任务。",
+    "adminHint": "用户、留言板、积分和功能",
+    "installHint": "把 Pinz 添加到主屏幕，全屏使用",
+    "closeMenu": "关闭菜单",
+    "accountMenu": "账号菜单"
+  },
+  "app": {
+    "auth": {
+      "callback": {
+        "page": {
+          "ops": "哎呀！",
+          "voltarParaOLogin": "返回登录",
+          "entrando": "正在登录…",
+          "m_oLinkExpirouOuJa": "链接已过期或已被使用。请重新申请。",
+          "m_naoFoiPossivelConcluirO": "我们无法完成登录。请在你申请链接的同一个浏览器中打开链接，或重新申请。"
+        }
+      },
+      "nova_senha": {
+        "page": {
+          "linkExpirado": "链接已过期",
+          "esteLinkJaFoiUsado": "此链接已被使用或已过期。请登录你的账号，并在“编辑个人资料”中重新申请。",
+          "irParaOLogin": "前往登录",
+          "novaSenha": "新密码",
+          "repitaANovaSenha": "再次输入新密码",
+          "m_asSenhasNaoSaoIguais": "两次输入的密码不一致。",
+          "m_escolhaUmaSenhaDiferenteDa": "请选择与当前密码不同的密码。",
+          "m_naoFoiPossivelTrocarA": "暂时无法修改密码。请重新申请链接后再试。",
+          "m_salvarNovaSenha": "保存新密码"
+        }
+      }
+    },
+    "criar": {
+      "page": {
+        "irParaOMeuMural": "前往我的留言板",
+        "etapas": "步骤",
+        "nomeDoMural": "留言板名称",
+        "escrevaONomeCompletoDo": "写下完整名称，随你喜欢。",
+        "exMuralJeferson": "例如：Jeferson 的留言板",
+        "querDeixarOMuralPrivado": "想把留言板设为私密吗？",
+        "opcionalCrieUmaPerguntaQue": "可选。设置一个只有你身边的人才能回答的问题。如果这里留空而你已经有一个问题，这个留言板将使用同一个问题。",
+        "perguntaOpcional": "问题（可选）",
+        "exQualEraMeuApelido": "例如：我上学时的外号是什么？",
+        "resposta": "答案",
+        "quemForResponderPrecisaDigitar": "回答的人必须完全按照这里的写法输入，包括相同的重音符号和标点（不区分大小写）。",
+        "exJef": "例如：Jef",
+        "tudoCerto": "都没问题吗？",
+        "mural": "留言板",
+        "acesso": "访问权限",
+        "publicoQualquerPessoaComO": "公开：任何拥有链接的人都能打开",
+        "voltar": "返回",
+        "m_voceChegouAoLimiteDe": "你已达到 {v0} 个留言板的上限。",
+        "m_oPlanoGratuitoInclui1": "免费套餐包含 1 个留言板。使用 PINZ+ 最多可拥有 10 个。",
+        "m_naoFoiPossivelCriarO": "暂时无法创建留言板，请再试一次。",
+        "m_todosOsSeusMuraisEstao": "你的所有留言板都已上线",
+        "m_seuMuralJaEstaNo": "你的留言板已经上线",
+        "m_oLimiteDoPinzE": "PINZ+ 的上限是 {v0} 个留言板。",
+        "m_oPlanoGratuitoInclui12": "免费套餐包含 1 个留言板。使用 PINZ+ 最多可拥有 10 个留言板。",
+        "m_vamosCriarMaisUmMural": "再创建一个留言板吧",
+        "m_comoOSeuMuralVai": "你的留言板叫什么名字？",
+        "m_criarMeuMural": "创建我的留言板",
+        "x_resposta": "答案：{v0}"
+      }
+    },
+    "loading": {
+      "carregando": "加载中",
+      "carregando2": "加载中…"
+    },
+    "not_found": {
+      "muralNaoEncontrado": "未找到留言板",
+      "esseEnderecoNaoExisteAinda": "这个地址（暂时）不存在。要不要创建属于你的留言板？",
+      "criarNovoMural": "创建新留言板"
+    },
+    "pagamento": {
+      "page": {
+        "voltandoParaOPinz": "正在返回 Pinz…"
+      }
+    },
+    "exclusao_de_dados": {
+      "page": {
+        "x_vocePodePedirAExclusao": "你可以申请删除你的账号，以及 Pinz（pinz.digital）保存的关于你的所有数据，包括通过 Google、Facebook 或 Apple 登录获得的数据。",
+        "x_comoPedir": "如何申请",
+        "x_envieUmEMailPara": "请发送邮件至 <s0>{v0}</s0>，主题写“数据删除”。",
+        "x_escrevaDoMesmoEMail": "请使用与账号相同的邮箱发送，并告诉我们你的用户名（留言板的 @）。",
+        "x_confirmaremosOPedidoPorResposta": "我们会通过回信确认申请，并在 30 天内删除数据。",
+        "x_oQueEExcluido": "会删除什么",
+        "x_suaContaOEMail": "你的账号、邮箱、用户名和头像。",
+        "x_seusMuraisETodosOs": "你的留言板、你发布的所有图钉，以及上传的文件（照片、绘画、音频和视频）。",
+        "x_notificacoesBottonsECreditosDa": "账号的通知、徽章和积分。",
+        "x_registrosDePagamentosPodemSer": "支付记录可能会按法律要求的期限保留。如果你使用过 Facebook 登录，也可以在 Facebook 设置 → 应用和网站中移除 Pinz。"
+      }
+    },
+    "privacidade": {
+      "page": {
+        "x_oPinzPinzDigitalE": "Pinz（pinz.digital）是一个留言板。本页说明我们使用哪些数据以及原因。",
+        "x_dadosQueColetamos": "我们收集的数据",
+        "x_contaEMailNomeDe": "账号：邮箱、用户名（昵称），以及你上传的头像（如有）。如果你使用 Google 登录，我们会收到该 Google 账号的邮箱和姓名。",
+        "x_dataDeNascimentoOpcionalSe": "出生日期（可选）：如果你在欢迎步骤中填写，我们会保存它以确认你已年满 13 岁。只有你本人可以查看，不会向任何人显示。",
+        "x_conteudoOsPinsQueVoce": "内容：你发布的图钉（文字、清单、照片、绘画、音频、视频、歌曲和地点）、保护你留言板的问题和答案，以及共享留言板的密码（加密存储）。",
+        "x_visitasESeguidoresQuandoVoce": "访问与粉丝：登录后访问他人留言板时，你的 @ 和头像会出现在对方的访客列表中（不含日期）。你关注的人在只有你能看到的列表里，关注你的人只显示为数字。",
+        "x_enquetesAoVotarNumaEnquete": "投票：当你参与投票时，我们会把你选择的选项与你的账号关联保存（每人一票）；留言板所有者只能看到总数和百分比，永远看不到谁投了什么。",
+        "x_localizacaoSoQuandoVocePermite": "位置（仅在你允许时）：如果留言板有天气卡片，浏览器或手机会询问是否可以使用你的位置来显示你所在地的天气。请参阅“位置”部分。",
+        "x_usoNotificacoesDaSuaConta": "使用情况：账号通知、留言板浏览次数，以及用于防止滥用的技术安全日志（例如 IP 地址）。",
+        "x_paraQueUsamos": "我们的用途",
+        "x_criarSuaContaPermitirO": "创建你的账号、提供登录，并显示你的留言板和图钉。",
+        "x_enviarEMailsDaConta": "发送与账号相关的邮件，例如验证码。",
+        "x_moderarConteudoAtenderDenunciasE": "审核内容、处理举报，并保护服务免遭滥用。",
+        "x_naoVendemosSeusDados": "我们不会出售你的数据。",
+        "x_localizacao": "位置",
+        "x_oDisplayDeClimaMostra": "天气卡片只会在你允许时显示你所在地的天气。权限由浏览器或手机本身请求，你可以随时在设备设置中拒绝或撤回。如果你拒绝，卡片会显示留言板所有者选择的城市的天气，我们不会再次询问：你的选择会保存在这台设备上，直到你删除账号（或清除浏览器数据）。",
+        "x_suaPosicaoFicaGuardadaApenas": "你的位置只保存在你的设备上，最长 30 分钟。我们不会把位置与你的账号关联，也不会存入数据库。",
+        "x_paraBuscarOTempoO": "为了获取天气，Pinz 服务器会接收取整后的位置（约 1 公里），并将其传给天气预报服务；为了显示城市名称，也会传给地图服务。服务器会连同取整后的位置保留响应几分钟（天气）或一天（城市名称），且不会识别你的身份。",
+        "x_quemVeOQue": "谁能看到什么",
+        "x_seuMuralSoAbrePara": "你的留言板只会对回答了你所设问题的人开放。标记为秘密的图钉会对访客模糊显示。你在别人的留言板上留下图钉时，会署上你的用户名。",
+        "x_servicosQueUsamos": "我们使用的服务",
+        "x_supabaseBancoDeDadosLogin": "Supabase：数据库、登录和文件存储。",
+        "x_googleLoginComOGoogle": "Google：Google 登录以及地图和地点搜索（Google 地图）。",
+        "x_metNorwayApiMetNo": "MET Norway（api.met.no）：根据取整后的位置，为天气卡片提供天气预报。",
+        "x_openstreetmapNominatimNomeDaCidade": "OpenStreetMap（Nominatim）：为允许位置的用户提供对应的城市名称。",
+        "x_resendEnvioDosEMails": "Resend：发送与账号相关的邮件。",
+        "x_cloudflareProtecaoEEntregaDo": "Cloudflare：网站的防护与分发。",
+        "x_mercadoPagoPagamentosDaAssinatura": "Mercado Pago：订阅和积分的支付。银行卡或 Pix 信息直接在 Mercado Pago 填写；Pinz 不接收也不存储，只获得支付结果。",
+        "x_essesServicosTratamOsDados": "这些服务按各自的政策处理数据，可能在巴西境外处理。",
+        "x_seusDireitos": "你的权利",
+        "x_vocePodePedirAcessoCorrecao": "你可以申请查阅、更正或删除你的数据和账号，也可以随时在留言板上删除你的图钉。账号存在期间，我们会保留数据；举报和安全日志可能会在保护他人所需的期限内保留。",
+        "x_criancas": "儿童",
+        "x_oPinzNaoEDestinado": "Pinz 不面向 13 岁以下的儿童。",
+        "x_stripePagamentosEmDolar": "Stripe：面向拉丁美洲和葡萄牙以外人群的美元支付。银行卡信息直接在 Stripe 填写；Pinz 不接收也不存储，只获得支付结果。"
+      }
+    },
+    "termos": {
+      "page": {
+        "x_aoCriarUmaContaOu": "创建账号或使用 Pinz（pinz.digital），即表示你同意这些条款。",
+        "x_oServico": "服务",
+        "x_oPinzPermiteCriarUm": "Pinz 让你创建个人留言板，或两个人共享的留言板，并在留言板上留下图钉（留言、照片、歌曲和其他形式）。部分功能属于 PINZ+ 套餐。",
+        "x_suaConta": "你的账号",
+        "x_voceEResponsavelPeloAcesso": "你需对账号的访问以及通过账号发布的内容负责。",
+        "x_oNomeDeUsuarioE": "用户名只能选择一次，不得冒充品牌、公司或其他人。",
+        "x_conteudoEConduta": "内容与行为",
+        "x_naoEPermitidoPublicarConteudo": "禁止发布违法内容，禁止发布骚扰、威胁或曝光他人的内容，禁止侵犯第三方权利或包含裸露或暴力的内容。你声明你有权发布你所发送的内容。",
+        "x_pinsPodemSerDenunciadosPodemos": "图钉可以被举报。我们可以删除违反这些条款的内容并封停账号。",
+        "x_pagamentos": "付款",
+        "x_oPinzEUmaAssinatura": "PINZ+ 是按月订阅（R$ 9.90，通过 Stripe 付款的用户为等值美元），由 Mercado Pago 或 Stripe 收款；积分按单独的套餐出售。价格会在购买前显示。",
+        "x_vocePodeCancelarAAssinatura": "你可以随时在 Pinz 内取消订阅，无需任何违约金。PINZ+ 会持续到已付款周期结束，之后不再扣款。",
+        "x_vocePodeDesistirDeUma": "按照巴西《消费者保护法》的规定，你可以在购买后 7 天内撤销购买，并通过 Pinz 联系方式申请退款。已在商店中花掉的积分将被扣除。",
+        "x_seAAssinaturaDeixarDe": "如果订阅停止付费，账号将回到免费套餐：你的图钉会保留，但 PINZ+ 功能将不可用。",
+        "x_osCreditosNaoSaoDinheiro": "积分不是货币，不能转让或提现。",
+        "x_disponibilidade": "可用性",
+        "x_fazemosOPossivelParaManter": "我们会尽力保持服务在线，但服务按现状提供，不保证不间断运行。我们可能会在通知后更改或终止功能以及这些条款。",
+        "x_privacidade": "隐私",
+        "x_oUsoDosSeusDados": "你的数据使用方式见<s0>隐私政策</s0>。"
+      }
+    }
+  },
+  "components": {
+    "A11yHost": {
+      "acessibilidade": "无障碍",
+      "queremosQueOPinzSeja": "我们希望 Pinz 对每个人都是出色的体验，所以我们提供了这些选项。",
+      "daltonismo": "色盲",
+      "corrigeAsCoresDaTela": "根据你的视觉类型调整屏幕颜色。",
+      "tipoDeDaltonismo": "色盲类型",
+      "tamanhoDoTexto": "文字大小",
+      "leitura": "阅读",
+      "contrasteAlto": "高对比度",
+      "coresMaisFortesParaVer": "使用更鲜明的颜色，让文字更易读",
+      "fonteDeLeituraFacil": "易读字体",
+      "letrasDesenhadasParaNaoSerem": "设计成不易混淆的字母（有助于阅读障碍和低视力）",
+      "maisEspacoEntreLetrasE": "加大字母和行之间的间距",
+      "oTextoFicaMenosApertado": "文字显得不那么拥挤",
+      "reduzirAnimacoes": "减少动画",
+      "menosMovimentoNaTela": "屏幕上的动态更少",
+      "restaurarOPadrao": "恢复默认设置"
+    },
+    "account": {
+      "AccountActions": {
+        "notificacoes": "通知",
+        "pesquisarUsuarios": "搜索用户",
+        "menu": "菜单",
+        "irParaOMeuMural": "前往我的留言板",
+        "meuMural": "我的留言板",
+        "m_notificacoesNovas": "通知（{v0} 条新）",
+        "m_notificacoes": "通知",
+        "m_menuPinsParaAprovar": "菜单（{v0} 个图钉待审批）",
+        "x_pesquisarUsuarios": "搜索用户"
+      },
+      "AccountDrawer": {
+        "editarMural": "编辑留言板",
+        "instalarOPinz": "安装 Pinz",
+        "compartilhar": "分享",
+        "adicionarATelaDeInicio": "添加到主屏幕",
+        "adicionar": "添加",
+        "seNaoAparecerAOpcao": "如果没有看到该选项，请用 Safari 打开 Pinz（iPhone 上的其他浏览器无法安装应用）。",
+        "metricas": "数据统计",
+        "muralCompartilhado": "共享留言板",
+        "desenvolvidoPorJefersonAraujo": "开发者：Jeferson Araújo",
+        "x_toqueNoBotaoCompartilharDo": "点按 Safari 中的<s0>分享</s0>按钮（带向上箭头的方框）。",
+        "x_roleAListaEToque": "滚动列表并点按<s0>添加到主屏幕</s0>。",
+        "x_confirmeEmAdicionarOPinz": "点按<s0>添加</s0>确认。Pinz 会留在你的主屏幕上，并以全屏方式打开。",
+        "x_devBy": "开发者：<s0>Jeferson Araújo</s0>"
+      },
+      "BirthField": {
+        "dataDeNascimento": "出生日期",
+        "ddMmAaaa": "yyyy/mm/dd",
+        "escolherADataNoCalendario": "在日历上选择日期"
+      },
+      "Carousel": {
+        "anterior": "上一个",
+        "proximo": "下一个"
+      },
+      "FirstTimeTip": {
+        "colocarUmPin": "贴图钉：",
+        "zoom": "缩放：",
+        "mover": "移动：",
+        "bottons": "徽章：",
+        "entendi": "知道了",
+        "m_ola": "你好，{v0}",
+        "m_queBomTerVocePor": "很高兴你来到这里。希望这对你和你的客户来说是一次很棒的体验。",
+        "m_queBomTerVocePor2": "很高兴你来到这里！使用方法如下：",
+        "x_colocarUmPinCliqueOu": "<s0>贴图钉：</s0>点击（或轻点）留言板上的空位。",
+        "x_zoomPincaComDoisDedos": "<s0>缩放：</s0>双指捏合或双击。“缩小”会回到完整留言板。",
+        "x_moverComOMuralAproximado": "<s0>移动：</s0>留言板放大后，拖动即可查看其余部分。",
+        "x_bottonsArrasteDaBarraDe": "<s0>徽章：</s0>从底部栏拖到留言板上。要移除时，把它拖回来。"
+      },
+      "GiftModal": {
+        "oPinzDesejaAVoce": "Pinz 祝你有美好的一天，也祝你新的一年充满留言、照片和特别的时刻。生日快乐！",
+        "oQueVoceGanhou": "你获得了什么",
+        "todosOsTiposDePin": "所有图钉类型（绘画、音乐、视频、语音和地点）以及时间胶囊。",
+        "segredoNosPinsMensagemDe": "秘密图钉、欢迎留言、共享留言板，以及不限数量的图钉和卡片。",
+        "todosOsBottonsDeAniversario": "所有生日徽章",
+        "elesEstaoNoPrimeiroBotao": "它们在你的徽章栏的第一个徽章里（上面带小箭头的那个）。点按它，选一个，拖到留言板上。",
+        "aproveitar": "尽情享受吧！",
+        "seuPinzJaEstaAtivo": "你的 PINZ+ 已经生效。尽情享受所有权益。",
+        "obrigado": "谢谢你！",
+        "m_voceGanhouUmPresente": "你收到了一份礼物！",
+        "m_felizAniversario": "生日快乐！",
+        "m_ate": "至 {v0}",
+        "m_ateOFimDoMes": "至本月底",
+        "m_alguem": "有人",
+        "x_felizAniversario": "生日快乐{v0}！🎉",
+        "x_pinzLiberadoDePresente": "<s0>已解锁 PINZ+{v0}</s0>，作为礼物。",
+        "x_todosOsBottonsDeAniversario": "<s0>所有生日徽章</s0>，作为你成为 PINZ+ 的礼物：气球、蛋糕、礼物、祝福便条等等。",
+        "x_tePresenteouCom1Mes": "{v0} 送了你 1 个月的 PINZ+！"
+      },
+      "Modal": {
+        "voltarAoMenu": "返回菜单",
+        "fechar": "关闭"
+      },
+      "MuralSettings": {
+        "tipoDoMural": "留言板类型",
+        "nomeDoMural": "留言板名称",
+        "mensagemDeBoasVindas": "欢迎留言",
+        "pinz": "PINZ+",
+        "umRecadoQueAparecePara": "显示给进入你留言板的人的一段话（回答问题之后）",
+        "apareceComoUmaJanelaQuando": "有人进入时会以弹窗形式显示。",
+        "resetarEsteMural": "要重置这个留言板吗？",
+        "todosOsRecadosPinsSerao": "所有留言（图钉）都会丢失，且无法撤销。",
+        "cancelar": "取消",
+        "resetarMural": "重置留言板",
+        "excluirEsteMuralApagaTambem": "删除这个留言板也会同时删除它的访问权限和所有留言，且无法撤销。",
+        "simExcluir": "是的，删除",
+        "excluirEsteMural": "删除这个留言板",
+        "m_preenchaONomeDoMural": "请填写留言板名称。",
+        "m_naoFoiPossivelSalvarConfira": "无法保存。请检查各项内容后再试一次。",
+        "m_salveiONomeMasNao": "名称已保存，但无法更改类型（请到商店购买）。",
+        "m_naoFoiPossivelSalvarA": "其余内容已保存，但无法保存安全问题。请检查各项内容后再试一次。",
+        "m_salveiORestoMasNao": "其余内容已保存，但无法保存图钉显示时长。",
+        "m_salveiORestoMasNao2": "其余内容已保存，但无法保存欢迎留言。最多 280 个字符。",
+        "m_naoFoiPossivelResetarO": "无法重置留言板。请再试一次。",
+        "m_muralResetadoTodosOsRecados": "留言板已重置。所有留言已被删除。",
+        "m_naoFoiPossivelExcluirTente": "无法删除。请再试一次。",
+        "m_proximoTipo": "下一个类型"
+      },
+      "MuralSetupModal": {
+        "configureSeuMural": "设置你的留言板",
+        "seuMuralJaEstaNo": "你的留言板已经上线。请选择它的名称、谁可以打开，以及他人的图钉保留多久。以后可以在“我的留言板”中随时修改。",
+        "nomeDoMural": "留言板名称",
+        "exViagemDe2026": "例如：2026 年旅行",
+        "depois": "稍后",
+        "m_deUmNomeAoMural": "请给留言板起个名字。",
+        "m_naoFoiPossivelSalvarTudo": "暂时无法保存全部内容。请检查各项内容后再试一次。"
+      },
+      "MyMuralsModal": {
+        "meusMurais": "我的留言板",
+        "apagarMural": "删除留言板",
+        "osBottonsSeraoDevolvidosA": "徽章会退还给你，图钉会丢失，留言板将无法再访问。",
+        "cancelar": "取消",
+        "voceAindaNaoCriouNenhum": "你还没有创建任何留言板。",
+        "arrasteParaMudarAOrdem": "拖动以调整顺序",
+        "editar": "编辑",
+        "apagar": "删除",
+        "m_naoFoiPossivelMudarA": "暂时无法调整顺序。请再试一次。",
+        "m_naoFoiPossivelApagarAgora": "暂时无法删除。请再试一次。",
+        "m_publico": "公开",
+        "x_apagar": "要删除“{v0}”吗？",
+        "x_voltarParaMeusMurais": "返回我的留言板",
+        "x_criarNovoMural": "创建新留言板",
+        "x_reorder": "调整 {title} 的顺序：拖动（或使用键盘方向键）",
+        "x_editTitle": "编辑 {title}{locked, select, yes {（带安全问题）} other {}}",
+        "x_edit": "编辑 {title}",
+        "x_delete": "删除 {title}"
+      },
+      "NewMuralModal": {
+        "novoMural": "新留言板",
+        "cancelar": "取消",
+        "tipoDoMural": "留言板类型",
+        "nomeDoMural": "留言板名称",
+        "exViagemDe2026": "例如：2026 年旅行",
+        "m_creditosInsuficientesParaEsteMural": "积分不足，无法获得此留言板。",
+        "m_comprarMuraisEParaQuem": "购买留言板仅限 PINZ+ 订阅用户。",
+        "m_naoFoiPossivelComprarAgora": "暂时无法购买。请再试一次。",
+        "m_preenchaONomeDoMural": "请填写留言板名称。",
+        "m_voceChegouAoLimiteDe": "你已达到留言板数量上限。",
+        "m_naoFoiPossivelCriarO": "暂时无法创建留言板，请再试一次。",
+        "m_creditos": "{v0} 积分",
+        "m_proximoTipo": "下一个类型",
+        "m_compreEsteTipoDeMural": "请购买此类型的留言板后再用它创建",
+        "m_criarMural": "创建留言板",
+        "x_comprarOMuralPorCreditos": "用 <s0>{v1} 积分</s0>购买留言板“{v0}”吗？",
+        "x_voceTem": "你有 <n0></n0> <s1>{v0}</s1>{v1}",
+        "x_comprar": "购买 <n0></n0>{v0}"
+      },
+      "NicknameSetup": {
+        "completeOSeuPerfil": "完善你的个人资料",
+        "escolhaOSeuNomeDe": "请选择你的用户名：别人会通过它找到你并打开你的留言板。保存后无法更改。",
+        "m_naoFoiPossivelSalvarAgora": "暂时无法保存。请再试一次。"
+      },
+      "NotificationsModal": {
+        "notificacoes": "通知",
+        "carregandoAsNotificacoes": "正在加载通知"
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@ import type { Locale } from "@/i18n/config";
 
 /**
  * Bandeira do país de cada idioma (SVG simples: os emojis de bandeira não aparecem no Windows).
- * pt = Brasil, en = Estados Unidos, es = Espanha.
+ * pt = Brasil, en = Estados Unidos, es = Espanha, de = Alemanha, ja = Japão, zh = China, ru = Rússia.
  */
 export function Flag({ locale, className = "h-4 w-6" }: { locale: Locale; className?: string }) {
   return (
@@ -23,6 +23,36 @@ export function Flag({ locale, className = "h-4 w-6" }: { locale: Locale; classN
           ))}
           <rect width="10.2" height="8.6" fill="#3c3b6e" />
           {[0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => <circle key={`${r}${c}`} cx={1.6 + c * 2.4} cy={1.6 + r * 2.7} r=".5" fill="#fff" />))}
+        </>
+      )}
+      {locale === "de" && (
+        <>
+          <rect width="24" height="16" fill="#000" />
+          <rect y="5.33" width="24" height="5.34" fill="#dd0000" />
+          <rect y="10.67" width="24" height="5.33" fill="#ffce00" />
+        </>
+      )}
+      {locale === "ja" && (
+        <>
+          <rect width="24" height="16" fill="#fff" />
+          <circle cx="12" cy="8" r="4.8" fill="#bc002d" />
+        </>
+      )}
+      {locale === "zh" && (
+        <>
+          <rect width="24" height="16" fill="#de2910" />
+          <path d="M5 2.2 5.95 5.1 9 5.1 6.55 6.9 7.45 9.8 5 8 2.55 9.8 3.45 6.9 1 5.1 4.05 5.1Z" fill="#ffde00" />
+          <circle cx="10.2" cy="2.6" r=".7" fill="#ffde00" />
+          <circle cx="12" cy="4.6" r=".7" fill="#ffde00" />
+          <circle cx="12" cy="7.2" r=".7" fill="#ffde00" />
+          <circle cx="10.2" cy="9" r=".7" fill="#ffde00" />
+        </>
+      )}
+      {locale === "ru" && (
+        <>
+          <rect width="24" height="16" fill="#fff" />
+          <rect y="5.33" width="24" height="5.34" fill="#0039a6" />
+          <rect y="10.67" width="24" height="5.33" fill="#d52b1e" />
         </>
       )}
       {locale === "es" && (

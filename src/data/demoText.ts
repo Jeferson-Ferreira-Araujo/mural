@@ -2,6 +2,8 @@ import type { BoardItem, Message } from "@/lib/types";
 
 /** Textos do mural de exemplo (e das amostras de displays) em cada idioma. O português é o que está em `mock.ts` / `StoreModal.tsx`; aqui ficam as outras línguas. */
 export type DemoLocale = "pt" | "en" | "es";
+/** O idioma do mural de exemplo para um idioma do site: pt, en e es têm texto próprio; os demais usam o inglês. */
+export const demoLocaleOf = (l: string): DemoLocale => (l === "pt" || l === "es" ? l : "en");
 type Over = { text?: string; caption?: string; title?: string; items?: string[]; name?: string };
 
 const EN: Record<string, Over> = {

@@ -8,7 +8,9 @@ export default getRequestConfig(async () => {
   const locale: Locale = isLocale(saved) ? saved : fromAcceptLanguage((await headers()).get("accept-language"));
   const base = (await import("../../messages/pt.json")).default;
   const own = locale === DEFAULT_LOCALE ? base : (await import(`../../messages/${locale}.json`)).default;
-  return { locale, messages: mergeMessages(base, own) };
+  // idiomas ainda não traduzidos por inteiro caem no INGLÊS (e só depois no português): quem lê japonês vê inglês onde falta, não português
+  const fallback = locale === DEFAULT_LOCALE || locale === "en" || locale === "es" ? base : mergeMessages(base, (await import("../../messages/en.json")).default);
+  return { locale, messages: mergeMessages(fallback, own) };
 });
 
 type Tree = { [k: string]: string | Tree };

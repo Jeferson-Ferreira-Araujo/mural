@@ -78,7 +78,7 @@ import { Toast } from "./Toast";
 import { UnlockPanel } from "./UnlockPanel";
 import type { Tone } from "./viewProps";
 import { useTranslations, useLocale } from "next-intl";
-import type { DemoLocale } from "@/data/demoText";
+import { demoLocaleOf, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 
 
@@ -95,7 +95,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const tn = useTranslations("notifications");
   const tnRef = useRef(tn);
   tnRef.current = tn;
-  const demoLocale = useLocale() as DemoLocale;
+  const demoLocale = demoLocaleOf(useLocale());
   const localeRef = useRef(demoLocale);
   localeRef.current = demoLocale;
   const { session, loading: sessionLoading } = useSession();

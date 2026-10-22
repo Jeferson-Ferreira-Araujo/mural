@@ -16,7 +16,7 @@ export const PROMESSAS: readonly Promessa[] = data;
 /** A mesma biblioteca em cada idioma (ARA em português, New Heart English Bible, Reina-Valera 1909): mesma ordem e mesmas referências, então o versículo do dia é o mesmo em qualquer idioma. */
 const LIBS: Record<string, readonly Promessa[]> = { pt: PROMESSAS, en: dataEn, es: dataEs };
 export const promessaDoDia = (now: Date = new Date(), locale = "pt"): Promessa => {
-  const lib = LIBS[locale] ?? PROMESSAS;
+  const lib = LIBS[locale] ?? dataEn; // idiomas sem biblioteca própria usam a inglesa
   return lib[promiseIndex(now, lib.length)];
 };
 

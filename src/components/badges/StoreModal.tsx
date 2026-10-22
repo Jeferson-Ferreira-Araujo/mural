@@ -15,7 +15,7 @@ import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShap
 import { DISPLAY_CATS, defaultStyle, displayName, isDisplayOn } from "../widgets";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
-import { SAMPLE_TEXT, type DemoLocale } from "@/data/demoText";
+import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 import { useMoney } from "@/lib/useMoney";
 
@@ -172,7 +172,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const tl = useLit();
   const tx = useTranslations("components.badges.StoreModal");
   const money = useMoney();
-  const demoLocale = useLocale() as DemoLocale;
+  const demoLocale = demoLocaleOf(useLocale());
   const [tab, setTab] = useState<Tab>("pins");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // "all" | id da categoria

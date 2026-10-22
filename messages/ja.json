@@ -1,0 +1,400 @@
+{
+  "common": {
+    "close": "閉じる",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "language": "言語"
+  },
+  "auth": {
+    "aria": "ログインまたは新規登録",
+    "tabLogin": "ログイン",
+    "tabSignup": "新規登録",
+    "email": "メールアドレス",
+    "emailPlaceholder": "you@email.com",
+    "password": "パスワード",
+    "show": "表示",
+    "hide": "非表示",
+    "remember": "ログイン状態を保持",
+    "wait": "お待ちください…",
+    "errors": {
+      "nickTaken": "このユーザー名はすでに使われています。",
+      "nickInvalid": "有効なユーザー名を入力してください。",
+      "emailInvalid": "有効なメールアドレスを入力してください。",
+      "passwordRequired": "パスワードを入力してください。",
+      "codeFail": "現在コードを送信できません。しばらくしてからもう一度お試しください。",
+      "badCredentials": "メールアドレスまたはパスワードが正しくありません。",
+      "loginFail": "現在ログインできません。もう一度お試しください。",
+      "emailExists": "このメールアドレスにはすでにアカウントがあります。パスワードでログインしてください。",
+      "weakPassword": "パスワードが弱すぎます。英字、数字を使い、文字数を増やしてください。",
+      "nickJustTaken": "そのユーザー名はたった今使われました。別のものを選んでください。",
+      "tooMany": "試行回数が多すぎます。しばらく待ってからもう一度お試しください。",
+      "signupFail": "現在アカウントを作成できません。もう一度お試しください。"
+    },
+    "confirm": {
+      "title": "メールアドレスを確認してください ✉️",
+      "body": "<strong>{email}</strong> にリンクを送信しました。確認が終わったらここに戻ってログインしてください。",
+      "done": "確認しました。ログインします"
+    }
+  },
+  "menu": {
+    "profile": "プロフィールを編集",
+    "profileHint": "写真、パスワード、アカウント情報",
+    "myMurals": "マイボード",
+    "myMuralsHint": "ボードの管理、カスタマイズ、表示ができます。",
+    "myPins": "マイピン",
+    "approvalsHint": "承認待ちとアーカイブしたピン",
+    "pending": "{count}件があなたの承認を待っています",
+    "visitors": "訪問者",
+    "shared": "共有ボード",
+    "metrics": "アクセス解析",
+    "metricsHint": "訪問数と貼ったピン。",
+    "saveImage": "ボードの画像を保存",
+    "followers": "フォロワーとフォロー中",
+    "followersHint": "あなたをフォローしている人と、あなたがフォローしている人。",
+    "earn": "クレジットを獲得",
+    "plans": "プラン",
+    "plansHint": "現在のプラン：{plan}。",
+    "install": "アプリをインストール",
+    "accessibility": "アクセシビリティ",
+    "accessibilityHint": "色覚、文字サイズ、コントラスト",
+    "admin": "サイト管理",
+    "signOut": "ログアウト",
+    "signOutQuestion": "ログアウトしますか？",
+    "signOutConfirm": "ログアウト",
+    "keep": "キャンセル",
+    "yourAccount": "あなたのアカウント",
+    "sharedHint": "2人だけのボード（PINZ+）",
+    "invites": "{count, plural, other {あなたへの招待が#件あります}}",
+    "saveImageHint": "投稿用の高画質画像",
+    "earnHint": "すぐにクレジットがもらえるタスク。",
+    "adminHint": "ユーザー、ボード、クレジット、機能",
+    "installHint": "Pinz をホーム画面に追加してフルスクリーンで使う",
+    "closeMenu": "メニューを閉じる",
+    "accountMenu": "アカウントメニュー"
+  },
+  "app": {
+    "auth": {
+      "callback": {
+        "page": {
+          "ops": "おっと！",
+          "voltarParaOLogin": "ログインに戻る",
+          "entrando": "ログイン中…",
+          "m_oLinkExpirouOuJa": "リンクの有効期限が切れたか、すでに使用されています。新しいリンクをリクエストしてください。",
+          "m_naoFoiPossivelConcluirO": "ログインを完了できませんでした。リクエストしたのと同じブラウザでリンクを開くか、新しいリンクをリクエストしてください。"
+        }
+      },
+      "nova_senha": {
+        "page": {
+          "linkExpirado": "リンクの有効期限切れ",
+          "esteLinkJaFoiUsado": "このリンクはすでに使用されたか、有効期限が切れています。アカウントにログインし、「プロフィールを編集」で新しいリンクをリクエストしてください。",
+          "irParaOLogin": "ログインへ",
+          "novaSenha": "新しいパスワード",
+          "repitaANovaSenha": "新しいパスワードをもう一度入力",
+          "m_asSenhasNaoSaoIguais": "パスワードが一致しません。",
+          "m_escolhaUmaSenhaDiferenteDa": "現在のパスワードとは別のパスワードを選んでください。",
+          "m_naoFoiPossivelTrocarA": "現在パスワードを変更できません。新しいリンクをリクエストしてもう一度お試しください。",
+          "m_salvarNovaSenha": "新しいパスワードを保存"
+        }
+      }
+    },
+    "criar": {
+      "page": {
+        "irParaOMeuMural": "マイボードへ",
+        "etapas": "手順",
+        "nomeDoMural": "ボード名",
+        "escrevaONomeCompletoDo": "お好きな名前をフルネームで入力してください。",
+        "exMuralJeferson": "例：Jefersonのボード",
+        "querDeixarOMuralPrivado": "ボードを非公開にしますか？",
+        "opcionalCrieUmaPerguntaQue": "任意です。身近な人だけが答えられる質問を作成できます。ここを空欄にして、すでに質問がある場合は、このボードにも同じ質問が使われます。",
+        "perguntaOpcional": "質問（任意）",
+        "exQualEraMeuApelido": "例：学生時代の私のあだ名は？",
+        "resposta": "答え",
+        "quemForResponderPrecisaDigitar": "回答する人は、アクセント記号や句読点も含めて、ここと同じように入力する必要があります（大文字と小文字は区別されません）。",
+        "exJef": "例：Jef",
+        "tudoCerto": "これでよろしいですか？",
+        "mural": "ボード",
+        "acesso": "アクセス",
+        "publicoQualquerPessoaComO": "公開：リンクを知っている人なら誰でも開けます",
+        "voltar": "戻る",
+        "m_voceChegouAoLimiteDe": "ボードの上限（{v0}個）に達しました。",
+        "m_oPlanoGratuitoInclui1": "無料プランではボードは1つです。PINZ+ なら最大10個まで持てます。",
+        "m_naoFoiPossivelCriarO": "現在ボードを作成できません。もう一度お試しください。",
+        "m_todosOsSeusMuraisEstao": "すべてのボードが公開されています",
+        "m_seuMuralJaEstaNo": "あなたのボードはすでに公開されています",
+        "m_oLimiteDoPinzE": "PINZ+ の上限は{v0}個のボードです。",
+        "m_oPlanoGratuitoInclui12": "無料プランではボードは1つです。PINZ+ なら最大10個のボードを持てます。",
+        "m_vamosCriarMaisUmMural": "もう1つボードを作りましょう",
+        "m_comoOSeuMuralVai": "ボードの名前は何にしますか？",
+        "m_criarMeuMural": "ボードを作成",
+        "x_resposta": "答え：{v0}"
+      }
+    },
+    "loading": {
+      "carregando": "読み込み中",
+      "carregando2": "読み込み中…"
+    },
+    "not_found": {
+      "muralNaoEncontrado": "ボードが見つかりません",
+      "esseEnderecoNaoExisteAinda": "そのアドレスは（まだ）存在しません。あなたのボードを作ってみませんか？",
+      "criarNovoMural": "新しいボードを作成"
+    },
+    "pagamento": {
+      "page": {
+        "voltandoParaOPinz": "Pinz に戻っています…"
+      }
+    },
+    "exclusao_de_dados": {
+      "page": {
+        "x_vocePodePedirAExclusao": "Pinz（pinz.digital）があなたについて保持しているアカウントとすべてのデータの削除を依頼できます。Google、Facebook、Apple のログインで受け取ったデータも含まれます。",
+        "x_comoPedir": "依頼方法",
+        "x_envieUmEMailPara": "件名を「データ削除」として <s0>{v0}</s0> にメールを送ってください。",
+        "x_escrevaDoMesmoEMail": "アカウントと同じメールアドレスから送信し、ユーザー名（ボードの @）をお知らせください。",
+        "x_confirmaremosOPedidoPorResposta": "返信で依頼を確認し、30日以内にデータを削除します。",
+        "x_oQueEExcluido": "削除される内容",
+        "x_suaContaOEMail": "アカウント、メールアドレス、ユーザー名、プロフィール写真。",
+        "x_seusMuraisETodosOs": "あなたのボードと、あなたが投稿したすべてのピン、アップロードしたファイル（写真、イラスト、音声、動画）。",
+        "x_notificacoesBottonsECreditosDa": "アカウントの通知、バッジ、クレジット。",
+        "x_registrosDePagamentosPodemSer": "支払い記録は、法律で求められる期間保管されることがあります。Facebook ログインを使用した場合は、Facebook の設定 → アプリとウェブサイトから Pinz を削除することもできます。"
+      }
+    },
+    "privacidade": {
+      "page": {
+        "x_oPinzPinzDigitalE": "Pinz（pinz.digital）はメッセージボードです。このページでは、私たちが使用するデータとその理由を説明します。",
+        "x_dadosQueColetamos": "収集するデータ",
+        "x_contaEMailNomeDe": "アカウント：メールアドレス、ユーザー名（ニックネーム）、アップロードした場合はプロフィール写真。Google でログインした場合は、Google アカウントのメールアドレスと名前を受け取ります。",
+        "x_dataDeNascimentoOpcionalSe": "生年月日（任意）：ウェルカムステップで入力した場合、13歳以上であることを確認するために保管します。アクセスできるのはあなただけで、他の人には表示されません。",
+        "x_conteudoOsPinsQueVoce": "コンテンツ：あなたが投稿するピン（テキスト、リスト、写真、イラスト、音声、動画、曲、場所）、ボードを守る質問と答え、共有ボードのパスワード（暗号化して保存）。",
+        "x_visitasESeguidoresQuandoVoce": "訪問とフォロワー：ログインして他の人のボードを訪れると、あなたの @ とプロフィール写真がその人の訪問者リストに（日付なしで）表示されます。あなたがフォローしている人はあなただけが見られるリストに入り、あなたをフォローしている人は数字だけで表示されます。",
+        "x_enquetesAoVotarNumaEnquete": "投票：投票に参加すると、選んだ選択肢をあなたのアカウントに紐づけて保存します（1人1票）。ボードの持ち主には合計と割合だけが表示され、誰が何に投票したかは決してわかりません。",
+        "x_localizacaoSoQuandoVocePermite": "位置情報（許可した場合のみ）：ボードに天気ディスプレイがある場合、ブラウザまたはスマートフォンが、あなたのいる場所の天気を表示するために位置情報を使用してよいか尋ねます。「位置情報」のセクションをご覧ください。",
+        "x_usoNotificacoesDaSuaConta": "利用状況：アカウントの通知、ボードの閲覧数、不正利用を防ぐための IP アドレスなどの技術的なセキュリティログ。",
+        "x_paraQueUsamos": "利用目的",
+        "x_criarSuaContaPermitirO": "アカウントの作成、ログインの提供、ボードとピンの表示。",
+        "x_enviarEMailsDaConta": "確認コードなど、アカウントに関するメールの送信。",
+        "x_moderarConteudoAtenderDenunciasE": "コンテンツのモデレーション、通報への対応、不正利用からのサービス保護。",
+        "x_naoVendemosSeusDados": "私たちはあなたのデータを販売しません。",
+        "x_localizacao": "位置情報",
+        "x_oDisplayDeClimaMostra": "天気ディスプレイは、あなたが許可した場合にのみ、あなたのいる場所の天気を表示します。許可はブラウザまたはスマートフォン自身が求め、端末の設定からいつでも拒否または取り消せます。拒否した場合は、ボードの持ち主が選んだ都市の天気を表示し、再度尋ねることはありません。あなたの選択は、アカウントを削除する（またはブラウザのデータを消去する）まで、この端末に保存されます。",
+        "x_suaPosicaoFicaGuardadaApenas": "あなたの位置情報は、最大30分間、端末内にのみ保存されます。位置情報をアカウントに紐づけたり、データベースに保存したりすることはありません。",
+        "x_paraBuscarOTempoO": "天気を取得するため、Pinz のサーバーは丸めた位置（約1km単位）を受け取り、天気予報サービスに渡します。都市名を表示するため、地図サービスにも渡します。サーバーは、丸めた位置とともに、応答を数分間（天気）または1日間（都市名）保持しますが、あなたを特定することはありません。",
+        "x_quemVeOQue": "誰に何が見えるか",
+        "x_seuMuralSoAbrePara": "あなたのボードは、あなたが設定した質問に答えた人にだけ開きます。秘密に設定したピンは、訪問者にはぼかして表示されます。他の人のボードにピンを残すと、あなたのユーザー名が署名として付きます。",
+        "x_servicosQueUsamos": "利用しているサービス",
+        "x_supabaseBancoDeDadosLogin": "Supabase：データベース、ログイン、ファイル保存。",
+        "x_googleLoginComOGoogle": "Google：Google ログイン、地図と場所の検索（Google マップ）。",
+        "x_metNorwayApiMetNo": "MET Norway（api.met.no）：丸めた位置をもとに、天気ディスプレイ用の天気予報を提供。",
+        "x_openstreetmapNominatimNomeDaCidade": "OpenStreetMap（Nominatim）：位置情報を許可した人の位置から都市名を取得。",
+        "x_resendEnvioDosEMails": "Resend：アカウントに関するメールの送信。",
+        "x_cloudflareProtecaoEEntregaDo": "Cloudflare：サイトの保護と配信。",
+        "x_mercadoPagoPagamentosDaAssinatura": "Mercado Pago：サブスクリプションとクレジットの決済。カードや Pix の情報は Mercado Pago に直接入力され、Pinz は受け取らず保存もせず、決済結果のみを受け取ります。",
+        "x_essesServicosTratamOsDados": "これらのサービスは各社のポリシーに従ってデータを処理し、ブラジル国外で処理する場合があります。",
+        "x_seusDireitos": "あなたの権利",
+        "x_vocePodePedirAcessoCorrecao": "データとアカウントの開示、訂正、削除を依頼でき、ボード上でいつでもご自身のピンを削除できます。データはアカウントが存在する間保管されます。通報とセキュリティログは、他の人を守るために必要な期間保管されることがあります。",
+        "x_criancas": "子ども",
+        "x_oPinzNaoEDestinado": "Pinz は13歳未満のお子様を対象としていません。",
+        "x_stripePagamentosEmDolar": "Stripe：中南米とポルトガル以外の方向けの米ドル決済。カード情報は Stripe に直接入力され、Pinz は受け取らず保存もせず、決済結果のみを受け取ります。"
+      }
+    },
+    "termos": {
+      "page": {
+        "x_aoCriarUmaContaOu": "アカウントを作成するか Pinz（pinz.digital）を利用することで、これらの規約に同意したことになります。",
+        "x_oServico": "サービス",
+        "x_oPinzPermiteCriarUm": "Pinz では、個人用ボードまたは2人で共有するボードを作成し、ボードにピン（メッセージ、写真、曲、その他の形式）を残せます。一部の機能は PINZ+ プランに含まれます。",
+        "x_suaConta": "あなたのアカウント",
+        "x_voceEResponsavelPeloAcesso": "アカウントへのアクセスと、アカウントで公開する内容については、あなたが責任を負います。",
+        "x_oNomeDeUsuarioE": "ユーザー名は一度だけ選べ、ブランド、企業、他の人を装うものであってはなりません。",
+        "x_conteudoEConduta": "コンテンツと行動",
+        "x_naoEPermitidoPublicarConteudo": "違法なコンテンツ、他の人への嫌がらせ・脅迫・晒し行為にあたるもの、第三者の権利を侵害するもの、ヌードや暴力を含むものを公開することは禁止されています。あなたは、送信する内容を公開する権利を有していることを表明します。",
+        "x_pinsPodemSerDenunciadosPodemos": "ピンは通報できます。これらの規約に違反するコンテンツを削除し、アカウントを停止することがあります。",
+        "x_pagamentos": "支払い",
+        "x_oPinzEUmaAssinatura": "PINZ+ は月額サブスクリプション（R$ 9.90、または Stripe でお支払いの方は米ドルでの同等額）で、Mercado Pago または Stripe を通じて請求されます。クレジットは別パックで販売されます。価格は購入前に表示されます。",
+        "x_vocePodeCancelarAAssinatura": "サブスクリプションは Pinz 内からいつでも、違約金なしで解約できます。PINZ+ は支払い済みの期間の終わりまで続き、新たな請求はありません。",
+        "x_vocePodeDesistirDeUma": "ブラジルの消費者保護法に定められているとおり、購入から7日以内であれば申し込みを撤回でき、Pinz へのお問い合わせから返金を依頼できます。ストアですでに使ったクレジットは差し引かれます。",
+        "x_seAAssinaturaDeixarDe": "サブスクリプションの支払いが止まると、アカウントは無料プランに戻ります。ピンは残りますが、PINZ+ の機能は使えなくなります。",
+        "x_osCreditosNaoSaoDinheiro": "クレジットは現金ではなく、譲渡や引き出しはできません。",
+        "x_disponibilidade": "提供状況",
+        "x_fazemosOPossivelParaManter": "サービスを稼働させ続けるよう最善を尽くしますが、現状のまま提供され、中断のない稼働は保証されません。機能やこれらの規約は、お知らせのうえ変更または終了することがあります。",
+        "x_privacidade": "プライバシー",
+        "x_oUsoDosSeusDados": "データの利用については<s0>プライバシーポリシー</s0>に記載しています。"
+      }
+    }
+  },
+  "components": {
+    "A11yHost": {
+      "acessibilidade": "アクセシビリティ",
+      "queremosQueOPinzSeja": "Pinz をすべての人にとって快適なものにしたいと考え、これらのオプションを用意しました。",
+      "daltonismo": "色覚",
+      "corrigeAsCoresDaTela": "画面の色をあなたの見え方に合わせて調整します。",
+      "tipoDeDaltonismo": "色覚のタイプ",
+      "tamanhoDoTexto": "文字サイズ",
+      "leitura": "読みやすさ",
+      "contrasteAlto": "ハイコントラスト",
+      "coresMaisFortesParaVer": "より強い色で文字を読みやすくします",
+      "fonteDeLeituraFacil": "読みやすいフォント",
+      "letrasDesenhadasParaNaoSerem": "見間違えにくい文字（ディスレクシアや弱視の方に役立ちます）",
+      "maisEspacoEntreLetrasE": "文字と行の間隔を広げる",
+      "oTextoFicaMenosApertado": "文章の詰まった印象が和らぎます",
+      "reduzirAnimacoes": "アニメーションを減らす",
+      "menosMovimentoNaTela": "画面の動きを少なくします",
+      "restaurarOPadrao": "初期設定に戻す"
+    },
+    "account": {
+      "AccountActions": {
+        "notificacoes": "通知",
+        "pesquisarUsuarios": "ユーザーを検索",
+        "menu": "メニュー",
+        "irParaOMeuMural": "マイボードへ",
+        "meuMural": "マイボード",
+        "m_notificacoesNovas": "通知（新着{v0}件）",
+        "m_notificacoes": "通知",
+        "m_menuPinsParaAprovar": "メニュー（承認待ちのピン{v0}件）",
+        "x_pesquisarUsuarios": "ユーザーを検索"
+      },
+      "AccountDrawer": {
+        "editarMural": "ボードを編集",
+        "instalarOPinz": "Pinz をインストール",
+        "compartilhar": "共有",
+        "adicionarATelaDeInicio": "ホーム画面に追加",
+        "adicionar": "追加",
+        "seNaoAparecerAOpcao": "オプションが表示されない場合は、Safari で Pinz を開いてください（iPhone の他のブラウザではアプリをインストールできません）。",
+        "metricas": "アクセス解析",
+        "muralCompartilhado": "共有ボード",
+        "desenvolvidoPorJefersonAraujo": "開発：Jeferson Araújo",
+        "x_toqueNoBotaoCompartilharDo": "Safari の<s0>共有</s0>ボタン（上向きの矢印が付いた四角）をタップします。",
+        "x_roleAListaEToque": "リストをスクロールして<s0>ホーム画面に追加</s0>をタップします。",
+        "x_confirmeEmAdicionarOPinz": "<s0>追加</s0>で確定します。Pinz がホーム画面に追加され、フルスクリーンで開きます。",
+        "x_devBy": "開発：<s0>Jeferson Araújo</s0>"
+      },
+      "BirthField": {
+        "dataDeNascimento": "生年月日",
+        "ddMmAaaa": "yyyy/mm/dd",
+        "escolherADataNoCalendario": "カレンダーで日付を選んでください"
+      },
+      "Carousel": {
+        "anterior": "前へ",
+        "proximo": "次へ"
+      },
+      "FirstTimeTip": {
+        "colocarUmPin": "ピンを貼る：",
+        "zoom": "ズーム：",
+        "mover": "移動：",
+        "bottons": "バッジ：",
+        "entendi": "わかりました",
+        "m_ola": "こんにちは、{v0}さん",
+        "m_queBomTerVocePor": "ご利用ありがとうございます。あなたとお客様にとって素晴らしい体験になることを願っています。",
+        "m_queBomTerVocePor2": "ご利用ありがとうございます！使い方はこちらです。",
+        "x_colocarUmPinCliqueOu": "<s0>ピンを貼る：</s0>ボードの空いている場所をクリック（またはタップ）します。",
+        "x_zoomPincaComDoisDedos": "<s0>ズーム：</s0>2本指でピンチするか、ダブルタップします。「縮小」でボード全体に戻ります。",
+        "x_moverComOMuralAproximado": "<s0>移動：</s0>ボードを拡大した状態でドラッグすると、残りの部分が見られます。",
+        "x_bottonsArrasteDaBarraDe": "<s0>バッジ：</s0>下のバーからボードへドラッグします。外すには、元の場所へドラッグして戻します。"
+      },
+      "GiftModal": {
+        "oPinzDesejaAVoce": "Pinz から、素敵な一日と、メッセージや写真、特別な瞬間にあふれた一年をお祈りします。おめでとうございます！",
+        "oQueVoceGanhou": "もらえるもの",
+        "todosOsTiposDePin": "すべてのピンの種類（イラスト、音楽、動画、音声、場所）とタイムカプセル。",
+        "segredoNosPinsMensagemDe": "シークレットピン、ウェルカムメッセージ、共有ボード、ピンとディスプレイの無制限化。",
+        "todosOsBottonsDeAniversario": "すべてのバースデーバッジ",
+        "elesEstaoNoPrimeiroBotao": "バッジバーの最初のバッジ（上に小さな矢印があるもの）に入っています。タップして1つ選び、ボードへドラッグしてください。",
+        "aproveitar": "お楽しみください！",
+        "seuPinzJaEstaAtivo": "PINZ+ はすでに有効です。すべての特典をお楽しみください。",
+        "obrigado": "ありがとうございます！",
+        "m_voceGanhouUmPresente": "ギフトが届きました！",
+        "m_felizAniversario": "お誕生日おめでとうございます！",
+        "m_ate": "{v0}まで",
+        "m_ateOFimDoMes": "今月末まで",
+        "m_alguem": "だれか",
+        "x_felizAniversario": "お誕生日おめでとうございます{v0}！🎉",
+        "x_pinzLiberadoDePresente": "<s0>PINZ+ が解放されました{v0}</s0>。プレゼントです。",
+        "x_todosOsBottonsDeAniversario": "<s0>すべてのバースデーバッジ</s0>を、PINZ+ のお祝いとしてプレゼント：風船、ケーキ、プレゼント、お祝いメッセージなどたくさん。",
+        "x_tePresenteouCom1Mes": "{v0}さんから PINZ+ 1か月分がプレゼントされました！"
+      },
+      "Modal": {
+        "voltarAoMenu": "メニューに戻る",
+        "fechar": "閉じる"
+      },
+      "MuralSettings": {
+        "tipoDoMural": "ボードの種類",
+        "nomeDoMural": "ボード名",
+        "mensagemDeBoasVindas": "ウェルカムメッセージ",
+        "pinz": "PINZ+",
+        "umRecadoQueAparecePara": "（質問に答えたあと）ボードに入った人に表示するメッセージ",
+        "apareceComoUmaJanelaQuando": "人が入ったときにウィンドウで表示されます。",
+        "resetarEsteMural": "このボードをリセットしますか？",
+        "todosOsRecadosPinsSerao": "すべてのメッセージ（ピン）が失われます。この操作は元に戻せません。",
+        "cancelar": "キャンセル",
+        "resetarMural": "ボードをリセット",
+        "excluirEsteMuralApagaTambem": "このボードを削除すると、アクセスとすべてのメッセージも消えます。この操作は元に戻せません。",
+        "simExcluir": "はい、削除します",
+        "excluirEsteMural": "このボードを削除",
+        "m_preenchaONomeDoMural": "ボード名を入力してください。",
+        "m_naoFoiPossivelSalvarConfira": "保存できませんでした。入力内容を確認して、もう一度お試しください。",
+        "m_salveiONomeMasNao": "名前は保存しましたが、種類は変更できませんでした（ストアで購入してください）。",
+        "m_naoFoiPossivelSalvarA": "その他は保存しましたが、セキュリティの質問は保存できませんでした。入力内容を確認して、もう一度お試しください。",
+        "m_salveiORestoMasNao": "その他は保存しましたが、ピンの表示期間は保存できませんでした。",
+        "m_salveiORestoMasNao2": "その他は保存しましたが、ウェルカムメッセージは保存できませんでした。最大280文字までです。",
+        "m_naoFoiPossivelResetarO": "ボードをリセットできませんでした。もう一度お試しください。",
+        "m_muralResetadoTodosOsRecados": "ボードをリセットしました。すべてのメッセージが削除されました。",
+        "m_naoFoiPossivelExcluirTente": "削除できませんでした。もう一度お試しください。",
+        "m_proximoTipo": "次の種類"
+      },
+      "MuralSetupModal": {
+        "configureSeuMural": "ボードを設定しましょう",
+        "seuMuralJaEstaNo": "あなたのボードはすでに公開されています。名前、開ける人、他の人のピンが残る期間を選んでください。すべて、あとから「マイボード」で変更できます。",
+        "nomeDoMural": "ボード名",
+        "exViagemDe2026": "例：2026年の旅行",
+        "depois": "あとで",
+        "m_deUmNomeAoMural": "ボードに名前を付けてください。",
+        "m_naoFoiPossivelSalvarTudo": "現在すべてを保存できません。入力内容を確認して、もう一度お試しください。"
+      },
+      "MyMuralsModal": {
+        "meusMurais": "マイボード",
+        "apagarMural": "ボードを削除",
+        "osBottonsSeraoDevolvidosA": "バッジは返却され、ピンは失われ、ボードにはアクセスできなくなります。",
+        "cancelar": "キャンセル",
+        "voceAindaNaoCriouNenhum": "まだボードを作成していません。",
+        "arrasteParaMudarAOrdem": "ドラッグして並び替え",
+        "editar": "編集",
+        "apagar": "削除",
+        "m_naoFoiPossivelMudarA": "現在順番を変更できません。もう一度お試しください。",
+        "m_naoFoiPossivelApagarAgora": "現在削除できません。もう一度お試しください。",
+        "m_publico": "公開",
+        "x_apagar": "「{v0}」を削除しますか？",
+        "x_voltarParaMeusMurais": "マイボードに戻る",
+        "x_criarNovoMural": "新しいボードを作成",
+        "x_reorder": "{title}の順番を変更：ドラッグ（またはキーボードの矢印キーを使用）",
+        "x_editTitle": "{title}を編集{locked, select, yes {（セキュリティの質問あり）} other {}}",
+        "x_edit": "{title}を編集",
+        "x_delete": "{title}を削除"
+      },
+      "NewMuralModal": {
+        "novoMural": "新しいボード",
+        "cancelar": "キャンセル",
+        "tipoDoMural": "ボードの種類",
+        "nomeDoMural": "ボード名",
+        "exViagemDe2026": "例：2026年の旅行",
+        "m_creditosInsuficientesParaEsteMural": "このボードに必要なクレジットが足りません。",
+        "m_comprarMuraisEParaQuem": "ボードの購入は PINZ+ の会員向けです。",
+        "m_naoFoiPossivelComprarAgora": "現在購入できません。もう一度お試しください。",
+        "m_preenchaONomeDoMural": "ボード名を入力してください。",
+        "m_voceChegouAoLimiteDe": "ボードの上限に達しました。",
+        "m_naoFoiPossivelCriarO": "現在ボードを作成できません。もう一度お試しください。",
+        "m_creditos": "{v0}クレジット",
+        "m_proximoTipo": "次の種類",
+        "m_compreEsteTipoDeMural": "この種類のボードで作成するには購入してください",
+        "m_criarMural": "ボードを作成",
+        "x_comprarOMuralPorCreditos": "ボード「{v0}」を <s0>{v1}クレジット</s0>で購入しますか？",
+        "x_voceTem": "所持：<n0></n0> <s1>{v0}</s1>{v1}",
+        "x_comprar": "<n0></n0>{v0}で購入"
+      },
+      "NicknameSetup": {
+        "completeOSeuPerfil": "プロフィールを完成させましょう",
+        "escolhaOSeuNomeDe": "ユーザー名を選んでください。他の人があなたを見つけてボードを開くときに使われます。保存後は変更できません。",
+        "m_naoFoiPossivelSalvarAgora": "現在保存できません。もう一度お試しください。"
+      },
+      "NotificationsModal": {
+        "notificacoes": "通知",
+        "carregandoAsNotificacoes": "通知を読み込み中"
+      }
+    }
+  }
+}

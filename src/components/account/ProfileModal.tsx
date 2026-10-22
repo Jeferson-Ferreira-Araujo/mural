@@ -164,7 +164,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       </dl>
       <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#e1d3ba] bg-white/60 p-4 text-sm">
         <span className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{tx("x_language")}</span>
-        <LanguagePicker />
+        <LanguagePicker variant="icon" />
       </div>
 
 

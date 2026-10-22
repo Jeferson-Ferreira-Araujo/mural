@@ -72,14 +72,16 @@ const VERSES = new Map(verses.map((v) => [v.ref, v]));
 
 /** O texto do dia no idioma da pessoa (sem tradução, devolve o próprio texto). */
 export function localizeDailyText(text: string | undefined, locale: string): string | undefined {
-  if (!text || (locale !== "en" && locale !== "es")) return text;
-  return INDEX.get(text)?.[locale] ?? text;
+  if (!text || locale === "pt") return text;
+  const l = locale === "es" ? "es" : "en"; // idiomas sem tradução própria usam o inglês
+  return INDEX.get(text)?.[l] ?? text;
 }
 
 /** Texto e referência do dia no idioma da pessoa: versículos pela referência, mensagens e frases pelo texto. Sem tradução, devolve como veio. */
 export function localizeDaily(text: string | undefined, ref: string | null | undefined, locale: string): { text?: string; ref?: string | null } {
-  if (locale !== "en" && locale !== "es") return { text, ref };
+  if (locale === "pt") return { text, ref };
+  const l = locale === "es" ? "es" : "en";
   const v = ref ? VERSES.get(ref) : undefined;
-  if (v) return { text: v[locale].text, ref: v[locale].ref };
+  if (v) return { text: v[l].text, ref: v[l].ref };
   return { text: localizeDailyText(text, locale), ref };
 }

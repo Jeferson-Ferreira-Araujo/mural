@@ -112,13 +112,13 @@ const ES: Dict = {
   ],
 };
 
-const DICT: Record<Locale, Dict> = { pt: PT, en: EN, es: ES };
+const DICT: Partial<Record<Locale, Dict>> = { pt: PT, en: EN, es: ES };
 
 export function useWT(): Dict & { loc: Locale; tag: string } {
   const l = useLocale();
   const loc: Locale = isLocale(l) ? l : "pt";
-  return { ...DICT[loc], loc, tag: LOCALE_TAGS[loc] };
+  return { ...(DICT[loc] ?? EN), loc, tag: LOCALE_TAGS[loc] };
 }
 
 /** Mesma coisa fora de um componente (ex.: a lista de fusos). */
-export const wtFor = (loc: Locale) => ({ ...DICT[loc], loc, tag: LOCALE_TAGS[loc] });
+export const wtFor = (loc: Locale) => ({ ...(DICT[loc] ?? EN), loc, tag: LOCALE_TAGS[loc] });

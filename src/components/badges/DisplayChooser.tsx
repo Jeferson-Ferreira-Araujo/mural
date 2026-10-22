@@ -5,7 +5,7 @@ import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShap
 import { DISPLAY_CATS, DisplayCard, displayName, splitDisplayId } from "../widgets";
 import { sampleFor } from "./StoreModal";
 import { useTranslations, useLocale } from "next-intl";
-import type { DemoLocale } from "@/data/demoText";
+import { demoLocaleOf } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 
 /**
@@ -16,7 +16,7 @@ import { useLit } from "@/i18n/literal";
 export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick: (id: string) => void; onStore: () => void }) {
   const tx = useTranslations("components.badges.DisplayChooser");
   const tl = useLit();
-  const demoLocale = useLocale() as DemoLocale;
+  const demoLocale = demoLocaleOf(useLocale());
   const [cat, setCat] = useState<string | null>(null);
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada estilo (retangular por padrão)
 

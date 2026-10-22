@@ -1,0 +1,400 @@
+{
+  "common": {
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "language": "Sprache"
+  },
+  "auth": {
+    "aria": "Anmelden oder registrieren",
+    "tabLogin": "Anmelden",
+    "tabSignup": "Konto erstellen",
+    "email": "E-Mail",
+    "emailPlaceholder": "du@email.com",
+    "password": "Passwort",
+    "show": "Anzeigen",
+    "hide": "Verbergen",
+    "remember": "Angemeldet bleiben",
+    "wait": "Bitte warten…",
+    "errors": {
+      "nickTaken": "Dieser Benutzername ist bereits vergeben.",
+      "nickInvalid": "Wähle einen gültigen Benutzernamen.",
+      "emailInvalid": "Gib eine gültige E-Mail-Adresse ein.",
+      "passwordRequired": "Gib dein Passwort ein.",
+      "codeFail": "Wir konnten den Code gerade nicht senden. Bitte versuche es gleich noch einmal.",
+      "badCredentials": "E-Mail oder Passwort falsch.",
+      "loginFail": "Wir konnten dich gerade nicht anmelden. Bitte versuche es noch einmal.",
+      "emailExists": "Mit dieser E-Mail gibt es bereits ein Konto. Melde dich mit deinem Passwort an.",
+      "weakPassword": "Passwort zu schwach. Verwende Buchstaben, Zahlen und mehr Zeichen.",
+      "nickJustTaken": "Dieser Benutzername wurde gerade vergeben. Wähle einen anderen.",
+      "tooMany": "Zu viele Versuche. Warte einen Moment und versuche es erneut.",
+      "signupFail": "Wir konnten das Konto gerade nicht erstellen. Bitte versuche es noch einmal."
+    },
+    "confirm": {
+      "title": "Bestätige deine E-Mail ✉️",
+      "body": "Wir haben einen Link an <strong>{email}</strong> geschickt. Komm nach der Bestätigung hierher zurück und melde dich an.",
+      "done": "Ich habe bestätigt, lass mich rein"
+    }
+  },
+  "menu": {
+    "profile": "Profil bearbeiten",
+    "profileHint": "Foto, Passwort und Kontodaten",
+    "myMurals": "Meine Pinnwände",
+    "myMuralsHint": "Verwalte, gestalte und öffne deine Pinnwände.",
+    "myPins": "Meine Pins",
+    "approvalsHint": "Freigaben und archivierte Pins",
+    "pending": "{count} warten auf deine Freigabe",
+    "visitors": "Besucher",
+    "shared": "Gemeinsame Pinnwand",
+    "metrics": "Statistiken",
+    "metricsHint": "Besuche und gesetzte Pins.",
+    "saveImage": "Pinnwand-Bild speichern",
+    "followers": "Follower und Folge ich",
+    "followersHint": "Wer dir folgt und wem du folgst.",
+    "earn": "Credits verdienen",
+    "plans": "Tarife",
+    "plansHint": "Dein aktueller Tarif: {plan}.",
+    "install": "App installieren",
+    "accessibility": "Barrierefreiheit",
+    "accessibilityHint": "Farbenblindheit, größere Schrift und Kontrast",
+    "admin": "Seite verwalten",
+    "signOut": "Abmelden",
+    "signOutQuestion": "Abmelden?",
+    "signOutConfirm": "Abmelden",
+    "keep": "Abbrechen",
+    "yourAccount": "Dein Konto",
+    "sharedHint": "Eine Pinnwand nur für euch zwei (PINZ+)",
+    "invites": "{count, plural, one {# Einladung für dich} other {# Einladungen für dich}}",
+    "saveImageHint": "Ein hochwertiges Bild zum Posten",
+    "earnHint": "Aufgaben, die dir sofort Credits bringen.",
+    "adminHint": "Nutzer, Pinnwände, Credits und Funktionen",
+    "installHint": "Pinz auf deinem Startbildschirm, im Vollbild",
+    "closeMenu": "Menü schließen",
+    "accountMenu": "Kontomenü"
+  },
+  "app": {
+    "auth": {
+      "callback": {
+        "page": {
+          "ops": "Hoppla!",
+          "voltarParaOLogin": "Zurück zur Anmeldung",
+          "entrando": "Anmeldung läuft…",
+          "m_oLinkExpirouOuJa": "Der Link ist abgelaufen oder wurde schon benutzt. Fordere einen neuen an.",
+          "m_naoFoiPossivelConcluirO": "Wir konnten die Anmeldung nicht abschließen. Öffne den Link im selben Browser, in dem du ihn angefordert hast, oder fordere einen neuen an."
+        }
+      },
+      "nova_senha": {
+        "page": {
+          "linkExpirado": "Link abgelaufen",
+          "esteLinkJaFoiUsado": "Dieser Link wurde bereits benutzt oder ist abgelaufen. Melde dich in deinem Konto an und fordere unter „Profil bearbeiten“ einen neuen an.",
+          "irParaOLogin": "Zur Anmeldung",
+          "novaSenha": "Neues Passwort",
+          "repitaANovaSenha": "Neues Passwort wiederholen",
+          "m_asSenhasNaoSaoIguais": "Die Passwörter stimmen nicht überein.",
+          "m_escolhaUmaSenhaDiferenteDa": "Wähle ein Passwort, das sich vom aktuellen unterscheidet.",
+          "m_naoFoiPossivelTrocarA": "Wir konnten das Passwort gerade nicht ändern. Fordere einen neuen Link an und versuche es erneut.",
+          "m_salvarNovaSenha": "Neues Passwort speichern"
+        }
+      }
+    },
+    "criar": {
+      "page": {
+        "irParaOMeuMural": "Zu meiner Pinnwand",
+        "etapas": "Schritte",
+        "nomeDoMural": "Name der Pinnwand",
+        "escrevaONomeCompletoDo": "Schreibe den vollständigen Namen, so wie du möchtest.",
+        "exMuralJeferson": "Z. B.: Jefersons Pinnwand",
+        "querDeixarOMuralPrivado": "Möchtest du die Pinnwand privat machen?",
+        "opcionalCrieUmaPerguntaQue": "Optional. Erstelle eine Frage, die nur Menschen aus deinem Umfeld beantworten können. Wenn du hier nichts angibst und schon eine Frage hast, verwendet diese Pinnwand dieselbe.",
+        "perguntaOpcional": "Frage (optional)",
+        "exQualEraMeuApelido": "Z. B.: Wie war mein Spitzname in der Schule?",
+        "resposta": "Antwort",
+        "quemForResponderPrecisaDigitar": "Wer antwortet, muss sie genau so eingeben, mit denselben Akzenten und Satzzeichen (Groß- und Kleinschreibung spielt keine Rolle).",
+        "exJef": "Z. B.: Jef",
+        "tudoCerto": "Alles in Ordnung?",
+        "mural": "Pinnwand",
+        "acesso": "Zugriff",
+        "publicoQualquerPessoaComO": "Öffentlich: Jeder mit dem Link kann sie öffnen",
+        "voltar": "Zurück",
+        "m_voceChegouAoLimiteDe": "Du hast das Limit von {v0} Pinnwänden erreicht.",
+        "m_oPlanoGratuitoInclui1": "Der kostenlose Tarif enthält 1 Pinnwand. Mit PINZ+ kannst du bis zu 10 haben.",
+        "m_naoFoiPossivelCriarO": "Wir konnten die Pinnwand gerade nicht erstellen. Bitte versuche es noch einmal.",
+        "m_todosOsSeusMuraisEstao": "Alle deine Pinnwände sind online",
+        "m_seuMuralJaEstaNo": "Deine Pinnwand ist schon online",
+        "m_oLimiteDoPinzE": "Das PINZ+-Limit liegt bei {v0} Pinnwänden.",
+        "m_oPlanoGratuitoInclui12": "Der kostenlose Tarif enthält 1 Pinnwand. Mit PINZ+ kannst du bis zu 10 Pinnwände haben.",
+        "m_vamosCriarMaisUmMural": "Erstellen wir noch eine Pinnwand",
+        "m_comoOSeuMuralVai": "Wie soll deine Pinnwand heißen?",
+        "m_criarMeuMural": "Meine Pinnwand erstellen",
+        "x_resposta": "Antwort: {v0}"
+      }
+    },
+    "loading": {
+      "carregando": "Wird geladen",
+      "carregando2": "Wird geladen…"
+    },
+    "not_found": {
+      "muralNaoEncontrado": "Pinnwand nicht gefunden",
+      "esseEnderecoNaoExisteAinda": "Diese Adresse gibt es (noch) nicht. Wie wäre es, deine eigene zu erstellen?",
+      "criarNovoMural": "Neue Pinnwand erstellen"
+    },
+    "pagamento": {
+      "page": {
+        "voltandoParaOPinz": "Zurück zu Pinz…"
+      }
+    },
+    "exclusao_de_dados": {
+      "page": {
+        "x_vocePodePedirAExclusao": "Du kannst die Löschung deines Kontos und aller Daten verlangen, die Pinz (pinz.digital) über dich speichert, einschließlich der Daten, die über die Anmeldung mit Google, Facebook oder Apple eingegangen sind.",
+        "x_comoPedir": "So fragst du an",
+        "x_envieUmEMailPara": "Sende eine E-Mail an <s0>{v0}</s0> mit dem Betreff „Datenlöschung“.",
+        "x_escrevaDoMesmoEMail": "Schreibe von derselben E-Mail-Adresse wie dein Konto und nenne uns deinen Benutzernamen (das @ deiner Pinnwand).",
+        "x_confirmaremosOPedidoPorResposta": "Wir bestätigen die Anfrage per Antwort und löschen die Daten innerhalb von 30 Tagen.",
+        "x_oQueEExcluido": "Was gelöscht wird",
+        "x_suaContaOEMail": "Dein Konto, deine E-Mail-Adresse, dein Benutzername und dein Profilfoto.",
+        "x_seusMuraisETodosOs": "Deine Pinnwände und alle Pins, die du gepostet hast, sowie die hochgeladenen Dateien (Fotos, Zeichnungen, Audio und Videos).",
+        "x_notificacoesBottonsECreditosDa": "Benachrichtigungen, Buttons und Credits des Kontos.",
+        "x_registrosDePagamentosPodemSer": "Zahlungsbelege können so lange aufbewahrt werden, wie das Gesetz es verlangt. Wenn du die Anmeldung über Facebook genutzt hast, kannst du Pinz auch in den Facebook-Einstellungen unter Apps und Websites entfernen."
+      }
+    },
+    "privacidade": {
+      "page": {
+        "x_oPinzPinzDigitalE": "Pinz (pinz.digital) ist eine Pinnwand für Nachrichten. Diese Seite erklärt, welche Daten wir verwenden und warum.",
+        "x_dadosQueColetamos": "Daten, die wir erheben",
+        "x_contaEMailNomeDe": "Konto: E-Mail-Adresse, Benutzername (Nickname) und, falls du eines hochlädst, das Profilfoto. Wenn du dich mit Google anmeldest, erhalten wir E-Mail-Adresse und Namen des Google-Kontos.",
+        "x_dataDeNascimentoOpcionalSe": "Geburtsdatum (optional): Wenn du es im Willkommensschritt angibst, speichern wir es, um zu bestätigen, dass du mindestens 13 Jahre alt bist. Nur du hast Zugriff darauf; es wird niemandem angezeigt.",
+        "x_conteudoOsPinsQueVoce": "Inhalte: die Pins, die du postest (Texte, Listen, Fotos, Zeichnungen, Audio, Videos, Songs und Orte), die Frage und Antwort, die deine Pinnwand schützen, und das Passwort der gemeinsamen Pinnwand (verschlüsselt gespeichert).",
+        "x_visitasESeguidoresQuandoVoce": "Besuche und Follower: Wenn du angemeldet die Pinnwand einer anderen Person besuchst, erscheinen dein @ und dein Profilfoto in deren Besucherliste (ohne Datum). Die Personen, denen du folgst, stehen in einer Liste, die nur du siehst, und Personen, die dir folgen, erscheinen nur als Zahl.",
+        "x_enquetesAoVotarNumaEnquete": "Umfragen: Wenn du bei einer Umfrage abstimmst, speichern wir die gewählte Option verknüpft mit deinem Konto (eine Stimme pro Person); der Inhaber der Pinnwand sieht nur die Summe und die Prozentwerte, nie, wer wofür gestimmt hat.",
+        "x_localizacaoSoQuandoVocePermite": "Standort (nur wenn du es erlaubst): Wenn die Pinnwand ein Wetter-Display hat, fragt der Browser oder das Handy, ob dein Standort verwendet werden darf, um das Wetter an deinem Ort anzuzeigen. Siehe den Abschnitt „Standort“.",
+        "x_usoNotificacoesDaSuaConta": "Nutzung: Benachrichtigungen deines Kontos, Aufrufzahlen von Pinnwänden und technische Sicherheitsprotokolle, etwa die IP-Adresse, um Missbrauch zu verhindern.",
+        "x_paraQueUsamos": "Wofür wir sie verwenden",
+        "x_criarSuaContaPermitirO": "Dein Konto erstellen, die Anmeldung ermöglichen und deine Pinnwand und Pins anzeigen.",
+        "x_enviarEMailsDaConta": "E-Mails zum Konto senden, etwa den Bestätigungscode.",
+        "x_moderarConteudoAtenderDenunciasE": "Inhalte moderieren, Meldungen bearbeiten und den Dienst vor Missbrauch schützen.",
+        "x_naoVendemosSeusDados": "Wir verkaufen deine Daten nicht.",
+        "x_localizacao": "Standort",
+        "x_oDisplayDeClimaMostra": "Das Wetter-Display zeigt das Wetter an deinem Ort, und nur, wenn du es erlaubst. Die Berechtigung wird vom Browser oder Handy selbst abgefragt, und du kannst sie jederzeit in den Geräteeinstellungen verweigern oder widerrufen. Wenn du sie verweigerst, zeigt das Display das Wetter der vom Inhaber der Pinnwand gewählten Stadt, und wir fragen nicht erneut: Deine Entscheidung wird auf diesem Gerät gespeichert, bis du dein Konto löschst (oder die Browserdaten löschst).",
+        "x_suaPosicaoFicaGuardadaApenas": "Deine Position wird nur auf deinem Gerät gespeichert, bis zu 30 Minuten lang. Wir verknüpfen die Position nicht mit deinem Konto und speichern sie nicht in der Datenbank.",
+        "x_paraBuscarOTempoO": "Um das Wetter abzurufen, erhält der Pinz-Server die gerundete Position (etwa 1 km) und gibt sie an den Wettervorhersagedienst weiter; für die Anzeige des Städtenamens gibt er sie auch an den Kartendienst weiter. Der Server behält die Antwort einige Minuten (das Wetter) bzw. einen Tag (den Städtenamen) zusammen mit der gerundeten Position, ohne dich zu identifizieren.",
+        "x_quemVeOQue": "Wer was sieht",
+        "x_seuMuralSoAbrePara": "Deine Pinnwand öffnet sich nur für Personen, die die von dir festgelegte Frage beantworten. Als geheim markierte Pins erscheinen für Besucher unscharf. Wenn du einen Pin auf der Pinnwand einer anderen Person hinterlässt, wird er mit deinem Benutzernamen signiert.",
+        "x_servicosQueUsamos": "Dienste, die wir nutzen",
+        "x_supabaseBancoDeDadosLogin": "Supabase: Datenbank, Anmeldung und Dateispeicher.",
+        "x_googleLoginComOGoogle": "Google: Anmeldung mit Google sowie Karten und Ortssuche (Google Maps).",
+        "x_metNorwayApiMetNo": "MET Norway (api.met.no): Wettervorhersage für das Wetter-Display, anhand der gerundeten Position.",
+        "x_openstreetmapNominatimNomeDaCidade": "OpenStreetMap (Nominatim): Städtename zur Position derjenigen, die den Standort erlauben.",
+        "x_resendEnvioDosEMails": "Resend: Versand der E-Mails zum Konto.",
+        "x_cloudflareProtecaoEEntregaDo": "Cloudflare: Schutz und Auslieferung der Seite.",
+        "x_mercadoPagoPagamentosDaAssinatura": "Mercado Pago: Zahlungen für das Abonnement und die Credits. Karten- oder Pix-Daten werden direkt bei Mercado Pago eingegeben; Pinz erhält und speichert sie nicht, nur das Zahlungsergebnis.",
+        "x_essesServicosTratamOsDados": "Diese Dienste verarbeiten Daten nach ihren eigenen Richtlinien und können sie außerhalb Brasiliens verarbeiten.",
+        "x_seusDireitos": "Deine Rechte",
+        "x_vocePodePedirAcessoCorrecao": "Du kannst Auskunft, Berichtigung oder Löschung deiner Daten und deines Kontos verlangen und deine Pins jederzeit direkt auf der Pinnwand löschen. Wir speichern die Daten, solange das Konto besteht; Meldungen und Sicherheitsprotokolle können so lange aufbewahrt werden, wie es zum Schutz anderer Personen nötig ist.",
+        "x_criancas": "Kinder",
+        "x_oPinzNaoEDestinado": "Pinz richtet sich nicht an Kinder unter 13 Jahren.",
+        "x_stripePagamentosEmDolar": "Stripe: Zahlungen in US-Dollar für Personen außerhalb Lateinamerikas und Portugals. Kartendaten werden direkt bei Stripe eingegeben; Pinz erhält und speichert sie nicht, nur das Zahlungsergebnis."
+      }
+    },
+    "termos": {
+      "page": {
+        "x_aoCriarUmaContaOu": "Mit der Erstellung eines Kontos oder der Nutzung von Pinz (pinz.digital) stimmst du diesen Bedingungen zu.",
+        "x_oServico": "Der Dienst",
+        "x_oPinzPermiteCriarUm": "Mit Pinz kannst du eine persönliche Pinnwand oder eine Pinnwand für zwei Personen erstellen und Pins (Nachrichten, Fotos, Songs und andere Formate) auf Pinnwänden hinterlassen. Einige Funktionen gehören zum Tarif PINZ+.",
+        "x_suaConta": "Dein Konto",
+        "x_voceEResponsavelPeloAcesso": "Du bist für den Zugang zu deinem Konto und für das verantwortlich, was du damit veröffentlichst.",
+        "x_oNomeDeUsuarioE": "Der Benutzername wird einmal gewählt und darf keine Marken, Unternehmen oder andere Personen nachahmen.",
+        "x_conteudoEConduta": "Inhalte und Verhalten",
+        "x_naoEPermitidoPublicarConteudo": "Es ist nicht erlaubt, rechtswidrige Inhalte zu veröffentlichen, Inhalte, die andere belästigen, bedrohen oder bloßstellen, die Rechte Dritter verletzen oder Nacktheit oder Gewalt enthalten. Du erklärst, dass du das Recht hast, zu veröffentlichen, was du sendest.",
+        "x_pinsPodemSerDenunciadosPodemos": "Pins können gemeldet werden. Wir dürfen Inhalte entfernen und Konten sperren, die gegen diese Bedingungen verstoßen.",
+        "x_pagamentos": "Zahlungen",
+        "x_oPinzEUmaAssinatura": "PINZ+ ist ein monatliches Abonnement (R$ 9,90 oder der entsprechende Betrag in US-Dollar für alle, die über Stripe zahlen), das über Mercado Pago oder Stripe abgerechnet wird; Credits werden in separaten Paketen verkauft. Die Preise werden vor dem Kauf angezeigt.",
+        "x_vocePodeCancelarAAssinatura": "Du kannst das Abonnement jederzeit in Pinz kündigen, ohne Strafe. PINZ+ läuft bis zum Ende des bereits bezahlten Zeitraums weiter, danach gibt es keine neuen Abbuchungen.",
+        "x_vocePodeDesistirDeUma": "Du kannst innerhalb von 7 Tagen von einem Kauf zurücktreten, wie es das brasilianische Verbraucherschutzgesetz vorsieht, und über den Pinz-Kontakt eine Erstattung verlangen. Bereits im Shop ausgegebene Credits werden abgezogen.",
+        "x_seAAssinaturaDeixarDe": "Wird das Abonnement nicht mehr bezahlt, kehrt das Konto zum kostenlosen Tarif zurück: Deine Pins bleiben, aber PINZ+-Funktionen stehen nicht mehr zur Verfügung.",
+        "x_osCreditosNaoSaoDinheiro": "Credits sind kein Geld und können nicht übertragen oder ausgezahlt werden.",
+        "x_disponibilidade": "Verfügbarkeit",
+        "x_fazemosOPossivelParaManter": "Wir geben unser Bestes, den Dienst online zu halten, er wird aber so bereitgestellt, wie er ist, ohne Gewähr für ununterbrochenen Betrieb. Wir können Funktionen und diese Bedingungen mit Ankündigung ändern oder einstellen.",
+        "x_privacidade": "Datenschutz",
+        "x_oUsoDosSeusDados": "Die Verwendung deiner Daten ist in der <s0>Datenschutzerklärung</s0> beschrieben."
+      }
+    }
+  },
+  "components": {
+    "A11yHost": {
+      "acessibilidade": "Barrierefreiheit",
+      "queremosQueOPinzSeja": "Wir möchten, dass Pinz für alle ein großartiges Erlebnis ist. Deshalb haben wir diese Optionen geschaffen.",
+      "daltonismo": "Farbenblindheit",
+      "corrigeAsCoresDaTela": "Passt die Bildschirmfarben an deine Sehweise an.",
+      "tipoDeDaltonismo": "Art der Farbenblindheit",
+      "tamanhoDoTexto": "Schriftgröße",
+      "leitura": "Lesen",
+      "contrasteAlto": "Hoher Kontrast",
+      "coresMaisFortesParaVer": "Kräftigere Farben für besser lesbaren Text",
+      "fonteDeLeituraFacil": "Leicht lesbare Schrift",
+      "letrasDesenhadasParaNaoSerem": "Buchstaben, die sich nicht verwechseln lassen (hilft bei Legasthenie und eingeschränktem Sehvermögen)",
+      "maisEspacoEntreLetrasE": "Mehr Platz zwischen Buchstaben und Zeilen",
+      "oTextoFicaMenosApertado": "Der Text wirkt weniger gedrängt",
+      "reduzirAnimacoes": "Animationen reduzieren",
+      "menosMovimentoNaTela": "Weniger Bewegung auf dem Bildschirm",
+      "restaurarOPadrao": "Standardwerte wiederherstellen"
+    },
+    "account": {
+      "AccountActions": {
+        "notificacoes": "Benachrichtigungen",
+        "pesquisarUsuarios": "Nutzer suchen",
+        "menu": "Menü",
+        "irParaOMeuMural": "Zu meiner Pinnwand",
+        "meuMural": "Meine Pinnwand",
+        "m_notificacoesNovas": "Benachrichtigungen ({v0} neu)",
+        "m_notificacoes": "Benachrichtigungen",
+        "m_menuPinsParaAprovar": "Menü ({v0} Pins zur Freigabe)",
+        "x_pesquisarUsuarios": "Nutzer suchen"
+      },
+      "AccountDrawer": {
+        "editarMural": "Pinnwand bearbeiten",
+        "instalarOPinz": "Pinz installieren",
+        "compartilhar": "Teilen",
+        "adicionarATelaDeInicio": "Zum Home-Bildschirm",
+        "adicionar": "Hinzufügen",
+        "seNaoAparecerAOpcao": "Wenn die Option nicht erscheint, öffne Pinz in Safari (andere iPhone-Browser können keine Apps installieren).",
+        "metricas": "Statistiken",
+        "muralCompartilhado": "Gemeinsame Pinnwand",
+        "desenvolvidoPorJefersonAraujo": "Entwickelt von Jeferson Araújo",
+        "x_toqueNoBotaoCompartilharDo": "Tippe in Safari auf die Schaltfläche <s0>Teilen</s0> (das Quadrat mit dem Pfeil nach oben).",
+        "x_roleAListaEToque": "Scrolle durch die Liste und tippe auf <s0>Zum Home-Bildschirm</s0>.",
+        "x_confirmeEmAdicionarOPinz": "Bestätige mit <s0>Hinzufügen</s0>. Pinz bleibt auf deinem Home-Bildschirm und öffnet sich im Vollbild.",
+        "x_devBy": "Entwickelt von <s0>Jeferson Araújo</s0>"
+      },
+      "BirthField": {
+        "dataDeNascimento": "Geburtsdatum",
+        "ddMmAaaa": "TT.MM.JJJJ",
+        "escolherADataNoCalendario": "Wähle das Datum im Kalender"
+      },
+      "Carousel": {
+        "anterior": "Zurück",
+        "proximo": "Weiter"
+      },
+      "FirstTimeTip": {
+        "colocarUmPin": "Pin setzen:",
+        "zoom": "Zoom:",
+        "mover": "Verschieben:",
+        "bottons": "Buttons:",
+        "entendi": "Verstanden",
+        "m_ola": "Hallo {v0}",
+        "m_queBomTerVocePor": "Schön, dass du da bist. Wir hoffen, dass es für dich und deine Kunden ein großartiges Erlebnis wird.",
+        "m_queBomTerVocePor2": "Schön, dass du da bist! So funktioniert es:",
+        "x_colocarUmPinCliqueOu": "<s0>Pin setzen:</s0> Klicke (oder tippe) auf eine freie Stelle der Pinnwand.",
+        "x_zoomPincaComDoisDedos": "<s0>Zoom:</s0> Ziehe mit zwei Fingern zusammen oder tippe doppelt. Mit „Verkleinern“ siehst du wieder die ganze Pinnwand.",
+        "x_moverComOMuralAproximado": "<s0>Verschieben:</s0> Ziehe bei vergrößerter Pinnwand, um den Rest zu sehen.",
+        "x_bottonsArrasteDaBarraDe": "<s0>Buttons:</s0> Ziehe sie aus der unteren Leiste auf die Pinnwand. Zum Entfernen ziehst du sie zurück."
+      },
+      "GiftModal": {
+        "oPinzDesejaAVoce": "Pinz wünscht dir einen wunderbaren Tag und ein Jahr voller Nachrichten, Fotos und besonderer Momente. Herzlichen Glückwunsch!",
+        "oQueVoceGanhou": "Was du bekommen hast",
+        "todosOsTiposDePin": "Alle Pin-Arten (Zeichnung, Musik, Video, Sprache und Ort) und die Zeitkapsel.",
+        "segredoNosPinsMensagemDe": "Geheime Pins, Willkommensnachricht, gemeinsame Pinnwand sowie unbegrenzte Pins und Displays.",
+        "todosOsBottonsDeAniversario": "Alle Geburtstags-Buttons",
+        "elesEstaoNoPrimeiroBotao": "Sie befinden sich im ersten Button deiner Button-Leiste (dem mit dem kleinen Pfeil oben). Tippe darauf, wähle einen aus und ziehe ihn auf die Pinnwand.",
+        "aproveitar": "Viel Spaß!",
+        "seuPinzJaEstaAtivo": "Dein PINZ+ ist bereits aktiv. Genieße alle Vorteile.",
+        "obrigado": "Danke!",
+        "m_voceGanhouUmPresente": "Du hast ein Geschenk bekommen!",
+        "m_felizAniversario": "Alles Gute zum Geburtstag!",
+        "m_ate": "bis {v0}",
+        "m_ateOFimDoMes": "bis Ende des Monats",
+        "m_alguem": "Jemand",
+        "x_felizAniversario": "Alles Gute zum Geburtstag{v0}! 🎉",
+        "x_pinzLiberadoDePresente": "<s0>PINZ+ freigeschaltet{v0}</s0>, als Geschenk.",
+        "x_todosOsBottonsDeAniversario": "<s0>Alle Geburtstags-Buttons</s0>, als Geschenk für dein PINZ+: Luftballons, Torten, Geschenke, Glückwunschkarten und vieles mehr.",
+        "x_tePresenteouCom1Mes": "{v0} hat dir 1 Monat PINZ+ geschenkt!"
+      },
+      "Modal": {
+        "voltarAoMenu": "Zurück zum Menü",
+        "fechar": "Schließen"
+      },
+      "MuralSettings": {
+        "tipoDoMural": "Art der Pinnwand",
+        "nomeDoMural": "Name der Pinnwand",
+        "mensagemDeBoasVindas": "Willkommensnachricht",
+        "pinz": "PINZ+",
+        "umRecadoQueAparecePara": "Eine Nachricht für alle, die deine Pinnwand betreten (nach Beantwortung der Frage)",
+        "apareceComoUmaJanelaQuando": "Wird als Fenster angezeigt, wenn die Person eintritt.",
+        "resetarEsteMural": "Diese Pinnwand zurücksetzen?",
+        "todosOsRecadosPinsSerao": "Alle Nachrichten (Pins) gehen verloren. Das lässt sich nicht rückgängig machen.",
+        "cancelar": "Abbrechen",
+        "resetarMural": "Pinnwand zurücksetzen",
+        "excluirEsteMuralApagaTambem": "Wenn du diese Pinnwand löschst, werden auch ihr Zugang und alle ihre Nachrichten gelöscht. Das lässt sich nicht rückgängig machen.",
+        "simExcluir": "Ja, löschen",
+        "excluirEsteMural": "Diese Pinnwand löschen",
+        "m_preenchaONomeDoMural": "Gib den Namen der Pinnwand ein.",
+        "m_naoFoiPossivelSalvarConfira": "Wir konnten nicht speichern. Prüfe die Felder und versuche es noch einmal.",
+        "m_salveiONomeMasNao": "Ich habe den Namen gespeichert, konnte aber die Art nicht ändern (im Shop kaufen).",
+        "m_naoFoiPossivelSalvarA": "Wir konnten die Sicherheitsfrage nicht speichern. Prüfe die Felder und versuche es noch einmal.",
+        "m_salveiORestoMasNao": "Ich habe den Rest gespeichert, konnte aber die Anzeigedauer der Pins nicht speichern.",
+        "m_salveiORestoMasNao2": "Ich habe den Rest gespeichert, konnte aber die Willkommensnachricht nicht speichern. Sie darf bis zu 280 Zeichen lang sein.",
+        "m_naoFoiPossivelResetarO": "Wir konnten die Pinnwand nicht zurücksetzen. Versuche es noch einmal.",
+        "m_muralResetadoTodosOsRecados": "Pinnwand zurückgesetzt. Alle Nachrichten wurden gelöscht.",
+        "m_naoFoiPossivelExcluirTente": "Wir konnten nicht löschen. Versuche es noch einmal.",
+        "m_proximoTipo": "Nächste Art"
+      },
+      "MuralSetupModal": {
+        "configureSeuMural": "Richte deine Pinnwand ein",
+        "seuMuralJaEstaNo": "Deine Pinnwand ist schon online. Wähle ihren Namen, wer sie öffnen darf und wie lange Pins anderer Personen bleiben. Du kannst alles später unter „Meine Pinnwände“ ändern.",
+        "nomeDoMural": "Name der Pinnwand",
+        "exViagemDe2026": "Z. B.: Reise 2026",
+        "depois": "Später",
+        "m_deUmNomeAoMural": "Gib der Pinnwand einen Namen.",
+        "m_naoFoiPossivelSalvarTudo": "Wir konnten gerade nicht alles speichern. Prüfe die Felder und versuche es noch einmal."
+      },
+      "MyMuralsModal": {
+        "meusMurais": "Meine Pinnwände",
+        "apagarMural": "Pinnwand löschen",
+        "osBottonsSeraoDevolvidosA": "Die Buttons werden dir zurückgegeben, die Pins gehen verloren und die Pinnwand ist nicht mehr erreichbar.",
+        "cancelar": "Abbrechen",
+        "voceAindaNaoCriouNenhum": "Du hast noch keine Pinnwand erstellt.",
+        "arrasteParaMudarAOrdem": "Ziehen, um die Reihenfolge zu ändern",
+        "editar": "Bearbeiten",
+        "apagar": "Löschen",
+        "m_naoFoiPossivelMudarA": "Wir konnten die Reihenfolge gerade nicht ändern. Versuche es noch einmal.",
+        "m_naoFoiPossivelApagarAgora": "Wir konnten gerade nicht löschen. Versuche es noch einmal.",
+        "m_publico": "Öffentlich",
+        "x_apagar": "„{v0}“ löschen?",
+        "x_voltarParaMeusMurais": "Zurück zu Meine Pinnwände",
+        "x_criarNovoMural": "Neue Pinnwand erstellen",
+        "x_reorder": "Reihenfolge von {title} ändern: ziehen (oder die Pfeiltasten verwenden)",
+        "x_editTitle": "{title} bearbeiten{locked, select, yes { (mit Sicherheitsfrage)} other {}}",
+        "x_edit": "{title} bearbeiten",
+        "x_delete": "{title} löschen"
+      },
+      "NewMuralModal": {
+        "novoMural": "Neue Pinnwand",
+        "cancelar": "Abbrechen",
+        "tipoDoMural": "Art der Pinnwand",
+        "nomeDoMural": "Name der Pinnwand",
+        "exViagemDe2026": "Z. B.: Reise 2026",
+        "m_creditosInsuficientesParaEsteMural": "Nicht genug Credits für diese Pinnwand.",
+        "m_comprarMuraisEParaQuem": "Der Kauf von Pinnwänden ist PINZ+-Abonnenten vorbehalten.",
+        "m_naoFoiPossivelComprarAgora": "Wir konnten gerade nicht kaufen. Versuche es noch einmal.",
+        "m_preenchaONomeDoMural": "Gib den Namen der Pinnwand ein.",
+        "m_voceChegouAoLimiteDe": "Du hast das Pinnwand-Limit erreicht.",
+        "m_naoFoiPossivelCriarO": "Wir konnten die Pinnwand gerade nicht erstellen. Bitte versuche es noch einmal.",
+        "m_creditos": "{v0} Credits",
+        "m_proximoTipo": "Nächste Art",
+        "m_compreEsteTipoDeMural": "Kaufe diese Art von Pinnwand, um damit zu erstellen",
+        "m_criarMural": "Pinnwand erstellen",
+        "x_comprarOMuralPorCreditos": "Die Pinnwand „{v0}“ für <s0>{v1} Credits</s0> kaufen?",
+        "x_voceTem": "Du hast <n0></n0> <s1>{v0}</s1>{v1}",
+        "x_comprar": "<n0></n0>{v0} kaufen"
+      },
+      "NicknameSetup": {
+        "completeOSeuPerfil": "Vervollständige dein Profil",
+        "escolhaOSeuNomeDe": "Wähle deinen Benutzernamen: So finden dich andere und öffnen deine Pinnwand. Nach dem Speichern lässt er sich nicht mehr ändern.",
+        "m_naoFoiPossivelSalvarAgora": "Wir konnten gerade nicht speichern. Versuche es noch einmal."
+      },
+      "NotificationsModal": {
+        "notificacoes": "Benachrichtigungen",
+        "carregandoAsNotificacoes": "Benachrichtigungen werden geladen"
+      }
+    }
+  }
+}
