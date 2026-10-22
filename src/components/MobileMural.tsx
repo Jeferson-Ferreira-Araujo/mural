@@ -123,7 +123,7 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
               )}
               <strong className="text-lg leading-none font-bold">{info.followers.toLocaleString(tag)}</strong>
             </span>
-            <span className="mt-0.5 block text-right text-[11px] leading-tight text-[#6b5440]">{info.followers === 1 ? "seguidor" : "seguidores"}</span>
+            <span className="mt-0.5 block text-right text-[11px] leading-tight text-[#6b5440]">{info.followers === 1 ? tl("seguidor") : tl("seguidores")}</span>
           </button>
         )}
       </div>

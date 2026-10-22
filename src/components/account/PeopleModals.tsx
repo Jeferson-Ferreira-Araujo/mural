@@ -55,7 +55,7 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
       role="tab"
       aria-selected={tab === id}
       onClick={() => setTab(id)}
-      className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold transition ${tab === id ? "bg-white text-[#2a1c12] shadow-[0_0.1rem_0.4rem_rgba(60,35,10,.2)]" : "text-[#6b5440] hover:text-[#2a1c12]"}`}
+      className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold capitalize transition ${tab === id ? "bg-white text-[#2a1c12] shadow-[0_0.1rem_0.4rem_rgba(60,35,10,.2)]" : "text-[#6b5440] hover:text-[#2a1c12]"}`}
     >
       {label}
       {n != null && <span className="ml-1.5 font-semibold text-[#8a7b69]">{n}</span>}
@@ -65,8 +65,8 @@ export function FollowingModal({ open, onClose, nick }: { open: boolean; onClose
   return (
     <Modal open={open} onClose={onClose} title={tx("seguidoresESeguindo")} label={tx("seguidoresESeguindo")}>
       <div role="tablist" aria-label={tx("seguindoESeguidores")} className="mb-3 flex gap-1 rounded-xl bg-[#e9dcc3]/70 p-1">
-        {tabBtn("following", "Seguindo", following?.length ?? null)}
-        {tabBtn("followers", "Seguidores", followers?.length ?? null)}
+        {tabBtn("following", tl("Seguindo"), following?.length ?? null)}
+        {tabBtn("followers", tl("seguidores"), followers?.length ?? null)}
       </div>
       <div className="relative mb-3">
         <input
@@ -136,6 +136,7 @@ export function FollowersModal({ open, onClose, nick }: { open: boolean; onClose
 
 /** Visitantes: quem entrou nos seus murais com conta (sem datas) e quantos seguidores você tem. */
 export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tl = useLit();
   const tx = useTranslations("components.account.PeopleModals");
   const [data, setData] = useState<{ hidden: boolean; visitors: PersonLite[]; followers: number } | null>(null);
   useEffect(() => {
@@ -153,7 +154,7 @@ export function VisitorsModal({ open, onClose }: { open: boolean; onClose: () =>
       ) : (
         <>
           <p className="mb-3 text-sm text-[#6b5440]">
-            {data.followers} {data.followers === 1 ? "seguidor" : "seguidores"}
+            {data.followers} {data.followers === 1 ? tl("seguidor") : tl("seguidores")}
           </p>
           {data.visitors.length === 0 ? (
             <p className="py-6 text-center text-sm text-[#6b5440]">{tx("ninguemComContaVisitouSeus")}</p>

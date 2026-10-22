@@ -196,7 +196,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               {(
                 [
                   visits !== undefined && [visits, visits === 1 ? tl("visualização") : tl("visualizações")],
-                  followers != null && [followers, followers === 1 ? "seguidor" : "seguidores"],
+                  followers != null && [followers, followers === 1 ? tl("seguidor") : tl("seguidores")],
                   placed != null && [placed, placed === 1 ? tl("PINZ colocado") : tl("PINZ colocados")],
                 ].filter(Boolean) as [number, string][]
               ).map(([n, label]) => (
