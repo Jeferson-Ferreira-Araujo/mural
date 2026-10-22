@@ -9,12 +9,12 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const SUPABASE = "https://npylmcjxcosoytuhjrxu.supabase.co";
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://js.stripe.com https://sdk.mercadopago.com",
+  "script-src 'self' 'unsafe-inline' https://js.stripe.com https://sdk.mercadopago.com https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   `media-src 'self' blob: ${SUPABASE}`,
   "font-src 'self' data:",
-  `connect-src 'self' ${SUPABASE} wss://npylmcjxcosoytuhjrxu.supabase.co https://api.stripe.com https://*.stripe.com https://*.mercadopago.com https://*.mercadolibre.com`,
+  `connect-src 'self' ${SUPABASE} wss://npylmcjxcosoytuhjrxu.supabase.co https://api.stripe.com https://*.stripe.com https://*.mercadopago.com https://*.mercadolibre.com https://cloudflareinsights.com`,
   "frame-src https://js.stripe.com https://*.stripe.com https://*.mercadopago.com https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
