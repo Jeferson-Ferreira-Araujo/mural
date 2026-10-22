@@ -12,9 +12,9 @@ import "./globals.css";
 // uma só fonte para toda a interface (textos, títulos, botões); a letra de mão fica só dentro dos pins
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
 // só dentro dos widgets da loja: serifa elegante (frases, relógio analógico) e letra de pixel (relógio e clima pixel)
-const playfair = Playfair_Display({ subsets: ["latin"], style: ["normal", "italic"], weight: ["400", "500", "600"], variable: "--font-playfair" });
+const playfair = Playfair_Display({ subsets: ["latin", "cyrillic"], style: ["normal", "italic"], weight: ["400", "500", "600"], variable: "--font-playfair" });
 const silkscreen = Silkscreen({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-silk" });
-const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
+const caveat = Caveat({ subsets: ["latin", "cyrillic"], variable: "--font-caveat" });
 const kalam = Kalam({ subsets: ["latin"], weight: ["300", "400"], variable: "--font-kalam" });
 const patrick = Patrick_Hand({ subsets: ["latin"], weight: "400", variable: "--font-patrick" });
 const indie = Indie_Flower({ subsets: ["latin"], weight: "400", variable: "--font-indie" });

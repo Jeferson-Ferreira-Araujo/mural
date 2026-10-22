@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-ui: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-title: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-ui: var(--font-jakarta), ui-sans-serif, system-ui, "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; /* japonês e chinês caem nas fontes do sistema */
+  --font-title: var(--font-jakarta), ui-sans-serif, system-ui, "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
   --font-hand: var(--font-caveat), cursive;
   --font-hand-alt: var(--font-kalam), cursive;
   --font-marker: var(--font-reenie), cursive;
