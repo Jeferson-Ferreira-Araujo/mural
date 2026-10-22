@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { LOCALES, LOCALE_COOKIE, LOCALE_NAMES, type Locale } from "@/i18n/config";
+import { Flag } from "./Flag";
 
 /** Seletor de idioma: o escolhido fica no cookie (vale em qualquer página e nas próximas visitas). Pequeno, em botões (sem a lista do sistema). */
 export function LanguagePicker({ className = "", tone = "light", variant = "bar", align = "right" }: { className?: string; tone?: "light" | "dark"; /** "icon": só o globo, que abre a lista de idiomas */ variant?: "bar" | "icon"; align?: "left" | "right" }) {
@@ -43,12 +44,13 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
           aria-expanded={open}
           aria-label={`${t("language")}: ${LOCALE_NAMES[locale]}`}
           title={t("language")}
-          className={`grid size-9 cursor-pointer place-items-center rounded-full border transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${base}`}
+          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${base}`}
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <circle cx="12" cy="12" r="9" />
             <path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9s1.2-6.4 3.7-9Z" />
           </svg>
+          <Flag locale={locale} className="h-4 w-6" />
         </button>
         {open && (
           <ul role="listbox" aria-label={t("language")} className={`absolute top-full z-50 mt-1.5 min-w-36 overflow-hidden rounded-xl border border-[#d9c9ad] bg-[#fbf6ea] py-1 text-sm text-[#2f2218] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.3)] ${align === "left" ? "left-0" : "right-0"}`}>
@@ -62,7 +64,10 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
                   }}
                   className={`flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left transition hover:bg-[#efe4cf] ${l === locale ? "font-bold" : ""}`}
                 >
-                  <span>{LOCALE_NAMES[l]}</span>
+                  <span className="flex items-center gap-2.5">
+                    <Flag locale={l} className="h-4 w-6" />
+                    {LOCALE_NAMES[l]}
+                  </span>
                   {l === locale && <span aria-hidden>✓</span>}
                 </button>
               </li>
@@ -87,7 +92,10 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
           title={LOCALE_NAMES[l]}
           className={`cursor-pointer rounded-lg px-2 py-1 uppercase transition ${l === locale ? (tone === "dark" ? "bg-white/25" : "bg-[#1f232b] text-white") : "opacity-80 hover:opacity-100"}`}
         >
-          {l}
+          <span className="inline-flex items-center gap-1.5">
+            <Flag locale={l} className="h-3 w-[18px]" />
+            {l}
+          </span>
         </button>
       ))}
     </div>
