@@ -2,6 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { LOCALE_TAGS, isLocale, type Locale } from "@/i18n/config";
+import { PACKS, type WtPack } from "@/data/demoPacks";
 
 /** Textos soltos dos displays (unidades, nomes padrão, clima, fusos, biscoito da sorte) por idioma. Datas e meses usam Intl com a etiqueta do idioma. */
 type Dict = {
@@ -112,7 +113,19 @@ const ES: Dict = {
   ],
 };
 
+/** Monta o dicionário de um idioma a partir do pacote em src/data/demo/<idioma>.json (plural de "há N dias" pelo Intl.PluralRules). */
+function fromPack(loc: Locale, p: WtPack): Dict {
+  const tag = LOCALE_TAGS[loc];
+  const rules = new Intl.PluralRules(tag);
+  return {
+    ...p,
+    ago: (n) => (p.ago[rules.select(n)] ?? p.ago.other ?? "").replace("{n}", String(n)),
+    place: (i) => p.place.replace("{n}", String(i)),
+  };
+}
+
 const DICT: Partial<Record<Locale, Dict>> = { pt: PT, en: EN, es: ES };
+for (const [loc, pack] of Object.entries(PACKS)) if (isLocale(loc) && pack) DICT[loc] = fromPack(loc, pack.wt);
 
 export function useWT(): Dict & { loc: Locale; tag: string } {
   const l = useLocale();

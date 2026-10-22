@@ -1,10 +1,11 @@
 import type { BoardItem, Message } from "@/lib/types";
+import { LOCALES, isLocale, type Locale } from "@/i18n/config";
+import { PACKS, type Over, type SampleText } from "./demoPacks";
 
 /** Textos do mural de exemplo (e das amostras de displays) em cada idioma. O português é o que está em `mock.ts` / `StoreModal.tsx`; aqui ficam as outras línguas. */
-export type DemoLocale = "pt" | "en" | "es";
-/** O idioma do mural de exemplo para um idioma do site: pt, en e es têm texto próprio; os demais usam o inglês. */
-export const demoLocaleOf = (l: string): DemoLocale => (l === "pt" || l === "es" ? l : "en");
-type Over = { text?: string; caption?: string; title?: string; items?: string[]; name?: string };
+export type DemoLocale = Locale;
+/** O idioma do mural de exemplo para um idioma do site: todos os idiomas do site têm texto próprio (pt, en e es aqui; os outros em demo/<idioma>.json). */
+export const demoLocaleOf = (l: string): DemoLocale => (isLocale(l) ? l : "en");
 
 const EN: Record<string, Over> = {
   m1: { text: "You've always been one of the most amazing people I've ever met. ❤️" },
@@ -64,11 +65,11 @@ const ES: Record<string, Over> = {
   x13: { text: "Haces que cualquier lunes sea mejor. 💙" },
 };
 
-const TABLE: Record<DemoLocale, Record<string, Over>> = { pt: {}, en: EN, es: ES };
+const overridesOf = (l: DemoLocale): Record<string, Over> => (l === "pt" ? {} : l === "en" ? EN : l === "es" ? ES : PACKS[l]?.demo ?? EN);
 
 /** Troca os textos de um cartão de exemplo pelos do idioma (o id pode ter o sufixo "-b" dos cartões repetidos). */
 export function localizeDemo<T extends BoardItem | Message>(it: T, locale: DemoLocale): T {
-  const o = TABLE[locale]?.[it.id.replace(/-b$/, "")];
+  const o = overridesOf(locale)[it.id.replace(/-b$/, "")];
   if (!o) return it;
   const r = { ...it } as Record<string, unknown>;
   if (o.text !== undefined && "text" in r) r.text = o.text;
@@ -80,8 +81,10 @@ export function localizeDemo<T extends BoardItem | Message>(it: T, locale: DemoL
 }
 
 /** Textos das amostras de displays (mural de exemplo e vitrine da loja). */
-export const SAMPLE_TEXT: Record<DemoLocale, { bibleText: string; bibleRef: string; motivation: string; birthday: string; trip: string; poll: string; yes: string; no: string; top3: string; food: string[]; book: string; together: string; counter: string }> = {
+const BASE_SAMPLE: Record<"pt" | "en" | "es", SampleText> = {
   pt: { bibleText: "Tudo posso naquele que me fortalece.", bibleRef: "Filipenses 4:13", motivation: "Disciplina de hoje é o resultado de amanhã.", birthday: "Aniversário", trip: "Viagem", poll: "Você gosta de pizza com abacaxi?", yes: "Sim", no: "Não", top3: "Comidas favoritas", food: ["Lasanha", "Pizza", "Sorvete"], book: "O Pequeno Príncipe", together: "Juntos há", counter: "Título do contador" },
   en: { bibleText: "I can do all things through him who strengthens me.", bibleRef: "Philippians 4:13", motivation: "Today's discipline is tomorrow's result.", birthday: "Birthday", trip: "Trip", poll: "Do you like pineapple on pizza?", yes: "Yes", no: "No", top3: "Favorite foods", food: ["Lasagna", "Pizza", "Ice cream"], book: "The Little Prince", together: "Together for", counter: "Counter title" },
   es: { bibleText: "Todo lo puedo en Cristo que me fortalece.", bibleRef: "Filipenses 4:13", motivation: "La disciplina de hoy es el resultado de mañana.", birthday: "Cumpleaños", trip: "Viaje", poll: "¿Te gusta la piña en la pizza?", yes: "Sí", no: "No", top3: "Comidas favoritas", food: ["Lasaña", "Pizza", "Helado"], book: "El Principito", together: "Juntos desde hace", counter: "Título del contador" },
 };
+
+export const SAMPLE_TEXT = Object.fromEntries(LOCALES.map((l) => [l, l === "pt" || l === "en" || l === "es" ? BASE_SAMPLE[l] : PACKS[l]?.sample ?? BASE_SAMPLE.en])) as Record<DemoLocale, SampleText>;
