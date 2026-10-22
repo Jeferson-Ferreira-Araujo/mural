@@ -235,6 +235,12 @@ body.badge-dragging * {
   }
 }
 
+/* árabe: cada bloco de texto escolhe a própria direção (a frase corre da direita para a esquerda e alinha à direita), sem espelhar o resto da tela */
+:lang(ar) :is(p, h1, h2, h3, h4, h5, h6, li, label, legend, textarea, input, figcaption, dd, dt) {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
 .intro-form {
   transition: opacity 0.6s ease, transform 0.6s ease;
 }

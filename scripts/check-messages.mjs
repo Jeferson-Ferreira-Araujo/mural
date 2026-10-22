@@ -47,7 +47,7 @@ const icu = (l, k, v) => {
   }
 };
 for (const [k, v] of Object.entries(pt)) icu("pt", k, v);
-for (const l of ["en", "es", "de", "ja", "zh", "ru"]) {
+for (const l of fs.readdirSync(new URL("../messages/", import.meta.url)).filter((f) => f.endsWith(".json") && f !== "pt.json").map((f) => f.slice(0, -5))) {
   const m = flat(read(l));
   const extra = Object.keys(m).filter((k) => !(k in pt) && !k.startsWith("lit."));
   const missing = Object.keys(pt).filter((k) => !(k in m));

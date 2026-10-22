@@ -53,7 +53,7 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
           <Flag locale={locale} className="h-4 w-6" />
         </button>
         {open && (
-          <ul role="listbox" aria-label={t("language")} className={`absolute top-full z-50 mt-1.5 min-w-36 overflow-hidden rounded-xl border border-[#d9c9ad] bg-[#fbf6ea] py-1 text-sm text-[#2f2218] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.3)] ${align === "left" ? "left-0" : "right-0"}`}>
+          <ul role="listbox" aria-label={t("language")} className={`absolute top-full z-50 mt-1.5 max-h-[min(70dvh,26rem)] min-w-44 overflow-y-auto overflow-x-hidden rounded-xl border border-[#d9c9ad] bg-[#fbf6ea] py-1 text-sm text-[#2f2218] shadow-[0_0.6rem_1.6rem_rgba(0,0,0,.3)] ${align === "left" ? "left-0" : "right-0"}`}>
             {LOCALES.map((l) => (
               <li key={l} role="option" aria-selected={l === locale}>
                 <button
