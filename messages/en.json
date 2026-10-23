@@ -2162,7 +2162,12 @@
     "hbbelk0": "Shows how many days in a row you kept a habit, with the last 7 days marked. Tap “Mark today” every day to keep the streak going.",
     "h18ki17r": "Format",
     "h19klm4e": "Shows an emoji and a short phrase with your mood. When you want to change it, just update it: it stays as is until then.",
-    "h10wwose": "Place on the board"
+    "h10wwose": "Place on the board",
+    "h1s7detf": "day in a row",
+    "h8u5hl5": "days in a row",
+    "hv55um1": "Habit done today!",
+    "h1hsy71m": "Description (optional)",
+    "h18rhh59": "E.g. At least 20 minutes"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

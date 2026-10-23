@@ -20,12 +20,13 @@ export function MoodWidget({ style = "light", emoji, note, frame }: { style?: st
   const square = shape === "square";
   const sk = SKINS[baseStyle(style)] ?? SKINS.light;
   const text = (note ?? "").trim();
+  const face = (emoji ?? "").trim() || "😄";
 
   return (
     <WidgetFrame frame={frame} label={tl("Humor do dia")} shape={shape}>
-      <div className={`absolute inset-0 flex ${square ? "flex-col items-center justify-center gap-[0.4em] px-[1em] py-[0.9em] text-center" : "items-center gap-[1.1em] px-[1.4em] py-[1em]"}`} style={{ background: sk.bg, color: sk.ink }}>
-        <span className="leading-none" style={{ fontSize: square ? "4.6em" : "5em" }}>
-          {(emoji ?? "").trim() || "😄"}
+      <div className={`absolute inset-0 flex ${!text ? "items-center justify-center" : square ? "flex-col items-center justify-center gap-[0.4em] px-[1em] py-[0.9em] text-center" : "items-center gap-[1.1em] px-[1.4em] py-[1em]"}`} style={{ background: sk.bg, color: sk.ink }}>
+        <span className="leading-none" style={{ fontSize: !text ? (square ? "6em" : "6.5em") : square ? "4.6em" : "5em" }}>
+          {face}
         </span>
         {text && <p className={`min-w-0 leading-tight font-bold [overflow-wrap:anywhere] ${square ? "line-clamp-3 text-[1.3em]" : "line-clamp-3 flex-1 text-[1.6em]"}`}>{text}</p>}
       </div>

@@ -2162,7 +2162,12 @@
     "hbbelk0": "Menampilkan berapa hari berturut-turut Anda menjalankan suatu kebiasaan, dengan 7 hari terakhir ditandai. Ketuk “Tandai hari ini” setiap hari untuk menjaga rangkaian.",
     "h18ki17r": "Format",
     "h19klm4e": "Menampilkan emoji dan kalimat singkat tentang suasana hati Anda. Saat ingin mengubahnya, cukup perbarui: sampai saat itu tetap seperti semula.",
-    "h10wwose": "Tempatkan di papan"
+    "h10wwose": "Tempatkan di papan",
+    "h1s7detf": "hari berturut-turut",
+    "h8u5hl5": "hari berturut-turut",
+    "hv55um1": "Kebiasaan selesai hari ini!",
+    "h1hsy71m": "Deskripsi (opsional)",
+    "h18rhh59": "Contoh: Minimal 20 menit"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

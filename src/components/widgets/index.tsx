@@ -71,7 +71,7 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
     { id: "wood", name: "Estante", hint: "Madeira e dourado." },
   ],
-  // hábito e humor: só o fundo muda (branco ou preto), retangular ou quadrado
+  // hábito e humor: só o fundo muda (branco ou preto); o hábito é só quadrado, o humor também tem o retangular
   habit: [
     { id: "light", name: "Branco", hint: "Fundo branco, limpo." },
     { id: "dark", name: "Preto", hint: "Fundo preto, sóbrio." },
@@ -201,7 +201,7 @@ export function DisplayCard({ data, preview = false, badgeId }: { data: DisplayD
     case "book":
       return <BookWidget style={data.style} title={data.title} cover={data.cover} pages={data.pages} read={data.read} view={data.view} frame={data.frame} />;
     case "habit":
-      return <HabitWidget style={data.style} title={data.title} emoji={data.emoji} days={data.days} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} />;
+      return <HabitWidget style={data.style} title={data.title} note={data.note} days={data.days} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} />;
     case "mood":
       return <MoodWidget style={data.style} emoji={data.emoji} note={data.note} frame={data.frame} />;
     case "daycount":

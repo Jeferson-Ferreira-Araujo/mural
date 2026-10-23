@@ -2162,7 +2162,12 @@
     "hbbelk0": "Hiển thị bạn đã duy trì một thói quen bao nhiêu ngày liên tiếp, với 7 ngày gần nhất được đánh dấu. Chạm “Đánh dấu hôm nay” mỗi ngày để giữ chuỗi.",
     "h18ki17r": "Định dạng",
     "h19klm4e": "Hiển thị một emoji và một câu ngắn về tâm trạng của bạn. Khi muốn đổi, chỉ cần cập nhật: cho đến lúc đó nó giữ nguyên.",
-    "h10wwose": "Đặt lên bảng"
+    "h10wwose": "Đặt lên bảng",
+    "h1s7detf": "ngày liên tiếp",
+    "h8u5hl5": "ngày liên tiếp",
+    "hv55um1": "Đã hoàn thành thói quen hôm nay!",
+    "h1hsy71m": "Mô tả (không bắt buộc)",
+    "h18rhh59": "VD: Tối thiểu 20 phút"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

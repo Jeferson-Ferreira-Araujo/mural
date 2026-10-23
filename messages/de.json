@@ -2162,7 +2162,12 @@
     "hbbelk0": "Zeigt, an wie vielen Tagen in Folge du eine Gewohnheit eingehalten hast, mit den letzten 7 Tagen markiert. Tippe jeden Tag auf „Heute abhaken“, um die Serie zu halten.",
     "h18ki17r": "Format",
     "h19klm4e": "Zeigt ein Emoji und einen kurzen Satz zu deiner Stimmung. Wenn du sie ändern willst, aktualisiere sie einfach: Bis dahin bleibt sie, wie sie ist.",
-    "h10wwose": "Auf die Pinnwand setzen"
+    "h10wwose": "Auf die Pinnwand setzen",
+    "h1s7detf": "Tag in Folge",
+    "h8u5hl5": "Tage in Folge",
+    "hv55um1": "Gewohnheit heute erledigt!",
+    "h1hsy71m": "Beschreibung (optional)",
+    "h18rhh59": "z. B. Mindestens 20 Minuten"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

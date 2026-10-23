@@ -2162,7 +2162,12 @@
     "hbbelk0": "Pokazuje, ile dni z rzędu utrzymujesz nawyk, z zaznaczonymi ostatnimi 7 dniami. Dotykaj codziennie „Zaznacz dzisiaj”, aby utrzymać serię.",
     "h18ki17r": "Format",
     "h19klm4e": "Pokazuje emoji i krótkie zdanie o Twoim nastroju. Gdy zechcesz go zmienić, po prostu zaktualizuj: do tego czasu zostaje bez zmian.",
-    "h10wwose": "Umieść na tablicy"
+    "h10wwose": "Umieść na tablicy",
+    "h1s7detf": "dzień z rzędu",
+    "h8u5hl5": "dni z rzędu",
+    "hv55um1": "Nawyk wykonany dzisiaj!",
+    "h1hsy71m": "Opis (opcjonalnie)",
+    "h18rhh59": "Np. Minimum 20 minut"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

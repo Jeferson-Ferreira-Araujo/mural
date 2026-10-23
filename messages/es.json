@@ -2162,7 +2162,12 @@
     "hbbelk0": "Muestra cuántos días seguidos cumpliste un hábito, con los últimos 7 días marcados. Toca “Marcar hoy” cada día para mantener la racha.",
     "h18ki17r": "Formato",
     "h19klm4e": "Muestra un emoji y una frase corta con tu humor. Cuando quieras cambiarlo, solo actualízalo: se queda como está hasta entonces.",
-    "h10wwose": "Poner en el mural"
+    "h10wwose": "Poner en el mural",
+    "h1s7detf": "día seguido",
+    "h8u5hl5": "días seguidos",
+    "hv55um1": "¡Hábito cumplido hoy!",
+    "h1hsy71m": "Descripción (opcional)",
+    "h18rhh59": "Ej: Mínimo 20 minutos"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2162,7 +2162,12 @@
     "hbbelk0": "Toont hoeveel dagen op rij je een gewoonte hebt volgehouden, met de laatste 7 dagen aangevinkt. Tik elke dag op “Vandaag afvinken” om de reeks vol te houden.",
     "h18ki17r": "Formaat",
     "h19klm4e": "Toont een emoji en een korte zin met je stemming. Wil je hem veranderen, werk hem dan bij: tot dan blijft hij zoals hij is.",
-    "h10wwose": "Op het prikbord zetten"
+    "h10wwose": "Op het prikbord zetten",
+    "h1s7detf": "dag op rij",
+    "h8u5hl5": "dagen op rij",
+    "hv55um1": "Gewoonte vandaag gedaan!",
+    "h1hsy71m": "Beschrijving (optioneel)",
+    "h18rhh59": "Bijv. Minstens 20 minuten"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

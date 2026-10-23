@@ -2162,7 +2162,12 @@
     "hbbelk0": "Mostra quanti giorni di fila hai mantenuto un’abitudine, con gli ultimi 7 giorni segnati. Tocca “Segna oggi” ogni giorno per mantenere la serie.",
     "h18ki17r": "Formato",
     "h19klm4e": "Mostra un’emoji e una frase breve con il tuo umore. Quando vuoi cambiarlo, basta aggiornarlo: resta com’è fino ad allora.",
-    "h10wwose": "Metti nella bacheca"
+    "h10wwose": "Metti nella bacheca",
+    "h1s7detf": "giorno di fila",
+    "h8u5hl5": "giorni di fila",
+    "hv55um1": "Abitudine completata oggi!",
+    "h1hsy71m": "Descrizione (facoltativa)",
+    "h18rhh59": "Es: Almeno 20 minuti"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

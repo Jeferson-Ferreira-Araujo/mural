@@ -35,7 +35,7 @@ const POOL: { product: string; key: number; formats: ("wide" | "square")[] }[] =
   { product: "date", key: 1007, formats: ["wide", "square"] },
   { product: "top3", key: 1011, formats: ["wide", "square"] },
   { product: "poll", key: 1013, formats: ["square"] },
-  { product: "habit", key: 1014, formats: ["wide", "square"] },
+  { product: "habit", key: 1014, formats: ["square"] },
   { product: "mood", key: 1015, formats: ["wide", "square"] },
   { product: "bible", key: 1001, formats: ["wide"] },
   { product: "motivation", key: 1002, formats: ["wide"] },
@@ -118,7 +118,7 @@ export function decorLayout(items: BoardItem[], locale: DemoLocale = "pt"): { it
 
   const spots: Spot[] = chosen.slice(0, slots.length).map((c, i) => {
     const base = pick(stylesOf(c.spec.product));
-    const style = hasShapes(c.spec.product) ? withShape(base, c.shape) : c.spec.product === "poll" ? withShape(base, "square") : base;
+    const style = hasShapes(c.spec.product) ? withShape(base, c.shape) : c.spec.product === "poll" || c.spec.product === "habit" ? withShape(base, "square") : base;
     return { product: c.spec.product, key: c.spec.key, style, slots: slots![i], scale: c.shape === "wide" ? 200 : 150, rotation: Math.round((Math.random() * 6 - 3) * 10) / 10 };
   });
 

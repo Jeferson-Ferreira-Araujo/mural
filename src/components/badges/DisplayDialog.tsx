@@ -67,7 +67,8 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   const [bkPreview, setBkPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const bkInput = useRef<HTMLInputElement>(null);
-  const [hbTitle, setHbTitle] = useState(""); // hábito: nome e emoji
+  const [hbTitle, setHbTitle] = useState(""); // hábito: nome e descrição
+  const [hbNote, setHbNote] = useState("");
   const [mdEmoji, setMdEmoji] = useState("😄"); // humor: emoji e frase
   const [mdNote, setMdNote] = useState("");
   const [dcTitle, setDcTitle] = useState(""); // contador de dias: nome e data de início
@@ -86,7 +87,9 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   const bases = styles ? [...new Set(styles.map(baseStyle))] : [];
   const shapes = styles ? (["wide", "square", "tall"] as const).filter((sh) => styles.some((s) => shapeOfStyle(s) === sh)) : [];
   const [shapeSel, setShapeSel] = useState<Shape>("wide");
-  const shape = shapes.includes(shapeSel) ? shapeSel : (shapes[0] ?? "wide");
+  // humor sem frase: só o emoji, então o formato é sempre o quadrado
+  const emojiOnly = product === "mood" && !mdNote.trim() && shapes.includes("square");
+  const shape = emojiOnly ? "square" : shapes.includes(shapeSel) ? shapeSel : (shapes[0] ?? "wide");
   const styleOf = (i: number) => {
     const b = bases[i];
     const id = withShape(b, shape);
@@ -113,6 +116,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     setBkFile(null);
     setUploading(false);
     setHbTitle(initial?.title ?? "");
+    setHbNote(initial?.product === "habit" ? (initial.note ?? "") : "");
     setMdEmoji(initial?.product === "mood" && initial.emoji ? initial.emoji : "😄");
     setMdNote(initial?.product === "mood" ? (initial.note ?? "") : "");
     setDcTitle(initial?.title ?? "");
@@ -170,7 +174,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     ...(product === "top3" ? { title: t3Title.trim() || SAMPLE_TEXT[dLocale].top3, items: t3Items.map((x, i) => x.trim() || SAMPLE_TEXT[dLocale].food[i]) } : {}),
     ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || [wt.defYes, wt.defNo][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
-    ...(product === "habit" ? { title: hbTitle.trim() || SAMPLE_TEXT[dLocale].habit, days: initial?.product === "habit" ? (initial.days ?? []) : [] } : {}),
+    ...(product === "habit" ? { title: hbTitle.trim() || SAMPLE_TEXT[dLocale].habit, note: hbNote.trim(), days: initial?.product === "habit" ? (initial.days ?? []) : [] } : {}),
     ...(product === "mood" ? { emoji: mdEmoji.trim() || "😄", note: mdNote.trim(), day: isoPlus(0) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
@@ -218,7 +222,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
             {shapes.length > 1 && (
               <div role="radiogroup" aria-label={tl("Formato")} className="mx-auto mt-3 grid max-w-xs grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
                 {shapes.map((sh) => (
-                  <button key={sh} type="button" role="radio" aria-checked={shape === sh} onClick={() => setShapeSel(sh)} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                  <button key={sh} type="button" role="radio" aria-checked={shape === sh} disabled={emojiOnly && sh !== "square"} onClick={() => setShapeSel(sh)} className={`disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
                     {SHAPE_LABEL[sh]}
                   </button>
                 ))}
@@ -398,9 +402,14 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
         {(product === "habit" || product === "mood") && (
           <div className="space-y-3">
             {product === "habit" && (
-              <Field label={tl("Nome do hábito")}>
-                {(id) => <input id={id} value={hbTitle} onChange={(e) => setHbTitle(e.target.value)} maxLength={30} placeholder={tl("Ex: Treinar")} className={inputClass} autoComplete="off" />}
-              </Field>
+              <>
+                <Field label={tl("Nome do hábito")}>
+                  {(id) => <input id={id} value={hbTitle} onChange={(e) => setHbTitle(e.target.value)} maxLength={30} placeholder={tl("Ex: Treinar")} className={inputClass} autoComplete="off" />}
+                </Field>
+                <Field label={tl("Descrição (opcional)")}>
+                  {(id) => <input id={id} value={hbNote} onChange={(e) => setHbNote(e.target.value)} maxLength={40} placeholder={tl("Ex: Mínimo de 20 minutos")} className={inputClass} autoComplete="off" />}
+                </Field>
+              </>
             )}
             {product === "mood" && (
             <div>
@@ -415,7 +424,6 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
                   );
                 })}
               </div>
-              <input value={mdEmoji} onChange={(e) => setMdEmoji(e.target.value)} maxLength={8} aria-label={tl("Outro emoji")} placeholder={tl("Ou digite outro emoji")} className={`${inputClass} mt-2`} autoComplete="off" />
             </div>
             )}
             {product === "mood" && (

@@ -101,7 +101,7 @@ export function sampleFor(product: string, style?: string, locale: DemoLocale = 
         d.setDate(d.getDate() - n);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
       };
-      return { product, style: st, title: L.habit, days: [0, 1, 2, 3, 4, 6].map(iso) };
+      return { product, style: st, title: L.habit, note: "", days: [0, 1, 2, 3].map(iso) };
     }
     case "mood": {
       const d = new Date();
