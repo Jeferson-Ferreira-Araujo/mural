@@ -2160,8 +2160,8 @@
     "h1hhazjn": "Bijv. Geweldige dag!",
     "hwji1k1": "Tik na het plaatsen op het prikbord elke dag op “Vandaag afvinken” om je reeks vol te houden.",
     "hbbelk0": "Toont hoeveel dagen op rij je een gewoonte hebt volgehouden, met de laatste 7 dagen aangevinkt. Tik elke dag op “Vandaag afvinken” om de reeks vol te houden.",
-    "h1ek53fx": "Toont een emoji en een korte zin met je stemming van vandaag. Verandert die, pas hem dan gewoon aan; de datum verschijnt als de stemming van een andere dag is.",
-    "h18ki17r": "Formaat"
+    "h18ki17r": "Formaat",
+    "h19klm4e": "Toont een emoji en een korte zin met je stemming. Wil je hem veranderen, werk hem dan bij: tot dan blijft hij zoals hij is."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

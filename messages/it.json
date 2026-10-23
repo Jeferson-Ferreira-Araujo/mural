@@ -2160,8 +2160,8 @@
     "h1hhazjn": "Es: Giornata fantastica!",
     "hwji1k1": "Dopo averlo messo nella bacheca, tocca “Segna oggi” ogni giorno per mantenere la serie.",
     "hbbelk0": "Mostra quanti giorni di fila hai mantenuto un’abitudine, con gli ultimi 7 giorni segnati. Tocca “Segna oggi” ogni giorno per mantenere la serie.",
-    "h1ek53fx": "Mostra un’emoji e una frase breve con il tuo umore di oggi. Quando cambia, basta aggiornarlo; la data compare se l’umore è di un altro giorno.",
-    "h18ki17r": "Formato"
+    "h18ki17r": "Formato",
+    "h19klm4e": "Mostra un’emoji e una frase breve con il tuo umore. Quando vuoi cambiarlo, basta aggiornarlo: resta com’è fino ad allora."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

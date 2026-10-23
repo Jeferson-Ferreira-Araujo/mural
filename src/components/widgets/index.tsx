@@ -142,7 +142,7 @@ export const DISPLAY_SUMMARY: Record<string, string> = {
   top3: "Mostra o seu top 3 sobre qualquer tema, como comidas, filmes ou músicas.",
   poll: "Faz uma pergunta com duas respostas. Quem visita o mural vota e todos veem o resultado na hora.",
   habit: "Mostra quantos dias seguidos você cumpriu um hábito, com os últimos 7 dias marcados. Você toca em “Marcar hoje” todo dia para manter a sequência.",
-  mood: "Mostra um emoji e uma frase curta com o seu humor de hoje. Quando mudar, é só trocar; a data aparece se o humor for de outro dia.",
+  mood: "Mostra um emoji e uma frase curta com o seu humor. Quando quiser mudar, é só atualizar: ele fica como está até lá.",
 };
 export const isBundled = (product: string) => !UNBUNDLED_DISPLAYS.has(product);
 export const PACK_SUFFIX = ":pack";
@@ -203,7 +203,7 @@ export function DisplayCard({ data, preview = false, badgeId }: { data: DisplayD
     case "habit":
       return <HabitWidget style={data.style} title={data.title} emoji={data.emoji} days={data.days} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} />;
     case "mood":
-      return <MoodWidget style={data.style} emoji={data.emoji} note={data.note} day={data.day} frame={data.frame} />;
+      return <MoodWidget style={data.style} emoji={data.emoji} note={data.note} frame={data.frame} />;
     case "daycount":
       return <DaysWidget style={data.style} title={data.title} since={data.since} frame={data.frame} />;
     case "countdown":

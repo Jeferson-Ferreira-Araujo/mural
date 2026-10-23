@@ -2160,8 +2160,8 @@
     "h1hhazjn": "Ej: ¡Día increíble!",
     "hwji1k1": "Después de ponerlo en el mural, toca “Marcar hoy” cada día para mantener la racha.",
     "hbbelk0": "Muestra cuántos días seguidos cumpliste un hábito, con los últimos 7 días marcados. Toca “Marcar hoy” cada día para mantener la racha.",
-    "h1ek53fx": "Muestra un emoji y una frase corta con tu humor de hoy. Cuando cambie, solo actualízalo; la fecha aparece si el humor es de otro día.",
-    "h18ki17r": "Formato"
+    "h18ki17r": "Formato",
+    "h19klm4e": "Muestra un emoji y una frase corta con tu humor. Cuando quieras cambiarlo, solo actualízalo: se queda como está hasta entonces."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

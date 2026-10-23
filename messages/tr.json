@@ -2160,8 +2160,8 @@
     "h1hhazjn": "Örn.: Harika bir gün!",
     "hwji1k1": "Panoya yerleştirdikten sonra seriyi korumak için her gün “Bugünü işaretle”ye dokunun.",
     "hbbelk0": "Bir alışkanlığı kaç gün üst üste sürdürdüğünüzü, son 7 günü işaretli olarak gösterir. Seriyi korumak için her gün “Bugünü işaretle”ye dokunun.",
-    "h1ek53fx": "Bugünkü ruh halinizi bir emoji ve kısa bir cümleyle gösterir. Değişince güncellemeniz yeterli; ruh hali başka bir günden ise tarih görünür.",
-    "h18ki17r": "Biçim"
+    "h18ki17r": "Biçim",
+    "h19klm4e": "Ruh halinizi bir emoji ve kısa bir cümleyle gösterir. Değiştirmek istediğinizde güncellemeniz yeterli: o zamana kadar olduğu gibi kalır."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

@@ -34,7 +34,6 @@ const SAMPLE: Record<string, Partial<DisplayData>> = {
   mood: {},
 };
 
-const HABIT_EMOJIS = ["🔥", "💪", "📚", "🏃", "🧘", "💧", "🎯", "✍️"];
 
 const isoPlus = (days: number) => {
   const d = new Date();
@@ -69,7 +68,6 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   const [uploading, setUploading] = useState(false);
   const bkInput = useRef<HTMLInputElement>(null);
   const [hbTitle, setHbTitle] = useState(""); // hábito: nome e emoji
-  const [hbEmoji, setHbEmoji] = useState("🔥");
   const [mdEmoji, setMdEmoji] = useState("😄"); // humor: emoji e frase
   const [mdNote, setMdNote] = useState("");
   const [dcTitle, setDcTitle] = useState(""); // contador de dias: nome e data de início
@@ -115,7 +113,6 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     setBkFile(null);
     setUploading(false);
     setHbTitle(initial?.title ?? "");
-    setHbEmoji(initial?.product === "habit" && initial.emoji ? initial.emoji : "🔥");
     setMdEmoji(initial?.product === "mood" && initial.emoji ? initial.emoji : "😄");
     setMdNote(initial?.product === "mood" ? (initial.note ?? "") : "");
     setDcTitle(initial?.title ?? "");
@@ -173,7 +170,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     ...(product === "top3" ? { title: t3Title.trim() || SAMPLE_TEXT[dLocale].top3, items: t3Items.map((x, i) => x.trim() || SAMPLE_TEXT[dLocale].food[i]) } : {}),
     ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || [wt.defYes, wt.defNo][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
-    ...(product === "habit" ? { title: hbTitle.trim() || SAMPLE_TEXT[dLocale].habit, emoji: hbEmoji.trim() || "🔥", days: initial?.product === "habit" ? (initial.days ?? []) : [] } : {}),
+    ...(product === "habit" ? { title: hbTitle.trim() || SAMPLE_TEXT[dLocale].habit, days: initial?.product === "habit" ? (initial.days ?? []) : [] } : {}),
     ...(product === "mood" ? { emoji: mdEmoji.trim() || "😄", note: mdNote.trim(), day: isoPlus(0) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
@@ -406,20 +403,22 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
                 {(id) => <input id={id} value={hbTitle} onChange={(e) => setHbTitle(e.target.value)} maxLength={30} placeholder={tl("Ex: Treinar")} className={inputClass} autoComplete="off" />}
               </Field>
             )}
+            {product === "mood" && (
             <div>
-              <p className="mb-1.5 text-sm font-semibold">{product === "habit" ? tl("Emoji do hábito") : tl("Como você está?")}</p>
-              <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={product === "habit" ? tl("Emoji do hábito") : tl("Como você está?")}>
-                {(product === "habit" ? HABIT_EMOJIS : MOODS).map((e) => {
-                  const cur = product === "habit" ? hbEmoji : mdEmoji;
+              <p className="mb-1.5 text-sm font-semibold">{tl("Como você está?")}</p>
+              <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={tl("Como você está?")}>
+                {MOODS.map((e) => {
+                  const cur = mdEmoji;
                   return (
-                    <button key={e} type="button" role="radio" aria-checked={cur === e} onClick={() => (product === "habit" ? setHbEmoji(e) : setMdEmoji(e))} className={`grid size-11 cursor-pointer place-items-center rounded-xl border text-2xl transition-colors ${cur === e ? "border-[#1f232b] bg-[#1f232b]/10" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`}>
+                    <button key={e} type="button" role="radio" aria-checked={cur === e} onClick={() => setMdEmoji(e)} className={`grid size-11 cursor-pointer place-items-center rounded-xl border text-2xl transition-colors ${cur === e ? "border-[#1f232b] bg-[#1f232b]/10" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`}>
                       {e}
                     </button>
                   );
                 })}
               </div>
-              <input value={product === "habit" ? hbEmoji : mdEmoji} onChange={(e) => (product === "habit" ? setHbEmoji(e.target.value) : setMdEmoji(e.target.value))} maxLength={8} aria-label={tl("Outro emoji")} placeholder={tl("Ou digite outro emoji")} className={`${inputClass} mt-2`} autoComplete="off" />
+              <input value={mdEmoji} onChange={(e) => setMdEmoji(e.target.value)} maxLength={8} aria-label={tl("Outro emoji")} placeholder={tl("Ou digite outro emoji")} className={`${inputClass} mt-2`} autoComplete="off" />
             </div>
+            )}
             {product === "mood" && (
               <Field label={tl("Uma frase curta (opcional)")}>
                 {(id) => <input id={id} value={mdNote} onChange={(e) => setMdNote(e.target.value)} maxLength={60} placeholder={tl("Ex: Dia incrível!")} className={inputClass} autoComplete="off" />}

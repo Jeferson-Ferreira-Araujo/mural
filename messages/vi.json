@@ -2160,8 +2160,8 @@
     "h1hhazjn": "VD: Một ngày tuyệt vời!",
     "hwji1k1": "Sau khi đặt lên bảng, hãy chạm “Đánh dấu hôm nay” mỗi ngày để giữ chuỗi.",
     "hbbelk0": "Hiển thị bạn đã duy trì một thói quen bao nhiêu ngày liên tiếp, với 7 ngày gần nhất được đánh dấu. Chạm “Đánh dấu hôm nay” mỗi ngày để giữ chuỗi.",
-    "h1ek53fx": "Hiển thị một emoji và một câu ngắn về tâm trạng hôm nay của bạn. Khi thay đổi, chỉ cần cập nhật; ngày sẽ hiện nếu tâm trạng thuộc ngày khác.",
-    "h18ki17r": "Định dạng"
+    "h18ki17r": "Định dạng",
+    "h19klm4e": "Hiển thị một emoji và một câu ngắn về tâm trạng của bạn. Khi muốn đổi, chỉ cần cập nhật: cho đến lúc đó nó giữ nguyên."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

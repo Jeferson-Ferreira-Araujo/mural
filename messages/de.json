@@ -2160,8 +2160,8 @@
     "h1hhazjn": "z. B. Toller Tag!",
     "hwji1k1": "Tippe nach dem Platzieren auf der Pinnwand jeden Tag auf „Heute abhaken“, um deine Serie zu halten.",
     "hbbelk0": "Zeigt, an wie vielen Tagen in Folge du eine Gewohnheit eingehalten hast, mit den letzten 7 Tagen markiert. Tippe jeden Tag auf „Heute abhaken“, um die Serie zu halten.",
-    "h1ek53fx": "Zeigt ein Emoji und einen kurzen Satz zu deiner heutigen Stimmung. Wenn sie sich ändert, aktualisiere sie einfach; das Datum erscheint, wenn die Stimmung von einem anderen Tag ist.",
-    "h18ki17r": "Format"
+    "h18ki17r": "Format",
+    "h19klm4e": "Zeigt ein Emoji und einen kurzen Satz zu deiner Stimmung. Wenn du sie ändern willst, aktualisiere sie einfach: Bis dahin bleibt sie, wie sie ist."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
