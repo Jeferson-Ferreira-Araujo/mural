@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Penghitung hari",
-        "m_comecaEm": "dimulai dalam"
+        "m_comecaEm": "dimulai dalam",
+        "m_desde": "sejak"
       },
       "index": {
         "versiculoDoDia": "Ayat hari ini",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "pin yang kamu tempel",
     "h1xkuywn": "Paket",
     "hpta1rt": "Gaya dalam paket",
-    "hv9g3q5": "Satu harga: Anda mendapat semua gaya dan memilih yang dipakai saat menempatkannya di papan."
+    "hv9g3q5": "Satu harga: Anda mendapat semua gaya dan memilih yang dipakai saat menempatkannya di papan.",
+    "h1o8kkce": "Menampilkan janji Alkitab yang berbeda setiap hari, berganti saat tengah malam. Anda hanya memilih tampilannya.",
+    "h1icc55d": "Menampilkan kalimat motivasi yang berbeda setiap hari, berganti saat tengah malam. Anda hanya memilih tampilannya.",
+    "h716e3r": "Menampilkan jam dari perangkat orang yang melihat papan, selalu tepat. Anda memilih tampilan: dinamis, flip, minimal, analog, atau piksel.",
+    "h12ubzug": "Menampilkan suhu dan cuaca saat ini di kota pilihan Anda, diperbarui otomatis.",
+    "h1d8phv5": "Menampilkan bulan ini dengan hari ini disorot dan tanggal penting yang Anda tandai.",
+    "htkhc2b": "Menampilkan tanggal hari ini pada lembar kalender yang berganti sendiri setiap hari.",
+    "h1tykm6v": "Menghitung hari, jam, dan menit menuju suatu acara. Anda memilih nama, tanggal, dan jam.",
+    "heafvld": "Menghitung sudah berapa hari sesuatu dimulai, seperti hubungan atau kebiasaan. Anda memilih nama dan tanggal mulai.",
+    "hx7g554": "Menampilkan sampul buku yang sedang Anda baca dan kemajuannya: halaman terbaca, bilah, atau keduanya. Perbarui kapan saja.",
+    "h1p1m2ef": "Menampilkan 3 teratas Anda untuk tema apa pun, seperti makanan, film, atau lagu.",
+    "h1f2lcp3": "Mengajukan pertanyaan dengan dua jawaban. Pengunjung memilih dan semua orang langsung melihat hasilnya."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

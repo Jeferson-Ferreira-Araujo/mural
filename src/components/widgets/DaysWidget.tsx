@@ -82,7 +82,7 @@ export function DaysWidget({ style = "warm", title, since, frame }: { style?: st
         )}
         {from && (
           <p className="text-[0.95em] font-semibold" style={{ color: skin.sub }}>
-            {future ? tx("m_comecaEm") : "desde"} {from}
+            {future ? tx("m_comecaEm") : tx("m_desde")} {from}
           </p>
         )}
       </div>

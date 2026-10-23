@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Compteur de jours",
-        "m_comecaEm": "commence dans"
+        "m_comecaEm": "commence dans",
+        "m_desde": "depuis"
       },
       "index": {
         "versiculoDoDia": "Verset du jour",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "épingles que tu as placées",
     "h1xkuywn": "Pack",
     "hpta1rt": "Styles du pack",
-    "hv9g3q5": "Un seul prix : vous obtenez tous les styles et choisissez lequel utiliser en le plaçant sur le mur."
+    "hv9g3q5": "Un seul prix : vous obtenez tous les styles et choisissez lequel utiliser en le plaçant sur le mur.",
+    "h1o8kkce": "Affiche chaque jour une promesse biblique différente, changée à minuit. Vous choisissez seulement le style.",
+    "h1icc55d": "Affiche chaque jour une phrase motivante différente, changée à minuit. Vous choisissez seulement le style.",
+    "h716e3r": "Affiche l’heure de l’appareil de la personne qui regarde le mur, toujours juste. Vous choisissez le style : dynamique, flip, minimal, analogique ou pixel.",
+    "h12ubzug": "Affiche la température et le temps actuels dans la ville de votre choix, avec mise à jour automatique.",
+    "h1d8phv5": "Affiche le mois en cours avec le jour d’aujourd’hui en évidence et les dates importantes que vous marquez.",
+    "htkhc2b": "Affiche la date du jour sur une feuille de calendrier qui change toute seule chaque jour.",
+    "h1tykm6v": "Compte les jours, heures et minutes restants avant un événement. Vous choisissez le nom, la date et l’heure.",
+    "heafvld": "Compte depuis combien de jours quelque chose a commencé, comme une relation ou une habitude. Vous choisissez le nom et la date de début.",
+    "hx7g554": "Affiche la couverture du livre que vous lisez et votre progression : pages lues, barre ou les deux. Vous la mettez à jour quand vous voulez.",
+    "h1p1m2ef": "Affiche votre top 3 sur n’importe quel thème, comme les plats, les films ou les chansons.",
+    "h1f2lcp3": "Pose une question avec deux réponses. Les visiteurs votent et tout le monde voit le résultat tout de suite."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

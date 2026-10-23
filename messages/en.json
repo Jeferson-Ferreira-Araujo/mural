@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Day counter",
-        "m_comecaEm": "starts in"
+        "m_comecaEm": "starts in",
+        "m_desde": "since"
       },
       "index": {
         "versiculoDoDia": "Verse of the day",

@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Dagenteller",
-        "m_comecaEm": "begint over"
+        "m_comecaEm": "begint over",
+        "m_desde": "sinds"
       },
       "index": {
         "versiculoDoDia": "Vers van de dag",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "pins die je hebt geplaatst",
     "h1xkuywn": "Pakket",
     "hpta1rt": "Stijlen in het pakket",
-    "hv9g3q5": "Eén prijs: je krijgt alle stijlen en kiest welke je gebruikt als je hem op het prikbord plaatst."
+    "hv9g3q5": "Eén prijs: je krijgt alle stijlen en kiest welke je gebruikt als je hem op het prikbord plaatst.",
+    "h1o8kkce": "Toont elke dag een andere bijbelse belofte, die om middernacht wisselt. Jij kiest alleen de stijl.",
+    "h1icc55d": "Toont elke dag een andere motiverende zin, die om middernacht wisselt. Jij kiest alleen de stijl.",
+    "h716e3r": "Toont de tijd van het apparaat van wie het prikbord bekijkt, altijd juist. Jij kiest de stijl: dynamisch, flip, minimal, analoog of pixel.",
+    "h12ubzug": "Toont de huidige temperatuur en het weer in de stad die je kiest, automatisch bijgewerkt.",
+    "h1d8phv5": "Toont de huidige maand met vandaag gemarkeerd en de belangrijke data die je aanvinkt.",
+    "htkhc2b": "Toont de datum van vandaag op een kalenderblad dat elke dag vanzelf verandert.",
+    "h1tykm6v": "Telt de dagen, uren en minuten tot een gebeurtenis. Jij kiest de naam, datum en tijd.",
+    "heafvld": "Telt hoeveel dagen geleden iets begon, zoals een relatie of een gewoonte. Jij kiest de naam en de startdatum.",
+    "hx7g554": "Toont de omslag van het boek dat je leest en je voortgang: gelezen pagina’s, balk of allebei. Je werkt het bij wanneer je wilt.",
+    "h1p1m2ef": "Toont jouw top 3 over elk thema, zoals eten, films of liedjes.",
+    "h1f2lcp3": "Stelt een vraag met twee antwoorden. Bezoekers stemmen en iedereen ziet meteen de uitslag."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

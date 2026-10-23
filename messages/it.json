@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Contatore dei giorni",
-        "m_comecaEm": "inizia tra"
+        "m_comecaEm": "inizia tra",
+        "m_desde": "dal"
       },
       "index": {
         "versiculoDoDia": "Versetto del giorno",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "pin che hai messo",
     "h1xkuywn": "Pacchetto",
     "hpta1rt": "Stili del pacchetto",
-    "hv9g3q5": "Un solo prezzo: ottieni tutti gli stili e scegli quale usare quando lo metti nella bacheca."
+    "hv9g3q5": "Un solo prezzo: ottieni tutti gli stili e scegli quale usare quando lo metti nella bacheca.",
+    "h1o8kkce": "Mostra ogni giorno una promessa biblica diversa, che cambia a mezzanotte. Tu scegli solo lo stile.",
+    "h1icc55d": "Mostra ogni giorno una frase motivazionale diversa, che cambia a mezzanotte. Tu scegli solo lo stile.",
+    "h716e3r": "Mostra l’ora del dispositivo di chi guarda la bacheca, sempre giusta. Tu scegli lo stile: dinamico, flip, minimal, analogico o pixel.",
+    "h12ubzug": "Mostra temperatura e meteo attuali della città che scegli, con aggiornamento automatico.",
+    "h1d8phv5": "Mostra il mese corrente con il giorno di oggi in evidenza e le date importanti che segni.",
+    "htkhc2b": "Mostra la data di oggi su un foglio di calendario che cambia da solo ogni giorno.",
+    "h1tykm6v": "Conta i giorni, le ore e i minuti che mancano a un evento. Tu scegli nome, data e ora.",
+    "heafvld": "Conta da quanti giorni è iniziata una cosa, come una relazione o un’abitudine. Tu scegli nome e data di inizio.",
+    "hx7g554": "Mostra la copertina del libro che stai leggendo e i tuoi progressi: pagine lette, barra o entrambi. Lo aggiorni quando vuoi.",
+    "h1p1m2ef": "Mostra la tua top 3 su qualsiasi tema, come cibi, film o canzoni.",
+    "h1f2lcp3": "Fa una domanda con due risposte. I visitatori votano e tutti vedono subito il risultato."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

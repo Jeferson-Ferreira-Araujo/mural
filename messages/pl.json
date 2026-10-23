@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Licznik dni",
-        "m_comecaEm": "zaczyna się za"
+        "m_comecaEm": "zaczyna się za",
+        "m_desde": "od"
       },
       "index": {
         "versiculoDoDia": "Werset dnia",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "piny, które umieściłeś",
     "h1xkuywn": "Pakiet",
     "hpta1rt": "Style w pakiecie",
-    "hv9g3q5": "Jedna cena: dostajesz wszystkie style i wybierasz, którego użyć, umieszczając go na tablicy."
+    "hv9g3q5": "Jedna cena: dostajesz wszystkie style i wybierasz, którego użyć, umieszczając go na tablicy.",
+    "h1o8kkce": "Pokazuje każdego dnia inną biblijną obietnicę, zmienianą o północy. Wybierasz tylko wygląd.",
+    "h1icc55d": "Pokazuje każdego dnia inne zdanie motywacyjne, zmieniane o północy. Wybierasz tylko wygląd.",
+    "h716e3r": "Pokazuje zawsze poprawną godzinę z urządzenia osoby oglądającej tablicę. Wybierasz wygląd: dynamiczny, flip, minimal, analogowy lub pixel.",
+    "h12ubzug": "Pokazuje aktualną temperaturę i pogodę w wybranym mieście, z automatyczną aktualizacją.",
+    "h1d8phv5": "Pokazuje bieżący miesiąc z wyróżnionym dzisiejszym dniem i ważnymi datami, które zaznaczysz.",
+    "htkhc2b": "Pokazuje dzisiejszą datę na kartce kalendarza, która sama zmienia się każdego dnia.",
+    "h1tykm6v": "Odlicza dni, godziny i minuty do wydarzenia. Wybierasz nazwę, datę i godzinę.",
+    "heafvld": "Liczy, od ilu dni coś trwa, na przykład związek lub nawyk. Wybierasz nazwę i datę początku.",
+    "hx7g554": "Pokazuje okładkę książki, którą czytasz, i Twoje postępy: przeczytane strony, pasek lub oba. Aktualizujesz, kiedy chcesz.",
+    "h1p1m2ef": "Pokazuje Twoje top 3 na dowolny temat, na przykład jedzenie, filmy lub piosenki.",
+    "h1f2lcp3": "Zadaje pytanie z dwiema odpowiedziami. Odwiedzający głosują, a wszyscy od razu widzą wynik."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Bộ đếm ngày",
-        "m_comecaEm": "bắt đầu sau"
+        "m_comecaEm": "bắt đầu sau",
+        "m_desde": "từ"
       },
       "index": {
         "versiculoDoDia": "Câu kinh trong ngày",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "pin bạn đã ghim",
     "h1xkuywn": "Gói",
     "hpta1rt": "Các kiểu trong gói",
-    "hv9g3q5": "Một mức giá: bạn nhận tất cả kiểu và chọn kiểu muốn dùng khi đặt lên bảng."
+    "hv9g3q5": "Một mức giá: bạn nhận tất cả kiểu và chọn kiểu muốn dùng khi đặt lên bảng.",
+    "h1o8kkce": "Hiển thị mỗi ngày một lời hứa Kinh Thánh khác, đổi vào lúc nửa đêm. Bạn chỉ chọn kiểu hiển thị.",
+    "h1icc55d": "Hiển thị mỗi ngày một câu truyền cảm hứng khác, đổi vào lúc nửa đêm. Bạn chỉ chọn kiểu hiển thị.",
+    "h716e3r": "Hiển thị giờ trên thiết bị của người xem bảng, luôn chính xác. Bạn chọn kiểu: động, flip, tối giản, kim hoặc pixel.",
+    "h12ubzug": "Hiển thị nhiệt độ và thời tiết hiện tại ở thành phố bạn chọn, tự động cập nhật.",
+    "h1d8phv5": "Hiển thị tháng hiện tại với ngày hôm nay được làm nổi bật và các ngày quan trọng bạn đánh dấu.",
+    "htkhc2b": "Hiển thị ngày hôm nay trên tờ lịch tự đổi mỗi ngày.",
+    "h1tykm6v": "Đếm số ngày, giờ và phút còn lại đến một sự kiện. Bạn chọn tên, ngày và giờ.",
+    "heafvld": "Đếm xem một điều gì đó, như một mối quan hệ hay một thói quen, đã bắt đầu được bao nhiêu ngày. Bạn chọn tên và ngày bắt đầu.",
+    "hx7g554": "Hiển thị bìa cuốn sách bạn đang đọc và tiến độ: số trang đã đọc, thanh tiến độ hoặc cả hai. Bạn cập nhật bất cứ lúc nào.",
+    "h1p1m2ef": "Hiển thị top 3 của bạn về bất kỳ chủ đề nào, như món ăn, phim hay bài hát.",
+    "h1f2lcp3": "Đặt một câu hỏi với hai đáp án. Khách ghé thăm bình chọn và mọi người thấy kết quả ngay."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

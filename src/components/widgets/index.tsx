@@ -108,8 +108,13 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
 export const isDisplayOn = (product: string) => !DISABLED_DISPLAYS.has(product);
-/** Displays vendidos em pacote: um preço só libera todos os estilos (produto "categoria:pack" no banco); a pessoa escolhe o estilo ao colocar no mural. */
-export const BUNDLED_DISPLAYS: ReadonlySet<string> = new Set(["book", "bible", "motivation", "clock", "weather", "calendar", "date", "countdown", "daycount", "top3", "poll"]);
+/**
+ * Todo display é vendido em pacote: um preço só libera todos os estilos, e a pessoa escolhe o estilo ao colocar no mural.
+ * PARA UM DISPLAY NOVO: (1) acrescente a categoria em DISPLAY_CATS e os estilos em WIDGET_STYLES; (2) no banco, crie as linhas "categoria:estilo" em pin_products
+ * e UMA linha "categoria:pack" com o preço do pacote (0 = grátis); (3) escreva o resumo em DISPLAY_SUMMARY e traduza-o (scripts/lit-add.cjs).
+ * Sem a linha ":pack" a loja mostra os estilos soltos, como antes.
+ */
+export const UNBUNDLED_DISPLAYS: ReadonlySet<string> = new Set();
 /** Resumo de como cada display funciona (mostrado no pacote da loja). */
 export const DISPLAY_SUMMARY: Record<string, string> = {
   bible: "Mostra uma promessa bíblica diferente a cada dia, trocada à meia-noite. Você só escolhe o visual.",
@@ -124,7 +129,7 @@ export const DISPLAY_SUMMARY: Record<string, string> = {
   top3: "Mostra o seu top 3 sobre qualquer tema, como comidas, filmes ou músicas.",
   poll: "Faz uma pergunta com duas respostas. Quem visita o mural vota e todos veem o resultado na hora.",
 };
-export const isBundled = (product: string) => BUNDLED_DISPLAYS.has(product);
+export const isBundled = (product: string) => !UNBUNDLED_DISPLAYS.has(product);
 export const PACK_SUFFIX = ":pack";
 export const isPackId = (id: string) => id.endsWith(PACK_SUFFIX);
 export const splitDisplayId = (id: string) => {

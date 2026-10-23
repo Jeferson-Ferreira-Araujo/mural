@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Contador de dias",
-        "m_comecaEm": "começa em"
+        "m_comecaEm": "começa em",
+        "m_desde": "desde"
       },
       "index": {
         "versiculoDoDia": "Versículo do dia",

@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Gün sayacı",
-        "m_comecaEm": "başlamasına"
+        "m_comecaEm": "başlamasına",
+        "m_desde": "Başlangıç:"
       },
       "index": {
         "versiculoDoDia": "Günün ayeti",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "yerleştirdiğin pinler",
     "h1xkuywn": "Paket",
     "hpta1rt": "Paketteki stiller",
-    "hv9g3q5": "Tek fiyat: tüm stilleri alırsınız ve panoya yerleştirirken hangisini kullanacağınızı seçersiniz."
+    "hv9g3q5": "Tek fiyat: tüm stilleri alırsınız ve panoya yerleştirirken hangisini kullanacağınızı seçersiniz.",
+    "h1o8kkce": "Her gün gece yarısı değişen farklı bir İncil vaadi gösterir. Siz sadece görünümü seçersiniz.",
+    "h1icc55d": "Her gün gece yarısı değişen farklı bir motivasyon sözü gösterir. Siz sadece görünümü seçersiniz.",
+    "h716e3r": "Panoyu görenin cihazındaki saati her zaman doğru gösterir. Görünümü siz seçersiniz: dinamik, flip, minimal, analog veya piksel.",
+    "h12ubzug": "Seçtiğiniz şehrin güncel sıcaklığını ve havasını otomatik güncellenerek gösterir.",
+    "h1d8phv5": "Bugünü vurgulayarak mevcut ayı ve işaretlediğiniz önemli tarihleri gösterir.",
+    "htkhc2b": "Bugünün tarihini, her gün kendiliğinden değişen bir takvim yaprağında gösterir.",
+    "h1tykm6v": "Bir olaya kalan gün, saat ve dakikayı sayar. Adı, tarihi ve saati siz seçersiniz.",
+    "heafvld": "Bir ilişki ya da alışkanlık gibi bir şeyin kaç gün önce başladığını sayar. Adı ve başlangıç tarihini siz seçersiniz.",
+    "hx7g554": "Okuduğunuz kitabın kapağını ve ilerlemenizi gösterir: okunan sayfalar, çubuk veya ikisi birden. Dilediğiniz zaman güncellersiniz.",
+    "h1p1m2ef": "Yemek, film veya şarkı gibi istediğiniz konuda ilk 3’ünüzü gösterir.",
+    "h1f2lcp3": "İki cevaplı bir soru sorar. Ziyaretçiler oy verir ve herkes sonucu anında görür."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

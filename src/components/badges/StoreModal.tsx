@@ -432,7 +432,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <span className="flex items-center justify-between gap-2 p-3">
                     <span className="font-title text-base font-semibold">{c.label}</span>
                     <span className="text-xs font-semibold text-[#6b5440]">
-                      {isBundled(c.id) ? `${tl("Pacote")} · ` : ""}{styles} {styles === 1 ? "estilo" : "estilos"}
+                      {isBundled(c.id) && products.some((p) => p.id === `${c.id}:pack`) ? `${tl("Pacote")} · ` : ""}{styles} {styles === 1 ? "estilo" : "estilos"}
                     </span>
                   </span>
                 </button>
@@ -451,7 +451,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               {tx("x_displays")}</button>
             <h3 className="font-title text-base font-semibold">{tl(DISPLAY_CATS.find((c) => c.id === displayCat)?.label ?? "")}</h3>
           </div>
-        {displayCat && isBundled(displayCat) ? (
+        {displayCat && isBundled(displayCat) && products.some((p) => p.id === `${displayCat}:pack`) ? (
           (() => {
             // pacote: um preço só libera todos os estilos; o carrossel mostra cada um
             const pack = products.find((p) => p.id === `${displayCat}:pack`);

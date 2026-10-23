@@ -1397,7 +1397,8 @@
       },
       "DaysWidget": {
         "contadorDeDias": "Tageszähler",
-        "m_comecaEm": "beginnt in"
+        "m_comecaEm": "beginnt in",
+        "m_desde": "seit"
       },
       "index": {
         "versiculoDoDia": "Vers des Tages",
@@ -2130,7 +2131,18 @@
     "h4jxtqa": "Pins, die du gesetzt hast",
     "h1xkuywn": "Paket",
     "hpta1rt": "Stile im Paket",
-    "hv9g3q5": "Ein Preis: Du erhältst alle Stile und wählst beim Platzieren auf der Pinnwand, welchen du nutzt."
+    "hv9g3q5": "Ein Preis: Du erhältst alle Stile und wählst beim Platzieren auf der Pinnwand, welchen du nutzt.",
+    "h1o8kkce": "Zeigt jeden Tag ein anderes Bibelversprechen, das um Mitternacht wechselt. Du wählst nur das Aussehen.",
+    "h1icc55d": "Zeigt jeden Tag einen anderen Motivationsspruch, der um Mitternacht wechselt. Du wählst nur das Aussehen.",
+    "h716e3r": "Zeigt die Uhrzeit des Geräts der Person, die die Pinnwand ansieht, immer richtig. Du wählst das Aussehen: dynamisch, Flip, minimal, analog oder Pixel.",
+    "h12ubzug": "Zeigt Temperatur und Wetter in der gewählten Stadt, automatisch aktualisiert.",
+    "h1d8phv5": "Zeigt den aktuellen Monat mit hervorgehobenem heutigem Tag und den wichtigen Terminen, die du markierst.",
+    "htkhc2b": "Zeigt das heutige Datum auf einem Kalenderblatt, das sich jeden Tag von selbst ändert.",
+    "h1tykm6v": "Zählt die Tage, Stunden und Minuten bis zu einem Ereignis. Du wählst Name, Datum und Uhrzeit.",
+    "heafvld": "Zählt, seit wie vielen Tagen etwas begonnen hat, etwa eine Beziehung oder eine Gewohnheit. Du wählst Name und Startdatum.",
+    "hx7g554": "Zeigt das Cover des Buchs, das du liest, und deinen Fortschritt: gelesene Seiten, Balken oder beides. Du aktualisierst es, wann du willst.",
+    "h1p1m2ef": "Zeigt deine Top 3 zu jedem Thema, etwa Essen, Filme oder Lieder.",
+    "h1f2lcp3": "Stellt eine Frage mit zwei Antworten. Besucher stimmen ab und alle sehen sofort das Ergebnis."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
