@@ -2127,7 +2127,10 @@
     "h14vhykg": "Kredilerin",
     "h9uuaxr": "✓ Senin",
     "h1v6h617": "Bir buton pinin raptiyesinin üzerinde duramaz. Biraz yana bırak.",
-    "h4jxtqa": "yerleştirdiğin pinler"
+    "h4jxtqa": "yerleştirdiğin pinler",
+    "h1xkuywn": "Paket",
+    "hpta1rt": "Paketteki stiller",
+    "hv9g3q5": "Tek fiyat: tüm stilleri alırsınız ve panoya yerleştirirken hangisini kullanacağınızı seçersiniz."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

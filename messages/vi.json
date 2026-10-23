@@ -2127,7 +2127,10 @@
     "h14vhykg": "Tín dụng của bạn",
     "h9uuaxr": "✓ Của bạn",
     "h1v6h617": "Một nút không thể nằm trên đinh ghim của pin. Hãy thả lệch sang bên một chút.",
-    "h4jxtqa": "pin bạn đã ghim"
+    "h4jxtqa": "pin bạn đã ghim",
+    "h1xkuywn": "Gói",
+    "hpta1rt": "Các kiểu trong gói",
+    "hv9g3q5": "Một mức giá: bạn nhận tất cả kiểu và chọn kiểu muốn dùng khi đặt lên bảng."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

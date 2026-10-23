@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setDisplayHidden, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARD_EM, NATURAL_W, RATIO, shapeOfStyle } from "@/lib/displayShape";
-import { DisplayCard, splitDisplayId } from "../widgets";
+import { DisplayCard, isBundled, splitDisplayId } from "../widgets";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
@@ -775,6 +775,7 @@ export function BadgeProvider({
           open
           product={dialog.product}
           style={dialog.style}
+          styles={dialog.mode === "new" && isBundled(dialog.product) ? displays.filter((id) => splitDisplayId(id).product === dialog.product).map((id) => splitDisplayId(id).style) : undefined}
           initial={dialog.initial}
           editing={dialog.mode === "edit"}
           busy={dialogBusy}

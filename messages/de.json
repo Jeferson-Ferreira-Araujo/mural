@@ -2127,7 +2127,10 @@
     "h14vhykg": "Deine Credits",
     "h9uuaxr": "✓ Gehört dir",
     "h1v6h617": "Ein Button kann nicht auf der Pinnnadel eines Pins sitzen. Lege ihn etwas daneben ab.",
-    "h4jxtqa": "Pins, die du gesetzt hast"
+    "h4jxtqa": "Pins, die du gesetzt hast",
+    "h1xkuywn": "Paket",
+    "hpta1rt": "Stile im Paket",
+    "hv9g3q5": "Ein Preis: Du erhältst alle Stile und wählst beim Platzieren auf der Pinnwand, welchen du nutzt."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

@@ -2,7 +2,7 @@
 
 import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isDisplayOn } from "./widgets";
+import { isDisplayOn, isPackId } from "./widgets";
 import { buildPool, randomMural, relocalize } from "@/data/mock";
 import { decorLayout } from "@/data/decorDisplays";
 import {
@@ -1185,7 +1185,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
       <ReactionsProvider value={isOwner || isMember ? { onChanged: () => void loadBoard() } : null}>
         <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
-        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={selected ? badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product))) : decorBadges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
+        <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={selected ? badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product))) : decorBadges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && !isPackId(p.id) && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
         <MuralScreen
           sidebarMenu={sidebarMenu}
           welcome={isMember && selected ? tx("m_esteEOMuralCompartilhado", { v0: selected.nickname, v1: myNick === selected.nickname ? (selected.partner ?? "") : (myNick ?? "") }) : undefined}

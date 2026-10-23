@@ -2127,7 +2127,10 @@
     "h14vhykg": "I tuoi crediti",
     "h9uuaxr": "✓ Tuo",
     "h1v6h617": "Un bottone non può stare sulla puntina di un pin. Rilascialo un po' di lato.",
-    "h4jxtqa": "pin che hai messo"
+    "h4jxtqa": "pin che hai messo",
+    "h1xkuywn": "Pacchetto",
+    "hpta1rt": "Stili del pacchetto",
+    "hv9g3q5": "Un solo prezzo: ottieni tutti gli stili e scegli quale usare quando lo metti nella bacheca."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

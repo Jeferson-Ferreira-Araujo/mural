@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
-import { DISPLAY_CATS, DisplayCard, displayName, splitDisplayId } from "../widgets";
+import { DISPLAY_CATS, DisplayCard, displayName, isBundled, splitDisplayId } from "../widgets";
 import { sampleFor } from "./StoreModal";
 import { useTranslations, useLocale } from "next-intl";
 import { demoLocaleOf } from "@/data/demoText";
@@ -66,6 +66,24 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
           )}
           <h3 className="font-title text-base font-semibold">{open.label}</h3>
         </div>
+        {isBundled(open.id) ? (
+          // pacote: um cartão só; o estilo é escolhido no carrossel ao colocar
+          <div className="mx-auto max-w-sm overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70">
+            <div className="grid min-h-[11rem] place-items-center bg-[#e9d8b6]/70 px-4 py-5">
+              <span className="pointer-events-none text-[9px]">
+                <span className="relative block">
+                  <DisplayCard data={sampleFor(open.id, splitDisplayId(open.ids[0]).style, demoLocale)} preview />
+                </span>
+              </span>
+            </div>
+            <div className="p-3">
+              <p className="font-title text-base font-semibold">{open.label}</p>
+              <p className="text-xs font-semibold text-[#6b5440]">{tl("Pacote")} · {open.styles} {open.styles === 1 ? "estilo" : "estilos"}</p>
+              <button type="button" onClick={() => onPick(open.ids[0])} className="mt-2 w-full cursor-pointer rounded-xl bg-[#1f232b] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2c313b] active:scale-[0.99]">
+                {tx("colocarDisplay")}</button>
+            </div>
+          </div>
+        ) : (
         <ul className="grid gap-3 sm:grid-cols-2" aria-label={open.label}>
           {[...new Set(open.ids.map((id) => baseStyle(splitDisplayId(id).style)))].map((base) => {
             // um cartão por estilo; se a pessoa tem os dois formatos, escolhe aqui
@@ -103,6 +121,7 @@ export function DisplayChooser({ ids, onPick, onStore }: { ids: string[]; onPick
             );
           })}
         </ul>
+        )}
       </div>
     );
   }

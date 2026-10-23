@@ -2127,7 +2127,10 @@
     "h14vhykg": "Tus créditos",
     "h9uuaxr": "✓ Ya es tuyo",
     "h1v6h617": "Un botón no puede quedar sobre la chincheta de un pin. Suéltalo un poco al lado.",
-    "h4jxtqa": "pins que colocaste"
+    "h4jxtqa": "pins que colocaste",
+    "h1xkuywn": "Paquete",
+    "hpta1rt": "Estilos del paquete",
+    "hv9g3q5": "Un solo precio: te llevas todos los estilos y eliges cuál usar al ponerlo en el mural."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

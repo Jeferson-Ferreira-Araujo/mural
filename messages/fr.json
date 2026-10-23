@@ -2127,7 +2127,10 @@
     "h14vhykg": "Tes crédits",
     "h9uuaxr": "✓ À toi",
     "h1v6h617": "Un bouton ne peut pas se poser sur le clou d'une épingle. Dépose-le un peu sur le côté.",
-    "h4jxtqa": "épingles que tu as placées"
+    "h4jxtqa": "épingles que tu as placées",
+    "h1xkuywn": "Pack",
+    "hpta1rt": "Styles du pack",
+    "hv9g3q5": "Un seul prix : vous obtenez tous les styles et choisissez lequel utiliser en le plaçant sur le mur."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

@@ -2127,7 +2127,10 @@
     "h14vhykg": "내 크레딧",
     "h9uuaxr": "✓ 보유 중",
     "h1v6h617": "버튼은 핀의 압정 위에 놓을 수 없습니다. 조금 옆에 놓으세요.",
-    "h4jxtqa": "내가 붙인 핀"
+    "h4jxtqa": "내가 붙인 핀",
+    "h1xkuywn": "패키지",
+    "hpta1rt": "패키지 스타일",
+    "hv9g3q5": "한 번의 가격으로 모든 스타일을 받고, 보드에 놓을 때 사용할 스타일을 고릅니다."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

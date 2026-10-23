@@ -12,7 +12,8 @@ import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 import { useBackClose } from "@/lib/backStack";
 import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
-import { DISPLAY_CATS, defaultStyle, displayName, isDisplayOn } from "../widgets";
+import { DISPLAY_CATS, defaultStyle, displayName, isBundled, isDisplayOn, isPackId, stylesOf } from "../widgets";
+import { StyleCarousel } from "./StyleCarousel";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
@@ -210,6 +211,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const products = (inventory?.pinProducts ?? []).filter((p) => isDisplayOn(p.id.split(":")[0]));
   const [displayCat, setDisplayCat] = useState<string | null>(null); // tipo de display aberto na aba Displays
+  const [packIdx, setPackIdx] = useState(0); // estilo à vista no carrossel do pacote
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada cartão de estilo (retangular por padrão)
 
   const [viewBoard, setViewBoard] = useState<{ image: string; name: string } | null>(null); // mural aberto em tela cheia
@@ -410,7 +412,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         // 1º passo: o tipo de display (cada estilo é vendido separadamente, dentro do tipo)
         <ul className="grid gap-3 sm:grid-cols-2" aria-label={tx("tiposDeDisplay")}>
           {DISPLAY_CATS.filter((c) => isDisplayOn(c.id)).map((c) => {
-            const items = products.filter((p) => p.id.startsWith(c.id + ":"));
+            const items = products.filter((p) => p.id.startsWith(c.id + ":") && !isPackId(p.id));
             const styles = new Set(items.map((p) => baseStyle(p.id.split(":")[1]))).size; // estilos diferentes (retangular e quadrado do mesmo estilo contam uma vez)
             return (
               <li key={c.id}>
@@ -429,7 +431,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   <span className="flex items-center justify-between gap-2 p-3">
                     <span className="font-title text-base font-semibold">{c.label}</span>
                     <span className="text-xs font-semibold text-[#6b5440]">
-                      {styles} {styles === 1 ? "estilo" : "estilos"}
+                      {isBundled(c.id) ? `${tl("Pacote")} · ` : ""}{styles} {styles === 1 ? "estilo" : "estilos"}
                     </span>
                   </span>
                 </button>
@@ -448,6 +450,64 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               {tx("x_displays")}</button>
             <h3 className="font-title text-base font-semibold">{tl(DISPLAY_CATS.find((c) => c.id === displayCat)?.label ?? "")}</h3>
           </div>
+        {displayCat && isBundled(displayCat) ? (
+          (() => {
+            // pacote: um preço só libera todos os estilos; o carrossel mostra cada um
+            const pack = products.find((p) => p.id === `${displayCat}:pack`);
+            const sts = stylesOf(displayCat);
+            if (!pack || sts.length === 0) return null;
+            const just = done?.id === `f${pack.id}`;
+            const label = tl(DISPLAY_CATS.find((c) => c.id === displayCat)?.label ?? "");
+            const cur = Math.min(packIdx, sts.length - 1);
+            return (
+              <div className={`relative mx-auto flex max-w-md flex-col overflow-hidden rounded-2xl border bg-white/70 ${just ? "border-[#3aa655] shadow-[0_0_0_3px_rgba(58,166,85,.35)]" : "border-[#e1d3ba]"}`} style={just ? { animation: "buy-pop 0.6s ease" } : undefined}>
+                {just && <Confetti key={done.at} />}
+                <div className="bg-[#e9d8b6]/70 px-2 pt-6 pb-3">
+                  <StyleCarousel
+                    count={sts.length}
+                    index={cur}
+                    onIndex={setPackIdx}
+                    label={tl("Estilos do pacote")}
+                    names={sts.map((x) => tl(x.name))}
+                    slide={(i) => (
+                      <div className="flex justify-center px-10">
+                        <div className="text-[9px]">
+                          <div className="relative">
+                            <DisplayCard data={sampleFor(displayCat, withShape(sts[i].id, "tall"), demoLocale)} preview />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="font-title text-base font-semibold">{tl("Pacote")} · {label}</p>
+                      <p className="text-xs font-semibold text-[#6b5440]">
+                        {sts.length} estilos · {tl(sts[cur].name)}
+                      </p>
+                    </div>
+                    {pack.owned ? (
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{tl("✓ Comprado")}</span>
+                    ) : (
+                      <p className="flex shrink-0 items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: pack.price })}>
+                        <Coin className="size-5" />
+                        {pack.price}
+                      </p>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-[#6b5440]">{tl("Um preço só: você leva todos os estilos e escolhe qual usar ao colocar no mural.")}</p>
+                  {!pack.owned && (
+                    <button type="button" disabled={busy === `f${pack.id}`} onClick={() => buy(`f${pack.id}`, { kind: "product", id: pack.id }, { title: label, text: tx("m_liberadoJaEstaNaEscolha"), spent: pack.price })} className={`${buyBtn} mt-2`}>
+                      {busy === `f${pack.id}` ? tl("Comprando…") : tl("Comprar")}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })()
+        ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {(() => {
             // um cartão por estilo; o formato (retangular ou quadrado) é escolhido no próprio cartão
@@ -504,6 +564,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             });
           })()}
         </ul>
+        )}
         </>
 ) : (
         <>

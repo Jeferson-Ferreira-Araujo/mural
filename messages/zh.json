@@ -2127,7 +2127,10 @@
     "h14vhykg": "你的积分",
     "h9uuaxr": "✓ 已拥有",
     "h1v6h617": "徽章不能放在图钉的钉子上。请放到稍微旁边一点的位置。",
-    "h4jxtqa": "你贴的图钉"
+    "h4jxtqa": "你贴的图钉",
+    "h1xkuywn": "套装",
+    "hpta1rt": "套装样式",
+    "hv9g3q5": "一次付费即可获得全部样式，放到墙上时再选择要用的样式。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

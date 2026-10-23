@@ -2127,7 +2127,10 @@
     "h14vhykg": "Kreditmu",
     "h9uuaxr": "✓ Milikmu",
     "h1v6h617": "Tombol tidak bisa berada di atas jarum pin. Lepas sedikit ke samping.",
-    "h4jxtqa": "pin yang kamu tempel"
+    "h4jxtqa": "pin yang kamu tempel",
+    "h1xkuywn": "Paket",
+    "hpta1rt": "Gaya dalam paket",
+    "hv9g3q5": "Satu harga: Anda mendapat semua gaya dan memilih yang dipakai saat menempatkannya di papan."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

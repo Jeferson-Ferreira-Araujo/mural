@@ -2127,7 +2127,10 @@
     "h14vhykg": "Twoje kredyty",
     "h9uuaxr": "✓ Twoje",
     "h1v6h617": "Przycisk nie może leżeć na szpilce pinu. Upuść go trochę z boku.",
-    "h4jxtqa": "piny, które umieściłeś"
+    "h4jxtqa": "piny, które umieściłeś",
+    "h1xkuywn": "Pakiet",
+    "hpta1rt": "Style w pakiecie",
+    "hv9g3q5": "Jedna cena: dostajesz wszystkie style i wybierasz, którego użyć, umieszczając go na tablicy."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

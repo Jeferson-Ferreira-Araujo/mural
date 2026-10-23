@@ -10,6 +10,7 @@ import { useWT } from "../widgets/wt";
 import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
+import { StyleCarousel } from "./StyleCarousel";
 import { Field, inputClass, primaryButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
@@ -39,7 +40,7 @@ const isoPlus = (days: number) => {
  * Antes de soltar o pin da loja no mural (ou ao editá-lo): escolher o estilo, a cor do contorno e, no relógio, o horário; no clima, a cidade.
  * `onSubmit` recebe os dados prontos para o servidor.
  */
-export function DisplayDialog({ open, product, style, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
+export function DisplayDialog({ open, product, style, styles, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; /** pacote: os estilos que a pessoa pode escolher no carrossel (sem isto, vale só `style`) */ styles?: string[]; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDialog");
   const dLocale = demoLocaleOf(useLocale());
@@ -72,9 +73,12 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [pick, setPick] = useState(0); // pacote: estilo à vista no carrossel
+  const choices = styles && styles.length > 1 ? styles : null;
 
   useEffect(() => {
     if (!open) return;
+    setPick(Math.max(0, styles?.indexOf(style) ?? 0));
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
@@ -146,7 +150,8 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
-  const data: DisplayData = { ...base, style };
+  const chosen = choices ? choices[Math.min(pick, choices.length - 1)] : style;
+  const data: DisplayData = { ...base, style: chosen };
   const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "poll" ? plTitle.trim().length > 0 && [0, 1].every((i) => (plOptions[i] ?? "").trim().length > 0) : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
   async function submit() {
@@ -165,16 +170,36 @@ export function DisplayDialog({ open, product, style, initial, editing, busy, er
       setUploading(false);
     }
   }
-  const title = displayName(product + ":" + style, tl);
+  const title = displayName(product + ":" + chosen, tl);
 
   return (
     <Modal open={open} onClose={onClose} title={title} label={title}>
       <div className="space-y-4">
-        <div className="flex justify-center overflow-hidden rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-2 py-5">
-          <div className="text-[min(11px,2.2vw)]">
-            <DisplayCard data={data} preview />
+        {choices ? (
+          // pacote: desliza entre os estilos e o que estiver à vista é o que vai para o mural
+          <div className="overflow-hidden rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-2 pt-5 pb-3">
+            <StyleCarousel
+              count={choices.length}
+              index={Math.min(pick, choices.length - 1)}
+              onIndex={setPick}
+              label={tl("Estilos do pacote")}
+              names={choices.map((s) => displayName(`${product}:${s}`, tl))}
+              slide={(i) => (
+                <div className="flex justify-center px-10">
+                  <div className="text-[min(11px,2.2vw)]">
+                    <DisplayCard data={{ ...base, style: choices[i] }} preview />
+                  </div>
+                </div>
+              )}
+            />
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-center overflow-hidden rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-2 py-5">
+            <div className="text-[min(11px,2.2vw)]">
+              <DisplayCard data={data} preview />
+            </div>
+          </div>
+        )}
 
         {product === "clock" && (
           <Field label={tx("horarioDeQualLugar")}>

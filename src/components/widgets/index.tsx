@@ -108,6 +108,11 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
 export const isDisplayOn = (product: string) => !DISABLED_DISPLAYS.has(product);
+/** Displays vendidos em pacote: um preço só libera todos os estilos (produto "categoria:pack" no banco); a pessoa escolhe o estilo ao colocar no mural. */
+export const BUNDLED_DISPLAYS: ReadonlySet<string> = new Set(["book"]);
+export const isBundled = (product: string) => BUNDLED_DISPLAYS.has(product);
+export const PACK_SUFFIX = ":pack";
+export const isPackId = (id: string) => id.endsWith(PACK_SUFFIX);
 export const splitDisplayId = (id: string) => {
   const [product, style = ""] = id.split(":");
   return { product, style };

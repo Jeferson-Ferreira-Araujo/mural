@@ -2127,7 +2127,10 @@
     "h14vhykg": "Je credits",
     "h9uuaxr": "✓ Van jou",
     "h1v6h617": "Een knop kan niet op de punt van een pin zitten. Laat hem iets opzij vallen.",
-    "h4jxtqa": "pins die je hebt geplaatst"
+    "h4jxtqa": "pins die je hebt geplaatst",
+    "h1xkuywn": "Pakket",
+    "hpta1rt": "Stijlen in het pakket",
+    "hv9g3q5": "Eén prijs: je krijgt alle stijlen en kiest welke je gebruikt als je hem op het prikbord plaatst."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

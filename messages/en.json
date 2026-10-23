@@ -2127,7 +2127,10 @@
     "h14vhykg": "Your credits",
     "h9uuaxr": "✓ Yours",
     "h1v6h617": "A button can't sit on a pin's tack. Drop it a little to the side.",
-    "h4jxtqa": "pins you placed"
+    "h4jxtqa": "pins you placed",
+    "h1xkuywn": "Bundle",
+    "hpta1rt": "Bundle styles",
+    "hv9g3q5": "One price: you get every style and pick which one to use when you place it on the board."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
