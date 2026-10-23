@@ -2130,7 +2130,18 @@
     "h4jxtqa": "pins que colocaste",
     "h1xkuywn": "Paquete",
     "hpta1rt": "Estilos del paquete",
-    "hv9g3q5": "Un solo precio: te llevas todos los estilos y eliges cuál usar al ponerlo en el mural."
+    "hv9g3q5": "Un solo precio: te llevas todos los estilos y eliges cuál usar al ponerlo en el mural.",
+    "h1o8kkce": "Muestra una promesa bíblica distinta cada día, que cambia a medianoche. Tú solo eliges el diseño.",
+    "h1icc55d": "Muestra una frase motivacional distinta cada día, que cambia a medianoche. Tú solo eliges el diseño.",
+    "h716e3r": "Muestra la hora del dispositivo de quien ve el mural, siempre correcta. Tú eliges el diseño: dinámico, flip, minimal, analógico o pixel.",
+    "h12ubzug": "Muestra la temperatura y el tiempo actuales de la ciudad que elijas, con actualización automática.",
+    "h1d8phv5": "Muestra el mes actual con el día de hoy resaltado y las fechas importantes que marques.",
+    "htkhc2b": "Muestra la fecha de hoy en una hoja de calendario que cambia sola cada día.",
+    "h1tykm6v": "Cuenta los días, horas y minutos que faltan para un evento. Tú eliges el nombre, la fecha y la hora.",
+    "heafvld": "Cuenta hace cuántos días empezó algo, como una relación o un hábito. Tú eliges el nombre y la fecha de inicio.",
+    "hx7g554": "Muestra la portada del libro que estás leyendo y tu progreso: páginas leídas, barra o ambos. Lo actualizas cuando quieras.",
+    "h1p1m2ef": "Muestra tu top 3 sobre cualquier tema, como comidas, películas o canciones.",
+    "h1f2lcp3": "Hace una pregunta con dos respuestas. Quien visita el mural vota y todos ven el resultado al instante."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

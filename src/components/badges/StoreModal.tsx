@@ -11,8 +11,8 @@ import { Modal } from "../account/Modal";
 import { DisplayCard, type DisplayData } from "../messages/DisplayCard";
 import { useBackClose } from "@/lib/backStack";
 import { PAY_EVENT } from "@/lib/payments";
-import { baseStyle, SHAPE_LABEL, withShape, type Shape } from "@/lib/displayShape";
-import { DISPLAY_CATS, defaultStyle, displayName, isBundled, isDisplayOn, isPackId, stylesOf } from "../widgets";
+import { baseStyle, SHAPE_LABEL, shapeOfStyle, withShape, type Shape } from "@/lib/displayShape";
+import { DISPLAY_CATS, defaultStyle, displayName, DISPLAY_SUMMARY, isBundled, isDisplayOn, isPackId, stylesOf } from "../widgets";
 import { StyleCarousel } from "./StyleCarousel";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
@@ -211,6 +211,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
   const boards = new Map((inventory?.boards ?? []).map((b) => [b.id, b]));
   const products = (inventory?.pinProducts ?? []).filter((p) => isDisplayOn(p.id.split(":")[0]));
   const [displayCat, setDisplayCat] = useState<string | null>(null); // tipo de display aberto na aba Displays
+  const [packShape, setPackShape] = useState<Shape | null>(null); // formato à vista no pacote (retangular por padrão)
   const [packIdx, setPackIdx] = useState(0); // estilo à vista no carrossel do pacote
   const [shapePick, setShapePick] = useState<Record<string, Shape>>({}); // formato escolhido em cada cartão de estilo (retangular por padrão)
 
@@ -418,7 +419,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               <li key={c.id}>
                 <button
                   type="button"
-                  onClick={() => setDisplayCat(c.id)}
+                  onClick={() => (setDisplayCat(c.id), setPackIdx(0))}
                   className="flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#e1d3ba] bg-white/70 text-left transition hover:border-[#d98a2b] hover:bg-white active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]"
                 >
                   <span className="grid place-items-center bg-[#e9d8b6]/70 px-4 py-5">
@@ -454,8 +455,11 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
           (() => {
             // pacote: um preço só libera todos os estilos; o carrossel mostra cada um
             const pack = products.find((p) => p.id === `${displayCat}:pack`);
-            const sts = stylesOf(displayCat);
+            const inCat = products.filter((p) => p.id.startsWith(displayCat + ":") && !isPackId(p.id));
+            const sts = stylesOf(displayCat).filter((x) => inCat.some((p) => baseStyle(p.id.split(":")[1]) === x.id));
             if (!pack || sts.length === 0) return null;
+            const shapesOfAll = (["wide", "square", "tall"] as const).filter((sh) => inCat.some((p) => shapeOfStyle(p.id.split(":")[1]) === sh));
+            const sh = shapesOfAll.includes(packShape ?? "wide") ? (packShape ?? "wide") : shapesOfAll[0];
             const just = done?.id === `f${pack.id}`;
             const label = tl(DISPLAY_CATS.find((c) => c.id === displayCat)?.label ?? "");
             const cur = Math.min(packIdx, sts.length - 1);
@@ -473,7 +477,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <div className="flex justify-center px-10">
                         <div className="text-[9px]">
                           <div className="relative">
-                            <DisplayCard data={sampleFor(displayCat, withShape(sts[i].id, "tall"), demoLocale)} preview />
+                            <DisplayCard data={sampleFor(displayCat, withShape(sts[i].id, sh), demoLocale)} preview />
                           </div>
                         </div>
                       </div>
@@ -489,7 +493,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </p>
                     </div>
                     {pack.owned ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{tl("✓ Comprado")}</span>
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{pack.price === 0 ? tx("m_gratis") : tl("✓ Comprado")}</span>
                     ) : (
                       <p className="flex shrink-0 items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: pack.price })}>
                         <Coin className="size-5" />
@@ -497,7 +501,16 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       </p>
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-[#6b5440]">{tl("Um preço só: você leva todos os estilos e escolhe qual usar ao colocar no mural.")}</p>
+                  {shapesOfAll.length > 1 && (
+                    <div role="radiogroup" aria-label={tx("formato")} className="mt-2 grid grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                      {shapesOfAll.map((s2) => (
+                        <button key={s2} type="button" role="radio" aria-checked={sh === s2} onClick={() => setPackShape(s2)} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${sh === s2 ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                          {SHAPE_LABEL[s2]}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {DISPLAY_SUMMARY[displayCat] && <p className="mt-2 text-sm leading-snug text-[#4a3826]">{tl(DISPLAY_SUMMARY[displayCat])}</p>}
                   {!pack.owned && (
                     <button type="button" disabled={busy === `f${pack.id}`} onClick={() => buy(`f${pack.id}`, { kind: "product", id: pack.id }, { title: label, text: tx("m_liberadoJaEstaNaEscolha"), spent: pack.price })} className={`${buyBtn} mt-2`}>
                       {busy === `f${pack.id}` ? tl("Comprando…") : tl("Comprar")}

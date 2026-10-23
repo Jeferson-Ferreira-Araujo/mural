@@ -109,7 +109,21 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
 export const isDisplayOn = (product: string) => !DISABLED_DISPLAYS.has(product);
 /** Displays vendidos em pacote: um preço só libera todos os estilos (produto "categoria:pack" no banco); a pessoa escolhe o estilo ao colocar no mural. */
-export const BUNDLED_DISPLAYS: ReadonlySet<string> = new Set(["book"]);
+export const BUNDLED_DISPLAYS: ReadonlySet<string> = new Set(["book", "bible", "motivation", "clock", "weather", "calendar", "date", "countdown", "daycount", "top3", "poll"]);
+/** Resumo de como cada display funciona (mostrado no pacote da loja). */
+export const DISPLAY_SUMMARY: Record<string, string> = {
+  bible: "Mostra uma promessa bíblica diferente a cada dia, trocada à meia-noite. Você só escolhe o visual.",
+  motivation: "Mostra uma frase motivacional diferente a cada dia, trocada à meia-noite. Você só escolhe o visual.",
+  clock: "Mostra a hora do aparelho de quem vê o mural, sempre certa. Você escolhe o visual: dinâmico, flip, minimal, analógico ou pixel.",
+  weather: "Mostra a temperatura e o tempo de agora na cidade que você escolher, com atualização automática.",
+  calendar: "Mostra o mês atual com o dia de hoje em destaque e as datas importantes que você marcar.",
+  date: "Mostra a data de hoje em uma folha de calendário que muda sozinha a cada dia.",
+  countdown: "Conta os dias, horas e minutos que faltam para um evento. Você escolhe o nome, a data e a hora.",
+  daycount: "Conta há quantos dias algo começou, como um namoro ou um hábito. Você escolhe o nome e a data de início.",
+  book: "Mostra a capa do livro que você está lendo e o seu progresso: páginas lidas, barra ou os dois. Você atualiza quando quiser.",
+  top3: "Mostra o seu top 3 sobre qualquer tema, como comidas, filmes ou músicas.",
+  poll: "Faz uma pergunta com duas respostas. Quem visita o mural vota e todos veem o resultado na hora.",
+};
 export const isBundled = (product: string) => BUNDLED_DISPLAYS.has(product);
 export const PACK_SUFFIX = ":pack";
 export const isPackId = (id: string) => id.endsWith(PACK_SUFFIX);

@@ -6,7 +6,7 @@ import { pinBox } from "@/lib/pinBox";
 import { createPortal } from "react-dom";
 import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, baseEmOfBadge, DEFAULT_SCALE, DISPLAY_SCALE, isDisplayKey, MAX_BADGES, MAX_SCALE, MAX_TILT, MIN_SCALE, moveBadge, PHYSICAL_TYPES, ratioOfBadge, ratioOfKey, removeBadge, setBadgeRotation, setDisplayHidden, setBadgeScale, updateDisplayData, updateDisplayLayout, type DisplayPayload, type PlacedBadge, type Stock } from "@/lib/badges";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { BOARD_EM, NATURAL_W, RATIO, shapeOfStyle } from "@/lib/displayShape";
+import { BOARD_EM, NATURAL_W, RATIO, baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { DisplayCard, isBundled, splitDisplayId } from "../widgets";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
@@ -211,6 +211,8 @@ export function BadgeProvider({
   // pins da loja: diálogo de opções (novo ou edição) e o modo em que o mural escurece para a pessoa arrastar o pin ao lugar que quiser
   const [dialog, setDialog] = useState<{ mode: "new" | "edit"; product: string; style: string; id?: string; initial?: DisplayPayload; /** espaço livre clicado: o display entra no centro dele */ slot?: number } | null>(null);
   const [dialogBusy, setDialogBusy] = useState(false);
+  const displaysRef = useRef(displays);
+  displaysRef.current = displays;
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
   const [detail, setDetail] = useState<DisplayPayload | null>(null); // detalhe (widget grande) aberto
@@ -632,7 +634,7 @@ export function BadgeProvider({
   // o display é um produto "categoria:estilo" já comprado: texto (versículo, frase) vai direto para o mural; relógio e clima pedem horário/cidade
   const pickDisplay = useCallback((id: string) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "bible" || product === "motivation" || product === "clock" || product === "cookie" || product === "date") {
+    if (!(isBundled(product) && new Set(displaysRef.current.filter((d) => splitDisplayId(d).product === product).map((d) => baseStyle(splitDisplayId(d).style))).size > 1) && (product === "bible" || product === "motivation" || product === "clock" || product === "cookie" || product === "date")) {
       // o relógio sempre usa a hora do aparelho de quem está vendo: nada a perguntar
       setPlacing({ product, data: product === "clock" ? { product, style, tz: "local" } : { product, style } });
       return;
@@ -644,7 +646,8 @@ export function BadgeProvider({
   // não pedem nada, o clima abre antes a escolha da cidade
   const placeDisplayAtSlot = useCallback((id: string, slot: number) => {
     const { product, style } = splitDisplayId(id);
-    if (product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "poll") {
+    const packed = isBundled(product) && new Set(displaysRef.current.filter((d) => splitDisplayId(d).product === product).map((d) => baseStyle(splitDisplayId(d).style))).size > 1;
+    if (packed || product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "poll") {
       setDialogError(null);
       setDialog({ mode: "new", product, style, slot });
       return;

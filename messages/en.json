@@ -2130,7 +2130,18 @@
     "h4jxtqa": "pins you placed",
     "h1xkuywn": "Bundle",
     "hpta1rt": "Bundle styles",
-    "hv9g3q5": "One price: you get every style and pick which one to use when you place it on the board."
+    "hv9g3q5": "One price: you get every style and pick which one to use when you place it on the board.",
+    "h1o8kkce": "Shows a different Bible promise every day, changed at midnight. You just pick the look.",
+    "h1icc55d": "Shows a different motivational phrase every day, changed at midnight. You just pick the look.",
+    "h716e3r": "Shows the time of the device of whoever views the board, always right. You pick the look: dynamic, flip, minimal, analog or pixel.",
+    "h12ubzug": "Shows the current temperature and weather in the city you choose, updated automatically.",
+    "h1d8phv5": "Shows the current month with today highlighted and the important dates you mark.",
+    "htkhc2b": "Shows today's date on a calendar sheet that changes by itself every day.",
+    "h1tykm6v": "Counts the days, hours and minutes left until an event. You choose the name, date and time.",
+    "heafvld": "Counts how many days ago something started, like a relationship or a habit. You choose the name and start date.",
+    "hx7g554": "Shows the cover of the book you are reading and your progress: pages read, a bar or both. Update it whenever you like.",
+    "h1p1m2ef": "Shows your top 3 on any theme, like foods, movies or songs.",
+    "h1f2lcp3": "Asks a question with two answers. Visitors vote and everyone sees the result right away."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

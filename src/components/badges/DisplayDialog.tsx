@@ -11,6 +11,7 @@ import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { StyleCarousel } from "./StyleCarousel";
+import { baseStyle, SHAPE_LABEL, shapeOfStyle, withShape, type Shape } from "@/lib/displayShape";
 import { Field, inputClass, primaryButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
@@ -74,11 +75,22 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   const [searched, setSearched] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [pick, setPick] = useState(0); // pacote: estilo à vista no carrossel
-  const choices = styles && styles.length > 1 ? styles : null;
+  // pacote: os estilos (sem o formato) e os formatos que a pessoa tem
+  const bases = styles ? [...new Set(styles.map(baseStyle))] : [];
+  const shapes = styles ? (["wide", "square", "tall"] as const).filter((sh) => styles.some((s) => shapeOfStyle(s) === sh)) : [];
+  const [shapeSel, setShapeSel] = useState<Shape>("wide");
+  const shape = shapes.includes(shapeSel) ? shapeSel : (shapes[0] ?? "wide");
+  const styleOf = (i: number) => {
+    const b = bases[i];
+    const id = withShape(b, shape);
+    return styles?.includes(id) ? id : (styles?.find((s) => baseStyle(s) === b) ?? id);
+  };
+  const choices = styles && (bases.length > 1 || shapes.length > 1) ? bases : null;
 
   useEffect(() => {
     if (!open) return;
-    setPick(Math.max(0, styles?.indexOf(style) ?? 0));
+    setPick(Math.max(0, styles ? [...new Set(styles.map(baseStyle))].indexOf(baseStyle(style)) : 0));
+    setShapeSel(shapeOfStyle(style));
     setFrame((initial?.frame as FrameColor) ?? "gold");
     setTz(initial?.tz ?? "local");
     setDates((initial?.dates ?? []).map((d) => ({ ...d })));
@@ -150,7 +162,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
-  const chosen = choices ? choices[Math.min(pick, choices.length - 1)] : style;
+  const chosen = choices ? styleOf(Math.min(pick, choices.length - 1)) : style;
   const data: DisplayData = { ...base, style: chosen };
   const ready = product === "weather" ? !!city : product === "countdown" ? cdTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(cdDate) : product === "daycount" ? dcTitle.trim().length > 0 && /^\d{4}-\d{2}-\d{2}$/.test(dcSince) : product === "poll" ? plTitle.trim().length > 0 && [0, 1].every((i) => (plOptions[i] ?? "").trim().length > 0) : product === "top3" ? t3Title.trim().length > 0 && t3Items.every((x) => x.trim().length > 0) : product === "book" ? Number(bkPages) >= 1 && Number(bkPages) <= 10000 && bkRead !== "" && Number(bkRead) >= 0 && Number(bkRead) <= Number(bkPages) : true;
   // leitura de livro: a foto nova sobe e passa pela verificação antes de salvar
@@ -187,11 +199,20 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
               slide={(i) => (
                 <div className="flex justify-center px-10">
                   <div className="text-[min(11px,2.2vw)]">
-                    <DisplayCard data={{ ...base, style: choices[i] }} preview />
+                    <DisplayCard data={{ ...base, style: styleOf(i) }} preview />
                   </div>
                 </div>
               )}
             />
+            {shapes.length > 1 && (
+              <div role="radiogroup" aria-label={tl("Formato")} className="mx-auto mt-3 grid max-w-xs grid-cols-2 gap-1 rounded-xl border border-[#e1d3ba] bg-white/60 p-0.5">
+                {shapes.map((sh) => (
+                  <button key={sh} type="button" role="radio" aria-checked={shape === sh} onClick={() => setShapeSel(sh)} className={`cursor-pointer rounded-lg px-2 py-1.5 text-xs font-bold transition-colors ${shape === sh ? "bg-[#1f232b] text-white" : "text-[#4a3826] hover:bg-[#efe4cf]"}`}>
+                    {SHAPE_LABEL[sh]}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex justify-center overflow-hidden rounded-2xl border border-dashed border-[#d9c9ad] bg-[#e9d8b6]/60 px-2 py-5">
@@ -201,7 +222,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
           </div>
         )}
 
-        {product === "clock" && (
+        {product === "clock" && editing && (
           <Field label={tx("horarioDeQualLugar")}>
             {(id) => (
               <select id={id} value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass}>
