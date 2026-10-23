@@ -35,6 +35,8 @@ const POOL: { product: string; key: number; formats: ("wide" | "square")[] }[] =
   { product: "date", key: 1007, formats: ["wide", "square"] },
   { product: "top3", key: 1011, formats: ["wide", "square"] },
   { product: "poll", key: 1013, formats: ["square"] },
+  { product: "habit", key: 1014, formats: ["wide", "square"] },
+  { product: "mood", key: 1015, formats: ["wide", "square"] },
   { product: "bible", key: 1001, formats: ["wide"] },
   { product: "motivation", key: 1002, formats: ["wide"] },
 ];

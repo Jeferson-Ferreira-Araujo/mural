@@ -16,7 +16,7 @@ const IMG_H = 800; // o fundo é 1200×800 (3:2) e a prévia mostra a faixa cent
 
 type Item = { slot: number; ratio?: number; type?: string; hidden?: boolean; sealed?: boolean; color?: string; text?: string; title?: string; caption?: string; src?: string; items?: { text: string }[] };
 type Preview = { nickname: string; avatar: string | null; board: string; open: boolean; items: Item[]; displays?: { slots: number[] | null; product: string }[] };
-const DISPLAY_BG: Record<string, string> = { clock: "#1d2a4a", weather: "#3f86c9", calendar: "#f4efe2", countdown: "#35205a", daycount: "#3a2a1e", book: "#5a3a24", top3: "#251f3d", poll: "#1f3d3a", bible: "#2b2f55", motivation: "#6a3b52" };
+const DISPLAY_BG: Record<string, string> = { clock: "#1d2a4a", weather: "#3f86c9", calendar: "#f4efe2", countdown: "#35205a", daycount: "#3a2a1e", book: "#5a3a24", top3: "#251f3d", poll: "#1f3d3a", bible: "#2b2f55", habit: "#f76707", mood: "#f2f2f2", motivation: "#6a3b52" };
 
 const NOTE: Record<string, string> = { yellow: "#fbe36a", pink: "#f7a8c0", green: "#b9e08a", orange: "#fbbd78", blue: "#a9d8f0" };
 const clean = (s: unknown, n: number) => String(s ?? "").replace(/[^ -ɏ]/g, "").trim().slice(0, n);

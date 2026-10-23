@@ -95,6 +95,18 @@ export function sampleFor(product: string, style?: string, locale: DemoLocale = 
       return { product, style: st, title: L.top3, items: L.food };
     case "book":
       return { product, style: st, title: L.book, pages: 96, read: 42, view: "both" };
+    case "habit": {
+      const iso = (n: number) => {
+        const d = new Date();
+        d.setDate(d.getDate() - n);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      };
+      return { product, style: st, title: L.habit, emoji: "🔥", days: [0, 1, 2, 3, 4, 6].map(iso) };
+    }
+    case "mood": {
+      const d = new Date();
+      return { product, style: st, emoji: "😄", note: L.mood, day: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
+    }
     case "daycount": {
       const d = new Date();
       d.setDate(d.getDate() - 245);

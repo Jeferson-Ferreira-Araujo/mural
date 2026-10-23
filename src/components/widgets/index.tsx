@@ -3,6 +3,8 @@
 import { CalendarWidget, type CalDate } from "./CalendarWidget";
 import { ClockWidget } from "./ClockWidget";
 import { BookWidget } from "./BookWidget";
+import { HabitWidget } from "./HabitWidget";
+import { MoodWidget } from "./MoodWidget";
 import { CookieWidget } from "./CookieWidget";
 import { CountdownWidget } from "./CountdownWidget";
 import { DateWidget } from "./DateWidget";
@@ -18,7 +20,7 @@ import { useTranslations } from "next-intl";
 import { fraseDoDia, useFraseDoDia } from "@/lib/frasesDia";
 
 /** Dados de um widget da loja (guardados no banco; o texto do dia vem do servidor). */
-export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** top 3 */ items?: string[]; /** enquete */ options?: string[]; id?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
+export type DisplayData = { product: string; style?: string; frame?: string; tz?: string; city?: string; lat?: number; lon?: number; text?: string; ref?: string | null; /** contador regressivo: nome, data e hora */ title?: string; target?: string; time?: string; /** contador de dias: desde quando */ since?: string; /** leitura de livro */ cover?: string; pages?: number; read?: number; view?: string; /** top 3 */ items?: string[]; /** enquete */ options?: string[]; /** hábito e humor */ emoji?: string; days?: string[]; note?: string; day?: string; id?: string; /** calendário: datas importantes marcadas */ dates?: CalDate[] };
 
 /** Os estilos de cada pin da loja (o primeiro é o padrão). */
 export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: string }[]> = {
@@ -69,6 +71,15 @@ export const WIDGET_STYLES: Record<string, { id: string; name: string; hint: str
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
     { id: "wood", name: "Estante", hint: "Madeira e dourado." },
   ],
+  // hábito e humor: só o fundo muda (branco ou preto), retangular ou quadrado
+  habit: [
+    { id: "light", name: "Branco", hint: "Fundo branco, limpo." },
+    { id: "dark", name: "Preto", hint: "Fundo preto, sóbrio." },
+  ],
+  mood: [
+    { id: "light", name: "Branco", hint: "Fundo branco, limpo." },
+    { id: "dark", name: "Preto", hint: "Fundo preto, sóbrio." },
+  ],
   top3: [
     { id: "podium", name: "Pódio", hint: "Papel claro, medalhas." },
     { id: "night", name: "Noite", hint: "Escuro e limpo." },
@@ -104,6 +115,8 @@ export const DISPLAY_CATS: { id: string; label: string; single: string }[] = [
   { id: "book", label: "Leitura de livro", single: "Leitura" },
   { id: "top3", label: "Top 3", single: "Top 3" },
   { id: "poll", label: "Enquete", single: "Enquete" },
+  { id: "habit", label: "Meta de hábito", single: "Hábito" },
+  { id: "mood", label: "Humor do dia", single: "Humor" },
 ];
 /** Displays desligados por enquanto: somem da loja, da escolha ao colocar e do mural (nada é apagado; ligar de novo é tirar da lista). O banco também recusa novos (`pin_cookie`). */
 export const DISABLED_DISPLAYS: ReadonlySet<string> = new Set(["cookie"]);
@@ -128,6 +141,8 @@ export const DISPLAY_SUMMARY: Record<string, string> = {
   book: "Mostra a capa do livro que você está lendo e o seu progresso: páginas lidas, barra ou os dois. Você atualiza quando quiser.",
   top3: "Mostra o seu top 3 sobre qualquer tema, como comidas, filmes ou músicas.",
   poll: "Faz uma pergunta com duas respostas. Quem visita o mural vota e todos veem o resultado na hora.",
+  habit: "Mostra quantos dias seguidos você cumpriu um hábito, com os últimos 7 dias marcados. Você toca em “Marcar hoje” todo dia para manter a sequência.",
+  mood: "Mostra um emoji e uma frase curta com o seu humor de hoje. Quando mudar, é só trocar; a data aparece se o humor for de outro dia.",
 };
 export const isBundled = (product: string) => !UNBUNDLED_DISPLAYS.has(product);
 export const PACK_SUFFIX = ":pack";
@@ -185,6 +200,10 @@ export function DisplayCard({ data, preview = false, badgeId }: { data: DisplayD
       return <Top3Widget style={data.style} title={data.title} items={data.items} frame={data.frame} />;
     case "book":
       return <BookWidget style={data.style} title={data.title} cover={data.cover} pages={data.pages} read={data.read} view={data.view} frame={data.frame} />;
+    case "habit":
+      return <HabitWidget style={data.style} title={data.title} emoji={data.emoji} days={data.days} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} />;
+    case "mood":
+      return <MoodWidget style={data.style} emoji={data.emoji} note={data.note} day={data.day} frame={data.frame} />;
     case "daycount":
       return <DaysWidget style={data.style} title={data.title} since={data.since} frame={data.frame} />;
     case "countdown":

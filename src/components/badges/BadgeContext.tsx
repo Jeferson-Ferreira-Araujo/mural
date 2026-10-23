@@ -8,6 +8,7 @@ import { addBadge, addDisplay, BADGE_OK_TYPES, badgeDef, badgeSrc, baseEmOf, bas
 import { getBrowserSupabase } from "@/lib/supabase";
 import { BOARD_EM, NATURAL_W, RATIO, baseStyle, shapeOfStyle } from "@/lib/displayShape";
 import { DisplayCard, isBundled, splitDisplayId } from "../widgets";
+import { HabitCtx } from "../widgets/habitCtx";
 import { DisplayDetail } from "./DisplayDetail";
 import { DisplayDialog } from "./DisplayDialog";
 import { TouchSlider } from "./TouchSlider";
@@ -647,7 +648,7 @@ export function BadgeProvider({
   const placeDisplayAtSlot = useCallback((id: string, slot: number) => {
     const { product, style } = splitDisplayId(id);
     const packed = isBundled(product) && new Set(displaysRef.current.filter((d) => splitDisplayId(d).product === product).map((d) => baseStyle(splitDisplayId(d).style))).size > 1;
-    if (packed || product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "poll") {
+    if (packed || product === "weather" || product === "calendar" || product === "countdown" || product === "daycount" || product === "book" || product === "top3" || product === "poll" || product === "habit" || product === "mood") {
       setDialogError(null);
       setDialog({ mode: "new", product, style, slot });
       return;
@@ -759,6 +760,24 @@ export function BadgeProvider({
     return () => window.clearTimeout(t);
   }, [badges, editable, setBadges]);
 
+  // hábito: o dono marca (ou desmarca) o dia de hoje no próprio cartão
+  const habitValue = useMemo(
+    () => ({
+      canMark: editable,
+      check: async (id: string) => {
+        const d = new Date();
+        const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        const { error } = await getBrowserSupabase().rpc("check_habit", { p_id: id, p_day: day });
+        if (error) {
+          live.current.notify(tl("Não foi possível salvar agora. Tente de novo."));
+          return false;
+        }
+        live.current.onDisplaysChanged?.();
+        return true;
+      },
+    }),
+    [editable],
+  );
   const openStoreRef = useRef(onOpenStore);
   openStoreRef.current = onOpenStore;
   // bottons agora podem ficar por cima de pins e displays: nada volta para a barra por estar debaixo de um pin ou display (o gancho continua para quem o chama)
@@ -772,7 +791,7 @@ export function BadgeProvider({
 
   return (
     <BadgeCtx.Provider value={value}>
-      {children}
+      <HabitCtx.Provider value={habitValue}>{children}</HabitCtx.Provider>
       {dialog && (
         <DisplayDialog
           open
@@ -868,7 +887,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
   const TRACK = 90; // mesmo comprimento da barra de inclinação
   const Hh = 124;
   // versículo, frase e relógio não têm o que editar (o estilo é o comprado): só ampliar e tirar
-  const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar" || badge.data?.product === "countdown" || badge.data?.product === "daycount" || badge.data?.product === "book" || badge.data?.product === "top3" || badge.data?.product === "poll");
+  const canEdit = isDisp && (badge.data?.product === "weather" || badge.data?.product === "calendar" || badge.data?.product === "countdown" || badge.data?.product === "daycount" || badge.data?.product === "book" || badge.data?.product === "top3" || badge.data?.product === "poll" || badge.data?.product === "habit" || badge.data?.product === "mood");
   const isBook = isDisp && badge.data?.product === "book";
   const Ha = (canEdit ? 108 : isDisp ? 76 : 42) + (isBook ? 78 : 0);
   // a pílula fica longe o bastante para a barra de inclinação (centrada embaixo do botton) caber sem encostar nela

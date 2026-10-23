@@ -1,6 +1,7 @@
 import type { BoardItem, Message } from "@/lib/types";
 import { LOCALES, isLocale, type Locale } from "@/i18n/config";
 import { PACKS, type Over, type SampleText } from "./demoPacks";
+import { HABIT_SAMPLE } from "./demoHabit";
 
 /** Textos do mural de exemplo (e das amostras de displays) em cada idioma. O português é o que está em `mock.ts` / `StoreModal.tsx`; aqui ficam as outras línguas. */
 export type DemoLocale = Locale;
@@ -87,4 +88,4 @@ const BASE_SAMPLE: Record<"pt" | "en" | "es", SampleText> = {
   es: { bibleText: "Todo lo puedo en Cristo que me fortalece.", bibleRef: "Filipenses 4:13", motivation: "La disciplina de hoy es el resultado de mañana.", birthday: "Cumpleaños", trip: "Viaje", poll: "¿Te gusta la piña en la pizza?", yes: "Sí", no: "No", top3: "Comidas favoritas", food: ["Lasaña", "Pizza", "Helado"], book: "El Principito", together: "Juntos desde hace", counter: "Título del contador" },
 };
 
-export const SAMPLE_TEXT = Object.fromEntries(LOCALES.map((l) => [l, l === "pt" || l === "en" || l === "es" ? BASE_SAMPLE[l] : PACKS[l]?.sample ?? BASE_SAMPLE.en])) as Record<DemoLocale, SampleText>;
+export const SAMPLE_TEXT = Object.fromEntries(LOCALES.map((l) => [l, { ...(l === "pt" || l === "en" || l === "es" ? BASE_SAMPLE[l] : PACKS[l]?.sample ?? BASE_SAMPLE.en), ...HABIT_SAMPLE[l] }])) as Record<DemoLocale, SampleText & { habit: string; mood: string }>;

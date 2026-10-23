@@ -13,7 +13,7 @@ import { ghostButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
-const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias" };
+const NAME: Record<string, string> = { bible: "Versículo do dia", motivation: "Frase do dia", clock: "Relógio", weather: "Clima", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", countdown: "Contador regressivo", daycount: "Contador de dias", habit: "Meta de hábito", mood: "Humor do dia" };
 
 /**
  * Detalhe de um pin da loja: o widget em tamanho grande, como quem passa por ele no mural quer ler (frase, hora, tempo).
