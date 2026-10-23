@@ -2161,7 +2161,8 @@
     "hwji1k1": "Après l’avoir placé sur le mur, touchez « Cocher aujourd’hui » chaque jour pour garder votre série.",
     "hbbelk0": "Affiche combien de jours d’affilée vous avez tenu une habitude, avec les 7 derniers jours cochés. Touchez « Cocher aujourd’hui » chaque jour pour garder la série.",
     "h18ki17r": "Format",
-    "h19klm4e": "Affiche un emoji et une courte phrase avec votre humeur. Quand vous voulez la changer, il suffit de la mettre à jour : elle reste telle quelle jusque-là."
+    "h19klm4e": "Affiche un emoji et une courte phrase avec votre humeur. Quand vous voulez la changer, il suffit de la mettre à jour : elle reste telle quelle jusque-là.",
+    "h10wwose": "Placer sur le mur"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

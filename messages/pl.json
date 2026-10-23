@@ -2161,7 +2161,8 @@
     "hwji1k1": "Po umieszczeniu na tablicy dotykaj codziennie „Zaznacz dzisiaj”, aby utrzymać serię.",
     "hbbelk0": "Pokazuje, ile dni z rzędu utrzymujesz nawyk, z zaznaczonymi ostatnimi 7 dniami. Dotykaj codziennie „Zaznacz dzisiaj”, aby utrzymać serię.",
     "h18ki17r": "Format",
-    "h19klm4e": "Pokazuje emoji i krótkie zdanie o Twoim nastroju. Gdy zechcesz go zmienić, po prostu zaktualizuj: do tego czasu zostaje bez zmian."
+    "h19klm4e": "Pokazuje emoji i krótkie zdanie o Twoim nastroju. Gdy zechcesz go zmienić, po prostu zaktualizuj: do tego czasu zostaje bez zmian.",
+    "h10wwose": "Umieść na tablicy"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

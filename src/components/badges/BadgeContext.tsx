@@ -51,6 +51,8 @@ type Ctx = {
   canDisplays: boolean;
   /** coloca o display (id "tipo:estilo") no centro de um espaço livre do mural */
   placeDisplayAtSlot: (id: string, slot: number) => void;
+  /** coloca um display já configurado (estilo, textos, datas) no centro de um espaço livre */
+  placeDisplayDataAtSlot: (data: DisplayPayload, slot: number) => void;
   /** tira o display do mural (detalhe) */
   removeDisplay: (id: string) => void;
   /** liga/desliga o segredo do display (PINZ+); devolve se deu certo */
@@ -58,7 +60,7 @@ type Ctx = {
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, placeDisplayDataAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "tack" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
@@ -656,6 +658,14 @@ export function BadgeProvider({
     void placeAtSlot(product, product === "clock" ? { product, style, tz: "local" } : { product, style }, slot);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const placeDisplayDataAtSlot = useCallback((data: DisplayPayload, slot: number) => {
+    const { text: _t, ref: _r, product: _p, ...clean } = data;
+    void _t;
+    void _r;
+    void _p;
+    void placeAtSlot(data.product, { ...clean, product: data.product } as DisplayPayload, slot);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   async function placeAtSlot(product: string, data: DisplayPayload, slot: number) {
     const layer = visibleLayer();
     const slotEl = [...document.querySelectorAll<HTMLElement>("[data-slot]")].find((el) => visible(el) && Number(el.dataset.slot) === slot);
@@ -786,7 +796,7 @@ export function BadgeProvider({
     void minOverlap;
   }, []);
   removeOverRef.current = removeOver;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, removeById, setDisplaySecret]);
+  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeById, setDisplaySecret]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (

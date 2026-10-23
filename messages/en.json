@@ -2161,7 +2161,8 @@
     "hwji1k1": "After placing it on the board, tap “Mark today” every day to keep your streak.",
     "hbbelk0": "Shows how many days in a row you kept a habit, with the last 7 days marked. Tap “Mark today” every day to keep the streak going.",
     "h18ki17r": "Format",
-    "h19klm4e": "Shows an emoji and a short phrase with your mood. When you want to change it, just update it: it stays as is until then."
+    "h19klm4e": "Shows an emoji and a short phrase with your mood. When you want to change it, just update it: it stays as is until then.",
+    "h10wwose": "Place on the board"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

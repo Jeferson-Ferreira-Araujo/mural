@@ -2161,7 +2161,8 @@
     "hwji1k1": "Panoya yerleştirdikten sonra seriyi korumak için her gün “Bugünü işaretle”ye dokunun.",
     "hbbelk0": "Bir alışkanlığı kaç gün üst üste sürdürdüğünüzü, son 7 günü işaretli olarak gösterir. Seriyi korumak için her gün “Bugünü işaretle”ye dokunun.",
     "h18ki17r": "Biçim",
-    "h19klm4e": "Ruh halinizi bir emoji ve kısa bir cümleyle gösterir. Değiştirmek istediğinizde güncellemeniz yeterli: o zamana kadar olduğu gibi kalır."
+    "h19klm4e": "Ruh halinizi bir emoji ve kısa bir cümleyle gösterir. Değiştirmek istediğinizde güncellemeniz yeterli: o zamana kadar olduğu gibi kalır.",
+    "h10wwose": "Panoya yerleştir"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

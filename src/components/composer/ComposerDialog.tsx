@@ -1,5 +1,6 @@
 "use client";
 
+import type { DisplayData } from "../widgets";
 import { useBackClose } from "@/lib/backStack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, slotsFor, type PlanId } from "@/lib/plans";
@@ -41,7 +42,7 @@ type Props = {
   /** motivo de o último envio não ter dado certo (aparece junto do botão, dentro da janela) */
   error?: string | null;
   /** só o dono, no próprio mural: os displays que ele tem (aba Displays do espaço livre clicado) */
-  displays?: { ids: string[]; onPick: (id: string) => void; onStore: () => void } | null;
+  displays?: { ids: string[]; onPlace: (data: DisplayData) => void; onStore: () => void } | null;
 };
 
 function FormFor({ format, onChange }: { format: MessageType; onChange: (d: DraftMessage | null) => void }) {
@@ -266,7 +267,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
               </div>
             )}
             {!format && tab === "displays" && rest.displays && rest.fixedSlot != null ? (
-              <DisplayChooser ids={rest.displays.ids} onPick={rest.displays.onPick} onStore={rest.displays.onStore} />
+              <DisplayChooser ids={rest.displays.ids} onPlace={rest.displays.onPlace} onStore={rest.displays.onStore} />
             ) : (
               <Body {...rest} onClose={onClose} format={format} onFormat={setFormat} />
             )}

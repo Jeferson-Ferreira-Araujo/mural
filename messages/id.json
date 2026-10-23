@@ -2161,7 +2161,8 @@
     "hwji1k1": "Setelah ditempatkan di papan, ketuk “Tandai hari ini” setiap hari untuk menjaga rangkaian.",
     "hbbelk0": "Menampilkan berapa hari berturut-turut Anda menjalankan suatu kebiasaan, dengan 7 hari terakhir ditandai. Ketuk “Tandai hari ini” setiap hari untuk menjaga rangkaian.",
     "h18ki17r": "Format",
-    "h19klm4e": "Menampilkan emoji dan kalimat singkat tentang suasana hati Anda. Saat ingin mengubahnya, cukup perbarui: sampai saat itu tetap seperti semula."
+    "h19klm4e": "Menampilkan emoji dan kalimat singkat tentang suasana hati Anda. Saat ingin mengubahnya, cukup perbarui: sampai saat itu tetap seperti semula.",
+    "h10wwose": "Tempatkan di papan"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

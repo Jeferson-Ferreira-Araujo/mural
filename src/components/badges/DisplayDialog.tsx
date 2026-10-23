@@ -45,7 +45,7 @@ const isoPlus = (days: number) => {
  * Antes de soltar o pin da loja no mural (ou ao editá-lo): escolher o estilo, a cor do contorno e, no relógio, o horário; no clima, a cidade.
  * `onSubmit` recebe os dados prontos para o servidor.
  */
-export function DisplayDialog({ open, product, style, styles, initial, editing, busy, error, onClose, onSubmit }: { open: boolean; product: string; /** estilo comprado (fixo) */ style: string; /** pacote: os estilos que a pessoa pode escolher no carrossel (sem isto, vale só `style`) */ styles?: string[]; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
+export function DisplayDialog({ open, product, style, styles, initial, editing, busy, error, inline = false, onClose, onSubmit }: { open: boolean; /** sem janela: o formulário aparece direto na tela de quem chama (aba Displays do compositor) */ inline?: boolean; product: string; /** estilo comprado (fixo) */ style: string; /** pacote: os estilos que a pessoa pode escolher no carrossel (sem isto, vale só `style`) */ styles?: string[]; initial?: DisplayData; editing: boolean; busy: boolean; error: string | null; onClose: () => void; onSubmit: (data: DisplayData) => void }) {
   const tl = useLit();
   const tx = useTranslations("components.badges.DisplayDialog");
   const dLocale = demoLocaleOf(useLocale());
@@ -196,8 +196,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   }
   const title = displayName(product + ":" + chosen, tl);
 
-  return (
-    <Modal open={open} onClose={onClose} title={title} label={title}>
+  const content = (
       <div className="space-y-4">
         {choices ? (
           // pacote: desliza entre os estilos e o que estiver à vista é o que vai para o mural
@@ -492,9 +491,15 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
           </p>
         )}
         <button type="button" disabled={busy || uploading || !ready} onClick={() => void submit()} className={primaryButton}>
-          {uploading ? tl("Enviando a capa…") : busy ? tl("Salvando…") : editing ? tl("Salvar") : tl("Escolher o lugar")}
+          {uploading ? tl("Enviando a capa…") : busy ? tl("Salvando…") : editing ? tl("Salvar") : inline ? tl("Colocar no mural") : tl("Escolher o lugar")}
         </button>
       </div>
+  );
+  return inline ? (
+    content
+  ) : (
+    <Modal open={open} onClose={onClose} title={title} label={title}>
+      {content}
     </Modal>
   );
 }
