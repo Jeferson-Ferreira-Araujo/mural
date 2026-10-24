@@ -1,79 +1,78 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { getLivePresence } from "@/lib/social";
 import { useLit } from "@/i18n/literal";
 
-/** Quem está vendo o mural agora: o apelido (ou "visitante", se não entrou na conta) e quando chegou. */
-type Viewer = { key: string; nick: string | null; t: number };
+/** Quem está vendo o mural agora: apelido e foto (ou "visitante", se não entrou na conta) e quando chegou. */
+type Viewer = { nick: string | null; avatar: string | null; at: number };
+
+const PING_MS = 20_000; // o visitante avisa que continua no mural
+const POLL_MS = 6_000; // o dono atualiza a lista
 
 /**
- * Presença em tempo real, nos dois sentidos e só para quem ligou:
- * - o DONO com a opção ligada vê quem está no mural dele agora (lista por chegada mais recente);
- * - quem VISITA aparece só se o dono tem a opção ligada e, se a pessoa tem conta, se ela também ligou a dela (visitante sem conta aparece como "visitante").
- * Quem desligou não vê ninguém e não aparece para ninguém: nem entra no canal.
+ * Presença em tempo real, decidida inteiramente no servidor (nada passa pelo navegador de ninguém além do que cada um pode ver):
+ * - quem VISITA avisa a cada 20 s (`live_ping`); o servidor só registra se o dono ligou a opção e, havendo conta, se o visitante também ligou a dela;
+ * - o DONO com a opção ligada lê a lista (`live_list`, mais recentes primeiro); para qualquer outra pessoa o servidor devolve nada.
+ * Quem desligou não vê ninguém e não aparece para ninguém. Quem sai da página some da lista em até 45 s (ou na hora, se avisar que saiu).
  */
-export function LivePresence({ muralId, ownerNick, isOwner, logged, myNick }: { muralId: string; ownerNick: string; isOwner: boolean; logged: boolean; myNick: string | null }) {
+export function LivePresence({ muralId, isOwner }: { muralId: string; isOwner: boolean }) {
   const tl = useLit();
-  const [mine, setMine] = useState<boolean | null>(null); // a minha opção (só para quem tem conta)
-  const [ownerOn, setOwnerOn] = useState<boolean | null>(null); // a opção do dono do mural que estou vendo
   const [viewers, setViewers] = useState<Viewer[]>([]);
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
 
+  // visitante: avisa que está aqui
   useEffect(() => {
-    if (!logged) return setMine(true); // sem conta não há opção: conta como visitante, se o dono ligou
-    let alive = true;
-    void getBrowserSupabase()
-      .rpc("get_live_presence")
-      .then(({ data }) => alive && setMine(data === true));
-    return () => {
-      alive = false;
-    };
-  }, [logged]);
-
-  useEffect(() => {
-    if (isOwner) return setOwnerOn(true);
-    let alive = true;
-    setOwnerOn(null);
-    void getBrowserSupabase()
-      .rpc("live_presence_of", { p_nick: ownerNick })
-      .then(({ data }) => alive && setOwnerOn(data === true));
-    return () => {
-      alive = false;
-    };
-  }, [isOwner, ownerNick]);
-
-  useEffect(() => {
-    // dono: precisa estar com a opção ligada para ver; visitante: o dono e ele mesmo (se tem conta) precisam estar com ela ligada
-    const allowed = isOwner ? mine === true : ownerOn === true && mine === true;
-    if (!allowed) {
-      setViewers([]);
-      return;
-    }
+    if (isOwner) return;
     const sb = getBrowserSupabase();
-    const me = crypto.randomUUID();
-    const ch: RealtimeChannel = sb.channel(`live:${muralId}`, { config: { presence: { key: me } } });
-    const sync = () => {
-      const st = ch.presenceState<{ nick: string | null; t: number }>();
-      const list: Viewer[] = [];
-      for (const [key, metas] of Object.entries(st)) {
-        const m = metas[0];
-        if (!m || key === me) continue;
-        list.push({ key, nick: m.nick ?? null, t: Number(m.t) || 0 });
-      }
-      list.sort((a, b) => b.t - a.t); // a chegada mais recente primeiro
-      setViewers(list);
+    const key = crypto.randomUUID();
+    let stopped = false;
+    let timer = 0;
+    const ping = async () => {
+      if (stopped || document.visibilityState !== "visible") return;
+      const { data } = await sb.rpc("live_ping", { p_mural_id: muralId, p_key: key });
+      if (data !== true) stopped = true; // o dono ou o visitante deixou desligado: não insiste
     };
-    if (isOwner) ch.on("presence", { event: "sync" }, sync);
-    ch.subscribe((status) => {
-      if (status === "SUBSCRIBED" && !isOwner) void ch.track({ nick: logged ? myNick : null, t: Date.now() });
+    void ping();
+    timer = window.setInterval(() => void ping(), PING_MS);
+    const vis = () => document.visibilityState === "visible" && void ping();
+    const leave = () => void sb.rpc("live_leave", { p_key: key });
+    document.addEventListener("visibilitychange", vis);
+    window.addEventListener("pagehide", leave);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", vis);
+      window.removeEventListener("pagehide", leave);
+      leave();
+    };
+  }, [muralId, isOwner]);
+
+  // dono: lê a lista (o servidor só responde se a opção dele está ligada)
+  useEffect(() => {
+    if (!isOwner) return;
+    const sb = getBrowserSupabase();
+    let alive = true;
+    let timer = 0;
+    const load = async () => {
+      if (document.visibilityState !== "visible") return;
+      const { data } = await sb.rpc("live_list", { p_mural_id: muralId });
+      if (!alive) return;
+      setViewers(Array.isArray(data) ? (data as Viewer[]) : []);
+    };
+    void getLivePresence(sb).then((on) => {
+      if (!alive || !on) return;
+      void load();
+      timer = window.setInterval(() => void load(), POLL_MS);
     });
     return () => {
-      void sb.removeChannel(ch);
+      alive = false;
+      window.clearInterval(timer);
+      setViewers([]);
     };
-  }, [muralId, isOwner, ownerOn, mine, logged, myNick]);
+  }, [muralId, isOwner]);
 
   // fecha a lista ao tocar fora
   useEffect(() => {
@@ -88,17 +87,27 @@ export function LivePresence({ muralId, ownerNick, isOwner, logged, myNick }: { 
     if (viewers.length === 0) setOpen(false);
   }, [viewers.length]);
 
-  if (!isOwner || mine !== true || viewers.length === 0) return null;
+  if (!isOwner || viewers.length === 0) return null;
   const n = viewers.length;
   return (
     <div ref={box} className="pointer-events-none fixed bottom-24 left-3 z-[120] lg:bottom-4 lg:left-4">
       {open && (
-        <div role="list" aria-label={tl("Vendo agora")} className="pointer-events-auto mb-2 max-h-64 w-60 overflow-y-auto rounded-2xl border border-[#e1d3ba] bg-[#fffaf0] p-2 shadow-xl">
+        <div role="list" aria-label={tl("Vendo agora")} className="pointer-events-auto mb-2 max-h-64 w-64 overflow-y-auto rounded-2xl border border-[#e1d3ba] bg-[#fffaf0] p-2 shadow-xl">
           <p className="px-2 pt-1 pb-1.5 text-xs font-bold tracking-wide text-[#6b5440] uppercase">{tl("Vendo agora")}</p>
-          {viewers.map((v) => (
-            <div role="listitem" key={v.key} className="flex items-center gap-2.5 rounded-xl px-2 py-1.5">
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#e9d8b6] text-sm font-bold text-[#4a3826]" aria-hidden>
-                {v.nick ? v.nick.slice(0, 1).toUpperCase() : "?"}
+          {viewers.map((v, i) => (
+            <div role="listitem" key={`${v.at}-${v.nick ?? "anon"}-${i}`} className="flex items-center gap-2.5 rounded-xl px-2 py-1.5">
+              <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-[#e9d8b6] text-sm font-bold text-[#4a3826]" aria-hidden>
+                {v.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={v.avatar} alt="" className="size-full object-cover" draggable={false} />
+                ) : v.nick ? (
+                  v.nick.slice(0, 1).toUpperCase()
+                ) : (
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+                  </svg>
+                )}
               </span>
               <span className="min-w-0 truncate text-sm font-semibold text-[#2a1c12]">{v.nick ? `@${v.nick}` : tl("Visitante")}</span>
             </div>

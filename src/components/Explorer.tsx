@@ -1181,7 +1181,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
-      {selected?.id && unlocked && !isShared && <LivePresence muralId={selected.id} ownerNick={selected.nickname} isOwner={isOwner} logged={logged} myNick={myNick} />}
+      {selected?.id && unlocked && !isShared && <LivePresence muralId={selected.id} isOwner={isOwner} />}
       <PollAccess.Provider value={{ token }}>
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
