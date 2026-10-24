@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
@@ -201,6 +202,23 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     ro.observe(b);
     return () => ro.disconnect();
   }, [apply, clampView, limits]);
+
+  // ao entrar no mural de OUTRA pessoa (o quadro é o mesmo componente, então manteria o zoom e a posição do mural anterior), volta ao enquadramento inicial, centralizado;
+  // trocar entre os murais da mesma pessoa (arrastar para o lado) mantém o zoom
+  const profile = usePathname()?.split("/")[1] ?? "";
+  const lastProfile = useRef(profile);
+  useEffect(() => {
+    if (lastProfile.current === profile) return;
+    lastProfile.current = profile;
+    touched.current = false;
+    hintDone.current = false;
+    if (!ready.current) return;
+    const { w, h } = size.current;
+    const { minS, defS } = limits();
+    const s0 = startZoomedRef.current && w < 700 ? Math.min(defS, Math.max(minS, h / WORLD_H)) : minS;
+    view.current = clampView((w - WORLD_W * s0) / 2, (h - WORLD_H * s0) / 2, s0);
+    apply(false);
+  }, [profile, apply, clampView, limits]);
 
   // o mural pode abrir trancado (inteiro) e destrancar depois: nesse caso o zoom inicial entra quando startZoomed vira verdadeiro, se a pessoa ainda não mexeu
   useEffect(() => {
