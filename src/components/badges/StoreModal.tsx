@@ -105,7 +105,7 @@ export function sampleFor(product: string, style?: string, locale: DemoLocale = 
     }
     case "mood": {
       const d = new Date();
-      return { product, style: st, emoji: "😄", note: L.mood, day: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
+      return { product, style: st, emoji: "happy", note: L.mood, day: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
     }
     case "daycount": {
       const d = new Date();

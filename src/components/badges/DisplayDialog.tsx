@@ -11,7 +11,7 @@ import { DisplayCard, displayName, type DisplayData } from "../widgets";
 import type { CalDate } from "../widgets/CalendarWidget";
 import { Modal } from "../account/Modal";
 import { StyleCarousel } from "./StyleCarousel";
-import { MOODS } from "../widgets/MoodWidget";
+import { MOOD_KEYS, MoodFace } from "../widgets/MoodFace";
 import { baseStyle, SHAPE_LABEL, shapeOfStyle, withShape, type Shape } from "@/lib/displayShape";
 import { Field, inputClass, primaryButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
@@ -69,7 +69,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
   const bkInput = useRef<HTMLInputElement>(null);
   const [hbTitle, setHbTitle] = useState(""); // hábito: nome e descrição
   const [hbNote, setHbNote] = useState("");
-  const [mdEmoji, setMdEmoji] = useState("😄"); // humor: emoji e frase
+  const [mdEmoji, setMdEmoji] = useState("happy"); // humor: emoji e frase
   const [mdNote, setMdNote] = useState("");
   const [dcTitle, setDcTitle] = useState(""); // contador de dias: nome e data de início
   const [dcSince, setDcSince] = useState("");
@@ -117,7 +117,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     setUploading(false);
     setHbTitle(initial?.title ?? "");
     setHbNote(initial?.product === "habit" ? (initial.note ?? "") : "");
-    setMdEmoji(initial?.product === "mood" && initial.emoji ? initial.emoji : "😄");
+    setMdEmoji(initial?.product === "mood" && initial.emoji ? initial.emoji : "happy");
     setMdNote(initial?.product === "mood" ? (initial.note ?? "") : "");
     setDcTitle(initial?.title ?? "");
     setDcSince(initial?.since ?? "");
@@ -175,7 +175,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
     ...(product === "poll" ? { title: plTitle.trim() || tx("m_voceGostaDePizzaCom"), options: [0, 1].map((i) => (plOptions[i] ?? "").trim() || [wt.defYes, wt.defNo][i]) } : {}),
     ...(product === "daycount" ? { title: dcTitle.trim() || tx("m_juntosHa"), since: /^\d{4}-\d{2}-\d{2}$/.test(dcSince) ? dcSince : isoPlus(-100) } : {}),
     ...(product === "habit" ? { title: hbTitle.trim() || SAMPLE_TEXT[dLocale].habit, note: hbNote.trim(), days: initial?.product === "habit" ? (initial.days ?? []) : [] } : {}),
-    ...(product === "mood" ? { emoji: mdEmoji.trim() || "😄", note: mdNote.trim(), day: isoPlus(0) } : {}),
+    ...(product === "mood" ? { emoji: mdEmoji.trim() || "happy", note: mdNote.trim(), day: isoPlus(0) } : {}),
     ...(product === "weather" ? { city: city?.name ?? "São Paulo", lat: city?.lat ?? 0, lon: city?.lon ?? 0 } : {}),
   };
   const chosen = choices ? styleOf(Math.min(pick, choices.length - 1)) : style;
@@ -415,11 +415,11 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
             <div>
               <p className="mb-1.5 text-sm font-semibold">{tl("Como você está?")}</p>
               <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={tl("Como você está?")}>
-                {MOODS.map((e) => {
+                {MOOD_KEYS.map((e) => {
                   const cur = mdEmoji;
                   return (
-                    <button key={e} type="button" role="radio" aria-checked={cur === e} onClick={() => setMdEmoji(e)} className={`grid size-11 cursor-pointer place-items-center rounded-xl border text-2xl transition-colors ${cur === e ? "border-[#1f232b] bg-[#1f232b]/10" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`}>
-                      {e}
+                    <button key={e} type="button" role="radio" aria-checked={cur === e} onClick={() => setMdEmoji(e)} className={`grid size-12 cursor-pointer place-items-center rounded-xl border transition-colors ${cur === e ? "border-[#1f232b] bg-[#1f232b]/10" : "border-[#e1d3ba] bg-white/60 hover:bg-white"}`}>
+                      <MoodFace value={e} className="size-9" />
                     </button>
                   );
                 })}
