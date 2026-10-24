@@ -7,7 +7,7 @@ import { LOCALES, LOCALE_COOKIE, LOCALE_NAMES, type Locale } from "@/i18n/config
 import { Flag } from "./Flag";
 
 /** Seletor de idioma: o escolhido fica no cookie (vale em qualquer página e nas próximas visitas). Pequeno, em botões (sem a lista do sistema). */
-export function LanguagePicker({ className = "", tone = "light", variant = "bar", align = "right" }: { className?: string; tone?: "light" | "dark"; /** "icon": só o globo, que abre a lista de idiomas */ variant?: "bar" | "icon"; align?: "left" | "right" }) {
+export function LanguagePicker({ className = "", tone = "light", variant = "bar", align = "right" }: { className?: string; tone?: "light" | "dark" | "beige"; /** "icon": só o globo, que abre a lista de idiomas */ variant?: "bar" | "icon"; align?: "left" | "right" }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -33,7 +33,7 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
     router.refresh(); // a página se refaz já no idioma novo, sem perder a sessão
   }
 
-  const base = tone === "dark" ? "border-white/25 bg-black/30 text-white" : "border-[#d9c9ad] bg-white/70 text-[#4a3826]";
+  const base = tone === "beige" ? "border-[#d9c9ad] bg-[#f7efdc] text-[#2f2218]" : tone === "dark" ? "border-white/25 bg-black/30 text-white" : "border-[#d9c9ad] bg-white/70 text-[#4a3826]";
   if (variant === "icon") {
     return (
       <div ref={box} className={className.includes("absolute") ? className : `relative inline-block ${className}`}>

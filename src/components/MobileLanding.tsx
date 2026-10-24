@@ -64,8 +64,8 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       <img src={boardImageS(look)} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-md" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#140a04]/70 via-transparent to-[#140a04]/60" />
       <h1 className="sr-only">{tx("pinz")}</h1>
-      <LanguagePicker variant="icon" align="left" tone="dark" className="absolute top-[max(0.6rem,env(safe-area-inset-top))] left-3 z-30 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur" />
-      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label={tx("acessibilidade")} title={tx("acessibilidade")} className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-xl bg-[#17110c]/70 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur transition active:scale-95">
+      <LanguagePicker variant="icon" align="left" tone="beige" className="absolute top-[max(0.6rem,env(safe-area-inset-top))] left-3 z-30 shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] backdrop-blur" />
+      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))} aria-label={tx("acessibilidade")} title={tx("acessibilidade")} className="absolute top-[max(0.6rem,env(safe-area-inset-top))] right-3 z-30 grid size-10 cursor-pointer place-items-center rounded-xl border border-[#d9c9ad] bg-[#f7efdc] text-[#2f2218] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.45)] transition active:scale-95">
         <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <circle cx="12" cy="4.5" r="1.8" />
           <path d="M5 8.5c2.3.9 4.7 1.3 7 1.3s4.7-.4 7-1.3M12 9.8V14m0 0-3 6m3-6 3 6" />
