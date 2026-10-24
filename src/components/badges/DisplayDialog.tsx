@@ -41,6 +41,11 @@ const isoPlus = (days: number) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
+/** Contador de letras abaixo do campo ("12/40"): o limite existe para o texto caber no cartão sem quebrar. */
+function Count({ v, max }: { v: string; max: number }) {
+  return <p className={`mt-1 text-right text-xs tabular-nums ${v.length >= max ? "font-semibold text-[#a23b2a]" : "text-[#8a7b69]"}`}>{v.length}/{max}</p>;
+}
+
 /**
  * Antes de soltar o pin da loja no mural (ou ao editá-lo): escolher o estilo, a cor do contorno e, no relógio, o horário; no clima, a cidade.
  * `onSubmit` recebe os dados prontos para o servidor.
@@ -304,7 +309,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
         {product === "countdown" && (
           <div className="space-y-3">
             <Field label={tx("tituloDoContador")}>
-              {(id) => <input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder={tx("exFormaturaNatalAniversario")} className={inputClass} autoComplete="off" />}
+              {(id) => <><input id={id} value={cdTitle} onChange={(e) => setCdTitle(e.target.value)} maxLength={30} placeholder={tx("exFormaturaNatalAniversario")} className={inputClass} autoComplete="off" /><Count v={cdTitle} max={30} /></>}
             </Field>
             <div className="flex gap-2">
               <div className="min-w-0 flex-1">
@@ -340,7 +345,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
               </div>
             </div>
             <Field label={tx("nomeDoLivroOpcional")}>
-              {(id) => <input id={id} value={bkTitle} onChange={(e) => setBkTitle(e.target.value)} maxLength={40} placeholder={tx("exOPequenoPrincipe")} className={inputClass} autoComplete="off" />}
+              {(id) => <><input id={id} value={bkTitle} onChange={(e) => setBkTitle(e.target.value)} maxLength={40} placeholder={tx("exOPequenoPrincipe")} className={inputClass} autoComplete="off" /><Count v={bkTitle} max={40} /></>}
             </Field>
             <div className="flex gap-2">
               <div className="min-w-0 flex-1">
@@ -372,7 +377,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
         {product === "poll" && (
           <div className="space-y-3">
             <Field label={tx("perguntaDaEnquete")}>
-              {(id) => <input id={id} value={plTitle} onChange={(e) => setPlTitle(e.target.value)} maxLength={90} placeholder={tx("exVoceGostaDePizza")} className={inputClass} autoComplete="off" />}
+              {(id) => <><input id={id} value={plTitle} onChange={(e) => setPlTitle(e.target.value)} maxLength={90} placeholder={tx("exVoceGostaDePizza")} className={inputClass} autoComplete="off" /><Count v={plTitle} max={90} /></>}
             </Field>
             <div className="space-y-2">
               <p className="text-sm font-semibold">{tx("asDuasRespostas")}</p>
@@ -387,12 +392,12 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
         {product === "top3" && (
           <div className="space-y-3">
             <Field label={tx("temaDoSeuTop3")}>
-              {(id) => <input id={id} value={t3Title} onChange={(e) => setT3Title(e.target.value)} maxLength={30} placeholder={tx("exMinhasComidasFavoritas")} className={inputClass} autoComplete="off" />}
+              {(id) => <><input id={id} value={t3Title} onChange={(e) => setT3Title(e.target.value)} maxLength={30} placeholder={tx("exMinhasComidasFavoritas")} className={inputClass} autoComplete="off" /><Count v={t3Title} max={30} /></>}
             </Field>
             {([0, 1, 2] as const).map((i) => (
               <Field key={i} label={`${i + 1}º lugar`}>
                 {(id) => (
-                  <input id={id} value={t3Items[i]} onChange={(e) => setT3Items((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={30} placeholder={[tl("Ex: Lasanha"), tl("Ex: Pizza"), tl("Ex: Sorvete")][i]} className={inputClass} autoComplete="off" />
+                  <><input id={id} value={t3Items[i]} onChange={(e) => setT3Items((l) => l.map((x, j) => (j === i ? e.target.value : x)))} maxLength={30} placeholder={[tl("Ex: Lasanha"), tl("Ex: Pizza"), tl("Ex: Sorvete")][i]} className={inputClass} autoComplete="off" /><Count v={t3Items[i]} max={30} /></>
                 )}
               </Field>
             ))}
@@ -404,10 +409,10 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
             {product === "habit" && (
               <>
                 <Field label={tl("Nome do hábito")}>
-                  {(id) => <input id={id} value={hbTitle} onChange={(e) => setHbTitle(e.target.value)} maxLength={30} placeholder={tl("Ex: Treinar")} className={inputClass} autoComplete="off" />}
+                  {(id) => <><input id={id} value={hbTitle} onChange={(e) => setHbTitle(e.target.value)} maxLength={20} placeholder={tl("Ex: Treinar")} className={inputClass} autoComplete="off" /><Count v={hbTitle} max={20} /></>}
                 </Field>
                 <Field label={tl("Descrição (opcional)")}>
-                  {(id) => <input id={id} value={hbNote} onChange={(e) => setHbNote(e.target.value)} maxLength={40} placeholder={tl("Ex: Mínimo de 20 minutos")} className={inputClass} autoComplete="off" />}
+                  {(id) => <><input id={id} value={hbNote} onChange={(e) => setHbNote(e.target.value)} maxLength={30} placeholder={tl("Ex: Mínimo de 20 minutos")} className={inputClass} autoComplete="off" /><Count v={hbNote} max={30} /></>}
                 </Field>
               </>
             )}
@@ -428,7 +433,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
             )}
             {product === "mood" && (
               <Field label={tl("Uma frase curta (opcional)")}>
-                {(id) => <input id={id} value={mdNote} onChange={(e) => setMdNote(e.target.value)} maxLength={60} placeholder={tl("Ex: Dia incrível!")} className={inputClass} autoComplete="off" />}
+                {(id) => <><input id={id} value={mdNote} onChange={(e) => setMdNote(e.target.value)} maxLength={40} placeholder={tl("Ex: Dia incrível!")} className={inputClass} autoComplete="off" /><Count v={mdNote} max={40} /></>}
               </Field>
             )}
             {product === "habit" && !editing && <p className="text-xs text-[#8a7b69]">{tl("Depois de colocar no mural, toque em “Marcar hoje” todo dia para manter a sequência.")}</p>}
@@ -438,7 +443,7 @@ export function DisplayDialog({ open, product, style, styles, initial, editing, 
         {product === "daycount" && (
           <div className="space-y-3">
             <Field label={tx("nomeOQueEstaContando")}>
-              {(id) => <input id={id} value={dcTitle} onChange={(e) => setDcTitle(e.target.value)} maxLength={30} placeholder={tx("exJuntosHaSemFumar")} className={inputClass} autoComplete="off" />}
+              {(id) => <><input id={id} value={dcTitle} onChange={(e) => setDcTitle(e.target.value)} maxLength={30} placeholder={tx("exJuntosHaSemFumar")} className={inputClass} autoComplete="off" /><Count v={dcTitle} max={30} /></>}
             </Field>
             <Field label={tx("desdeQuando")}>{(id) => <input id={id} type="date" value={dcSince} onChange={(e) => setDcSince(e.target.value)} className={inputClass} />}</Field>
           </div>
