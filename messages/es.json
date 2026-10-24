@@ -2180,7 +2180,6 @@
     "hzro8oa": "Aceptar las métricas",
     "hfmax5b": "Cambiar mis opciones de privacidad",
     "h7n48v5": "Quién es el responsable",
-    "h1sl5tv9": "Pinz (pinz.digital) es el responsable del tratamiento de tus datos personales. Para cualquier asunto de privacidad, incluido hablar con el encargado de datos (DPO), usa el correo de contacto al final de esta página.",
     "htditvj": "En qué nos basamos (LGPD de Brasil, art. 7)",
     "h1yvassb": "Ejecución del contrato: crear tu cuenta, mostrar tu mural y tus pins y procesar pagos.",
     "h1xmafen": "Interés legítimo: seguridad del servicio, prevención de abuso y fraude y moderación de contenido.",
@@ -2204,7 +2203,8 @@
     "h1okyzwu": "Tus datos (LGPD)",
     "h1goq0e3": "Descarga una copia de todo lo que Pinz guarda sobre ti o cambia tus opciones de privacidad.",
     "h703497": "Preparando…",
-    "h1l1w5sj": "Descargar mis datos"
+    "h1l1w5sj": "Descargar mis datos",
+    "h13e01re": "Pinz (pinz.digital) lo mantiene una persona física, que es la responsable del tratamiento de tus datos personales. Para cualquier asunto de privacidad, incluido hablar con el encargado de datos (DPO), usa el correo de contacto al final de esta página."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2180,7 +2180,6 @@
     "hzro8oa": "Accept metrics",
     "hfmax5b": "Change my privacy choices",
     "h7n48v5": "Who is responsible",
-    "h1sl5tv9": "Pinz (pinz.digital) is the controller of your personal data. For any privacy matter, including reaching the data protection officer (DPO), use the contact e-mail at the end of this page.",
     "htditvj": "Our legal bases (Brazilian LGPD, art. 7)",
     "h1yvassb": "Performance of the contract: creating your account, showing your board and pins, and processing payments.",
     "h1xmafen": "Legitimate interest: service security, preventing abuse and fraud, and content moderation.",
@@ -2204,7 +2203,8 @@
     "h1okyzwu": "Your data (LGPD)",
     "h1goq0e3": "Download a copy of everything Pinz keeps about you or change your privacy choices.",
     "h703497": "Preparing…",
-    "h1l1w5sj": "Download my data"
+    "h1l1w5sj": "Download my data",
+    "h13e01re": "Pinz (pinz.digital) is run by an individual, who is the controller of your personal data. For any privacy matter, including reaching the data protection officer (DPO), use the contact e-mail at the end of this page."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

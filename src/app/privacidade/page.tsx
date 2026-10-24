@@ -19,7 +19,7 @@ export default function Privacidade() {
 
       <section>
         <h2>{tl("Quem é o responsável")}</h2>
-        <p>{tl("O Pinz (pinz.digital) é o controlador dos seus dados pessoais. Para qualquer assunto de privacidade, inclusive falar com o encarregado de dados (DPO), use o e-mail de contato no fim desta página.")}</p>
+        <p>{tl("O Pinz (pinz.digital) é mantido por uma pessoa física, que é a controladora dos seus dados pessoais. Para qualquer assunto de privacidade, inclusive falar com o encarregado de dados (DPO), use o e-mail de contato no fim desta página.")}</p>
       </section>
 
       <section>
