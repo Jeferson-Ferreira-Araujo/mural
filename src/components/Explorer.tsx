@@ -4,6 +4,7 @@ import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isDisplayOn, isPackId } from "./widgets";
 import { LivePresence } from "./LivePresence";
+import { trackEvent } from "./SiteTracker";
 import { buildPool, randomMural, relocalize } from "@/data/mock";
 import { decorLayout } from "@/data/decorDisplays";
 import {
@@ -197,7 +198,13 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     return () => window.removeEventListener("pinz:edit-profile", h);
   }, []);
   const [searchOpen, setSearchOpen] = useState(false);
+  useEffect(() => {
+    if (searchOpen) trackEvent("search");
+  }, [searchOpen]);
   const [storeOpen, setStoreOpen] = useState(false);
+  useEffect(() => {
+    if (storeOpen) trackEvent("open_store");
+  }, [storeOpen]);
   const [payResult, setPayResult] = useState<string | null>(null); // volta do Mercado Pago: resultado num modal sobre a loja
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {

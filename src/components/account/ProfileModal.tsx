@@ -4,6 +4,7 @@ import { forgetGeoChoice } from "@/lib/geo";
 import { useRef, useState, type FormEvent } from "react";
 import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { ConsentLink } from "../ConsentBanner";
 import { getLivePresence, getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setLivePresence, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
@@ -63,6 +64,19 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
   useEffect(() => {
     if (open) void getVisitPrivacy(getBrowserSupabase()).then(setShowVisits);
   }, [open]);
+  const [exporting, setExporting] = useState(false);
+  async function downloadMyData() {
+    setExporting(true);
+    const { data, error } = await getBrowserSupabase().rpc("export_my_data");
+    setExporting(false);
+    if (error || !data) return;
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `pinz-meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
   const [live, setLive] = useState(false); // mostrar quem está no mural agora (desligado por padrão)
   useEffect(() => {
     if (open) void getLivePresence(getBrowserSupabase()).then(setLive);
@@ -204,6 +218,16 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         <button type="button" role="switch" aria-checked={live} aria-label={tl("Mostrar quem está no mural agora")} onClick={() => void toggleLive()} className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors ${live ? "bg-[#2f8f4e]" : "bg-[#cdbfa6]"}`}>
           <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${live ? "translate-x-5" : ""}`} />
         </button>
+      </div>
+      <div className="mt-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
+        <p className="text-sm font-semibold">{tl("Seus dados (LGPD)")}</p>
+        <p className="text-xs text-[#6b5440]">{tl("Baixe uma cópia de tudo o que o Pinz guarda sobre você ou mude as suas escolhas de privacidade.")}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <button type="button" disabled={exporting} onClick={() => void downloadMyData()} className="cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:opacity-60">
+            {exporting ? tl("Preparando…") : tl("Baixar meus dados")}
+          </button>
+          <ConsentLink className="cursor-pointer text-sm font-semibold underline" />
+        </div>
       </div>
       {VISIT_TOGGLE_ENABLED && (
         <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">

@@ -5,6 +5,8 @@ import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { A11yHost } from "@/components/A11yHost";
 import { LOCALE_TAGS, type Locale } from "@/i18n/config";
 import { PwaRegister } from "@/components/PwaRegister";
+import { SiteTracker } from "@/components/SiteTracker";
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
@@ -77,6 +79,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
           <A11yHost />
+          <SiteTracker />
+          <ConsentBanner />
         </NextIntlClientProvider>
         <PwaRegister />
       </body>

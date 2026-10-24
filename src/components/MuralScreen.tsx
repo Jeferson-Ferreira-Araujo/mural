@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { trackEvent } from "./SiteTracker";
 import type { PinPlace } from "./composer/types";
 import { BOARD_CAPACITY } from "@/lib/plans";
 import { inBoardOrder, takenSlots } from "@/lib/slots";
@@ -33,6 +34,9 @@ export function MuralScreen({ composer, ...view }: Props) {
   const tl = useLit();
   const tx = useTranslations("components.MuralScreen");
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (open) trackEvent("open_composer");
+  }, [open]);
   // espaço em que o pin vai ser colado (desktop: o visitante clica no espaço do mural; sem isso, ele escolhe no compositor)
   const [slot, setSlot] = useState<number | null>(null);
   const { badges, displays, canDisplays, placeDisplayDataAtSlot, openStore } = useBadges();

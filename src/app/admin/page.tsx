@@ -458,9 +458,14 @@ export default function Admin() {
             <h1 className="font-title text-2xl font-semibold">Administração</h1>
             <p className="text-sm text-[#6b5440]">Usuários, murais, créditos, bloqueios e analytics.</p>
           </div>
-          <Link href="/" className={btn}>
-            ← Voltar ao site
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/metricas" className={primary}>
+              Métricas
+            </Link>
+            <Link href="/" className={btn}>
+              ← Voltar ao site
+            </Link>
+          </div>
         </header>
 
         {/* ambiente dos pagamentos (teste/produção): sempre à vista, qualquer que seja a seção */}
