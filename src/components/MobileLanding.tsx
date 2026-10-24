@@ -28,6 +28,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   const tx = useTranslations("components.MobileLanding");
   const look = boardById(board);
   const [open, setOpen] = useState(false);
+  const [zoomIn, setZoomIn] = useState(false); // mural ampliado: o logo encolhe e o mural ganha o espaço (o dobro); sem zoom, volta ao tamanho de sempre
   // o quadro só aparece depois de montado e com o fundo sorteado: antes disso a página do servidor mostrava um pedaço do primeiro quadro, ampliado, no canto
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -72,15 +73,15 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       </button>
 
       {/* logo grande, frase de mão e apoio, no topo */}
-      <header className="relative z-20 flex min-h-0 flex-1 flex-col items-center justify-evenly px-5 pt-[max(0.6rem,env(safe-area-inset-top))] pb-2 text-center">
-        <Brand className="mx-auto h-[clamp(4.5rem,22dvh,12rem)]" />
-        <p className="mx-auto max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>
+      <header className={`relative z-20 flex min-h-0 flex-col items-center px-5 pt-[max(0.6rem,env(safe-area-inset-top))] text-center ${zoomIn ? "flex-none justify-center pb-1" : "flex-1 justify-evenly pb-2"}`}>
+        <Brand className={`mx-auto transition-[height] duration-300 ${zoomIn ? "h-[3.4rem]" : "h-[clamp(4.5rem,22dvh,12rem)]"}`} />
+        <p className={`${zoomIn ? "hidden" : ""} mx-auto max-w-[23rem] text-[15px] leading-snug text-[#f6efe2]/80 [text-shadow:0_0.1em_0.4em_rgba(0,0,0,.6)]`}>{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
       {/* o mural inteiro, como sempre; a foto panorâmica passa das laterais e, no primeiro acesso, o quadro passeia para os dois lados para mostrar que dá para arrastar */}
-      <div className="relative w-full shrink-0 max-h-[52dvh]" style={{ aspectRatio: "3 / 2" }}>
-        <PannableBoard bare scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA } : undefined} hintOnce="pinz:landing-hint">
+      <div className={`relative w-full ${zoomIn ? "min-h-0 flex-1" : "max-h-[52dvh] shrink-0"}`} style={zoomIn ? undefined : { aspectRatio: "3 / 2" }}>
+        <PannableBoard bare scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA } : undefined} hintOnce="pinz:landing-hint" onZoomChange={setZoomIn}>
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
       </div>

@@ -3,7 +3,7 @@ import { Tape } from "./fasteners";
 import { useTranslations } from "next-intl";
 
 /** Lista: papel creme com checklist escrito à mão. */
-export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor; onEdit?: () => void; /** marcar/desmarcar um item (só quem pode editar a lista) */ onToggle?: (index: number) => void }) {
+export function ListCard({ title, items, font, tape, onEdit, onToggle, squareOnly = false }: { /** mural de exemplo: só o quadradinho marca (o resto do item abre o detalhe do pin, como no resto do cartão) */ squareOnly?: boolean; title: string; items: { text: string; done: boolean }[]; font?: HandId; tape?: TapeColor; onEdit?: () => void; /** marcar/desmarcar um item (só quem pode editar a lista) */ onToggle?: (index: number) => void }) {
   const tx = useTranslations("components.messages.ListCard");
   const hand = handOf(font);
   const canToggle = !!onToggle;
@@ -51,7 +51,29 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle }: { title
       <ul className="mt-[0.5em] space-y-[0.28em] leading-tight text-[#2a2a33]" style={{ fontFamily: itemFont, fontSize: `${itemSize}em` }}>
         {items.map((it, i) => (
           <li key={i}>
-            {onToggle ? (
+            {onToggle && squareOnly ? (
+              <div className="flex items-start gap-[0.55em]">
+                <button
+                  type="button"
+                  aria-pressed={it.done}
+                  aria-label={`${it.done ? "Desmarcar" : "Marcar"}: ${it.text}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggle(i);
+                  }}
+                  className="-m-[0.25em] grid cursor-pointer place-items-center rounded-[0.3em] p-[0.25em] transition hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-[0.1em] focus-visible:outline-[#d98a2b]"
+                >
+                  <span className="grid size-[1.05em] shrink-0 place-items-center rounded-[0.15em] border border-[#2a2a33]/70">
+                    {it.done && (
+                      <svg viewBox="0 0 12 12" className="size-[85%]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="m2 6.3 2.6 2.6L10 3" />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+                <span className={`ml-[0.3em] min-w-0 [overflow-wrap:anywhere] ${it.done ? "opacity-60 line-through" : ""}`}>{it.text}</span>
+              </div>
+            ) : onToggle ? (
               <button
                 type="button"
                 aria-pressed={it.done}

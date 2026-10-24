@@ -21,12 +21,14 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false, hintOnce, eye }: { /** a dica "arraste para os lados" toca UMA vez na vida do aparelho (guarda neste nome no armazenamento), mesmo sem zoom inicial: usada na tela de entrada do celular */ hintOnce?: string; /** desktop: olho ao lado do Aproximar/Afastar; com os botões escondidos (hidden), só o olho fica à vista */ eye?: { hidden: boolean; onToggle: () => void; pos: string }; /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false, hintOnce, onZoomChange, eye }: { /** avisa quando o quadro passa a estar ampliado (true) ou volta a mostrar o mural inteiro (false) */ onZoomChange?: (zoomedIn: boolean) => void; /** a dica "arraste para os lados" toca UMA vez na vida do aparelho (guarda neste nome no armazenamento), mesmo sem zoom inicial: usada na tela de entrada do celular */ hintOnce?: string; /** desktop: olho ao lado do Aproximar/Afastar; com os botões escondidos (hidden), só o olho fica à vista */ eye?: { hidden: boolean; onToggle: () => void; pos: string }; /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const tl = useLit();
   const tx = useTranslations("components.board.PannableBoard");
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
   const touched = useRef(false); // a pessoa já mexeu no quadro (zoom ou arraste): o zoom inicial não se repete
+  const zoomCbRef = useRef(onZoomChange);
+  zoomCbRef.current = onZoomChange;
   const onceRef = useRef(hintOnce);
   onceRef.current = hintOnce;
   const startZoomedRef = useRef(startZoomed);
@@ -144,6 +146,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       if (out !== zoomedOutRef.current) {
         zoomedOutRef.current = out;
         setZoomedOut(out);
+        zoomCbRef.current?.(!out);
       }
     },
     [limits],
@@ -181,6 +184,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     if (!b) return;
     const measure = () => {
       const r = b.getBoundingClientRect();
+      const wasFit = zoomedOutRef.current; // o mural estava inteiro à vista antes desta mudança de tamanho?
       size.current = { w: r.width, h: r.height };
       if (!ready.current && r.width > 0) {
         ready.current = true;
@@ -194,8 +198,9 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       } else {
         const { x, y, s } = view.current;
         const { minS } = limits();
-        // mural inteiro à vista: a área mudou de tamanho (ex.: menu lateral recolhido ou quadro panorâmico carregado), então o quadro volta ao centro
-        view.current = s <= minS * 1.02 ? clampView((r.width - WORLD_W * s) / 2, (r.height - WORLD_H * s) / 2, s) : clampView(x, y, s);
+        // mural inteiro à vista (antes de a área mudar): a área mudou de tamanho (ex.: menu lateral recolhido/aberto ou quadro panorâmico carregado),
+        // então o quadro se reajusta ao novo tamanho (mural inteiro) e volta ao centro, tanto quando a área cresce quanto quando encolhe
+        view.current = wasFit || s <= minS * 1.02 ? clampView((r.width - WORLD_W * minS) / 2, (r.height - WORLD_H * minS) / 2, minS) : clampView(x, y, s);
       }
       apply(false);
     };
