@@ -11,7 +11,7 @@ export function A11yButton({ className = "" }: { className?: string }) {
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent(A11Y_OPEN_EVENT))}
       aria-label={tx("acessibilidade")}
-      className={`grid size-[2.5em] cursor-pointer place-items-center rounded-full bg-[#17110c]/80 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-[#17110c] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${className}`}
+      className={`grid size-[2.5em] cursor-pointer place-items-center rounded-xl bg-[#17110c]/80 text-white shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.35)] backdrop-blur transition hover:bg-[#17110c] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${className}`}
     >
       <svg viewBox="0 0 24 24" className="size-[1.35em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <circle cx="12" cy="4.5" r="1.8" />

@@ -44,7 +44,7 @@ export function LanguagePicker({ className = "", tone = "light", variant = "bar"
           aria-expanded={open}
           aria-label={`${t("language")}: ${LOCALE_NAMES[locale]}`}
           title={t("language")}
-          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${base}`}
+          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border px-2.5 transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-[#d98a2b] ${base}`}
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <circle cx="12" cy="12" r="9" />
