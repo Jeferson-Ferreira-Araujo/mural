@@ -6,3 +6,7 @@ next-env.d.ts
 .env*
 !.env.production
 .claude
+
+# testes de ponta a ponta
+/test-results/
+/playwright-report/
