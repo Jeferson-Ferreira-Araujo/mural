@@ -238,12 +238,27 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
   // assim que as boas-vindas fecham, mesmo que o aparelho já tenha visto a dica hoje; e o mural também volta ao zoom inicial se ainda não foi mexido.
   const [hint, setHint] = useState(false);
   const hintDone = useRef(false);
+  const introWatch = useRef<MutationObserver | null>(null);
+  useEffect(() => () => introWatch.current?.disconnect(), []);
   const hintTimers = useRef<number[]>([]);
   const startHint = useCallback(
     (force: boolean) => {
       if ((!startZoomedRef.current && !onceRef.current) || hintDone.current || touched.current || !ready.current) return;
       const { w, h } = size.current;
       if (w <= 0 || w >= 700) return;
+      // a abertura animada do logo ainda está tocando: espera ela terminar (para as duas animações não acontecerem juntas) e só então passeia pelo mural
+      if (onceRef.current && document.documentElement.dataset.intro === "play") {
+        if (!introWatch.current) {
+          introWatch.current = new MutationObserver(() => {
+            if (document.documentElement.dataset.intro === "play") return;
+            introWatch.current?.disconnect();
+            introWatch.current = null;
+            window.setTimeout(() => startHintRef.current(false), 600);
+          });
+          introWatch.current.observe(document.documentElement, { attributes: true, attributeFilter: ["data-intro"] });
+        }
+        return;
+      }
       const today = new Date().toLocaleDateString("sv-SE");
       try {
         if (!force && localStorage.getItem(onceRef.current ?? "pinz:pan-hint") === (onceRef.current ? "1" : today)) return;
