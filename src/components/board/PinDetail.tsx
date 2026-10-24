@@ -281,8 +281,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       className="m-auto w-[min(96vw,64rem)] max-h-[96dvh] overflow-hidden bg-transparent p-0 text-white backdrop:bg-black/70 backdrop:backdrop-blur-sm"
     >
       {open && entry && index !== null && (
-        <div className="relative flex h-[min(94dvh,60rem)] flex-col items-center gap-3">
-          <div className="flex w-full items-center justify-center gap-2 px-1">
+        <div className="relative flex h-[min(94dvh,60rem)] flex-col items-center justify-center gap-3">
+          {/* fixo no canto superior direito da janela */}
+          <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${arrow} absolute top-0 right-0 z-10`}>
+            <CloseX />
+          </button>
+          <div className="flex w-full items-center justify-center gap-2 px-1 empty:hidden">
             {shareable && (
               <button type="button" disabled={sharing} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
                 {tx.rich("x_compartilhar", { n0: () => <ShareIcon /> })}</button>
@@ -313,10 +317,6 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 </svg>
               </button>
             )}
-            {/* fixo no canto superior direito da janela */}
-            <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${arrow} absolute top-0 right-0 z-10`}>
-              <CloseX />
-            </button>
           </div>
           {shareMsg && (
             <p role="status" className="rounded-xl bg-black/55 px-4 py-2 text-sm font-semibold text-white">
@@ -325,13 +325,13 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           )}
           {((item && !isSealed(item) && !isHidden(item) && item.ownerHidden) || (ownWidget && widgetHidden)) && revealBtn()}
           {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
-          <div className="flex min-h-0 w-full flex-1 items-center justify-center px-12 sm:px-16">
+          <div className="flex w-full items-center justify-center px-12 sm:px-16">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label={tx("anterior")} className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
               <ChevronLeft />
             </button>
-            {/* o pin ocupa todo o espaço que sobra entre os botões (em cima e embaixo): o tamanho vem da altura e da largura dessa área, então nunca há barra de rolagem */}
-            <div className="relative min-w-0 flex-1 self-stretch [container-type:size]">
-            <div className="absolute inset-0 grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc(100cqh / ${fit.h + 2.8}), calc(100cqw / ${fit.w}))` }} key={entry.id}>
+            {/* o pin tem o maior tamanho que cabe na janela (descontados os botões de cima e de baixo, que ficam colados nele): nunca há barra de rolagem */}
+            <div className="relative min-w-0 flex-1">
+            <div className="grid place-items-center pt-[1.2em] pb-[1.4em]" style={{ fontSize: `min(72px, calc((min(94dvh, 60rem) - 14rem) / ${fit.h + 2.8}), calc((min(96vw, 64rem) - 8rem) / ${fit.w}))` }} key={entry.id}>
               {/* em destaque o pin aparece limpo (sem o selo no meio); o aviso de pendente vem logo abaixo */}
               <DetailProvider value>
                 <div className="relative">
