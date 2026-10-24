@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Verileriniz (LGPD)",
     "h1goq0e3": "Pinz’in sizinle ilgili sakladığı her şeyin bir kopyasını indirin veya gizlilik tercihlerinizi değiştirin.",
     "h703497": "Hazırlanıyor…",
-    "h1l1w5sj": "Verilerimi indir"
+    "h1l1w5sj": "Verilerimi indir",
+    "h8yp7m2": "Kuponunuz var mı?",
+    "h5c1rfn": "Kupon kodu",
+    "hsolq20": "Kullan",
+    "h110a5op": "Kullanılıyor…",
+    "hecw5pr": "Kupon kullanıldı:",
+    "hxsuxma": "kredi",
+    "h1lzlqo1": "gün PINZ+",
+    "hw4c2kg": "Geçersiz kod.",
+    "hsyq26h": "Bu kuponun süresi doldu.",
+    "hd9xnm": "Bu kuponu zaten kullandınız.",
+    "hsf1swr": "Bu kupon tükendi.",
+    "hyzg7vr": "Çok fazla deneme. 15 dakika sonra tekrar deneyin.",
+    "h1efww64": "Şu anda kullanılamadı. Tekrar deneyin."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

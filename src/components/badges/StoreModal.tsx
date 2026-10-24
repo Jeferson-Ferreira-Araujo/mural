@@ -14,6 +14,7 @@ import { PAY_EVENT } from "@/lib/payments";
 import { baseStyle, SHAPE_LABEL, shapeOfStyle, withShape, type Shape } from "@/lib/displayShape";
 import { DISPLAY_CATS, defaultStyle, displayName, DISPLAY_SUMMARY, isBundled, isDisplayOn, isPackId, stylesOf } from "../widgets";
 import { StyleCarousel } from "./StyleCarousel";
+import { CouponBox } from "./CouponBox";
 import { GridSkeleton } from "../Skeleton";
 import { useTranslations, useLocale } from "next-intl";
 import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
@@ -304,6 +305,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
             </li>
           ))}
         </ul>
+        <CouponBox />
       </section>
 
       {/* conta FREE: atalho para assinar o PINZ+ mensal */}

@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Deine Daten (LGPD)",
     "h1goq0e3": "Lade eine Kopie von allem herunter, was Pinz über dich speichert, oder ändere deine Datenschutzauswahl.",
     "h703497": "Wird vorbereitet…",
-    "h1l1w5sj": "Meine Daten herunterladen"
+    "h1l1w5sj": "Meine Daten herunterladen",
+    "h8yp7m2": "Hast du einen Gutschein?",
+    "h5c1rfn": "Gutscheincode",
+    "hsolq20": "Einlösen",
+    "h110a5op": "Wird eingelöst…",
+    "hecw5pr": "Gutschein eingelöst:",
+    "hxsuxma": "Credits",
+    "h1lzlqo1": "Tage PINZ+",
+    "hw4c2kg": "Ungültiger Code.",
+    "hsyq26h": "Dieser Gutschein ist abgelaufen.",
+    "hd9xnm": "Du hast diesen Gutschein schon verwendet.",
+    "hsf1swr": "Dieser Gutschein ist aufgebraucht.",
+    "hyzg7vr": "Zu viele Versuche. Versuche es in 15 Minuten erneut.",
+    "h1efww64": "Einlösen gerade nicht möglich. Versuche es erneut."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

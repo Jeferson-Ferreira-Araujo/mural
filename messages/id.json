@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Data Anda (LGPD)",
     "h1goq0e3": "Unduh salinan semua yang disimpan Pinz tentang Anda atau ubah pilihan privasi Anda.",
     "h703497": "Menyiapkan…",
-    "h1l1w5sj": "Unduh data saya"
+    "h1l1w5sj": "Unduh data saya",
+    "h8yp7m2": "Punya kupon?",
+    "h5c1rfn": "Kode kupon",
+    "hsolq20": "Tukar",
+    "h110a5op": "Menukar…",
+    "hecw5pr": "Kupon ditukar:",
+    "hxsuxma": "kredit",
+    "h1lzlqo1": "hari PINZ+",
+    "hw4c2kg": "Kode tidak valid.",
+    "hsyq26h": "Kupon ini sudah kedaluwarsa.",
+    "hd9xnm": "Anda sudah memakai kupon ini.",
+    "hsf1swr": "Kupon ini sudah habis.",
+    "hyzg7vr": "Terlalu banyak percobaan. Coba lagi dalam 15 menit.",
+    "h1efww64": "Tidak dapat menukar sekarang. Coba lagi."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

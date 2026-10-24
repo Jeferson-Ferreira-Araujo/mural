@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Dữ liệu của bạn (LGPD)",
     "h1goq0e3": "Tải xuống bản sao mọi thứ Pinz lưu về bạn hoặc thay đổi lựa chọn riêng tư của bạn.",
     "h703497": "Đang chuẩn bị…",
-    "h1l1w5sj": "Tải dữ liệu của tôi"
+    "h1l1w5sj": "Tải dữ liệu của tôi",
+    "h8yp7m2": "Bạn có mã giảm giá?",
+    "h5c1rfn": "Mã phiếu",
+    "hsolq20": "Đổi",
+    "h110a5op": "Đang đổi…",
+    "hecw5pr": "Đã đổi phiếu:",
+    "hxsuxma": "tín dụng",
+    "h1lzlqo1": "ngày PINZ+",
+    "hw4c2kg": "Mã không hợp lệ.",
+    "hsyq26h": "Phiếu này đã hết hạn.",
+    "hd9xnm": "Bạn đã dùng phiếu này rồi.",
+    "hsf1swr": "Phiếu này đã hết lượt.",
+    "hyzg7vr": "Quá nhiều lần thử. Hãy thử lại sau 15 phút.",
+    "h1efww64": "Hiện chưa thể đổi. Hãy thử lại."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

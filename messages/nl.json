@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Jouw gegevens (LGPD)",
     "h1goq0e3": "Download een kopie van alles wat Pinz over je bewaart of wijzig je privacykeuzes.",
     "h703497": "Bezig met voorbereiden…",
-    "h1l1w5sj": "Mijn gegevens downloaden"
+    "h1l1w5sj": "Mijn gegevens downloaden",
+    "h8yp7m2": "Heb je een kortingscode?",
+    "h5c1rfn": "Couponcode",
+    "hsolq20": "Inwisselen",
+    "h110a5op": "Bezig met inwisselen…",
+    "hecw5pr": "Coupon ingewisseld:",
+    "hxsuxma": "credits",
+    "h1lzlqo1": "dagen PINZ+",
+    "hw4c2kg": "Ongeldige code.",
+    "hsyq26h": "Deze coupon is verlopen.",
+    "hd9xnm": "Je hebt deze coupon al gebruikt.",
+    "hsf1swr": "Deze coupon is op.",
+    "hyzg7vr": "Te veel pogingen. Probeer het over 15 minuten opnieuw.",
+    "h1efww64": "Inwisselen lukt nu niet. Probeer het opnieuw."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

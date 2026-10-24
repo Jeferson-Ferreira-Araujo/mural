@@ -1,7 +1,7 @@
 import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "./plans";
 import { adminClient, isUuid } from "./mercadopago";
 import { formatMoney, type Currency } from "./money";
-import { purchaseMail, sendMail } from "./mail";
+import { plusMail, purchaseMail, sendMail } from "./mail";
 
 /**
  * O que se pode comprar com pagamento único (Pix ou cartão), só no servidor: pacotes de créditos, PINZ+ anual, PINZ+ vitalício e o presente de 1 mês.
@@ -41,6 +41,24 @@ export async function giftRecipient(buyer: string, nickname: string): Promise<{ 
 }
 
 /** Grava o pagamento no banco e aplica o efeito (créditos ou PINZ+). Idempotente: o mesmo pagamento nunca soma duas vezes. */
+/** Avisos da assinatura mensal (cobrança paga, falha, cancelamento): um e-mail por ocorrência (chave = tipo + id do pagamento). Nunca derruba o webhook. */
+export async function notifyPlus(uid: string, type: "paid" | "failed" | "canceled", key: string, currency: Currency = "BRL", cents?: number) {
+  try {
+    const db = adminClient();
+    const claim = `${type}:${key}`;
+    const { error: dup } = await db.from("payment_emails").insert({ payment_id: claim });
+    if (dup) return;
+    const { data } = await db.auth.admin.getUserById(uid);
+    const to = data.user?.email;
+    if (!to) return;
+    const lang = currency === "BRL" ? "pt" : "en";
+    const mail = plusMail({ lang, type, amount: cents ? formatMoney(cents, currency, lang === "pt" ? "pt-BR" : "en-US") : undefined });
+    if (!(await sendMail({ to, ...mail }))) await db.from("payment_emails").delete().eq("payment_id", claim);
+  } catch (e) {
+    console.error("notifyPlus", e instanceof Error ? e.message : e);
+  }
+}
+
 /** Avisa o comprador por e-mail, uma vez por pagamento (o aviso do provedor pode chegar repetido). Falha no envio nunca desfaz a compra. */
 async function notifyPurchase(parsed: { buyer: string; item: Item }, paymentId: string, currency: Currency) {
   try {

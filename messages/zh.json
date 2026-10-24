@@ -2204,7 +2204,20 @@
     "h1okyzwu": "你的数据（LGPD）",
     "h1goq0e3": "下载 Pinz 保存的关于你的全部信息副本，或更改你的隐私选择。",
     "h703497": "准备中…",
-    "h1l1w5sj": "下载我的数据"
+    "h1l1w5sj": "下载我的数据",
+    "h8yp7m2": "有优惠码吗？",
+    "h5c1rfn": "优惠码",
+    "hsolq20": "兑换",
+    "h110a5op": "兑换中…",
+    "hecw5pr": "优惠码已兑换：",
+    "hxsuxma": "积分",
+    "h1lzlqo1": "天 PINZ+",
+    "hw4c2kg": "无效的代码。",
+    "hsyq26h": "此优惠码已过期。",
+    "hd9xnm": "你已使用过此优惠码。",
+    "hsf1swr": "此优惠码已用完。",
+    "hyzg7vr": "尝试次数过多，请 15 分钟后再试。",
+    "h1efww64": "暂时无法兑换，请重试。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

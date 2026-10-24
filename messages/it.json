@@ -2204,7 +2204,20 @@
     "h1okyzwu": "I tuoi dati (LGPD)",
     "h1goq0e3": "Scarica una copia di tutto ciò che Pinz conserva su di te o modifica le tue scelte sulla privacy.",
     "h703497": "Preparazione…",
-    "h1l1w5sj": "Scarica i miei dati"
+    "h1l1w5sj": "Scarica i miei dati",
+    "h8yp7m2": "Hai un coupon?",
+    "h5c1rfn": "Codice coupon",
+    "hsolq20": "Riscatta",
+    "h110a5op": "Riscatto…",
+    "hecw5pr": "Coupon riscattato:",
+    "hxsuxma": "crediti",
+    "h1lzlqo1": "giorni di PINZ+",
+    "hw4c2kg": "Codice non valido.",
+    "hsyq26h": "Questo coupon è scaduto.",
+    "hd9xnm": "Hai già usato questo coupon.",
+    "hsf1swr": "Questo coupon è esaurito.",
+    "hyzg7vr": "Troppi tentativi. Riprova tra 15 minuti.",
+    "h1efww64": "Impossibile riscattare ora. Riprova."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

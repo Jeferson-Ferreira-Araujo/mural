@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Twoje dane (LGPD)",
     "h1goq0e3": "Pobierz kopię wszystkiego, co Pinz przechowuje o Tobie, lub zmień swoje wybory dotyczące prywatności.",
     "h703497": "Przygotowywanie…",
-    "h1l1w5sj": "Pobierz moje dane"
+    "h1l1w5sj": "Pobierz moje dane",
+    "h8yp7m2": "Masz kupon?",
+    "h5c1rfn": "Kod kuponu",
+    "hsolq20": "Zrealizuj",
+    "h110a5op": "Realizowanie…",
+    "hecw5pr": "Kupon zrealizowany:",
+    "hxsuxma": "kredytów",
+    "h1lzlqo1": "dni PINZ+",
+    "hw4c2kg": "Nieprawidłowy kod.",
+    "hsyq26h": "Ten kupon wygasł.",
+    "hd9xnm": "Ten kupon został już przez Ciebie użyty.",
+    "hsf1swr": "Ten kupon został wyczerpany.",
+    "hyzg7vr": "Zbyt wiele prób. Spróbuj ponownie za 15 minut.",
+    "h1efww64": "Nie udało się teraz zrealizować. Spróbuj ponownie."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

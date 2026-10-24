@@ -2204,7 +2204,20 @@
     "h1goq0e3": "Descarga una copia de todo lo que Pinz guarda sobre ti o cambia tus opciones de privacidad.",
     "h703497": "Preparando…",
     "h1l1w5sj": "Descargar mis datos",
-    "h13e01re": "Pinz (pinz.digital) lo mantiene una persona física, que es la responsable del tratamiento de tus datos personales. Para cualquier asunto de privacidad, incluido hablar con el encargado de datos (DPO), usa el correo de contacto al final de esta página."
+    "h13e01re": "Pinz (pinz.digital) lo mantiene una persona física, que es la responsable del tratamiento de tus datos personales. Para cualquier asunto de privacidad, incluido hablar con el encargado de datos (DPO), usa el correo de contacto al final de esta página.",
+    "h8yp7m2": "¿Tienes un cupón?",
+    "h5c1rfn": "Código del cupón",
+    "hsolq20": "Canjear",
+    "h110a5op": "Canjeando…",
+    "hecw5pr": "Cupón canjeado:",
+    "hxsuxma": "créditos",
+    "h1lzlqo1": "días de PINZ+",
+    "hw4c2kg": "Código no válido.",
+    "hsyq26h": "Este cupón ha caducado.",
+    "hd9xnm": "Ya usaste este cupón.",
+    "hsf1swr": "Este cupón se agotó.",
+    "hyzg7vr": "Demasiados intentos. Inténtalo de nuevo en 15 minutos.",
+    "h1efww64": "No se pudo canjear ahora. Inténtalo de nuevo."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

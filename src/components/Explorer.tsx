@@ -387,6 +387,15 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     }
     void reloadInventory();
   }, [session, reloadInventory]);
+  // cupom resgatado (loja): atualiza o saldo e o PINZ+
+  useEffect(() => {
+    const h = () => {
+      void reloadInventory();
+      void reloadOwn();
+    };
+    window.addEventListener("pinz:reload-inventory", h);
+    return () => window.removeEventListener("pinz:reload-inventory", h);
+  }, [reloadInventory, reloadOwn]);
   // recompensa ganha (de qualquer tela): avisa e atualiza o saldo
   useEffect(() => {
     const h = (e: Event) => {

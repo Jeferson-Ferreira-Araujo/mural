@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { applyPayment, parseRef } from "@/lib/payCatalog";
+import { applyPayment, notifyPlus, parseRef } from "@/lib/payCatalog";
 import { adminClient, envConfigured, isUuid, mp, syncPreapproval, webhookEnv } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -49,7 +49,10 @@ async function handle(req: Request) {
       // cada mensalidade fica registrada (aparece no extrato do usuário e no admin)
       if (sync.uid) {
         const status = r.data.status === "processed" ? "approved" : (r.data.status ?? "pending");
-        await adminClient().rpc("pay_record", { p_user: sync.uid, p_kind: "plus", p_payment: `sub:${id}`, p_cents: Math.round((r.data.transaction_amount ?? 0) * 100), p_status: status });
+        const cents = Math.round((r.data.transaction_amount ?? 0) * 100);
+        await adminClient().rpc("pay_record", { p_user: sync.uid, p_kind: "plus", p_payment: `sub:${id}`, p_cents: cents, p_status: status });
+        if (status === "approved") await notifyPlus(sync.uid, "paid", `sub:${id}`, "BRL", cents);
+        else if (r.data.status === "rejected") await notifyPlus(sync.uid, "failed", `sub:${id}`, "BRL");
       }
       return ok();
     }

@@ -7,6 +7,7 @@ import { BadgeProvider } from "@/components/badges/BadgeContext";
 import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { MessageView } from "@/components/messages/MessageView";
 import { AnalyticsPanel } from "./AnalyticsPanel";
+import { CouponsPanel } from "./CouponsPanel";
 import { FeaturesPanel } from "./FeaturesPanel";
 import { TestsPanel } from "./TestsPanel";
 import { PayModeSwitch } from "./PayModeSwitch";
@@ -373,7 +374,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests" | "coupons">("users");
   const [payQ, setPayQ] = useState("");
   const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
@@ -479,6 +480,7 @@ export default function Admin() {
               ["payments", "Pagamentos"],
               ["features", "Recursos"],
               ["analytics", "Analytics"],
+              ["coupons", "Cupons"],
               ["tests", "Testes"],
             ] as const
           ).map(([id, label]) => (
@@ -498,6 +500,8 @@ export default function Admin() {
           <TestsPanel onToast={setToast} />
         ) : tab === "features" ? (
           <FeaturesPanel onToast={setToast} />
+        ) : tab === "coupons" ? (
+          <CouponsPanel onToast={setToast} />
         ) : tab === "analytics" ? (
           <AnalyticsPanel />
         ) : tab === "payments" ? (

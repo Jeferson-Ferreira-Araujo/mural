@@ -2204,7 +2204,20 @@
     "h1goq0e3": "Download a copy of everything Pinz keeps about you or change your privacy choices.",
     "h703497": "Preparing…",
     "h1l1w5sj": "Download my data",
-    "h13e01re": "Pinz (pinz.digital) is run by an individual, who is the controller of your personal data. For any privacy matter, including reaching the data protection officer (DPO), use the contact e-mail at the end of this page."
+    "h13e01re": "Pinz (pinz.digital) is run by an individual, who is the controller of your personal data. For any privacy matter, including reaching the data protection officer (DPO), use the contact e-mail at the end of this page.",
+    "h8yp7m2": "Have a coupon?",
+    "h5c1rfn": "Coupon code",
+    "hsolq20": "Redeem",
+    "h110a5op": "Redeeming…",
+    "hecw5pr": "Coupon redeemed:",
+    "hxsuxma": "credits",
+    "h1lzlqo1": "days of PINZ+",
+    "hw4c2kg": "Invalid code.",
+    "hsyq26h": "This coupon has expired.",
+    "hd9xnm": "You already used this coupon.",
+    "hsf1swr": "This coupon is sold out.",
+    "hyzg7vr": "Too many attempts. Try again in 15 minutes.",
+    "h1efww64": "Could not redeem right now. Try again."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

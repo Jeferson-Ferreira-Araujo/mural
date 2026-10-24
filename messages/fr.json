@@ -2204,7 +2204,20 @@
     "h1okyzwu": "Vos données (LGPD)",
     "h1goq0e3": "Téléchargez une copie de tout ce que Pinz conserve sur vous ou modifiez vos choix de confidentialité.",
     "h703497": "Préparation…",
-    "h1l1w5sj": "Télécharger mes données"
+    "h1l1w5sj": "Télécharger mes données",
+    "h8yp7m2": "Un code promo ?",
+    "h5c1rfn": "Code promo",
+    "hsolq20": "Utiliser",
+    "h110a5op": "Utilisation…",
+    "hecw5pr": "Code promo utilisé :",
+    "hxsuxma": "crédits",
+    "h1lzlqo1": "jours de PINZ+",
+    "hw4c2kg": "Code invalide.",
+    "hsyq26h": "Ce code a expiré.",
+    "hd9xnm": "Vous avez déjà utilisé ce code.",
+    "hsf1swr": "Ce code n’est plus disponible.",
+    "hyzg7vr": "Trop de tentatives. Réessayez dans 15 minutes.",
+    "h1efww64": "Impossible d’utiliser le code pour le moment. Réessayez."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

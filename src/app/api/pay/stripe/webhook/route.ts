@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { applyPayment, parseRef } from "@/lib/payCatalog";
+import { applyPayment, notifyPlus, parseRef } from "@/lib/payCatalog";
 import { adminClient, isUuid } from "@/lib/mercadopago";
 import { isCurrency, priceIn, type Currency } from "@/lib/money";
 import { PLUS_PRICE_CENTS } from "@/lib/plans";
@@ -90,12 +90,22 @@ export async function POST(req: Request) {
         if (!cur || Number(o.amount_paid ?? 0) !== expected(PLUS_PRICE_CENTS, cur)) return ok();
         const end = Number((((o.lines as Obj | undefined)?.data as Obj[] | undefined)?.[0]?.period as Obj | undefined)?.end ?? 0);
         const until = end ? new Date(end * 1000).toISOString() : new Date(Date.now() + 31 * 86_400_000).toISOString();
-        return (await syncSubscription(uid, subId, "authorized", until, str(o.id), Number(o.amount_paid), cur)) ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
+        if (!(await syncSubscription(uid, subId, "authorized", until, str(o.id), Number(o.amount_paid), cur))) return NextResponse.json({ error: "db" }, { status: 500 });
+        await notifyPlus(uid, "paid", str(o.id), cur, Number(o.amount_paid));
+        return ok();
+      }
+      case "invoice.payment_failed": {
+        const subId = str(o.subscription) || str(((o.parent as Obj | undefined)?.subscription_details as Obj | undefined)?.subscription);
+        const uid = subId ? await subscriptionUid(subId) : null;
+        if (uid) await notifyPlus(uid, "failed", str(o.id), asCurrency(str(o.currency)) ?? "USD");
+        return ok();
       }
       case "customer.subscription.deleted": {
         const uid = (isUuid(str((o.metadata as Obj | undefined)?.ref)) ? str((o.metadata as Obj).ref) : null) ?? null;
         if (!uid) return ok();
-        return (await syncSubscription(uid, str(o.id), "cancelled", null)) ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
+        if (!(await syncSubscription(uid, str(o.id), "cancelled", null))) return NextResponse.json({ error: "db" }, { status: 500 });
+        await notifyPlus(uid, "canceled", str(o.id));
+        return ok();
       }
       case "charge.refunded": {
         const ref = str((o.metadata as Obj | undefined)?.ref);
