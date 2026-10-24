@@ -210,6 +210,25 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     return () => ro.disconnect();
   }, [apply, clampView, limits]);
 
+  // olho: ao esconder os botões o menu lateral recolhe e a área cresce (a posição se ajusta e se perde); ao mostrar de novo, a visão volta exatamente como estava
+  const eyeHidden = !!eye?.hidden;
+  const savedView = useRef<{ x: number; y: number; s: number } | null>(null);
+  useEffect(() => {
+    if (eyeHidden) {
+      savedView.current = { ...view.current };
+      return;
+    }
+    const v = savedView.current;
+    if (!v) return;
+    savedView.current = null;
+    const put = () => {
+      view.current = clampView(v.x, v.y, v.s);
+      apply(false);
+    };
+    const ids = [80, 560].map((ms) => window.setTimeout(put, ms)); // depois de a área voltar ao tamanho (o menu abre com animação)
+    return () => ids.forEach((id) => window.clearTimeout(id));
+  }, [eyeHidden, apply, clampView]);
+
   // ao entrar no mural de OUTRA pessoa (o quadro é o mesmo componente, então manteria o zoom e a posição do mural anterior), volta ao enquadramento inicial, centralizado;
   // trocar entre os murais da mesma pessoa (arrastar para o lado) mantém o zoom
   const profile = usePathname()?.split("/")[1] ?? "";
