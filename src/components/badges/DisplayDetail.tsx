@@ -89,7 +89,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
             </svg>
           </button>
         )}
-        {text ? (
+        {!data.id ? null /* display do mural de exemplo: sem compartilhar */ : text ? (
           <button type="button" onClick={() => void share()} className={`${ghostButton} w-full`}>
             {copied ? tl("Texto copiado!") : tl("Compartilhar o texto")}
           </button>
