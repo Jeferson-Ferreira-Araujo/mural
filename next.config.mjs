@@ -23,11 +23,16 @@ const csp = [
   "frame-ancestors 'self'",
 ].join("; ");
 
+// sites de teste de tela autorizados a abrir o Pinz em um quadro (TEMPORÁRIO; vazio = ninguém)
+const TEMP_FRAME_TESTERS = ["https://responsivetesttool.com", "https://*.responsivetesttool.com"];
+
 // cabeçalhos de segurança em todas as páginas
 const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" }, // ninguém coloca o Pinz dentro de outro site (clickjacking)
+  // ninguém coloca o Pinz dentro de outro site (clickjacking)... com UMA exceção TEMPORÁRIA para o dono testar tamanhos de tela em ferramentas online.
+  // Para voltar ao normal: deixe TEMP_FRAME_TESTERS vazio (ele troca o X-Frame-Options por frame-ancestors só com esses sites).
+  ...(TEMP_FRAME_TESTERS.length ? [{ key: "Content-Security-Policy", value: `frame-ancestors 'self' ${TEMP_FRAME_TESTERS.join(" ")}` }] : [{ key: "X-Frame-Options", value: "SAMEORIGIN" }]),
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(self), payment=(), usb=(), interest-cohort=()" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
