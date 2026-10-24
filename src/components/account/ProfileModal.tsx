@@ -5,6 +5,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ConsentLink } from "../ConsentBanner";
+import { TwoFactorSettings } from "./TwoFactorSettings";
 import { getLivePresence, getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setLivePresence, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
@@ -219,6 +220,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
           <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${live ? "translate-x-5" : ""}`} />
         </button>
       </div>
+      <TwoFactorSettings />
       <div className="mt-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
         <p className="text-sm font-semibold">{tl("Seus dados (LGPD)")}</p>
         <p className="text-xs text-[#6b5440]">{tl("Baixe uma cópia de tudo o que o Pinz guarda sobre você ou mude as suas escolhas de privacidade.")}</p>

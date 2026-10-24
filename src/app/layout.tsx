@@ -8,6 +8,7 @@ import { PwaRegister } from "@/components/PwaRegister";
 import { SiteTracker } from "@/components/SiteTracker";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { LocaleSync } from "@/components/LocaleSync";
+import { TwoFactorGate } from "@/components/TwoFactorGate";
 import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
@@ -84,6 +85,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <SiteTracker />
           <ConsentBanner />
           <LocaleSync />
+          <TwoFactorGate />
         </NextIntlClientProvider>
         <PwaRegister />
       </body>
