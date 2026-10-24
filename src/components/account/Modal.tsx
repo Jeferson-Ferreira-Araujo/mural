@@ -18,7 +18,7 @@ const ArrowBack = () => (
 );
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
-export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, danger = false }: { /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
+export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, footer, danger = false }: { /** barra fixa no pé da janela (sempre visível, fora da rolagem) */ footer?: ReactNode; /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const tx = useTranslations("components.account.Modal");
   const ref = useRef<HTMLDialogElement>(null);
   const slot = useContext(EmbedCtx);
@@ -47,6 +47,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
           {aside && <div className="shrink-0">{aside}</div>}
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        {footer && <div className="shrink-0 border-t border-[#e6d8bd] bg-[#f7efdc] px-4 py-3">{footer}</div>}
         {overlay}
       </div>,
       slot,
@@ -76,7 +77,8 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
               ×
             </button>
           </header>
-          <div className="overflow-y-auto px-5 py-5">{children}</div>
+          <div className="min-h-0 overflow-y-auto px-5 py-5">{children}</div>
+          {footer && <div className="shrink-0 border-t border-[#e6d8bd] bg-[#fbf6ea] px-5 py-3">{footer}</div>}
           {overlay}
         </div>
       )}

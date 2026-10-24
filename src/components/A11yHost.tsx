@@ -99,7 +99,13 @@ export function A11yHost() {
         </defs>
       </svg>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={tx("acessibilidade")}>
+      <Modal open={open} onClose={() => setOpen(false)} title={tx("acessibilidade")}
+        footer={
+          <button type="button" onClick={() => commit({ ...A11Y_DEFAULT })} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-white">
+            {tx("restaurarOPadrao")}
+          </button>
+        }
+      >
         <div className="space-y-5 text-[#2f2218]">
           <p className="text-sm text-[#4a3826]">{tx("queremosQueOPinzSeja")}</p>
 
@@ -139,8 +145,6 @@ export function A11yHost() {
             <Switch on={s.calm} label={tx("reduzirAnimacoes")} hint={tx("menosMovimentoNaTela")} onChange={(v) => patch({ calm: v })} />
           </section>
 
-          <button type="button" onClick={() => commit({ ...A11Y_DEFAULT })} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-white">
-            {tx("restaurarOPadrao")}</button>
         </div>
       </Modal>
     </>
