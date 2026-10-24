@@ -15,7 +15,7 @@ import { PlanLimit } from "./PlanLimit";
 import { Sidebar } from "./Sidebar";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLit } from "@/i18n/literal";
 
 const COLLAPSE_KEY = "pinz:sidebar-collapsed";
@@ -33,6 +33,21 @@ export function DesktopBoard(props: ViewProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [clean, setClean] = useState(false); // mural limpo: esconde os botões flutuantes (o olho continua)
   const hide = clean ? "invisible opacity-0" : "";
+  const reopenMenu = useRef(false); // o olho recolheu o menu lateral: ao mostrar os botões de novo, ele volta
+  const toggleClean = () => {
+    if (!clean) {
+      reopenMenu.current = !collapsed;
+      if (!collapsed) {
+        setCollapsed(true); // sem gravar a preferência: é só enquanto o mural está limpo
+        window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+      }
+    } else if (reopenMenu.current) {
+      reopenMenu.current = false;
+      setCollapsed(false);
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+    }
+    setClean(!clean);
+  };
   useEffect(() => {
     try {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
@@ -116,7 +131,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[calc(2.2vw+3.5rem)] bottom-5" eye={{ hidden: clean, onToggle: () => setClean((v) => !v), pos: "right-[2.2vw] bottom-5" }} hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
+        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[calc(2.2vw+3.5rem)] bottom-5" eye={{ hidden: clean, onToggle: toggleClean, pos: "right-[2.2vw] bottom-5" }} hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain>
           {locked &&
             (lockForm ? (
