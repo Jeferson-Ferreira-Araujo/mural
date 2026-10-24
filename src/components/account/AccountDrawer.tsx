@@ -532,10 +532,18 @@ export function AccountDrawer({
                 </div>
               </nav>
               {moreBelow && (
-                <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 flex h-14 items-end justify-center bg-gradient-to-t from-[#f7efdc] via-[#f7efdc]/85 to-transparent pb-1 text-[#8a7b69]">
-                  <svg viewBox="0 0 24 24" className="size-6 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-14 items-end justify-center bg-gradient-to-t from-[#f7efdc] via-[#f7efdc]/85 to-transparent pb-1 text-[#8a7b69]">
+                  {/* a seta é um botão: clicar nela rola a lista para mostrar o que está mais abaixo (o degradê em volta continua sem pegar cliques) */}
+                  <button
+                    type="button"
+                    aria-label={tl("Ver mais opções")}
+                    onClick={() => navRef.current?.scrollBy({ top: Math.max(120, (navRef.current?.clientHeight ?? 300) * 0.75), behavior: "smooth" })}
+                    className="pointer-events-auto grid size-9 cursor-pointer place-items-center rounded-full transition hover:bg-black/5 active:scale-95"
+                  >
+                    <svg aria-hidden viewBox="0 0 24 24" className="size-6 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
                 </div>
               )}
             </div>

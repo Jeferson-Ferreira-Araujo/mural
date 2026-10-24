@@ -2,6 +2,7 @@ import { Brand } from "./Brand";
 import { FitSidebar } from "./FitSidebar";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import { LanguagePicker } from "./LanguagePicker";
+import { A11yButton } from "./A11yButton";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
 
@@ -53,6 +54,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {!compact && <p className="text-center text-[14px] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
 
       {guestNext && <GuestLinks next={guestNext} className="justify-center" />}
+      {!account && <A11yButton className="!absolute top-[0.8em] left-[0.8em] z-30" />}
       {!account && <LanguagePicker variant="icon" className="!absolute top-[0.8em] right-[0.8em] z-30 !mx-0 !w-auto !max-w-none" />}
 
       {/* divisor só quando a tela pede um título (ex.: a demonstração); na inicial o campo "Procurar usuário" já se explica */}
