@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Bestanden downloaden…",
     "h11u6ku7": "Bevestig de verificatie in twee stappen om door te gaan.",
     "h1ffs77y": "De back-up kon nu niet worden gemaakt.",
-    "hbmpf7x": "bestanden konden niet worden gedownload; hun adressen staan in mural.json."
+    "hbmpf7x": "bestanden konden niet worden gedownload; hun adressen staan in mural.json.",
+    "h1nbxuz5": "Evenementmodus",
+    "hwcxizr": "Print of download de QR-code zodat gasten dit prikbord op hun telefoon openen. Om te posten loggen ze in met een Pinz-account.",
+    "h12hkz1y": "QR-code downloaden",
+    "h1wylfod": "Poster printen",
+    "hh2bmh3": "Pins automatisch goedkeuren",
+    "hu7ryvc": "De pins van gasten verschijnen meteen, zonder op je goedkeuring te wachten. Je kunt nog steeds elke pin verwijderen.",
+    "h1cvalda": "Scan en laat je bericht achter",
+    "hbzt2ni": "Om te posten moet je inloggen met een Pinz-account."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

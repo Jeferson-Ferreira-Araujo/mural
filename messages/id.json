@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Mengunduh file…",
     "h11u6ku7": "Konfirmasi verifikasi dua langkah untuk melanjutkan.",
     "h1ffs77y": "Tidak dapat membuat cadangan sekarang.",
-    "hbmpf7x": "file tidak dapat diunduh; alamatnya ada di mural.json."
+    "hbmpf7x": "file tidak dapat diunduh; alamatnya ada di mural.json.",
+    "h1nbxuz5": "Mode acara",
+    "hwcxizr": "Cetak atau unduh kode QR agar tamu membuka papan ini lewat ponsel. Untuk memposting, mereka masuk dengan akun Pinz.",
+    "h12hkz1y": "Unduh kode QR",
+    "h1wylfod": "Cetak poster",
+    "hh2bmh3": "Setujui pin otomatis",
+    "hu7ryvc": "Pin tamu langsung muncul tanpa menunggu persetujuan Anda. Anda tetap bisa menghapus pin mana pun.",
+    "h1cvalda": "Pindai dan tinggalkan pesan Anda",
+    "hbzt2ni": "Untuk memposting, perlu masuk dengan akun Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

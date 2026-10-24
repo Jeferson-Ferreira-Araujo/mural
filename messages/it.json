@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Download dei file…",
     "h11u6ku7": "Conferma la verifica in due passaggi per continuare.",
     "h1ffs77y": "Impossibile creare il backup ora.",
-    "hbmpf7x": "file non sono stati scaricati; i loro indirizzi sono in mural.json."
+    "hbmpf7x": "file non sono stati scaricati; i loro indirizzi sono in mural.json.",
+    "h1nbxuz5": "Modalità evento",
+    "hwcxizr": "Stampa o scarica il codice QR perché gli invitati aprano questa bacheca dal telefono. Per pubblicare, accedono con un account Pinz.",
+    "h12hkz1y": "Scarica il codice QR",
+    "h1wylfod": "Stampa il cartello",
+    "hh2bmh3": "Approva i pin automaticamente",
+    "hu7ryvc": "I pin degli invitati compaiono subito, senza attendere la tua approvazione. Puoi sempre eliminare qualsiasi pin.",
+    "h1cvalda": "Scansiona e lascia il tuo messaggio",
+    "hbzt2ni": "Per pubblicare serve accedere con un account Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

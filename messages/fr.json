@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Téléchargement des fichiers…",
     "h11u6ku7": "Confirmez la vérification en deux étapes pour continuer.",
     "h1ffs77y": "Impossible de créer la sauvegarde pour le moment.",
-    "hbmpf7x": "fichiers n’ont pas pu être téléchargés ; leurs adresses sont dans mural.json."
+    "hbmpf7x": "fichiers n’ont pas pu être téléchargés ; leurs adresses sont dans mural.json.",
+    "h1nbxuz5": "Mode événement",
+    "hwcxizr": "Imprimez ou téléchargez le QR code pour que les invités ouvrent ce mur depuis leur téléphone. Pour publier, ils se connectent avec un compte Pinz.",
+    "h12hkz1y": "Télécharger le QR code",
+    "h1wylfod": "Imprimer l’affiche",
+    "hh2bmh3": "Approuver les pins automatiquement",
+    "hu7ryvc": "Les pins des invités apparaissent tout de suite, sans attendre votre approbation. Vous pouvez toujours supprimer n’importe quel pin.",
+    "h1cvalda": "Scannez et laissez votre message",
+    "hbzt2ni": "Pour publier, il faut se connecter avec un compte Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Dateien werden geladen…",
     "h11u6ku7": "Bestätige die Zwei-Faktor-Authentifizierung, um fortzufahren.",
     "h1ffs77y": "Das Backup konnte gerade nicht erstellt werden.",
-    "hbmpf7x": "Dateien konnten nicht geladen werden; ihre Adressen stehen in mural.json."
+    "hbmpf7x": "Dateien konnten nicht geladen werden; ihre Adressen stehen in mural.json.",
+    "h1nbxuz5": "Event-Modus",
+    "hwcxizr": "Drucke den QR-Code aus oder lade ihn herunter, damit Gäste diese Pinnwand mit dem Handy öffnen. Zum Posten melden sie sich mit einem Pinz-Konto an.",
+    "h12hkz1y": "QR-Code herunterladen",
+    "h1wylfod": "Plakat drucken",
+    "hh2bmh3": "Pins automatisch freigeben",
+    "hu7ryvc": "Die Pins der Gäste erscheinen sofort, ohne auf deine Freigabe zu warten. Du kannst weiterhin jeden Pin löschen.",
+    "h1cvalda": "Scannen und Nachricht hinterlassen",
+    "hbzt2ni": "Zum Posten ist die Anmeldung mit einem Pinz-Konto nötig."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

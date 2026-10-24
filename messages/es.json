@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Descargando archivos…",
     "h11u6ku7": "Confirma la verificación en dos pasos para continuar.",
     "h1ffs77y": "No se pudo crear la copia ahora.",
-    "hbmpf7x": "archivos no se pudieron descargar; sus direcciones están en mural.json."
+    "hbmpf7x": "archivos no se pudieron descargar; sus direcciones están en mural.json.",
+    "h1nbxuz5": "Modo evento",
+    "hwcxizr": "Imprime o descarga el código QR para que los invitados abran este mural desde el móvil. Para publicar, inician sesión con una cuenta Pinz.",
+    "h12hkz1y": "Descargar código QR",
+    "h1wylfod": "Imprimir cartel",
+    "hh2bmh3": "Aprobar los pins automáticamente",
+    "hu7ryvc": "Los pins de los invitados aparecen al instante, sin esperar tu aprobación. Puedes seguir eliminando cualquier pin.",
+    "h1cvalda": "Escanea y deja tu mensaje",
+    "hbzt2ni": "Para publicar necesitas iniciar sesión con una cuenta Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

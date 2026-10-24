@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Dosyalar indiriliyor…",
     "h11u6ku7": "Devam etmek için iki adımlı doğrulamayı onaylayın.",
     "h1ffs77y": "Şu anda yedek oluşturulamadı.",
-    "hbmpf7x": "dosya indirilemedi; adresleri mural.json içinde."
+    "hbmpf7x": "dosya indirilemedi; adresleri mural.json içinde.",
+    "h1nbxuz5": "Etkinlik modu",
+    "hwcxizr": "Misafirlerin bu panoyu telefonlarından açabilmesi için QR kodunu yazdırın veya indirin. Paylaşım yapmak için Pinz hesabıyla giriş yaparlar.",
+    "h12hkz1y": "QR kodunu indir",
+    "h1wylfod": "Afişi yazdır",
+    "hh2bmh3": "Pinleri otomatik onayla",
+    "hu7ryvc": "Misafirlerin pinleri onayınızı beklemeden hemen görünür. İstediğiniz pini yine silebilirsiniz.",
+    "h1cvalda": "Tara ve mesajını bırak",
+    "hbzt2ni": "Paylaşım yapmak için bir Pinz hesabıyla giriş yapmak gerekir."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

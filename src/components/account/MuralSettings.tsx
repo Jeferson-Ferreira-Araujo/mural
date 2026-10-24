@@ -1,6 +1,7 @@
 "use client";
 
 import { backupMural } from "@/lib/muralBackup";
+import { EventTools } from "./EventTools";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
@@ -310,6 +311,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         )}
       </div>
 
+      <EventTools muralId={mural.id} slug={mural.slug} title={mural.title} />
       {/* backup: um ZIP com tudo deste mural */}
       <div className="mt-4 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
         <p className="text-sm font-semibold">{tl("Backup do mural")}</p>

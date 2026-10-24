@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Downloading files…",
     "h11u6ku7": "Confirm two-step verification to continue.",
     "h1ffs77y": "Could not create the backup right now.",
-    "hbmpf7x": "files could not be downloaded; their addresses are in mural.json."
+    "hbmpf7x": "files could not be downloaded; their addresses are in mural.json.",
+    "h1nbxuz5": "Event mode",
+    "hwcxizr": "Print or download the QR code so guests can open this board on their phones. To post, they sign in with a Pinz account.",
+    "h12hkz1y": "Download QR code",
+    "h1wylfod": "Print poster",
+    "hh2bmh3": "Approve pins automatically",
+    "hu7ryvc": "Guests’ pins appear right away, without waiting for your approval. You can still delete any pin.",
+    "h1cvalda": "Scan and leave your message",
+    "hbzt2ni": "To post you need to sign in with a Pinz account."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

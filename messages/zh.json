@@ -2251,7 +2251,15 @@
     "h1nme9w5": "正在下载文件…",
     "h11u6ku7": "请确认两步验证以继续。",
     "h1ffs77y": "暂时无法创建备份。",
-    "hbmpf7x": "个文件无法下载；它们的地址在 mural.json 中。"
+    "hbmpf7x": "个文件无法下载；它们的地址在 mural.json 中。",
+    "h1nbxuz5": "活动模式",
+    "hwcxizr": "打印或下载二维码，方便来宾用手机打开这面墙。发布时需要用 Pinz 账号登录。",
+    "h12hkz1y": "下载二维码",
+    "h1wylfod": "打印海报",
+    "hh2bmh3": "自动批准图钉",
+    "hu7ryvc": "来宾的图钉会立即显示，无需等待你的批准。你仍可以删除任何图钉。",
+    "h1cvalda": "扫码留下你的留言",
+    "hbzt2ni": "发布需要使用 Pinz 账号登录。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

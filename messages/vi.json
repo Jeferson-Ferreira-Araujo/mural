@@ -2251,7 +2251,15 @@
     "h1nme9w5": "Đang tải tệp…",
     "h11u6ku7": "Hãy xác nhận xác minh hai bước để tiếp tục.",
     "h1ffs77y": "Hiện chưa thể tạo bản sao lưu.",
-    "hbmpf7x": "tệp không tải xuống được; địa chỉ của chúng nằm trong mural.json."
+    "hbmpf7x": "tệp không tải xuống được; địa chỉ của chúng nằm trong mural.json.",
+    "h1nbxuz5": "Chế độ sự kiện",
+    "hwcxizr": "In hoặc tải mã QR để khách mở bảng này bằng điện thoại. Để đăng, họ đăng nhập bằng tài khoản Pinz.",
+    "h12hkz1y": "Tải mã QR",
+    "h1wylfod": "In áp phích",
+    "hh2bmh3": "Tự động duyệt pin",
+    "hu7ryvc": "Pin của khách hiện ngay, không cần chờ bạn duyệt. Bạn vẫn có thể xóa bất kỳ pin nào.",
+    "h1cvalda": "Quét và để lại lời nhắn",
+    "hbzt2ni": "Để đăng cần đăng nhập bằng tài khoản Pinz."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",
