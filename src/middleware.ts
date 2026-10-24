@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isLocale } from "@/i18n/config";
 
 /**
  * Limite de requisições por IP nas rotas /api (janela de 1 minuto, na memória: o site roda em uma instância só).
@@ -28,6 +29,13 @@ function clientIp(req: NextRequest): string {
 
 export function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
+  // endereço por idioma (/en, /es…): a página inicial é servida naquele idioma, sem depender do cookie nem do navegador (SEO internacional)
+  const lang = /^\/([a-z]{2})\/?$/.exec(path)?.[1];
+  if (lang && lang !== "pt" && isLocale(lang)) {
+    const headers = new Headers(req.headers);
+    headers.set("x-pinz-locale", lang);
+    return NextResponse.rewrite(new URL("/", req.url), { request: { headers } });
+  }
   if (path.startsWith("/api/pay/webhook")) return NextResponse.next();
   const rule = RULES.find((r) => r.test.test(path));
   const max = rule?.max ?? DEFAULT_MAX;
@@ -49,4 +57,5 @@ export function middleware(req: NextRequest) {
   return res;
 }
 
-export const config = { matcher: "/api/:path*" };
+// o matcher precisa ser texto fixo (o Next não aceita cálculo aqui): a lista de idiomas (sem o português, que é a raiz) precisa acompanhar LOCALES
+export const config = { matcher: ["/api/:path*", "/(en|es|fr|it|de|nl|pl|uk|ru|tr|ar|hi|id|vi|th|ko|ja|zh)"] };

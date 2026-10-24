@@ -5,7 +5,9 @@ import { DEFAULT_LOCALE, fromAcceptLanguage, isLocale, LOCALE_COOKIE, type Local
 /** Idioma de cada visita: o escolhido pela pessoa (cookie) ou, na primeira vez, o do navegador. As mensagens de um idioma sem tradução caem no português. */
 export default getRequestConfig(async () => {
   const saved = (await cookies()).get(LOCALE_COOKIE)?.value;
-  const locale: Locale = isLocale(saved) ? saved : fromAcceptLanguage((await headers()).get("accept-language"));
+  const h = await headers();
+  const fromUrl = h.get("x-pinz-locale"); // endereço por idioma (/en…): vale mais que o cookie
+  const locale: Locale = isLocale(fromUrl) ? fromUrl : isLocale(saved) ? saved : fromAcceptLanguage(h.get("accept-language"));
   const base = (await import("../../messages/pt.json")).default;
   const own = locale === DEFAULT_LOCALE ? base : (await import(`../../messages/${locale}.json`)).default;
   // idiomas ainda não traduzidos por inteiro caem no INGLÊS (e só depois no português): quem lê japonês vê inglês onde falta, não português

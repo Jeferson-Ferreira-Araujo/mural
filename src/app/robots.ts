@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { SITE_HOST } from "@/lib/mural";
+import { LOCALES } from "@/i18n/config";
+import { SITE_URL } from "@/lib/seo";
 
-/** Só a página inicial, Termos e Privacidade podem ser indexadas; murais, contas e o resto ficam fora. */
+/** Podem ser indexadas: a página inicial (em todos os idiomas), Termos, Privacidade e Exclusão de dados; murais, contas, painel e API ficam fora. */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: ["/$", "/termos", "/privacidade"], disallow: ["/"] }],
-    sitemap: `https://${SITE_HOST}/sitemap.xml`,
+    rules: [{ userAgent: "*", allow: ["/$", ...LOCALES.filter((l) => l !== "pt").map((l) => `/${l}$`), "/termos", "/privacidade", "/exclusao-de-dados"], disallow: ["/"] }],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

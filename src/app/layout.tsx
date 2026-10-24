@@ -36,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   openGraph: { siteName: "Pinz", type: "website", locale: OG_LOCALE[locale] ?? "pt_BR", images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Pinz" }] },
   twitter: { card: "summary_large_image", images: ["/og.jpg"] },
   robots: { index: false, follow: false },
+  verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || undefined, other: process.env.NEXT_PUBLIC_BING_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } : undefined },
   applicationName: "Pinz",
   // iOS: ao adicionar à tela de início abre em tela cheia, com o ícone do Pinz
   appleWebApp: { capable: true, title: "Pinz", statusBarStyle: "black-translucent" },
