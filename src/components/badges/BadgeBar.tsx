@@ -85,10 +85,10 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
           aria-expanded={open}
           aria-label={tx("x_openCat", { cat: catLabel(cat), n: list.length })}
           title={tx("x_catTitle", { cat: catLabel(cat), n: list.length })}
-          className={`relative grid h-14 w-14 cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 ${open ? "bg-white/10" : ""}`}
+          className={`relative grid size-[var(--bb,3.5rem)] cursor-pointer place-items-center rounded-xl transition hover:bg-white/10 active:scale-95 ${open ? "bg-white/10" : ""}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+          <img src={badgeSrc(list[0].key)} alt="" draggable={false} className={`max-h-[calc(var(--bb,3.5rem)-0.5rem)] max-w-[calc(var(--bb,3.5rem)-0.5rem)] select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
           <span aria-hidden className={`pointer-events-none absolute right-0 bottom-0 grid size-[1.15rem] place-items-center rounded-md shadow-[0_0.1rem_0.3rem_rgba(0,0,0,.5)] ${open ? "bg-[#f2c230] text-[#2a1c12]" : "bg-white text-[#2a1c12]"}`}>
             <svg viewBox="0 0 16 16" className="size-3" fill="currentColor">
               <rect x="2" y="2" width="5" height="5" rx="1" />
@@ -103,7 +103,7 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
   };
   const openList = ordered.find(([c]) => c === openCat)?.[1] ?? null;
   const storeBtn = (
-        <button type="button" onClick={openStore} data-tour="store" aria-label={tx("lojaDeBottons")} title={tx("loja")} className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+        <button type="button" onClick={openStore} data-tour="store" aria-label={tx("lojaDeBottons")} title={tx("loja")} className="flex size-[var(--bb,3.5rem)] shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8L4 8Z" />
             <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8" />
@@ -112,7 +112,7 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
         </button>
   );
   const rewardsBtn = (
-        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_REWARDS_EVENT))} data-tour="rewards" aria-label={tx("ganharCreditos")} title={tx("ganharCreditos")} className="flex h-14 w-14 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
+        <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_REWARDS_EVENT))} data-tour="rewards" aria-label={tx("ganharCreditos")} title={tx("ganharCreditos")} className="flex size-[var(--bb,3.5rem)] shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl bg-gradient-to-b from-[#ffd75e] to-[#f5a50f] ring-1 ring-[#e39a0b]/60 text-[#2a1c12] shadow-[0_0.2rem_0.6rem_rgba(0,0,0,.4),inset_0_1px_0_rgba(255,255,255,.55)] transition hover:brightness-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/moeda.webp" alt="" aria-hidden draggable={false} className="pointer-events-none size-5 select-none object-contain" />
           <span className="text-[11px] leading-none font-bold">{tx("ganhar")}</span>
@@ -131,10 +131,10 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
                 aria-label={out ? tx("m_bottonSemUnidadesDisponiveis", { v0: b.name ? tl(b.name) : b.key }) : tx("m_bottonArrasteParaOMural", { v0: b.name ? tl(b.name) : b.key })}
                 onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget)}
                 onDragStart={(e) => e.preventDefault()}
-                className={`grid h-14 w-14 touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
+                className={`grid size-[var(--bb,3.5rem)] touch-pan-x place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+                <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-[calc(var(--bb,3.5rem)-0.5rem)] max-w-[calc(var(--bb,3.5rem)-0.5rem)] select-none transition ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
               </button>
               {/* quantidade que a pessoa ainda tem para colocar */}
               <span
@@ -166,10 +166,10 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
                     title={b.name ? tl(b.name) : undefined}
                     onPointerDown={(e) => begin(e.nativeEvent, { kind: "new", key: b.key }, e.currentTarget, true)}
                     onDragStart={(e) => e.preventDefault()}
-                    className={`grid h-14 w-14 touch-none place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
+                    className={`grid size-[var(--bb,3.5rem)] touch-none place-items-center rounded-xl transition ${out ? "cursor-not-allowed" : "cursor-grab hover:bg-white/10 active:cursor-grabbing"}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-12 max-w-12 select-none ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
+                    <img src={badgeSrc(b.key)} alt="" draggable={false} className={`max-h-[calc(var(--bb,3.5rem)-0.5rem)] max-w-[calc(var(--bb,3.5rem)-0.5rem)] select-none ${out ? "opacity-30 grayscale" : ""}`} style={{ filter: out ? undefined : "drop-shadow(0 2px 3px rgba(0,0,0,.5))" }} />
                   </button>
                   <span aria-hidden className={`pointer-events-none absolute top-0 right-0 grid min-w-[1.15rem] place-items-center rounded-md px-1 text-[10px] leading-[1.15rem] font-bold text-white ${out ? "bg-[#7a6b5a]" : "bg-[#d98a2b]"}`}>
                     {st.left ?? 0}
