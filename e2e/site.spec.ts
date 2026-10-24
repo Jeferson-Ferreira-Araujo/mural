@@ -99,6 +99,16 @@ test.describe("segurança das rotas", () => {
     expect([400, 401, 403, 503]).toContain(r.status());
   });
 
+  test("/api/status informa o estado e o tempo no ar, sem expor segredos", async ({ request }) => {
+    const res = await request.get("/api/status");
+    expect(res.status()).toBe(200);
+    const j = (await res.json()) as { status: string; server: { uptimeSeconds: number }; checks: { database: { ok: boolean } } };
+    expect(["ok", "degraded"]).toContain(j.status);
+    expect(j.server.uptimeSeconds).toBeGreaterThan(0);
+    expect(j.checks.database.ok).toBe(true);
+    expect(JSON.stringify(j)).not.toMatch(/key|secret|token|password/i);
+  });
+
   test("cabeçalhos de segurança presentes", async ({ request }) => {
     const h = (await request.get("/")).headers();
     expect(h["x-content-type-options"]).toBe("nosniff");
