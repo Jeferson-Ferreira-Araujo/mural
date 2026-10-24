@@ -2243,7 +2243,15 @@
     "hghqemf": "Impossibile attivarla ora.",
     "h18o1zn": "Inserisci il codice della tua app di autenticazione per accedere.",
     "h5df63v": "Accedi",
-    "h18byoka": "Esci dall’account"
+    "h18byoka": "Esci dall’account",
+    "hsa8i7p": "Backup della bacheca",
+    "hgj9pxl": "Scarica una copia di tutti i pin, display e file di questa bacheca (ZIP).",
+    "hnk4dbc": "Scarica il backup",
+    "h1budx5y": "Preparazione del backup…",
+    "h1nme9w5": "Download dei file…",
+    "h11u6ku7": "Conferma la verifica in due passaggi per continuare.",
+    "h1ffs77y": "Impossibile creare il backup ora.",
+    "hbmpf7x": "file non sono stati scaricati; i loro indirizzi sono in mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

@@ -1,5 +1,6 @@
 "use client";
 
+import { backupMural } from "@/lib/muralBackup";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
@@ -17,6 +18,18 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
   const tl = useLit();
   const tx = useTranslations("components.account.MuralSettings");
   const [title, setTitle] = useState(mural.title);
+  const [backup, setBackup] = useState<{ busy: boolean; done: number; total: number; error: string | null }>({ busy: false, done: 0, total: 0, error: null });
+  async function runBackup() {
+    setBackup({ busy: true, done: 0, total: 0, error: null });
+    const r = await backupMural(mural.id, (done, total) => setBackup((b) => ({ ...b, done, total })));
+    if (!r.ok) return setBackup({ busy: false, done: 0, total: 0, error: r.reason === "mfa" ? tl("Confirme a verificação em duas etapas para continuar.") : tl("Não foi possível gerar o backup agora.") });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(r.blob);
+    a.download = r.name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setBackup({ busy: false, done: 0, total: 0, error: r.missing ? `${r.missing} ${tl("arquivos não puderam ser baixados; o endereço deles está no mural.json.")}` : null });
+  }
   const plus = mural.plan === "full";
   const [welcome, setWelcome] = useState(mural.welcome_message ?? ""); // mensagem que a pessoa vê ao entrar no mural (só PINZ+)
   const [ttl, setTtl] = useState<PinTtl>(mural.pin_ttl_days ?? null);
@@ -294,6 +307,20 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         ) : (
           <button type="button" onClick={() => setConfirmReset(true)} className="w-full cursor-pointer rounded-xl border border-[#e3b3a8] bg-white/60 px-4 py-3 text-sm font-semibold text-[#a23b2a] transition hover:bg-[#fbeae5]">
             {tx("resetarMural")}</button>
+        )}
+      </div>
+
+      {/* backup: um ZIP com tudo deste mural */}
+      <div className="mt-4 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
+        <p className="text-sm font-semibold">{tl("Backup do mural")}</p>
+        <p className="text-xs text-[#6b5440]">{tl("Baixe uma cópia de todos os pins, displays e arquivos deste mural (ZIP).")}</p>
+        <button type="button" disabled={backup.busy} onClick={() => void runBackup()} className="mt-2 cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-[#efe4cf] disabled:opacity-60">
+          {backup.busy ? (backup.total ? `${tl("Baixando arquivos…")} ${backup.done}/${backup.total}` : tl("Preparando o backup…")) : tl("Baixar backup")}
+        </button>
+        {backup.error && (
+          <p role="alert" className="mt-2 text-sm font-semibold text-[#a23b2a]">
+            {backup.error}
+          </p>
         )}
       </div>
 

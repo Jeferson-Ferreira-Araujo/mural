@@ -2243,7 +2243,15 @@
     "hghqemf": "Nie udało się teraz włączyć.",
     "h18o1zn": "Wpisz kod z aplikacji uwierzytelniającej, aby się zalogować.",
     "h5df63v": "Zaloguj",
-    "h18byoka": "Wyloguj"
+    "h18byoka": "Wyloguj",
+    "hsa8i7p": "Kopia zapasowa tablicy",
+    "hgj9pxl": "Pobierz kopię wszystkich pinów, wyświetlaczy i plików tej tablicy (ZIP).",
+    "hnk4dbc": "Pobierz kopię",
+    "h1budx5y": "Przygotowywanie kopii…",
+    "h1nme9w5": "Pobieranie plików…",
+    "h11u6ku7": "Potwierdź weryfikację dwuetapową, aby kontynuować.",
+    "h1ffs77y": "Nie udało się teraz utworzyć kopii.",
+    "hbmpf7x": "plików nie udało się pobrać; ich adresy są w pliku mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

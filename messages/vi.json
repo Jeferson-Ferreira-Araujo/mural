@@ -2243,7 +2243,15 @@
     "hghqemf": "Hiện chưa thể bật.",
     "h18o1zn": "Nhập mã từ ứng dụng xác thực để đăng nhập.",
     "h5df63v": "Đăng nhập",
-    "h18byoka": "Đăng xuất"
+    "h18byoka": "Đăng xuất",
+    "hsa8i7p": "Sao lưu bảng",
+    "hgj9pxl": "Tải xuống bản sao của mọi pin, màn hình hiển thị và tệp của bảng này (ZIP).",
+    "hnk4dbc": "Tải bản sao lưu",
+    "h1budx5y": "Đang chuẩn bị bản sao lưu…",
+    "h1nme9w5": "Đang tải tệp…",
+    "h11u6ku7": "Hãy xác nhận xác minh hai bước để tiếp tục.",
+    "h1ffs77y": "Hiện chưa thể tạo bản sao lưu.",
+    "hbmpf7x": "tệp không tải xuống được; địa chỉ của chúng nằm trong mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

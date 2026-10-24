@@ -2243,7 +2243,15 @@
     "hghqemf": "Aktivieren gerade nicht möglich.",
     "h18o1zn": "Gib den Code aus deiner Authenticator-App ein, um dich anzumelden.",
     "h5df63v": "Anmelden",
-    "h18byoka": "Abmelden"
+    "h18byoka": "Abmelden",
+    "hsa8i7p": "Pinnwand-Backup",
+    "hgj9pxl": "Lade eine Kopie aller Pins, Displays und Dateien dieser Pinnwand herunter (ZIP).",
+    "hnk4dbc": "Backup herunterladen",
+    "h1budx5y": "Backup wird vorbereitet…",
+    "h1nme9w5": "Dateien werden geladen…",
+    "h11u6ku7": "Bestätige die Zwei-Faktor-Authentifizierung, um fortzufahren.",
+    "h1ffs77y": "Das Backup konnte gerade nicht erstellt werden.",
+    "hbmpf7x": "Dateien konnten nicht geladen werden; ihre Adressen stehen in mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

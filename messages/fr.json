@@ -2243,7 +2243,15 @@
     "hghqemf": "Impossible de l’activer pour le moment.",
     "h18o1zn": "Saisissez le code de votre application d’authentification pour vous connecter.",
     "h5df63v": "Se connecter",
-    "h18byoka": "Se déconnecter"
+    "h18byoka": "Se déconnecter",
+    "hsa8i7p": "Sauvegarde du mur",
+    "hgj9pxl": "Téléchargez une copie de tous les pins, displays et fichiers de ce mur (ZIP).",
+    "hnk4dbc": "Télécharger la sauvegarde",
+    "h1budx5y": "Préparation de la sauvegarde…",
+    "h1nme9w5": "Téléchargement des fichiers…",
+    "h11u6ku7": "Confirmez la vérification en deux étapes pour continuer.",
+    "h1ffs77y": "Impossible de créer la sauvegarde pour le moment.",
+    "hbmpf7x": "fichiers n’ont pas pu être téléchargés ; leurs adresses sont dans mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

@@ -2243,7 +2243,15 @@
     "hghqemf": "暂时无法开启。",
     "h18o1zn": "请输入验证器应用中的验证码以登录。",
     "h5df63v": "登录",
-    "h18byoka": "退出登录"
+    "h18byoka": "退出登录",
+    "hsa8i7p": "墙面备份",
+    "hgj9pxl": "下载此墙上所有图钉、展示组件和文件的副本（ZIP）。",
+    "hnk4dbc": "下载备份",
+    "h1budx5y": "正在准备备份…",
+    "h1nme9w5": "正在下载文件…",
+    "h11u6ku7": "请确认两步验证以继续。",
+    "h1ffs77y": "暂时无法创建备份。",
+    "hbmpf7x": "个文件无法下载；它们的地址在 mural.json 中。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

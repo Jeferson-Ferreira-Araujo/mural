@@ -2243,7 +2243,15 @@
     "hghqemf": "Tidak dapat mengaktifkan sekarang.",
     "h18o1zn": "Masukkan kode dari aplikasi autentikator untuk masuk.",
     "h5df63v": "Masuk",
-    "h18byoka": "Keluar"
+    "h18byoka": "Keluar",
+    "hsa8i7p": "Cadangan papan",
+    "hgj9pxl": "Unduh salinan semua pin, tampilan, dan file papan ini (ZIP).",
+    "hnk4dbc": "Unduh cadangan",
+    "h1budx5y": "Menyiapkan cadangan…",
+    "h1nme9w5": "Mengunduh file…",
+    "h11u6ku7": "Konfirmasi verifikasi dua langkah untuk melanjutkan.",
+    "h1ffs77y": "Tidak dapat membuat cadangan sekarang.",
+    "hbmpf7x": "file tidak dapat diunduh; alamatnya ada di mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

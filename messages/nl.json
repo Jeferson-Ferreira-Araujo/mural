@@ -2243,7 +2243,15 @@
     "hghqemf": "Inschakelen lukt nu niet.",
     "h18o1zn": "Voer de code uit je authenticator-app in om in te loggen.",
     "h5df63v": "Inloggen",
-    "h18byoka": "Uitloggen"
+    "h18byoka": "Uitloggen",
+    "hsa8i7p": "Back-up van het prikbord",
+    "hgj9pxl": "Download een kopie van alle pins, displays en bestanden van dit prikbord (ZIP).",
+    "hnk4dbc": "Back-up downloaden",
+    "h1budx5y": "Back-up voorbereiden…",
+    "h1nme9w5": "Bestanden downloaden…",
+    "h11u6ku7": "Bevestig de verificatie in twee stappen om door te gaan.",
+    "h1ffs77y": "De back-up kon nu niet worden gemaakt.",
+    "hbmpf7x": "bestanden konden niet worden gedownload; hun adressen staan in mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

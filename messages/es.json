@@ -2243,7 +2243,15 @@
     "hghqemf": "No se pudo activar ahora.",
     "h18o1zn": "Ingresa el código de tu app de autenticación para entrar.",
     "h5df63v": "Entrar",
-    "h18byoka": "Cerrar sesión"
+    "h18byoka": "Cerrar sesión",
+    "hsa8i7p": "Copia de seguridad del mural",
+    "hgj9pxl": "Descarga una copia de todos los pins, displays y archivos de este mural (ZIP).",
+    "hnk4dbc": "Descargar copia",
+    "h1budx5y": "Preparando la copia…",
+    "h1nme9w5": "Descargando archivos…",
+    "h11u6ku7": "Confirma la verificación en dos pasos para continuar.",
+    "h1ffs77y": "No se pudo crear la copia ahora.",
+    "hbmpf7x": "archivos no se pudieron descargar; sus direcciones están en mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

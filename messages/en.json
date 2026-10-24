@@ -2243,7 +2243,15 @@
     "hghqemf": "Could not turn it on right now.",
     "h18o1zn": "Enter the code from your authenticator app to sign in.",
     "h5df63v": "Sign in",
-    "h18byoka": "Sign out"
+    "h18byoka": "Sign out",
+    "hsa8i7p": "Board backup",
+    "hgj9pxl": "Download a copy of all pins, displays and files of this board (ZIP).",
+    "hnk4dbc": "Download backup",
+    "h1budx5y": "Preparing the backup…",
+    "h1nme9w5": "Downloading files…",
+    "h11u6ku7": "Confirm two-step verification to continue.",
+    "h1ffs77y": "Could not create the backup right now.",
+    "hbmpf7x": "files could not be downloaded; their addresses are in mural.json."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

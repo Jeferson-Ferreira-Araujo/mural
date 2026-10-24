@@ -2243,7 +2243,15 @@
     "hghqemf": "Şu anda açılamadı.",
     "h18o1zn": "Giriş yapmak için kimlik doğrulayıcı uygulamanızdaki kodu girin.",
     "h5df63v": "Giriş yap",
-    "h18byoka": "Çıkış yap"
+    "h18byoka": "Çıkış yap",
+    "hsa8i7p": "Pano yedeği",
+    "hgj9pxl": "Bu panonun tüm pinlerinin, ekranlarının ve dosyalarının bir kopyasını indirin (ZIP).",
+    "hnk4dbc": "Yedeği indir",
+    "h1budx5y": "Yedek hazırlanıyor…",
+    "h1nme9w5": "Dosyalar indiriliyor…",
+    "h11u6ku7": "Devam etmek için iki adımlı doğrulamayı onaylayın.",
+    "h1ffs77y": "Şu anda yedek oluşturulamadı.",
+    "hbmpf7x": "dosya indirilemedi; adresleri mural.json içinde."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
