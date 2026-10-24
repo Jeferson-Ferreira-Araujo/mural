@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useBackClose } from "@/lib/backStack";
-import { boardById, boardImageS } from "@/lib/boards";
+import { boardById, boardImageS, WIDE_EXTRA } from "@/lib/boards";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { Brand } from "./Brand";
@@ -78,9 +78,9 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
-      {/* mais alto que largo: o mural abre ampliado, com as laterais cortadas (mostra que há mais para os lados) e uma dica de arrastar passeia por ele */}
-      <div className="relative w-full shrink-0 max-h-[46dvh]" style={{ aspectRatio: "1 / 1" }}>
-        <PannableBoard bare startZoomed alwaysHint>
+      {/* o mural inteiro, como sempre; a foto panorâmica passa das laterais e, no primeiro acesso, o quadro passeia para os dois lados para mostrar que dá para arrastar */}
+      <div className="relative w-full shrink-0 max-h-[52dvh]" style={{ aspectRatio: "3 / 2" }}>
+        <PannableBoard bare scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA } : undefined} hintOnce="pinz:landing-hint">
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
       </div>
