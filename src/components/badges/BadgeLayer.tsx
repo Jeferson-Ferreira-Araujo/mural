@@ -33,10 +33,14 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     const el = ref.current;
     if (!el || !editable) return;
     // computador: duplo clique abre o detalhe do widget
-    const dbl = () => {
+    // partes do cartão com ação própria (ex.: "Marcar hoje" do hábito) não mexem no display: nada de arrastar, selecionar ou abrir o detalhe
+    const own = (ev: Event) => ev.target instanceof Element && !!ev.target.closest("[data-no-badge-drag]");
+    const dbl = (ev: Event) => {
+      if (own(ev)) return;
       if (display) openRef.current(b.id);
     };
     const down = (ev: PointerEvent) => {
+      if (own(ev)) return;
       lastType.current = ev.pointerType;
       tapStart.current = { x: ev.clientX, y: ev.clientY, t: performance.now() };
       // widget da loja no celular: arrastar com o dedo move o MURAL (o dedo costuma passar por cima do widget); para mover o widget é preciso apertar e segurar
@@ -70,6 +74,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     };
     // um toque ou clique (sem arrastar) mostra os controles +, − e lixeira. Reage ao levantar o dedo (o quadro atrasa o "clique" 0,3 s)
     const up = (ev: PointerEvent) => {
+      if (own(ev)) return;
       const s0 = tapStart.current;
       tapStart.current = null;
       if (!s0) return;

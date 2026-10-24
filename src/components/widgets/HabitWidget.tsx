@@ -90,23 +90,23 @@ export function HabitWidget({ style = "q-light", title, note, days, badgeId, fra
 
   return (
     <WidgetFrame frame={frame} label={tl("Meta de hábito")} shape="square">
-      <div className="absolute inset-0 flex flex-col justify-between gap-[0.35em] px-[0.9em] py-[0.8em]" style={{ background: sk.bg, color: sk.ink }}>
+      <div className="absolute inset-0 flex flex-col justify-between gap-[0.3em] overflow-hidden px-[0.85em] py-[0.7em]" style={{ background: sk.bg, color: sk.ink }}>
         <div className="min-w-0">
-          <p className="truncate text-[1.2em] leading-tight font-bold" title={name}>
+          <p className="truncate text-[1.1em] leading-[1.15] font-bold" title={name}>
             {name || wt.defTogether}
           </p>
           {sub && (
-            <p className="truncate text-[0.78em] leading-tight" style={{ color: sk.sub }} title={sub}>
+            <p className="truncate text-[0.72em] leading-tight" style={{ color: sk.sub }} title={sub}>
               {sub}
             </p>
           )}
         </div>
 
-        <div className="flex flex-col items-center rounded-[0.7em] px-[0.5em] py-[0.35em]" style={{ background: tone.box, color: tone.num }}>
-          <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: n >= 100 ? "2.2em" : "2.6em" }}>
+        <div className="flex flex-col items-center rounded-[0.7em] px-[0.5em] py-[0.25em]" style={{ background: tone.box, color: tone.num }}>
+          <span className="leading-none font-extrabold tabular-nums" style={{ fontSize: n >= 100 ? "2em" : "2.3em" }}>
             {n}
           </span>
-          <span className="text-[0.8em] leading-tight font-semibold" style={{ color: sk.ink }}>
+          <span className="text-[0.74em] leading-tight font-semibold" style={{ color: sk.ink }}>
             {label}
           </span>
         </div>
@@ -118,11 +118,11 @@ export function HabitWidget({ style = "q-light", title, note, days, badgeId, fra
             const isToday = k === iso(today!);
             const future = d > today! && !isToday;
             return (
-              <span key={k} className="flex w-[1.3em] flex-col items-center gap-[0.2em]">
-                <span className="grid h-[1.05em] min-w-[1.05em] place-items-center rounded-full px-[0.2em] text-[0.62em] leading-none font-bold" style={isToday ? { background: sk.today, color: sk.onSolid } : { color: sk.sub }}>
+              <span key={k} className="flex w-[1.3em] flex-col items-center gap-[0.15em]">
+                <span className="grid h-[0.95em] min-w-[0.95em] place-items-center rounded-full px-[0.2em] text-[0.6em] leading-none font-bold" style={isToday ? { background: sk.today, color: sk.onSolid } : { color: sk.sub }}>
                   {wt.weekInitials[i]}
                 </span>
-                <span className="grid size-[1.05em] place-items-center rounded-full" style={on ? { background: sk.done } : { boxShadow: `inset 0 0 0 0.1em ${isToday ? sk.today : sk.ring}`, opacity: future ? 0.55 : 1 }}>
+                <span className="grid size-[0.95em] place-items-center rounded-full" style={on ? { background: sk.done } : { boxShadow: `inset 0 0 0 0.1em ${isToday ? sk.today : sk.ring}`, opacity: future ? 0.55 : 1 }}>
                   {on && <Check color={sk.onSolid} />}
                 </span>
               </span>
@@ -131,7 +131,7 @@ export function HabitWidget({ style = "q-light", title, note, days, badgeId, fra
         </div>
 
         {mark && (
-          <button type="button" onPointerDown={stop} onClick={toggle} disabled={busy} className="flex w-full cursor-pointer items-center justify-center gap-[0.35em] rounded-[0.6em] px-[0.6em] py-[0.32em] text-[0.85em] leading-tight font-bold whitespace-nowrap disabled:opacity-60" style={doneToday ? { background: sk.ok.box, color: sk.ok.num } : { background: sk.today, color: sk.onSolid }}>
+          <button type="button" data-no-badge-drag onPointerDown={stop} onClick={toggle} disabled={busy} className="pointer-events-auto relative z-10 flex w-full shrink-0 cursor-pointer items-center justify-center gap-[0.3em] rounded-[0.55em] px-[0.5em] py-[0.26em] text-[0.8em] leading-tight font-bold whitespace-nowrap disabled:opacity-60" style={doneToday ? { background: sk.ok.box, color: sk.ok.num } : { background: sk.today, color: sk.onSolid }}>
             <Check color={doneToday ? sk.ok.num : sk.onSolid} size="0.9em" />
             {doneToday ? tl("Hábito concluído hoje!") : tl("Marcar hoje")}
           </button>
