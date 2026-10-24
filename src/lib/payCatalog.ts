@@ -1,5 +1,7 @@
 import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "./plans";
 import { adminClient, isUuid } from "./mercadopago";
+import { formatMoney, type Currency } from "./money";
+import { purchaseMail, sendMail } from "./mail";
 
 /**
  * O que se pode comprar com pagamento único (Pix ou cartão), só no servidor: pacotes de créditos, PINZ+ anual, PINZ+ vitalício e o presente de 1 mês.
@@ -39,13 +41,42 @@ export async function giftRecipient(buyer: string, nickname: string): Promise<{ 
 }
 
 /** Grava o pagamento no banco e aplica o efeito (créditos ou PINZ+). Idempotente: o mesmo pagamento nunca soma duas vezes. */
-export async function applyPayment(parsed: { buyer: string; item: Item; recipient?: string }, paymentId: string, status: string): Promise<boolean> {
+/** Avisa o comprador por e-mail, uma vez por pagamento (o aviso do provedor pode chegar repetido). Falha no envio nunca desfaz a compra. */
+async function notifyPurchase(parsed: { buyer: string; item: Item }, paymentId: string, currency: Currency) {
+  try {
+    const db = adminClient();
+    const { error: dup } = await db.from("payment_emails").insert({ payment_id: paymentId });
+    if (dup) return; // já enviado
+    const { data } = await db.auth.admin.getUserById(parsed.buyer);
+    const to = data.user?.email;
+    if (!to) return;
+    const lang = currency === "BRL" ? "pt" : "en";
+    const { item } = parsed;
+    const pt = lang === "pt";
+    const detail =
+      item.kind === "credits" ? (pt ? `${item.credits} créditos foram adicionados à sua conta.` : `${item.credits} credits were added to your account.`)
+      : item.kind === "gift" ? (pt ? "O presente de 1 mês de PINZ+ foi enviado." : "Your 1-month PINZ+ gift was sent.")
+      : item.days ? (pt ? `PINZ+ ativo por ${item.days} dias.` : `PINZ+ is active for ${item.days} days.`)
+      : (pt ? "PINZ+ vitalício ativado." : "Lifetime PINZ+ activated.");
+    const mail = purchaseMail({ lang, item: item.title, detail, amount: formatMoney(item.cents, currency, pt ? "pt-BR" : "en-US"), paymentId: paymentId.replace(/^stripe:/, "") });
+    const sent = await sendMail({ to, ...mail });
+    if (!sent) await db.from("payment_emails").delete().eq("payment_id", paymentId); // não saiu: libera para a próxima tentativa do provedor
+  } catch (e) {
+    console.error("notifyPurchase", e instanceof Error ? e.message : e);
+  }
+}
+
+export async function applyPayment(parsed: { buyer: string; item: Item; recipient?: string }, paymentId: string, status: string, currency: Currency = "BRL"): Promise<boolean> {
   const { buyer, item, recipient } = parsed;
   const db = adminClient();
+  const done = async (ok: boolean) => {
+    if (ok && status === "approved") await notifyPurchase(parsed, paymentId, currency);
+    return ok;
+  };
   if (item.kind === "credits") {
     const { error } = await db.rpc("pay_credits_apply", { p_user: buyer, p_payment: paymentId, p_credits: item.credits, p_cents: item.cents, p_status: status });
-    return !error;
+    return done(!error);
   }
   const { error } = await db.rpc("pay_plus_once", { p_user: item.kind === "gift" ? recipient : buyer, p_payment: paymentId, p_days: item.days ?? null, p_cents: item.cents, p_status: status, p_buyer: buyer });
-  return !error;
+  return done(!error);
 }

@@ -29,7 +29,7 @@ async function applyOnce(ref: string, paymentId: string, amount: number, currenc
   if (!cur) return true; // moeda que não vendemos: ignora
   const price = expected(parsed.item.cents, cur);
   if (amount !== price) return true; // valor diferente do preço do item: ignora
-  const ok = await applyPayment({ ...parsed, item: { ...parsed.item, cents: price } }, paymentId, status);
+  const ok = await applyPayment({ ...parsed, item: { ...parsed.item, cents: price } }, paymentId, status, cur);
   if (ok) await markCurrency(paymentId, cur);
   return ok;
 }
