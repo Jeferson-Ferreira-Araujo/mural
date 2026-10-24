@@ -2167,7 +2167,13 @@
     "h8u5hl5": "ngày liên tiếp",
     "hv55um1": "Đã hoàn thành thói quen hôm nay!",
     "h1hsy71m": "Mô tả (không bắt buộc)",
-    "h18rhh59": "VD: Tối thiểu 20 phút"
+    "h18rhh59": "VD: Tối thiểu 20 phút",
+    "h1j1ery9": "khách trên bảng của bạn",
+    "h142afv2": "khách trên bảng của bạn",
+    "h1sv9c1k": "Khách",
+    "h1qvgd1j": "Đang xem",
+    "h1vnf6le": "Hiện ai đang ở trên bảng",
+    "h16gte7g": "Bật: bạn thấy ai đang ở trên bảng của mình và bạn cũng hiện khi ở bảng người khác. Tắt: bạn không thấy ai và không ai thấy bạn."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

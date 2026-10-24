@@ -2167,7 +2167,13 @@
     "h8u5hl5": "giorni di fila",
     "hv55um1": "Abitudine completata oggi!",
     "h1hsy71m": "Descrizione (facoltativa)",
-    "h18rhh59": "Es: Almeno 20 minuti"
+    "h18rhh59": "Es: Almeno 20 minuti",
+    "h1j1ery9": "visitatore nella tua bacheca",
+    "h142afv2": "visitatori nella tua bacheca",
+    "h1sv9c1k": "Visitatore",
+    "h1qvgd1j": "Online ora",
+    "h1vnf6le": "Mostra chi è nella bacheca adesso",
+    "h16gte7g": "Attivo: vedi chi è nella tua bacheca e compari quando sei in quella degli altri. Disattivo: non vedi nessuno e nessuno ti vede."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

@@ -2167,7 +2167,13 @@
     "h8u5hl5": "jours d’affilée",
     "hv55um1": "Habitude faite aujourd’hui !",
     "h1hsy71m": "Description (facultatif)",
-    "h18rhh59": "Ex : 20 minutes minimum"
+    "h18rhh59": "Ex : 20 minutes minimum",
+    "h1j1ery9": "visiteur sur votre mur",
+    "h142afv2": "visiteurs sur votre mur",
+    "h1sv9c1k": "Visiteur",
+    "h1qvgd1j": "En ligne maintenant",
+    "h1vnf6le": "Afficher qui est sur le mur en ce moment",
+    "h16gte7g": "Activé : vous voyez qui est sur votre mur et vous apparaissez quand vous êtes sur celui des autres. Désactivé : vous ne voyez personne et personne ne vous voit."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

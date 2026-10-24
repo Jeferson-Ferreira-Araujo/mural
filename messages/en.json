@@ -2167,7 +2167,13 @@
     "h8u5hl5": "days in a row",
     "hv55um1": "Habit done today!",
     "h1hsy71m": "Description (optional)",
-    "h18rhh59": "E.g. At least 20 minutes"
+    "h18rhh59": "E.g. At least 20 minutes",
+    "h1j1ery9": "visitor on your board",
+    "h142afv2": "visitors on your board",
+    "h1sv9c1k": "Visitor",
+    "h1qvgd1j": "Viewing now",
+    "h1vnf6le": "Show who is on the board now",
+    "h16gte7g": "On: you see who is on your board and you appear when you are on other people’s boards. Off: you see no one and no one sees you."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

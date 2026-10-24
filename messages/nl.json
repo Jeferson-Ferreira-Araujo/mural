@@ -2167,7 +2167,13 @@
     "h8u5hl5": "dagen op rij",
     "hv55um1": "Gewoonte vandaag gedaan!",
     "h1hsy71m": "Beschrijving (optioneel)",
-    "h18rhh59": "Bijv. Minstens 20 minuten"
+    "h18rhh59": "Bijv. Minstens 20 minuten",
+    "h1j1ery9": "bezoeker op je prikbord",
+    "h142afv2": "bezoekers op je prikbord",
+    "h1sv9c1k": "Bezoeker",
+    "h1qvgd1j": "Nu aanwezig",
+    "h1vnf6le": "Toon wie er nu op het prikbord is",
+    "h16gte7g": "Aan: je ziet wie er op je prikbord is en je verschijnt als je op dat van anderen bent. Uit: je ziet niemand en niemand ziet jou."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

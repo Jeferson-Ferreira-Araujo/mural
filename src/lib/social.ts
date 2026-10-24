@@ -54,6 +54,17 @@ export async function setVisitPrivacy(sb: SupabaseClient, show: boolean): Promis
   return !error;
 }
 
+/** "Mostrar quem está no mural agora" (desligado por padrão): ligado, a pessoa vê quem está no mural dela e aparece nos murais dos outros; desligado, não vê ninguém e ninguém a vê. */
+export async function getLivePresence(sb: SupabaseClient): Promise<boolean> {
+  const { data, error } = await sb.rpc("get_live_presence");
+  return error ? false : data === true;
+}
+
+export async function setLivePresence(sb: SupabaseClient, on: boolean): Promise<boolean> {
+  const { error } = await sb.rpc("set_live_presence", { p_on: on });
+  return !error;
+}
+
 /** Privacidade do PERFIL: público ou privado (com pergunta e resposta de segurança), valendo para todos os murais. */
 export type ProfilePrivacy = { private: boolean; question: string; answer: string };
 

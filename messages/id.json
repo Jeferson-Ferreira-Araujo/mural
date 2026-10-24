@@ -2167,7 +2167,13 @@
     "h8u5hl5": "hari berturut-turut",
     "hv55um1": "Kebiasaan selesai hari ini!",
     "h1hsy71m": "Deskripsi (opsional)",
-    "h18rhh59": "Contoh: Minimal 20 menit"
+    "h18rhh59": "Contoh: Minimal 20 menit",
+    "h1j1ery9": "pengunjung di papan Anda",
+    "h142afv2": "pengunjung di papan Anda",
+    "h1sv9c1k": "Pengunjung",
+    "h1qvgd1j": "Sedang melihat",
+    "h1vnf6le": "Tampilkan siapa yang ada di papan sekarang",
+    "h16gte7g": "Aktif: Anda melihat siapa yang ada di papan Anda dan Anda terlihat saat berada di papan orang lain. Nonaktif: Anda tidak melihat siapa pun dan tidak ada yang melihat Anda."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

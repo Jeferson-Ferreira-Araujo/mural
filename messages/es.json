@@ -2167,7 +2167,13 @@
     "h8u5hl5": "días seguidos",
     "hv55um1": "¡Hábito cumplido hoy!",
     "h1hsy71m": "Descripción (opcional)",
-    "h18rhh59": "Ej: Mínimo 20 minutos"
+    "h18rhh59": "Ej: Mínimo 20 minutos",
+    "h1j1ery9": "visitante en tu mural",
+    "h142afv2": "visitantes en tu mural",
+    "h1sv9c1k": "Visitante",
+    "h1qvgd1j": "Viendo ahora",
+    "h1vnf6le": "Mostrar quién está en el mural ahora",
+    "h16gte7g": "Activado: ves quién está en tu mural y apareces cuando estés en el de otros. Desactivado: no ves a nadie y nadie te ve."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

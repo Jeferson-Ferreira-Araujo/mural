@@ -2167,7 +2167,13 @@
     "h8u5hl5": "dni z rzędu",
     "hv55um1": "Nawyk wykonany dzisiaj!",
     "h1hsy71m": "Opis (opcjonalnie)",
-    "h18rhh59": "Np. Minimum 20 minut"
+    "h18rhh59": "Np. Minimum 20 minut",
+    "h1j1ery9": "gość na Twojej tablicy",
+    "h142afv2": "gości na Twojej tablicy",
+    "h1sv9c1k": "Gość",
+    "h1qvgd1j": "Teraz oglądają",
+    "h1vnf6le": "Pokazuj, kto jest teraz na tablicy",
+    "h16gte7g": "Włączone: widzisz, kto jest na Twojej tablicy, i pojawiasz się, gdy jesteś na cudzych. Wyłączone: nikogo nie widzisz i nikt nie widzi Ciebie."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

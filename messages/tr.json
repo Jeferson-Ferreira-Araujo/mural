@@ -2167,7 +2167,13 @@
     "h8u5hl5": "gün üst üste",
     "hv55um1": "Alışkanlık bugün tamamlandı!",
     "h1hsy71m": "Açıklama (isteğe bağlı)",
-    "h18rhh59": "Örn.: En az 20 dakika"
+    "h18rhh59": "Örn.: En az 20 dakika",
+    "h1j1ery9": "ziyaretçi panonuzda",
+    "h142afv2": "ziyaretçi panonuzda",
+    "h1sv9c1k": "Ziyaretçi",
+    "h1qvgd1j": "Şu anda bakanlar",
+    "h1vnf6le": "Panoda şu an kimin olduğunu göster",
+    "h16gte7g": "Açık: panonuzda kimin olduğunu görürsünüz ve başkalarının panosundayken siz de görünürsünüz. Kapalı: kimseyi görmezsiniz, kimse de sizi görmez."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
