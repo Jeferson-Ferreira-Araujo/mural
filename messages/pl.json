@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Zatwierdzaj piny automatycznie",
     "hu7ryvc": "Piny gości pojawiają się od razu, bez czekania na Twoje zatwierdzenie. Nadal możesz usunąć każdy pin.",
     "h1cvalda": "Zeskanuj i zostaw wiadomość",
-    "hbzt2ni": "Aby publikować, trzeba zalogować się kontem Pinz."
+    "hbzt2ni": "Aby publikować, trzeba zalogować się kontem Pinz.",
+    "hh865ys": "Ukryj przyciski",
+    "h10enppt": "Pokaż przyciski"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

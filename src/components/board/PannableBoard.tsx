@@ -21,7 +21,7 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false }: { /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false, eye }: { /** desktop: olho ao lado do Aproximar/Afastar; com os botões escondidos (hidden), só o olho fica à vista */ eye?: { hidden: boolean; onToggle: () => void; pos: string }; /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const tl = useLit();
   const tx = useTranslations("components.board.PannableBoard");
   const box = useRef<HTMLDivElement>(null);
@@ -551,7 +551,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       )}
 
       {cornerLeft && (
-        <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className="absolute bottom-3 left-3 z-20">
+        <div data-zoom-controls onPointerDown={(e) => e.stopPropagation()} className={`absolute bottom-3 left-3 z-20 transition-opacity ${eye?.hidden ? "invisible opacity-0" : ""}`}>
           {cornerLeft}
         </div>
       )}
@@ -565,7 +565,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
           data-tour="zoom"
           aria-label={zoomedOut ? tx("m_aproximarOMural") : tx("m_afastarOMural")}
           title={zoomedOut ? tl("Aproximar") : tl("Afastar")}
-          className={`absolute ${controlPos} z-20 inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-3 text-[13px] font-semibold sm:h-11 sm:gap-2 sm:px-4 sm:text-sm text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+          className={`absolute ${controlPos} z-20 ${eye?.hidden ? "invisible opacity-0" : ""} inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border-2 border-white/80 bg-[#17110c]/95 px-3 text-[13px] font-semibold sm:h-11 sm:gap-2 sm:px-4 sm:text-sm text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
           <svg viewBox="0 0 24 24" className="size-4 shrink-0 sm:size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             {/* lupa: "+" para aproximar, "−" para ver tudo */}
@@ -574,6 +574,26 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
             {zoomedOut ? <path d="M11 8v6M8 11h6" /> : <path d="M8 11h6" />}
           </svg>
           {zoomedOut ? tl("Aproximar") : tl("Afastar")}
+        </button>
+      )}
+
+      {/* olho (desktop): esconde ou mostra os botões flutuantes, para deixar o mural em tela cheia, limpo */}
+      {eye && (
+        <button
+          type="button"
+          data-zoom-controls
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={eye.onToggle}
+          aria-pressed={eye.hidden}
+          aria-label={eye.hidden ? tl("Mostrar os botões") : tl("Esconder os botões")}
+          title={eye.hidden ? tl("Mostrar os botões") : tl("Esconder os botões")}
+          className={`absolute ${eye.pos} z-20 grid size-11 cursor-pointer place-items-center rounded-xl border-2 border-white/80 bg-[#17110c]/95 text-white opacity-55 shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition hover:opacity-100 focus-visible:opacity-100 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+        >
+          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+            <circle cx="12" cy="12" r="3" />
+            {eye.hidden && <path d="m3 3 18 18" />}
+          </svg>
         </button>
       )}
     </div>

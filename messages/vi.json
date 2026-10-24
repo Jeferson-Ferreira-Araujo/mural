@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Tự động duyệt pin",
     "hu7ryvc": "Pin của khách hiện ngay, không cần chờ bạn duyệt. Bạn vẫn có thể xóa bất kỳ pin nào.",
     "h1cvalda": "Quét và để lại lời nhắn",
-    "hbzt2ni": "Để đăng cần đăng nhập bằng tài khoản Pinz."
+    "hbzt2ni": "Để đăng cần đăng nhập bằng tài khoản Pinz.",
+    "hh865ys": "Ẩn các nút",
+    "h10enppt": "Hiện các nút"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

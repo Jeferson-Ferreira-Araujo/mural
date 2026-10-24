@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Approve pins automatically",
     "hu7ryvc": "Guests’ pins appear right away, without waiting for your approval. You can still delete any pin.",
     "h1cvalda": "Scan and leave your message",
-    "hbzt2ni": "To post you need to sign in with a Pinz account."
+    "hbzt2ni": "To post you need to sign in with a Pinz account.",
+    "hh865ys": "Hide the buttons",
+    "h10enppt": "Show the buttons"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

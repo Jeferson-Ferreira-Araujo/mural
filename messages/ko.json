@@ -2259,7 +2259,9 @@
     "hh2bmh3": "핀 자동 승인",
     "hu7ryvc": "손님의 핀이 승인을 기다리지 않고 바로 나타납니다. 어떤 핀이든 계속 삭제할 수 있습니다.",
     "h1cvalda": "스캔하고 메시지를 남겨 주세요",
-    "hbzt2ni": "게시하려면 Pinz 계정으로 로그인해야 합니다."
+    "hbzt2ni": "게시하려면 Pinz 계정으로 로그인해야 합니다.",
+    "hh865ys": "버튼 숨기기",
+    "h10enppt": "버튼 보이기"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

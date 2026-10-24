@@ -2259,7 +2259,9 @@
     "hh2bmh3": "自动批准图钉",
     "hu7ryvc": "来宾的图钉会立即显示，无需等待你的批准。你仍可以删除任何图钉。",
     "h1cvalda": "扫码留下你的留言",
-    "hbzt2ni": "发布需要使用 Pinz 账号登录。"
+    "hbzt2ni": "发布需要使用 Pinz 账号登录。",
+    "hh865ys": "隐藏按钮",
+    "h10enppt": "显示按钮"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

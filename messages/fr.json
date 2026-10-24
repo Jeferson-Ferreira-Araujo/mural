@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Approuver les pins automatiquement",
     "hu7ryvc": "Les pins des invités apparaissent tout de suite, sans attendre votre approbation. Vous pouvez toujours supprimer n’importe quel pin.",
     "h1cvalda": "Scannez et laissez votre message",
-    "hbzt2ni": "Pour publier, il faut se connecter avec un compte Pinz."
+    "hbzt2ni": "Pour publier, il faut se connecter avec un compte Pinz.",
+    "hh865ys": "Masquer les boutons",
+    "h10enppt": "Afficher les boutons"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

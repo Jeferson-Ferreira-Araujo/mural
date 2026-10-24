@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Aprobar los pins automáticamente",
     "hu7ryvc": "Los pins de los invitados aparecen al instante, sin esperar tu aprobación. Puedes seguir eliminando cualquier pin.",
     "h1cvalda": "Escanea y deja tu mensaje",
-    "hbzt2ni": "Para publicar necesitas iniciar sesión con una cuenta Pinz."
+    "hbzt2ni": "Para publicar necesitas iniciar sesión con una cuenta Pinz.",
+    "hh865ys": "Ocultar los botones",
+    "h10enppt": "Mostrar los botones"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

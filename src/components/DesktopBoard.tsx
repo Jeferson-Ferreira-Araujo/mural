@@ -31,6 +31,8 @@ export function DesktopBoard(props: ViewProps) {
   const tx = useTranslations("components.DesktopBoard");
   const tl = useLit();
   const [collapsed, setCollapsed] = useState(false);
+  const [clean, setClean] = useState(false); // mural limpo: esconde os botões flutuantes (o olho continua)
+  const hide = clean ? "invisible opacity-0" : "";
   useEffect(() => {
     try {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
@@ -71,7 +73,7 @@ export function DesktopBoard(props: ViewProps) {
           aria-expanded={!collapsed}
           aria-label={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
           title={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
-          className="absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]"
+          className={`${hide} absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
         >
           <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="m15 6-6 6 6 6" />
@@ -80,7 +82,7 @@ export function DesktopBoard(props: ViewProps) {
 
         <div className={`relative h-full shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2] ${look.wide ? "w-full" : "w-[min(100%,150dvh)]"}`}>
 
-        <nav aria-label={tx("informacoesDoMural")} className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5">
+        <nav aria-label={tx("informacoesDoMural")} className={`${hide} pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5 transition-opacity`}>
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && !locked && props.muralInfo?.title && (
@@ -114,7 +116,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[2.2vw] bottom-5" hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
+        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[calc(2.2vw+3.5rem)] bottom-5" eye={{ hidden: clean, onToggle: () => setClean((v) => !v), pos: "right-[2.2vw] bottom-5" }} hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain>
           {locked &&
             (lockForm ? (
@@ -127,7 +129,7 @@ export function DesktopBoard(props: ViewProps) {
         </PannableBoard>
         </div>
 
-        <div className={`pointer-events-none absolute bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5 ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
+        <div className={`${hide} pointer-events-none absolute bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5 transition-opacity ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
           {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">

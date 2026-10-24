@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Pinleri otomatik onayla",
     "hu7ryvc": "Misafirlerin pinleri onayınızı beklemeden hemen görünür. İstediğiniz pini yine silebilirsiniz.",
     "h1cvalda": "Tara ve mesajını bırak",
-    "hbzt2ni": "Paylaşım yapmak için bir Pinz hesabıyla giriş yapmak gerekir."
+    "hbzt2ni": "Paylaşım yapmak için bir Pinz hesabıyla giriş yapmak gerekir.",
+    "hh865ys": "Düğmeleri gizle",
+    "h10enppt": "Düğmeleri göster"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

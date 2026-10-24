@@ -2259,7 +2259,9 @@
     "hh2bmh3": "Pins automatisch freigeben",
     "hu7ryvc": "Die Pins der Gäste erscheinen sofort, ohne auf deine Freigabe zu warten. Du kannst weiterhin jeden Pin löschen.",
     "h1cvalda": "Scannen und Nachricht hinterlassen",
-    "hbzt2ni": "Zum Posten ist die Anmeldung mit einem Pinz-Konto nötig."
+    "hbzt2ni": "Zum Posten ist die Anmeldung mit einem Pinz-Konto nötig.",
+    "hh865ys": "Schaltflächen ausblenden",
+    "h10enppt": "Schaltflächen einblenden"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
