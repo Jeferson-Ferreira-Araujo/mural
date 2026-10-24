@@ -215,6 +215,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     void getBrowserSupabase().rpc("is_admin").then(({ data }) => setIsAdmin(data === true));
   }, [session]);
   const [newMuralOpen, setNewMuralOpen] = useState(false);
+  const [newMuralFromList, setNewMuralFromList] = useState(false); // aberto pelo botão "Criar novo mural" da lista Meus murais
   const [blockedUntil, setBlockedUntil] = useState<number | null>(null); // 3 erros seguidos na pergunta: bloqueado por 30 min (o servidor também recusa)
   const [profileOpen, setProfileOpen] = useState(false); // resumo do perfil de quem é o mural aberto
   const [profileStart, setProfileStart] = useState<"summary" | "shared">("summary"); // "shared": abre direto no convite para o mural compartilhado (botão do desktop)
@@ -1164,7 +1165,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const sidebarMenu =
     logged && myNick && !nickPending && (isOwner || !selected) ? ( // vendo o mural de outra pessoa, as opções da própria conta não aparecem
       <AccountDrawer
-        onNewMural={isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? () => setNewMuralOpen(true) : undefined}
+        onNewMural={isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? (fromList) => (setNewMuralFromList(!!fromList), setNewMuralOpen(true)) : undefined}
         inline
         open
         onClose={() => undefined}
@@ -1296,7 +1297,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             }}
           />
           {everProfile && selected && !isShared && <ProfileSummaryModal open={profileOpen} startView={profileStart} isOwner={isOwner} onClose={() => (setProfileOpen(false), setProfileStart("summary"))} nick={selected.nickname} logged={logged} viewerPlus={inventory?.plus === true} showStats={unlocked} onNotify={notify} />}
-          {everNewMural && myNick && <NewMuralModal open={newMuralOpen} onClose={() => setNewMuralOpen(false)} nick={myNick} onBought={() => void reloadInventory()} />}
+          {everNewMural && myNick && <NewMuralModal open={newMuralOpen} onClose={() => (setNewMuralOpen(false), setNewMuralFromList(false))} onBack={newMuralFromList ? () => (setNewMuralOpen(false), setNewMuralFromList(false)) : undefined} nick={myNick} onBought={() => void reloadInventory()} />}
           <StoreModal open={storeOpen} onClose={() => setStoreOpen(false)} inventory={inventory} onBuy={buy} />
           <PaymentResultModal result={payResult} onClose={() => setPayResult(null)} />
           <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSelect={(n) => void pickPerson(n)} />

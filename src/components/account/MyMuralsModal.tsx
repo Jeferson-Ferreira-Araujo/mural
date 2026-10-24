@@ -14,7 +14,7 @@ import { useLit } from "@/i18n/literal";
  * Meus murais: a lista dos murais da conta. Tocar num deles abre a edição (nome, pergunta de segurança e resposta, tipo do mural),
  * com o botão de voltar para a lista.
  */
-export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, onChanged, onDeleted }: { /** botão "Criar novo mural" (só quem pode criar mais um) */ onNewMural?: () => void; open: boolean; onClose: () => void; murals: OwnMural[]; /** mural aberto agora: se for apagado, sai dele */ currentId?: string; onChanged: () => void; onDeleted: () => void }) {
+export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, onChanged, onDeleted }: { /** botão "Criar novo mural" (só quem pode criar mais um) */ onNewMural?: (fromList?: boolean) => void; open: boolean; onClose: () => void; murals: OwnMural[]; /** mural aberto agora: se for apagado, sai dele */ currentId?: string; onChanged: () => void; onDeleted: () => void }) {
   const tl = useLit();
   const tx = useTranslations("components.account.MyMuralsModal");
   const [editId, setEditId] = useState<string | null>(null);
@@ -119,6 +119,13 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     onChanged();
   }
 
+  // um mural novo foi criado (a lista cresceu) enquanto esta janela estava por baixo do "Novo mural": fecha a lista, a pessoa já foi para o mural novo
+  const lastCount = useRef(murals.length);
+  useEffect(() => {
+    if (open && murals.length > lastCount.current) onClose();
+    lastCount.current = murals.length;
+  }, [murals.length, open, onClose]);
+
   async function remove() {
     if (!toDelete || busy) return;
     setBusy(true);
@@ -182,10 +189,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
             <div className="mb-2.5 flex justify-end">
               <button
                 type="button"
-                onClick={() => {
-                  onClose();
-                  onNewMural();
-                }}
+                onClick={() => onNewMural(true)} /* a lista continua por baixo: o "Voltar" do novo mural a mostra de novo */
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#d9c9ad] bg-white/70 px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition hover:bg-white active:scale-95"
               >
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden>
@@ -230,10 +234,10 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                     </button>
                   )}
                   {/* só a imagem do mural (com o cadeado, se tiver pergunta de segurança) e os botões de editar e apagar */}
-                  <button type="button" onClick={() => setEditId(m.id)} className="relative w-44 max-w-[62%] min-w-0 shrink-0 cursor-pointer text-left" aria-label={tx("x_editTitle", { title: m.title, locked: m.question ? "yes" : "no" })} title={m.title}>
-                    <span className="mb-1 block h-5 max-w-44 truncate text-sm leading-5 font-bold">{m.title}</span>
+                  <button type="button" onClick={() => setEditId(m.id)} className="relative w-[min(27rem,calc(100%-6.5rem))] min-w-0 shrink-0 cursor-pointer text-left" aria-label={tx("x_editTitle", { title: m.title, locked: m.question ? "yes" : "no" })} title={m.title}>
+                    <span className="mb-1.5 block h-6 max-w-full truncate text-base leading-6 font-bold">{m.title}</span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={boardPreview(b)} alt="" draggable={false} className="aspect-[12/5] w-full max-w-44 rounded-lg object-cover" />
+                    <img src={boardPreview(b)} alt="" draggable={false} className="aspect-[12/5] w-full rounded-xl object-cover shadow-[0_0.2rem_0.7rem_rgba(60,30,0,.25)]" />
                     {/* abaixo da imagem: se o mural é público ou privado (com pergunta de segurança) */}
                     <span className={`mt-1.5 flex items-center gap-1 text-xs font-semibold ${m.question ? "text-[#8a5a10]" : "text-[#2f6a3c]"}`}>
                       {m.question ? (
@@ -250,7 +254,7 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                       {m.question ? tl("Privado") : tx("m_publico")}
                     </span>
                   </button>
-                  <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-2 pt-6">
+                  <div className="ml-auto flex shrink-0 flex-col items-center justify-center gap-2 self-center pl-3">
                     <button type="button" onClick={() => setEditId(m.id)} aria-label={tx("x_edit", { title: m.title })} title={tx("editar")} className="grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1f232b] text-white transition hover:bg-[#2c313b]">
                       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />

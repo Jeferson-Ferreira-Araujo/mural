@@ -22,9 +22,10 @@ function Coin({ className = "size-5" }: { className?: string }) {
  * Novo mural (PINZ+), no mesmo modelo da edição: tipo em slide (os que ainda não são seus têm o botão Comprar) e nome.
  * Público ou privado é do perfil (Perfil → Privacidade): o mural novo já nasce com a mesma regra.
  */
-export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean; onClose: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
+export function NewMuralModal({ open, onClose, nick, onBought, onBack }: { open: boolean; onClose: () => void; /** veio da lista "Meus murais": mostra o botão Voltar (fecha só este e deixa a lista à vista) */ onBack?: () => void; nick: string; /** a loja mudou (créditos/tipos): recarrega o inventário da tela */ onBought?: () => void }) {
   const tl = useLit();
   const tx = useTranslations("components.account.NewMuralModal");
+  const txBack = useTranslations("components.account.MyMuralsModal");
   const [title, setTitle] = useState("");
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
   const [offers, setOffers] = useState<BoardOffer[]>([]);
@@ -128,6 +129,16 @@ export function NewMuralModal({ open, onClose, nick, onBought }: { open: boolean
       onClose={onClose}
       title={tx("novoMural")}
       label={tx("novoMural")}
+      headerLeft={
+        onBack ? (
+          <button type="button" onClick={onBack} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#4a3826] hover:text-[#2a1c12]">
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m15 5-7 7 7 7" />
+            </svg>
+            {txBack("x_voltarParaMeusMurais")}
+          </button>
+        ) : undefined
+      }
       wide
       aside={
         // saldo de créditos no cabeçalho, ao lado do botão de fechar

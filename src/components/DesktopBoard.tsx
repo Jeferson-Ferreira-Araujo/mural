@@ -41,10 +41,12 @@ export function DesktopBoard(props: ViewProps) {
         setCollapsed(true); // sem gravar a preferência: é só enquanto o mural está limpo
         window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
       }
-    } else if (reopenMenu.current) {
+    } else {
+      // restaurar a visão devolve também o menu lateral (sem gravar a preferência)
       reopenMenu.current = false;
       setCollapsed(false);
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 500);
     }
     setClean(!clean);
   };
@@ -146,12 +148,12 @@ export function DesktopBoard(props: ViewProps) {
 
         <div className={`${hide} pointer-events-none absolute bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5 transition-opacity ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
-          {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}
+          <div aria-hidden className="w-[13rem] shrink-0" />
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2">
             <BadgeBar className="pointer-events-auto w-[min(46rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} className="!size-14" /> : undefined} />
           </div>
           {/* à direita da barra ficam os botões + e − do zoom */}
-          {canAdd && <div aria-hidden className="w-[9.5rem] shrink-0" />}
+          <div aria-hidden className="w-[13rem] shrink-0" />
         </div>
         </div>
       </div>

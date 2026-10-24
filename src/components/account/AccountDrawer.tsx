@@ -112,7 +112,7 @@ export function AccountDrawer({
   onPending: (n: number) => void;
   onNotify: (msg: string) => void;
   /** PINZ+ (e abaixo do limite de murais): abre a criação de um mural novo */
-  onNewMural?: () => void;
+  onNewMural?: (fromList?: boolean) => void;
   /** convites de mural compartilhado esperando resposta */
   sharedInvites?: number;
   /** a lista de murais compartilhados mudou (aceitou, criou, apagou) */
