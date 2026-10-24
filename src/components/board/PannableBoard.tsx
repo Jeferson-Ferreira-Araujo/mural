@@ -269,7 +269,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     (force: boolean) => {
       if ((!startZoomedRef.current && !onceRef.current) || hintDone.current || touched.current || !ready.current) return;
       const { w, h } = size.current;
-      if (w <= 0 || w >= 700) return;
+      if (w <= 0 || (w >= 700 && !onceRef.current)) return; // a tela larga só passeia na tela de entrada (hintOnce)
       // a abertura animada do logo ainda está tocando: espera ela terminar (para as duas animações não acontecerem juntas) e só então passeia pelo mural
       if (onceRef.current && document.documentElement.dataset.intro === "play") {
         if (!introWatch.current) {

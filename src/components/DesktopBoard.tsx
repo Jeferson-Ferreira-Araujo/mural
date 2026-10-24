@@ -133,7 +133,7 @@ export function DesktopBoard(props: ViewProps) {
 
         {/* o mural abre sempre inteiro; o botão e a roda do mouse aproximam, e com o quadro aproximado dá para arrastá-lo */}
         <div className="absolute inset-0">
-        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[calc(2.2vw+3.5rem)] bottom-5" eye={{ hidden: clean, onToggle: toggleClean, pos: "right-[2.2vw] bottom-5" }} hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
+        <PannableBoard ambient={boardImageS(look)} scene={look.wide ? { src: look.wide, extra: WIDE_EXTRA, blur: locked } : undefined} controlPos="right-[calc(2.2vw+3.5rem)] bottom-5" hintOnce={account ? undefined : "pinz:landing-hint-desktop"} eye={{ hidden: clean, onToggle: toggleClean, pos: "right-[2.2vw] bottom-5" }} hideControls={locked} wideZoom={hasSelection ? 1.9 : 2.7}>
         <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain>
           {locked &&
             (lockForm ? (
