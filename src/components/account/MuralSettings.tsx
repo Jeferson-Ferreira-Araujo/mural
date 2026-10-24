@@ -14,6 +14,9 @@ import { Field, ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
+/** Modo evento (QR code, cartaz e aprovação automática) desligado por enquanto: o código fica pronto; para ligar, troque para true. */
+const EVENT_MODE_ENABLED = false;
+
 /** Editar o mural: tipo (fundo), nome e excluir. Público/privado e a pergunta de segurança são do PERFIL (Perfil → Privacidade). */
 export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: { mural: OwnMural; onSaved: () => void; onDeleted: () => void; /** o primeiro mural da conta nunca pode ser excluído */ canDelete?: boolean }) {
   const tl = useLit();
@@ -311,7 +314,7 @@ export function MuralSettings({ mural, onSaved, onDeleted, canDelete = true }: {
         )}
       </div>
 
-      <EventTools muralId={mural.id} slug={mural.slug} title={mural.title} />
+      {EVENT_MODE_ENABLED && <EventTools muralId={mural.id} slug={mural.slug} title={mural.title} />}
       {/* backup: um ZIP com tudo deste mural */}
       <div className="mt-4 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
         <p className="text-sm font-semibold">{tl("Backup do mural")}</p>
