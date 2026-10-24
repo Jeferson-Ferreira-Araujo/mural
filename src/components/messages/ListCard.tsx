@@ -61,7 +61,7 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle, squareOnl
                     e.stopPropagation();
                     onToggle(i);
                   }}
-                  className="-m-[0.25em] grid cursor-pointer place-items-center rounded-[0.3em] p-[0.25em] transition hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-[0.1em] focus-visible:outline-[#d98a2b]"
+                  className="pointer-events-auto relative z-10 -m-[0.4em] grid cursor-pointer place-items-center rounded-[0.4em] p-[0.4em] transition hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-[0.1em] focus-visible:outline-[#d98a2b]"
                 >
                   <span className="grid size-[1.05em] shrink-0 place-items-center rounded-[0.15em] border border-[#2a2a33]/70">
                     {it.done && (
