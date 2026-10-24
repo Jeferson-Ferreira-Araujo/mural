@@ -9,12 +9,13 @@ import { useLit } from "@/i18n/literal";
 type Viewer = { nick: string | null; avatar: string | null; at: number };
 
 const PING_MS = 20_000; // o visitante avisa que continua no mural
-const POLL_MS = 6_000; // o dono atualiza a lista
+const POLL_MS = 15_000; // reserva: quem some sem avisar (celular desligado, sinal) só deixa de contar depois de 45 s, sem aviso em tempo real
 
 /**
  * Presença em tempo real, decidida inteiramente no servidor (nada passa pelo navegador de ninguém além do que cada um pode ver):
  * - quem VISITA avisa a cada 20 s (`live_ping`); o servidor só registra se o dono ligou a opção e, havendo conta, se o visitante também ligou a dela;
  * - o DONO com a opção ligada lê a lista (`live_list`, mais recentes primeiro); para qualquer outra pessoa o servidor devolve nada.
+ * - em tempo real: o banco manda um aviso vazio a cada entrada ou saída; o dono, ao recebê-lo, busca a lista de novo.
  * Quem desligou não vê ninguém e não aparece para ninguém. Quem sai da página some da lista em até 45 s (ou na hora, se avisar que saiu).
  */
 export function LivePresence({ muralId, isOwner }: { muralId: string; isOwner: boolean }) {
@@ -62,14 +63,18 @@ export function LivePresence({ muralId, isOwner }: { muralId: string; isOwner: b
       if (!alive) return;
       setViewers(Array.isArray(data) ? (data as Viewer[]) : []);
     };
+    let ch: ReturnType<typeof sb.channel> | null = null;
     void getLivePresence(sb).then((on) => {
       if (!alive || !on) return;
       void load();
+      // tempo real: o banco avisa (sem dados) quando alguém entra ou sai, e a lista é buscada de novo no servidor
+      ch = sb.channel(`live:${muralId}`).on("broadcast", { event: "live" }, () => void load()).subscribe();
       timer = window.setInterval(() => void load(), POLL_MS);
     });
     return () => {
       alive = false;
       window.clearInterval(timer);
+      if (ch) void sb.removeChannel(ch);
       setViewers([]);
     };
   }, [muralId, isOwner]);
