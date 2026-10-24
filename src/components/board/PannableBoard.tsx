@@ -21,12 +21,14 @@ const CLICK_DELAY_MS = 280; // espera para saber se é toque simples ou o primei
  * e um botão alterna entre "ver o mural inteiro" e aproximar. O conteúdo (filhos) tem WORLD_W × WORLD_H.
  * Os cliques dos filhos (tocar num pin ou num espaço livre) continuam funcionando, só atrasados ~0,3 s para distinguir do toque duplo.
  */
-export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false, eye }: { /** desktop: olho ao lado do Aproximar/Afastar; com os botões escondidos (hidden), só o olho fica à vista */ eye?: { hidden: boolean; onToggle: () => void; pos: string }; /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
+export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos = "right-3 bottom-3", hideControls = false, onSwipe, bare = false, wideZoom = 1.25, startZoomed = false, alwaysHint = false, eye }: { /** a dica "arraste para os lados" toca em toda visita (tela de entrada), não só uma vez por dia */ alwaysHint?: boolean; /** desktop: olho ao lado do Aproximar/Afastar; com os botões escondidos (hidden), só o olho fica à vista */ eye?: { hidden: boolean; onToggle: () => void; pos: string }; /** celular: já abre com o mural ampliado, no centro (em vez de afastado, inteiro) */ startZoomed?: boolean; /** quantos cartões cabem na largura da tela ao aproximar, em telas largas (maior = aproximar menos) */ wideZoom?: number; children: ReactNode; /** cena panorâmica de fundo: a imagem inteira (o quadro 3:2 fica no miolo) é movida e ampliada junto, e dá para arrastar até as pontas dela */ scene?: { src: string; extra: number; blur?: boolean }; /** sem o fundo marrom próprio: o fundo da tela aparece por trás (tela inicial do celular) */ bare?: boolean; /** arrastar para o lado, além da borda do quadro, passa para o outro mural (1 = próximo, -1 = anterior); uma troca por arrastada: para trocar de novo é preciso soltar e arrastar outra vez */ onSwipe?: (dir: 1 | -1) => void; /** sem o botão Aproximar/Afastar (ex.: mural privado ainda trancado) */ hideControls?: boolean; /** posição do botão Aproximar/Afastar (classes de posição) */ controlPos?: string; /** imagem borrada de fundo (as bordas quando o quadro inteiro cabe) */ ambient?: string; /** botão fixo no canto inferior esquerdo (na mesma linha do Aproximar/Afastar) */ cornerLeft?: ReactNode }) {
   const tl = useLit();
   const tx = useTranslations("components.board.PannableBoard");
   const box = useRef<HTMLDivElement>(null);
   const swipeRef = useRef(onSwipe);
   const touched = useRef(false); // a pessoa já mexeu no quadro (zoom ou arraste): o zoom inicial não se repete
+  const alwaysHintRef = useRef(alwaysHint);
+  alwaysHintRef.current = alwaysHint;
   const startZoomedRef = useRef(startZoomed);
   startZoomedRef.current = startZoomed;
   const wideRef = useRef(wideZoom);
@@ -244,7 +246,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       if (w <= 0 || w >= 700) return;
       const today = new Date().toLocaleDateString("sv-SE");
       try {
-        if (!force && localStorage.getItem("pinz:pan-hint") === today) return;
+        if (!force && !alwaysHintRef.current && localStorage.getItem("pinz:pan-hint") === today) return;
       } catch {}
       hintDone.current = true;
       if (force) {

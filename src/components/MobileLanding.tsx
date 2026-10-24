@@ -78,8 +78,9 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
       </header>
 
       {/* o mural de exemplo, inteiro, no meio: arrasta, pinça e aproxima como um mural de verdade */}
-      <div className="relative w-full shrink-0 max-h-[52dvh]" style={{ aspectRatio: "3 / 2" }}>
-        <PannableBoard bare>
+      {/* mais alto que largo: o mural abre ampliado, com as laterais cortadas (mostra que há mais para os lados) e uma dica de arrastar passeia por ele */}
+      <div className="relative w-full shrink-0 max-h-[46dvh]" style={{ aspectRatio: "1 / 1" }}>
+        <PannableBoard bare startZoomed alwaysHint>
           <BoardCanvas items={items} plan={plan} board={board} capacity={capacity} hasSelection={hasSelection} unlocked={unlocked} locked={locked} onCompose={onCompose} onNotify={onNotify} contain />
         </PannableBoard>
       </div>
