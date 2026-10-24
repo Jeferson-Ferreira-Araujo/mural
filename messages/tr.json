@@ -2217,7 +2217,15 @@
     "hd9xnm": "Bu kuponu zaten kullandınız.",
     "hsf1swr": "Bu kupon tükendi.",
     "hyzg7vr": "Çok fazla deneme. 15 dakika sonra tekrar deneyin.",
-    "h1efww64": "Şu anda kullanılamadı. Tekrar deneyin."
+    "h1efww64": "Şu anda kullanılamadı. Tekrar deneyin.",
+    "h9x6hyt": "Günlük hatırlatma",
+    "h14ws7hi": "Bugün alışkanlığı henüz işaretlemediyseniz size haber veririz.",
+    "his9wyg": "Hatırlatma saati",
+    "h1erdh1s": "Bu cihazda bildirim",
+    "h3pm2c": "Bildirimler bu tarayıcıda engellenmiş. Tarayıcı ayarlarından izin verin.",
+    "hpgv5ou": "Bu cihaz bildirimleri desteklemiyor. iPhone’da etkinleştirmek için Pinz’i ana ekrana ekleyin.",
+    "hmqwvmu": "Bu cihazda bildirimleri aç",
+    "hdsrlbk": "E-posta"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "“{text}” işaretini kaldırdı",
     "listAnd": "ve",
     "listNone": "bir şeyi değiştirdi",
-    "list": "@{actor}, “{list}” listende {what}"
+    "list": "@{actor}, “{list}” listende {what}",
+    "habitReminder": "Bugün “{title}” için henüz işaret koymadınız. Serinizi sürdürün!"
   },
   "meta": {
     "siteDescription": "Pinz, anları biriktirmek için dijital bir pano: sevdiklerinden notlar, fotoğraflar, şarkılar ve videolar al.",

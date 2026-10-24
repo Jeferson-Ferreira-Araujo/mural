@@ -2217,7 +2217,15 @@
     "hd9xnm": "Anda sudah memakai kupon ini.",
     "hsf1swr": "Kupon ini sudah habis.",
     "hyzg7vr": "Terlalu banyak percobaan. Coba lagi dalam 15 menit.",
-    "h1efww64": "Tidak dapat menukar sekarang. Coba lagi."
+    "h1efww64": "Tidak dapat menukar sekarang. Coba lagi.",
+    "h9x6hyt": "Pengingat harian",
+    "h14ws7hi": "Kami akan memberi tahu jika Anda belum menandai kebiasaan hari ini.",
+    "his9wyg": "Jam pengingat",
+    "h1erdh1s": "Notifikasi di perangkat ini",
+    "h3pm2c": "Notifikasi diblokir di peramban ini. Izinkan di pengaturan peramban.",
+    "hpgv5ou": "Perangkat ini tidak mendukung notifikasi. Di iPhone, tambahkan Pinz ke layar utama untuk mengaktifkannya.",
+    "hmqwvmu": "Aktifkan notifikasi di perangkat ini",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "menghapus centang “{text}”",
     "listAnd": "dan",
     "listNone": "mengubah sesuatu",
-    "list": "@{actor} {what} di daftarmu “{list}”"
+    "list": "@{actor} {what} di daftarmu “{list}”",
+    "habitReminder": "Anda belum menandai “{title}” hari ini. Pertahankan rangkaian Anda!"
   },
   "meta": {
     "siteDescription": "Pinz adalah papan digital untuk mengumpulkan momen: terima catatan, foto, lagu, dan video dari orang-orang yang kamu sayangi.",

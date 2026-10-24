@@ -2217,7 +2217,15 @@
     "hd9xnm": "Je hebt deze coupon al gebruikt.",
     "hsf1swr": "Deze coupon is op.",
     "hyzg7vr": "Te veel pogingen. Probeer het over 15 minuten opnieuw.",
-    "h1efww64": "Inwisselen lukt nu niet. Probeer het opnieuw."
+    "h1efww64": "Inwisselen lukt nu niet. Probeer het opnieuw.",
+    "h9x6hyt": "Dagelijkse herinnering",
+    "h14ws7hi": "We laten het weten als je de gewoonte vandaag nog niet hebt afgevinkt.",
+    "his9wyg": "Tijdstip van de herinnering",
+    "h1erdh1s": "Melding op dit apparaat",
+    "h3pm2c": "Meldingen zijn geblokkeerd in deze browser. Sta ze toe in de browserinstellingen.",
+    "hpgv5ou": "Dit apparaat ondersteunt geen meldingen. Voeg Pinz op de iPhone toe aan het beginscherm om ze in te schakelen.",
+    "hmqwvmu": "Meldingen op dit apparaat inschakelen",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "vinkte “{text}” uit",
     "listAnd": "en",
     "listNone": "veranderde iets",
-    "list": "@{actor} {what} in je lijst “{list}”"
+    "list": "@{actor} {what} in je lijst “{list}”",
+    "habitReminder": "Je hebt “{title}” vandaag nog niet afgevinkt. Hou je reeks vol!"
   },
   "meta": {
     "siteDescription": "Pinz is een digitaal bord om momenten te verzamelen: ontvang briefjes, foto's, nummers en video's van de mensen van wie je houdt.",

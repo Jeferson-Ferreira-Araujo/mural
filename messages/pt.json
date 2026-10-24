@@ -1459,7 +1459,8 @@
     "listUndone": "desmarcou “{text}”",
     "listAnd": "e",
     "listNone": "mexeu",
-    "list": "@{actor} {what} na sua lista “{list}”"
+    "list": "@{actor} {what} na sua lista “{list}”",
+    "habitReminder": "Você ainda não marcou “{title}” hoje. Mantenha a sua sequência!"
   },
   "meta": {
     "siteDescription": "O Pinz é um mural digital para colecionar momentos: receba recados, fotos, músicas e vídeos de quem você ama.",

@@ -2217,7 +2217,15 @@
     "hd9xnm": "Bạn đã dùng phiếu này rồi.",
     "hsf1swr": "Phiếu này đã hết lượt.",
     "hyzg7vr": "Quá nhiều lần thử. Hãy thử lại sau 15 phút.",
-    "h1efww64": "Hiện chưa thể đổi. Hãy thử lại."
+    "h1efww64": "Hiện chưa thể đổi. Hãy thử lại.",
+    "h9x6hyt": "Nhắc nhở hằng ngày",
+    "h14ws7hi": "Chúng tôi sẽ báo nếu hôm nay bạn chưa đánh dấu thói quen.",
+    "his9wyg": "Giờ nhắc",
+    "h1erdh1s": "Thông báo trên thiết bị này",
+    "h3pm2c": "Thông báo đang bị chặn trong trình duyệt này. Hãy cho phép trong cài đặt trình duyệt.",
+    "hpgv5ou": "Thiết bị này không hỗ trợ thông báo. Trên iPhone, hãy thêm Pinz vào màn hình chính để bật.",
+    "hmqwvmu": "Bật thông báo trên thiết bị này",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "đã bỏ đánh dấu “{text}”",
     "listAnd": "và",
     "listNone": "đã thay đổi gì đó",
-    "list": "@{actor} {what} trong danh sách “{list}” của bạn"
+    "list": "@{actor} {what} trong danh sách “{list}” của bạn",
+    "habitReminder": "Hôm nay bạn chưa đánh dấu “{title}”. Hãy giữ chuỗi của bạn!"
   },
   "meta": {
     "siteDescription": "Pinz là bảng kỹ thuật số để lưu giữ khoảnh khắc: nhận ghi chú, ảnh, bài hát và video từ những người bạn yêu thương.",

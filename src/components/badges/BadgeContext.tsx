@@ -703,6 +703,11 @@ export function BadgeProvider({
     setDialogError(null);
     setDialog({ mode: "edit", product: b.data.product, style: b.data.style ?? "", id, initial: b.data });
   }, []);
+  /** Lembrete diário do hábito (tabela à parte): liga, ajusta ou desliga. */
+  async function saveReminder(badgeId: string, remind: DisplayPayload["remind"]) {
+    if (remind === undefined) return;
+    await getBrowserSupabase().rpc("set_habit_reminder", { p_badge: badgeId, p_time: remind?.time ?? "20:00", p_tz: remind?.tz ?? "America/Sao_Paulo", p_push: remind?.push ?? true, p_email: remind?.email ?? false, p_on: !!remind });
+  }
   async function submitDialog(data: DisplayPayload) {
     if (!dialog) return;
     if (dialog.mode === "new") {
@@ -719,11 +724,12 @@ export function BadgeProvider({
       return;
     }
     setDialogBusy(true);
-    const { text: _t, ref: _r, product: _p, ...clean } = data;
+    const { text: _t, ref: _r, product: _p, remind, ...clean } = data;
     void _t;
     void _r;
     void _p;
     const ok = dialog.id ? await updateDisplayData(getBrowserSupabase(), dialog.id, clean) : false;
+    if (ok && dialog.id) await saveReminder(dialog.id, remind);
     setDialogBusy(false);
     if (!ok) return setDialogError("Não foi possível salvar agora. Tente de novo.");
     setDialog(null);
@@ -735,11 +741,12 @@ export function BadgeProvider({
     setPlacing(null);
     if (!mid) return;
     if (rect) removeOverRef.current?.(rect, 0.02); // botton debaixo do widget volta para a barra
-    const { text: _t, ref: _r, product: _p, ...clean } = data;
+    const { text: _t, ref: _r, product: _p, remind, ...clean } = data;
     void _t;
     void _r;
     void _p;
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
+    if ("id" in res) await saveReminder(res.id, remind);
     if ("error" in res) {
       live.current.notify(res.error === "taken" ? tx("m_esseLugarAcabouDeReceber") : res.error === "plan_limit" ? tx("m_oPlanoGratuitoPermiteAte") : res.error === "limit" ? tx("m_oMuralChegouAoMaximo") : res.error === "not_owned" ? tx("m_esteDisplayEDaLoja") : tx("m_naoFoiPossivelColocarO2"));
       live.current.onDisplaysChanged?.();
@@ -807,6 +814,7 @@ export function BadgeProvider({
           open
           product={dialog.product}
           style={dialog.style}
+          badgeId={dialog.id}
           styles={dialog.mode === "new" && isBundled(dialog.product) ? displays.filter((id) => splitDisplayId(id).product === dialog.product).map((id) => splitDisplayId(id).style) : undefined}
           initial={dialog.initial}
           editing={dialog.mode === "edit"}

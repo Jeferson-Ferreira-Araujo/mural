@@ -14,6 +14,7 @@ export type Notification =
   | { id: string; kind: "gift"; data: { actor?: string; avatar?: string | null; days?: number }; read: boolean; createdAt: string }
   | { id: string; kind: "birthday"; data: { gift?: "plus" | "badges"; until?: string }; read: boolean; createdAt: string }
   | { id: string; kind: "archived"; data: { count: number; muralSlug: string; muralNick: string; muralTitle?: string }; read: boolean; createdAt: string }
+  | { id: string; kind: "habit_reminder"; data: { title: string; muralNick: string; muralSlug: string; muralTitle?: string }; read: boolean; createdAt: string }
   | { id: string; kind: "reward"; data: { task: string; credits: number; title: string; actor?: string; avatar?: string | null }; read: boolean; createdAt: string };
 
 export async function fetchNotifications(sb: SupabaseClient): Promise<Notification[]> {
@@ -40,6 +41,7 @@ export function notificationText(n: Notification, t: NotifT): string {
   if (n.kind === "birthday") return n.data.gift === "plus" ? t("birthdayPlus") : t("birthdayBadges");
   if (n.kind === "archived") return t("archived", { count: n.data.count, mural: n.data.muralTitle ?? n.data.muralSlug });
   if (n.kind === "reward") return t("reward", { credits: n.data.credits, hasActor: n.data.actor ? "yes" : "no", actor: n.data.actor ?? "" });
+  if (n.kind === "habit_reminder") return t("habitReminder", { title: n.data.title });
   if (n.kind === "follow") return t("follow", { actor: n.data.actor });
   if (n.kind === "reaction") return t("reaction", { actor: n.data.actor, emoji: reactionEmoji(n.data.emoji), nick: n.data.muralNick });
   const d = n.data;

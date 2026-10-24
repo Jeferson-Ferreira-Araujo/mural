@@ -2217,7 +2217,15 @@
     "hd9xnm": "Du hast diesen Gutschein schon verwendet.",
     "hsf1swr": "Dieser Gutschein ist aufgebraucht.",
     "hyzg7vr": "Zu viele Versuche. Versuche es in 15 Minuten erneut.",
-    "h1efww64": "Einlösen gerade nicht möglich. Versuche es erneut."
+    "h1efww64": "Einlösen gerade nicht möglich. Versuche es erneut.",
+    "h9x6hyt": "Tägliche Erinnerung",
+    "h14ws7hi": "Wir sagen dir Bescheid, wenn du die Gewohnheit heute noch nicht abgehakt hast.",
+    "his9wyg": "Uhrzeit der Erinnerung",
+    "h1erdh1s": "Benachrichtigung auf diesem Gerät",
+    "h3pm2c": "Benachrichtigungen sind in diesem Browser blockiert. Erlaube sie in den Browsereinstellungen.",
+    "hpgv5ou": "Dieses Gerät unterstützt keine Benachrichtigungen. Füge Pinz auf dem iPhone zum Home-Bildschirm hinzu, um sie zu aktivieren.",
+    "hmqwvmu": "Benachrichtigungen auf diesem Gerät aktivieren",
+    "hdsrlbk": "E-Mail"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "hat „{text}“ wieder abgewählt",
     "listAnd": "und",
     "listNone": "hat etwas geändert",
-    "list": "@{actor} {what} in deiner Liste „{list}“"
+    "list": "@{actor} {what} in deiner Liste „{list}“",
+    "habitReminder": "Du hast „{title}“ heute noch nicht abgehakt. Halte deine Serie am Laufen!"
   },
   "meta": {
     "siteDescription": "Pinz ist eine digitale Pinnwand zum Sammeln von Momenten: Erhalte Notizen, Fotos, Songs und Videos von den Menschen, die du liebst.",

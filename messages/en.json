@@ -2217,7 +2217,15 @@
     "hd9xnm": "You already used this coupon.",
     "hsf1swr": "This coupon is sold out.",
     "hyzg7vr": "Too many attempts. Try again in 15 minutes.",
-    "h1efww64": "Could not redeem right now. Try again."
+    "h1efww64": "Could not redeem right now. Try again.",
+    "h9x6hyt": "Daily reminder",
+    "h14ws7hi": "We’ll let you know if you haven’t checked your habit today.",
+    "his9wyg": "Reminder time",
+    "h1erdh1s": "Notification on this device",
+    "h3pm2c": "Notifications are blocked in this browser. Allow them in the browser settings.",
+    "hpgv5ou": "This device doesn’t support notifications. On iPhone, add Pinz to the home screen to enable them.",
+    "hmqwvmu": "Turn on notifications on this device",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "unchecked “{text}”",
     "listAnd": "and",
     "listNone": "changed something",
-    "list": "@{actor} {what} in your list “{list}”"
+    "list": "@{actor} {what} in your list “{list}”",
+    "habitReminder": "You haven’t checked “{title}” today. Keep your streak going!"
   },
   "meta": {
     "siteDescription": "Pinz is a digital board for collecting moments: receive notes, photos, songs and videos from the people you love.",

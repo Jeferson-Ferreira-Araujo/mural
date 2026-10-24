@@ -1,6 +1,7 @@
 import { CREDIT_PACKS, PLUS_ANNUAL_CENTS, PLUS_GIFT_CENTS, PLUS_LIFETIME_CENTS, PLUS_PRICE_CENTS } from "./plans";
 import { adminClient, isUuid } from "./mercadopago";
 import { formatMoney, type Currency } from "./money";
+import { LOCALE_TAGS, isLocale, type Locale } from "@/i18n/config";
 import { plusMail, purchaseMail, sendMail } from "./mail";
 
 /**
@@ -41,6 +42,13 @@ export async function giftRecipient(buyer: string, nickname: string): Promise<{ 
 }
 
 /** Grava o pagamento no banco e aplica o efeito (créditos ou PINZ+). Idempotente: o mesmo pagamento nunca soma duas vezes. */
+/** Idioma do e-mail: o que a pessoa usa no site (guardado no perfil); sem isso, português para reais e inglês para o resto. */
+async function mailLocale(uid: string, currency: Currency): Promise<Locale> {
+  const { data } = await adminClient().from("profiles").select("locale").eq("user_id", uid).maybeSingle();
+  const l = (data as { locale?: string | null } | null)?.locale;
+  return isLocale(l) ? l : currency === "BRL" ? "pt" : "en";
+}
+
 /** Avisos da assinatura mensal (cobrança paga, falha, cancelamento): um e-mail por ocorrência (chave = tipo + id do pagamento). Nunca derruba o webhook. */
 export async function notifyPlus(uid: string, type: "paid" | "failed" | "canceled", key: string, currency: Currency = "BRL", cents?: number) {
   try {
@@ -51,8 +59,8 @@ export async function notifyPlus(uid: string, type: "paid" | "failed" | "cancele
     const { data } = await db.auth.admin.getUserById(uid);
     const to = data.user?.email;
     if (!to) return;
-    const lang = currency === "BRL" ? "pt" : "en";
-    const mail = plusMail({ lang, type, amount: cents ? formatMoney(cents, currency, lang === "pt" ? "pt-BR" : "en-US") : undefined });
+    const lang = await mailLocale(uid, currency);
+    const mail = plusMail({ lang, type, amount: cents ? formatMoney(cents, currency, LOCALE_TAGS[lang]) : undefined });
     if (!(await sendMail({ to, ...mail }))) await db.from("payment_emails").delete().eq("payment_id", claim);
   } catch (e) {
     console.error("notifyPlus", e instanceof Error ? e.message : e);
@@ -68,15 +76,10 @@ async function notifyPurchase(parsed: { buyer: string; item: Item }, paymentId: 
     const { data } = await db.auth.admin.getUserById(parsed.buyer);
     const to = data.user?.email;
     if (!to) return;
-    const lang = currency === "BRL" ? "pt" : "en";
+    const lang = await mailLocale(parsed.buyer, currency);
     const { item } = parsed;
-    const pt = lang === "pt";
-    const detail =
-      item.kind === "credits" ? (pt ? `${item.credits} créditos foram adicionados à sua conta.` : `${item.credits} credits were added to your account.`)
-      : item.kind === "gift" ? (pt ? "O presente de 1 mês de PINZ+ foi enviado." : "Your 1-month PINZ+ gift was sent.")
-      : item.days ? (pt ? `PINZ+ ativo por ${item.days} dias.` : `PINZ+ is active for ${item.days} days.`)
-      : (pt ? "PINZ+ vitalício ativado." : "Lifetime PINZ+ activated.");
-    const mail = purchaseMail({ lang, item: item.title, detail, amount: formatMoney(item.cents, currency, pt ? "pt-BR" : "en-US"), paymentId: paymentId.replace(/^stripe:/, "") });
+    const kind = item.kind === "credits" ? "credits" : item.kind === "gift" ? "gift" : item.days ? "plus_days" : "lifetime";
+    const mail = purchaseMail({ lang, item: item.title, kind, n: kind === "credits" ? item.credits : item.days ?? undefined, amount: formatMoney(item.cents, currency, LOCALE_TAGS[lang]), paymentId: paymentId.replace(/^stripe:/, "") });
     const sent = await sendMail({ to, ...mail });
     if (!sent) await db.from("payment_emails").delete().eq("payment_id", paymentId); // não saiu: libera para a próxima tentativa do provedor
   } catch (e) {

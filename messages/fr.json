@@ -2217,7 +2217,15 @@
     "hd9xnm": "Vous avez déjà utilisé ce code.",
     "hsf1swr": "Ce code n’est plus disponible.",
     "hyzg7vr": "Trop de tentatives. Réessayez dans 15 minutes.",
-    "h1efww64": "Impossible d’utiliser le code pour le moment. Réessayez."
+    "h1efww64": "Impossible d’utiliser le code pour le moment. Réessayez.",
+    "h9x6hyt": "Rappel quotidien",
+    "h14ws7hi": "Nous vous prévenons si vous n’avez pas encore coché l’habitude aujourd’hui.",
+    "his9wyg": "Heure du rappel",
+    "h1erdh1s": "Notification sur cet appareil",
+    "h3pm2c": "Les notifications sont bloquées dans ce navigateur. Autorisez-les dans les réglages du navigateur.",
+    "hpgv5ou": "Cet appareil ne prend pas en charge les notifications. Sur iPhone, ajoutez Pinz à l’écran d’accueil pour les activer.",
+    "hmqwvmu": "Activer les notifications sur cet appareil",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "a décoché « {text} »",
     "listAnd": "et",
     "listNone": "a changé quelque chose",
-    "list": "@{actor} {what} dans ta liste « {list} »"
+    "list": "@{actor} {what} dans ta liste « {list} »",
+    "habitReminder": "Vous n’avez pas encore coché « {title} » aujourd’hui. Gardez votre série !"
   },
   "meta": {
     "siteDescription": "Pinz est un tableau numérique pour collecter des moments : reçois des notes, des photos, des chansons et des vidéos des personnes que tu aimes.",

@@ -2217,7 +2217,15 @@
     "hd9xnm": "Ten kupon został już przez Ciebie użyty.",
     "hsf1swr": "Ten kupon został wyczerpany.",
     "hyzg7vr": "Zbyt wiele prób. Spróbuj ponownie za 15 minut.",
-    "h1efww64": "Nie udało się teraz zrealizować. Spróbuj ponownie."
+    "h1efww64": "Nie udało się teraz zrealizować. Spróbuj ponownie.",
+    "h9x6hyt": "Codzienne przypomnienie",
+    "h14ws7hi": "Damy znać, jeśli dziś jeszcze nie zaznaczyłeś nawyku.",
+    "his9wyg": "Godzina przypomnienia",
+    "h1erdh1s": "Powiadomienie na tym urządzeniu",
+    "h3pm2c": "Powiadomienia są zablokowane w tej przeglądarce. Zezwól na nie w ustawieniach przeglądarki.",
+    "hpgv5ou": "To urządzenie nie obsługuje powiadomień. Na iPhonie dodaj Pinz do ekranu głównego, aby je włączyć.",
+    "hmqwvmu": "Włącz powiadomienia na tym urządzeniu",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "odznaczył(a) „{text}”",
     "listAnd": "i",
     "listNone": "coś zmienił(a)",
-    "list": "@{actor} {what} na Twojej liście „{list}”"
+    "list": "@{actor} {what} na Twojej liście „{list}”",
+    "habitReminder": "Nie zaznaczyłeś jeszcze dziś „{title}”. Utrzymaj swoją serię!"
   },
   "meta": {
     "siteDescription": "Pinz to cyfrowa tablica do zbierania chwil: otrzymuj notatki, zdjęcia, piosenki i filmy od bliskich.",

@@ -7,6 +7,7 @@ import { LOCALE_TAGS, type Locale } from "@/i18n/config";
 import { PwaRegister } from "@/components/PwaRegister";
 import { SiteTracker } from "@/components/SiteTracker";
 import { ConsentBanner } from "@/components/ConsentBanner";
+import { LocaleSync } from "@/components/LocaleSync";
 import { A11Y_INIT_SCRIPT } from "@/lib/a11y";
 import { SITE_HOST } from "@/lib/mural";
 import "./globals.css";
@@ -82,6 +83,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <A11yHost />
           <SiteTracker />
           <ConsentBanner />
+          <LocaleSync />
         </NextIntlClientProvider>
         <PwaRegister />
       </body>

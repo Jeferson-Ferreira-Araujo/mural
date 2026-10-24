@@ -2217,7 +2217,15 @@
     "hd9xnm": "Ya usaste este cupón.",
     "hsf1swr": "Este cupón se agotó.",
     "hyzg7vr": "Demasiados intentos. Inténtalo de nuevo en 15 minutos.",
-    "h1efww64": "No se pudo canjear ahora. Inténtalo de nuevo."
+    "h1efww64": "No se pudo canjear ahora. Inténtalo de nuevo.",
+    "h9x6hyt": "Recordatorio diario",
+    "h14ws7hi": "Te avisamos si hoy aún no marcaste el hábito.",
+    "his9wyg": "Hora del recordatorio",
+    "h1erdh1s": "Notificación en este dispositivo",
+    "h3pm2c": "Las notificaciones están bloqueadas en este navegador. Permítelas en la configuración del navegador.",
+    "hpgv5ou": "Este dispositivo no admite notificaciones. En iPhone, añade Pinz a la pantalla de inicio para activarlas.",
+    "hmqwvmu": "Activar notificaciones en este dispositivo",
+    "hdsrlbk": "Correo electrónico"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "desmarcó “{text}”",
     "listAnd": "y",
     "listNone": "modificó algo",
-    "list": "@{actor} {what} en tu lista “{list}”"
+    "list": "@{actor} {what} en tu lista “{list}”",
+    "habitReminder": "Aún no marcaste “{title}” hoy. ¡Mantén tu racha!"
   },
   "meta": {
     "siteDescription": "Pinz es un mural digital para coleccionar momentos: recibe mensajes, fotos, canciones y videos de las personas que quieres.",

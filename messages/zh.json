@@ -2217,7 +2217,15 @@
     "hd9xnm": "你已使用过此优惠码。",
     "hsf1swr": "此优惠码已用完。",
     "hyzg7vr": "尝试次数过多，请 15 分钟后再试。",
-    "h1efww64": "暂时无法兑换，请重试。"
+    "h1efww64": "暂时无法兑换，请重试。",
+    "h9x6hyt": "每日提醒",
+    "h14ws7hi": "如果你今天还没有打卡这个习惯，我们会提醒你。",
+    "his9wyg": "提醒时间",
+    "h1erdh1s": "在此设备上通知",
+    "h3pm2c": "此浏览器已屏蔽通知。请在浏览器设置中允许。",
+    "hpgv5ou": "此设备不支持通知。在 iPhone 上，请将 Pinz 添加到主屏幕后启用。",
+    "hmqwvmu": "在此设备上开启通知",
+    "hdsrlbk": "电子邮件"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "取消勾选了“{text}”",
     "listAnd": "和",
     "listNone": "修改了一些内容",
-    "list": "@{actor} 在你的清单“{list}”中{what}"
+    "list": "@{actor} 在你的清单“{list}”中{what}",
+    "habitReminder": "你今天还没有打卡“{title}”。保持你的连续天数吧！"
   },
   "meta": {
     "siteDescription": "Pinz 是一个收集美好时刻的数字留言板：接收你爱的人发来的便条、照片、歌曲和视频。",

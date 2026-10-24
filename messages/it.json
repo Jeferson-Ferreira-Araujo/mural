@@ -2217,7 +2217,15 @@
     "hd9xnm": "Hai già usato questo coupon.",
     "hsf1swr": "Questo coupon è esaurito.",
     "hyzg7vr": "Troppi tentativi. Riprova tra 15 minuti.",
-    "h1efww64": "Impossibile riscattare ora. Riprova."
+    "h1efww64": "Impossibile riscattare ora. Riprova.",
+    "h9x6hyt": "Promemoria giornaliero",
+    "h14ws7hi": "Ti avvisiamo se oggi non hai ancora segnato l’abitudine.",
+    "his9wyg": "Ora del promemoria",
+    "h1erdh1s": "Notifica su questo dispositivo",
+    "h3pm2c": "Le notifiche sono bloccate in questo browser. Consentile nelle impostazioni del browser.",
+    "hpgv5ou": "Questo dispositivo non supporta le notifiche. Su iPhone, aggiungi Pinz alla schermata Home per attivarle.",
+    "hmqwvmu": "Attiva le notifiche su questo dispositivo",
+    "hdsrlbk": "E-mail"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",
@@ -2233,7 +2241,8 @@
     "listUndone": "ha deselezionato «{text}»",
     "listAnd": "e",
     "listNone": "ha cambiato qualcosa",
-    "list": "@{actor} {what} nel tuo elenco «{list}»"
+    "list": "@{actor} {what} nel tuo elenco «{list}»",
+    "habitReminder": "Oggi non hai ancora segnato “{title}”. Mantieni la tua serie!"
   },
   "meta": {
     "siteDescription": "Pinz è una bacheca digitale per raccogliere momenti: ricevi biglietti, foto, canzoni e video dalle persone che ami.",
