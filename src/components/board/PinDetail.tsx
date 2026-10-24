@@ -120,9 +120,14 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const cardRef = useRef<HTMLDivElement>(null);
   const [showSecret, setShowSecret] = useState(false); // dono: ver o conteúdo de um pin em segredo (só nesta janela)
   const revealBtn = () => (
-    <button type="button" onClick={() => setShowSecret((v) => !v)} aria-pressed={showSecret} className={`${ghost} flex items-center justify-center gap-2`}>
-      {showSecret ? <EyeClosed /> : <EyeOpen />}
-      {showSecret ? (widget ? tl("Esconder display") : tx("m_esconderPin")) : widget ? tl("Revelar display") : tx("m_revelarPin")}
+    <button
+      type="button"
+      onClick={() => setShowSecret((v) => !v)}
+      aria-pressed={showSecret}
+      aria-label={showSecret ? (widget ? tl("Esconder display") : tx("m_esconderPin")) : widget ? tl("Revelar display") : tx("m_revelarPin")}
+      className={`${ghost} grid size-11 place-items-center !p-0`}
+    >
+      {showSecret ? <EyeOpen /> : <EyeClosed />}
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";

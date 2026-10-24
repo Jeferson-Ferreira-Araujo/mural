@@ -81,8 +81,12 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
           </div>
         </div>
         {own && hidden && (
-          <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} className={`${ghostButton} w-full`}>
-            {reveal ? tl("Esconder display") : tl("Revelar display")}
+          <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} aria-label={reveal ? tl("Esconder display") : tl("Revelar display")} className={`${ghostButton} mx-auto grid size-11 place-items-center !p-0`}>
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+              <circle cx="12" cy="12" r="3" />
+              {!reveal && <path d="m3 3 18 18" />}
+            </svg>
           </button>
         )}
         {text ? (
