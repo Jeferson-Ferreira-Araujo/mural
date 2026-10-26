@@ -210,7 +210,16 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
     if (na !== nb) return na ? -1 : 1;
     return na ? b.key - a.key : 0;
   });
-  const PER_PAGE = 9;
+  // a grade tem 3 colunas no celular e 6 no computador (lg): no computador cabem 3 fileiras cheias, 18 por página
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const on = () => setWide(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const PER_PAGE = wide ? 18 : 9;
   const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
   const pageSafe = Math.min(page, pages - 1);
   const goPage = (n: number) => {
