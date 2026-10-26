@@ -5,8 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
+import { Bars, brl, card, chip, Delta, Kpi, label, nf, type Item } from "./parts";
+import { GrowthView } from "./growth";
 
-type Item = { name: string; value: number };
 type Row = { name: string; total: number } & Record<string, number | string>;
 type Day = { d: string; views: number; sessions: number; visitors: number; active: number; signups: number; pins: number; pins_del: number; displays: number; revenue: number };
 type Metrics = {
@@ -29,44 +30,12 @@ type Metrics = {
 };
 type Live = { online: number; online_logged: number; online_devices: Item[]; online_pages: Item[]; per_minute: number[]; today_views: number; today_sessions: number; feed: { at: string; name: string; nick: string | null; detail: string | null }[]; at: string };
 
-const nf = (n: number) => Math.round(n).toLocaleString("pt-BR");
-const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const PERIODS: [number, string][] = [[1, "Hoje"], [7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [365, "1 ano"], [0, "Tudo"]];
 const PIN_TYPE: Record<string, string> = { postit: "Post-it", text: "Texto", photo: "Foto", video: "Vídeo", voice: "Voz", music: "Música", place: "Lugar", list: "Lista", draw: "Desenho" };
 const DISPLAY: Record<string, string> = { bible: "Versículo", motivation: "Frase", clock: "Relógio", weather: "Clima", calendar: "Calendário", date: "Calendário do dia", countdown: "Contador regressivo", daycount: "Contador de dias", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", cookie: "Biscoito da sorte", habit: "Meta de hábito", mood: "Humor do dia" };
 const TOOL: Record<string, string> = { open_store: "Abriu a loja", open_composer: "Abriu o compositor", open_profile: "Abriu o perfil", open_notifications: "Abriu notificações", share: "Compartilhou", install: "Instalou o app", search: "Usou a busca", display_placed: "Colocou display", badge_placed: "Colocou botton", follow: "Seguiu alguém", mural_created: "Criou mural" };
 const EVENT: Record<string, string> = { pin_created: "Pin criado", pin_deleted: "Pin excluído", display_placed: "Display colocado", display_removed: "Display removido", badge_placed: "Botton colocado", badge_removed: "Botton removido", mural_created: "Mural criado", mural_deleted: "Mural excluído", signup: "Novo cadastro", account_deleted: "Conta excluída", follow: "Novo seguidor", unfollow: "Deixou de seguir", login: "Entrou na conta", open_store: "Abriu a loja", open_composer: "Abriu o compositor", open_profile: "Abriu o perfil", search: "Usou a busca", share: "Compartilhou", install: "Instalou o app" };
 const DEVICE: Record<string, string> = { desktop: "Computador", mobile: "Celular", tablet: "Tablet", outro: "Outro" };
-const label = (map: Record<string, string>, k: string) => map[k] ?? k;
-
-const card = "rounded-2xl border border-[#e1d3ba] bg-white/80 p-4 shadow-[0_1px_0_rgba(0,0,0,.03)]";
-const chip = (on: boolean) => `cursor-pointer rounded-lg px-3 py-1.5 text-sm font-semibold transition ${on ? "bg-[#1f232b] text-white" : "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`;
-
-function Delta({ cur, prev }: { cur: number; prev: number }) {
-  if (!prev && !cur) return null;
-  if (!prev) return <span className="text-xs font-bold text-[#2f8f4e]">novo</span>;
-  const p = ((cur - prev) / prev) * 100;
-  const up = p >= 0;
-  return (
-    <span className={`text-xs font-bold ${up ? "text-[#2f8f4e]" : "text-[#c0392b]"}`} title={`Período anterior: ${nf(prev)}`}>
-      {up ? "▲" : "▼"} {Math.abs(p) < 10 ? Math.abs(p).toFixed(1) : nf(Math.abs(p))}%
-    </span>
-  );
-}
-
-function Kpi({ title, value, sub, cur, prev }: { title: string; value: string; sub?: string; cur?: number; prev?: number }) {
-  return (
-    <div className={card}>
-      <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{title}</p>
-      <p className="font-title mt-1 text-[2rem] leading-tight font-semibold tabular-nums">{value}</p>
-      <div className="mt-0.5 flex items-center gap-2">
-        {cur !== undefined && prev !== undefined && <Delta cur={cur} prev={prev} />}
-        {sub && <span className="text-xs text-[#6b5440]">{sub}</span>}
-      </div>
-    </div>
-  );
-}
-
 /** Gráfico de área simples em SVG, com valores ao passar o mouse. */
 function AreaChart({ points, fmt }: { points: { x: string; y: number }[]; fmt: (n: number) => string }) {
   const [hover, setHover] = useState<number | null>(null);
@@ -112,32 +81,6 @@ function AreaChart({ points, fmt }: { points: { x: string; y: number }[]; fmt: (
         </div>
       )}
     </div>
-  );
-}
-
-function Bars({ title, rows, fmt = nf, map }: { title: string; rows: Item[]; fmt?: (n: number) => string; map?: Record<string, string> }) {
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  return (
-    <section className={card}>
-      <h3 className="font-title text-base font-semibold">{title}</h3>
-      {rows.length === 0 ? (
-        <p className="mt-2 text-sm text-[#8a7b69]">Sem dados ainda neste período.</p>
-      ) : (
-        <ul className="mt-3 space-y-2">
-          {rows.map((r) => (
-            <li key={r.name} className="text-sm">
-              <div className="flex justify-between gap-3">
-                <span className="truncate">{map ? label(map, r.name) : r.name}</span>
-                <span className="font-semibold tabular-nums">{fmt(r.value)}</span>
-              </div>
-              <div className="mt-0.5 h-1.5 rounded-full bg-[#efe4cf]">
-                <div className="h-full rounded-full bg-[#d9a21b]" style={{ width: `${(r.value / max) * 100}%` }} />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
   );
 }
 
@@ -195,6 +138,7 @@ export default function MetricsPage() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [days, setDays] = useState(30);
+  const [tab, setTab] = useState<"growth" | "geral">("growth"); // painel de growth (padrão) ou a visão geral de uso
   const [m, setM] = useState<Metrics | null>(null);
   const [live, setLive] = useState<Live | null>(null);
   const [metric, setMetric] = useState<keyof Day>("views");
@@ -214,15 +158,15 @@ export default function MetricsPage() {
     setM(data as Metrics);
   }, [days]);
   useEffect(() => {
-    if (!allowed) return;
+    if (!allowed || tab !== "geral") return;
     setM(null);
     void loadMetrics();
     const t = window.setInterval(() => document.visibilityState === "visible" && void loadMetrics(), 30_000);
     return () => window.clearInterval(t);
-  }, [allowed, loadMetrics]);
+  }, [allowed, tab, loadMetrics]);
 
   useEffect(() => {
-    if (!allowed) return;
+    if (!allowed || tab !== "geral") return;
     const sb = getBrowserSupabase();
     const load = async () => {
       if (document.visibilityState !== "visible") return;
@@ -232,7 +176,7 @@ export default function MetricsPage() {
     void load();
     const t = window.setInterval(() => void load(), 4_000);
     return () => window.clearInterval(t);
-  }, [allowed]);
+  }, [allowed, tab]);
 
   useEffect(() => {
     const h = () => setPresent(!!document.fullscreenElement);
@@ -302,9 +246,9 @@ export default function MetricsPage() {
       <div className="mx-auto max-w-7xl">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-title text-2xl font-semibold sm:text-3xl">Pinz · Métricas</h1>
+            <h1 className="font-title text-2xl font-semibold sm:text-3xl">Pinz · Growth</h1>
             <p className="text-sm text-[#6b5440]">
-              {m ? `Atualizado às ${new Date(m.generated_at).toLocaleTimeString("pt-BR")} · dados próprios, sem cookies e sem rastreadores de terceiros` : "Carregando…"}
+              {tab === "growth" ? "Aquisição, ativação, retenção e receita · dados próprios, sem rastreadores de terceiros" : m ? `Atualizado às ${new Date(m.generated_at).toLocaleTimeString("pt-BR")} · dados próprios, sem cookies e sem rastreadores de terceiros` : "Carregando…"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 print:hidden">
@@ -313,9 +257,11 @@ export default function MetricsPage() {
                 ← Painel
               </Link>
             )}
-            <button type="button" onClick={exportCsv} className={chip(false)}>
-              Exportar CSV
-            </button>
+            {tab === "geral" && (
+              <button type="button" onClick={exportCsv} className={chip(false)}>
+                Exportar CSV
+              </button>
+            )}
             <button type="button" onClick={() => window.print()} className={chip(false)}>
               Imprimir / PDF
             </button>
@@ -325,7 +271,15 @@ export default function MetricsPage() {
           </div>
         </header>
 
-        <div className="mt-4 flex flex-wrap gap-1.5 print:hidden" role="tablist" aria-label="Período">
+        <div className="mt-4 flex flex-wrap gap-1.5 print:hidden" role="tablist" aria-label="Painel">
+          {([["growth", "Growth"], ["geral", "Visão geral de uso"]] as const).map(([id, t]) => (
+            <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={chip(tab === id)}>
+              {t}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-1.5 print:hidden" role="tablist" aria-label="Período">
           {PERIODS.map(([d, t]) => (
             <button key={d} type="button" role="tab" aria-selected={days === d} onClick={() => setDays(d)} className={chip(days === d)}>
               {t}
@@ -335,6 +289,10 @@ export default function MetricsPage() {
 
         {err && <p role="alert" className="mt-4 text-sm font-semibold text-[#a23b2a]">{err}</p>}
 
+        {tab === "growth" && <GrowthView days={days} />}
+
+        {tab === "geral" && (
+          <>
         {/* agora, em tempo real */}
         <section className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]" aria-label="Agora">
           <div className={card}>
@@ -480,6 +438,8 @@ export default function MetricsPage() {
             <p className="mt-6 text-xs text-[#8a7b69]">
               Como ler: visitantes e sessões contam navegações a partir da data em que a medição entrou no ar. Cadastros, pins, murais e seguidores têm histórico completo (vêm do próprio banco). Pins excluídos só contam a partir da medição; apagar um mural inteiro não conta como exclusão de pins. Sem IP, sem cookies e sem rastreadores externos.
             </p>
+          </>
+        )}
           </>
         )}
       </div>
