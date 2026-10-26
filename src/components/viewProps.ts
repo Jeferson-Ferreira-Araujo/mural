@@ -63,6 +63,8 @@ export type ViewProps = {
   guestNext?: string;
   /** Desktop: atalhos da conta desenhados na coluna bege (no lugar do menu hambúrguer). */
   sidebarMenu?: ReactNode;
+  /** Desktop: vendo o mural de OUTRA pessoa estando logado (não o próprio nem um compartilhado): menu lateral recolhido e foto, @ e botões no canto do mural. */
+  visit?: { nick: string; avatar?: string | null; plus?: boolean } | null;
   /** Os murais da pessoa dona deste mural (rodapé, com setas para trocar). */
   muralSwitch?: MuralSwitch;
 };

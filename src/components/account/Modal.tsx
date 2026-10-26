@@ -4,6 +4,7 @@ import { useBackClose } from "@/lib/backStack";
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 /**
  * Onde as janelas do menu da conta aparecem quando o menu é a gaveta: em vez de uma janela por cima, o conteúdo ocupa a parte de baixo da gaveta
@@ -18,8 +19,9 @@ const ArrowBack = () => (
 );
 
 /** Janela centralizada do menu da conta (abre por cima do menu lateral). */
-export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, overlay, footer, danger = false }: { /** barra fixa no pé da janela (sempre visível, fora da rolagem) */ footer?: ReactNode; /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
+export function Modal({ open, onClose, title, label, children, wide = false, xl = false, aside, headerLeft, onBack, overlay, footer, danger = false }: { /** seta no canto esquerdo do cabeçalho, antes do título (voltar a uma etapa anterior da própria janela) */ onBack?: () => void; /** barra fixa no pé da janela (sempre visível, fora da rolagem) */ footer?: ReactNode; /** janela de alerta (ex.: excluir a conta): borda, fundo e título em vermelho */ danger?: boolean; aside?: ReactNode; /** cobre a janela inteira (ex.: confirmação de que salvou) */ overlay?: ReactNode; /** no lugar do título, à esquerda do cabeçalho (ex.: botão de voltar) */ headerLeft?: ReactNode; xl?: boolean; open: boolean; onClose: () => void; /** título do cabeçalho; vazio = janela sem título (só o botão de fechar) */ title: string; /** nome da janela para leitores de tela quando não há título */ label?: string; children: ReactNode; wide?: boolean }) {
   const tx = useTranslations("components.account.Modal");
+  const tl = useLit();
   const ref = useRef<HTMLDialogElement>(null);
   const slot = useContext(EmbedCtx);
   useBackClose(open, onClose); // o botão voltar (Android) fecha esta janela em vez de sair da página
@@ -38,7 +40,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
       <div role="region" aria-label={title || label} className={`absolute inset-0 flex flex-col ${danger ? "bg-[#fdf1ed] text-[#4a1d14]" : "bg-[#f7efdc] text-[#2f2218]"}`}>
         <header className={`flex shrink-0 items-center gap-2 border-b px-3 py-2.5 ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}`}>
           {headerLeft ?? (
-            <button type="button" onClick={onClose} aria-label={tx("voltarAoMenu")} title={tx("voltarAoMenu")} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-black/5 active:scale-95">
+            <button type="button" onClick={onBack ?? onClose} aria-label={tx("voltarAoMenu")} title={tx("voltarAoMenu")} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-black/5 active:scale-95">
               <ArrowBack />
             </button>
           )}
@@ -70,7 +72,16 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
       {open && (
         <div className="relative flex max-h-[92dvh] flex-col">
           <header className={`flex items-center gap-3 px-5 py-3 ${title || headerLeft ? `justify-between border-b ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}` : "justify-end pb-0"}`}>
-            {title && <h2 className="font-title text-lg font-semibold">{title}</h2>}
+            {(title || onBack) && (
+              <div className="flex min-w-0 items-center gap-1.5">
+                {onBack && (
+                  <button type="button" onClick={onBack} aria-label={tl("Voltar")} title={tl("Voltar")} className="-ml-2 grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-black/5 active:scale-95">
+                    <ArrowBack />
+                  </button>
+                )}
+                {title && <h2 className="font-title text-lg font-semibold">{title}</h2>}
+              </div>
+            )}
             {headerLeft}
             {aside && <div className="ml-auto">{aside}</div>}
             <button type="button" onClick={onClose} aria-label={tx("fechar")} className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">

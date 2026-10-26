@@ -24,9 +24,10 @@ export async function listSharedMurals(sb: SupabaseClient): Promise<SharedMural[
   return data as SharedMural[];
 }
 
-export type SharedFailure = "plus_required" | "partner_not_found" | "partner_self" | "shared_limit" | "invite_exists" | "password_invalid" | "invalid_title" | "error";
+export type SharedFailure = "plus_required" | "partner_plus_required" | "partner_not_found" | "partner_self" | "shared_limit" | "invite_exists" | "password_invalid" | "question_invalid" | "invalid_title" | "error";
 
-const KNOWN: SharedFailure[] = ["plus_required", "partner_not_found", "partner_self", "shared_limit", "invite_exists", "password_invalid", "invalid_title"];
+// "partner_plus_required" vem antes de "plus_required": uma mensagem contém a outra
+const KNOWN: SharedFailure[] = ["partner_plus_required", "plus_required", "partner_not_found", "partner_self", "shared_limit", "invite_exists", "password_invalid", "question_invalid", "invalid_title"];
 const failure = (message: string): SharedFailure => KNOWN.find((k) => message.includes(k)) ?? "error";
 
 export const SHARED_ERROR_TEXT: Record<SharedFailure, string> = {
@@ -35,13 +36,16 @@ export const SHARED_ERROR_TEXT: Record<SharedFailure, string> = {
   partner_self: "Escolha outra pessoa: você não pode compartilhar o mural com você mesmo.",
   shared_limit: "Você já criou o máximo de 3 murais compartilhados.",
   invite_exists: "Já existe um convite seu aguardando essa pessoa.",
-  password_invalid: "A senha precisa ter de 6 a 72 caracteres.",
+  partner_plus_required: "Essa pessoa ainda não tem o PINZ+.",
+  password_invalid: "Escreva a resposta (até 100 letras).",
+  question_invalid: "A pergunta de segurança precisa ter de 3 a 140 letras.",
   invalid_title: "Escreva um nome para o mural (até 60 letras).",
   error: "Não foi possível concluir agora. Tente de novo.",
 };
 
-export async function createSharedMural(sb: SupabaseClient, title: string, partner: string, password: string): Promise<{ ok: true; id: string; slug: string; nickname: string } | { ok: false; reason: SharedFailure }> {
-  const { data, error } = await sb.rpc("create_shared_mural", { p_title: title, p_partner: partner, p_password: password });
+/** Mural compartilhado novo: público (os dois entram sem pergunta) ou privado (pergunta de segurança e resposta); validade dos pins de 7, 15 ou 30 dias (sem prazo = null). */
+export async function createSharedMural(sb: SupabaseClient, o: { title: string; partner: string; priv: boolean; question: string; answer: string; ttl: 7 | 15 | 30 | null }): Promise<{ ok: true; id: string; slug: string; nickname: string } | { ok: false; reason: SharedFailure }> {
+  const { data, error } = await sb.rpc("create_shared_mural", { p_title: o.title, p_partner: o.partner, p_password: o.priv ? o.answer : "", p_question: o.priv ? o.question : "", p_private: o.priv, p_ttl: o.ttl });
   if (error || !data) return { ok: false, reason: failure(error?.message ?? "") };
   return { ok: true, id: data.id, slug: data.slug, nickname: data.nickname };
 }
@@ -51,8 +55,9 @@ export async function respondSharedInvite(sb: SupabaseClient, id: string, accept
   return error ? { ok: false, reason: failure(error.message) } : { ok: true };
 }
 
-export async function setSharedPassword(sb: SupabaseClient, id: string, password: string): Promise<{ ok: true } | { ok: false; reason: SharedFailure }> {
-  const { error } = await sb.rpc("set_shared_password", { p_id: id, p_password: password });
+/** Troca a pergunta de segurança e a resposta (ou deixa o mural sem pergunta). Só quem criou. */
+export async function setSharedPrivacy(sb: SupabaseClient, id: string, o: { priv: boolean; question: string; answer: string }): Promise<{ ok: true } | { ok: false; reason: SharedFailure }> {
+  const { error } = await sb.rpc("set_shared_privacy", { p_id: id, p_private: o.priv, p_question: o.priv ? o.question : "", p_answer: o.priv ? o.answer : "" });
   return error ? { ok: false, reason: failure(error.message) } : { ok: true };
 }
 

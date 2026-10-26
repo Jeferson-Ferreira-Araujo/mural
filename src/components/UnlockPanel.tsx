@@ -31,6 +31,8 @@ type Props = {
   placed?: number | null;
   /** mural compartilhado: pede a senha (campo escondido) em vez de uma pergunta */
   password?: boolean;
+  /** mural compartilhado com pergunta de segurança: o campo mostra o que se digita (é uma resposta, não uma senha) */
+  plainAnswer?: boolean;
   /** "form": só o cartão de pergunta, grande, para o centro do quadro (desktop); "profile": só o perfil (sem a pergunta); padrão: tudo junto */
   part?: "form" | "profile";
   /** tocar na foto/nome abre o resumo do perfil */
@@ -52,7 +54,7 @@ const LockIcon = () => (
  * Pergunta de desbloqueio. A verificação é feita por quem usa o componente (onSubmit):
  * no mural real, no servidor (Supabase); no demo da página inicial, é simulada.
  */
-export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
+export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "light", title, owner, avatar, open = false, password = false, plainAnswer = false, plus = false, visits, followers, placed, part, onProfile, shareProfile, blockedUntil, onBlock }: Props) {
   const tl = useLit();
   const tx = useTranslations("components.UnlockPanel");
   const tag = useTag();
@@ -86,7 +88,7 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     const res = await onSubmit(answer);
     setBusy(false);
     if (res.ok) return;
-    if (res.reason === "wrong" && password) setHint(tx("m_senhaIncorreta"));
+    if (res.reason === "wrong" && password) setHint(plainAnswer ? tx("m_essaNaoEAResposta") : tx("m_senhaIncorreta"));
     else if (res.reason === "wrong") {
       if ((res.fails ?? 0) >= 3) {
         setBlockMsg(tx("x_wrongMany", { who: owner ? `@${owner}` : tl("essa pessoa") }));
@@ -138,8 +140,8 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               setAnswer(e.target.value);
               if (hint) setHint(null);
             }}
-            type={password ? "password" : "text"}
-            autoComplete={password ? "current-password" : "off"}
+            type={password && !plainAnswer ? "password" : "text"}
+            autoComplete={password && !plainAnswer ? "current-password" : "off"}
             placeholder={password ? tx("m_digiteASenha") : tx("m_digiteSuaResposta")}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
@@ -235,8 +237,8 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
               setAnswer(e.target.value);
               if (hint) setHint(null);
             }}
-            type={password ? "password" : "text"}
-            autoComplete={password ? "current-password" : "off"}
+            type={password && !plainAnswer ? "password" : "text"}
+            autoComplete={password && !plainAnswer ? "current-password" : "off"}
             placeholder={password ? tx("m_digiteASenha") : tx("m_digiteSuaResposta")}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}

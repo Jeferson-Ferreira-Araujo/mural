@@ -1448,7 +1448,7 @@
   "notifications": {
     "pinNew": "@{actor} deixou um PINZ no mural “{mural}”{pending, select, yes { · aguardando a sua aprovação} other {}}",
     "pinApproved": "@{actor} aprovou o seu PINZ",
-    "gift": "🎁 {hasActor, select, yes {@{actor}} other {Alguém}} te presenteou com 1 mês de PINZ+!",
+    "gift": "🎁 {hasActor, select, yes {@{actor}} other {Alguém}} te presenteou com 1 mês de PINZ+! Agora vocês podem criar murais compartilhados.",
     "birthdayPlus": "🎂 Feliz aniversário! Você ganhou o PINZ+ até o fim do mês.",
     "birthdayBadges": "🎂 Feliz aniversário! Você ganhou bottons de aniversário.",
     "archived": "📦 {count, plural, one {# pin foi arquivado} other {# pins foram arquivados}} no mural “{mural}”: passou do prazo de validade",

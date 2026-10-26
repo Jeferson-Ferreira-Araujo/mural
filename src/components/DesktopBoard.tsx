@@ -6,6 +6,7 @@ import { BOARD_CAPACITY } from "@/lib/plans";
 import { BoardCanvas } from "./board/BoardCanvas";
 import { PannableBoard } from "./board/PannableBoard";
 import { AccountActions } from "./account/AccountActions";
+import { Avatar } from "./Avatar";
 import { BadgeBar } from "./badges/BadgeBar";
 import { MuralNameMenu } from "./MuralNameMenu";
 import { LockedNotice } from "./LockedNotice";
@@ -30,6 +31,7 @@ export const BOARD_IMAGE = boardImageS(boardById(DEFAULT_BOARD)); // só serve d
 export function DesktopBoard(props: ViewProps) {
   const tx = useTranslations("components.DesktopBoard");
   const tl = useLit();
+  const visit = props.visit ?? null; // mural de outra pessoa: o menu lateral abre recolhido e a pessoa aparece no canto do mural
   const [collapsed, setCollapsed] = useState(false);
   const [clean, setClean] = useState(false); // mural limpo: esconde os botões flutuantes (o olho continua)
   const hide = clean ? "invisible opacity-0" : "";
@@ -42,9 +44,10 @@ export function DesktopBoard(props: ViewProps) {
         window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
       }
     } else {
-      // restaurar a visão devolve também o menu lateral (sem gravar a preferência)
+      // restaurar a visão devolve também o menu lateral (sem gravar a preferência); visitando alguém, volta como estava (recolhido, em geral)
+      const wasOpen = reopenMenu.current;
       reopenMenu.current = false;
-      setCollapsed(false);
+      setCollapsed(visit ? !wasOpen : false);
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 500);
     }
@@ -55,11 +58,27 @@ export function DesktopBoard(props: ViewProps) {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
     } catch {}
   }, []);
+  // ao entrar no mural de outra pessoa o menu lateral recolhe (mural em tela cheia); ao voltar ao próprio, volta ao que a pessoa tinha escolhido
+  const visitNick = visit?.nick ?? null;
+  const wasVisiting = useRef(false);
+  useEffect(() => {
+    if (visitNick) {
+      wasVisiting.current = true;
+      setCollapsed(true);
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+    } else if (wasVisiting.current) {
+      wasVisiting.current = false;
+      try {
+        setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
+      } catch {}
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+    }
+  }, [visitNick]);
   const toggleCollapsed = () => {
     const next = !collapsed;
     setCollapsed(next);
     try {
-      localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
+      if (!visit) localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0"); // visitando: a escolha vale só para esta visita
     } catch {}
     // o mural se refaz na nova largura
     window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
@@ -101,23 +120,22 @@ export function DesktopBoard(props: ViewProps) {
 
         <nav aria-label={tx("informacoesDoMural")} className={`${hide} pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5 transition-opacity`}>
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
+            {/* mural de outra pessoa, menu lateral recolhido: foto e @ (com o menu aberto, eles já aparecem nele), depois Seguir e os murais da pessoa */}
+            {visit && collapsed && (
+              <div className="flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-xl bg-[#fbf6ea] py-1 pr-4 pl-1.5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
+                <Avatar src={visit.avatar} name={visit.nick} plus={visit.plus} className="size-8" />
+                <span className="max-w-[16vw] truncate">@{visit.nick}</span>
+              </div>
+            )}
+            {visit && hasSelection && props.follow && <FollowButton follow={props.follow} />}
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
-            {hasSelection && !locked && props.muralInfo?.title && (
+            {hasSelection && (!locked || !!visit) && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
                 <MuralNameMenu title={props.muralInfo.title} sw={muralSwitch} showShared={!!account?.atHome} onCreate={newMural} />
               </h2>
             )}
             {hasSelection && !locked && unlocked && account?.atHome && plan === "free" && <PlanLimit used={items.length} />}
-            {hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
-            {/* no mural de outra pessoa: convidar para um mural só dos dois (abre o convite no perfil dela) */}
-            {hasSelection && !locked && props.follow && !account?.atHome && (
-              <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("pinz:invite-shared"))} className="inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#fbf6ea] px-4 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] transition hover:bg-white active:scale-95">
-                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <circle cx="9" cy="8" r="3.2" />
-                  <path d="M3 20c0-3.3 2.7-5.5 6-5.5M17 9v6M14 12h6" />
-                </svg>
-                {tx("x_convidarParaOMuralCompartilhado")}</button>
-            )}
+            {!visit && hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* convida outras pessoas a ver este mural */}
             {hasSelection && share && (
               <ShareButton reward iconOnly title={tx("convidarPessoasParaVerEste")} text={share.text} path={share.path} onNotify={onNotify} className="shrink-0 bg-[#fbf6ea] text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)] hover:bg-white" />

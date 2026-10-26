@@ -958,9 +958,10 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           <UnlockPanel
             part="form"
             password={isMember}
+            plainAnswer={isMember && !!selected.question}
             key={`${selected.nickname}/${selected.slug}/form`}
             owner={selected.nickname}
-            question={isMember ? tx("m_senhaDoMural") : selected.question}
+            question={isMember ? selected.question || tx("m_senhaDoMural") : selected.question}
             open={selected.open || isOwner}
             unlocked={unlocked}
             onSubmit={submitAnswer}
@@ -1029,6 +1030,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           {selected && !resolving && !(isShared && !isMember) && !(isMember && selected.locked) && (
             <UnlockPanel
               password={isMember}
+              plainAnswer={isMember && !!selected.question}
               key={`${selected.nickname}/${selected.slug}`}
               title={selected.title}
               owner={selected.nickname}
@@ -1039,7 +1041,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               visits={selected.kind === "shared" ? undefined : selected.stats.visited}
               followers={selected.kind === "shared" ? null : followers}
               placed={selected.kind === "shared" ? null : placed}
-              question={isMember ? tx("m_senhaDoMural") : selected.question}
+              question={isMember ? selected.question || tx("m_senhaDoMural") : selected.question}
               open={selected.open || isOwner}
               unlocked={unlocked}
               onSubmit={submitAnswer}
@@ -1050,10 +1052,24 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               onBlock={(sec) => setBlockedUntil(Date.now() + sec * 1000)}
             />
           )}
+          {/* mural de outra pessoa: o convite para um mural compartilhado mora aqui, no menu lateral (só quem tem o PINZ+ vê o botão) */}
+          {selected && !resolving && logged && !isShared && !isOwner && inventory?.plus && part === "profile" && (
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("pinz:invite-shared"))}
+              className="flex w-full cursor-pointer items-center justify-center gap-[0.6em] rounded-[0.8em] border border-[#d9c9ad] bg-[#fbf6ea] px-[1em] py-[0.8em] text-[0.95em] font-semibold text-[#2a1c12] transition hover:bg-white active:scale-[0.99]"
+            >
+              <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <circle cx="9" cy="8" r="3.2" />
+                <path d="M3 20c0-3.3 2.7-5.5 6-5.5M17 9v6M14 12h6" />
+              </svg>
+              {tl("Convidar para o mural compartilhado")}
+            </button>
+          )}
         </div>
       );
     },
-    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, nick, slug, resolving, followers, placed, blockedUntil],
+    [opening, choices, loading, logged, sessionLoading, initialRef, openMural, pickPerson, selected, submitAnswer, unlocked, isShared, isMember, isOwner, nick, slug, resolving, followers, placed, blockedUntil, inventory?.plus],
   );
 
   // sem mural escolhido: um mural de exemplo aleatório, nítido. Mural escolhido e trancado: o exemplo desfocado.
@@ -1229,13 +1245,14 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           boardPending={boardPendingNow}
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
           follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
+          visit={selected && logged && !isOwner && !isShared ? { nick: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : null}
           share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: tx("m_muralDeNoPinz", { v0: selected.nickname }), text: tx("m_venhaVerOMuralDe", { v0: selected.nickname }), path: `/${nick}/${slug}` } : null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null, topFollowers: unlocked && !isShared ? topFollowers : [], onProfile: isShared ? undefined : () => setProfileOpen(true) } : undefined}
           onChangeMural={clear}
           panel={panel}
           onNotify={notify}
           account={logged ? { onSearch: () => setSearchOpen(true), onHome: () => void homeRouteFor(getBrowserSupabase()).then((to) => (to === window.location.pathname ? undefined : window.location.assign(to))), atHome: isOwner, ...(isOwner && selected?.plan === "full" && own.length < PLUS_MAX_MURALS ? { onNewMural: () => setNewMuralOpen(true) } : {}), onMenu: () => setDrawer({ open: true }), badge: pendingCount + sharedInvites, notifications: { count: unread, onOpen: () => void openNotifications() } } : undefined}
-          muralSwitch={unlocked && nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
+          muralSwitch={(unlocked || (!isShared && !isOwner)) && nick && slug && siblings.length > 1 ? { items: siblings, current: slug, onSelect: (sl) => void openMural(nick, sl) } : undefined}
         guestNext={!logged && !sessionLoading && nick && slug ? `/${nick}/${slug}` : undefined}
           composer={
             isOwner

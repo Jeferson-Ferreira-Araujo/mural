@@ -5,7 +5,11 @@ import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { createSharedMural, SHARED_ERROR_TEXT } from "@/lib/shared";
 import { getProfileSummary, reportProfile, type ProfileReportReason, type ProfileSummary } from "@/lib/social";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { BOARDS, DEFAULT_BOARD, boardPreview } from "@/lib/boards";
+import { BOARDS, DEFAULT_BOARD } from "@/lib/boards";
+import { PAY_EVENT } from "@/lib/payments";
+import { BoardCarousel } from "./BoardCarousel";
+import { PinTtlField, type PinTtl } from "./PinTtlField";
+import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { fetchInventory, type BoardOffer } from "@/lib/badges";
 import { Avatar } from "../Avatar";
 import { Field, ghostButton, inputClass, primaryButton } from "../ui";
@@ -74,7 +78,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   const cardRef = useRef<HTMLDivElement>(null); // o cartão de visita (imagem) que vai no compartilhamento
   const [err, setErr] = useState<string | null>(null);
   const [title, setTitle] = useState("");
-  const [password, setPassword] = useState("");
+  const [privacy, setPrivacy] = useState<Privacy>({ priv: true, question: "", answer: "" }); // mural compartilhado: pergunta de segurança (ou público)
+  const [ttl, setTtl] = useState<PinTtl>(null);
   const [reason, setReason] = useState<ProfileReportReason>("ofensa");
   const [details, setDetails] = useState("");
   const [board, setBoard] = useState<string>(DEFAULT_BOARD);
@@ -86,7 +91,8 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
     setView(startView === "shared" && logged ? "shared" : "summary");
     setErr(null);
     setTitle("");
-    setPassword("");
+    setPrivacy({ priv: true, question: "", answer: "" });
+    setTtl(null);
     setDetails("");
     setBoard(DEFAULT_BOARD);
     if (logged) void fetchInventory(getBrowserSupabase()).then((inv) => setOffers(inv?.boards ?? []));
@@ -101,9 +107,11 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   async function sendShared(e: FormEvent) {
     e.preventDefault();
     if (busy) return;
+    const perr = privacyError(privacy, false);
+    if (perr) return setErr(tl(perr));
     setBusy(true);
     setErr(null);
-    const res = await createSharedMural(getBrowserSupabase(), title.trim(), nick, password);
+    const res = await createSharedMural(getBrowserSupabase(), { title: title.trim(), partner: nick, priv: privacy.priv, question: privacy.question.trim(), answer: privacy.answer.trim(), ttl });
     setBusy(false);
     if (!res.ok) return setErr(tl(SHARED_ERROR_TEXT[res.reason]));
     if (board !== DEFAULT_BOARD) await getBrowserSupabase().rpc("set_mural_board", { p_mural_id: res.id, p_board: board });
@@ -155,7 +163,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={heading} label={heading} headerLeft={view !== "summary" ? <button type="button" onClick={() => (setView("summary"), setErr(null))} className="cursor-pointer text-sm font-semibold text-[#6b5440] underline">{tx("voltar")}</button> : undefined}>
+    <Modal open={open} onClose={onClose} title={heading} label={heading} onBack={view !== "summary" ? () => (setView("summary"), setErr(null)) : undefined}>
       {!data ? (
         <CardSkeleton label={tx("carregandoOPerfil")} />
       ) : view === "summary" ? (
@@ -200,7 +208,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           )}
 
           <div className="space-y-2.5 border-t border-[#e6d8bd] pt-4">
-            {logged && !self && (
+            {logged && !self && viewerPlus && (
               <button type="button" onClick={() => (setErr(null), setView("shared"))} className={`${ghostButton} w-full`}>
                 {tx("convidarParaOMuralCompartilhado")}</button>
             )}
@@ -219,53 +227,45 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           </div>
         </div>
       ) : view === "shared" ? (
-        <form onSubmit={sendShared} noValidate className="space-y-4">
-          <p className="text-sm text-[#4a3826]">
-            {tx.rich("x_umMuralSoDeVoces", { v0: data.nickname, s0: (c) => <strong>{c}</strong> })}</p>
-          {!viewerPlus && <p className="rounded-xl border border-[#ecd9a0] bg-[#fff6dd] px-3 py-2 text-sm text-[#6b4a10]">{tx("voceAindaNaoTemO")}</p>}
-          <fieldset className="min-w-0">
-            <legend className="mb-1 text-sm font-semibold">{tx("tipoDoMural")}</legend>
-            <div role="radiogroup" aria-label={tx("tipoDoMural")} className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none]">
-              {ownedBoards.map((bd) => {
-                const on = board === bd.id;
-                return (
-                  <button
-                    key={bd.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    onClick={() => setBoard(bd.id)}
-                    className={`relative w-[7.5rem] shrink-0 cursor-pointer snap-center rounded-xl border-2 p-1.5 text-center transition ${on ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.35)] ring-2 ring-[#d9a21b]/40" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={boardPreview(bd)} alt="" draggable={false} className="aspect-[12/5] w-full rounded-lg object-cover" />
-                    {on && (
-                      <span aria-hidden className="absolute top-2.5 left-2.5 grid size-5 place-items-center rounded-full bg-[#d9a21b] text-[#2a1c12] shadow">
-                        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m5 12.5 4.5 4.5L19 7.5" />
-                        </svg>
-                      </span>
-                    )}
-                    <span className="mt-1 block text-xs font-semibold">{tl(bd.name)}</span>
-                  </button>
-                );
-              })}
+        !data.plus ? (
+          // a outra pessoa ainda não tem o PINZ+: não dá para criar o mural; dá para presenteá-la (1 mês, com o desconto de presente)
+          <div className="space-y-4 text-center">
+            <div className="text-5xl" aria-hidden>
+              🎁
             </div>
-            {ownedBoards.length === 1 && <p className="text-xs text-[#6b5440]">{tx("outrosTiposDeMuralVoce")}</p>}
-          </fieldset>
-          <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exNossaViagem")} className={inputClass} />}</Field>
-          <Field label={tx("senhaDoMural")} hint={<span className="text-xs text-[#8a7b69]">{tx("combineComAOutraPessoa")}</span>}>
-            {(id) => <input id={id} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />}
-          </Field>
-          {err && (
-            <p role="alert" className="text-sm text-[#a23b2a]">
-              {err}
-            </p>
-          )}
-          <button type="submit" disabled={busy || !viewerPlus || !title.trim() || password.length < 6} className={primaryButton}>
-            {busy ? tl("Enviando…") : tl("Enviar convite")}
-          </button>
-        </form>
+            <p className="font-title text-xl leading-snug font-semibold">{tl("Para criar um mural compartilhado, a outra pessoa precisa ser assinante PINZ+.")}</p>
+            <p className="text-sm text-[#4a3826]">{tl("O mural compartilhado só funciona quando as duas pessoas têm o PINZ+. Que tal presentear {nick} com 1 mês de PINZ+?").replace("{nick}", `@${data.nickname}`)}</p>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: `gift:${data.nickname}` } }));
+              }}
+              className={primaryButton}
+            >
+              {tl("Presentear {nick} com PINZ+").replace("{nick}", `@${data.nickname}`)}
+            </button>
+            <p className="text-xs text-[#6b5440]">{tl("Quando o pagamento for confirmado, ela é avisada do presente e vocês já podem criar murais compartilhados.")}</p>
+          </div>
+        ) : (
+          <form onSubmit={sendShared} noValidate className="space-y-4">
+            <p className="text-sm text-[#4a3826]">
+              {tx.rich("x_umMuralSoDeVoces", { v0: data.nickname, s0: (c) => <strong>{c}</strong> })}</p>
+            <BoardCarousel boards={ownedBoards} value={board} onChange={setBoard} label={tx("tipoDoMural")} />
+            {ownedBoards.length === 1 && <p className="text-center text-xs text-[#6b5440]">{tx("outrosTiposDeMuralVoce")}</p>}
+            <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exNossaViagem")} className={inputClass} />}</Field>
+            <PrivacyField value={privacy} onChange={setPrivacy} />
+            <PinTtlField value={ttl} onChange={setTtl} />
+            {err && (
+              <p role="alert" className="text-sm text-[#a23b2a]">
+                {err}
+              </p>
+            )}
+            <button type="submit" disabled={busy || !viewerPlus || !title.trim()} className={primaryButton}>
+              {busy ? tl("Enviando…") : tl("Enviar convite")}
+            </button>
+          </form>
+        )
       ) : (
         <form onSubmit={sendReport} noValidate className="space-y-4">
           <p className="text-sm text-[#4a3826]">

@@ -5,6 +5,7 @@ import { Avatar } from "../Avatar";
 import { primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 import { useTag } from "@/i18n/useTag";
 
 export type GiftNote = { id: string; actor?: string; avatar?: string | null; /** aniversário: "plus" (conta FREE ganhou o PINZ+ no mês) ou "badges" (PINZ+ ganhou bottons) */ birthday?: "plus" | "badges"; until?: string };
@@ -46,6 +47,7 @@ function Confetti() {
 /** Avisa a pessoa que ganhou um presente: 1 mês de PINZ+ de alguém ou o presente de aniversário (ao vivo ou no próximo login). */
 export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** nome de quem está entrando (aniversário) */ name?: string | null; onClose: () => void }) {
   const tx = useTranslations("components.account.GiftModal");
+  const tl = useLit();
   const tag = useTag();
   const bday = gift?.birthday;
   const until = gift?.until ? new Date(gift.until).toLocaleDateString(tag, { day: "numeric", month: "long", timeZone: "America/Sao_Paulo" }) : null;
@@ -109,6 +111,7 @@ export function GiftModal({ gift, name, onClose }: { gift: GiftNote | null; /** 
             {gift.actor && <Avatar src={gift.avatar ?? null} name={gift.actor} className="mx-auto size-16" />}
             <p className="text-base font-semibold">{tx("x_tePresenteouCom1Mes", { v0: gift.actor ? `@${gift.actor}` : tx("m_alguem") })}</p>
             <p className="text-sm text-[#4a3826]">{tx("seuPinzJaEstaAtivo")}</p>
+            {gift.actor && <p className="text-sm font-semibold text-[#4a3826]">{tl("Agora vocês podem criar murais compartilhados.")}</p>}
             <button type="button" onClick={onClose} className={`${primaryButton} w-full`}>
               {tx("obrigado")}</button>
           </div>

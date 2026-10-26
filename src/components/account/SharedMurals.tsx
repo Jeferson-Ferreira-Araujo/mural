@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { deleteSharedMural, listSharedMurals, respondSharedInvite, setSharedPassword, SHARED_ERROR_TEXT, type SharedFailure, type SharedMural } from "@/lib/shared";
+import { deleteSharedMural, listSharedMurals, respondSharedInvite, setSharedPrivacy, SHARED_ERROR_TEXT, type SharedFailure, type SharedMural } from "@/lib/shared";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { ghostButton, inputClass, primaryButton } from "../ui";
+import { ghostButton, primaryButton } from "../ui";
+import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 
@@ -22,7 +23,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [changing, setChanging] = useState<string | null>(null);
-  const [newPw, setNewPw] = useState("");
+  const [pv, setPv] = useState<Privacy>({ priv: true, question: "", answer: "" }); // nova pergunta de segurança (ou mural sem pergunta)
   const [confirmId, setConfirmId] = useState<string | null>(null); // mural que a pessoa quer apagar: pede confirmação aqui mesmo, no site
 
   const reload = useCallback(async () => {
@@ -54,15 +55,17 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
     await reload();
   }
 
-  async function savePassword(m: SharedMural) {
+  async function savePrivacy(m: SharedMural) {
+    const perr = privacyError(pv, false);
+    if (perr) return setErr(tl(perr));
     setBusy(true);
     setErr(null);
-    const res = await setSharedPassword(sb, m.id, newPw);
+    const res = await setSharedPrivacy(sb, m.id, { priv: pv.priv, question: pv.question.trim(), answer: pv.answer.trim() });
     setBusy(false);
     if (!res.ok) return fail(res.reason);
     setChanging(null);
-    setNewPw("");
-    onNotify(tx("m_senhaTrocadaAsDuasPessoas"));
+    setPv({ priv: true, question: "", answer: "" });
+    onNotify(tl("Pergunta de segurança atualizada. As duas pessoas entram de novo com a resposta nova."));
   }
 
   const invites = (list ?? []).filter((m) => !m.mine && m.status === "pending");
@@ -116,7 +119,7 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                     </p>
                   </div>
                   {m.mine && m.status === "accepted" && (
-                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={tx("m_alterarASenhaDe", { v0: m.title })} title={tx("alterarSenha")} className={iconBtn}>
+                    <button type="button" onClick={() => setChanging(changing === m.id ? null : m.id)} aria-label={`${tl("Alterar a pergunta de segurança")}: ${m.title}`} title={tl("Alterar a pergunta de segurança")} className={iconBtn}>
                       <svg {...ic}>
                         <circle cx="8" cy="15" r="4" />
                         <path d="m11 12 8-8M16 7l3 3M14 9l2 2" />
@@ -153,9 +156,9 @@ export function SharedMurals({ onChanged, onNotify }: { plus?: boolean; onChange
                   </div>
                 )}
                 {changing === m.id && (
-                  <div className="mt-3 flex gap-2">
-                    <input type="password" autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder={tx("novaSenhaMin6")} aria-label={tx("novaSenha")} className={inputClass} />
-                    <button type="button" disabled={busy || newPw.length < 6} onClick={() => void savePassword(m)} className={`${primaryButton} !w-auto shrink-0 px-4`}>
+                  <div className="mt-3 space-y-3">
+                    <PrivacyField value={pv} onChange={setPv} />
+                    <button type="button" disabled={busy} onClick={() => void savePrivacy(m)} className={primaryButton}>
                       {tx("salvar")}</button>
                   </div>
                 )}

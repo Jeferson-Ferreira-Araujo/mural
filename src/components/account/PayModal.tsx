@@ -54,17 +54,32 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
   const [copied, setCopied] = useState(false);
   const [left, setLeft] = useState(0); // segundos até o código expirar
   const fromPlans = product === "plus";
+  const giftNick = product?.startsWith("gift:") ? product.slice(5) : null; // "gift:<usuário>": presente para essa pessoa, direto para o pagamento
 
   useEffect(() => {
     if (!product) return;
-    setStep(product === "plus" ? "plans" : "choose");
-    setTarget(product === "plus" ? null : product);
+    setStep(product === "plus" || giftNick ? "plans" : "choose");
+    setTarget(product === "plus" || giftNick ? null : product);
     setRecipient("");
     setGiftInput("");
     setCharge(null);
     setBusy(null);
     setError(null);
     setCopied(false);
+    if (giftNick) {
+      setGiftInput(giftNick);
+      setStep("gift");
+      void getBrowserSupabase()
+        .rpc("gift_recipient", { p_nick: giftNick })
+        .then(({ data }) => {
+          const d = data as { ok?: boolean; nickname?: string; reason?: string } | null;
+          if (!d?.ok) return setError(tl(GIFT_ERROR[String(d?.reason)] ?? GIFT_ERROR.not_found));
+          setRecipient(d.nickname ?? giftNick);
+          setTarget("gift");
+          setStep("choose");
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
   const pack = target?.startsWith("credits:") ? CREDIT_PACKS.find((p) => p.id === target.slice(8)) : undefined;
@@ -203,7 +218,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
 
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
-  const open = !!product && (fromPlans || !!pack);
+  const open = !!product && (fromPlans || !!giftNick || !!pack);
   const title = step === "plans" || step === "gift" ? tl("PINZ+") : (info?.title ?? tl("PINZ+"));
   const ghost = "mt-2 w-full cursor-pointer rounded-xl px-4 py-2 text-sm font-semibold text-[#6b5440] hover:bg-black/5";
 
