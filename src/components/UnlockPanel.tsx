@@ -126,20 +126,17 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
         </section>
       );
     return (
-      <section aria-label={tx("acessoAoMural")} className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
-        {!password && owner && (
-          <div className="mb-[1.1em] flex flex-col items-center gap-[0.5em]">
-            <Avatar src={avatar} name={owner} plus={plus} className="size-[4.6em]" />
-            <p className="text-[1.1em] font-bold [overflow-wrap:anywhere]">@{owner}</p>
+      <section aria-label={tx("acessoAoMural")} className="rise w-full max-w-[22em] rounded-[1.2em] border border-white/15 bg-[#1c1510]/88 p-[1.3em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+        {!password && owner ? (
+          <div className="flex flex-col items-center gap-[0.35em]">
+            <Avatar src={avatar} name={owner} plus={plus} className="size-[3.6em]" />
+            <p className="text-[0.95em] font-bold [overflow-wrap:anywhere]">@{owner}</p>
           </div>
-        )}
-        <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
-          <LockIcon />
-        </span>
-        <p className="mt-[0.9em] text-[0.8em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? tx("m_muralCompartilhado") : tx("m_muralPrivado")}</p>
-        <h2 className="font-title mt-[0.45em] text-[1.9em] leading-tight font-semibold [overflow-wrap:anywhere]">{question}</h2>
-        {password && <p className="mt-[0.6em] text-[0.95em] text-white/75">{tx("digiteASenhaParaEntrar")}</p>}
-        <form onSubmit={submit} noValidate className="mt-[1.2em] text-left">
+        ) : null}
+        <p className="mt-[0.7em] text-[0.7em] font-semibold tracking-[0.16em] text-[#f2c230] uppercase">{password ? tx("m_muralCompartilhado") : tx("m_muralPrivado")}</p>
+        <h2 className="font-title mt-[0.35em] text-[1.25em] leading-snug font-semibold [overflow-wrap:anywhere]">{question}</h2>
+        {password && <p className="mt-[0.4em] text-[0.85em] text-white/75">{tx("digiteASenhaParaEntrar")}</p>}
+        <form onSubmit={submit} noValidate className="mt-[0.9em] text-left">
           <label htmlFor={inputId} className="sr-only">
             {question}
           </label>
@@ -157,14 +154,14 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
             placeholder={password ? tx("m_digiteASenha") : tx("m_digiteSuaResposta")}
             aria-invalid={hint !== null}
             aria-describedby={hint ? `${inputId}-hint` : undefined}
-            className="w-full rounded-[0.7em] border border-transparent bg-[#e9e5df] px-[1em] py-[0.8em] text-[1.05em] text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#f2c230]/80"
+            className="w-full rounded-[0.6em] border border-transparent bg-[#e9e5df] px-[0.85em] py-[0.6em] text-[0.95em] text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus-visible:ring-2 focus-visible:ring-[#f2c230]/80"
           />
           {hint && (
             <p id={`${inputId}-hint`} role="alert" className="mt-[0.5em] text-[0.9em] text-[#ffb4a2]">
               {hint}
             </p>
           )}
-          <button type="submit" disabled={busy} className="mt-[0.9em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.7em] bg-[#f2c230] px-[1em] py-[0.85em] text-[1.05em] font-bold text-[#2a1c12] transition hover:bg-[#f7cd45] disabled:opacity-70">
+          <button type="submit" disabled={busy} className="mt-[0.7em] flex w-full cursor-pointer items-center justify-center gap-[0.5em] rounded-[0.6em] bg-[#f2c230] px-[1em] py-[0.65em] text-[0.95em] font-bold text-[#2a1c12] transition hover:bg-[#f7cd45] disabled:opacity-70">
             {busy ? tl("Verificando…") : tl("Desbloquear")}
             <svg viewBox="0 0 24 24" className="size-[1.1em]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M5 12h14M13 6l6 6-6 6" />
