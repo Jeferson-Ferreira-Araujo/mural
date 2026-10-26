@@ -39,7 +39,7 @@ export function LivePresence({ muralId, isOwner }: { muralId: string; isOwner: b
     void ping();
     timer = window.setInterval(() => void ping(), PING_MS);
     const vis = () => document.visibilityState === "visible" && void ping();
-    const leave = () => void sb.rpc("live_leave", { p_key: key });
+    const leave = () => void sb.rpc("live_leave", { p_key: key }).then(() => undefined);
     document.addEventListener("visibilitychange", vis);
     window.addEventListener("pagehide", leave);
     return () => {

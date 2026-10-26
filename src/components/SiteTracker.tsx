@@ -26,7 +26,7 @@ const deviceOf = () => (/Mobi|Android|iPhone|iPod/i.test(navigator.userAgent) ? 
 export function trackEvent(name: string, props?: Record<string, unknown>) {
   try {
     if (!analyticsAllowed()) return;
-    void getBrowserSupabase().rpc("track_event", { p_name: name, p_session: sessionId().id, p_path: location.pathname, p_props: props ?? {} });
+    void getBrowserSupabase().rpc("track_event", { p_name: name, p_session: sessionId().id, p_path: location.pathname, p_props: props ?? {} }).then(() => undefined);
   } catch {}
 }
 
@@ -49,7 +49,7 @@ export function SiteTracker() {
     if (/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
     const sb = getBrowserSupabase();
     const { id, fresh } = sessionId();
-    const send = (name: string, props: Record<string, unknown>) => void sb.rpc("track_event", { p_name: name, p_session: id, p_path: path, p_props: props });
+    const send = (name: string, props: Record<string, unknown>) => void sb.rpc("track_event", { p_name: name, p_session: id, p_path: path, p_props: props }).then(() => undefined);
     if (fresh) {
       let ref = "";
       try {
@@ -71,8 +71,8 @@ export function SiteTracker() {
     if (navigator.doNotTrack === "1" || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
     if (!anonId.current) anonId.current = crypto.randomUUID();
     const sb = getBrowserSupabase();
-    void sb.rpc("anon_ping", { p_id: anonId.current, p_view: true });
-    const t = window.setInterval(() => document.visibilityState === "visible" && void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }), PING_MS);
+    void sb.rpc("anon_ping", { p_id: anonId.current, p_view: true }).then(() => undefined);
+    const t = window.setInterval(() => document.visibilityState === "visible" && void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }).then(() => undefined), PING_MS);
     return () => window.clearInterval(t);
   }, [path, ok]);
 
@@ -97,7 +97,7 @@ export function SiteTracker() {
     const sb = getBrowserSupabase();
     const ping = () => {
       if (document.visibilityState !== "visible" || location.pathname.startsWith("/admin")) return;
-      void sb.rpc("track_event", { p_name: "ping", p_session: sessionId().id, p_path: location.pathname, p_props: { device: deviceOf() } });
+      void sb.rpc("track_event", { p_name: "ping", p_session: sessionId().id, p_path: location.pathname, p_props: { device: deviceOf() } }).then(() => undefined);
     };
     const t = window.setInterval(ping, PING_MS);
     document.addEventListener("visibilitychange", ping);
