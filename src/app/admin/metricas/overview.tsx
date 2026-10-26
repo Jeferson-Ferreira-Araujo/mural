@@ -357,7 +357,7 @@ export function OverviewView({ days, extra }: { days: number; extra: Extra }) {
         </div>
         <div className={card}>
           <h2 className="font-title text-lg font-semibold">Origem de tráfego</h2>
-          <RowBars rows={origin} empty="Sem dados ainda (só conta quem aceitou o aviso de cookies)." />
+          <RowBars rows={origin} empty="Sem dados ainda (esse detalhe só vem de quem aceitou o aviso de cookies)." />
         </div>
       </section>
 

@@ -2281,7 +2281,8 @@
     "h9hhjuo": "Ortak pano ancak ikiniz de PINZ+ sahibiyseniz çalışır. {nick} kişisine 1 aylık PINZ+ hediye etmeye ne dersin?",
     "hh0htpg": "{nick} kişisine PINZ+ hediye et",
     "h181aouq": "Ödeme onaylanınca kişiye hediye bildirimi gider ve ortak panolar oluşturabilirsiniz.",
-    "h9cneyj": "Artık birlikte ortak panolar oluşturabilirsiniz."
+    "h9cneyj": "Artık birlikte ortak panolar oluşturabilirsiniz.",
+    "h1xzho0f": "Anonim sayım (her zaman açık, onay gerekmez): yalnızca kaç kişinin çevrimiçi olduğunu ve günde kaç sayfanın görüntülendiğini, toplam sayılar olarak sayıyoruz. Açık her sayfa, yalnızca kendi belleğinde yaşayan rastgele bir sayı kullanır (cihazına kaydedilmez) ve birkaç dakika içinde sunucumuzdan silinir. Bu sayımda hesap, IP, cihaz, dil, sayfa adresi veya yönlendiren site saklamıyoruz."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

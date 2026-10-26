@@ -2281,7 +2281,8 @@
     "h9hhjuo": "Le mur partagé ne fonctionne que si les deux personnes ont PINZ+. Et si vous offriez 1 mois de PINZ+ à {nick} ?",
     "hh0htpg": "Offrir PINZ+ à {nick}",
     "h181aouq": "Dès que le paiement est confirmé, la personne est prévenue du cadeau et vous pouvez créer des murs partagés.",
-    "h9cneyj": "Vous pouvez maintenant créer des murs partagés."
+    "h9cneyj": "Vous pouvez maintenant créer des murs partagés.",
+    "h1xzho0f": "Comptage anonyme (toujours actif, sans besoin d'accepter) : nous comptons seulement combien de personnes sont en ligne et combien de pages sont vues par jour, en chiffres cumulés. Chaque page ouverte utilise un nombre aléatoire qui n'existe que dans sa mémoire (il n'est pas enregistré sur votre appareil) et disparaît de notre serveur en quelques minutes. Dans ce comptage, nous ne conservons ni compte, ni IP, ni appareil, ni langue, ni adresse de la page, ni site d'origine."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

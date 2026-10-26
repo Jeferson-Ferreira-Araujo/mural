@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { analyticsAllowed, CONSENT_EVENT } from "@/lib/consent";
@@ -61,6 +61,19 @@ export function SiteTracker() {
     }
     send("page_view", {});
     send("ping", { device: deviceOf() });
+  }, [path, ok]);
+
+  // sem aceite: só a contagem anônima e agregada ("quantas pessoas online" e "quantas páginas vistas"). Nada é guardado no aparelho (o id vive só na memória desta página),
+  // não vai conta, IP, dispositivo, idioma nem endereço; respeita o "Não rastrear" do navegador, ignora robôs e o painel de administração.
+  const anonId = useRef<string>("");
+  useEffect(() => {
+    if (ok || !path || path.startsWith("/admin")) return;
+    if (navigator.doNotTrack === "1" || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
+    if (!anonId.current) anonId.current = crypto.randomUUID();
+    const sb = getBrowserSupabase();
+    void sb.rpc("anon_ping", { p_id: anonId.current, p_view: true });
+    const t = window.setInterval(() => document.visibilityState === "visible" && void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }), PING_MS);
+    return () => window.clearInterval(t);
   }, [path, ok]);
 
   // entrou na conta: um "login" por visita
