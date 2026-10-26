@@ -62,7 +62,7 @@ export function A11yHost() {
           saveA11y(v);
           applyA11y(v);
         } else if (JSON.stringify(cur.current) !== JSON.stringify(A11Y_DEFAULT)) {
-          void sb.rpc("set_a11y", { p_data: cur.current });
+          void sb.rpc("set_a11y", { p_data: cur.current }).then(() => undefined);
         }
       });
     };
@@ -82,7 +82,7 @@ export function A11yHost() {
     setS(next);
     saveA11y(next);
     applyA11y(next);
-    if (synced.current) void getBrowserSupabase().rpc("set_a11y", { p_data: next }); // logado: guarda na conta
+    if (synced.current) void getBrowserSupabase().rpc("set_a11y", { p_data: next }).then(() => undefined); // logado: guarda na conta
   }
   const patch = (p: Partial<A11y>) => commit({ ...cur.current, ...p });
 
