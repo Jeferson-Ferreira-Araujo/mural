@@ -110,6 +110,12 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
     if (blocked)
       return (
         <section aria-label={tx("muralBloqueado")} className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+          {!password && owner && (
+            <div className="mb-[1.1em] flex flex-col items-center gap-[0.5em]">
+              <Avatar src={avatar} name={owner} plus={plus} className="size-[4.6em]" />
+              <p className="text-[1.1em] font-bold [overflow-wrap:anywhere]">@{owner}</p>
+            </div>
+          )}
           <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
             <LockIcon />
           </span>
@@ -121,6 +127,12 @@ export function UnlockPanel({ question, unlocked, onSubmit, inputId, tone = "lig
       );
     return (
       <section aria-label={tx("acessoAoMural")} className="rise w-full max-w-[28em] rounded-[1.4em] border border-white/15 bg-[#1c1510]/88 p-[1.8em] text-center text-[#f6efe2] shadow-[0_1em_3em_rgba(0,0,0,.6)] backdrop-blur-md">
+        {!password && owner && (
+          <div className="mb-[1.1em] flex flex-col items-center gap-[0.5em]">
+            <Avatar src={avatar} name={owner} plus={plus} className="size-[4.6em]" />
+            <p className="text-[1.1em] font-bold [overflow-wrap:anywhere]">@{owner}</p>
+          </div>
+        )}
         <span className="mx-auto grid size-[3.2em] place-items-center rounded-full bg-[#f2c230] text-[1.2em] text-[#2a1c12]">
           <LockIcon />
         </span>

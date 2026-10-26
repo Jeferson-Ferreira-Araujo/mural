@@ -37,6 +37,11 @@ export function DesktopBoard(props: ViewProps) {
   const hide = clean ? "invisible opacity-0" : "";
   const reopenMenu = useRef(false); // o olho recolheu o menu lateral: ao mostrar os botões de novo, ele volta
   const toggleClean = () => {
+    // teste: o olho também põe o navegador em tela cheia (e tira, no clique seguinte); o clique é o gesto que o navegador exige
+    try {
+      if (!clean) void document.documentElement.requestFullscreen?.().catch(() => undefined);
+      else if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
+    } catch {}
     if (!clean) {
       reopenMenu.current = !collapsed;
       if (!collapsed) {
@@ -121,13 +126,13 @@ export function DesktopBoard(props: ViewProps) {
         <nav aria-label={tx("informacoesDoMural")} className={`${hide} pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5 transition-opacity`}>
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
             {/* mural de outra pessoa, menu lateral recolhido: foto e @ (com o menu aberto, eles já aparecem nele), depois Seguir e os murais da pessoa */}
-            {visit && collapsed && (
+            {visit && collapsed && !locked && (
               <div className="flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-xl bg-[#fbf6ea] py-1 pr-4 pl-1.5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
                 <Avatar src={visit.avatar} name={visit.nick} plus={visit.plus} className="size-8" />
                 <span className="max-w-[16vw] truncate">@{visit.nick}</span>
               </div>
             )}
-            {visit && hasSelection && props.follow && <FollowButton follow={props.follow} />}
+            {visit && hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && (!locked || !!visit) && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">

@@ -961,6 +961,8 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             plainAnswer={isMember && !!selected.question}
             key={`${selected.nickname}/${selected.slug}/form`}
             owner={selected.nickname}
+            avatar={selected.avatar}
+            plus={selected.plan === "full"}
             question={isMember ? selected.question || tx("m_senhaDoMural") : selected.question}
             open={selected.open || isOwner}
             unlocked={unlocked}
