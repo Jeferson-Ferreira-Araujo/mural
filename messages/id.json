@@ -2261,7 +2261,14 @@
     "h1cvalda": "Pindai dan tinggalkan pesan Anda",
     "hbzt2ni": "Untuk memposting, perlu masuk dengan akun Pinz.",
     "hh865ys": "Sembunyikan tombol",
-    "h10enppt": "Tampilkan tombol"
+    "h10enppt": "Tampilkan tombol",
+    "h1kmjnmh": "Kamu punya",
+    "hrrmaqu": "Pin diarsipkan.",
+    "h1mb17a0": "Arsipkan pin ini",
+    "h1d1zdt0": "Arsipkan",
+    "h1fnha7f": "Arsipkan pin",
+    "h2lhv5b": "Pin keluar dari mural, tetapi tidak dihapus.",
+    "h10g178d": "Untuk menemukannya lagi, buka menu samping > Pin saya > Diarsipkan. Dari sana kamu bisa memasang kembali pin ke mural kapan saja."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

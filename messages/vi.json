@@ -2261,7 +2261,14 @@
     "h1cvalda": "Quét và để lại lời nhắn",
     "hbzt2ni": "Để đăng cần đăng nhập bằng tài khoản Pinz.",
     "hh865ys": "Ẩn các nút",
-    "h10enppt": "Hiện các nút"
+    "h10enppt": "Hiện các nút",
+    "h1kmjnmh": "Bạn có",
+    "hrrmaqu": "Đã lưu trữ pin.",
+    "h1mb17a0": "Lưu trữ pin này",
+    "h1d1zdt0": "Lưu trữ",
+    "h1fnha7f": "Lưu trữ pin",
+    "h2lhv5b": "Pin rời khỏi bảng nhưng không bị xóa.",
+    "h10g178d": "Để tìm lại, hãy mở menu bên > Pin của tôi > Đã lưu trữ. Từ đó bạn có thể đặt pin trở lại bảng bất cứ lúc nào."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

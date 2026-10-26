@@ -115,6 +115,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmArchive, setConfirmArchive] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [shareMsg, setShareMsg] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -150,6 +151,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   useEffect(() => {
     setShowSecret(false);
     setConfirmDelete(false);
+    setConfirmArchive(false);
     setShareMsg(null);
   }, [index, open]);
 
@@ -292,6 +294,14 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             <CloseX />
           </button>
           <div className="flex w-full items-center justify-center gap-2 px-1 empty:hidden">
+            {mod?.archive && item && !isSealed(item) && !isHidden(item) && !item.pending && (
+              <button type="button" disabled={busy} aria-label={tl("Arquivar este pin")} title={tl("Arquivar este pin")} onClick={() => setConfirmArchive(true)} className={shareBtn}>
+                <svg {...big}>
+                  <path d="M3 5h18v4H3zM5 9v10h14V9M10 13h4" />
+                </svg>
+                {tl("Arquivar")}
+              </button>
+            )}
             {shareable && (
               <button type="button" disabled={sharing} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
                 {tx.rich("x_compartilhar", { n0: () => <ShareIcon /> })}</button>
@@ -477,6 +487,28 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
             >
               {tx("excluir")}</button>
+          </div>
+        </div>
+      </Modal>
+    )}
+    {mod?.archive && item && !isSealed(item) && !isHidden(item) && !item.pending && (
+      <Modal open={confirmArchive} onClose={() => setConfirmArchive(false)} title={tl("Arquivar pin")} label={tl("Arquivar pin")}>
+        <div className="space-y-4">
+          <p className="text-sm text-[#4a3826]">{tl("O pin sai do mural, mas não é apagado.")}</p>
+          <p className="rounded-xl bg-[#fff6dd] px-3 py-2.5 text-sm text-[#4a3826]">{tl("Para encontrá-lo de novo, abra o menu lateral > Meus pins > Arquivados. De lá você coloca o pin de volta no mural quando quiser.")}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setConfirmArchive(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
+              {tx("cancelar")}</button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setConfirmArchive(false);
+                void run(() => mod.archive!(item.id), true);
+              }}
+              className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60"
+            >
+              {tl("Arquivar")}</button>
           </div>
         </div>
       </Modal>

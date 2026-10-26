@@ -61,8 +61,8 @@ export function NewMuralModal({ open, onClose, nick, onBought, onBack }: { open:
 
   const owns = (id: string) => id === DEFAULT_BOARD || offers.find((o) => o.id === id)?.owned === true;
   const priceOf = (id: string) => offers.find((o) => o.id === id)?.price ?? 25;
-  // primeiro os quadros que a pessoa já tem, depois os que ela pode comprar (a ordem de cada grupo é a da loja)
-  const ordered = [...BOARDS].sort((a, b) => Number(owns(b.id)) - Number(owns(a.id)));
+  // o carrossel mostra só os quadros que a pessoa já tem (comprar é pela Loja)
+  const ordered = BOARDS.filter((b) => owns(b.id));
   const orderedRef = useRef(ordered);
   orderedRef.current = ordered;
 

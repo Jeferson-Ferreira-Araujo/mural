@@ -20,6 +20,8 @@ export type Moderation = {
   notify: (msg: string) => void;
   /** leva o pin para onde o dono soltou: passa a pertencer ao espaço `slot` (deslocado ox, oy em "em" do quadro) e cobre os espaços de `cov` */
   nudge: (id: string, slot: number, ox: number, oy: number, cov: number[]) => Promise<boolean>;
+  /** só o dono: tira o pin do mural e o guarda em Meus pins > Arquivados (dá para colocar de volta) */
+  archive?: (id: string) => Promise<boolean>;
   report: (id: string, r: { reason: ReportReason; details: string; block: boolean }) => Promise<boolean>;
 };
 

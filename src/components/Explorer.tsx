@@ -701,10 +701,16 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         }
         return true;
       },
+      archive: isOwner
+        ? async (id: string) => {
+            const { error } = await getBrowserSupabase().rpc("archive_pin", { p_id: id });
+            return afterModeration(!error, tl("Pin arquivado."));
+          }
+        : undefined,
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? tx("m_pinEmSegredo") : tx("m_pinVisivelParaTodos")),
       report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), tx("m_denunciaEnviadaEPinRemovido")),
     }),
-    [afterModeration, own, slug, isMember, notify, loadBoard],
+    [afterModeration, own, slug, isMember, isOwner, notify, loadBoard, tl],
   );
   // estoque de pins decorativos: 1 de cada pin liberado + extras compradas (FREE: os 10 iniciais; PINZ+: os 25). Ninguém tem ilimitado. Enquanto a loja carrega, só os iniciais.
   // ordem da barra: os bottons comprados primeiro (o mais novo no início)

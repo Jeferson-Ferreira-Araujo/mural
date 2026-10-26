@@ -33,7 +33,7 @@ const TILT = [-3, 2, -2, 3, -2, 2, -1.5, 2.5, -2, 1.5, -2, 2.5, -3, 2, -2.5] as 
 const jitter = (i: number) => ({ dx: (((i * 37) % 7) - 3) * 0.14, dy: (((i * 53) % 5) - 2) * 0.1 });
 
 /** Escala base do tamanho dos blocos (em cqw da lousa). */
-const BASE_EM_CQW = 0.98;
+const BASE_EM_CQW = 0.98 * 0.85; // teste: pins 15% menores, para caber mais na tela (displays e bottons não mudam)
 
 /**
  * Descobre o quanto encolher os blocos para a grade caber na cortiça sem sobrepor.

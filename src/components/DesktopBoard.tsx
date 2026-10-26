@@ -90,7 +90,7 @@ export function DesktopBoard(props: ViewProps) {
           aria-expanded={!collapsed}
           aria-label={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
           title={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
-          className={`${hide} absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
+          className={`absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
         >
           <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="m15 6-6 6 6 6" />

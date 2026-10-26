@@ -2261,7 +2261,14 @@
     "h1cvalda": "Tara ve mesajını bırak",
     "hbzt2ni": "Paylaşım yapmak için bir Pinz hesabıyla giriş yapmak gerekir.",
     "hh865ys": "Düğmeleri gizle",
-    "h10enppt": "Düğmeleri göster"
+    "h10enppt": "Düğmeleri göster",
+    "h1kmjnmh": "Sahipsin:",
+    "hrrmaqu": "Pin arşivlendi.",
+    "h1mb17a0": "Bu pini arşivle",
+    "h1d1zdt0": "Arşivle",
+    "h1fnha7f": "Pini arşivle",
+    "h2lhv5b": "Pin panodan kalkar ama silinmez.",
+    "h10g178d": "Tekrar bulmak için yan menü > Pinlerim > Arşivlenenler bölümünü aç. Oradan pini istediğin zaman panoya geri koyabilirsin."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

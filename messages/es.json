@@ -2261,7 +2261,14 @@
     "h1cvalda": "Escanea y deja tu mensaje",
     "hbzt2ni": "Para publicar necesitas iniciar sesión con una cuenta Pinz.",
     "hh865ys": "Ocultar los botones",
-    "h10enppt": "Mostrar los botones"
+    "h10enppt": "Mostrar los botones",
+    "h1kmjnmh": "Tienes",
+    "hrrmaqu": "Pin archivado.",
+    "h1mb17a0": "Archivar este pin",
+    "h1d1zdt0": "Archivar",
+    "h1fnha7f": "Archivar pin",
+    "h2lhv5b": "El pin sale del mural, pero no se borra.",
+    "h10g178d": "Para encontrarlo de nuevo, abre el menú lateral > Mis pins > Archivados. Desde ahí puedes volver a poner el pin en el mural cuando quieras."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

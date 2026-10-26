@@ -2261,7 +2261,14 @@
     "h1cvalda": "扫码留下你的留言",
     "hbzt2ni": "发布需要使用 Pinz 账号登录。",
     "hh865ys": "隐藏按钮",
-    "h10enppt": "显示按钮"
+    "h10enppt": "显示按钮",
+    "h1kmjnmh": "你有",
+    "hrrmaqu": "已归档图钉。",
+    "h1mb17a0": "归档此图钉",
+    "h1d1zdt0": "归档",
+    "h1fnha7f": "归档图钉",
+    "h2lhv5b": "图钉会从墙上移除，但不会被删除。",
+    "h10g178d": "想再找到它，请打开侧边菜单 > 我的图钉 > 已归档。你可以随时从那里把图钉放回墙上。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

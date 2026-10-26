@@ -376,6 +376,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <img src={badgeSrc(b.key)} alt="" draggable={false} className="max-h-14 max-w-14 select-none" style={{ filter: "drop-shadow(0 2px 3px rgba(60,30,0,.4))", animation: just ? "buy-wiggle 0.9s ease" : undefined }} />
                     </div>
                     <p className="mt-1 w-full truncate text-xs font-semibold">{name}</p>
+                    <p className={`w-full truncate text-[11px] ${owned ? "font-bold text-[#2f7d46]" : "text-[#8a7b69]"}`}>{tl("Você tem")} {owned ? 1 + c.extra : 0}</p>
                     <Qty value={n} onChange={(v) => setQty((q) => ({ ...q, [b.key]: v }))} label={tx("x_qty", { name })} />
                     {just ? (
                       <p className="mt-2 w-full rounded-lg bg-[#3aa655] px-2 py-1.5 text-xs font-bold text-white">{tx("comprado")}</p>

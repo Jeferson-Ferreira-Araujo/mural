@@ -2261,7 +2261,14 @@
     "h1cvalda": "Scannez et laissez votre message",
     "hbzt2ni": "Pour publier, il faut se connecter avec un compte Pinz.",
     "hh865ys": "Masquer les boutons",
-    "h10enppt": "Afficher les boutons"
+    "h10enppt": "Afficher les boutons",
+    "h1kmjnmh": "Vous avez",
+    "hrrmaqu": "Pin archivé.",
+    "h1mb17a0": "Archiver ce pin",
+    "h1d1zdt0": "Archiver",
+    "h1fnha7f": "Archiver le pin",
+    "h2lhv5b": "Le pin quitte le mur, mais il n'est pas supprimé.",
+    "h10g178d": "Pour le retrouver, ouvrez le menu latéral > Mes pins > Archivés. De là, vous pouvez le remettre sur le mur quand vous voulez."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

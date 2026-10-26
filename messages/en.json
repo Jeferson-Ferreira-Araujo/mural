@@ -2261,7 +2261,14 @@
     "h1cvalda": "Scan and leave your message",
     "hbzt2ni": "To post you need to sign in with a Pinz account.",
     "hh865ys": "Hide the buttons",
-    "h10enppt": "Show the buttons"
+    "h10enppt": "Show the buttons",
+    "h1kmjnmh": "You have",
+    "hrrmaqu": "Pin archived.",
+    "h1mb17a0": "Archive this pin",
+    "h1d1zdt0": "Archive",
+    "h1fnha7f": "Archive pin",
+    "h2lhv5b": "The pin leaves the board, but it is not deleted.",
+    "h10g178d": "To find it again, open the side menu > My pins > Archived. From there you can put the pin back on the board whenever you want."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

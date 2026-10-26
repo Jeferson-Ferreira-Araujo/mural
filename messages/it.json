@@ -2261,7 +2261,14 @@
     "h1cvalda": "Scansiona e lascia il tuo messaggio",
     "hbzt2ni": "Per pubblicare serve accedere con un account Pinz.",
     "hh865ys": "Nascondi i pulsanti",
-    "h10enppt": "Mostra i pulsanti"
+    "h10enppt": "Mostra i pulsanti",
+    "h1kmjnmh": "Hai",
+    "hrrmaqu": "Pin archiviato.",
+    "h1mb17a0": "Archivia questo pin",
+    "h1d1zdt0": "Archivia",
+    "h1fnha7f": "Archivia pin",
+    "h2lhv5b": "Il pin esce dalla bacheca, ma non viene eliminato.",
+    "h10g178d": "Per ritrovarlo, apri il menu laterale > I miei pin > Archiviati. Da lì puoi rimetterlo sulla bacheca quando vuoi."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

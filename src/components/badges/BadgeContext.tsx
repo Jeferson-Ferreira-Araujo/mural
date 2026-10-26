@@ -138,16 +138,13 @@ function evaluate(px: number, py: number, w: number, h: number, layer: Element, 
   const cy = clamp(py, lr.top + h / 2, lr.bottom - h / 2);
 
   if (coversBadge(cx, cy)) return { kind: "badge" };
-  // botton só fica sobre foto, post-it, papel (texto e lista) e desenho: nunca sobre mapa, vídeo, música, voz, cápsula nem display
+  // botton só fica sobre foto, post-it, papel (texto e lista) e desenho: nunca sobre mapa, vídeo, música, voz nem cápsula (sobre display pode)
   const br = { left: cx - w / 2, right: cx + w / 2, top: cy - h / 2, bottom: cy + h / 2 };
   const share = (o: { left: number; right: number; top: number; bottom: number }) => {
     const iw = Math.min(br.right, o.right) - Math.max(br.left, o.left);
     const ih = Math.min(br.bottom, o.bottom) - Math.max(br.top, o.top);
     return iw > 0 && ih > 0 ? (iw * ih) / (w * h) : 0; // quanto do botton cobre o outro item
   };
-  for (const ch of layer.children) {
-    if (ch !== ignore && (ch as HTMLElement).dataset.badgeKind === "display" && share(ch.getBoundingClientRect()) > 0.15) return { kind: "physical" };
-  }
   for (const fp of document.querySelectorAll<HTMLElement>("[data-pin-id]")) {
     if (fp.getBoundingClientRect().width <= 0 || fp.offsetParent === null) continue;
     if (BADGE_OK_TYPES.has(fp.dataset.pinType ?? "")) continue;

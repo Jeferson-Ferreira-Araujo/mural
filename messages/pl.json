@@ -2261,7 +2261,14 @@
     "h1cvalda": "Zeskanuj i zostaw wiadomość",
     "hbzt2ni": "Aby publikować, trzeba zalogować się kontem Pinz.",
     "hh865ys": "Ukryj przyciski",
-    "h10enppt": "Pokaż przyciski"
+    "h10enppt": "Pokaż przyciski",
+    "h1kmjnmh": "Masz",
+    "hrrmaqu": "Pin zarchiwizowany.",
+    "h1mb17a0": "Zarchiwizuj ten pin",
+    "h1d1zdt0": "Archiwizuj",
+    "h1fnha7f": "Archiwizuj pin",
+    "h2lhv5b": "Pin znika z tablicy, ale nie jest usuwany.",
+    "h10g178d": "Aby go znaleźć, otwórz menu boczne > Moje piny > Zarchiwizowane. Stamtąd możesz w każdej chwili przywrócić pin na tablicę."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

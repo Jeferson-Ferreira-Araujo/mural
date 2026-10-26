@@ -2261,7 +2261,14 @@
     "h1cvalda": "Scannen und Nachricht hinterlassen",
     "hbzt2ni": "Zum Posten ist die Anmeldung mit einem Pinz-Konto nötig.",
     "hh865ys": "Schaltflächen ausblenden",
-    "h10enppt": "Schaltflächen einblenden"
+    "h10enppt": "Schaltflächen einblenden",
+    "h1kmjnmh": "Du hast",
+    "hrrmaqu": "Pin archiviert.",
+    "h1mb17a0": "Diesen Pin archivieren",
+    "h1d1zdt0": "Archivieren",
+    "h1fnha7f": "Pin archivieren",
+    "h2lhv5b": "Der Pin verlässt die Pinnwand, wird aber nicht gelöscht.",
+    "h10g178d": "Um ihn wiederzufinden, öffne das Seitenmenü > Meine Pins > Archiviert. Von dort kannst du den Pin jederzeit zurück an die Pinnwand setzen."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

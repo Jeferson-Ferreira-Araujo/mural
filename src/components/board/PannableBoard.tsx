@@ -543,6 +543,31 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     };
   };
 
+  // teclado (desktop): ← e → levam o mural até a ponta de cada lado; + e − aproximam e afastam como o botão Aproximar/Afastar
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (document.querySelector("dialog[open]")) return; // janela aberta: as teclas são dela
+      const { w, h } = size.current;
+      if (!ready.current || w < 700) return;
+      const { minS, defS } = limits();
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        touched.current = true;
+        setHint(false);
+        view.current = clampView(e.key === "ArrowLeft" ? 1e6 : -1e6, view.current.y, view.current.s);
+        apply(true, 700);
+      } else if (e.key === "+" || e.key === "=" || e.key === "-" || e.key === "_") {
+        e.preventDefault();
+        zoomTo(e.key === "+" || e.key === "=" ? defS : minS, w / 2, h / 2, true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [apply, clampView, limits, zoomTo]);
+
   function toggleZoom() {
     const { w, h } = size.current;
     const { minS, defS } = limits();
