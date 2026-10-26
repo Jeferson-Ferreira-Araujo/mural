@@ -51,15 +51,8 @@ export function BadgeBar({ className = "", hideRewards = false, leading, storeRi
     return () => window.removeEventListener("pointerdown", away, true);
   }, [openCat]);
   if (!editable) return null;
-  // ordem da barra: os que ainda têm unidades vêm primeiro, os de MAIOR quantidade na frente; empate: o comprado mais recentemente primeiro;
-  // quem ficou sem unidades vai para o final (continua visível, só apagado)
-  const mine = BADGES.filter((b) => stock(b.key).owned).sort((a, b) => {
-    const la = stock(a.key).left ?? 0;
-    const lb = stock(b.key).left ?? 0;
-    if ((la > 0) !== (lb > 0)) return la > 0 ? -1 : 1;
-    if (la !== lb) return lb - la;
-    return (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0);
-  });
+  // ordem da barra: fixa, o comprado mais recentemente primeiro. Colocar um botton no mural (ou ele acabar) não muda a posição: fica onde estava, só apagado
+  const mine = BADGES.filter((b) => stock(b.key).owned).sort((a, b) => (acquiredAt(b.key) ?? 0) - (acquiredAt(a.key) ?? 0));
   // quem tem mais de um botton da mesma categoria vê só um botão na barra (com uma setinha): ele abre um painel para cima com todos eles.
   // A categoria Aniversário vem sempre primeiro; as demais seguem a posição do primeiro botton delas na barra
   const byCat = new Map<string, typeof mine>();
