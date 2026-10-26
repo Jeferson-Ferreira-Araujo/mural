@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
  * Aviso para o PROPRIETÁRIO quando o mural enche e visitantes ainda tentam deixar um PINZ.
  * (Na demonstração os números são locais; depois virão de eventos reais.)
  */
-export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: number; tone?: Tone; /** > 0: o plano gratuito travou o mural neste número de pins (ainda há espaços no quadro) */ planLimit?: number }) {
+export function OwnerAlert({ tries, tone = "light" }: { tries: number; tone?: Tone }) {
   const tx = useTranslations("components.board.OwnerAlert");
   const dark = tone === "dark";
   return (
@@ -15,7 +15,7 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
       className={`rounded-[1em] border px-[1.1em] py-[0.95em] ${dark ? "border-[#e0a02f]/50 bg-[#3a2a0c]/80 text-[#fff1cf] backdrop-blur" : "border-[#e0b04a] bg-[#fff1cf] text-[#4a3000]"}`}
     >
       <p className="flex items-center gap-[0.5em] text-[1.05em] font-bold">
-        <span aria-hidden>📌</span> {planLimit > 0 ? tx("m_voceChegouAoLimiteDe", { v0: planLimit }) : tx("m_seuMuralEstaCheio")}
+        <span aria-hidden>📌</span> {tx("m_seuMuralEstaCheio")}
       </p>
       <p className="mt-[0.3em] text-[0.92em]">
         {tries > 0 ? (
@@ -25,7 +25,7 @@ export function OwnerAlert({ tries, tone = "light", planLimit = 0 }: { tries: nu
           tx("m_ninguemTentouDeixarUmPinz")
         )}
       </p>
-      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{planLimit > 0 ? tx("m_assineOPinzParaColocar") : tx("m_emBreveUseCreditosPara")}</p>
+      <p className={`mt-[0.5em] text-[0.78em] ${dark ? "text-[#fff1cf]/70" : "text-[#4a3000]/70"}`}>{tx("m_emBreveUseCreditosPara")}</p>
     </section>
   );
 }

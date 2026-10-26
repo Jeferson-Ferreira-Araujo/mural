@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Сейчас не удалось изменить размер.",
         "m_naoFoiPossivelColocarO2": "Сейчас не удалось разместить виджет.",
         "m_naoHaEspacoLivreAo": "Рядом нет свободного места для этого виджета. Попробуйте другое место.",
-        "m_oPlanoGratuitoPermiteAte": "Бесплатный тариф позволяет разместить на доске до 15 пинов и виджетов. С PINZ+ такого ограничения нет.",
         "m_oMuralChegouAoMaximo": "На доске достигнуто максимальное число элементов.",
         "m_esteDisplayEDaLoja": "Этот виджет из магазина. Разблокируйте его за кредиты, чтобы использовать.",
         "m_tirarODisplayDoMural": "Убрать виджет с доски",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Уведомление для владельца доски",
-        "m_voceChegouAoLimiteDe": "Вы достигли предела бесплатного тарифа — {v0} пинов.",
         "m_seuMuralEstaCheio": "Ваша доска заполнена.",
         "m_ninguemTentouDeixarUmPinz": "Пока никто не пытался оставить PINZ.",
-        "m_assineOPinzParaColocar": "Оформите PINZ+, чтобы размещать неограниченное число пинов и виджетов.",
         "m_emBreveUseCreditosPara": "Скоро: откройте ещё одну доску за кредиты.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {человек попытался} few {человека попытались} many {человек попытались} other {человека попытались}} оставить PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "До {v0} секунд."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Бесплатный тариф ограничен 15 пинами и виджетами. Чтобы было больше, владельцу нужен PINZ+.",
         "prontoAvisamosODonoDo": "Готово! Мы сообщили владельцу доски, что вы заходили. 💛",
         "fechar": "Закрыть",
         "aviseODonoQueVoce": "Сообщите владельцу, что вы заходили.",
         "euTenteiDeixarUmPinz": "Я попытался(ась) оставить PINZ",
         "naoCustaNada": "Это ничего не стоит.",
-        "m_esteMuralChegouAoLimite": "Эта доска достигла предела тарифа.",
         "m_estePinzEstaLotado": "Этот PINZ заполнен."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Открывается…",
       "ou": "или",
       "m_naoFoiPossivelEntrarCom": "Не удалось войти через {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Предел тарифа",
-      "free": "БЕСПЛАТНО",
-      "comOPinzVoceTem": "С PINZ+ вы получаете:",
-      "m_assinarOPinzPorR": "Оформить PINZ+ за R$ 9,90/мес.",
-      "x_voceEstaUsandoDePins": "Вы используете <s0>{v0}</s0> из <s1>{v1}</s1> пинов и виджетов на вашей доске. Это предел <s2>БЕСПЛАТНОГО</s2> аккаунта, в который входит 1 доска.",
-      "x_usedAria": "Использовано {used} из {max} элементов. Подробнее о пределе тарифа",
-      "x_subscribe": "Оформить PINZ+ за {price}/мес."
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Человек не найден",

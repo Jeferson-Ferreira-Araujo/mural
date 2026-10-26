@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "تعذّر تغيير الحجم الآن.",
         "m_naoFoiPossivelColocarO2": "تعذّر وضع الشاشة الآن.",
         "m_naoHaEspacoLivreAo": "لا توجد مساحة شاغرة حولها لوضع هذه الشاشة هنا. جرّب موضعًا آخر.",
-        "m_oPlanoGratuitoPermiteAte": "تسمح الباقة المجانية بما يصل إلى 15 دبّوسًا وشاشة على اللوحة. مع PINZ+ لا يوجد هذا الحد.",
         "m_oMuralChegouAoMaximo": "بلغت اللوحة الحد الأقصى من العناصر.",
         "m_esteDisplayEDaLoja": "هذه الشاشة من المتجر. افتحها بالأرصدة لاستخدامها.",
         "m_tirarODisplayDoMural": "إزالة الشاشة من اللوحة",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "ملاحظة لصاحب اللوحة",
-        "m_voceChegouAoLimiteDe": "بلغت حد الباقة المجانية وهو {v0} دبوسًا.",
         "m_seuMuralEstaCheio": "لوحتك ممتلئة.",
         "m_ninguemTentouDeixarUmPinz": "لم يحاول أحد ترك PINZ بعد.",
-        "m_assineOPinzParaColocar": "اشترك في PINZ+ لوضع دبابيس وشاشات بلا حدود.",
         "m_emBreveUseCreditosPara": "قريبًا: استخدم الأرصدة لفتح لوحة أخرى.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, zero {شخص حاول} one {شخص حاول} two {شخصان حاولا} few {أشخاص حاولوا} many {شخصًا حاولوا} other {شخص حاولوا}} ترك PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "حتى {v0} ثانية."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "الباقة المجانية لها حد 15 دبّوسًا وشاشة. للحصول على المزيد يحتاج المالك إلى PINZ+.",
         "prontoAvisamosODonoDo": "تم! أبلغنا صاحب اللوحة أنك زرت اللوحة. 💛",
         "fechar": "إغلاق",
         "aviseODonoQueVoce": "أخبر المالك أنك زرت اللوحة.",
         "euTenteiDeixarUmPinz": "حاولت ترك PINZ",
         "naoCustaNada": "لا يكلّف شيئًا.",
-        "m_esteMuralChegouAoLimite": "بلغت هذه اللوحة حد الباقة.",
         "m_estePinzEstaLotado": "هذا الـ PINZ ممتلئ."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "جارٍ الفتح…",
       "ou": "أو",
       "m_naoFoiPossivelEntrarCom": "تعذّر تسجيل الدخول عبر {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "حد الباقة",
-      "free": "مجاني",
-      "comOPinzVoceTem": "مع PINZ+ تحصل على:",
-      "m_assinarOPinzPorR": "اشترك في PINZ+ بـ 9,90 ريال برازيلي/شهر",
-      "x_voceEstaUsandoDePins": "تستخدم <s0>{v0}</s0> من <s1>{v1}</s1> دبّوسًا وشاشة على لوحتك. هذا هو حد الحساب <s2>المجاني</s2> الذي يشمل لوحة واحدة.",
-      "x_usedAria": "استُخدم {used} من {max} عنصرًا. اعرف المزيد عن حد الباقة",
-      "x_subscribe": "اشترك في PINZ+ بـ {price}/شهر"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "لم يتم العثور على الشخص",

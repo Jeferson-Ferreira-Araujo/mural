@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "We konden de grootte nu niet wijzigen.",
         "m_naoFoiPossivelColocarO2": "We konden de display nu niet plaatsen.",
         "m_naoHaEspacoLivreAo": "Er is rondom geen vrije ruimte om deze display hier te plaatsen. Probeer een andere plek.",
-        "m_oPlanoGratuitoPermiteAte": "Het gratis abonnement staat tot 15 pins en displays op het bord toe. Met PINZ+ is er geen limiet.",
         "m_oMuralChegouAoMaximo": "Het bord heeft het maximale aantal items bereikt.",
         "m_esteDisplayEDaLoja": "Deze display komt uit de winkel. Ontgrendel hem met credits om hem te gebruiken.",
         "m_tirarODisplayDoMural": "Verwijder de display van het bord",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Bericht voor de eigenaar van het bord",
-        "m_voceChegouAoLimiteDe": "Je hebt de limiet van {v0} pins van het gratis abonnement bereikt.",
         "m_seuMuralEstaCheio": "Je bord is vol.",
         "m_ninguemTentouDeixarUmPinz": "Nog niemand probeerde een PINZ achter te laten.",
-        "m_assineOPinzParaColocar": "Neem PINZ+ om onbeperkt pins en displays te plaatsen.",
         "m_emBreveUseCreditosPara": "Binnenkort: gebruik credits om een ander bord te openen.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {persoon probeerde} other {mensen probeerden}} een PINZ achter te laten."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Maximaal {v0} seconden."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Het gratis abonnement heeft een limiet van 15 pins en displays. Om er meer te hebben, heeft de eigenaar PINZ+ nodig.",
         "prontoAvisamosODonoDo": "Klaar! We hebben de eigenaar van het bord laten weten dat je langs bent geweest. 💛",
         "fechar": "Sluiten",
         "aviseODonoQueVoce": "Laat de eigenaar weten dat je langs bent geweest.",
         "euTenteiDeixarUmPinz": "Ik probeerde een PINZ achter te laten",
         "naoCustaNada": "Het kost niets.",
-        "m_esteMuralChegouAoLimite": "Dit bord heeft de limiet van het abonnement bereikt.",
         "m_estePinzEstaLotado": "Deze PINZ is vol."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Openen…",
       "ou": "of",
       "m_naoFoiPossivelEntrarCom": "We konden niet inloggen met {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Abonnementslimiet",
-      "free": "GRATIS",
-      "comOPinzVoceTem": "Met PINZ+ krijg je:",
-      "m_assinarOPinzPorR": "Neem PINZ+ voor R$ 9,90/maand",
-      "x_voceEstaUsandoDePins": "Je gebruikt <s0>{v0}</s0> van <s1>{v1}</s1> pins en displays op je bord. Dat is de limiet van het <s2>GRATIS</s2> account, dat 1 bord bevat.",
-      "x_usedAria": "{used} van {max} items gebruikt. Meer over de abonnementslimiet",
-      "x_subscribe": "Neem PINZ+ voor {price}/maand"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Persoon niet gevonden",

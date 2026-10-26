@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Non siamo riusciti a cambiare la dimensione ora.",
         "m_naoFoiPossivelColocarO2": "Non siamo riusciti a mettere il display ora.",
         "m_naoHaEspacoLivreAo": "Non c'è spazio libero attorno per mettere qui questo display. Prova un altro punto.",
-        "m_oPlanoGratuitoPermiteAte": "Il piano gratuito consente fino a 15 pin e display sulla bacheca. Con PINZ+ non c'è questo limite.",
         "m_oMuralChegouAoMaximo": "La bacheca ha raggiunto il numero massimo di elementi.",
         "m_esteDisplayEDaLoja": "Questo display viene dal negozio. Sbloccalo con i crediti per usarlo.",
         "m_tirarODisplayDoMural": "Rimuovi il display dalla bacheca",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Avviso per il proprietario della bacheca",
-        "m_voceChegouAoLimiteDe": "Hai raggiunto il limite di {v0} pin del piano gratuito.",
         "m_seuMuralEstaCheio": "La tua bacheca è piena.",
         "m_ninguemTentouDeixarUmPinz": "Nessuno ha ancora provato a lasciare un PINZ.",
-        "m_assineOPinzParaColocar": "Abbonati a PINZ+ per mettere pin e display illimitati.",
         "m_emBreveUseCreditosPara": "In arrivo: usa i crediti per aprire un'altra bacheca.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {persona ha provato} many {persone hanno provato} other {persone hanno provato}} a lasciare un PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Fino a {v0} secondi."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Il piano gratuito ha un limite di 15 pin e display. Per averne di più, il proprietario ha bisogno di PINZ+.",
         "prontoAvisamosODonoDo": "Fatto! Abbiamo avvisato il proprietario della bacheca che sei passato. 💛",
         "fechar": "Chiudi",
         "aviseODonoQueVoce": "Fai sapere al proprietario che sei passato.",
         "euTenteiDeixarUmPinz": "Ho provato a lasciare un PINZ",
         "naoCustaNada": "Non costa nulla.",
-        "m_esteMuralChegouAoLimite": "Questa bacheca ha raggiunto il limite del piano.",
         "m_estePinzEstaLotado": "Questo PINZ è pieno."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Apertura…",
       "ou": "oppure",
       "m_naoFoiPossivelEntrarCom": "Non siamo riusciti ad accedere con {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Limite del piano",
-      "free": "GRATIS",
-      "comOPinzVoceTem": "Con PINZ+ ottieni:",
-      "m_assinarOPinzPorR": "Abbonati a PINZ+ a R$ 9,90/mese",
-      "x_voceEstaUsandoDePins": "Stai usando <s0>{v0}</s0> di <s1>{v1}</s1> pin e display sulla tua bacheca. È il limite dell'account <s2>GRATUITO</s2>, che include 1 bacheca.",
-      "x_usedAria": "{used} di {max} elementi usati. Scopri di più sul limite del piano",
-      "x_subscribe": "Abbonati a PINZ+ a {price}/mese"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Persona non trovata",

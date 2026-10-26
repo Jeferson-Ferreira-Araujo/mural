@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "We couldn't change the size right now.",
         "m_naoFoiPossivelColocarO2": "We couldn't place the display right now.",
         "m_naoHaEspacoLivreAo": "There's no free space around to place this display here. Try another spot.",
-        "m_oPlanoGratuitoPermiteAte": "The free plan allows up to 15 pins and displays on the board. With PINZ+ there is no such limit.",
         "m_oMuralChegouAoMaximo": "The board reached the maximum number of items.",
         "m_esteDisplayEDaLoja": "This display is from the store. Unlock it with credits to use it.",
         "m_tirarODisplayDoMural": "Remove the display from the board",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Notice for the board owner",
-        "m_voceChegouAoLimiteDe": "You reached the free plan limit of {v0} pins.",
         "m_seuMuralEstaCheio": "Your board is full.",
         "m_ninguemTentouDeixarUmPinz": "Nobody tried to leave a PINZ yet.",
-        "m_assineOPinzParaColocar": "Subscribe to PINZ+ to place unlimited pins and displays.",
         "m_emBreveUseCreditosPara": "Coming soon: use credits to open another board.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {person tried} other {people tried}} to leave a PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Up to {v0} seconds."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "The free plan has a limit of 15 pins and displays. To have more, the owner needs PINZ+.",
         "prontoAvisamosODonoDo": "Done! We let the board owner know you stopped by. 💛",
         "fechar": "Close",
         "aviseODonoQueVoce": "Let the owner know you stopped by.",
         "euTenteiDeixarUmPinz": "I tried to leave a PINZ",
         "naoCustaNada": "It costs nothing.",
-        "m_esteMuralChegouAoLimite": "This board reached the plan limit.",
         "m_estePinzEstaLotado": "This PINZ is full."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Opening…",
       "ou": "or",
       "m_naoFoiPossivelEntrarCom": "We couldn't sign in with {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Plan limit",
-      "free": "FREE",
-      "comOPinzVoceTem": "With PINZ+ you get:",
-      "m_assinarOPinzPorR": "Subscribe to PINZ+ for R$ 9.90/month",
-      "x_voceEstaUsandoDePins": "You are using <s0>{v0}</s0> of <s1>{v1}</s1> pins and displays on your board. That is the limit of the <s2>FREE</s2> account, which includes 1 board.",
-      "x_usedAria": "{used} of {max} items used. Learn more about the plan limit",
-      "x_subscribe": "Subscribe to PINZ+ for {price}/month"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person not found",

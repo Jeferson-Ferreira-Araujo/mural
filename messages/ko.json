@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "지금은 크기를 변경할 수 없습니다.",
         "m_naoFoiPossivelColocarO2": "지금은 디스플레이를 배치할 수 없습니다.",
         "m_naoHaEspacoLivreAo": "이 디스플레이를 여기에 놓을 주변 빈 공간이 없습니다. 다른 자리를 시도하세요.",
-        "m_oPlanoGratuitoPermiteAte": "무료 플랜은 보드에 핀과 디스플레이를 최대 15개까지 허용합니다. PINZ+에서는 한도가 없습니다.",
         "m_oMuralChegouAoMaximo": "보드가 최대 항목 수에 도달했습니다.",
         "m_esteDisplayEDaLoja": "이 디스플레이는 상점에서 온 것입니다. 사용하려면 크레딧으로 잠금을 해제하세요.",
         "m_tirarODisplayDoMural": "보드에서 디스플레이 제거",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "보드 주인에게 알림",
-        "m_voceChegouAoLimiteDe": "무료 플랜의 핀 한도 {v0}개에 도달했습니다.",
         "m_seuMuralEstaCheio": "보드가 가득 찼습니다.",
         "m_ninguemTentouDeixarUmPinz": "아직 PINZ를 남기려고 시도한 사람이 없습니다.",
-        "m_assineOPinzParaColocar": "무제한 핀과 디스플레이를 붙이려면 PINZ+를 구독하세요.",
         "m_emBreveUseCreditosPara": "곧 제공: 크레딧으로 다른 보드를 열 수 있습니다.",
         "x_deixarUmPinz": "<s0>{v0}</s0>명이 PINZ를 남기려고 시도했습니다."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "최대 {v0}초."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "무료 플랜은 핀과 디스플레이를 15개까지로 제한합니다. 더 많이 쓰려면 주인에게 PINZ+가 필요합니다.",
         "prontoAvisamosODonoDo": "완료! 보드 주인에게 방문하셨다고 알렸습니다. 💛",
         "fechar": "닫기",
         "aviseODonoQueVoce": "보드 주인에게 방문했다고 알려 주세요.",
         "euTenteiDeixarUmPinz": "PINZ를 남기려고 했어요",
         "naoCustaNada": "비용은 들지 않습니다.",
-        "m_esteMuralChegouAoLimite": "이 보드는 플랜 한도에 도달했습니다.",
         "m_estePinzEstaLotado": "이 PINZ는 가득 찼습니다."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "여는 중…",
       "ou": "또는",
       "m_naoFoiPossivelEntrarCom": "{v0}(으)로 로그인할 수 없습니다."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "플랜 한도",
-      "free": "무료",
-      "comOPinzVoceTem": "PINZ+에서는 다음을 받습니다:",
-      "m_assinarOPinzPorR": "월 R$ 9.90에 PINZ+ 구독",
-      "x_voceEstaUsandoDePins": "보드에서 핀과 디스플레이 <s1>{v1}</s1>개 중 <s0>{v0}</s0>개를 사용 중입니다. 보드 1개가 포함된 <s2>무료</s2> 계정의 한도입니다.",
-      "x_usedAria": "{max}개 중 {used}개 항목 사용됨. 플랜 한도에 대해 자세히 알아보기",
-      "x_subscribe": "월 {price}에 PINZ+ 구독"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "사람을 찾을 수 없음",

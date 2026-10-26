@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "ตอนนี้เรายังเปลี่ยนขนาดไม่ได้",
         "m_naoFoiPossivelColocarO2": "ตอนนี้เรายังวางจอแสดงผลไม่ได้",
         "m_naoHaEspacoLivreAo": "ไม่มีพื้นที่ว่างรอบ ๆ ให้วางจอแสดงผลนี้ที่นี่ ลองตำแหน่งอื่น",
-        "m_oPlanoGratuitoPermiteAte": "แพ็กเกจฟรีให้มีพินและจอแสดงผลบนบอร์ดได้สูงสุด 15 รายการ ด้วย PINZ+ ไม่มีขีดจำกัดนี้",
         "m_oMuralChegouAoMaximo": "บอร์ดมีจำนวนรายการสูงสุดแล้ว",
         "m_esteDisplayEDaLoja": "จอแสดงผลนี้มาจากร้านค้า ปลดล็อกด้วยเครดิตเพื่อใช้งาน",
         "m_tirarODisplayDoMural": "นำจอแสดงผลออกจากบอร์ด",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "ข้อความถึงเจ้าของบอร์ด",
-        "m_voceChegouAoLimiteDe": "คุณถึงขีดจำกัด {v0} พินของแพ็กเกจฟรีแล้ว",
         "m_seuMuralEstaCheio": "บอร์ดของคุณเต็มแล้ว",
         "m_ninguemTentouDeixarUmPinz": "ยังไม่มีใครพยายามทิ้ง PINZ ไว้",
-        "m_assineOPinzParaColocar": "สมัคร PINZ+ เพื่อปักพินและจอแสดงผลได้ไม่จำกัด",
         "m_emBreveUseCreditosPara": "เร็ว ๆ นี้: ใช้เครดิตเพื่อเปิดบอร์ดอื่น",
         "x_deixarUmPinz": "<s0>{v0}</s0> คนพยายามทิ้ง PINZ ไว้"
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "สูงสุด {v0} วินาที"
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "แพ็กเกจฟรีจำกัดที่ 15 พินและจอแสดงผล หากต้องการมากกว่านี้ เจ้าของต้องมี PINZ+",
         "prontoAvisamosODonoDo": "เรียบร้อย! เราแจ้งเจ้าของบอร์ดแล้วว่าคุณแวะมา 💛",
         "fechar": "ปิด",
         "aviseODonoQueVoce": "แจ้งให้เจ้าของทราบว่าคุณแวะมา",
         "euTenteiDeixarUmPinz": "ฉันพยายามทิ้ง PINZ ไว้",
         "naoCustaNada": "ไม่เสียค่าใช้จ่าย",
-        "m_esteMuralChegouAoLimite": "บอร์ดนี้ถึงขีดจำกัดของแพ็กเกจแล้ว",
         "m_estePinzEstaLotado": "PINZ นี้เต็มแล้ว"
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "กำลังเปิด…",
       "ou": "หรือ",
       "m_naoFoiPossivelEntrarCom": "เราเข้าสู่ระบบด้วย {v0} ไม่ได้"
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "ขีดจำกัดของแพ็กเกจ",
-      "free": "ฟรี",
-      "comOPinzVoceTem": "ด้วย PINZ+ คุณจะได้:",
-      "m_assinarOPinzPorR": "สมัคร PINZ+ ราคา R$ 9,90/เดือน",
-      "x_voceEstaUsandoDePins": "คุณใช้ <s0>{v0}</s0> จาก <s1>{v1}</s1> พินและจอแสดงผลบนบอร์ดของคุณ นั่นคือขีดจำกัดของบัญชี<s2>ฟรี</s2> ซึ่งมี 1 บอร์ด",
-      "x_usedAria": "ใช้ไป {used} จาก {max} รายการ เรียนรู้เพิ่มเติมเกี่ยวกับขีดจำกัดของแพ็กเกจ",
-      "x_subscribe": "สมัคร PINZ+ ราคา {price}/เดือน"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "ไม่พบบุคคลนี้",

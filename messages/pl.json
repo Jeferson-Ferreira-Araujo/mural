@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Nie udało się teraz zmienić rozmiaru.",
         "m_naoFoiPossivelColocarO2": "Nie udało się teraz umieścić wyświetlacza.",
         "m_naoHaEspacoLivreAo": "Wokół nie ma wolnego miejsca, by umieścić tu ten wyświetlacz. Spróbuj w innym miejscu.",
-        "m_oPlanoGratuitoPermiteAte": "Plan darmowy pozwala na maksymalnie 15 pinów i wyświetlaczy na tablicy. W PINZ+ nie ma takiego limitu.",
         "m_oMuralChegouAoMaximo": "Tablica osiągnęła maksymalną liczbę elementów.",
         "m_esteDisplayEDaLoja": "Ten wyświetlacz pochodzi ze sklepu. Odblokuj go kredytami, aby go używać.",
         "m_tirarODisplayDoMural": "Usuń wyświetlacz z tablicy",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Uwaga dla właściciela tablicy",
-        "m_voceChegouAoLimiteDe": "Osiągnięto limit {v0} pinów planu darmowego.",
         "m_seuMuralEstaCheio": "Twoja tablica jest pełna.",
         "m_ninguemTentouDeixarUmPinz": "Nikt jeszcze nie próbował zostawić PINZ.",
-        "m_assineOPinzParaColocar": "Wykup PINZ+, by umieszczać nieograniczoną liczbę pinów i wyświetlaczy.",
         "m_emBreveUseCreditosPara": "Wkrótce: użyj kredytów, by otworzyć kolejną tablicę.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {osoba próbowała} few {osoby próbowały} many {osób próbowało} other {osoby próbowały}} zostawić PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Do {v0} sekund."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Plan darmowy ma limit 15 pinów i wyświetlaczy. Aby mieć więcej, właściciel potrzebuje PINZ+.",
         "prontoAvisamosODonoDo": "Gotowe! Daliśmy znać właścicielowi tablicy, że wpadłeś. 💛",
         "fechar": "Zamknij",
         "aviseODonoQueVoce": "Daj znać właścicielowi, że wpadłeś.",
         "euTenteiDeixarUmPinz": "Próbowałem zostawić PINZ",
         "naoCustaNada": "To nic nie kosztuje.",
-        "m_esteMuralChegouAoLimite": "Ta tablica osiągnęła limit planu.",
         "m_estePinzEstaLotado": "Ten PINZ jest pełny."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Otwieranie…",
       "ou": "lub",
       "m_naoFoiPossivelEntrarCom": "Nie udało się zalogować przez {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Limit planu",
-      "free": "DARMOWY",
-      "comOPinzVoceTem": "Z PINZ+ dostajesz:",
-      "m_assinarOPinzPorR": "Wykup PINZ+ za R$ 9,90/miesiąc",
-      "x_voceEstaUsandoDePins": "Używasz <s0>{v0}</s0> z <s1>{v1}</s1> pinów i wyświetlaczy na tablicy. To limit konta <s2>DARMOWEGO</s2>, które obejmuje 1 tablicę.",
-      "x_usedAria": "Wykorzystano {used} z {max} elementów. Dowiedz się więcej o limicie planu",
-      "x_subscribe": "Wykup PINZ+ za {price}/miesiąc"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Nie znaleziono osoby",

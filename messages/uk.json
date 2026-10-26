@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Зараз не вдалося змінити розмір.",
         "m_naoFoiPossivelColocarO2": "Зараз не вдалося розмістити дисплей.",
         "m_naoHaEspacoLivreAo": "Навколо немає вільного місця, щоб розмістити тут цей дисплей. Спробуй інше місце.",
-        "m_oPlanoGratuitoPermiteAte": "Безкоштовний план дозволяє до 15 пінів і дисплеїв на дошці. З PINZ+ такого ліміту немає.",
         "m_oMuralChegouAoMaximo": "Дошка досягла максимальної кількості елементів.",
         "m_esteDisplayEDaLoja": "Цей дисплей з магазину. Розблокуй його кредитами, щоб користуватися.",
         "m_tirarODisplayDoMural": "Прибрати дисплей з дошки",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Повідомлення для власника дошки",
-        "m_voceChegouAoLimiteDe": "Ти досяг(ла) ліміту безкоштовного плану в {v0} пінів.",
         "m_seuMuralEstaCheio": "Твоя дошка заповнена.",
         "m_ninguemTentouDeixarUmPinz": "Ніхто ще не намагався залишити PINZ.",
-        "m_assineOPinzParaColocar": "Оформи PINZ+, щоб розміщувати необмежену кількість пінів і дисплеїв.",
         "m_emBreveUseCreditosPara": "Незабаром: використовуй кредити, щоб відкрити ще одну дошку.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {людина намагалася} few {людини намагалися} many {людей намагалися} other {людини намагалися}} залишити PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "До {v0} секунд."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Безкоштовний план має ліміт 15 пінів і дисплеїв. Щоб мати більше, власнику потрібен PINZ+.",
         "prontoAvisamosODonoDo": "Готово! Ми повідомили власника дошки, що ти заходив(ла). 💛",
         "fechar": "Закрити",
         "aviseODonoQueVoce": "Дай власнику знати, що ти заходив(ла).",
         "euTenteiDeixarUmPinz": "Я намагався(лася) залишити PINZ",
         "naoCustaNada": "Це нічого не коштує.",
-        "m_esteMuralChegouAoLimite": "Ця дошка досягла ліміту плану.",
         "m_estePinzEstaLotado": "Цей PINZ заповнений."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Відкриття…",
       "ou": "або",
       "m_naoFoiPossivelEntrarCom": "Не вдалося увійти через {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Ліміт плану",
-      "free": "БЕЗКОШТОВНО",
-      "comOPinzVoceTem": "З PINZ+ ти отримуєш:",
-      "m_assinarOPinzPorR": "Оформити PINZ+ за 9,90 R$/міс.",
-      "x_voceEstaUsandoDePins": "Ти використовуєш <s0>{v0}</s0> із <s1>{v1}</s1> пінів і дисплеїв на дошці. Це ліміт <s2>БЕЗКОШТОВНОГО</s2> акаунта, що включає 1 дошку.",
-      "x_usedAria": "Використано {used} із {max} елементів. Докладніше про ліміт плану",
-      "x_subscribe": "Оформити PINZ+ за {price}/міс."
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Людину не знайдено",

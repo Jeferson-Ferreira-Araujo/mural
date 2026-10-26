@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Impossible de changer la taille pour le moment.",
         "m_naoFoiPossivelColocarO2": "Impossible de placer l'affichage pour le moment.",
         "m_naoHaEspacoLivreAo": "Il n'y a pas assez de place libre autour pour placer cet affichage ici. Essaie un autre endroit.",
-        "m_oPlanoGratuitoPermiteAte": "L'offre gratuite autorise jusqu'à 15 épingles et affichages sur le tableau. Avec PINZ+, il n'y a pas de limite.",
         "m_oMuralChegouAoMaximo": "Le tableau a atteint le nombre maximal d'éléments.",
         "m_esteDisplayEDaLoja": "Cet affichage vient de la boutique. Débloque-le avec des crédits pour l'utiliser.",
         "m_tirarODisplayDoMural": "Retirer l'affichage du tableau",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Avis pour le propriétaire du tableau",
-        "m_voceChegouAoLimiteDe": "Tu as atteint la limite de {v0} épingles de l'offre gratuite.",
         "m_seuMuralEstaCheio": "Ton tableau est plein.",
         "m_ninguemTentouDeixarUmPinz": "Personne n'a encore essayé de laisser un PINZ.",
-        "m_assineOPinzParaColocar": "Passe à PINZ+ pour placer des épingles et des affichages sans limite.",
         "m_emBreveUseCreditosPara": "Bientôt : utilise des crédits pour ouvrir un autre tableau.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {personne a essayé} many {personnes ont essayé} other {personnes ont essayé}} de laisser un PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Jusqu'à {v0} secondes."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "L'offre gratuite est limitée à 15 épingles et affichages. Pour en avoir plus, le propriétaire a besoin de PINZ+.",
         "prontoAvisamosODonoDo": "C'est fait ! Nous avons prévenu le propriétaire du tableau de ton passage. 💛",
         "fechar": "Fermer",
         "aviseODonoQueVoce": "Préviens le propriétaire de ton passage.",
         "euTenteiDeixarUmPinz": "J'ai essayé de laisser un PINZ",
         "naoCustaNada": "Ça ne coûte rien.",
-        "m_esteMuralChegouAoLimite": "Ce tableau a atteint la limite de l'offre.",
         "m_estePinzEstaLotado": "Ce PINZ est plein."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Ouverture…",
       "ou": "ou",
       "m_naoFoiPossivelEntrarCom": "Impossible de se connecter avec {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Limite de l'offre",
-      "free": "GRATUIT",
-      "comOPinzVoceTem": "Avec PINZ+, tu obtiens :",
-      "m_assinarOPinzPorR": "Passer à PINZ+ pour 9,90 R$/mois",
-      "x_voceEstaUsandoDePins": "Tu utilises <s0>{v0}</s0> sur <s1>{v1}</s1> épingles et affichages sur ton tableau. C'est la limite du compte <s2>GRATUIT</s2>, qui inclut 1 tableau.",
-      "x_usedAria": "{used} éléments utilisés sur {max}. En savoir plus sur la limite de l'offre",
-      "x_subscribe": "Passer à PINZ+ pour {price}/mois"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Personne introuvable",

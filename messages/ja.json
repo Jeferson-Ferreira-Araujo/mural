@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "現在サイズを変更できません。",
         "m_naoFoiPossivelColocarO2": "現在ディスプレイを配置できません。",
         "m_naoHaEspacoLivreAo": "このディスプレイを置ける空きが周囲にありません。別の場所をお試しください。",
-        "m_oPlanoGratuitoPermiteAte": "無料プランでは、ボードに最大15個のピンとディスプレイを置けます。PINZ+ ならこの制限はありません。",
         "m_oMuralChegouAoMaximo": "ボードのアイテム数が上限に達しました。",
         "m_esteDisplayEDaLoja": "このディスプレイはストアのものです。クレジットでロックを解除して使ってください。",
         "m_tirarODisplayDoMural": "ディスプレイをボードから外す",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "ボードの持ち主へのお知らせ",
-        "m_voceChegouAoLimiteDe": "無料プランのピン数の上限（{v0}個）に達しました。",
         "m_seuMuralEstaCheio": "あなたのボードはいっぱいです。",
         "m_ninguemTentouDeixarUmPinz": "まだだれも PINZ を残そうとしていません。",
-        "m_assineOPinzParaColocar": "PINZ+ に登録すると、ピンとディスプレイを無制限に貼れます。",
         "m_emBreveUseCreditosPara": "近日公開：クレジットでもう1つボードを開けるようになります。",
         "x_deixarUmPinz": "<s0>{v0}</s0>人が PINZ を残そうとしました。"
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "最大{v0}秒。"
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "無料プランでは、ピンとディスプレイは15個までです。それ以上にするには、持ち主が PINZ+ に加入する必要があります。",
         "prontoAvisamosODonoDo": "完了しました！ボードの持ち主に、あなたが立ち寄ったことをお知らせしました。💛",
         "fechar": "閉じる",
         "aviseODonoQueVoce": "立ち寄ったことを持ち主に知らせましょう。",
         "euTenteiDeixarUmPinz": "PINZ を残そうとしました",
         "naoCustaNada": "無料です。",
-        "m_esteMuralChegouAoLimite": "このボードはプランの上限に達しました。",
         "m_estePinzEstaLotado": "この PINZ はいっぱいです。"
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "開いています…",
       "ou": "または",
       "m_naoFoiPossivelEntrarCom": "{v0}でログインできませんでした。"
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "プランの上限",
-      "free": "無料",
-      "comOPinzVoceTem": "PINZ+ でできること：",
-      "m_assinarOPinzPorR": "R$ 9.90/月で PINZ+ に登録",
-      "x_voceEstaUsandoDePins": "ボードのピンとディスプレイ<s1>{v1}</s1>個のうち<s0>{v0}</s0>個を使用中です。これは、ボード1つを含む<s2>無料</s2>アカウントの上限です。",
-      "x_usedAria": "{max}個中{used}個を使用中。プランの上限について詳しく見る",
-      "x_subscribe": "{price}/月で PINZ+ に登録"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "ユーザーが見つかりません",

@@ -194,7 +194,7 @@ export function DemoMural() {
   );
 
   const notice = useMemo(
-    () => (view === "owner" && full ? (tone: "light" | "dark") => <OwnerAlert tries={tries} tone={tone} planLimit={plan === "free" && capacity > available ? available : 0} /> : undefined),
+    () => (view === "owner" && full ? (tone: "light" | "dark") => <OwnerAlert tries={tries} tone={tone} /> : undefined),
     [view, full, tries, plan, capacity, available],
   );
 

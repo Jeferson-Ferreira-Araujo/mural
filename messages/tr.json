@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Boyutu şu anda değiştiremedik.",
         "m_naoFoiPossivelColocarO2": "Ekranı şu anda yerleştiremedik.",
         "m_naoHaEspacoLivreAo": "Bu ekranı buraya yerleştirmek için çevrede boş alan yok. Başka bir yer dene.",
-        "m_oPlanoGratuitoPermiteAte": "Ücretsiz plan panoda en fazla 15 pin ve ekrana izin verir. PINZ+ ile böyle bir sınır yoktur.",
         "m_oMuralChegouAoMaximo": "Pano maksimum öğe sayısına ulaştı.",
         "m_esteDisplayEDaLoja": "Bu ekran mağazadan. Kullanmak için kredilerle kilidini aç.",
         "m_tirarODisplayDoMural": "Ekranı panodan kaldır",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Pano sahibi için not",
-        "m_voceChegouAoLimiteDe": "Ücretsiz planın {v0} pin sınırına ulaştın.",
         "m_seuMuralEstaCheio": "Panon dolu.",
         "m_ninguemTentouDeixarUmPinz": "Henüz kimse PINZ bırakmaya çalışmadı.",
-        "m_assineOPinzParaColocar": "Sınırsız pin ve ekran yerleştirmek için PINZ+'a abone ol.",
         "m_emBreveUseCreditosPara": "Yakında: başka bir pano açmak için kredi kullan.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {kişi} other {kişi}} PINZ bırakmaya çalıştı."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "En fazla {v0} saniye."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Ücretsiz planın sınırı 15 pin ve ekrandır. Daha fazlası için sahibinin PINZ+'a ihtiyacı var.",
         "prontoAvisamosODonoDo": "Tamam! Pano sahibine uğradığını bildirdik. 💛",
         "fechar": "Kapat",
         "aviseODonoQueVoce": "Pano sahibine uğradığını bildir.",
         "euTenteiDeixarUmPinz": "Bir PINZ bırakmaya çalıştım",
         "naoCustaNada": "Hiçbir şeye mal olmaz.",
-        "m_esteMuralChegouAoLimite": "Bu pano planın sınırına ulaştı.",
         "m_estePinzEstaLotado": "Bu PINZ dolu."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Açılıyor…",
       "ou": "veya",
       "m_naoFoiPossivelEntrarCom": "{v0} ile giriş yapamadık."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Plan sınırı",
-      "free": "ÜCRETSİZ",
-      "comOPinzVoceTem": "PINZ+ ile şunları alırsın:",
-      "m_assinarOPinzPorR": "Ayda R$ 9,90'a PINZ+'a abone ol",
-      "x_voceEstaUsandoDePins": "Panonda <s1>{v1}</s1> pin ve ekrandan <s0>{v0}</s0> tanesini kullanıyorsun. Bu, 1 pano içeren <s2>ÜCRETSİZ</s2> hesabın sınırı.",
-      "x_usedAria": "{max} öğeden {used} tanesi kullanıldı. Plan sınırı hakkında daha fazla bilgi",
-      "x_subscribe": "Ayda {price} karşılığı PINZ+'a abone ol"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Kişi bulunamadı",

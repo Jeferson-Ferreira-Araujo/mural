@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Não foi possível mudar o tamanho agora.",
         "m_naoFoiPossivelColocarO2": "Não foi possível colocar o display agora.",
         "m_naoHaEspacoLivreAo": "Não há espaço livre ao redor para colocar este display aqui. Tente outro espaço.",
-        "m_oPlanoGratuitoPermiteAte": "O plano gratuito permite até 15 pins e displays no mural. Com o PINZ+ não há esse limite.",
         "m_oMuralChegouAoMaximo": "O mural chegou ao máximo de itens.",
         "m_esteDisplayEDaLoja": "Este display é da loja. Libere com créditos para usar.",
         "m_tirarODisplayDoMural": "Tirar o display do mural",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Aviso para o dono do mural",
-        "m_voceChegouAoLimiteDe": "Você chegou ao limite de {v0} pins do plano gratuito.",
         "m_seuMuralEstaCheio": "Seu mural está cheio.",
         "m_ninguemTentouDeixarUmPinz": "Ninguém tentou deixar um PINZ ainda.",
-        "m_assineOPinzParaColocar": "Assine o PINZ+ para colocar pins e displays sem limite.",
         "m_emBreveUseCreditosPara": "Em breve: use créditos para abrir outro mural.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {pessoa tentou} other {pessoas tentaram}} deixar um PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Até {v0} segundos."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "O plano gratuito tem um limite de 15 pins e displays. Para ter mais, o dono precisa do PINZ+.",
         "prontoAvisamosODonoDo": "Pronto! Avisamos o dono do mural que você passou por aqui. 💛",
         "fechar": "Fechar",
         "aviseODonoQueVoce": "Avise o dono que você passou por aqui.",
         "euTenteiDeixarUmPinz": "Eu tentei deixar um PINZ",
         "naoCustaNada": "Não custa nada.",
-        "m_esteMuralChegouAoLimite": "Este mural chegou ao limite do plano.",
         "m_estePinzEstaLotado": "Este PINZ está lotado."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Abrindo…",
       "ou": "ou",
       "m_naoFoiPossivelEntrarCom": "Não foi possível entrar com {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Limite do plano",
-      "free": "FREE",
-      "comOPinzVoceTem": "Com o PINZ+ você tem:",
-      "m_assinarOPinzPorR": "Assinar o PINZ+ por R$ 9,90/mês",
-      "x_voceEstaUsandoDePins": "Você está usando <s0>{v0}</s0> de <s1>{v1}</s1> pins e displays do seu mural. Esse é o limite da conta <s2>FREE</s2>, que inclui 1 mural.",
-      "x_usedAria": "{used} de {max} itens usados. Saiba mais sobre o limite do plano",
-      "x_subscribe": "Assinar o PINZ+ por {price}/mês"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Pessoa não encontrada",

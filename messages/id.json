@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Kami belum bisa mengubah ukuran saat ini.",
         "m_naoFoiPossivelColocarO2": "Kami belum bisa menempatkan display saat ini.",
         "m_naoHaEspacoLivreAo": "Tidak ada ruang kosong di sekitar untuk menempatkan display ini di sini. Coba tempat lain.",
-        "m_oPlanoGratuitoPermiteAte": "Paket gratis mengizinkan hingga 15 pin dan display di papan. Dengan PINZ+ tidak ada batas itu.",
         "m_oMuralChegouAoMaximo": "Papan mencapai jumlah item maksimum.",
         "m_esteDisplayEDaLoja": "Display ini dari toko. Buka dengan kredit untuk memakainya.",
         "m_tirarODisplayDoMural": "Hapus display dari papan",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Pemberitahuan untuk pemilik papan",
-        "m_voceChegouAoLimiteDe": "Kamu mencapai batas paket gratis sebanyak {v0} pin.",
         "m_seuMuralEstaCheio": "Papanmu penuh.",
         "m_ninguemTentouDeixarUmPinz": "Belum ada yang mencoba meninggalkan PINZ.",
-        "m_assineOPinzParaColocar": "Berlangganan PINZ+ untuk menempel pin dan display tanpa batas.",
         "m_emBreveUseCreditosPara": "Segera hadir: gunakan kredit untuk membuka papan lain.",
         "x_deixarUmPinz": "<s0>{v0}</s0> orang mencoba meninggalkan PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Hingga {v0} detik."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Paket gratis dibatasi 15 pin dan display. Untuk lebih banyak, pemilik perlu PINZ+.",
         "prontoAvisamosODonoDo": "Selesai! Kami memberi tahu pemilik papan bahwa kamu mampir. 💛",
         "fechar": "Tutup",
         "aviseODonoQueVoce": "Beri tahu pemilik bahwa kamu mampir.",
         "euTenteiDeixarUmPinz": "Saya mencoba meninggalkan PINZ",
         "naoCustaNada": "Tidak dikenai biaya.",
-        "m_esteMuralChegouAoLimite": "Papan ini mencapai batas paket.",
         "m_estePinzEstaLotado": "PINZ ini penuh."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Membuka…",
       "ou": "atau",
       "m_naoFoiPossivelEntrarCom": "Kami tidak bisa masuk dengan {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Batas paket",
-      "free": "GRATIS",
-      "comOPinzVoceTem": "Dengan PINZ+ kamu mendapat:",
-      "m_assinarOPinzPorR": "Berlangganan PINZ+ seharga R$ 9,90/bulan",
-      "x_voceEstaUsandoDePins": "Kamu memakai <s0>{v0}</s0> dari <s1>{v1}</s1> pin dan display di papanmu. Itu batas akun <s2>GRATIS</s2>, yang mencakup 1 papan.",
-      "x_usedAria": "{used} dari {max} item terpakai. Pelajari lebih lanjut tentang batas paket",
-      "x_subscribe": "Berlangganan PINZ+ seharga {price}/bulan"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Orang tidak ditemukan",

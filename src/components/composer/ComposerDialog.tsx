@@ -102,9 +102,8 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
   const tl = useLit();
   const available = slotsFor(plan, capacity);
   // onde colar: começa no primeiro espaço livre, mas o visitante escolhe qualquer um
-  // o plano limita QUANTOS pins o mural tem (FREE: 15 de 28), não quais espaços: qualquer espaço livre serve
+  // qualquer espaço livre serve
   const firstFree = Array.from({ length: capacity }, (_, i) => i).find((i) => !taken.includes(i)) ?? null;
-  const planLimit = used >= available && firstFree !== null;
   const full = firstFree === null || used >= available;
   const flags = useFeatureFlags();
   const formats = enabledFormats(formatsFor(plan), flags);
@@ -139,7 +138,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
     setEmpty(true);
   }, [error]);
 
-  if (full) return <FullNotice used={used} available={available} planLimit={planLimit} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
+  if (full) return <FullNotice used={used} available={available} onTried={onTried} triedAlready={triedAlready} onClose={onClose} />;
 
   if (!format) return <FormatPicker formats={formats} onPick={onFormat} />;
 

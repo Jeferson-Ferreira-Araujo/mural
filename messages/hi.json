@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "हम अभी आकार बदल नहीं पाए।",
         "m_naoFoiPossivelColocarO2": "हम अभी डिस्प्ले रख नहीं पाए।",
         "m_naoHaEspacoLivreAo": "इस डिस्प्ले को यहाँ रखने के लिए आसपास खाली जगह नहीं है। दूसरी जगह आज़माएँ।",
-        "m_oPlanoGratuitoPermiteAte": "मुफ़्त प्लान में बोर्ड पर 15 तक पिन और डिस्प्ले हो सकते हैं। PINZ+ में ऐसी कोई सीमा नहीं।",
         "m_oMuralChegouAoMaximo": "बोर्ड अधिकतम आइटम तक पहुँच गया है।",
         "m_esteDisplayEDaLoja": "यह डिस्प्ले स्टोर से है। इस्तेमाल के लिए इसे क्रेडिट से अनलॉक करें।",
         "m_tirarODisplayDoMural": "डिस्प्ले को बोर्ड से हटाएँ",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "बोर्ड मालिक के लिए सूचना",
-        "m_voceChegouAoLimiteDe": "आप मुफ़्त प्लान की {v0} पिन की सीमा तक पहुँच गए।",
         "m_seuMuralEstaCheio": "आपका बोर्ड भरा हुआ है।",
         "m_ninguemTentouDeixarUmPinz": "अभी तक किसी ने PINZ छोड़ने की कोशिश नहीं की।",
-        "m_assineOPinzParaColocar": "असीमित पिन और डिस्प्ले लगाने के लिए PINZ+ लें।",
         "m_emBreveUseCreditosPara": "जल्द आ रहा है: दूसरा बोर्ड खोलने के लिए क्रेडिट का उपयोग करें।",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {व्यक्ति ने} other {लोगों ने}} PINZ छोड़ने की कोशिश की।"
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "{v0} सेकंड तक।"
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "मुफ़्त प्लान में 15 पिन और डिस्प्ले की सीमा है। ज़्यादा के लिए मालिक को PINZ+ चाहिए।",
         "prontoAvisamosODonoDo": "हो गया! हमने बोर्ड मालिक को बता दिया कि आप आए थे। 💛",
         "fechar": "बंद करें",
         "aviseODonoQueVoce": "मालिक को बताएँ कि आप आए थे।",
         "euTenteiDeixarUmPinz": "मैंने PINZ छोड़ने की कोशिश की",
         "naoCustaNada": "इसमें कुछ खर्च नहीं होता।",
-        "m_esteMuralChegouAoLimite": "इस बोर्ड ने प्लान की सीमा छू ली।",
         "m_estePinzEstaLotado": "यह PINZ भरा हुआ है।"
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "खुल रहा है…",
       "ou": "या",
       "m_naoFoiPossivelEntrarCom": "हम {v0} से साइन इन नहीं कर पाए।"
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "प्लान की सीमा",
-      "free": "मुफ़्त",
-      "comOPinzVoceTem": "PINZ+ के साथ आपको मिलता है:",
-      "m_assinarOPinzPorR": "R$ 9.90/माह में PINZ+ लें",
-      "x_voceEstaUsandoDePins": "आप अपने बोर्ड पर <s1>{v1}</s1> में से <s0>{v0}</s0> पिन और डिस्प्ले इस्तेमाल कर रहे हैं। यह <s2>मुफ़्त</s2> खाते की सीमा है, जिसमें 1 बोर्ड शामिल है।",
-      "x_usedAria": "{max} में से {used} आइटम इस्तेमाल हुए। प्लान की सीमा के बारे में और जानें",
-      "x_subscribe": "{price}/माह में PINZ+ लें"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "व्यक्ति नहीं मिला",

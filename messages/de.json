@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Wir konnten die Größe gerade nicht ändern.",
         "m_naoFoiPossivelColocarO2": "Wir konnten das Display gerade nicht platzieren.",
         "m_naoHaEspacoLivreAo": "Hier ist kein freier Platz, um dieses Display zu platzieren. Versuche eine andere Stelle.",
-        "m_oPlanoGratuitoPermiteAte": "Der kostenlose Tarif erlaubt bis zu 15 Pins und Displays auf der Pinnwand. Mit PINZ+ gibt es kein solches Limit.",
         "m_oMuralChegouAoMaximo": "Die Pinnwand hat die maximale Anzahl an Elementen erreicht.",
         "m_esteDisplayEDaLoja": "Dieses Display stammt aus dem Shop. Schalte es mit Credits frei, um es zu benutzen.",
         "m_tirarODisplayDoMural": "Display von der Pinnwand entfernen",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Hinweis für den Inhaber der Pinnwand",
-        "m_voceChegouAoLimiteDe": "Du hast das Limit des kostenlosen Tarifs von {v0} Pins erreicht.",
         "m_seuMuralEstaCheio": "Deine Pinnwand ist voll.",
         "m_ninguemTentouDeixarUmPinz": "Noch hat niemand versucht, einen PINZ zu hinterlassen.",
-        "m_assineOPinzParaColocar": "Abonniere PINZ+, um unbegrenzt Pins und Displays zu setzen.",
         "m_emBreveUseCreditosPara": "Bald verfügbar: Mit Credits eine weitere Pinnwand öffnen.",
         "x_deixarUmPinz": "<s0>{v0}</s0> {v0, plural, one {Person hat} other {Personen haben}} versucht, einen PINZ zu hinterlassen."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Bis zu {v0} Sekunden."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Der kostenlose Tarif hat ein Limit von 15 Pins und Displays. Für mehr braucht der Inhaber PINZ+.",
         "prontoAvisamosODonoDo": "Erledigt! Wir haben den Inhaber der Pinnwand wissen lassen, dass du vorbeigeschaut hast. 💛",
         "fechar": "Schließen",
         "aviseODonoQueVoce": "Lass den Inhaber wissen, dass du vorbeigeschaut hast.",
         "euTenteiDeixarUmPinz": "Ich habe versucht, einen PINZ zu hinterlassen",
         "naoCustaNada": "Es kostet nichts.",
-        "m_esteMuralChegouAoLimite": "Diese Pinnwand hat das Limit des Tarifs erreicht.",
         "m_estePinzEstaLotado": "Dieser PINZ ist voll."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Wird geöffnet…",
       "ou": "oder",
       "m_naoFoiPossivelEntrarCom": "Wir konnten dich nicht mit {v0} anmelden."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Tariflimit",
-      "free": "KOSTENLOS",
-      "comOPinzVoceTem": "Mit PINZ+ bekommst du:",
-      "m_assinarOPinzPorR": "PINZ+ für R$ 9,90/Monat abonnieren",
-      "x_voceEstaUsandoDePins": "Du nutzt <s0>{v0}</s0> von <s1>{v1}</s1> Pins und Displays auf deiner Pinnwand. Das ist das Limit des <s2>KOSTENLOSEN</s2> Kontos, das 1 Pinnwand enthält.",
-      "x_usedAria": "{used} von {max} Elementen genutzt. Mehr zum Tariflimit",
-      "x_subscribe": "PINZ+ für {price}/Monat abonnieren"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Person nicht gefunden",

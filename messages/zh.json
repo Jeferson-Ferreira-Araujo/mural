@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "暂时无法更改大小。",
         "m_naoFoiPossivelColocarO2": "暂时无法放置卡片。",
         "m_naoHaEspacoLivreAo": "这附近没有可放置此卡片的空位。请试试其他位置。",
-        "m_oPlanoGratuitoPermiteAte": "免费套餐最多允许在留言板上放 15 个图钉和卡片。使用 PINZ+ 则没有这个限制。",
         "m_oMuralChegouAoMaximo": "留言板已达到最大数量。",
         "m_esteDisplayEDaLoja": "这个卡片来自商店。请用积分解锁后再使用。",
         "m_tirarODisplayDoMural": "从留言板移除卡片",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "给留言板所有者的提示",
-        "m_voceChegouAoLimiteDe": "你已达到免费套餐的 {v0} 个图钉上限。",
         "m_seuMuralEstaCheio": "你的留言板已满。",
         "m_ninguemTentouDeixarUmPinz": "还没有人尝试留下 PINZ。",
-        "m_assineOPinzParaColocar": "订阅 PINZ+，即可无限贴图钉和卡片。",
         "m_emBreveUseCreditosPara": "即将推出：用积分开启另一个留言板。",
         "x_deixarUmPinz": "<s0>{v0}</s0> 人尝试留下 PINZ。"
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "最长 {v0} 秒。"
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "免费套餐最多有 15 个图钉和卡片。想要更多，所有者需要 PINZ+。",
         "prontoAvisamosODonoDo": "完成！我们已告知留言板所有者你来过。💛",
         "fechar": "关闭",
         "aviseODonoQueVoce": "让所有者知道你来过。",
         "euTenteiDeixarUmPinz": "我想留下一个 PINZ",
         "naoCustaNada": "不收费。",
-        "m_esteMuralChegouAoLimite": "这个留言板已达到套餐上限。",
         "m_estePinzEstaLotado": "这个 PINZ 已满。"
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "正在打开…",
       "ou": "或",
       "m_naoFoiPossivelEntrarCom": "我们无法使用 {v0} 登录。"
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "套餐上限",
-      "free": "免费",
-      "comOPinzVoceTem": "使用 PINZ+，你将获得：",
-      "m_assinarOPinzPorR": "以 R$ 9.90/月订阅 PINZ+",
-      "x_voceEstaUsandoDePins": "你的留言板上的图钉和卡片，已使用 <s0>{v0}</s0> 个，共 <s1>{v1}</s1> 个。这是包含 1 个留言板的<s2>免费</s2>账号的上限。",
-      "x_usedAria": "已使用 {used}/{max} 项。进一步了解套餐上限",
-      "x_subscribe": "以 {price}/月订阅 PINZ+"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "找不到此人",

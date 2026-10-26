@@ -745,7 +745,7 @@ export function BadgeProvider({
     const res = await addDisplay(getBrowserSupabase(), mid, product, clean, x, y, slots);
     if ("id" in res) await saveReminder(res.id, remind);
     if ("error" in res) {
-      live.current.notify(res.error === "taken" ? tx("m_esseLugarAcabouDeReceber") : res.error === "plan_limit" ? tx("m_oPlanoGratuitoPermiteAte") : res.error === "limit" ? tx("m_oMuralChegouAoMaximo") : res.error === "not_owned" ? tx("m_esteDisplayEDaLoja") : tx("m_naoFoiPossivelColocarO2"));
+      live.current.notify(res.error === "taken" ? tx("m_esseLugarAcabouDeReceber") : res.error === "limit" ? tx("m_oMuralChegouAoMaximo") : res.error === "not_owned" ? tx("m_esteDisplayEDaLoja") : tx("m_naoFoiPossivelColocarO2"));
       live.current.onDisplaysChanged?.();
       return;
     }

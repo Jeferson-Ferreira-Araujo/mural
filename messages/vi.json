@@ -720,7 +720,6 @@
         "m_naoFoiPossivelMudarO": "Hiện chúng tôi chưa đổi được kích thước.",
         "m_naoFoiPossivelColocarO2": "Hiện chúng tôi chưa đặt được màn hình hiển thị.",
         "m_naoHaEspacoLivreAo": "Xung quanh không còn chỗ trống để đặt màn hình hiển thị này ở đây. Hãy thử chỗ khác.",
-        "m_oPlanoGratuitoPermiteAte": "Gói miễn phí cho phép tối đa 15 pin và màn hình hiển thị trên bảng. Với PINZ+ không có giới hạn này.",
         "m_oMuralChegouAoMaximo": "Bảng đã đạt số mục tối đa.",
         "m_esteDisplayEDaLoja": "Màn hình hiển thị này đến từ cửa hàng. Hãy mở khóa bằng tín dụng để dùng.",
         "m_tirarODisplayDoMural": "Gỡ màn hình hiển thị khỏi bảng",
@@ -885,10 +884,8 @@
       },
       "OwnerAlert": {
         "avisoParaODonoDo": "Thông báo cho chủ bảng",
-        "m_voceChegouAoLimiteDe": "Bạn đã đạt giới hạn {v0} pin của gói miễn phí.",
         "m_seuMuralEstaCheio": "Bảng của bạn đã đầy.",
         "m_ninguemTentouDeixarUmPinz": "Chưa ai thử để lại PINZ.",
-        "m_assineOPinzParaColocar": "Đăng ký PINZ+ để ghim pin và màn hình hiển thị không giới hạn.",
         "m_emBreveUseCreditosPara": "Sắp ra mắt: dùng tín dụng để mở thêm một bảng.",
         "x_deixarUmPinz": "<s0>{v0}</s0> người đã thử để lại PINZ."
       },
@@ -1083,13 +1080,11 @@
         "x_ateSegundos": "Tối đa {v0} giây."
       },
       "FullNotice": {
-        "oPlanoGratuitoTemUm": "Gói miễn phí giới hạn 15 pin và màn hình hiển thị. Để có nhiều hơn, chủ bảng cần PINZ+.",
         "prontoAvisamosODonoDo": "Xong! Chúng tôi đã báo cho chủ bảng biết bạn đã ghé qua. 💛",
         "fechar": "Đóng",
         "aviseODonoQueVoce": "Cho chủ bảng biết bạn đã ghé qua.",
         "euTenteiDeixarUmPinz": "Tôi đã thử để lại PINZ",
         "naoCustaNada": "Không tốn gì cả.",
-        "m_esteMuralChegouAoLimite": "Bảng này đã đạt giới hạn của gói.",
         "m_estePinzEstaLotado": "PINZ này đã đầy."
       },
       "SlotPicker": {
@@ -1290,15 +1285,6 @@
       "abrindo": "Đang mở…",
       "ou": "hoặc",
       "m_naoFoiPossivelEntrarCom": "Chúng tôi không đăng nhập được bằng {v0}."
-    },
-    "PlanLimit": {
-      "limiteDoPlano": "Giới hạn gói",
-      "free": "MIỄN PHÍ",
-      "comOPinzVoceTem": "Với PINZ+ bạn nhận được:",
-      "m_assinarOPinzPorR": "Đăng ký PINZ+ với giá R$ 9,90/tháng",
-      "x_voceEstaUsandoDePins": "Bạn đang dùng <s0>{v0}</s0> trên <s1>{v1}</s1> pin và màn hình hiển thị trên bảng của mình. Đó là giới hạn của tài khoản <s2>MIỄN PHÍ</s2>, bao gồm 1 bảng.",
-      "x_usedAria": "Đã dùng {used} trên {max} mục. Tìm hiểu thêm về giới hạn gói",
-      "x_subscribe": "Đăng ký PINZ+ với giá {price}/tháng"
     },
     "ProfileMurals": {
       "pessoaNaoEncontrada": "Không tìm thấy người này",
