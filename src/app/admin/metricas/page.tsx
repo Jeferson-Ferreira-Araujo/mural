@@ -175,7 +175,7 @@ export default function MetricsPage() {
       if (data) setLive(data as Live);
     };
     void load();
-    const t = window.setInterval(() => void load(), 4_000);
+    const t = window.setInterval(() => void load(), 2_000); // tempo real: atualiza a cada 2 s
     return () => window.clearInterval(t);
   }, [allowed, tab]);
 

@@ -5,7 +5,14 @@ import { usePathname } from "next/navigation";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { analyticsAllowed, CONSENT_EVENT } from "@/lib/consent";
 
-const PING_MS = 45_000;
+const PING_MS = 15_000; // "online agora": um sinal a cada 15 s (o painel considera online quem mandou sinal nos últimos 40 s)
+
+/** Avisa que a página saiu (aba fechada ou em segundo plano) para o "online agora" cair na hora. fetch com keepalive sobrevive ao fechamento da aba. */
+function leave(fn: "anon_leave" | "site_leave", arg: Record<string, string>) {
+  try {
+    void fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: "POST", keepalive: true, headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, "Content-Type": "application/json" }, body: JSON.stringify(arg) }).catch(() => undefined);
+  } catch {}
+}
 
 /** Id da visita: sorteado no navegador, vale só enquanto a aba está aberta (nada de cookie e nada que identifique a pessoa). */
 function sessionId(): { id: string; fresh: boolean } {
@@ -72,8 +79,17 @@ export function SiteTracker() {
     if (!anonId.current) anonId.current = crypto.randomUUID();
     const sb = getBrowserSupabase();
     void sb.rpc("anon_ping", { p_id: anonId.current, p_view: true }).then(() => undefined);
-    const t = window.setInterval(() => document.visibilityState === "visible" && void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }).then(() => undefined), PING_MS);
-    return () => window.clearInterval(t);
+    const ping = () => void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }).then(() => undefined);
+    const t = window.setInterval(() => document.visibilityState === "visible" && ping(), PING_MS);
+    const vis = () => (document.visibilityState === "visible" ? ping() : leave("anon_leave", { p_id: anonId.current }));
+    const bye = () => leave("anon_leave", { p_id: anonId.current });
+    document.addEventListener("visibilitychange", vis);
+    window.addEventListener("pagehide", bye);
+    return () => {
+      window.clearInterval(t);
+      document.removeEventListener("visibilitychange", vis);
+      window.removeEventListener("pagehide", bye);
+    };
   }, [path, ok]);
 
   // entrou na conta: um "login" por visita
@@ -91,7 +107,7 @@ export function SiteTracker() {
     return () => data.subscription.unsubscribe();
   }, [ok]);
 
-  // "online agora": avisa a cada 45 s, só com a aba à vista
+  // "online agora": avisa a cada 15 s, só com a aba à vista
   useEffect(() => {
     if (!ok || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
     const sb = getBrowserSupabase();
@@ -100,10 +116,14 @@ export function SiteTracker() {
       void sb.rpc("track_event", { p_name: "ping", p_session: sessionId().id, p_path: location.pathname, p_props: { device: deviceOf() } }).then(() => undefined);
     };
     const t = window.setInterval(ping, PING_MS);
-    document.addEventListener("visibilitychange", ping);
+    const vis = () => (document.visibilityState === "visible" ? ping() : leave("site_leave", { p_session: sessionId().id }));
+    const bye = () => leave("site_leave", { p_session: sessionId().id });
+    document.addEventListener("visibilitychange", vis);
+    window.addEventListener("pagehide", bye);
     return () => {
       window.clearInterval(t);
-      document.removeEventListener("visibilitychange", ping);
+      document.removeEventListener("visibilitychange", vis);
+      window.removeEventListener("pagehide", bye);
     };
   }, [ok]);
 
