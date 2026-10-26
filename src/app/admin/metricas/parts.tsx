@@ -6,7 +6,9 @@ export const nf = (n: number) => Math.round(n).toLocaleString("pt-BR");
 export const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 export const label = (map: Record<string, string>, k: string) => map[k] ?? k;
 
-export const card = "rounded-2xl border border-[#e1d3ba] bg-white/80 p-4 shadow-[0_1px_0_rgba(0,0,0,.03)]";
+/** cartão do painel: claro, sem borda, sombra suave */
+export const panel = "rounded-2xl bg-[#fffaf1] shadow-[0_2px_10px_rgba(90,60,20,.07)]";
+export const card = `${panel} p-4`;
 export const chip = (on: boolean) => `cursor-pointer rounded-lg px-3 py-1.5 text-sm font-semibold transition ${on ? "bg-[#1f232b] text-white" : "border border-[#d9c9ad] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`;
 
 export function Delta({ cur, prev }: { cur: number; prev: number }) {

@@ -7,6 +7,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
 import { Bars, brl, card, chip, Delta, Kpi, label, nf, type Item } from "./parts";
 import { GrowthView } from "./growth";
+import { OverviewView } from "./overview";
 
 type Row = { name: string; total: number } & Record<string, number | string>;
 type Day = { d: string; views: number; sessions: number; visitors: number; active: number; signups: number; pins: number; pins_del: number; displays: number; revenue: number };
@@ -30,7 +31,7 @@ type Metrics = {
 };
 type Live = { online: number; online_logged: number; online_devices: Item[]; online_pages: Item[]; per_minute: number[]; today_views: number; today_sessions: number; feed: { at: string; name: string; nick: string | null; detail: string | null }[]; at: string };
 
-const PERIODS: [number, string][] = [[1, "Hoje"], [7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [365, "1 ano"], [0, "Tudo"]];
+const PERIODS: [number, string][] = [[7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [365, "1 ano"], [0, "Tudo"]];
 const PIN_TYPE: Record<string, string> = { postit: "Post-it", text: "Texto", photo: "Foto", video: "Vídeo", voice: "Voz", music: "Música", place: "Lugar", list: "Lista", draw: "Desenho" };
 const DISPLAY: Record<string, string> = { bible: "Versículo", motivation: "Frase", clock: "Relógio", weather: "Clima", calendar: "Calendário", date: "Calendário do dia", countdown: "Contador regressivo", daycount: "Contador de dias", book: "Leitura de livro", top3: "Top 3", poll: "Enquete", cookie: "Biscoito da sorte", habit: "Meta de hábito", mood: "Humor do dia" };
 const TOOL: Record<string, string> = { open_store: "Abriu a loja", open_composer: "Abriu o compositor", open_profile: "Abriu o perfil", open_notifications: "Abriu notificações", share: "Compartilhou", install: "Instalou o app", search: "Usou a busca", display_placed: "Colocou display", badge_placed: "Colocou botton", follow: "Seguiu alguém", mural_created: "Criou mural" };
@@ -138,7 +139,7 @@ export default function MetricsPage() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [days, setDays] = useState(30);
-  const [tab, setTab] = useState<"growth" | "geral">("growth"); // painel de growth (padrão) ou a visão geral de uso
+  const [tab, setTab] = useState<"overview" | "growth" | "geral">("overview"); // visão geral (padrão), retenção e ativação, ou uso e tempo real
   const [m, setM] = useState<Metrics | null>(null);
   const [live, setLive] = useState<Live | null>(null);
   const [metric, setMetric] = useState<keyof Day>("views");
@@ -158,12 +159,12 @@ export default function MetricsPage() {
     setM(data as Metrics);
   }, [days]);
   useEffect(() => {
-    if (!allowed || tab !== "geral") return;
+    if (!allowed) return;
     setM(null);
     void loadMetrics();
     const t = window.setInterval(() => document.visibilityState === "visible" && void loadMetrics(), 30_000);
     return () => window.clearInterval(t);
-  }, [allowed, tab, loadMetrics]);
+  }, [allowed, loadMetrics]);
 
   useEffect(() => {
     if (!allowed || tab !== "geral") return;
@@ -241,54 +242,82 @@ export default function MetricsPage() {
   const pv = m?.previous;
   const conv = (a: number, b: number) => (b > 0 ? `${((a / b) * 100).toFixed(1).replace(".", ",")}%` : "—");
 
+const NAV: { id: "overview" | "growth" | "geral"; label: string; icon: string }[] = [
+  { id: "overview", label: "Visão geral", icon: "M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z" },
+  { id: "growth", label: "Retenção e ativação", icon: "M4 20V10M10 20V4M16 20v-7M22 20H2" },
+  { id: "geral", label: "Uso e tempo real", icon: "M3 12h4l3-8 4 16 3-8h4" },
+];
+
+  const dr = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).replace(/\./g, "");
+  const startDate = days === 0 && m ? new Date(m.range.from) : new Date(Date.now() - (Math.max(days, 1) - 1) * 86400000);
+  const rangeText = dr(startDate) + "  –  " + dr(new Date());
+
   return (
-    <div ref={root} className={`min-h-dvh bg-[#f6efe0] text-[#2a1c12] print:bg-white ${present ? "overflow-y-auto p-6 text-[1.05rem] sm:p-10" : "p-4 sm:p-6"}`}>
-      <div className="mx-auto max-w-7xl">
-        <header className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="font-title text-2xl font-semibold sm:text-3xl">Pinz · Growth</h1>
-            <p className="text-sm text-[#6b5440]">
-              {tab === "growth" ? "Aquisição, ativação, retenção e receita · dados próprios, sem rastreadores de terceiros" : m ? `Atualizado às ${new Date(m.generated_at).toLocaleTimeString("pt-BR")} · dados próprios, sem cookies e sem rastreadores de terceiros` : "Carregando…"}
-            </p>
+    <div ref={root} className={`min-h-dvh bg-[#6b4a2b] bg-cover bg-fixed text-[#2a1c12] print:bg-white ${present ? "overflow-y-auto p-3 text-[1.05rem]" : "p-2 sm:p-4"}`} style={{ backgroundImage: "linear-gradient(rgba(40,24,10,.35), rgba(40,24,10,.35)), url(/img/blur/cortica.webp)" }}>
+      <div className="mx-auto flex max-w-[1560px] flex-col gap-3 lg:flex-row lg:gap-4">
+        <aside className="flex shrink-0 flex-col rounded-3xl bg-[#fbf5ea]/95 p-3 shadow-[0_10px_40px_rgba(30,12,0,.35)] lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:w-56 lg:p-4 print:hidden">
+          <div className="flex items-center justify-between gap-3 lg:block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/pinz-logo.webp" alt="Pinz" className="h-10 w-auto select-none lg:mx-auto lg:mt-1 lg:h-14" draggable={false} />
+            <Link href="/admin" className="text-xs font-semibold text-[#6b5440] underline lg:hidden">← Painel</Link>
           </div>
-          <div className="flex flex-wrap items-center gap-2 print:hidden">
-            {!present && (
-              <Link href="/admin" className={chip(false)}>
-                ← Painel
-              </Link>
-            )}
-            {tab === "geral" && (
-              <button type="button" onClick={exportCsv} className={chip(false)}>
-                Exportar CSV
+          <nav aria-label="Seções" className="mt-3 flex gap-1 overflow-x-auto lg:mt-6 lg:flex-col lg:overflow-visible">
+            {NAV.map((n) => (
+              <button key={n.id} type="button" onClick={() => setTab(n.id)} aria-current={tab === n.id ? "page" : undefined} className={`flex shrink-0 cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[15px] font-semibold whitespace-nowrap transition ${tab === n.id ? "bg-[#f3e3c6] text-[#2a1c12]" : "text-[#4a3826] hover:bg-[#f3e9d6]"}`}>
+                <svg viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d={n.icon} />
+                </svg>
+                {n.label}
               </button>
-            )}
-            <button type="button" onClick={() => window.print()} className={chip(false)}>
+            ))}
+          </nav>
+          <div className="mt-3 hidden flex-1 lg:block" />
+          <div className="mt-3 flex flex-wrap gap-2 lg:flex-col">
+            <button type="button" onClick={exportCsv} disabled={!m} className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e1d3ba] bg-white px-3 py-2.5 text-sm font-semibold text-[#2a1c12] transition hover:bg-[#f3e9d6] disabled:opacity-50">
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16" />
+              </svg>
+              Exportar dados
+            </button>
+            <button type="button" onClick={() => window.print()} className="cursor-pointer rounded-xl px-3 py-2 text-sm font-semibold text-[#6b5440] transition hover:bg-[#f3e9d6]">
               Imprimir / PDF
             </button>
-            <button type="button" onClick={togglePresent} className={chip(present)}>
+            <button type="button" onClick={togglePresent} className="cursor-pointer rounded-xl px-3 py-2 text-sm font-semibold text-[#6b5440] transition hover:bg-[#f3e9d6]">
               {present ? "Sair da apresentação" : "Modo apresentação"}
             </button>
+            <Link href="/admin" className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-[#6b5440] transition hover:bg-[#f3e9d6] lg:block">
+              ← Painel do admin
+            </Link>
+          </div>
+        </aside>
+
+      <div className="min-w-0 flex-1 rounded-3xl bg-[#fbf5ea]/95 p-4 shadow-[0_10px_40px_rgba(30,12,0,.35)] sm:p-6 print:shadow-none">
+        <header className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-title text-3xl font-semibold sm:text-4xl">{tab === "growth" ? "Retenção e ativação" : tab === "geral" ? "Uso e tempo real" : "Growth"}</h1>
+            <p className="text-[#6b5440]">{tab === "growth" ? "Quem chega, fica, volta e paga · dados próprios, sem rastreadores de terceiros" : tab === "geral" ? "Navegação, ferramentas e atividade ao vivo" : "Acompanhe o crescimento do PINZ em tempo real."}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 print:hidden">
+            <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold shadow-[0_2px_8px_rgba(90,60,20,.08)]">
+              <svg viewBox="0 0 24 24" className="size-4 text-[#6b5440]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M3 10h18M8 3v4M16 3v4" />
+              </svg>
+              {rangeText}
+            </span>
+            <div className="flex rounded-xl bg-white p-1 shadow-[0_2px_8px_rgba(90,60,20,.08)]" role="tablist" aria-label="Período">
+              {PERIODS.map(([d, t]) => (
+                <button key={d} type="button" role="tab" aria-selected={days === d} onClick={() => setDays(d)} className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-semibold transition ${days === d ? "bg-[#4a3826] text-white" : "text-[#4a3826] hover:bg-[#f3e9d6]"}`}>
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
         </header>
 
-        <div className="mt-4 flex flex-wrap gap-1.5 print:hidden" role="tablist" aria-label="Painel">
-          {([["growth", "Growth"], ["geral", "Visão geral de uso"]] as const).map(([id, t]) => (
-            <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={chip(tab === id)}>
-              {t}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-3 flex flex-wrap gap-1.5 print:hidden" role="tablist" aria-label="Período">
-          {PERIODS.map(([d, t]) => (
-            <button key={d} type="button" role="tab" aria-selected={days === d} onClick={() => setDays(d)} className={chip(days === d)}>
-              {t}
-            </button>
-          ))}
-        </div>
-
         {err && <p role="alert" className="mt-4 text-sm font-semibold text-[#a23b2a]">{err}</p>}
 
+        {tab === "overview" && <OverviewView days={days} extra={m ? { pins_by_type: m.pins_by_type, devices: m.devices, referrers: m.referrers } : null} />}
         {tab === "growth" && <GrowthView days={days} />}
 
         {tab === "geral" && (
@@ -442,6 +471,7 @@ export default function MetricsPage() {
         )}
           </>
         )}
+      </div>
       </div>
     </div>
   );
