@@ -17,7 +17,6 @@ import { FollowButton } from "./FollowButton";
 import { PlanBadge } from "./board/PlanBadge";
 import { PAY_EVENT } from "@/lib/payments";
 import { PAYMENTS_ENABLED } from "@/lib/plans";
-import { PlanLimit } from "./PlanLimit";
 import { FollowersModal } from "./account/PeopleModals";
 import type { ViewProps } from "./viewProps";
 import type { MuralSwitch } from "./MuralSwitcher";
@@ -136,7 +135,6 @@ export function MobileMural({ items, plan, board, capacity, hasSelection, unlock
         {/* escolher o mural: sempre no canto superior direito (o esquerdo é do Novo mural no seu perfil, ou do Seguir ao visitar) */}
         <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
           {/* conta FREE no próprio mural: contador de pins e explicação do limite, na mesma linha do botão de murais */}
-          {account?.atHome && plan === "free" && unlocked && !locked && <PlanLimit used={items.length} glass />}
           <MuralNameMenu
             title={info.title}
             label={account?.onNewMural ? tl("Meus murais") : tl("Murais")}

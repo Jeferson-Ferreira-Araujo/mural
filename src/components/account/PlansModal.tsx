@@ -14,7 +14,7 @@ import { useMoney } from "@/lib/useMoney";
 const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
     { text: "1 mural", on: true },
-    { text: "Até 15 pins e displays no mural", on: true },
+    { text: "Pins e displays sem limite", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "10 Bottons (1 unidade de cada)", on: true },
     { text: "Vídeo, voz e local", on: false },
@@ -25,7 +25,6 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   ],
   full: [
     { text: "Até 10 murais", on: true },
-    { text: "Pins e displays sem limite (o gratuito tem 15)", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Vídeo, voz e local", on: true },

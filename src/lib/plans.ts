@@ -28,7 +28,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   free: {
     id: "free",
     name: "PINZ FREE",
-    slots: 15,
+    slots: 28, // sem limite de pins no gratuito: todos os espaços do quadro
     formats: ["postit", "text", "list", "photo"],
     capsule: false,
     murals: 1,
@@ -45,7 +45,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   },
 };
 
-/** Espaços liberados: no FREE são os 15 do plano; no PINZ+, todos os do quadro (28). */
+/** Espaços liberados: todos os do quadro, nos dois planos (o limite de 15 pins do gratuito acabou). */
 export const slotsFor = (plan: PlanId, capacity: number = BOARD_CAPACITY) => (plan === "full" ? capacity : Math.min(PLANS[plan].slots, capacity));
 
 export const formatsFor = (plan: PlanId) => PLANS[plan].formats;
