@@ -144,7 +144,7 @@ export function MusicCard({
   return (
     <article aria-label={tx("musica")} className="relative w-[14em]">
       {/* corpo do MP3 player (horizontal) */}
-      <div
+      <div data-body
         className="relative flex items-stretch gap-[0.55em] rounded-[1.2em] p-[0.6em]"
         style={{
           background: `linear-gradient(172deg, ${look.body[0]} 0%, ${look.body[1]} 46%, ${look.body[2]} 100%)`,

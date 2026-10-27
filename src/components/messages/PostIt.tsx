@@ -16,7 +16,7 @@ export function PostIt({ color, text, font, pin, pos }: { color: PostItColor; te
   const c = palette[color];
   const hand = handOf(font);
   return (
-    <article
+    <article data-body
       aria-label={tx("postIt")}
       className="paper-grain curl shadow-paper relative flex h-[13.5em] w-[14em] flex-col px-[1.3em] pt-[2.1em] pb-[1.1em]"
       style={{

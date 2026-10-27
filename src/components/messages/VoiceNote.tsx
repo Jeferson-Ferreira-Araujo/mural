@@ -136,7 +136,7 @@ export function VoiceNote({ caption, duration, src, color = "cream" }: { caption
       )}
 
       {/* corpo do gravador */}
-      <div
+      <div data-body
         className="relative flex gap-[0.5em] rounded-[1em] p-[0.55em]"
         style={{
           background: `linear-gradient(172deg, ${look.body[0]} 0%, ${look.body[1]} 50%, ${look.body[2]} 100%)`,

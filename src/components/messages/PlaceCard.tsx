@@ -45,7 +45,7 @@ export function PlaceCard({
   return (
     <article aria-label={tx("localNoMapa")} className="relative w-[14em]">
       {/* corpo do aparelho */}
-      <div
+      <div data-body
         className="relative rounded-[1.1em] p-[0.55em]"
         style={{
           background: `linear-gradient(172deg, ${look.body[0]} 0%, ${look.body[1]} 46%, ${look.body[2]} 100%)`,

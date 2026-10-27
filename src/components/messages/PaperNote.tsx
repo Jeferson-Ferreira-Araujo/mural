@@ -13,7 +13,7 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
   if (variant === "letter") {
     return (
       <div className="relative w-[14em]">
-      <article
+      <article data-body
         aria-label={tx("texto")}
         className="paper-grain shadow-paper relative w-full min-h-[13.5em] bg-[#f5f0e2] px-[1.3em] pt-[1.9em] pb-[1.3em]"
         style={{
@@ -33,7 +33,7 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
   }
 
   return (
-    <article
+    <article data-body
       aria-label={tx("texto")}
       className="paper-grain shadow-paper relative w-[14em] min-h-[13.5em] bg-[#fbf7ea] pt-[1.9em] pr-[1em] pb-[1.4em] pl-[2.9em]"
       style={{

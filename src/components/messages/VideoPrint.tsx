@@ -181,7 +181,7 @@ export function VideoPrint({ caption, duration, src, link, color = "black" }: { 
     <article aria-label={tx("video")} className="relative w-[14em]">
       {big && <BigVideo src={src} embedSrc={embed?.src} onClose={() => setBig(false)} />}
       {/* corpo do player */}
-      <div
+      <div data-body
         className="relative rounded-[1em] p-[0.3em]"
         style={{
           background: `linear-gradient(172deg, ${look.body[0]} 0%, ${look.body[1]} 46%, ${look.body[2]} 100%)`,

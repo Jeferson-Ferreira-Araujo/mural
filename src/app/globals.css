@@ -468,8 +468,9 @@ html[data-a11y-contrast="1"] :focus-visible {
 
 /* segredo: só o cartão gira (as duas faces trocam no meio, na borda); a tachinha/fita fica no lugar, levanta e prende de novo */
 .pz-face { backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; }
-.pz-blank > * > * { visibility: hidden; } /* verso em branco: sobra só o papel */
-.pz-blank > * { pointer-events: none; }
+.pz-blank * { visibility: hidden; } /* verso em branco: tudo some, menos o corpo do cartão (papel ou aparelho), marcado com data-body */
+.pz-blank [data-body] { visibility: visible; }
+.pz-blank { pointer-events: none; }
 .pz-fast, .pz-fast * { visibility: hidden; } /* camada da tachinha/fita: só elas aparecem */
 .pz-fast [data-tack], .pz-fast [data-tape] { visibility: visible; }
 .pz-nofast [data-tack], .pz-nofast [data-tape] { visibility: hidden; } /* na animação, a da face que gira some e vale a da camada parada */

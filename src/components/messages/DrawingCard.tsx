@@ -9,7 +9,7 @@ export function DrawingCard({ caption, src, font, tape }: { caption: string; src
   const tx = useTranslations("components.messages.DrawingCard");
   const hand = handOf(font);
   return (
-    <article aria-label={tx("desenho")} className="paper-grain shadow-paper relative w-[15em] bg-[#fdfcf7] p-[0.7em]" style={{ borderRadius: "0.15em" }}>
+    <article data-body aria-label={tx("desenho")} className="paper-grain shadow-paper relative w-[15em] bg-[#fdfcf7] p-[0.7em]" style={{ borderRadius: "0.15em" }}>
       <Tape className="-top-[0.8em] left-1/2 -translate-x-1/2" rotate={2} tone={tape ? tapeOf(tape).tone : undefined} />
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-white shadow-[inset_0_0_0.25em_rgba(0,0,0,.25)]">
         {src ? (

@@ -11,7 +11,7 @@ export function ListCard({ title, items, font, tape, onEdit, onToggle, squareOnl
   const itemFont = font ? hand.family : "var(--font-kalam), cursive";
   const itemSize = font ? 1.18 * hand.scale : 0.88;
   return (
-    <article
+    <article data-body
       aria-label={tx("lista")}
       className="paper-grain shadow-paper relative w-[14em] bg-[#f7f1e1] px-[1.1em] pt-[1.8em] pb-[1.2em]"
       style={{

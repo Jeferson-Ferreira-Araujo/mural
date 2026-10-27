@@ -19,7 +19,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, 
   const frame = detail ? 0.5 : 0.9; // moldura branca
   const cardW = Math.max(photoW + frame * 2, detail ? 6.6 : 8.6); // um mínimo só para a legenda caber
   return (
-    <article
+    <article data-body
       aria-label={tx("foto")}
       className="paper-grain shadow-paper relative bg-[#fdfcf7]"
       style={{ borderRadius: "0.15em", width: `${cardW}em`, padding: `${frame}em` }}
