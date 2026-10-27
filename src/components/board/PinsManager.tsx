@@ -45,7 +45,8 @@ export function PinsManager({ pins, plan, busyId = null, onApprove, onReject, on
   const dark = tone === "dark";
   const pending = pins.filter((p) => p.status === "pending");
   const approved = pins.filter((p) => p.status === "approved");
-  const full = plan === "full";
+  void plan;
+  const full = true; // segredo (blur) liberado para todos os planos
   const btn = `cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] ${dark ? "border-white/20 text-white hover:bg-white/10" : "border-[#d9c9ad] text-[#4a3826] hover:bg-[#efe4cf]"}`;
   const primary = "cursor-pointer rounded-lg bg-[#1f232b] px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-[#2f3540] disabled:cursor-not-allowed disabled:opacity-45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   const muted = dark ? "text-white/65" : "text-[#6b5440]";

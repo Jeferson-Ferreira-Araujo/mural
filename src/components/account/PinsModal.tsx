@@ -99,7 +99,8 @@ export function PinsModal({ open, onClose, muralId, plan, onPending, onRestored,
   const [busy, setBusy] = useState<string | null>(null);
   const [reporting, setReporting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const full = plan === "full";
+  void plan;
+  const full = true; // segredo liberado para todos os planos
 
   const load = useCallback(async () => {
     const list = await listOwnerPins(getBrowserSupabase(), muralId);

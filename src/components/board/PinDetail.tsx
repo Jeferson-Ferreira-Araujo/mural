@@ -407,10 +407,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                   <>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, false), true)} className={`${ghost}`}>
                       {tx("recusar")}</button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? tx("m_aprovaEDeixaEmSegredo") : tx("m_segredoEDoPinz")} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
+                    <button type="button" disabled={busy} title={tx("m_aprovaEDeixaEmSegredo")} onClick={() => run(() => mod.moderate(item.id, true, true), true)} className={`${ghost}`}>
                       <span className="inline-flex items-center justify-center gap-2">
                         <EyeClosed />
-                        {mod.plan === "full" ? tl("Aprovar como segredo") : tl("Segredo (PINZ+)")}
+                        {tl("Aprovar como segredo")}
                       </span>
                     </button>
                     <button type="button" disabled={busy} onClick={() => run(() => mod.moderate(item.id, true), true)} className="cursor-pointer rounded-xl bg-[#d9a21b] px-6 py-2.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60">
@@ -428,11 +428,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       </svg>
                       {item.pinned ? tl("Desafixar pin") : tl("Fixar pin")}
                     </button>
-                    <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : tx("m_segredoEDoPinz")} onClick={() => {
+                    <button type="button" disabled={busy} onClick={() => {
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);
                     }} className={`${ghost}`}>
-                      {mod.plan !== "full" ? tl("Segredo (PINZ+)") : item.ownerHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
+                      {item.ownerHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
                     </button>
                   </>
                 )}
