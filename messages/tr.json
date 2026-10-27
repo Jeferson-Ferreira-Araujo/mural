@@ -2269,7 +2269,12 @@
     "h181aouq": "Ödeme onaylanınca kişiye hediye bildirimi gider ve ortak panolar oluşturabilirsiniz.",
     "h9cneyj": "Artık birlikte ortak panolar oluşturabilirsiniz.",
     "h1xzho0f": "Anonim sayım (her zaman açık, onay gerekmez): yalnızca kaç kişinin çevrimiçi olduğunu ve günde kaç sayfanın görüntülendiğini, toplam sayılar olarak sayıyoruz. Açık her sayfa, yalnızca kendi belleğinde yaşayan rastgele bir sayı kullanır (cihazına kaydedilmez) ve birkaç dakika içinde sunucumuzdan silinir. Bu sayımda hesap, IP, cihaz, dil, sayfa adresi veya yönlendiren site saklamıyoruz.",
-    "h14yea0q": "Kabul et"
+    "h14yea0q": "Kabul et",
+    "h1kc268": "Pini sabitle",
+    "hvhbuip": "Pin sabitlemeyi kaldır",
+    "h1v7kvqz": "Pin sabitlendi.",
+    "h1f6ejua": "Pin sabitlemesi kaldırıldı.",
+    "hykbb39": "Sabitlenen pin, panonun geçerlilik süresi dolunca kaybolmaz."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

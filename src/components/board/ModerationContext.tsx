@@ -14,6 +14,8 @@ export type Moderation = {
   /** apaga um pin que o dono já aprovou (mesma operação de recusar, com o aviso certo: "Pin apagado.") */
   remove: (id: string) => Promise<boolean>;
   setSecret: (id: string, secret: boolean) => Promise<boolean>;
+  /** fixa o pin: ele não vence com o prazo de validade do mural */
+  setPinned: (id: string, pinned: boolean) => Promise<boolean>;
   /** muda o pin de espaço (arrastando); se o espaço estiver ocupado, os dois trocam de lugar */
   move: (id: string, slot: number) => Promise<boolean>;
   /** aviso curto na tela */

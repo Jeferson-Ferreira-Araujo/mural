@@ -25,6 +25,8 @@ type Base = {
   pending?: boolean;
   /** Visão do dono: este pin está em blur para quem visita (recurso PINZ+). */
   ownerHidden?: boolean;
+  /** Fixado pelo dono: não vence com o prazo de validade do mural (tachinha dourada). */
+  pinned?: boolean;
   /** Nickname de quem deixou o pin. Pins antigos de antes do fim do envio anônimo podem não ter. */
   signedBy?: string;
   /** Reação (chave do emoji) que o dono do mural deixou neste pin. */
@@ -74,6 +76,7 @@ export type HiddenItem = {
   fcov?: number[];
   hidden: true;
   pending?: boolean;
+  pinned?: boolean;
   /** Fundo de um mural trancado: só o desenho borrado, sem cadeado nem aviso. */
   backdrop?: true;
   /** Só o tipo e o estilo visual: o conteúdo nunca vem. */

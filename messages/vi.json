@@ -2269,7 +2269,12 @@
     "h181aouq": "Khi thanh toán được xác nhận, họ sẽ nhận thông báo về món quà và hai bạn có thể tạo bảng chung.",
     "h9cneyj": "Giờ hai bạn có thể cùng tạo bảng chung.",
     "h1xzho0f": "Đếm ẩn danh (luôn bật, không cần chấp nhận): chúng tôi chỉ đếm có bao nhiêu người đang trực tuyến và bao nhiêu trang được xem mỗi ngày, dưới dạng số tổng hợp. Mỗi trang đang mở dùng một số ngẫu nhiên chỉ tồn tại trong bộ nhớ của trang (không lưu trên thiết bị của bạn) và biến mất khỏi máy chủ sau vài phút. Trong phép đếm này chúng tôi không lưu tài khoản, IP, thiết bị, ngôn ngữ, địa chỉ trang hay trang giới thiệu.",
-    "h14yea0q": "Chấp nhận"
+    "h14yea0q": "Chấp nhận",
+    "h1kc268": "Ghim pin",
+    "hvhbuip": "Bỏ ghim pin",
+    "h1v7kvqz": "Đã ghim pin.",
+    "h1f6ejua": "Đã bỏ ghim pin.",
+    "hykbb39": "Pin đã ghim không biến mất khi hết hạn hiệu lực của bảng."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

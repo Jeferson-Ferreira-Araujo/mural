@@ -14,12 +14,15 @@ export function Pin({
   pos,
   className = "",
   style,
+  extra,
 }: {
   tone?: PinColor;
   /** Sem isso, a posição vem do `className` (esquerda). Na direita a tachinha é espelhada. */
   pos?: PinPos;
   className?: string;
   style?: CSSProperties;
+  /** tachinha colocada por cima de um cartão que não tem a sua (a animação de trocar de cor não a move) */
+  extra?: boolean;
 }) {
   const recolor = pinOf(tone).filter;
   const flip = pos === "right";
@@ -30,6 +33,7 @@ export function Pin({
       alt=""
       aria-hidden
       data-tack
+      data-extra={extra ? "" : undefined}
       draggable={false}
       className={`pointer-events-none absolute z-20 -mt-[0.85em] -mr-[0.55em] -ml-[0.95em] block w-[3em] select-none ${className}`}
       style={{

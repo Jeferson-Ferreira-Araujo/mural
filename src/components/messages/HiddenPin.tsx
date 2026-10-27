@@ -39,6 +39,30 @@ function placeholderFor(h: HiddenItem): Message | null {
  * Espaço ocupado em blur: o conteúdo NÃO veio do servidor (pin aguardando aprovação de outra pessoa ou pin que o dono
  * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
+/** O verso do pin em segredo: o mesmo cartão de enchimento que os visitantes veem, sem borrar (quem o vê espelhado). */
+export function HiddenBack({ item }: { item: HiddenItem }) {
+  const fake = placeholderFor(item);
+  return fake ? <MessageView message={fake} /> : <div className="h-[13.5em] w-[14em] rounded-[0.2em] bg-[#e8dcc0]" />;
+}
+
+/** Selo do cadeado sobre o pin em segredo. */
+export function SecretBadge() {
+  const tx = useTranslations("components.messages.HiddenPin");
+  const inDetail = useInDetail();
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
+      <span className="flex flex-col items-center gap-[0.45em]">
+        <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
+          <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor">
+            <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
+          </svg>
+        </span>
+        <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{tx("segredo")}</span>
+      </span>
+    </span>
+  );
+}
+
 export function HiddenPin({ item }: { item: HiddenItem }) {
   const tx = useTranslations("components.messages.HiddenPin");
   const inDetail = useInDetail();

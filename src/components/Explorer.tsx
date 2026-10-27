@@ -26,7 +26,7 @@ import {
 } from "@/lib/mural";
 import { BOARDS, boardById } from "@/lib/boards";
 import type { SendPayload } from "./composer/types";
-import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
+import { fetchBoard, fetchLockedLayout, getSendStatus, listOwnerPins, moderatePin, reportPin, sendBlockedText, sendPin, setPinHidden, setPinPinned, updateListPin, SEND_ERROR_TEXT } from "@/lib/pins";
 import { getOwnMurals, getOwnProfile, homeRouteFor, signOutAndLeave, loginUrl, rememberNext, safeNext, takeNext, useSession, type OwnMural } from "@/lib/auth";
 import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
@@ -710,6 +710,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           }
         : undefined,
       setSecret: async (id: string, secret: boolean) => afterModeration(await setPinHidden(getBrowserSupabase(), id, secret), secret ? tx("m_pinEmSegredo") : tx("m_pinVisivelParaTodos")),
+      setPinned: async (id: string, pinned: boolean) => afterModeration(await setPinPinned(getBrowserSupabase(), id, pinned), pinned ? tl("Pin fixado.") : tl("Pin desafixado.")),
       report: async (id: string, r: { reason: ReportReason; details: string; block: boolean }) => afterModeration(await reportPin(getBrowserSupabase(), id, r.reason, r.details, r.block), tx("m_denunciaEnviadaEPinRemovido")),
     }),
     [afterModeration, own, slug, isMember, isOwner, notify, loadBoard, tl],

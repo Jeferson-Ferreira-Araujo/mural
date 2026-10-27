@@ -422,6 +422,12 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       <Trash />
                       <span className="hidden sm:inline">{tx("excluirPin")}</span>
                     </button>
+                    <button type="button" disabled={busy} title={tl("O pin fixado não some quando passa a validade do mural.")} aria-pressed={!!item.pinned} onClick={() => void run(() => mod.setPinned(item.id, !item.pinned), false)} className={`${ghost} flex items-center justify-center gap-2`}>
+                      <svg {...icon}>
+                        <path d="M12 17v5M8 3h8l-1 6 3 3H6l3-3-1-6Z" />
+                      </svg>
+                      {item.pinned ? tl("Desafixar pin") : tl("Fixar pin")}
+                    </button>
                     <button type="button" disabled={busy || mod.plan !== "full"} title={mod.plan === "full" ? "" : tx("m_segredoEDoPinz")} onClick={() => {
                       setShowSecret(false);
                       void run(() => mod.setSecret(item.id, !item.ownerHidden), false);

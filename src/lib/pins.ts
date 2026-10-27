@@ -129,6 +129,12 @@ export async function setPinHidden(sb: SupabaseClient, id: string, hidden: boole
   return !error;
 }
 
+/** Fixa (ou solta) um pin: o fixado não sai do mural quando passa o prazo de validade. */
+export async function setPinPinned(sb: SupabaseClient, id: string, pinned: boolean): Promise<boolean> {
+  const { error } = await sb.rpc("set_pin_pinned", { p_id: id, p_pinned: pinned });
+  return !error;
+}
+
 /** Relata um pin como abuso/assédio: guarda a prova, remove do mural e (opcional) bloqueia quem enviou. */
 export async function reportPin(sb: SupabaseClient, id: string, reason: string, details: string, block: boolean): Promise<boolean> {
   const { error } = await sb.rpc("report_pin", { p_id: id, p_reason: reason, p_details: details || null, p_block: block });

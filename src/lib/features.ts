@@ -20,6 +20,7 @@ export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string }[]
   { key: "pin_weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
   { key: "mural_swipe", label: "Trocar de mural arrastando (celular)", hint: "Arrastar o mural para o lado passa para o próximo mural da pessoa. Desligado por padrão" },
   { key: "live_presence", label: "Visitantes no mural em tempo real", hint: "O dono vê quem está no mural agora (cada pessoa liga no perfil). Desligado por padrão: ninguém manda sinais e o botão some do perfil" },
+  { key: "secret_flip", label: "Segredo: pin virado ao contrário", hint: "Teste: o pin em segredo aparece virado de costas (a tachinha ou fita levanta, ele vira e prende de novo). Desligado: o segredo continua borrado como antes" },
   { key: "reactions", label: "Reações aos pins", hint: "O dono do mural reage com emoji no detalhe do pin (e o autor é avisado no sino)" },
 ];
 

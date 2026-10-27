@@ -2269,7 +2269,12 @@
     "h181aouq": "Zodra de betaling is bevestigd, krijgt de persoon een melding van het cadeau en kunnen jullie gedeelde borden maken.",
     "h9cneyj": "Nu kunnen jullie samen gedeelde borden maken.",
     "h1xzho0f": "Anonieme telling (altijd actief, zonder toestemming): we tellen alleen hoeveel mensen online zijn en hoeveel pagina's per dag worden bekeken, als opgetelde aantallen. Elke geopende pagina gebruikt een willekeurig nummer dat alleen in het geheugen van de pagina leeft (het wordt niet op je apparaat opgeslagen) en binnen enkele minuten van onze server verdwijnt. Bij deze telling bewaren we geen account, IP, apparaat, taal, pagina-adres of verwijzende site.",
-    "h14yea0q": "Accepteren"
+    "h14yea0q": "Accepteren",
+    "h1kc268": "Pin vastzetten",
+    "hvhbuip": "Pin losmaken",
+    "h1v7kvqz": "Pin vastgezet.",
+    "h1f6ejua": "Pin losgemaakt.",
+    "hykbb39": "Een vastgezette pin blijft staan als de geldigheid van het bord verloopt."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

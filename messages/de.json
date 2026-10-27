@@ -2269,7 +2269,12 @@
     "h181aouq": "Sobald die Zahlung bestätigt ist, wird die Person über das Geschenk informiert und ihr könnt geteilte Pinnwände erstellen.",
     "h9cneyj": "Ihr könnt jetzt gemeinsam geteilte Pinnwände erstellen.",
     "h1xzho0f": "Anonyme Zählung (immer aktiv, ohne Zustimmung): Wir zählen nur, wie viele Personen online sind und wie viele Seiten pro Tag aufgerufen werden, als Summenwerte. Jede geöffnete Seite nutzt eine Zufallszahl, die nur in ihrem Speicher lebt (sie wird nicht auf deinem Gerät gespeichert) und nach wenigen Minuten von unserem Server verschwindet. Bei dieser Zählung speichern wir weder Konto, IP, Gerät, Sprache, Seitenadresse noch Herkunftsseite.",
-    "h14yea0q": "Akzeptieren"
+    "h14yea0q": "Akzeptieren",
+    "h1kc268": "Pin fixieren",
+    "hvhbuip": "Fixierung lösen",
+    "h1v7kvqz": "Pin fixiert.",
+    "h1f6ejua": "Fixierung gelöst.",
+    "hykbb39": "Ein fixierter Pin bleibt, wenn die Gültigkeit der Pinnwand abläuft."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

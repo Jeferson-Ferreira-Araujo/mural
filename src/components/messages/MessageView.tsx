@@ -2,7 +2,9 @@ import { reactionEmoji } from "@/lib/reactions";
 import { isHidden, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
-import { HiddenPin } from "./HiddenPin";
+import { HiddenBack, HiddenPin, SecretBadge } from "./HiddenPin";
+import { PinFx, SecretFlip } from "./PinFx";
+import { useFeatureFlags } from "@/lib/features";
 import { ClosedCapsule } from "./ClosedCapsule";
 import { ListCard } from "./ListCard";
 import { MusicCard } from "./MusicCard";
@@ -120,22 +122,41 @@ function Marked({ m }: { m: Message }) {
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
 export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
+  const flip = useFeatureFlags().secret_flip === true;
+  if (isSealed(message)) return <ClosedCapsule opensAt={message.opensAt} />;
+  // fixado: tachinha/fita dourada (PinFx); o resto é o pin de sempre
+  return (
+    <PinFx pinned={!!message.pinned && !(isHidden(message) && message.pending)} type={message.type}>
+      <MessageBody message={message} revealSecret={revealSecret} flip={flip} />
+    </PinFx>
+  );
+}
+
+function MessageBody({ message, revealSecret, flip }: { message: BoardItem; revealSecret: boolean; flip: boolean }) {
   const tx = useTranslations("components.messages.MessageView");
-  const inDetail = useInDetail();
   let m = message;
-  if (isSealed(m)) return <ClosedCapsule opensAt={m.opensAt} />;
-  if (isHidden(m)) return <HiddenPin item={m} />;
+  if (isSealed(m)) return null;
+  // segredo virado: quem visita vê o pin de costas (espelhado), sem conteúdo
+  if (isHidden(m)) return flip && !m.pending && !m.backdrop ? <SecretFlip back front={null} backFace={<HiddenBack item={m} />} badge={<SecretBadge />} /> : <HiddenPin item={m} />;
   // visão do dono: pin em segredo mostra o texto e a assinatura, mas borrados, até ele pedir para ver no detalhe do pin
   if (m.ownerHidden && !m.pending) {
     if (!revealSecret) {
       // o mesmo cartão que os visitantes veem (texto de enchimento, foto e mapa genéricos): nenhum dado verdadeiro do pin fica na tela, nem por um instante durante o zoom
       const t = m.type;
       const hid: HiddenItem = { id: m.id, hidden: true, type: t, color: "color" in m ? m.color : undefined, variant: "variant" in m ? m.variant : undefined, playerColor: "playerColor" in m ? m.playerColor : undefined, ratio: "ratio" in m ? m.ratio : undefined, font: m.font, pin: m.pin, tape: m.tape, pos: m.pos };
-      return <HiddenPin item={hid} />;
+      if (!flip) return <HiddenPin item={hid} />;
+      return <SecretFlip back front={<Plain m={{ ...m, ownerHidden: false }} />} backFace={<HiddenBack item={hid} />} badge={<SecretBadge />} />;
     }
     m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
   }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
+  // mesma árvore do pin em segredo: ao ligar ou desligar o segredo o pin vira (com a animação) em vez de trocar de cartão
+  return flip ? <SecretFlip back={false} front={<Plain m={m} />} backFace={null} badge={null} /> : <Plain m={m} />;
+}
+
+/** O pin à vista: sozinho, ou com assinatura, reação e lacre de Cápsula. */
+function Plain({ m }: { m: Message }) {
+  const tx = useTranslations("components.messages.MessageView");
   if (!m.fromCapsule && !m.signedBy && !m.reaction) return <Content m={m} />;
   // mensagem assinada e/ou vinda de uma Cápsula já aberta (ganha um pequeno lacre no canto)
   return (

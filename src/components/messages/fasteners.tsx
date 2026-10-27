@@ -60,6 +60,7 @@ export function Tape({
   return (
     <span
       aria-hidden
+      data-tape
       className={`absolute z-20 block h-[1.9em] w-[6em] ${className}`}
       style={{
         transform: `rotate(${rotate}deg)`,
