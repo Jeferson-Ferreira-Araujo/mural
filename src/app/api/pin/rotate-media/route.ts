@@ -9,7 +9,8 @@ export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
-const PUBLIC = "/storage/v1/object/public/pin-media/";
+/** Endereço público dos arquivos (o do armazenamento, não o domínio próprio do login: é o que o banco aceita nos pins, veja uploadMedia em pins.ts). */
+const PUBLIC = "https://npylmcjxcosoytuhjrxu.supabase.co/storage/v1/object/public/pin-media/";
 
 const fail = (status: number, error: string) => NextResponse.json({ error }, { status });
 
@@ -34,9 +35,9 @@ export async function POST(req: Request) {
 
   const { data: src, error } = await user.rpc("pin_media_for_manage", { p_id: id });
   if (error) return fail(403, "forbidden");
-  if (typeof src !== "string" || !src.startsWith(SUPABASE_URL + PUBLIC)) return NextResponse.json({ ok: true, rotated: false }); // pin sem arquivo nosso
+  if (typeof src !== "string" || !src.startsWith(PUBLIC)) return NextResponse.json({ ok: true, rotated: false }); // pin sem arquivo nosso
 
-  const path = src.slice((SUPABASE_URL + PUBLIC).length);
+  const path = src.slice(PUBLIC.length);
   const m = /^([0-9a-f-]{36})\/[A-Za-z0-9._-]{1,80}\.([a-z0-9]{2,5})$/i.exec(path);
   if (!m) return NextResponse.json({ ok: true, rotated: false });
   const next = `${m[1]}/${randomUUID()}.${m[2].toLowerCase()}`;
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
   const bucket = admin.storage.from("pin-media");
   const { error: cpErr } = await bucket.copy(path, next);
   if (cpErr) return fail(502, "copy_failed");
-  const { data: swapped, error: swapErr } = await admin.rpc("swap_pin_media", { p_id: id, p_old: src, p_new: `${SUPABASE_URL}${PUBLIC}${next}` });
+  const { data: swapped, error: swapErr } = await admin.rpc("swap_pin_media", { p_id: id, p_old: src, p_new: `${PUBLIC}${next}` });
   if (swapErr || swapped !== true) {
     await bucket.remove([next]); // o pin mudou no meio do caminho: desfaz a cópia
     return fail(409, "changed");
