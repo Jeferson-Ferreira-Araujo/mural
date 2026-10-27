@@ -2268,7 +2268,8 @@
     "hh0htpg": "Regalar PINZ+ a {nick}",
     "h181aouq": "Cuando se confirme el pago, le avisaremos del regalo y ya podrán crear murales compartidos.",
     "h9cneyj": "Ahora pueden crear murales compartidos.",
-    "h1xzho0f": "Conteo anónimo (siempre activo, sin necesidad de aceptar): solo contamos cuántas personas están conectadas y cuántas páginas se ven por día, en cifras sumadas. Cada página abierta usa un número aleatorio que vive solo en su memoria (no se guarda en tu dispositivo) y desaparece de nuestro servidor en pocos minutos. En este conteo no guardamos cuenta, IP, dispositivo, idioma, dirección de la página ni sitio de origen."
+    "h1xzho0f": "Conteo anónimo (siempre activo, sin necesidad de aceptar): solo contamos cuántas personas están conectadas y cuántas páginas se ven por día, en cifras sumadas. Cada página abierta usa un número aleatorio que vive solo en su memoria (no se guarda en tu dispositivo) y desaparece de nuestro servidor en pocos minutos. En este conteo no guardamos cuenta, IP, dispositivo, idioma, dirección de la página ni sitio de origen.",
+    "h14yea0q": "Aceptar"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

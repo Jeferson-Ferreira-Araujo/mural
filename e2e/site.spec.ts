@@ -58,11 +58,11 @@ test.describe("páginas públicas", () => {
 });
 
 test.describe("privacidade", () => {
-  test("o aviso aparece, 'Só o essencial' o fecha e a escolha é lembrada", async ({ page }) => {
+  test("o aviso aparece, 'Recusar' o fecha e a escolha é lembrada", async ({ page }) => {
     await page.goto("/");
     const banner = page.getByRole("dialog", { name: /Privacidade e cookies/i });
     await expect(banner).toBeVisible();
-    await banner.getByRole("button", { name: "Só o essencial" }).click();
+    await banner.getByRole("button", { name: "Recusar" }).click();
     await expect(banner).toBeHidden();
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("pinz:consent") ?? "null"));
     expect(saved).toMatchObject({ v: 1, analytics: false });
@@ -76,7 +76,7 @@ test.describe("privacidade", () => {
       if (r.url().includes("/rpc/track_event")) calls.push(r.url());
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Só o essencial" }).click();
+    await page.getByRole("button", { name: "Recusar" }).click();
     await page.goto("/privacidade");
     await page.waitForTimeout(1500);
     expect(calls).toEqual([]);

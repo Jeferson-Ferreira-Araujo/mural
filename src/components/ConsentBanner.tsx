@@ -8,7 +8,7 @@ import { useLit } from "@/i18n/literal";
 
 /**
  * Aviso de privacidade: aparece na primeira visita (e quando a pessoa pede para mudar a escolha).
- * Os dois botões têm o mesmo peso. Recusar não tira nada do site: só desliga as métricas de uso.
+ * Os dois botões (Aceitar e Recusar) têm o mesmo peso. Recusar não tira nada do site: só desliga as métricas de uso.
  */
 export function ConsentBanner() {
   const tl = useLit();
@@ -39,10 +39,10 @@ export function ConsentBanner() {
       </p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <button type="button" onClick={() => choose(false)} className={btn}>
-          {tl("Só o essencial")}
+          {tl("Recusar")}
         </button>
         <button type="button" onClick={() => choose(true)} className={btn}>
-          {tl("Aceitar as métricas")}
+          {tl("Aceitar")}
         </button>
       </div>
     </div>
