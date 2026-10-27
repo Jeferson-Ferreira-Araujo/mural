@@ -123,10 +123,22 @@ export async function moderatePin(sb: SupabaseClient, id: string, approve: boole
   return !error;
 }
 
-/** PINZ+: deixa um pin visível ou em blur para quem visita. */
+/** Deixa um pin visível ou em segredo para quem visita (qualquer plano). */
 export async function setPinHidden(sb: SupabaseClient, id: string, hidden: boolean): Promise<boolean> {
   const { error } = await sb.rpc("set_pin_hidden", { p_id: id, p_hidden: hidden });
-  return !error;
+  if (error) return false;
+  await rotatePinMedia(sb, id); // ao ligar ou desligar o segredo, o arquivo (foto, desenho, vídeo, voz) muda de endereço
+  return true;
+}
+
+/** Troca o endereço do arquivo do pin (o link antigo deixa de abrir). Se falhar, o segredo continua valendo: só o endereço antigo não foi trocado. */
+export async function rotatePinMedia(sb: SupabaseClient, id: string): Promise<void> {
+  try {
+    const { data: s } = await sb.auth.getSession();
+    await fetch("/api/pin/rotate-media", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.session?.access_token ?? ""}` }, body: JSON.stringify({ id }) });
+  } catch {
+    /* sem rede: o segredo já foi gravado; o endereço antigo fica como estava */
+  }
 }
 
 /** Fixa (ou solta) um pin: o fixado não sai do mural quando passa o prazo de validade. */
