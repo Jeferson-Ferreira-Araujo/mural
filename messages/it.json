@@ -2268,8 +2268,8 @@
     "hh0htpg": "Regala PINZ+ a {nick}",
     "h181aouq": "Appena il pagamento è confermato, la persona viene avvisata del regalo e potete creare bacheche condivise.",
     "h9cneyj": "Ora potete creare bacheche condivise.",
-    "h14yea0q": "Accetta",
-    "h1aft97y": "Conteggio anonimo (sempre attivo, senza bisogno di accettare): contiamo solo quante pagine vengono viste al giorno, in numeri sommati. Ogni pagina aperta usa un numero casuale che vive solo nella sua memoria (non viene salvato sul tuo dispositivo) e sparisce dal nostro server in pochi minuti. In questo conteggio non conserviamo account, IP, dispositivo, lingua, indirizzo della pagina né sito di provenienza."
+    "h1xzho0f": "Conteggio anonimo (sempre attivo, senza bisogno di accettare): contiamo solo quante persone sono online e quante pagine vengono viste al giorno, in numeri sommati. Ogni pagina aperta usa un numero casuale che vive solo nella sua memoria (non viene salvato sul tuo dispositivo) e sparisce dal nostro server in pochi minuti. In questo conteggio non conserviamo account, IP, dispositivo, lingua, indirizzo della pagina né sito di provenienza.",
+    "h14yea0q": "Accetta"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

@@ -2268,8 +2268,8 @@
     "hh0htpg": "Podaruj PINZ+ dla {nick}",
     "h181aouq": "Gdy płatność zostanie potwierdzona, osoba dostanie powiadomienie o prezencie i będziecie mogli tworzyć wspólne tablice.",
     "h9cneyj": "Teraz możecie razem tworzyć wspólne tablice.",
-    "h14yea0q": "Zaakceptuj",
-    "h1aft97y": "Anonimowe zliczanie (zawsze włączone, bez konieczności zgody): liczymy tylko, ile stron jest wyświetlanych dziennie, w sumach. Każda otwarta strona używa losowego numeru, który istnieje tylko w jej pamięci (nie jest zapisywany na Twoim urządzeniu) i znika z naszego serwera w ciągu kilku minut. W tym zliczaniu nie przechowujemy konta, IP, urządzenia, języka, adresu strony ani strony źródłowej."
+    "h1xzho0f": "Anonimowe zliczanie (zawsze włączone, bez konieczności zgody): liczymy tylko, ile osób jest online i ile stron jest wyświetlanych dziennie, w sumach. Każda otwarta strona używa losowego numeru, który istnieje tylko w jej pamięci (nie jest zapisywany na Twoim urządzeniu) i znika z naszego serwera w ciągu kilku minut. W tym zliczaniu nie przechowujemy konta, IP, urządzenia, języka, adresu strony ani strony źródłowej.",
+    "h14yea0q": "Zaakceptuj"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

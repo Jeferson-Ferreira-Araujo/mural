@@ -2268,8 +2268,8 @@
     "hh0htpg": "Hadiahkan PINZ+ untuk {nick}",
     "h181aouq": "Setelah pembayaran dikonfirmasi, dia diberi tahu tentang hadiah itu dan kalian bisa membuat mural bersama.",
     "h9cneyj": "Sekarang kalian bisa membuat mural bersama.",
-    "h14yea0q": "Terima",
-    "h1aft97y": "Hitungan anonim (selalu aktif, tanpa perlu menyetujui): kami hanya menghitung berapa halaman dilihat per hari, dalam angka gabungan. Setiap halaman yang terbuka memakai angka acak yang hanya hidup di memorinya (tidak disimpan di perangkatmu) dan hilang dari server kami dalam beberapa menit. Dalam hitungan ini kami tidak menyimpan akun, IP, perangkat, bahasa, alamat halaman, atau situs asal."
+    "h1xzho0f": "Hitungan anonim (selalu aktif, tanpa perlu menyetujui): kami hanya menghitung berapa orang yang online dan berapa halaman dilihat per hari, dalam angka gabungan. Setiap halaman yang terbuka memakai angka acak yang hanya hidup di memorinya (tidak disimpan di perangkatmu) dan hilang dari server kami dalam beberapa menit. Dalam hitungan ini kami tidak menyimpan akun, IP, perangkat, bahasa, alamat halaman, atau situs asal.",
+    "h14yea0q": "Terima"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

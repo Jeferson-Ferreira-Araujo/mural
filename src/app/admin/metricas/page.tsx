@@ -8,7 +8,6 @@ import { Spinner } from "@/components/ui";
 import { Bars, brl, card, chip, Delta, Kpi, label, nf, type Item } from "./parts";
 import { GrowthView } from "./growth";
 import { OverviewView } from "./overview";
-import { ONLINE_NOW } from "@/lib/online";
 
 type Row = { name: string; total: number } & Record<string, number | string>;
 type Day = { d: string; views: number; sessions: number; visitors: number; active: number; signups: number; pins: number; pins_del: number; displays: number; revenue: number };
@@ -176,7 +175,7 @@ export default function MetricsPage() {
       if (data) setLive(data as Live);
     };
     void load();
-    const t = window.setInterval(() => void load(), ONLINE_NOW ? 2_000 : 30_000); // com o "online agora" ligado, atualiza a cada 2 s
+    const t = window.setInterval(() => void load(), 2_000); // tempo real: atualiza a cada 2 s
     return () => window.clearInterval(t);
   }, [allowed, tab]);
 
@@ -333,22 +332,13 @@ const NAV: { id: "overview" | "growth" | "geral"; label: string; icon: string }[
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#3ddc84] opacity-70" />
                     <span className="relative inline-flex size-2.5 rounded-full bg-[#3ddc84]" />
                   </span>
-                  {ONLINE_NOW ? "Online agora · tempo real" : "Hoje"}
+                  Online agora · tempo real
                 </p>
-                {ONLINE_NOW ? (
-                  <>
-                    <p className="font-title mt-1 text-6xl leading-none font-semibold tabular-nums">{live ? nf(live.online) : "—"}</p>
-                    <p className="mt-1 text-sm text-[#6b5440]">{live ? `${nf(live.online_logged)} logados · ${nf(live.online - live.online_logged)} visitantes` : ""}</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="font-title mt-1 text-6xl leading-none font-semibold tabular-nums">{live ? nf(live.today_views) : "—"}</p>
-                    <p className="mt-1 text-sm text-[#6b5440]">páginas vistas hoje</p>
-                  </>
-                )}
+                <p className="font-title mt-1 text-6xl leading-none font-semibold tabular-nums">{live ? nf(live.online) : "—"}</p>
+                <p className="mt-1 text-sm text-[#6b5440]">{live ? `${nf(live.online_logged)} logados · ${nf(live.online - live.online_logged)} visitantes` : ""}</p>
               </div>
               <div className="text-right text-sm text-[#6b5440]">
-                {ONLINE_NOW && <p><b className="tabular-nums">{live ? nf(live.today_views) : "—"}</b> páginas vistas hoje</p>}
+                <p><b className="tabular-nums">{live ? nf(live.today_views) : "—"}</b> páginas vistas hoje</p>
                 <p><b className="tabular-nums">{live ? nf(live.today_sessions) : "—"}</b> sessões hoje</p>
               </div>
             </div>
