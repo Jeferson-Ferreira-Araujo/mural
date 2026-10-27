@@ -14,7 +14,7 @@ export default function Privacidade() {
   const tl = useLit();
   const tx = useTranslations("app.privacidade.page");
   return (
-    <LegalPage title={tl("Política de Privacidade")} updated="2026-10-26">
+    <LegalPage title={tl("Política de Privacidade")} updated="2026-10-27">
       <p>{tx("x_oPinzPinzDigitalE")}</p>
 
       <section>
@@ -60,7 +60,7 @@ export default function Privacidade() {
         <ul>
           <li>{tl("Essenciais (sempre ativos): o login da sua conta, o idioma escolhido, as preferências de acessibilidade e a sua escolha de privacidade. Sem eles o site não funciona.")}</li>
           <li>{tl("Medições de uso (só se você aceitar): usamos ferramentas próprias, sem cookies de terceiros. A visita recebe um número aleatório que vale só enquanto a aba está aberta. Não guardamos o seu IP nessas medições e não vendemos nem repassamos esses dados a anunciantes.")}</li>
-          <li>{tl("Contagem anônima (sempre ativa, sem precisar aceitar): contamos só quantas pessoas estão online e quantas páginas são vistas por dia, em números somados. Cada página aberta usa um número aleatório que fica apenas na memória dela (não é gravado no seu aparelho) e some do nosso servidor em poucos minutos. Nessa contagem não guardamos conta, IP, aparelho, idioma, endereço da página nem site de origem.")}</li>
+          <li>{tl("Contagem anônima (sempre ativa, sem precisar aceitar): contamos só quantas páginas são vistas por dia, em números somados. Cada página aberta usa um número aleatório que fica apenas na memória dela (não é gravado no seu aparelho) e some do nosso servidor em poucos minutos. Nessa contagem não guardamos conta, IP, aparelho, idioma, endereço da página nem site de origem.")}</li>
           <li>{tl("O que medimos: páginas visitadas, início da visita, tipo de aparelho, idioma, fuso horário, site de origem e uso das ferramentas (como abrir a loja). Se você estiver logado, a medição fica ligada à sua conta. Guardamos por até 24 meses.")}</li>
           <li>{tl("O sinal “Não rastrear” do navegador é respeitado.")}</li>
         </ul>

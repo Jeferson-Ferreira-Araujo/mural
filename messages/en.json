@@ -2268,8 +2268,8 @@
     "hh0htpg": "Gift {nick} PINZ+",
     "h181aouq": "Once the payment is confirmed, they are notified of the gift and you can both create shared boards.",
     "h9cneyj": "Now you can create shared boards together.",
-    "h1xzho0f": "Anonymous count (always on, no need to accept): we only count how many people are online and how many pages are viewed per day, as summed numbers. Each open page uses a random number that lives only in its memory (it is not saved on your device) and disappears from our server within minutes. In this count we do not store your account, IP, device, language, page address or referring site.",
-    "h14yea0q": "Accept"
+    "h14yea0q": "Accept",
+    "h1aft97y": "Anonymous count (always on, no need to accept): we only count how many pages are viewed per day, as summed numbers. Each open page uses a random number that lives only in its memory (it is not saved on your device) and disappears from our server within minutes. In this count we do not store your account, IP, device, language, page address or referring site."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { analyticsAllowed, CONSENT_EVENT } from "@/lib/consent";
+import { ONLINE_NOW } from "@/lib/online";
 
 const PING_MS = 15_000; // "online agora": um sinal a cada 15 s (o painel considera online quem mandou sinal nos últimos 40 s)
 
@@ -79,6 +80,7 @@ export function SiteTracker() {
     if (!anonId.current) anonId.current = crypto.randomUUID();
     const sb = getBrowserSupabase();
     void sb.rpc("anon_ping", { p_id: anonId.current, p_view: true }).then(() => undefined);
+    if (!ONLINE_NOW) return; // só a página vista conta; sem sinais periódicos
     const ping = () => void sb.rpc("anon_ping", { p_id: anonId.current, p_view: false }).then(() => undefined);
     const t = window.setInterval(() => document.visibilityState === "visible" && ping(), PING_MS);
     const vis = () => (document.visibilityState === "visible" ? ping() : leave("anon_leave", { p_id: anonId.current }));
@@ -109,7 +111,7 @@ export function SiteTracker() {
 
   // "online agora": avisa a cada 15 s, só com a aba à vista
   useEffect(() => {
-    if (!ok || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
+    if (!ONLINE_NOW || !ok || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)) return;
     const sb = getBrowserSupabase();
     const ping = () => {
       if (document.visibilityState !== "visible" || location.pathname.startsWith("/admin")) return;
