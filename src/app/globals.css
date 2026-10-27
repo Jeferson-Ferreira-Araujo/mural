@@ -443,7 +443,7 @@ html[data-a11y-contrast="1"] :focus-visible {
 /* ---------- pin fixado (tachinha/fita dourada) e pin em segredo virado ---------- */
 :root { --sx: 1; }
 .pz-gold [data-tack] {
-  filter: hue-rotate(40deg) saturate(1.45) brightness(1.12) drop-shadow(0.22em 0.4em 0.22em rgba(30, 12, 0, 0.5)) !important;
+  filter: grayscale(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.5) contrast(1.1) drop-shadow(0.22em 0.4em 0.22em rgba(30, 12, 0, 0.5)) !important;
 }
 .pz-gold [data-tape] {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.4), transparent 30%, rgba(255, 255, 255, 0.28) 70%, transparent), rgba(222, 170, 52, 0.88) !important;
@@ -454,9 +454,9 @@ html[data-a11y-contrast="1"] :focus-visible {
   100% { translate: 0 0; scale: var(--sx) 1; rotate: 0deg; }
 }
 @keyframes pz-peel {
-  0% { translate: 0 0; rotate: 0deg; }
-  30%, 45% { translate: 0 -1em; rotate: -9deg; }
-  100% { translate: 0 0; rotate: 0deg; }
+  0% { margin-top: 0; rotate: 0deg; }
+  30%, 45% { margin-top: -0.9em; rotate: -9deg; }
+  100% { margin-top: 0; rotate: 0deg; }
 }
 @keyframes pz-drop {
   0% { translate: 0 -2.2em; scale: 1.2; opacity: 0; }
@@ -483,8 +483,8 @@ html[data-a11y-contrast="1"] :focus-visible {
   22%, 78% { translate: 0.1em -2.2em; scale: calc(var(--sx) * 1.2) 1.2; rotate: -14deg; }
 }
 @keyframes pz-peel-hold {
-  0%, 100% { translate: 0 0; rotate: 0deg; }
-  22%, 78% { translate: 0 -1em; rotate: -9deg; }
+  0%, 100% { margin-top: 0; rotate: 0deg; }
+  22%, 78% { margin-top: -0.9em; rotate: -9deg; }
 }
 .pz-turn-back { animation: pz-turn-back 1.3s ease-in-out both; }
 .pz-turn-front { animation: pz-turn-front 1.3s ease-in-out both; }

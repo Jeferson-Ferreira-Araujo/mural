@@ -122,7 +122,7 @@ function Marked({ m }: { m: Message }) {
  * Tamanho: tudo em `em` — quem usa define o `font-size` para escalar.
  */
 export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
-  const flip = useFeatureFlags().secret_flip === true;
+  const flip = useFeatureFlags().secret_flip !== false;
   if (isSealed(message)) return <ClosedCapsule opensAt={message.opensAt} />;
   // fixado: tachinha/fita dourada (PinFx); o resto é o pin de sempre
   return (
