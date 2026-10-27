@@ -463,6 +463,9 @@ export default function Admin() {
             <Link href="/admin/metricas" className={primary}>
               Métricas
             </Link>
+            <Link href="/admin/status" className={btn}>
+              Status do servidor
+            </Link>
             <Link href="/" className={btn}>
               ← Voltar ao site
             </Link>

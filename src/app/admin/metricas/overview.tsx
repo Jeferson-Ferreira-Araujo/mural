@@ -5,6 +5,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
 import { Avatar } from "@/components/Avatar";
 import { brl, nf, panel, type Item } from "./parts";
+import { UptimeCard } from "./uptime";
 
 type Day = { d: string; users: number; murals: number; pins: number; reactions: number; revenue: number };
 type Counts = { users: number; murals: number; pins: number; reactions: number; revenue: number };
@@ -308,6 +309,8 @@ export function OverviewView({ days, extra }: { days: number; extra: Extra }) {
           <KpiCard key={k.key} k={k} o={o} />
         ))}
       </section>
+
+      <UptimeCard />
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)_minmax(0,1fr)]" aria-label="Evolução">
         <div className={card}>
