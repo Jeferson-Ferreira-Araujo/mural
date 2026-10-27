@@ -38,17 +38,3 @@ export function PinFx({ pinned, type, children }: { pinned: boolean; type?: stri
     </div>
   );
 }
-
-/**
- * Pin em segredo, virado de costas: ao ligar, a tachinha/fita levanta, o pin vira (espelhado: o que estava à esquerda vai para a direita) e prende de novo.
- * Ao desligar (ou ao pedir para ver), faz o caminho inverso.
- */
-export function SecretFlip({ back, front, backFace, badge }: { back: boolean; front: ReactNode; backFace: ReactNode; badge: ReactNode }) {
-  const s = useSwap(back, 650, 1300);
-  return (
-    <div className="relative w-fit" style={{ perspective: "70em" }}>
-      <div className={`pz-card ${s.shown ? "pz-mirror" : ""} ${s.run ? (back ? "pz-turn-back" : "pz-turn-front") : ""}`}>{s.shown ? backFace : front}</div>
-      {s.shown && badge}
-    </div>
-  );
-}

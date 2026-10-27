@@ -466,30 +466,40 @@ html[data-a11y-contrast="1"] :focus-visible {
 .pz-swap [data-tack]:not([data-extra]) { animation: pz-lift 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both; }
 .pz-swap [data-tape] { animation: pz-peel 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both; }
 
-/* segredo: levanta, vira de costas (espelhado) e prende de novo */
-.pz-card { --sx: 1; backface-visibility: visible; }
-.pz-mirror { --sx: -1; transform: scaleX(-1); }
-.pz-mirror [data-tack] { scale: -1 1; }
-@keyframes pz-turn-back {
-  0%, 22% { transform: rotateY(0deg); }
-  78%, 100% { transform: rotateY(180deg); }
+/* segredo: só o cartão gira (as duas faces trocam no meio, na borda); a tachinha/fita fica no lugar, levanta e prende de novo */
+.pz-face { backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; }
+.pz-blank > * > * { visibility: hidden; } /* verso em branco: sobra só o papel */
+.pz-blank > * { pointer-events: none; }
+.pz-fast, .pz-fast * { visibility: hidden; } /* camada da tachinha/fita: só elas aparecem */
+.pz-fast [data-tack], .pz-fast [data-tape] { visibility: visible; }
+.pz-nofast [data-tack], .pz-nofast [data-tape] { visibility: hidden; } /* na animação, a da face que gira some e vale a da camada parada */
+@keyframes pz-out {
+  0%, 16% { transform: rotateY(0deg); visibility: visible; animation-timing-function: ease-in; }
+  42% { transform: rotateY(90deg); visibility: visible; }
+  42.1%, 100% { transform: rotateY(90deg); visibility: hidden; }
 }
-@keyframes pz-turn-front {
-  0%, 22% { transform: rotateY(180deg); }
-  78%, 100% { transform: rotateY(360deg); }
+@keyframes pz-in {
+  0%, 41.9% { transform: rotateY(-90deg); visibility: hidden; }
+  42% { transform: rotateY(-90deg); visibility: visible; animation-timing-function: ease-out; }
+  68%, 100% { transform: rotateY(0deg); visibility: visible; }
 }
-@keyframes pz-lift-hold {
-  0%, 100% { translate: 0 0; scale: var(--sx) 1; rotate: 0deg; }
-  22%, 78% { translate: 0.1em -2.2em; scale: calc(var(--sx) * 1.2) 1.2; rotate: -14deg; }
+@keyframes pz-fast-tack {
+  0% { translate: 0 0; scale: 1; rotate: 0deg; animation-timing-function: ease-out; }
+  15%, 68% { translate: 0.1em -2.2em; scale: 1.2; rotate: -14deg; animation-timing-function: ease-in; }
+  84%, 100% { translate: 0 0; scale: 1; rotate: 0deg; }
 }
-@keyframes pz-peel-hold {
-  0%, 100% { margin-top: 0; rotate: 0deg; }
-  22%, 78% { margin-top: -0.9em; rotate: -9deg; }
+@keyframes pz-fast-tape {
+  0% { margin-top: 0; rotate: 0deg; animation-timing-function: ease-out; }
+  15%, 68% { margin-top: -0.9em; rotate: -9deg; animation-timing-function: ease-in; }
+  84%, 100% { margin-top: 0; rotate: 0deg; }
 }
-.pz-turn-back { animation: pz-turn-back 1.3s ease-in-out both; }
-.pz-turn-front { animation: pz-turn-front 1.3s ease-in-out both; }
-.pz-turn-back [data-tack]:not([data-extra]), .pz-turn-front [data-tack]:not([data-extra]) { animation: pz-lift-hold 1.3s ease-in-out both; }
-.pz-turn-back [data-tape], .pz-turn-front [data-tape] { animation: pz-peel-hold 1.3s ease-in-out both; }
+@keyframes pz-fade { from { opacity: 0; } to { opacity: 1; } }
+.pz-fade { animation: pz-fade 0.3s ease-out both; }
+.pz-run .pz-out { animation: pz-out 1.2s linear both; }
+.pz-run .pz-in { animation: pz-in 1.2s linear both; }
+.pz-run .pz-fast [data-tack] { animation: pz-fast-tack 1.2s linear both; }
+.pz-run .pz-fast [data-tape] { animation: pz-fast-tape 1.2s linear both; }
 @media (prefers-reduced-motion: reduce) {
-  .pz-swap [data-tack], .pz-swap [data-tape], .pz-turn-back, .pz-turn-front, .pz-turn-back *, .pz-turn-front * { animation: none !important; }
+  .pz-swap [data-tack], .pz-swap [data-tape], .pz-run .pz-fast [data-tack], .pz-run .pz-fast [data-tape], .pz-run .pz-in { animation: none !important; }
+  .pz-run .pz-out { animation: none !important; visibility: hidden; }
 }

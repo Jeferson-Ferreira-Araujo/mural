@@ -2,8 +2,9 @@ import { reactionEmoji } from "@/lib/reactions";
 import { isHidden, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
-import { HiddenBack, HiddenPin, SecretBadge } from "./HiddenPin";
-import { PinFx, SecretFlip } from "./PinFx";
+import { HiddenPin, placeholderFor, SecretBadge } from "./HiddenPin";
+import { useEffect, useState, type ReactNode } from "react";
+import { PinFx } from "./PinFx";
 import { useFeatureFlags } from "@/lib/features";
 import { ClosedCapsule } from "./ClosedCapsule";
 import { ListCard } from "./ListCard";
@@ -132,26 +133,72 @@ export function MessageView({ message, revealSecret = false }: { message: BoardI
   );
 }
 
+/** O que o visitante vê de um pin em segredo: só o tipo e o estilo (cor, papel, letra, tachinha ou fita), nunca o conteúdo. */
+function hiddenOf(m: Message): HiddenItem {
+  return { id: m.id, hidden: true, type: m.type, color: "color" in m ? m.color : undefined, variant: "variant" in m ? m.variant : undefined, playerColor: "playerColor" in m ? m.playerColor : undefined, ratio: "ratio" in m ? m.ratio : undefined, media: "src" in m && !!m.src, font: m.font, pin: m.pin, tape: m.tape, pos: m.pos };
+}
+
+/** Cartão de enchimento (sem nada do pin de verdade): o verso em branco e a tachinha/fita do pin em segredo. */
+export function FakeCard({ item }: { item: HiddenItem }) {
+  const fake = placeholderFor(item);
+  return fake ? <Content m={fake} /> : <div className="h-[13.5em] w-[14em] rounded-[0.2em] bg-[#e8dcc0]" />;
+}
+
+/**
+ * Pin em segredo, virado de costas. Só o cartão gira (em torno do próprio eixo); a tachinha ou fita fica no mesmo lugar: levanta, o pin vira, ela prende de novo.
+ * De costas o pin é um cartão em branco de enchimento (o conteúdo de verdade nem existe na página); ao desligar o segredo, o caminho é o inverso.
+ * As duas faces e a tachinha ficam todas na página só durante a animação, que é feita só em CSS (sem render no meio).
+ */
+function SecretFlip({ back, front, fake }: { back: boolean; front: ReactNode; fake: HiddenItem }) {
+  const [settled, setSettled] = useState(back); // o último estado já assentado (sem animação em curso)
+  const run = settled !== back;
+  useEffect(() => {
+    if (!run) return;
+    const t = window.setTimeout(() => setSettled(back), 1250);
+    return () => window.clearTimeout(t);
+  }, [run, back]);
+  const showFront = run || !back;
+  const showBack = run || back;
+  const role = (isBack: boolean) => (!run ? "" : isBack === back ? "pz-in" : "pz-out"); // quem chega e quem sai
+  return (
+    <div className={`relative w-fit ${run ? "pz-run" : ""}`} style={{ perspective: "80em" }}>
+      {showFront && <div className={`pz-face ${run ? "pz-nofast" : ""} ${role(false)}`}>{front}</div>}
+      {showBack && (
+        <div className={`pz-face ${run && showFront && front ? "absolute top-0 left-0" : ""} ${role(true)}`}>
+          <div className="pz-blank">
+            <FakeCard item={fake} />
+          </div>
+          {!run && <SecretBadge />}
+        </div>
+      )}
+      {showBack && (
+        <div aria-hidden className="pz-fast pointer-events-none absolute inset-0 z-[25]">
+          <FakeCard item={fake} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MessageBody({ message, revealSecret, flip }: { message: BoardItem; revealSecret: boolean; flip: boolean }) {
   const tx = useTranslations("components.messages.MessageView");
   let m = message;
   if (isSealed(m)) return null;
   // segredo virado: quem visita vê o pin de costas (espelhado), sem conteúdo
-  if (isHidden(m)) return flip && !m.pending && !m.backdrop ? <SecretFlip back front={null} backFace={<HiddenBack item={m} />} badge={<SecretBadge />} /> : <HiddenPin item={m} />;
+  if (isHidden(m)) return flip && !m.pending && !m.backdrop ? <SecretFlip back front={null} fake={m} /> : <HiddenPin item={m} />;
   // visão do dono: pin em segredo mostra o texto e a assinatura, mas borrados, até ele pedir para ver no detalhe do pin
   if (m.ownerHidden && !m.pending) {
     if (!revealSecret) {
       // o mesmo cartão que os visitantes veem (texto de enchimento, foto e mapa genéricos): nenhum dado verdadeiro do pin fica na tela, nem por um instante durante o zoom
-      const t = m.type;
-      const hid: HiddenItem = { id: m.id, hidden: true, type: t, color: "color" in m ? m.color : undefined, variant: "variant" in m ? m.variant : undefined, playerColor: "playerColor" in m ? m.playerColor : undefined, ratio: "ratio" in m ? m.ratio : undefined, font: m.font, pin: m.pin, tape: m.tape, pos: m.pos };
+      const hid = hiddenOf(m);
       if (!flip) return <HiddenPin item={hid} />;
-      return <SecretFlip back front={<Plain m={{ ...m, ownerHidden: false }} />} backFace={<HiddenBack item={hid} />} badge={<SecretBadge />} />;
+      return <SecretFlip back front={<Plain m={{ ...m, ownerHidden: false }} />} fake={hid} />;
     }
     m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
   }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
   // mesma árvore do pin em segredo: ao ligar ou desligar o segredo o pin vira (com a animação) em vez de trocar de cartão
-  return flip ? <SecretFlip back={false} front={<Plain m={m} />} backFace={null} badge={null} /> : <Plain m={m} />;
+  return flip ? <SecretFlip back={false} front={<Plain m={m} />} fake={hiddenOf(m)} /> : <Plain m={m} />;
 }
 
 /** O pin à vista: sozinho, ou com assinatura, reação e lacre de Cápsula. */

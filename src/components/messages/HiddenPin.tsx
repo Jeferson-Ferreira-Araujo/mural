@@ -3,13 +3,15 @@ import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
 import { useTranslations } from "next-intl";
 
+/** Imagem transparente de 1×1: só para a foto de enchimento ter fita (como a de verdade) sem mostrar nada. */
+const PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 const LOREM = "——— ———— —— ————— ——— ———— ——";
 
 /**
  * Cartão com texto de enchimento (nunca o conteúdo de verdade) para desenhar o pin em blur.
  * O servidor só manda o tipo e o estilo visual (cor, papel, letra...), então o mural parece cheio de cards diferentes.
  */
-function placeholderFor(h: HiddenItem): Message | null {
+export function placeholderFor(h: HiddenItem): Message | null {
   const style = { font: h.font, pin: h.pin, tape: h.tape, pos: h.pos };
   switch (h.type) {
     case "postit":
@@ -19,7 +21,7 @@ function placeholderFor(h: HiddenItem): Message | null {
     case "list":
       return { id: h.id, type: "list", title: "————— ———", items: [{ text: "———— ———", done: false }, { text: "—— ————— ——", done: true }, { text: "———— ——", done: false }], ...style };
     case "photo":
-      return { id: h.id, type: "photo", caption: "", scene: "hills", ratio: h.ratio, ...style };
+      return { id: h.id, type: "photo", caption: "", scene: "hills", src: h.media ? PIXEL : undefined, ratio: h.ratio, ...style };
     case "draw":
       return { id: h.id, type: "draw", caption: "", ...style };
     case "music":
@@ -39,25 +41,17 @@ function placeholderFor(h: HiddenItem): Message | null {
  * Espaço ocupado em blur: o conteúdo NÃO veio do servidor (pin aguardando aprovação de outra pessoa ou pin que o dono
  * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
-/** O verso do pin em segredo: o mesmo cartão de enchimento que os visitantes veem, sem borrar (quem o vê espelhado). */
-export function HiddenBack({ item }: { item: HiddenItem }) {
-  const fake = placeholderFor(item);
-  return fake ? <MessageView message={fake} /> : <div className="h-[13.5em] w-[14em] rounded-[0.2em] bg-[#e8dcc0]" />;
-}
-
-/** Selo do cadeado sobre o pin em segredo. */
+/** Selo no meio do pin em segredo (virado de costas): só o olho fechado, sem texto. */
 export function SecretBadge() {
   const tx = useTranslations("components.messages.HiddenPin");
   const inDetail = useInDetail();
   return (
-    <span aria-hidden className="pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
-      <span className="flex flex-col items-center gap-[0.45em]">
-        <span className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
-          <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="currentColor">
-            <path d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V8a3 3 0 0 0-6 0v2Z" />
-          </svg>
-        </span>
-        <span className="rounded-lg bg-black/55 px-[0.9em] py-[0.4em] text-center text-[0.85em] leading-tight font-semibold text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.35)]">{tx("segredo")}</span>
+    <span className="pz-fade pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
+      <span role="img" aria-label={tx("segredo")} className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
+        <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1" />
+          <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
+        </svg>
       </span>
     </span>
   );
