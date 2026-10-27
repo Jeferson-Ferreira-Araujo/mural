@@ -2274,7 +2274,10 @@
     "hvhbuip": "Desfijar pin",
     "h1v7kvqz": "Pin fijado.",
     "h1f6ejua": "Pin desfijado.",
-    "hykbb39": "Un pin fijado no desaparece cuando vence la validez del mural."
+    "hykbb39": "Un pin fijado no desaparece cuando vence la validez del mural.",
+    "hgnp01v": "Tu mural recibe pins de dibujo, música, vídeo, voz y lugar",
+    "hlcr3nv": "Estos formatos valen para tu mural: quien lo visita puede dejarlos allí. Suscribirte a PINZ+ no te permite poner estos pins en los murales de otras personas.",
+    "h1e1glef": "Displays en secreto para los visitantes"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

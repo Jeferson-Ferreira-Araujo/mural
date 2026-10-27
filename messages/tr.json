@@ -2274,7 +2274,10 @@
     "hvhbuip": "Pin sabitlemeyi kaldır",
     "h1v7kvqz": "Pin sabitlendi.",
     "h1f6ejua": "Pin sabitlemesi kaldırıldı.",
-    "hykbb39": "Sabitlenen pin, panonun geçerlilik süresi dolunca kaybolmaz."
+    "hykbb39": "Sabitlenen pin, panonun geçerlilik süresi dolunca kaybolmaz.",
+    "hgnp01v": "Panon çizim, müzik, video, ses ve konum pinleri alır",
+    "hlcr3nv": "Bu biçimler senin panon için geçerlidir: panonu ziyaret edenler bunları orada bırakabilir. PINZ+ aboneliği, bu pinleri başkalarının panolarına koymana izin vermez.",
+    "h1e1glef": "Ziyaretçilerden gizlenen ekranlar"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

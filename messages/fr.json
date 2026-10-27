@@ -2274,7 +2274,10 @@
     "hvhbuip": "Désépingler",
     "h1v7kvqz": "Pin épinglé.",
     "h1f6ejua": "Pin désépinglé.",
-    "hykbb39": "Un pin épinglé reste quand la durée de vie des pins du mur expire."
+    "hykbb39": "Un pin épinglé reste quand la durée de vie des pins du mur expire.",
+    "hgnp01v": "Votre mur reçoit des pins de dessin, musique, vidéo, voix et lieu",
+    "hlcr3nv": "Ces formats valent pour votre mur : les personnes qui le visitent peuvent les y laisser. S'abonner à PINZ+ ne permet pas de poser ces pins sur les murs des autres.",
+    "h1e1glef": "Displays gardés secrets pour les visiteurs"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

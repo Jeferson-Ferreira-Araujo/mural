@@ -2274,7 +2274,10 @@
     "hvhbuip": "Unpin",
     "h1v7kvqz": "Pin fixed.",
     "h1f6ejua": "Pin unfixed.",
-    "hykbb39": "A fixed pin stays when the board's pin lifetime runs out."
+    "hykbb39": "A fixed pin stays when the board's pin lifetime runs out.",
+    "hgnp01v": "Your board receives drawing, music, video, voice and place pins",
+    "hlcr3nv": "These formats apply to your own board: people who visit your board can leave them there. Subscribing to PINZ+ does not let you place these pins on other people's boards.",
+    "h1e1glef": "Displays kept secret from visitors"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

@@ -2274,7 +2274,10 @@
     "hvhbuip": "Fixierung lösen",
     "h1v7kvqz": "Pin fixiert.",
     "h1f6ejua": "Fixierung gelöst.",
-    "hykbb39": "Ein fixierter Pin bleibt, wenn die Gültigkeit der Pinnwand abläuft."
+    "hykbb39": "Ein fixierter Pin bleibt, wenn die Gültigkeit der Pinnwand abläuft.",
+    "hgnp01v": "Deine Pinnwand erhält Pins für Zeichnung, Musik, Video, Sprache und Ort",
+    "hlcr3nv": "Diese Formate gelten für deine eigene Pinnwand: Wer sie besucht, kann sie dort hinterlassen. Mit PINZ+ kannst du diese Pins nicht auf den Pinnwänden anderer Personen anbringen.",
+    "h1e1glef": "Displays vor Besuchern geheim halten"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

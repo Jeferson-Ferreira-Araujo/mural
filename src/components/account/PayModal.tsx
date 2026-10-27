@@ -20,8 +20,8 @@ const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "c
 /** Vantagens do PINZ+ (mostradas antes de pedir qualquer dado de pagamento). */
 const BENEFITS = [
   "Até 10 murais",
-  "Pins de desenho, música, vídeo, voz e local",
-  "Pins em segredo (borrados) para os visitantes",
+  "Seu mural recebe pins de desenho, música, vídeo, voz e local",
+  "Displays em segredo para os visitantes",
   "Mural compartilhado entre duas pessoas",
   "Mensagem de boas-vindas para quem entra no seu mural",
 ];
@@ -273,6 +273,7 @@ export function PayModal({ product, onClose, onPaid }: { product: string | null;
                   </li>
                 ))}
               </ul>
+              <p className="mt-3 rounded-lg bg-[#fff1c9] px-3 py-2 text-sm leading-snug text-[#5a431f]">{tl("Esses formatos valem para o seu mural: quem visita o seu mural pode deixá-los lá. Assinar o PINZ+ não permite colocar esses pins nos murais de outras pessoas.")}</p>
               <p className="mt-4 mb-3 text-sm font-semibold text-[#6b5440]">{tx("escolhaOSeuPlano")}</p>
               <div className="space-y-3.5">
                 {planCard("plus", tl("Mensal (assinatura)"), PLUS_PRICE_CENTS, tl("por mês"), tl("Cobrado todo mês no cartão. Cancele quando quiser: o PINZ+ continua até o fim do período já pago."))}

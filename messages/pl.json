@@ -2274,7 +2274,10 @@
     "hvhbuip": "Odepnij pin",
     "h1v7kvqz": "Pin przypięty.",
     "h1f6ejua": "Pin odpięty.",
-    "hykbb39": "Przypięty pin nie znika, gdy mija ważność tablicy."
+    "hykbb39": "Przypięty pin nie znika, gdy mija ważność tablicy.",
+    "hgnp01v": "Twoja tablica przyjmuje piny z rysunkiem, muzyką, wideo, głosem i miejscem",
+    "hlcr3nv": "Te formaty dotyczą Twojej tablicy: osoby, które ją odwiedzają, mogą je tam zostawiać. Subskrypcja PINZ+ nie pozwala umieszczać tych pinów na tablicach innych osób.",
+    "h1e1glef": "Wyświetlacze ukryte przed odwiedzającymi"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

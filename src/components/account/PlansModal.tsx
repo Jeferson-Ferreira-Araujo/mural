@@ -17,9 +17,9 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Pins e displays sem limite", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "10 Bottons (1 unidade de cada)", on: true },
-    { text: "Vídeo, voz e local", on: false },
+    { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: false },
     { text: "Cápsulas PINZ (abrem numa data)", on: false },
-    { text: "Deixar pins específicos em segredo", on: false },
+    { text: "Deixar pins específicos em segredo", on: true },
     { text: "Comprar pins e temas na loja com créditos", on: true },
     { text: "Mais de um mural", on: false },
   ],
@@ -27,7 +27,7 @@ const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Até 10 murais", on: true },
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "25 Bottons (1 unidade de cada)", on: true },
-    { text: "Vídeo, voz e local", on: true },
+    { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
     { text: "Deixar pins específicos em segredo", on: true },
     { text: "Pins e temas da loja, com créditos", on: true },
@@ -59,6 +59,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
           </li>
         ))}
       </ul>
+      {full && <p className="mt-3 rounded-lg bg-[#fff1c9] px-3 py-2 text-xs leading-snug text-[#5a431f]">{tl("Esses formatos valem para o seu mural: quem visita o seu mural pode deixá-los lá. Assinar o PINZ+ não permite colocar esses pins nos murais de outras pessoas.")}</p>}
       {footer}
     </article>
   );
