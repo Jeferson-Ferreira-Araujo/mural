@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { applyPayment, notifyPlus, parseRef } from "@/lib/payCatalog";
+import { logServerError } from "@/lib/logError";
 import { adminClient, envConfigured, isUuid, mp, syncPreapproval, webhookEnv } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -24,13 +25,20 @@ async function handle(req: Request) {
   try {
     if (type === "payment") {
       const r = await mp<{ id?: number; status?: string; external_reference?: string; transaction_amount?: number; currency_id?: string }>(`/v1/payments/${id}`, undefined, env);
-      if (!r.ok) return NextResponse.json({ error: "lookup_failed" }, { status: r.status === 404 ? 200 : 502 });
+      if (!r.ok) {
+        if (r.status !== 404) await logServerError("pay.webhook", `não consegui consultar o pagamento ${id} no Mercado Pago (HTTP ${r.status})`);
+        return NextResponse.json({ error: "lookup_failed" }, { status: r.status === 404 ? 200 : 502 });
+      }
       // cobranças da assinatura mensal também geram "payment": a referência delas é só o id da conta (sem ":"), tratadas pelo aviso da assinatura
       const parsed = parseRef(r.data.external_reference);
       if (!parsed) return ok();
       // o valor pago tem que ser exatamente o preço do item
-      if (r.data.currency_id !== "BRL" || Math.round((r.data.transaction_amount ?? 0) * 100) !== parsed.item.cents) return ok();
+      if (r.data.currency_id !== "BRL" || Math.round((r.data.transaction_amount ?? 0) * 100) !== parsed.item.cents) {
+        if (r.data.status === "approved") await logServerError("pay.webhook", `pagamento ${id} aprovado, mas o valor ou a moeda não bate com o preço do item (não liberado)`);
+        return ok();
+      }
       const applied = await applyPayment(parsed, String(r.data.id ?? id), r.data.status ?? "pending");
+      if (!applied) await logServerError("pay.webhook", `pagamento ${id}: o banco recusou aplicar a compra`);
       return applied ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
     }
 
@@ -56,7 +64,8 @@ async function handle(req: Request) {
       }
       return ok();
     }
-  } catch {
+  } catch (e) {
+    await logServerError("pay.webhook", e);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
   return ok();

@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { adminClient, mpEither, paymentsConfigured, syncPreapproval } from "@/lib/mercadopago";
+import { logServerError } from "@/lib/logError";
 import { allow } from "@/lib/rateLimit";
 import { stripeApi } from "@/lib/stripe";
 
@@ -27,12 +28,12 @@ export async function POST(req: Request) {
   if (sub.mp_preapproval_id.startsWith("stripe:")) {
     // assinatura em dólar (Stripe): não renova; o PINZ+ vale até o fim do período já pago
     const r = await stripeApi(`/v1/subscriptions/${encodeURIComponent(sub.mp_preapproval_id.slice(7))}`, { method: "POST", body: { cancel_at_period_end: true } });
-    if (!r.ok) return fail(502, "provider_error");
+    if (!r.ok) { await logServerError("pay.cancel", "o Mercado Pago ou a Stripe recusou a chamada"); return fail(502, "provider_error"); }
     await adminClient().rpc("pay_plus_apply", { p_user: uid, p_preapproval: sub.mp_preapproval_id, p_status: "cancelled", p_paid_until: null });
     return NextResponse.json({ ok: true });
   }
   const r = await mpEither(`/preapproval/${encodeURIComponent(sub.mp_preapproval_id)}`, { method: "PUT", body: { status: "cancelled" } });
-  if (!r.ok) return fail(502, "provider_error");
+  if (!r.ok) { await logServerError("pay.cancel", "o Mercado Pago ou a Stripe recusou a chamada"); return fail(502, "provider_error"); }
   await syncPreapproval(sub.mp_preapproval_id, r.env);
   return NextResponse.json({ ok: true });
 }

@@ -18,6 +18,7 @@ type Summary = {
   monitored_since: string | null;
 };
 type Hist = { summary: Summary; since: string | null; checks_total: number; p95_ms_24h: number | null; max_ms_24h: number | null; hourly: Bucket[]; daily: Bucket[]; incidents: { at: string; reason: string | null; status_code: number | null; latency_ms: number | null }[] };
+type Errs = { last_24h: number; last_1h: number; rows: { id: number; source: "client" | "server"; area: string; message: string; stack: string | null; path: string | null; n: number; first_at: string; last_at: string }[] };
 type Live = {
   status: "ok" | "degraded" | "down";
   reasons: string[];
@@ -55,8 +56,10 @@ const dur = (min: number) => (min < 60 ? `${min} min` : `${Math.floor(min / 60)}
 export function useUptime(everyMs: number) {
   const [hist, setHist] = useState<Hist | null>(null);
   const [live, setLive] = useState<Live | null>(null);
+  const [errs, setErrs] = useState<Errs | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const load = useCallback(async () => {
+    void getBrowserSupabase().rpc("admin_errors").then(({ data }) => data && setErrs(data as Errs));
     const [h, l] = await Promise.all([getBrowserSupabase().rpc("admin_uptime"), fetch("/api/status", { cache: "no-store" }).then((r) => r.json() as Promise<Live>).catch(() => null)]);
     if (h.error) setErr("Não foi possível carregar o histórico de disponibilidade.");
     else {
@@ -70,7 +73,7 @@ export function useUptime(everyMs: number) {
     const t = window.setInterval(() => document.visibilityState === "visible" && void load(), everyMs);
     return () => window.clearInterval(t);
   }, [load, everyMs]);
-  return { hist, live, err };
+  return { hist, live, errs, err };
 }
 
 function Pill({ status }: { status: Live["status"] | "unknown" }) {
@@ -200,7 +203,7 @@ function Service({ name, hint, ok, ms: t, reason }: { name: string; hint: string
 
 /** Página inteira de disponibilidade do servidor (só o administrador). */
 export function UptimeView() {
-  const { hist, live, err } = useUptime(15_000);
+  const { hist, live, errs, err } = useUptime(15_000);
   if (!hist && !err) {
     return (
       <div className="grid place-items-center py-24">
@@ -322,8 +325,42 @@ export function UptimeView() {
         )}
       </section>
 
+      <section className={card} aria-label="Erros registrados">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="font-title text-lg font-semibold">Erros registrados</h2>
+          <p className="text-sm text-[#6b5440]">
+            <b className="tabular-nums">{nf(errs?.last_1h ?? 0)}</b> na última hora · <b className="tabular-nums">{nf(errs?.last_24h ?? 0)}</b> em 24 h
+          </p>
+        </div>
+        {!errs || errs.rows.length === 0 ? (
+          <p className="mt-2 text-sm text-[#2f8f4e]">Nenhum erro registrado. 🎉</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-[#efe4cf]">
+            {errs.rows.map((e) => (
+              <li key={e.id} className="py-2.5 text-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${e.area.startsWith("pay") ? "bg-[#fbeae5] text-[#a23b2a]" : e.source === "server" ? "bg-[#fff6dd] text-[#8a6410]" : "bg-[#eef1f7] text-[#3b4a6b]"}`}>
+                    {e.source === "server" ? "servidor" : "navegador"} · {e.area}
+                  </span>
+                  {e.n > 1 && <span className="text-xs font-semibold text-[#6b5440]">×{nf(e.n)}</span>}
+                  <span className="ml-auto text-xs text-[#6b5440]">{ago(e.last_at)}</span>
+                </div>
+                <p className="mt-1 break-words">{e.message}</p>
+                {e.path && <p className="text-xs text-[#8a7b69]">em {e.path}</p>}
+                {e.stack && (
+                  <details className="mt-1">
+                    <summary className="cursor-pointer text-xs text-[#6b5440]">ver detalhe técnico</summary>
+                    <pre className="mt-1 overflow-x-auto rounded-lg bg-[#f6efe0] p-2 text-[11px] whitespace-pre-wrap">{e.stack}</pre>
+                  </details>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <p className="pb-2 text-xs text-[#8a7b69]">
-        Como ler: o banco de dados visita o site a cada minuto e anota se respondeu (e em quanto tempo); por isso ele registra até as quedas em que o próprio site não pôde falar. O “no ar desde o último deploy” volta a zero a cada atualização do site e não conta como queda. Guardamos 90 dias de histórico. A rota pública com os mesmos dados em JSON é <code>/api/status</code>.
+        Como ler: o banco de dados visita o site a cada minuto e anota se respondeu (e em quanto tempo); por isso ele registra até as quedas em que o próprio site não pôde falar. O “no ar desde o último deploy” volta a zero a cada atualização do site e não conta como queda. Guardamos 90 dias de histórico de disponibilidade e 30 dias de erros. Se o site cair por 2 minutos seguidos, ou se houver erro em pagamento, você recebe um e-mail. A rota pública com os mesmos dados em JSON é <code>/api/status</code>.
       </p>
     </div>
   );

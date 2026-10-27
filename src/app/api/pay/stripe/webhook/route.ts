@@ -3,6 +3,7 @@ import { applyPayment, notifyPlus, parseRef } from "@/lib/payCatalog";
 import { adminClient, isUuid } from "@/lib/mercadopago";
 import { isCurrency, priceIn, type Currency } from "@/lib/money";
 import { PLUS_PRICE_CENTS } from "@/lib/plans";
+import { logServerError } from "@/lib/logError";
 import { stripeApi, stripeConfigured, verifyStripeSignature } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -79,6 +80,7 @@ export async function POST(req: Request) {
         const ref = str((o.metadata as Obj | undefined)?.ref) || str(o.client_reference_id);
         const status = o.payment_status === "paid" ? "approved" : "pending";
         const done = await applyOnce(ref, `stripe:${str(o.payment_intent) || str(o.id)}`, Number(o.amount_total ?? 0), str(o.currency), status);
+        if (!done) await logServerError("pay.stripe", `${event.type}: o banco recusou aplicar a compra`);
         return done ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
       }
       case "invoice.paid": {
@@ -112,10 +114,12 @@ export async function POST(req: Request) {
         const pi = str(o.payment_intent);
         if (!ref || !pi || o.refunded !== true) return ok();
         const done = await applyOnce(ref, `stripe:${pi}`, Number(o.amount ?? 0), str(o.currency), "refunded");
+        if (!done) await logServerError("pay.stripe", `${event.type}: o banco recusou aplicar a compra`);
         return done ? ok() : NextResponse.json({ error: "db" }, { status: 500 });
       }
     }
-  } catch {
+  } catch (e) {
+    await logServerError("pay.stripe", e);
     return NextResponse.json({ error: "error" }, { status: 500 });
   }
   return ok();

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { CREDIT_PACKS, PLUS_PRICE_CENTS } from "@/lib/plans";
 import { adminClient, mp, paymentsConfigured, SITE_URL } from "@/lib/mercadopago";
+import { logServerError } from "@/lib/logError";
 import { allow } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
         auto_recurring: { frequency: 1, frequency_type: "months", transaction_amount: PLUS_PRICE_CENTS / 100, currency_id: "BRL" },
       },
     });
-    if (!r.ok || !r.data.init_point) return fail(502, "provider_error");
+    if (!r.ok || !r.data.init_point) { await logServerError("pay.checkout", "o Mercado Pago ou a Stripe recusou a chamada"); return fail(502, "provider_error"); }
     return NextResponse.json({ url: r.data.init_point });
   }
 
@@ -61,6 +62,6 @@ export async function POST(req: Request) {
       statement_descriptor: "PINZ",
     },
   });
-  if (!r.ok || !r.data.init_point) return fail(502, "provider_error");
+  if (!r.ok || !r.data.init_point) { await logServerError("pay.checkout", "o Mercado Pago ou a Stripe recusou a chamada"); return fail(502, "provider_error"); }
   return NextResponse.json({ url: r.data.init_point });
 }

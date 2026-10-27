@@ -6,6 +6,7 @@ import { A11yHost } from "@/components/A11yHost";
 import { LOCALE_TAGS, type Locale } from "@/i18n/config";
 import { PwaRegister } from "@/components/PwaRegister";
 import { SiteTracker } from "@/components/SiteTracker";
+import { ErrorReporter } from "@/components/ErrorReporter";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { LocaleSync } from "@/components/LocaleSync";
 import { TwoFactorGate } from "@/components/TwoFactorGate";
@@ -83,6 +84,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
           <A11yHost />
           <SiteTracker />
+          <ErrorReporter />
           <ConsentBanner />
           <LocaleSync />
           <TwoFactorGate />

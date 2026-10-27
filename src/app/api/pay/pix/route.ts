@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { giftRecipient, itemForProduct, refFor } from "@/lib/payCatalog";
 import { adminClient, mp, paymentsConfigured, SITE_URL } from "@/lib/mercadopago";
+import { logServerError } from "@/lib/logError";
 import { allow } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -59,6 +60,6 @@ export async function POST(req: Request) {
     },
   });
   const td = r.data.point_of_interaction?.transaction_data;
-  if (!r.ok || !r.data.id || !td?.qr_code) return fail(502, "provider_error");
+  if (!r.ok || !r.data.id || !td?.qr_code) { await logServerError("pay.pix", "o Mercado Pago ou a Stripe recusou a chamada"); return fail(502, "provider_error"); }
   return NextResponse.json({ id: String(r.data.id), qr: td.qr_code, qrBase64: td.qr_code_base64 ?? null, expires: expires.toISOString() });
 }

@@ -109,6 +109,19 @@ test.describe("segurança das rotas", () => {
     expect(JSON.stringify(j)).not.toMatch(/key|secret|token|password/i);
   });
 
+  test("a rota de alertas recusa quem não tem o segredo", async ({ request }) => {
+    expect((await request.post("/api/cron/alerts")).status()).toBe(403);
+    expect((await request.post("/api/cron/alerts", { headers: { "x-cron-secret": "errado" } })).status()).toBe(403);
+  });
+
+  test("o registro de erros do navegador não aceita leitura pública", async ({ request }) => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    test.skip(!url || !key, "sem chaves públicas no ambiente de teste");
+    const r = await request.get(url + "/rest/v1/app_errors?select=*", { headers: { apikey: key! } });
+    expect([401, 403, 404]).toContain(r.status());
+  });
+
   test("cabeçalhos de segurança presentes", async ({ request }) => {
     const h = (await request.get("/")).headers();
     expect(h["x-content-type-options"]).toBe("nosniff");
