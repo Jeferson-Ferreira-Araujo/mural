@@ -6,6 +6,7 @@ import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { ConsentLink } from "../ConsentBanner";
 import { TwoFactorSettings } from "./TwoFactorSettings";
+import { useFeatureFlags } from "@/lib/features";
 import { getLivePresence, getProfilePrivacy, getVisitPrivacy, saveProfilePrivacy, setLivePresence, setVisitPrivacy } from "@/lib/social";
 import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
@@ -21,6 +22,7 @@ const VISIT_TOGGLE_ENABLED = false;
 /** Perfil: foto, nome de usuário e e-mail (só leitura) e troca de senha. */
 export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacySaved, plus = false }: { open: boolean; onClose: () => void; nick: string; email: string; onSignOut: () => void; /** a privacidade mudou: recarrega os murais da tela */ onPrivacySaved?: () => void; plus?: boolean }) {
   const tl = useLit();
+  const liveOn = useFeatureFlags().live_presence === true; // visitantes no mural em tempo real: desligado por padrão (o administrador liga em Recursos)
   const tx = useTranslations("components.account.ProfileModal");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
@@ -211,7 +213,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         )}
       </section>
 
-      <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
+      {liveOn && <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
         <div className="min-w-0">
           <p className="text-sm font-semibold">{tl("Mostrar quem está no mural agora")}</p>
           <p className="text-xs text-[#6b5440]">{tl("Ligado: você vê quem está no seu mural e aparece quando estiver no mural dos outros. Desligado: você não vê ninguém e ninguém vê você.")}</p>
@@ -219,7 +221,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
         <button type="button" role="switch" aria-checked={live} aria-label={tl("Mostrar quem está no mural agora")} onClick={() => void toggleLive()} className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors ${live ? "bg-[#2f8f4e]" : "bg-[#cdbfa6]"}`}>
           <span className={`absolute top-0.5 left-0.5 size-6 rounded-full bg-white shadow transition-transform ${live ? "translate-x-5" : ""}`} />
         </button>
-      </div>
+      </div>}
       <TwoFactorSettings />
       <div className="mt-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3">
         <p className="text-sm font-semibold">{tl("Seus dados (LGPD)")}</p>

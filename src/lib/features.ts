@@ -19,6 +19,7 @@ export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string }[]
   { key: "pin_clock", label: "Relógio", hint: "Pin da loja: a hora passando no mural" },
   { key: "pin_weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
   { key: "mural_swipe", label: "Trocar de mural arrastando (celular)", hint: "Arrastar o mural para o lado passa para o próximo mural da pessoa. Desligado por padrão" },
+  { key: "live_presence", label: "Visitantes no mural em tempo real", hint: "O dono vê quem está no mural agora (cada pessoa liga no perfil). Desligado por padrão: ninguém manda sinais e o botão some do perfil" },
   { key: "reactions", label: "Reações aos pins", hint: "O dono do mural reage com emoji no detalhe do pin (e o autor é avisado no sino)" },
 ];
 

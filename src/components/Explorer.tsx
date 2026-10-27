@@ -4,6 +4,7 @@ import { PollAccess } from "@/lib/poll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isDisplayOn, isPackId } from "./widgets";
 import { LivePresence } from "./LivePresence";
+import { useFeatureFlags } from "@/lib/features";
 import { trackEvent } from "./SiteTracker";
 import { buildPool, randomMural, relocalize } from "@/data/mock";
 import { decorLayout } from "@/data/decorDisplays";
@@ -571,6 +572,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
 
   // avisos em tempo real: quando chega algo para esta conta (pin novo, aprovação, seguidor, reação), o servidor manda um sinal sem conteúdo
   // e o site busca o resto já autenticado: sino, contagem de pins para aprovar, o mural aberto e um aviso rápido na tela
+  const flags = useFeatureFlags();
   const live = useRef({ loadBoard, isOwner, notifOpen, firstOwnId, notify });
   live.current = { loadBoard, isOwner, notifOpen, firstOwnId, notify };
   const myUid = session?.user.id;
@@ -1222,7 +1224,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   return (
     <div data-explorer className="contents">
       {playIntro && <IntroAnimation />}
-      {selected?.id && unlocked && !isShared && <LivePresence muralId={selected.id} isOwner={isOwner} />}
+      {flags.live_presence === true && selected?.id && unlocked && !isShared && <LivePresence muralId={selected.id} isOwner={isOwner} />}
       <PollAccess.Provider value={{ token }}>
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
