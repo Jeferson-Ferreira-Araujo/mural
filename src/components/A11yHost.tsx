@@ -17,7 +17,7 @@ const COLOR_OPTIONS: { id: ColorMode; label: string; hint: string }[] = [
 
 function Switch({ on, label, hint, onChange }: { on: boolean; label: string; hint: string; onChange: (v: boolean) => void }) {
   return (
-    <button type="button" role="switch" aria-checked={on} onClick={() => onChange(!on)} className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-4 py-3 text-left transition hover:bg-white">
+    <button type="button" role="switch" aria-checked={on} onClick={() => onChange(!on)} className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-[#e1d3ba] bg-white/70 px-3.5 py-2.5 text-left transition hover:bg-white">
       <span className="min-w-0">
         <span className="block text-[15px] font-bold">{label}</span>
         <span className="block text-xs text-[#6b5440]">{hint}</span>
@@ -99,22 +99,24 @@ export function A11yHost() {
         </defs>
       </svg>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={tx("acessibilidade")}
+      <Modal open={open} onClose={() => setOpen(false)} wide title={tx("acessibilidade")}
         footer={
           <button type="button" onClick={() => commit({ ...A11Y_DEFAULT })} className="w-full cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#4a3826] hover:bg-white">
             {tx("restaurarOPadrao")}
           </button>
         }
       >
-        <div className="space-y-5 text-[#2f2218]">
+        {/* computador: duas colunas (daltonismo e tamanho à esquerda, leitura à direita), sem barra de rolagem */}
+        <div className="space-y-4 text-[#2f2218] md:grid md:grid-cols-2 md:items-start md:gap-x-6 md:space-y-0">
+          <div className="space-y-4">
           <p className="text-sm text-[#4a3826]">{tx("queremosQueOPinzSeja")}</p>
 
           <section aria-label={tx("daltonismo")}>
             <h3 className="font-title text-base font-semibold">{tx("daltonismo")}</h3>
             <p className="text-xs text-[#6b5440]">{tx("corrigeAsCoresDaTela")}</p>
-            <div role="radiogroup" aria-label={tx("tipoDeDaltonismo")} className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+            <div role="radiogroup" aria-label={tx("tipoDeDaltonismo")} className="mt-2 grid grid-cols-1 gap-1.5">
               {COLOR_OPTIONS.map((o) => (
-                <button key={o.id} type="button" role="radio" aria-checked={s.color === o.id} onClick={() => patch({ color: o.id })} className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-left transition ${s.color === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}>
+                <button key={o.id} type="button" role="radio" aria-checked={s.color === o.id} onClick={() => patch({ color: o.id })} className={`cursor-pointer rounded-xl border-2 px-3 py-1.5 text-left transition ${s.color === o.id ? "border-[#d9a21b] bg-[#fff6dd]" : "border-[#e1d3ba] bg-white/70 hover:bg-white"}`}>
                   <span className="block text-sm font-bold">{tl(o.label)}</span>
                   <span className="block text-xs text-[#6b5440]">{tl(o.hint)}</span>
                 </button>
@@ -137,6 +139,7 @@ export function A11yHost() {
               ))}
             </div>
           </section>
+          </div>
 
           <section aria-label={tx("leitura")} className="space-y-2">
             <Switch on={s.contrast} label={tx("contrasteAlto")} hint={tx("coresMaisFortesParaVer")} onChange={(v) => patch({ contrast: v })} />
