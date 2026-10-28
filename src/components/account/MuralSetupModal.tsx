@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { OwnMural } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
-import { Field, ghostButton, inputClass, primaryButton } from "../ui";
+import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
@@ -12,7 +12,7 @@ import { useLit } from "@/i18n/literal";
 
 /**
  * Primeiro mural da conta nova (que já nasce pronto, com nome padrão): pergunta o nome, se é público ou privado (com a pergunta de segurança)
- * e por quanto tempo ficam os pins de outras pessoas. Tudo dá para mudar depois em Meus murais.
+ * e por quanto tempo ficam os pins de outras pessoas. É obrigatório (sem fechar nem "depois"; só o botão Salvar); tudo dá para mudar depois em Meus murais.
  */
 export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boolean; onClose: () => void; mural: OwnMural | null; onSaved: () => void }) {
   const tl = useLit();
@@ -53,7 +53,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={tx("configureSeuMural")} label={tx("configureSeuMural")}>
+    <Modal open={open} onClose={onClose} required title={tx("configureSeuMural")} label={tx("configureSeuMural")}>
       <form onSubmit={save} noValidate className="space-y-4">
         <p className="text-sm text-[#4a3826]">{tx("seuMuralJaEstaNo")}</p>
         <Field label={tx("nomeDoMural")}>{(id) => <input id={id} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={tx("exViagemDe2026")} className={inputClass} />}</Field>
@@ -64,13 +64,9 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
             {error}
           </p>
         )}
-        <div className="flex gap-2">
-          <button type="button" onClick={onClose} disabled={busy} className={`${ghostButton} flex-1`}>
-            {tx("depois")}</button>
-          <button type="submit" disabled={busy} className={`${primaryButton} flex-1`}>
-            {busy ? tl("Salvando…") : tl("Salvar")}
-          </button>
-        </div>
+        <button type="submit" disabled={busy} className={`${primaryButton} w-full`}>
+          {busy ? tl("Salvando…") : tl("Salvar")}
+        </button>
       </form>
     </Modal>
   );
