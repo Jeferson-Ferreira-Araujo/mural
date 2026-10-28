@@ -504,3 +504,7 @@ html[data-a11y-contrast="1"] :focus-visible {
   .pz-swap [data-tack], .pz-swap [data-tape], .pz-run .pz-fast [data-tack], .pz-run .pz-fast [data-tape], .pz-run .pz-in { animation: none !important; }
   .pz-run .pz-out { animation: none !important; visibility: hidden; }
 }
+
+/* aviso de privacidade no topo: o site desce a altura da barra e volta ao normal quando ela some */
+html[data-consent] body { padding-top: var(--consent-h, 0px); box-sizing: border-box; }
+html[data-consent] .h-dvh { height: calc(100dvh - var(--consent-h, 0px)); }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getConsent, OPEN_CONSENT_EVENT, setConsent } from "@/lib/consent";
 import { useLit } from "@/i18n/literal";
@@ -14,6 +14,7 @@ export function ConsentBanner() {
   const tl = useLit();
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // na primeira visita espera a abertura animada do logo terminar (o <html> perde data-intro); a trava evita ficar escondido para sempre
@@ -44,6 +45,28 @@ export function ConsentBanner() {
     };
   }, []);
 
+  const shown = open && !path?.startsWith("/admin");
+  // a barra empurra o site para baixo (ver globals.css) e, ao sumir, o site volta à altura normal
+  useEffect(() => {
+    const el = bar.current;
+    const root = document.documentElement;
+    if (!shown || !el) return;
+    const apply = () => {
+      root.style.setProperty("--consent-h", `${el.offsetHeight}px`);
+      root.dataset.consent = "1";
+      window.dispatchEvent(new Event("resize"));
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      delete root.dataset.consent;
+      root.style.removeProperty("--consent-h");
+      window.dispatchEvent(new Event("resize"));
+    };
+  }, [shown]);
+
   if (!open || path?.startsWith("/admin")) return null;
   const choose = (yes: boolean) => {
     setConsent(yes);
@@ -51,7 +74,7 @@ export function ConsentBanner() {
   };
   const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
-    <div role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 top-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-lg">
+    <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 top-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-lg">
       <p className="min-w-[16rem] flex-1 text-[0.72rem] leading-tight text-[#4a3826]">
         {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}{" "}
         {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}
