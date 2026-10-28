@@ -44,6 +44,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
   const size = useRef({ w: 0, h: 0 });
   const ready = useRef(false);
   const zoomedOutRef = useRef(false);
+  const openS = useRef(0); // ampliação com que o quadro abre no celular (startZoomed): o botão Aproximar volta a ela
   const [zoomedOut, setZoomedOut] = useState(false);
 
   // gesto em andamento
@@ -192,6 +193,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         const { minS, defS } = limits();
         // ampliado = o mural preenche a altura da área (a tela do celular é alta e o mural, largo): aparece o centro, com as bordas cortadas dos lados
         const s0 = startZoomedRef.current && r.width < 700 ? Math.min(defS, Math.max(minS, r.height / WORLD_H)) : minS;
+        if (startZoomedRef.current && r.width < 700) openS.current = s0;
         view.current = clampView((r.width - WORLD_W * s0) / 2, (r.height - WORLD_H * s0) / 2, s0);
         // o quadro ficou visível só agora (ex.: a tela terminou de carregar): a dica de arrastar tenta de novo, para não perder a vez do dia
         window.setTimeout(() => startHintRef.current(false), 900);
@@ -573,7 +575,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     const { minS, defS } = limits();
     const cx = w / 2;
     const cy = h / 2;
-    zoomTo(zoomedOutRef.current ? defS : minS, cx, cy, true);
+    zoomTo(zoomedOutRef.current ? (openS.current || defS) : minS, cx, cy, true);
   }
 
   return (
