@@ -7,8 +7,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 export const ADMIN_TEST_KEY = "pinz:admin-test";
 
 const TESTS: { id: string; title: string; hint: string }[] = [
-  { id: "onboarding", title: "Boas-vindas da conta nova", hint: "Foto de perfil, data de nascimento e convite para o tour." },
-  { id: "tour", title: "Tour guiado", hint: "O passo a passo interativo, do primeiro pin até a loja." },
+  { id: "onboarding", title: "Boas-vindas da conta nova", hint: "Foto de perfil e data de nascimento." },
   { id: "birthday-plus", title: "Aniversário: PINZ+ do mês", hint: "A janela de parabéns de quem tem conta gratuita (ganhou o PINZ+ até o fim do mês)." },
   { id: "birthday-badges", title: "Aniversário: bottons de presente", hint: "A janela de parabéns de quem já é PINZ+ (ganhou todos os bottons de aniversário)." },
   { id: "gift", title: "Presente de 1 mês de PINZ+", hint: "A janela de quando alguém te presenteia com o PINZ+." },

@@ -314,7 +314,6 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         sessionStorage.removeItem("pinz:admin-test"); // só some quando o teste de fato abre (se a tela recarregar antes, ele continua valendo)
       } catch {}
       if (id === "onboarding") setOnbOpen(true);
-      else if (id === "tour") setTourOpen(true);
       else if (id === "birthday-plus") setGiftNote({ id: "teste-aniversario", birthday: "plus", until: end });
       else if (id === "birthday-badges") setGiftNote({ id: "teste-aniversario", birthday: "badges" });
       else if (id === "gift") setGiftNote({ id: "teste-presente", actor: myNick ?? "alguem", avatar: null });
