@@ -115,9 +115,9 @@ const nickMessage: Record<NickState, string | null> = {
   idle: null,
   checking: "Verificando…",
   ok: "Disponível ✓",
-  taken: "Esse nome de usuário já está em uso.",
+  taken: "Esse nome não pode ser usado.",
   invalid: "Use de 3 a 30 letras minúsculas, números ou underline (_).",
-  denied: "Esse nome de usuário não pode ser utilizado.",
+  denied: "Esse nome não pode ser usado.",
 };
 
 /** Campo de nickname: ele vira o endereço do mural (SITE_HOST/nickname). */
@@ -135,7 +135,7 @@ export function NicknameField({
   const tx = useTranslations("components.ui");
   const tl = useLit();
   const bad = state === "taken" || state === "invalid" || state === "denied";
-  const inside = state === "ok" || state === "checking"; // "Disponível" e "Verificando…" ficam dentro da caixa, à direita; os erros continuam embaixo
+  const inside = state === "ok" || state === "checking" || bad; // só o ícone (✓ verde, X vermelho, ou "…" verificando) fica dentro da caixa, à direita; o motivo do erro fica embaixo
   return (
     <Field
       label={tx("nomeDeUsuario")}
@@ -155,11 +155,21 @@ export function NicknameField({
           placeholder={tx("seuUsuario")}
           autoFocus={autoFocus}
           aria-invalid={bad}
-          className={`${inputClass} ${inside ? "pr-32" : ""}`}
+          className={`${inputClass} ${inside ? "pr-11" : ""}`}
         />
         {inside && (
-          <span aria-live="polite" className={`pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-semibold ${state === "ok" ? "text-[#2f7d3a]" : "text-[#6b5440]"}`}>
-            {tl(nickMessage[state] as string)}
+          <span aria-live="polite" className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+            {state === "ok" ? (
+              <svg viewBox="0 0 24 24" className="size-5 text-[#2f7d3a]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label={tl("Disponível ✓")}>
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            ) : state === "checking" ? (
+              <span className="text-lg leading-none font-bold text-[#8a7b69]" aria-label={tl("Verificando…")}>…</span>
+            ) : (
+              <svg viewBox="0 0 24 24" className="size-5 text-[#c0392b]" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
+            )}
           </span>
         )}
         </div>

@@ -2287,7 +2287,8 @@
     "hchz2n7": "Estadísticas globales",
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Añadir PIN",
-    "h1a3glvp": "Esperando aprobación"
+    "h1a3glvp": "Esperando aprobación",
+    "h10c5ogu": "Este nombre no se puede usar."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

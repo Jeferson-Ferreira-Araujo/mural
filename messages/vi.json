@@ -2287,7 +2287,8 @@
     "hchz2n7": "Thống kê toàn cầu",
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Thêm PIN",
-    "h1a3glvp": "Đang chờ duyệt"
+    "h1a3glvp": "Đang chờ duyệt",
+    "h10c5ogu": "Không thể dùng tên này."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

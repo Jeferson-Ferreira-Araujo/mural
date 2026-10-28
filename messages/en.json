@@ -2287,7 +2287,8 @@
     "hchz2n7": "Global statistics",
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Add PIN",
-    "h1a3glvp": "Awaiting approval"
+    "h1a3glvp": "Awaiting approval",
+    "h10c5ogu": "This name can't be used."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

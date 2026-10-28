@@ -2287,7 +2287,8 @@
     "hchz2n7": "Globale Statistiken",
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "PIN hinzufügen",
-    "h1a3glvp": "Wartet auf Freigabe"
+    "h1a3glvp": "Wartet auf Freigabe",
+    "h10c5ogu": "Dieser Name kann nicht verwendet werden."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

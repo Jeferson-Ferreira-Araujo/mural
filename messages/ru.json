@@ -2287,7 +2287,8 @@
     "hchz2n7": "Глобальная статистика",
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Добавить PIN",
-    "h1a3glvp": "Ожидает одобрения"
+    "h1a3glvp": "Ожидает одобрения",
+    "h10c5ogu": "Это имя нельзя использовать."
   },
   "notifications": {
     "pinNew": "@{actor} оставил(а) PINZ на доске «{mural}»{pending, select, yes { · ждёт вашего одобрения} other {}}",
