@@ -112,10 +112,15 @@ export function ConsentBanner() {
       {policy && (
         <div className="fixed inset-0 z-[600] grid place-items-center bg-black/60 p-3" onClick={() => setPolicy(false)}>
           <div role="dialog" aria-modal="true" aria-label={tl("Política de Privacidade")} onClick={(e) => e.stopPropagation()} className="relative flex h-[88dvh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-[#fffaf0] shadow-2xl">
-            <button type="button" onClick={() => setPolicy(false)} aria-label={tl("Fechar")} className="absolute top-2 right-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-black/60 text-lg font-bold text-white hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]">
-              ×
-            </button>
-            <iframe src="/privacidade" title={tl("Política de Privacidade")} className="size-full border-0" />
+            <div className="flex items-center justify-between gap-3 border-b border-[#e1d3ba] px-5 py-3">
+              <h2 className="font-title text-xl font-semibold text-[#2a1c12]">{tl("Política de Privacidade")}</h2>
+              <button type="button" onClick={() => setPolicy(false)} aria-label={tl("Fechar")} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-[#4a3826] transition hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]">
+                <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+                  <path d="M6 6l12 12M18 6 6 18" />
+                </svg>
+              </button>
+            </div>
+            <iframe src="/privacidade/embed" title={tl("Política de Privacidade")} className="min-h-0 w-full flex-1 border-0" />
           </div>
         </div>
       )}
