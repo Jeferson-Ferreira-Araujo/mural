@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Ver todos los beneficios",
     "hf2u2xs": "Ocultar beneficios",
     "h1fs29ls": "Puedes conocer PINZ+ cuando quieras.",
-    "h1f21sgs": "Tu primer mural"
+    "h1f21sgs": "Tu primer mural",
+    "h1q4n215": "PINZ usa solo el almacenamiento esencial y, con tu autorización, datos anónimos de uso.",
+    "hlsbx0h": "Sin anuncios ni rastreo de terceros."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

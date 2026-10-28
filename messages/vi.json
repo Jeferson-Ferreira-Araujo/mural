@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Xem tất cả lợi ích",
     "hf2u2xs": "Ẩn lợi ích",
     "h1fs29ls": "Bạn có thể tìm hiểu PINZ+ bất cứ lúc nào.",
-    "h1f21sgs": "Bảng đầu tiên của bạn"
+    "h1f21sgs": "Bảng đầu tiên của bạn",
+    "h1q4n215": "PINZ chỉ dùng bộ nhớ thiết yếu và, khi bạn cho phép, dữ liệu sử dụng ẩn danh.",
+    "hlsbx0h": "Không quảng cáo, không theo dõi của bên thứ ba."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

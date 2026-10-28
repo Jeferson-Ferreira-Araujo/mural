@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Lihat semua manfaat",
     "hf2u2xs": "Sembunyikan manfaat",
     "h1fs29ls": "Kamu bisa mengenal PINZ+ kapan saja.",
-    "h1f21sgs": "Papan pertamamu"
+    "h1f21sgs": "Papan pertamamu",
+    "h1q4n215": "PINZ hanya memakai penyimpanan esensial dan, dengan izinmu, data penggunaan anonim.",
+    "hlsbx0h": "Tanpa iklan dan tanpa pelacakan pihak ketiga."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

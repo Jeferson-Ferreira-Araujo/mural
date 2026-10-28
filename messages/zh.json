@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "查看所有权益",
     "hf2u2xs": "隐藏权益",
     "h1fs29ls": "你随时可以了解 PINZ+。",
-    "h1f21sgs": "你的第一个留言板"
+    "h1f21sgs": "你的第一个留言板",
+    "h1q4n215": "PINZ 仅使用必要的存储,并在你授权后使用匿名使用数据。",
+    "hlsbx0h": "无广告,无第三方跟踪。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

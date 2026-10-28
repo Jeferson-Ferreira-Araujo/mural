@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Vedi tutti i vantaggi",
     "hf2u2xs": "Nascondi i vantaggi",
     "h1fs29ls": "Puoi scoprire PINZ+ quando vuoi.",
-    "h1f21sgs": "La tua prima bacheca"
+    "h1f21sgs": "La tua prima bacheca",
+    "h1q4n215": "PINZ usa solo l'archiviazione essenziale e, con la tua autorizzazione, dati d'uso anonimi.",
+    "hlsbx0h": "Senza pubblicità né tracciamento di terze parti."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

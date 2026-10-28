@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "모든 혜택 보기",
     "hf2u2xs": "혜택 숨기기",
     "h1fs29ls": "PINZ+는 언제든지 알아볼 수 있어요.",
-    "h1f21sgs": "첫 번째 보드"
+    "h1f21sgs": "첫 번째 보드",
+    "h1q4n215": "PINZ는 필수 저장소만 사용하며, 허락하신 경우에만 익명 이용 데이터를 사용합니다.",
+    "hlsbx0h": "광고도, 제3자 추적도 없습니다."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

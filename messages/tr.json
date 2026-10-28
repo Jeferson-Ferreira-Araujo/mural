@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Tüm avantajları gör",
     "hf2u2xs": "Avantajları gizle",
     "h1fs29ls": "PINZ+'ı istediğin zaman tanıyabilirsin.",
-    "h1f21sgs": "İlk panon"
+    "h1f21sgs": "İlk panon",
+    "h1q4n215": "PINZ yalnızca gerekli depolamayı ve, iznin olursa, anonim kullanım verilerini kullanır.",
+    "hlsbx0h": "Reklam yok, üçüncü taraf takibi yok."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

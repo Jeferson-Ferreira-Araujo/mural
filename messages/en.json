@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "See all benefits",
     "hf2u2xs": "Hide benefits",
     "h1fs29ls": "You can explore PINZ+ whenever you like.",
-    "h1f21sgs": "Your first board"
+    "h1f21sgs": "Your first board",
+    "h1q4n215": "PINZ uses only essential storage and, with your permission, anonymous usage data.",
+    "hlsbx0h": "No ads and no third-party tracking."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

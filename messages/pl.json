@@ -2305,7 +2305,9 @@
     "h1u8cy0e": "Zobacz wszystkie korzyści",
     "hf2u2xs": "Ukryj korzyści",
     "h1fs29ls": "Możesz poznać PINZ+ w dowolnej chwili.",
-    "h1f21sgs": "Twoja pierwsza tablica"
+    "h1f21sgs": "Twoja pierwsza tablica",
+    "h1q4n215": "PINZ używa tylko niezbędnej pamięci i, za Twoją zgodą, anonimowych danych o użyciu.",
+    "hlsbx0h": "Bez reklam i bez śledzenia przez osoby trzecie."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

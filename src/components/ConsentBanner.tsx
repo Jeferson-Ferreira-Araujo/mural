@@ -86,8 +86,8 @@ export function ConsentBanner() {
     <>
       <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 bottom-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-[0_-0.3rem_1rem_rgba(0,0,0,.2)]">
         <p className="min-w-[16rem] flex-1 text-[0.85rem] leading-snug text-black">
-          {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}{" "}
-          {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}
+          {tl("O PINZ usa só o armazenamento essencial e, com sua autorização, dados anônimos de uso.")}{" "}
+          {tl("Sem anúncios nem rastreamento de terceiros.")}{" "}
           <Link
             href="/privacidade"
             onClick={(e) => {
