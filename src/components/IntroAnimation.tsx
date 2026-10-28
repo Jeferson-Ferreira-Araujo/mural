@@ -17,10 +17,12 @@ export function introSeen(): boolean {
 /** Não vai tocar (já viu, ou já está logado): libera o logo e o formulário. */
 export const introSkip = () => {
   delete document.documentElement.dataset.intro;
+  delete document.documentElement.dataset.introVeil;
 };
 
 const done = () => {
   delete document.documentElement.dataset.intro;
+  delete document.documentElement.dataset.introVeil;
   try {
     sessionStorage.setItem(SEEN_KEY, "1");
   } catch {}
@@ -52,6 +54,7 @@ export function IntroAnimation() {
       return;
     }
     document.documentElement.dataset.intro = "play";
+    document.documentElement.dataset.introVeil = "off"; // o véu escuro da primeira pintura (globals.css) passa para o fundo desta abertura, sem piscar
     const el = note.current;
     const r = target.getBoundingClientRect();
     Object.assign(el.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
@@ -77,7 +80,6 @@ export function IntroAnimation() {
 
         // 1) o bloco entra no meio da tela
         el.style.transform = center;
-        add(back.current!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, fill: "forwards" }));
         const appear = add(
           el.animate(
             [
@@ -169,7 +171,7 @@ export function IntroAnimation() {
 
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
-      <div ref={back} className="absolute inset-0 bg-[#1a0f06]/75 opacity-0" />
+      <div ref={back} className="absolute inset-0 bg-[#1a0f06]/90" />
       <div ref={note} className="absolute origin-center will-change-transform" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/img/pinz/papel.webp" alt="" draggable={false} className="block size-full select-none [filter:drop-shadow(0_0.6rem_1.2rem_rgba(0,0,0,.45))]" />
