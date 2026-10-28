@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "PIN toevoegen",
     "h1a3glvp": "Wacht op goedkeuring",
-    "h10c5ogu": "Deze naam kan niet worden gebruikt."
+    "h10c5ogu": "Deze naam kan niet worden gebruikt.",
+    "h1t4m6dh": "Zeer zwak wachtwoord",
+    "h10q8ahp": "Zwak wachtwoord",
+    "htunl24": "Goed wachtwoord",
+    "h1wjdchi": "Sterk wachtwoord",
+    "h18s0ku5": "Vereisten"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

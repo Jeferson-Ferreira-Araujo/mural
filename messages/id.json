@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Tambah PIN",
     "h1a3glvp": "Menunggu persetujuan",
-    "h10c5ogu": "Nama ini tidak dapat digunakan."
+    "h10c5ogu": "Nama ini tidak dapat digunakan.",
+    "h1t4m6dh": "Kata sandi sangat lemah",
+    "h10q8ahp": "Kata sandi lemah",
+    "htunl24": "Kata sandi bagus",
+    "h1wjdchi": "Kata sandi kuat",
+    "h18s0ku5": "Persyaratan"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

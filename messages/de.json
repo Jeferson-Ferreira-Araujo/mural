@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "PIN hinzufügen",
     "h1a3glvp": "Wartet auf Freigabe",
-    "h10c5ogu": "Dieser Name kann nicht verwendet werden."
+    "h10c5ogu": "Dieser Name kann nicht verwendet werden.",
+    "h1t4m6dh": "Sehr schwaches Passwort",
+    "h10q8ahp": "Schwaches Passwort",
+    "htunl24": "Gutes Passwort",
+    "h1wjdchi": "Starkes Passwort",
+    "h18s0ku5": "Anforderungen"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

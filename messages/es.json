@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Añadir PIN",
     "h1a3glvp": "Esperando aprobación",
-    "h10c5ogu": "Este nombre no se puede usar."
+    "h10c5ogu": "Este nombre no se puede usar.",
+    "h1t4m6dh": "Contraseña muy débil",
+    "h10q8ahp": "Contraseña débil",
+    "htunl24": "Contraseña buena",
+    "h1wjdchi": "Contraseña fuerte",
+    "h18s0ku5": "Requisitos"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "PIN ekle",
     "h1a3glvp": "Onay bekliyor",
-    "h10c5ogu": "Bu ad kullanılamaz."
+    "h10c5ogu": "Bu ad kullanılamaz.",
+    "h1t4m6dh": "Çok zayıf şifre",
+    "h10q8ahp": "Zayıf şifre",
+    "htunl24": "İyi şifre",
+    "h1wjdchi": "Güçlü şifre",
+    "h18s0ku5": "Gereksinimler"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

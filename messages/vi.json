@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Thêm PIN",
     "h1a3glvp": "Đang chờ duyệt",
-    "h10c5ogu": "Không thể dùng tên này."
+    "h10c5ogu": "Không thể dùng tên này.",
+    "h1t4m6dh": "Mật khẩu rất yếu",
+    "h10q8ahp": "Mật khẩu yếu",
+    "htunl24": "Mật khẩu tốt",
+    "h1wjdchi": "Mật khẩu mạnh",
+    "h18s0ku5": "Yêu cầu"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

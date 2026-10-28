@@ -2288,7 +2288,12 @@
     "h1ycuwmi": "PINZ",
     "h10hkdt2": "Add PIN",
     "h1a3glvp": "Awaiting approval",
-    "h10c5ogu": "This name can't be used."
+    "h10c5ogu": "This name can't be used.",
+    "h1t4m6dh": "Very weak password",
+    "h10q8ahp": "Weak password",
+    "htunl24": "Good password",
+    "h1wjdchi": "Strong password",
+    "h18s0ku5": "Requirements"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
