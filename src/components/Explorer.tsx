@@ -275,6 +275,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     void getOnboarding(getBrowserSupabase()).then((o) => {
       if (!alive || !o) return;
       onbChecked.current = uid;
+      setSetupDone(o.setup);
       if (!o.done) t = window.setTimeout(() => setOnbOpen(true), 700);
     });
     return () => {
@@ -284,22 +285,18 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   }, [uid, isOwner, unlocked, nickPending, companyWelcome]);
   // conta nova: o primeiro mural já nasce pronto (nome padrão, público); logo depois das boas-vindas, pergunta nome, público/privado e validade dos pins
   const setupPending = useRef(false);
+  const [setupDone, setSetupDone] = useState<boolean | null>(null); // o banco diz se a configuração inicial do primeiro mural já foi salva (null = ainda não sei)
   useEffect(() => {
     if (!uid || !isOwner || !unlocked || nickPending || !myNick) return;
     const first = own[0];
     if (!first || first.slug !== slug) return;
-    if (Date.now() - new Date(session?.user.created_at ?? 0).getTime() > 3 * 86_400_000) return; // só contas novas
-    if (first.title !== `Mural ${myNick}` || first.question || first.pin_ttl_days) return; // o mural já foi configurado
-    try {
-      if (localStorage.getItem(`pinz:mural-setup:${uid}`)) return;
-    } catch {
-      return;
-    }
+    if (setupDone !== false) return; // já foi feita (ou ainda não sei)
+    if (first.title !== `Mural ${myNick}` || first.question || first.pin_ttl_days) return; // o mural já foi configurado de outro jeito
     setupPending.current = true;
     if (onbOpen || setupOpen) return; // as boas-vindas vão abrir (ou a configuração já está aberta): a configuração vem depois
     const t = window.setTimeout(() => setSetupOpen(true), 2400);
     return () => window.clearTimeout(t);
-  }, [uid, isOwner, unlocked, nickPending, myNick, own, slug, session, onbOpen, setupOpen]);
+  }, [uid, isOwner, unlocked, nickPending, myNick, own, slug, setupDone, onbOpen, setupOpen]);
   // testes da página de administração: ela guarda o nome do teste e leva ao mural; aqui a tela escolhida abre
   useEffect(() => {
     if (!uid || !isOwner || !unlocked || nickPending) return;
@@ -1345,7 +1342,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      {everSetup && <MuralSetupModal open={setupOpen} mural={own[0] ?? null} onClose={() => { setSetupOpen(false); setupPending.current = false; try { if (uid) localStorage.setItem(`pinz:mural-setup:${uid}`, "1"); } catch {} window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} onSaved={() => void reloadOwn()} />}
+      {everSetup && <MuralSetupModal open={setupOpen} mural={own[0] ?? null} onClose={() => { setSetupOpen(false); setupPending.current = false; setSetupDone(true); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} onSaved={() => void reloadOwn()} />}
       {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); window.setTimeout(() => (setupPending.current ? setSetupOpen(true) : window.dispatchEvent(new CustomEvent("pinz:pan-hint"))), 400); }} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
       {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
       <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label={tx("pinsArquivados")}>

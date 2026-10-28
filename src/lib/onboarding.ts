@@ -9,14 +9,14 @@ export const ONBOARDING_EVENT = "pinz:start-onboarding";
 /** Marca no aparelho que a tela de perfil (nome, foto e data) já foi feita junto com a escolha do nome de usuário: as boas-vindas abrem direto no convite do tour. */
 export const PROFILE_STEP_DONE_KEY = (uid: string) => `pinz:profile-step:${uid}`;
 
-export type Onboarding = { done: boolean; birth: string | null };
+export type Onboarding = { done: boolean; birth: string | null; /** a configuração inicial do primeiro mural (nome, público/privado, validade) já foi salva */ setup: boolean };
 
 /** Se a conta já passou pelas boas-vindas (foto, data de nascimento e convite para o tour) e a data de nascimento salva. */
 export async function getOnboarding(sb: SupabaseClient): Promise<Onboarding | null> {
   const { data, error } = await sb.rpc("get_onboarding");
   if (error || !data) return null;
-  const d = data as { done?: boolean; birth?: string | null };
-  return { done: d.done === true, birth: d.birth ?? null };
+  const d = data as { done?: boolean; birth?: string | null; setup?: boolean };
+  return { done: d.done === true, birth: d.birth ?? null, setup: d.setup !== false };
 }
 
 /** Salva a data de nascimento (AAAA-MM-DD, opcional) e, com `finish`, marca as boas-vindas como concluídas. Devolve o código do erro, ou null se deu certo. */

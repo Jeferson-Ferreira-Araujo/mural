@@ -48,6 +48,7 @@ export function MuralSetupModal({ open, onClose, mural, onSaved }: { open: boole
     const res = await Promise.all(steps);
     setBusy(false);
     if (res.some((r) => r.error)) return setError(tx("m_naoFoiPossivelSalvarTudo"));
+    await sb.rpc("finish_mural_setup"); // o banco guarda que já foi feita: nunca mais aparece, em nenhum aparelho
     onSaved();
     onClose();
   }
