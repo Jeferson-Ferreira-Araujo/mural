@@ -62,13 +62,13 @@ export function DesktopBoard(props: ViewProps) {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
     } catch {}
   }, []);
-  // ao entrar no mural de outra pessoa o menu lateral fica aberto (a pessoa pode recolher, só para esta visita); ao voltar ao próprio, volta ao que tinha escolhido
+  // ao entrar no mural de outra pessoa o menu lateral fica recolhido, o mural em tela cheia (a pessoa pode abri-lo, só para esta visita); ao voltar ao próprio, volta ao que tinha escolhido
   const visitNick = visit?.nick ?? null;
   const wasVisiting = useRef(false);
   useEffect(() => {
     if (visitNick) {
       wasVisiting.current = true;
-      setCollapsed(false);
+      setCollapsed(true);
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
     } else if (wasVisiting.current) {
       wasVisiting.current = false;
@@ -124,14 +124,8 @@ export function DesktopBoard(props: ViewProps) {
 
         <nav aria-label={tx("informacoesDoMural")} className={`${hide} pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-[2.2vw] pt-5 transition-opacity`}>
           <div className="pointer-events-auto flex min-h-11 min-w-0 items-center gap-2">
-            {/* mural de outra pessoa, menu lateral recolhido: foto e @ (com o menu aberto, eles já aparecem nele), depois Seguir e os murais da pessoa */}
-            {visit && collapsed && !locked && (
-              <div className="flex h-11 min-w-0 shrink-0 items-center gap-2 rounded-xl bg-[#fbf6ea] py-1 pr-4 pl-1.5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
-                <Avatar src={visit.avatar} name={visit.nick} plus={visit.plus} className="size-8" />
-                <span className="max-w-[16vw] truncate">@{visit.nick}</span>
-              </div>
-            )}
-            {visit && hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
+            {/* mural de outra pessoa: com o menu lateral recolhido, foto, @ e Seguir ficam embaixo, à esquerda; com ele aberto, a pessoa já aparece no menu e o Seguir fica aqui */}
+            {visit && !collapsed && hasSelection && !locked && props.follow && <FollowButton follow={props.follow} />}
             {/* nome do mural: pílula igual à do botão Pesquisar usuários, alinhada à esquerda */}
             {hasSelection && (!locked || !!visit) && props.muralInfo?.title && (
               <h2 className="grid h-11 max-w-[42vw] place-items-center rounded-xl bg-[#fbf6ea] px-5 text-sm font-semibold text-[#2a1c12] shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
@@ -167,11 +161,23 @@ export function DesktopBoard(props: ViewProps) {
         </PannableBoard>
         </div>
 
+        {visit && collapsed && !locked && (
+          <div className={`${hide} pointer-events-auto absolute bottom-0 left-0 z-10 flex items-center gap-3 px-[2.2vw] pb-5 transition-opacity`}>
+            <div className="flex min-w-0 items-center gap-3 rounded-2xl bg-[#fbf6ea] p-2.5 pr-5 shadow-[0_0.4rem_1.2rem_rgba(0,0,0,.3)]">
+              <Avatar src={visit.avatar} name={visit.nick} plus={visit.plus} className="size-16 shrink-0" />
+              <div className="flex min-w-0 flex-col items-start gap-1.5">
+                <span className="max-w-[14vw] truncate text-base font-bold text-[#2a1c12]">@{visit.nick}</span>
+                {hasSelection && props.follow && <FollowButton follow={props.follow} compact />}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={`${hide} pointer-events-none absolute bottom-0 z-10 flex items-end justify-center gap-3 px-[2.2vw] pb-5 transition-opacity ${look.wide ? "left-1/2 w-[min(100%,150dvh)] -translate-x-1/2 portrait:inset-x-0 portrait:left-0 portrait:w-auto portrait:translate-x-0" : "inset-x-0"}`}>
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
           <div aria-hidden className="w-[1.5rem] shrink-0" />
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2" style={{ "--bb": "3.5rem" } as React.CSSProperties}>
-            <BadgeBar className="pointer-events-auto w-[min(60rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} className="!size-[var(--bb)]" /> : undefined} />
+            {visit ? canAdd && <AddPinButton visitor={visitor} className="!size-[var(--bb)]" /> : <BadgeBar className="pointer-events-auto w-[min(60rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} className="!size-[var(--bb)]" /> : undefined} />}
           </div>
           {/* à direita da barra ficam os botões + e − do zoom */}
           <div aria-hidden className="w-[13rem] shrink-0" />
