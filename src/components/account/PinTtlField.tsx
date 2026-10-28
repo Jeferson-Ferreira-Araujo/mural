@@ -44,7 +44,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
     <Field label={tx("tempoDeExibicaoDosPinz")} hint={<span className="text-xs text-[#8a7b69]">{tx("depoisDoPrazoOPin")}</span>}>
       {(id) => (
         <div ref={box} className="overflow-hidden rounded-xl border border-[#d9c9ad] bg-white">
-          <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base">
+          <button type="button" id={id} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-2 text-left text-[15px]">
             <span>{tl(current.label)}</span>
             <svg viewBox="0 0 24 24" className={`size-5 shrink-0 text-[#8a7b69] transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m6 9 6 6 6-6" />
@@ -62,7 +62,7 @@ export function PinTtlField({ value, onChange }: { value: PinTtl; onChange: (v: 
                         onChange(o.value);
                         setOpen(false);
                       }}
-                      className={`flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-left text-base transition hover:bg-[#fff6dd] ${on ? "bg-[#fff6dd] font-semibold" : ""}`}
+                      className={`flex w-full cursor-pointer items-center justify-between gap-2 px-3.5 py-2 text-left text-[15px] transition hover:bg-[#fff6dd] ${on ? "bg-[#fff6dd] font-semibold" : ""}`}
                     >
                       {tl(o.label)}
                       {on && (

@@ -11,7 +11,7 @@ import { useLit } from "@/i18n/literal";
 import { useTag } from "@/i18n/useTag";
 import { useMoney } from "@/lib/useMoney";
 
-const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
+export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
   free: [
     { text: "1 mural", on: true },
     { text: "Pins e displays sem limite", on: true },

@@ -35,7 +35,7 @@ export function PrivacyField({ value, onChange }: { value: Privacy; onChange: (v
             role="radio"
             aria-checked={value.priv === val}
             onClick={() => onChange({ ...value, priv: val })}
-            className={`cursor-pointer rounded-xl border-2 px-3 py-2 text-sm font-bold transition ${value.priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
+            className={`cursor-pointer rounded-xl border-2 px-3 py-1.5 text-sm font-bold transition ${value.priv === val ? "border-[#d9a21b] bg-[#fff6dd] shadow-[0_0.2rem_0.7rem_rgba(217,162,27,.3)]" : "border-[#e1d3ba] bg-white hover:bg-[#fff6dd]"}`}
           >
             {label}
           </button>

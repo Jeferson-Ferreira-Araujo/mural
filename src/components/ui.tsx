@@ -43,13 +43,13 @@ export function AuthShell({ children, wide = false }: { children: ReactNode; wid
 }
 
 export const inputClass =
-  "w-full rounded-xl border border-[#e1d3ba] bg-white/80 px-4 py-3 text-base text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus:border-[#b8873b] focus:bg-white focus-visible:ring-2 focus-visible:ring-[#d98a2b]/50";
+  "w-full rounded-xl border border-[#e1d3ba] bg-white/80 px-3.5 py-2 text-base text-[#2f2218] outline-none placeholder:text-[#8a7b69] focus:border-[#b8873b] focus:bg-white focus-visible:ring-2 focus-visible:ring-[#d98a2b]/50";
 
 export const primaryButton =
-  "inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1f232b] px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1f232b] px-4 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#2c313b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60";
 
 export const ghostButton =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#d9c9ad] bg-transparent px-5 py-3 text-base font-semibold text-[#4a3826] transition-colors hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#d9c9ad] bg-transparent px-4 py-2.5 text-[15px] font-semibold text-[#4a3826] transition-colors hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
 export function Field({
   label,
@@ -65,7 +65,7 @@ export function Field({
   const id = useId();
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
+      <label htmlFor={id} className="mb-1 block text-sm font-semibold">
         {label}
       </label>
       {children(id)}

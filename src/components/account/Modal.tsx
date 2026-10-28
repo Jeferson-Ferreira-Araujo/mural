@@ -79,7 +79,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
     >
       {open && (
         <div className="relative flex max-h-[92dvh] flex-col">
-          <header className={`flex items-center gap-3 px-5 py-3 ${title || headerLeft ? `justify-between border-b ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}` : "justify-end pb-0"}`}>
+          <header className={`flex items-center gap-3 px-5 py-2.5 ${title || headerLeft ? `justify-between border-b ${danger ? "border-[#e3b3a8] bg-[#a23b2a] text-white" : "border-[#e6d8bd]"}` : "justify-end pb-0"}`}>
             {(title || onBack) && (
               <div className="flex min-w-0 items-center gap-1.5">
                 {onBack && (
@@ -98,7 +98,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
               </button>
             )}
           </header>
-          <div className="min-h-0 overflow-y-auto px-5 py-5">{children}</div>
+          <div className="min-h-0 overflow-y-auto px-5 py-4">{children}</div>
           {footer && <div className="shrink-0 border-t border-[#e6d8bd] bg-[#fbf6ea] px-5 py-3">{footer}</div>}
           {overlay}
         </div>
