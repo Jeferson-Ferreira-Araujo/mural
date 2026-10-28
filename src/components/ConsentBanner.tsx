@@ -14,7 +14,7 @@ export function ConsentBanner() {
   const tl = useLit();
   const path = usePathname();
   const [open, setOpen] = useState(false);
-  const [left, setLeft] = useState(0);
+  const [box, setBox] = useState<{ left: number; width?: number }>({ left: 8 });
 
   useEffect(() => {
     // na primeira visita espera a abertura animada do logo terminar (o <html> perde data-intro); a trava evita ficar escondido para sempre
@@ -52,7 +52,12 @@ export function ConsentBanner() {
       const side = document.querySelector("aside");
       const r = side?.getBoundingClientRect();
       const visible = !!r && getComputedStyle(side!).visibility !== "hidden" && r.width < window.innerWidth * 0.6;
-      setLeft(visible ? Math.max(0, Math.round(r!.right)) : 0);
+      const l = (visible ? Math.max(0, Math.round(r!.right)) : 0) + 8;
+      if (window.innerWidth < 640) return setBox({ left: l });
+      // computador: 70% do espaço livre do mural (sem a coluna bege nem os botões da direita), centralizada nele
+      const avail = window.innerWidth - l - 72;
+      const w = Math.round(avail * 0.7);
+      setBox({ left: l + Math.round((avail - w) / 2), width: w });
     };
     measure();
     const id = window.setInterval(measure, 300);
@@ -68,10 +73,10 @@ export function ConsentBanner() {
     setConsent(yes);
     setOpen(false);
   };
-  const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-2.5 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+  const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-3.5 py-1.5 text-sm font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
-    <div role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} style={{ left: left + 8 }} className="fixed right-2 bottom-2 z-[500] flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-[#e1d3ba] bg-[#fffaf0] px-2.5 py-1.5 shadow-xl sm:right-[4.5rem]">
-      <p className="min-w-[14rem] flex-1 text-[0.62rem] leading-tight text-[#4a3826]">
+    <div role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} style={{ left: box.left, width: box.width }} className="fixed right-2 bottom-2 z-[500] flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-[#e1d3ba] bg-[#fffaf0] px-3 py-2 shadow-xl">
+      <p className="min-w-[14rem] flex-1 text-[0.8rem] leading-snug text-[#4a3826]">
         {tl("Usamos só o armazenamento essencial para o site funcionar (login, idioma e acessibilidade). Se você deixar, também medimos o uso do site de forma anônima, com ferramentas próprias, para melhorar o Pinz. Não usamos publicidade nem rastreadores de terceiros.")}{" "}
         <Link href="/privacidade" className="font-semibold whitespace-nowrap underline">
           {tl("Política de Privacidade")}
