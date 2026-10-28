@@ -163,7 +163,7 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={heading} label={heading} onBack={view !== "summary" ? () => (setView("summary"), setErr(null)) : undefined}>
+    <Modal open={open} onClose={onClose} title={heading} label={heading} onBack={view !== "summary" ? () => (view === "shared" && startView === "shared" ? onClose() : (setView("summary"), setErr(null))) : undefined}>
       {!data ? (
         <CardSkeleton label={tx("carregandoOPerfil")} />
       ) : view === "summary" ? (
