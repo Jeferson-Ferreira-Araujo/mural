@@ -12,7 +12,7 @@ import { useLit } from "@/i18n/literal";
  * Foto de perfil do dono (aparece no mural e na busca). Quem acabou de criar o mural é convidado a enviar a primeira.
  * A foto é recortada em quadrado e reduzida no próprio navegador antes de ir para o servidor.
  */
-export function AvatarUploader({ nickname, plus = false }: { nickname: string; plus?: boolean }) {
+export function AvatarUploader({ nickname, plus = false, compact = false }: { nickname: string; plus?: boolean; /** versão enxuta (sem margem e com foto menor), para telas de uma dobra só */ compact?: boolean }) {
   const tl = useLit();
   const tx = useTranslations("components.AvatarUploader");
   const [url, setUrl] = useState<string | null>(null);
@@ -71,8 +71,8 @@ export function AvatarUploader({ nickname, plus = false }: { nickname: string; p
   const btn = "cursor-pointer rounded-lg border border-[#d9c9ad] px-3 py-1.5 text-sm font-semibold text-[#4a3826] transition-colors hover:bg-[#efe4cf] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
 
   return (
-    <section aria-label={tx("suaFoto")} className={`mt-5 flex items-center gap-4 rounded-2xl border p-4 ${!ready || url ? "border-[#e1d3ba] bg-white/60" : "border-[#e0b04a] bg-[#fff6dd]"}`}>
-      <Avatar src={url} name={nickname} plus={plus} className="size-[4.5rem]" />
+    <section aria-label={tx("suaFoto")} className={`${compact ? "" : "mt-5"} flex items-center ${compact ? "gap-3 p-3" : "gap-4 p-4"} rounded-2xl border ${!ready || url ? "border-[#e1d3ba] bg-white/60" : "border-[#e0b04a] bg-[#fff6dd]"}`}>
+      <Avatar src={url} name={nickname} plus={plus} className={compact ? "size-14" : "size-[4.5rem]"} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold">{url ? tx("m_suaFoto") : tx("m_adicioneUmaFoto")}</p>
         <div className="mt-1.5 flex flex-wrap gap-2">

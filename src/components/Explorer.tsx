@@ -32,14 +32,13 @@ import { Spinner } from "./ui";
 import { AccountDrawer } from "./account/AccountDrawer";
 import { SearchDialog } from "./account/SearchDialog";
 import { FirstTimeTip } from "./account/FirstTimeTip";
-import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT } from "@/lib/onboarding";
+import { getOnboarding, ONBOARDING_EVENT, TOUR_EVENT, type Onboarding } from "@/lib/onboarding";
 import { claimReward, claimStoredReferral, OPEN_REWARDS_EVENT, rememberRef, REWARD_EVENT } from "@/lib/rewards";
 import { Modal } from "./account/Modal";
 import { PAY_EVENT, pixStatus } from "@/lib/payments";
 import dynamic from "next/dynamic";
 
 // janelas pesadas: o código só é baixado quando a pessoa abre uma delas pela primeira vez (e é aquecido em segundo plano, depois da primeira tela)
-const MuralSetupModal = dynamic(() => import("./account/MuralSetupModal").then((m) => m.MuralSetupModal), { ssr: false });
 const OnboardingModal = dynamic(() => import("./account/OnboardingModal").then((m) => m.OnboardingModal), { ssr: false });
 const Tour = dynamic(() => import("./tour/Tour").then((m) => m.Tour), { ssr: false });
 const RewardsModal = dynamic(() => import("./account/RewardsModal").then((m) => m.RewardsModal), { ssr: false });
@@ -111,7 +110,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     if (logged) window.location.replace(takeNext() ?? next);
     else rememberNext(next);
   }, [nextPath, logged, sessionLoading]);
-  const [setupOpen, setSetupOpen] = useState(false); // configuração do primeiro mural da conta nova (nome, público/privado, validade)
+  const [onbInfo, setOnbInfo] = useState<Onboarding | null>(null); // o que o banco diz que falta nas boas-vindas (perfil e/ou configuração do primeiro mural)
   const [onbOpen, setOnbOpen] = useState(false); // boas-vindas da conta nova: foto, data de nascimento e convite para o tour
   const [tourOpen, setTourOpen] = useState(false);
   const [payProduct, setPayProduct] = useState<string | null>(null); // pacote de créditos em pagamento (Pix ou cartão)
@@ -271,32 +270,27 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   useEffect(() => {
     if (!uid || !isOwner || !unlocked || nickPending || companyWelcome || onbChecked.current === uid) return;
     let alive = true;
-    let t = 0;
     void getOnboarding(getBrowserSupabase()).then((o) => {
       if (!alive || !o) return;
       onbChecked.current = uid;
-      setSetupDone(o.setup);
-      if (!o.done) t = window.setTimeout(() => setOnbOpen(true), 700);
+      setOnbInfo(o);
     });
     return () => {
       alive = false;
-      window.clearTimeout(t);
     };
   }, [uid, isOwner, unlocked, nickPending, companyWelcome]);
-  // conta nova: o primeiro mural já nasce pronto (nome padrão, público); logo depois das boas-vindas, pergunta nome, público/privado e validade dos pins
-  const setupPending = useRef(false);
-  const [setupDone, setSetupDone] = useState<boolean | null>(null); // o banco diz se a configuração inicial do primeiro mural já foi salva (null = ainda não sei)
+  // conta nova: uma tela só pede foto, data de nascimento e a configuração do primeiro mural (nome, público/privado, validade dos pins); o banco guarda o que já foi feito
+  const onbShown = useRef(false);
+  const firstOwn = own[0] && own[0].slug === slug ? own[0] : null;
+  const needsSetup = !!onbInfo && !onbInfo.setup;
   useEffect(() => {
-    if (!uid || !isOwner || !unlocked || nickPending || !myNick) return;
-    const first = own[0];
-    if (!first || first.slug !== slug) return;
-    if (setupDone !== false) return; // já foi feita (ou ainda não sei)
-    if (first.title !== `Mural ${myNick}` || first.question || first.pin_ttl_days) return; // o mural já foi configurado de outro jeito
-    setupPending.current = true;
-    if (onbOpen || setupOpen) return; // as boas-vindas vão abrir (ou a configuração já está aberta): a configuração vem depois
-    const t = window.setTimeout(() => setSetupOpen(true), 2400);
+    if (!onbInfo || onbShown.current || !uid || !isOwner || !unlocked || nickPending || !myNick) return;
+    if (onbInfo.done && !needsSetup) return;
+    if (needsSetup && !firstOwn) return; // espera o mural carregar
+    onbShown.current = true;
+    const t = window.setTimeout(() => setOnbOpen(true), 700);
     return () => window.clearTimeout(t);
-  }, [uid, isOwner, unlocked, nickPending, myNick, own, slug, setupDone, onbOpen, setupOpen]);
+  }, [onbInfo, needsSetup, firstOwn, uid, isOwner, unlocked, nickPending, myNick]);
   // testes da página de administração: ela guarda o nome do teste e leva ao mural; aqui a tela escolhida abre
   useEffect(() => {
     if (!uid || !isOwner || !unlocked || nickPending) return;
@@ -310,7 +304,10 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       try {
         sessionStorage.removeItem("pinz:admin-test"); // só some quando o teste de fato abre (se a tela recarregar antes, ele continua valendo)
       } catch {}
-      if (id === "onboarding") setOnbOpen(true);
+      if (id === "onboarding") {
+        setOnbInfo({ done: false, birth: null, setup: true });
+        setOnbOpen(true);
+      }
       else if (id === "birthday-plus") setGiftNote({ id: "teste-aniversario", birthday: "plus", until: end });
       else if (id === "birthday-badges") setGiftNote({ id: "teste-aniversario", birthday: "badges" });
       else if (id === "gift") setGiftNote({ id: "teste-presente", actor: myNick ?? "alguem", avatar: null });
@@ -321,7 +318,10 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   // o tour abre pelo fim das boas-vindas e pelo item do menu
   useEffect(() => {
     const open = () => setTourOpen(true);
-    const onb = () => setOnbOpen(true);
+    const onb = () => {
+      setOnbInfo({ done: false, birth: null, setup: true }); // teste: só o perfil, sem mexer no mural
+      setOnbOpen(true);
+    };
     const rw = () => setRewardsOpen(true);
     const pay = (e: Event) => setPayProduct((e as CustomEvent<{ product?: string }>).detail?.product ?? null);
     window.addEventListener(PAY_EVENT, pay);
@@ -1155,7 +1155,6 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     void homeRouteFor(getBrowserSupabase()).then((to) => window.location.replace(to));
   }, [goHome]);
   // (estes ganchos ficam ANTES do retorno antecipado abaixo: a ordem dos ganchos não pode mudar entre uma pintura e outra)
-  const everSetup = useEver(setupOpen);
   const everProfile = useEver(profileOpen);
   const everNewMural = useEver(newMuralOpen);
   const everOnb = useEver(onbOpen);
@@ -1342,8 +1341,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      {everSetup && <MuralSetupModal open={setupOpen} mural={own[0] ?? null} onClose={() => { setSetupOpen(false); setupPending.current = false; setSetupDone(true); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} onSaved={() => void reloadOwn()} />}
-      {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); window.setTimeout(() => (setupPending.current ? setSetupOpen(true) : window.dispatchEvent(new CustomEvent("pinz:pan-hint"))), 400); }} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
+      {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); setOnbInfo((o) => (o ? { ...o, done: true, setup: true } : o)); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} profile={!onbInfo?.done} mural={needsSetup ? firstOwn : null} onSaved={() => void reloadOwn()} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
       {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
       <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label={tx("pinsArquivados")}>
         {archivedNote && (
