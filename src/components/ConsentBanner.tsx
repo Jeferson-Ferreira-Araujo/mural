@@ -46,7 +46,7 @@ export function ConsentBanner() {
   }, []);
 
   const shown = open && !path?.startsWith("/admin");
-  // a barra empurra o site para baixo (ver globals.css) e, ao sumir, o site volta à altura normal
+  // a barra empurra o site para cima (ver globals.css) e, ao sumir, o site volta à altura normal
   useEffect(() => {
     const el = bar.current;
     const root = document.documentElement;
@@ -74,7 +74,7 @@ export function ConsentBanner() {
   };
   const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
-    <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 top-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-b border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-lg">
+    <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 bottom-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-[0_-0.3rem_1rem_rgba(0,0,0,.2)]">
       <p className="min-w-[16rem] flex-1 text-[0.72rem] leading-tight text-[#4a3826]">
         {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}{" "}
         {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}

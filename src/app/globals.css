@@ -505,8 +505,8 @@ html[data-a11y-contrast="1"] :focus-visible {
   .pz-run .pz-out { animation: none !important; visibility: hidden; }
 }
 
-/* aviso de privacidade no topo: o site desce a altura da barra e volta ao normal quando ela some */
-html[data-consent] body { padding-top: var(--consent-h, 0px); box-sizing: border-box; }
+/* aviso de privacidade embaixo: o site encolhe a altura da barra e volta ao normal quando ela some */
+html[data-consent] body { padding-bottom: var(--consent-h, 0px); box-sizing: border-box; }
 html[data-consent] .h-dvh { height: calc(100dvh - var(--consent-h, 0px)); }
 
 /* abertura do logo: desde a primeira pintura a tela fica escura, para não aparecer o corte vertical entre a coluna bege e o mural (que ainda está carregando) */
