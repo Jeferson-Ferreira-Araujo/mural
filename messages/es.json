@@ -2286,7 +2286,8 @@
     "h4fk97e": "Registrarse",
     "hchz2n7": "Estadísticas globales",
     "h1ycuwmi": "PINZ",
-    "h10hkdt2": "Añadir PIN"
+    "h10hkdt2": "Añadir PIN",
+    "h1a3glvp": "Esperando aprobación"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

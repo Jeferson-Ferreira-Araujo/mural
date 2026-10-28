@@ -2286,7 +2286,8 @@
     "h4fk97e": "가입",
     "hchz2n7": "전체 통계",
     "h1ycuwmi": "PINZ",
-    "h10hkdt2": "PIN 추가"
+    "h10hkdt2": "PIN 추가",
+    "h1a3glvp": "승인 대기 중"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

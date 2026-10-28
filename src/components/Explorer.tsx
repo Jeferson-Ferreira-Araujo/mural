@@ -1265,7 +1265,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
               ? {
                   mode: "demo", // mesmo compositor da demonstração, agora gravando no banco
                   onSend: onSendPin,
-                  sentNote: isMember ? tx("m_pinColocadoNoMuralDe") : tx("m_pinEnviadoEleAparecePara"),
+                  sentNote: isMember ? tx("m_pinColocadoNoMuralDe") : tl("Aguardando aprovação"),
                   onTried: () => {
                     setTried(true);
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);

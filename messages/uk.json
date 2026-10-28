@@ -2286,7 +2286,8 @@
     "h4fk97e": "Реєстрація",
     "hchz2n7": "Глобальна статистика",
     "h1ycuwmi": "PINZ",
-    "h10hkdt2": "Додати PIN"
+    "h10hkdt2": "Додати PIN",
+    "h1a3glvp": "Очікує схвалення"
   },
   "notifications": {
     "pinNew": "@{actor} залишив(ла) PINZ на дошці «{mural}»{pending, select, yes { · очікує твого схвалення} other {}}",

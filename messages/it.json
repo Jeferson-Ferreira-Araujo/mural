@@ -2286,7 +2286,8 @@
     "h4fk97e": "Registrati",
     "hchz2n7": "Statistiche globali",
     "h1ycuwmi": "PINZ",
-    "h10hkdt2": "Aggiungi PIN"
+    "h10hkdt2": "Aggiungi PIN",
+    "h1a3glvp": "In attesa di approvazione"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

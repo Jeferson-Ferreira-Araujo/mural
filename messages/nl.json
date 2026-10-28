@@ -2286,7 +2286,8 @@
     "h4fk97e": "Registreren",
     "hchz2n7": "Wereldwijde statistieken",
     "h1ycuwmi": "PINZ",
-    "h10hkdt2": "PIN toevoegen"
+    "h10hkdt2": "PIN toevoegen",
+    "h1a3glvp": "Wacht op goedkeuring"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
