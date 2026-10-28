@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",
+    "muralNew": "@{actor}님이 새 보드 “{mural}”를 만들었습니다. 확인해 보세요!",
+    "displayNew": "@{actor}님이 “{mural}” 보드에 새 디스플레이를 추가했습니다. 확인해 보세요!",
     "pinApproved": "@{actor}님이 내 PINZ를 승인했습니다",
     "gift": "🎁 {hasActor, select, yes {@{actor}님이} other {누군가가}} PINZ+ 1개월을 선물했습니다! 이제 함께 공유 보드를 만들 수 있어요.",
     "birthdayPlus": "🎂 생일 축하해요! 이번 달 말까지 PINZ+를 받았습니다.",

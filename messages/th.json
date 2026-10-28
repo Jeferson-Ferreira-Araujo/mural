@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} ทิ้ง PINZ ไว้บนบอร์ด “{mural}”{pending, select, yes { · รอการอนุมัติจากคุณ} other {}}",
+    "muralNew": "@{actor} สร้างบอร์ดใหม่: “{mural}” ไปดูกัน!",
+    "displayNew": "@{actor} เพิ่มดิสเพลย์ใหม่ใน “{mural}” ไปดูกัน!",
     "pinApproved": "@{actor} อนุมัติ PINZ ของคุณแล้ว",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {มีคน}}มอบ PINZ+ 1 เดือนให้คุณ! ตอนนี้คุณทั้งสองสร้างบอร์ดร่วมด้วยกันได้แล้ว",
     "birthdayPlus": "🎂 สุขสันต์วันเกิด! คุณได้รับ PINZ+ จนถึงสิ้นเดือน",

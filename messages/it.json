@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",
+    "muralNew": "@{actor} ha creato una nuova bacheca: «{mural}». Dai un'occhiata!",
+    "displayNew": "@{actor} ha aggiunto un nuovo display su «{mural}». Dai un'occhiata!",
     "pinApproved": "@{actor} ha approvato il tuo PINZ",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Qualcuno}} ti ha regalato 1 mese di PINZ+! Ora potete creare bacheche condivise.",
     "birthdayPlus": "🎂 Buon compleanno! Hai ricevuto PINZ+ fino alla fine del mese.",

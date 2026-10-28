@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",
+    "muralNew": "@{actor} utworzył(a) nową tablicę: „{mural}”. Zajrzyj!",
+    "displayNew": "@{actor} dodał(a) nowy display na „{mural}”. Zajrzyj!",
     "pinApproved": "@{actor} zatwierdził(a) Twój PINZ",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Ktoś}} podarował(a) Ci 1 miesiąc PINZ+! Teraz możecie razem tworzyć wspólne tablice.",
     "birthdayPlus": "🎂 Wszystkiego najlepszego! Dostałeś PINZ+ do końca miesiąca.",

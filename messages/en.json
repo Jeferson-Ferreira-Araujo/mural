@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
+    "muralNew": "@{actor} created a new board: “{mural}”. Check it out!",
+    "displayNew": "@{actor} added a new display to “{mural}”. Check it out!",
     "pinApproved": "@{actor} approved your PINZ",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Someone}} gifted you 1 month of PINZ+! Now you can create shared boards together.",
     "birthdayPlus": "🎂 Happy birthday! You got PINZ+ until the end of the month.",

@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
+    "muralNew": "@{actor} yeni bir pano oluşturdu: “{mural}”. Göz at!",
+    "displayNew": "@{actor}, “{mural}” panosuna yeni bir display ekledi. Göz at!",
     "pinApproved": "@{actor} PINZ'ini onayladı",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Biri}} sana 1 ay PINZ+ hediye etti! Artık birlikte ortak panolar oluşturabilirsiniz.",
     "birthdayPlus": "🎂 Doğum günün kutlu olsun! Ay sonuna kadar PINZ+ kazandın.",

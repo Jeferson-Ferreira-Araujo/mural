@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",
+    "muralNew": "@{actor} 创建了新的留言板“{mural}”。快去看看!",
+    "displayNew": "@{actor} 在“{mural}”上添加了新的展示。快去看看!",
     "pinApproved": "@{actor} 批准了你的 PINZ",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {有人}}送了你 1 个月的 PINZ+！ 现在你们可以一起创建共享墙了。",
     "birthdayPlus": "🎂 生日快乐！你获得了本月底前的 PINZ+。",

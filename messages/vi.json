@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",
+    "muralNew": "@{actor} đã tạo bảng mới: “{mural}”. Vào xem nhé!",
+    "displayNew": "@{actor} đã thêm một display mới vào “{mural}”. Vào xem nhé!",
     "pinApproved": "@{actor} đã duyệt PINZ của bạn",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Ai đó}} đã tặng bạn 1 tháng PINZ+! Giờ hai bạn có thể cùng tạo bảng chung.",
     "birthdayPlus": "🎂 Chúc mừng sinh nhật! Bạn nhận được PINZ+ đến hết tháng.",

@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} оставил(а) PINZ на доске «{mural}»{pending, select, yes { · ждёт вашего одобрения} other {}}",
+    "muralNew": "@{actor} создал(а) новую доску: «{mural}». Загляни!",
+    "displayNew": "@{actor} добавил(а) новый дисплей на «{mural}». Загляни!",
     "pinApproved": "@{actor} одобрил(а) ваш PINZ",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Кто-то}} подарил(а) вам 1 месяц PINZ+! Теперь вы можете вместе создавать общие стены.",
     "birthdayPlus": "🎂 С днём рождения! Вы получили PINZ+ до конца месяца.",

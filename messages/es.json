@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
+    "muralNew": "@{actor} creó un nuevo mural: “{mural}”. ¡Échale un vistazo!",
+    "displayNew": "@{actor} añadió un nuevo display en “{mural}”. ¡Échale un vistazo!",
     "pinApproved": "@{actor} aprobó tu PINZ",
     "gift": "🎁 ¡{hasActor, select, yes {@{actor}} other {Alguien}} te regaló 1 mes de PINZ+! Ahora pueden crear murales compartidos.",
     "birthdayPlus": "🎂 ¡Feliz cumpleaños! Ganaste PINZ+ hasta fin de mes.",

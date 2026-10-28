@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "ترك @{actor} PINZ على اللوحة «{mural}»{pending, select, yes { · بانتظار موافقتك} other {}}",
+    "muralNew": "أنشأ @{actor} لوحة جديدة: «{mural}». ألقِ نظرة!",
+    "displayNew": "أضاف @{actor} شاشة عرض جديدة إلى «{mural}». ألقِ نظرة!",
     "pinApproved": "وافق @{actor} على PINZ الخاص بك",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {شخص ما}} أهداك شهرًا من PINZ+! يمكنكما الآن إنشاء لوحات مشتركة معًا.",
     "birthdayPlus": "🎂 عيد ميلاد سعيد! حصلت على PINZ+ حتى نهاية الشهر.",

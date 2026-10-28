@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
+    "muralNew": "@{actor} maakte een nieuw bord: “{mural}”. Kijk eens!",
+    "displayNew": "@{actor} voegde een nieuwe display toe aan “{mural}”. Kijk eens!",
     "pinApproved": "@{actor} heeft je PINZ goedgekeurd",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Iemand}} schonk je 1 maand PINZ+! Nu kunnen jullie samen gedeelde borden maken.",
     "birthdayPlus": "🎂 Gefeliciteerd! Je hebt PINZ+ gekregen tot het einde van de maand.",

@@ -10,6 +10,8 @@ export type Notification =
   | { id: string; kind: "reaction"; data: ReactionData; read: boolean; createdAt: string }
   | { id: string; kind: "pin_new"; data: PinNewData; read: boolean; createdAt: string }
   | { id: string; kind: "pin_approved"; data: PinApprovedData; read: boolean; createdAt: string }
+  | { id: string; kind: "mural_new"; data: { actor: string; avatar?: string | null; muralNick: string; muralSlug: string; muralTitle?: string }; read: boolean; createdAt: string }
+  | { id: string; kind: "display_new"; data: { actor: string; avatar?: string | null; muralNick: string; muralSlug: string; muralTitle?: string }; read: boolean; createdAt: string }
   | { id: string; kind: "follow"; data: { actor: string; avatar?: string | null }; read: boolean; createdAt: string }
   | { id: string; kind: "gift"; data: { actor?: string; avatar?: string | null; days?: number }; read: boolean; createdAt: string }
   | { id: string; kind: "birthday"; data: { gift?: "plus" | "badges"; until?: string }; read: boolean; createdAt: string }
@@ -36,6 +38,8 @@ export type NotifT = (key: string, values?: Record<string, string | number>) => 
 
 export function notificationText(n: Notification, t: NotifT): string {
   if (n.kind === "pin_new") return t("pinNew", { actor: n.data.actor, mural: n.data.muralTitle ?? n.data.muralNick, pending: n.data.pending ? "yes" : "no" });
+  if (n.kind === "mural_new") return t("muralNew", { actor: n.data.actor, mural: n.data.muralTitle ?? n.data.muralSlug });
+  if (n.kind === "display_new") return t("displayNew", { actor: n.data.actor, mural: n.data.muralTitle ?? n.data.muralSlug });
   if (n.kind === "pin_approved") return t("pinApproved", { actor: n.data.actor });
   if (n.kind === "gift") return t("gift", { hasActor: n.data.actor ? "yes" : "no", actor: n.data.actor ?? "" });
   if (n.kind === "birthday") return n.data.gift === "plus" ? t("birthdayPlus") : t("birthdayBadges");

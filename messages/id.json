@@ -2289,6 +2289,8 @@
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",
+    "muralNew": "@{actor} membuat papan baru: “{mural}”. Lihat yuk!",
+    "displayNew": "@{actor} menambahkan display baru di “{mural}”. Lihat yuk!",
     "pinApproved": "@{actor} menyetujui PINZ-mu",
     "gift": "🎁 {hasActor, select, yes {@{actor}} other {Seseorang}} menghadiahimu 1 bulan PINZ+! Sekarang kalian bisa membuat mural bersama.",
     "birthdayPlus": "🎂 Selamat ulang tahun! Kamu mendapat PINZ+ hingga akhir bulan.",
