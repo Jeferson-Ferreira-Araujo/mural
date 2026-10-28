@@ -21,6 +21,7 @@ import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoF
 import type { DraftMessage, SendPayload } from "./types";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 type Props = {
   open: boolean;
@@ -246,7 +247,7 @@ export function ComposerDialog({ open, onClose, ...rest }: Props) {
             )}
             <p className="font-title text-center text-lg font-semibold text-[#2f2218]">{format ? tl(formatInfo[format].label) : tx("m_coloqueUmPin")}</p>
             <button type="button" onClick={onClose} aria-label={tx("fechar")} className={`${ghostButton} !size-9 !rounded-lg !p-0 justify-self-end`}>
-              ×
+              <CloseIcon />
             </button>
           </div>
           <div className="overflow-y-auto px-5 py-5">

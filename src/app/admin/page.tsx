@@ -18,6 +18,7 @@ import { StatusChip, payTitle } from "@/components/account/TransactionsModal";
 import { brl, type TxPayment } from "@/lib/payments";
 import type { BoardItem, Message } from "@/lib/types";
 import type { PlacedBadge } from "@/lib/badges";
+import { CloseIcon } from "@/components/CloseIcon";
 
 type MuralLite = { id: string; slug: string; title: string; plan: "free" | "full"; private: boolean };
 type UserRow = { id: string; email: string; nickname: string; createdAt: string; lastSignIn: string | null; credits: number; banned: boolean; isAdmin: boolean; murals: MuralLite[]; pinsReceived: number; pinsSent: number };
@@ -119,7 +120,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
                 ))}
               </div>
               <button type="button" onClick={onClose} aria-label="Fechar" className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
-                ×
+                <CloseIcon />
               </button>
             </div>
           </header>

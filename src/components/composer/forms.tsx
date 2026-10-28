@@ -14,6 +14,7 @@ import { searchPlaces, type PlaceHit } from "@/lib/places";
 import { canCompressVideo, compressVideo, downscalePhoto, MAX_VIDEO_SEC, needsCompression, probeVideo } from "@/lib/media";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 /** Nos players (vídeo, música e voz) a mensagem é só uma frase curta: no máximo 2 linhas no papelzinho. */
 const PLAYER_NOTE_MAX = 32;
@@ -159,7 +160,7 @@ export function ListForm({ onChange }: { onChange: DraftChange }) {
               />
               {items.length > 1 && (
                 <button type="button" aria-label={`Remover item ${i + 1}`} onClick={() => setItems((arr) => arr.filter((_, j) => j !== i))} className="grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl text-[#6b5440] hover:bg-[#efe4cf]">
-                  ×
+                  <CloseIcon />
                 </button>
               )}
             </li>

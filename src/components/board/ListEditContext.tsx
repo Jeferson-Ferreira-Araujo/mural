@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { ghostButton, inputClass, primaryButton } from "../ui";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 export type ListData = { id: string; title: string; items: { text: string; done: boolean }[] };
 
@@ -74,7 +75,7 @@ function Editor({ list, onSave, onClose }: { list: ListData; onSave: (l: ListDat
               />
               <input value={it.text} onChange={(e) => setItems((arr) => arr.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} maxLength={40} aria-label={`Item ${i + 1}`} className={inputClass} />
               <button type="button" aria-label={`Remover item ${i + 1}`} onClick={() => setItems((arr) => arr.filter((_, j) => j !== i))} className="grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl text-[#6b5440] hover:bg-[#efe4cf]">
-                ×
+                <CloseIcon />
               </button>
             </li>
           ))}

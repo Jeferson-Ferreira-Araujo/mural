@@ -12,6 +12,7 @@ import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
 import { LanguagePicker } from "./LanguagePicker";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 /**
  * Tela inicial no celular para quem ainda não entrou: o mesmo mural de exemplo do computador, completo e navegável (arrastar, pinça, aproximar),
@@ -110,7 +111,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
           <div>
             <div className="mb-2 flex justify-end">
               <button type="button" onClick={() => setOpen(false)} aria-label={tx("fechar")} className="grid size-10 cursor-pointer place-items-center rounded-full bg-white/90 text-2xl text-[#2f2218] shadow-[0_0.2rem_0.8rem_rgba(0,0,0,.4)]">
-                ×
+                <CloseIcon />
               </button>
             </div>
             <div className="text-[15px]">{panel("dark")}</div>

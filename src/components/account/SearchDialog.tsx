@@ -4,6 +4,7 @@ import { useBackClose } from "@/lib/backStack";
 import { useEffect, useRef } from "react";
 import { SearchBox } from "../SearchBox";
 import { useTranslations } from "next-intl";
+import { CloseIcon } from "@/components/CloseIcon";
 
 /** Pesquisa de murais (ícone do cabeçalho): abre uma janela com o campo de busca. */
 export function SearchDialog({ open, onClose, onSelect }: { open: boolean; onClose: () => void; onSelect: (nick: string) => void }) {
@@ -32,7 +33,7 @@ export function SearchDialog({ open, onClose, onSelect }: { open: boolean; onClo
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-title text-lg font-semibold">{tx("pesquisarUsuarios")}</h2>
             <button type="button" onClick={onClose} aria-label={tx("fechar")} className="grid size-9 cursor-pointer place-items-center rounded-lg text-xl hover:bg-black/5">
-              ×
+              <CloseIcon />
             </button>
           </div>
           <SearchBox

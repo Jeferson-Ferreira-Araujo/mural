@@ -8,6 +8,7 @@ import { PLAYER_PALETTE, type PlayerLook } from "./playerPalette";
 import { Scene } from "./Scene";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}`;
@@ -42,7 +43,7 @@ function BigVideo({ src, embedSrc, onClose }: { src?: string; embedSrc?: string;
           <video src={src} controls autoPlay playsInline className="max-h-full max-w-full rounded-xl" />
         )}
         <button type="button" onClick={onClose} aria-label={tx("fechar")} className="absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/20 text-2xl text-white backdrop-blur transition hover:bg-white/35 active:scale-90">
-          ×
+          <CloseIcon />
         </button>
       </div>
     </dialog>

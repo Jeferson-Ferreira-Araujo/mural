@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useRef, type ReactNode } from "re
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
+import { CloseIcon } from "@/components/CloseIcon";
 
 /**
  * Onde as janelas do menu da conta aparecem quando o menu é a gaveta: em vez de uma janela por cima, o conteúdo ocupa a parte de baixo da gaveta
@@ -94,7 +95,7 @@ export function Modal({ open, onClose, title, label, children, wide = false, xl 
             {aside && <div className="ml-auto">{aside}</div>}
             {!required && (
               <button type="button" onClick={onClose} aria-label={tx("fechar")} className="grid size-9 cursor-pointer place-items-center rounded-lg text-2xl hover:bg-black/5">
-                ×
+                <CloseIcon />
               </button>
             )}
           </header>
