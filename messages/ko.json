@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "이미지가 저장되었습니다! 이제 게시만 하면 됩니다.",
         "m_naoFoiPossivelGerarA": "지금은 이미지를 생성할 수 없습니다.",
         "m_aguardandoASuaAprovacao": "내 승인을 기다리는 중",
-        "m_aguardandoLiberacaoDoDonoDo": "보드 주인의 허락을 기다리는 중",
+        "m_aguardandoLiberacaoDoDonoDo": "승인 대기 중",
         "m_segredoEDoPinz": "비밀은 PINZ+ 기능입니다",
         "m_aprovaEDeixaEmSegredo": "승인하고 비밀로 유지: 방문자에게는 핀이 흐리게 보입니다",
         "x_compartilhar": "<n0></n0>공유",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "비밀 핀",
-        "aguardandoLiberacaoDoDonoDo": "보드 주인의 허락을 기다리는 중",
+        "aguardandoLiberacaoDoDonoDo": "승인 대기 중",
         "segredo": "비밀"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "PINZ 캡슐에서 열림",
         "m_irAoMuralDe": "@{v0}님의 보드로 이동",
         "m_aguardandoASuaAprovacao": "내 승인을 기다리는 중",
-        "m_aguardandoLiberacaoDoDonoDo": "보드 주인의 허락을 기다리는 중"
+        "m_aguardandoLiberacaoDoDonoDo": "승인 대기 중"
       },
       "MusicCard": {
         "musica": "음악",

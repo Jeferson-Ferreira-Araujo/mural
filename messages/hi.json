@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "इमेज सहेज ली गई! अब बस पोस्ट करें।",
         "m_naoFoiPossivelGerarA": "हम अभी इमेज नहीं बना पाए।",
         "m_aguardandoASuaAprovacao": "आपकी स्वीकृति की प्रतीक्षा में",
-        "m_aguardandoLiberacaoDoDonoDo": "बोर्ड मालिक की मंज़ूरी की प्रतीक्षा में",
+        "m_aguardandoLiberacaoDoDonoDo": "स्वीकृति की प्रतीक्षा में",
         "m_segredoEDoPinz": "गुप्त PINZ+ की सुविधा है",
         "m_aprovaEDeixaEmSegredo": "स्वीकृत करता है और गुप्त रखता है: विज़िटर को पिन धुंधला दिखता है",
         "x_compartilhar": "<n0></n0>साझा करें",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "गुप्त पिन",
-        "aguardandoLiberacaoDoDonoDo": "बोर्ड मालिक की मंज़ूरी की प्रतीक्षा में",
+        "aguardandoLiberacaoDoDonoDo": "स्वीकृति की प्रतीक्षा में",
         "segredo": "गुप्त"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "PINZ कैप्सूल से खोला गया",
         "m_irAoMuralDe": "@{v0} के बोर्ड पर जाएँ",
         "m_aguardandoASuaAprovacao": "आपकी स्वीकृति की प्रतीक्षा में",
-        "m_aguardandoLiberacaoDoDonoDo": "बोर्ड मालिक की मंज़ूरी की प्रतीक्षा में"
+        "m_aguardandoLiberacaoDoDonoDo": "स्वीकृति की प्रतीक्षा में"
       },
       "MusicCard": {
         "musica": "संगीत",

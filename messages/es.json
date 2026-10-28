@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "¡Imagen guardada! Ahora solo publícala.",
         "m_naoFoiPossivelGerarA": "No se pudo generar la imagen ahora.",
         "m_aguardandoASuaAprovacao": "Esperando tu aprobación",
-        "m_aguardandoLiberacaoDoDonoDo": "Esperando la liberación del dueño del mural",
+        "m_aguardandoLiberacaoDoDonoDo": "Esperando aprobación",
         "m_segredoEDoPinz": "Secreto es de PINZ+",
         "m_aprovaEDeixaEmSegredo": "Aprueba y lo deja en secreto: los visitantes ven el pin borroso",
         "x_compartilhar": "<n0></n0>Compartir",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Pin secreto",
-        "aguardandoLiberacaoDoDonoDo": "Esperando la liberación del dueño del mural",
+        "aguardandoLiberacaoDoDonoDo": "Esperando aprobación",
         "segredo": "Secreto"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Abierta de una Cápsula PINZ",
         "m_irAoMuralDe": "Ir al mural de @{v0}",
         "m_aguardandoASuaAprovacao": "Esperando tu aprobación",
-        "m_aguardandoLiberacaoDoDonoDo": "Esperando la liberación del dueño del mural"
+        "m_aguardandoLiberacaoDoDonoDo": "Esperando aprobación"
       },
       "MusicCard": {
         "musica": "Música",

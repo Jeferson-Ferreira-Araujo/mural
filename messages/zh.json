@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "图片已保存！现在去发布吧。",
         "m_naoFoiPossivelGerarA": "暂时无法生成图片。",
         "m_aguardandoASuaAprovacao": "等待你的批准",
-        "m_aguardandoLiberacaoDoDonoDo": "等待留言板所有者放行",
+        "m_aguardandoLiberacaoDoDonoDo": "等待批准",
         "m_segredoEDoPinz": "秘密是 PINZ+ 的功能",
         "m_aprovaEDeixaEmSegredo": "批准并保持秘密：访客看到的图钉是模糊的",
         "x_compartilhar": "<n0></n0>分享",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "秘密图钉",
-        "aguardandoLiberacaoDoDonoDo": "等待留言板所有者放行",
+        "aguardandoLiberacaoDoDonoDo": "等待批准",
         "segredo": "秘密"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "从 PINZ 胶囊中开启",
         "m_irAoMuralDe": "前往 @{v0} 的留言板",
         "m_aguardandoASuaAprovacao": "等待你的批准",
-        "m_aguardandoLiberacaoDoDonoDo": "等待留言板所有者放行"
+        "m_aguardandoLiberacaoDoDonoDo": "等待批准"
       },
       "MusicCard": {
         "musica": "音乐",

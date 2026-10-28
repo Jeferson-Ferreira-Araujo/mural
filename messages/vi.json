@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Đã lưu ảnh! Giờ chỉ cần đăng.",
         "m_naoFoiPossivelGerarA": "Hiện chúng tôi chưa tạo được ảnh.",
         "m_aguardandoASuaAprovacao": "Đang chờ bạn duyệt",
-        "m_aguardandoLiberacaoDoDonoDo": "Đang chờ chủ bảng cho phép",
+        "m_aguardandoLiberacaoDoDonoDo": "Đang chờ duyệt",
         "m_segredoEDoPinz": "Bí mật là tính năng của PINZ+",
         "m_aprovaEDeixaEmSegredo": "Duyệt và giữ bí mật: khách thấy pin bị làm mờ",
         "x_compartilhar": "<n0></n0>Chia sẻ",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Pin bí mật",
-        "aguardandoLiberacaoDoDonoDo": "Đang chờ chủ bảng cho phép",
+        "aguardandoLiberacaoDoDonoDo": "Đang chờ duyệt",
         "segredo": "Bí mật"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Mở từ một Viên nang PINZ",
         "m_irAoMuralDe": "Đến bảng của @{v0}",
         "m_aguardandoASuaAprovacao": "Đang chờ bạn duyệt",
-        "m_aguardandoLiberacaoDoDonoDo": "Đang chờ chủ bảng cho phép"
+        "m_aguardandoLiberacaoDoDonoDo": "Đang chờ duyệt"
       },
       "MusicCard": {
         "musica": "Nhạc",

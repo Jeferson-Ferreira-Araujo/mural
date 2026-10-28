@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Bild gespeichert! Jetzt nur noch posten.",
         "m_naoFoiPossivelGerarA": "Wir konnten das Bild gerade nicht erzeugen.",
         "m_aguardandoASuaAprovacao": "Wartet auf deine Freigabe",
-        "m_aguardandoLiberacaoDoDonoDo": "Wartet auf die Freigabe durch den Inhaber der Pinnwand",
+        "m_aguardandoLiberacaoDoDonoDo": "Wartet auf Freigabe",
         "m_segredoEDoPinz": "Geheim ist eine PINZ+-Funktion",
         "m_aprovaEDeixaEmSegredo": "Gibt frei und hält den Pin geheim: Besucher sehen ihn unscharf",
         "x_compartilhar": "<n0></n0>Teilen",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Geheimer Pin",
-        "aguardandoLiberacaoDoDonoDo": "Wartet auf die Freigabe durch den Inhaber der Pinnwand",
+        "aguardandoLiberacaoDoDonoDo": "Wartet auf Freigabe",
         "segredo": "Geheim"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Aus einer PINZ-Kapsel geöffnet",
         "m_irAoMuralDe": "Zur Pinnwand von @{v0}",
         "m_aguardandoASuaAprovacao": "Wartet auf deine Freigabe",
-        "m_aguardandoLiberacaoDoDonoDo": "Wartet auf die Freigabe durch den Inhaber der Pinnwand"
+        "m_aguardandoLiberacaoDoDonoDo": "Wartet auf Freigabe"
       },
       "MusicCard": {
         "musica": "Musik",

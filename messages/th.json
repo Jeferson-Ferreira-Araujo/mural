@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "บันทึกภาพแล้ว! โพสต์ได้เลย",
         "m_naoFoiPossivelGerarA": "ตอนนี้เรายังสร้างภาพไม่ได้",
         "m_aguardandoASuaAprovacao": "รอการอนุมัติจากคุณ",
-        "m_aguardandoLiberacaoDoDonoDo": "รอการอนุญาตจากเจ้าของบอร์ด",
+        "m_aguardandoLiberacaoDoDonoDo": "รอการอนุมัติ",
         "m_segredoEDoPinz": "ความลับเป็นฟีเจอร์ของ PINZ+",
         "m_aprovaEDeixaEmSegredo": "อนุมัติและเก็บเป็นความลับ: ผู้เยี่ยมชมเห็นพินเบลอ",
         "x_compartilhar": "<n0></n0>แชร์",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "พินลับ",
-        "aguardandoLiberacaoDoDonoDo": "รอการอนุญาตจากเจ้าของบอร์ด",
+        "aguardandoLiberacaoDoDonoDo": "รอการอนุมัติ",
         "segredo": "ลับ"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "เปิดจากแคปซูล PINZ",
         "m_irAoMuralDe": "ไปที่บอร์ดของ @{v0}",
         "m_aguardandoASuaAprovacao": "รอการอนุมัติจากคุณ",
-        "m_aguardandoLiberacaoDoDonoDo": "รอการอนุญาตจากเจ้าของบอร์ด"
+        "m_aguardandoLiberacaoDoDonoDo": "รอการอนุมัติ"
       },
       "MusicCard": {
         "musica": "เพลง",

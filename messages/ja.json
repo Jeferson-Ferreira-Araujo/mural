@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "画像を保存しました！あとは投稿するだけです。",
         "m_naoFoiPossivelGerarA": "現在画像を生成できません。",
         "m_aguardandoASuaAprovacao": "あなたの承認待ち",
-        "m_aguardandoLiberacaoDoDonoDo": "ボードの持ち主の承認待ち",
+        "m_aguardandoLiberacaoDoDonoDo": "承認待ち",
         "m_segredoEDoPinz": "シークレットは PINZ+ の機能です",
         "m_aprovaEDeixaEmSegredo": "承認して秘密にします：訪問者にはピンがぼかして表示されます",
         "x_compartilhar": "<n0></n0>共有",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "シークレットピン",
-        "aguardandoLiberacaoDoDonoDo": "ボードの持ち主の承認待ち",
+        "aguardandoLiberacaoDoDonoDo": "承認待ち",
         "segredo": "シークレット"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "PINZ カプセルから開封",
         "m_irAoMuralDe": "@{v0}さんのボードへ",
         "m_aguardandoASuaAprovacao": "あなたの承認待ち",
-        "m_aguardandoLiberacaoDoDonoDo": "ボードの持ち主の承認待ち"
+        "m_aguardandoLiberacaoDoDonoDo": "承認待ち"
       },
       "MusicCard": {
         "musica": "音楽",

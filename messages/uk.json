@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Зображення збережено! Тепер залишилося лише опублікувати.",
         "m_naoFoiPossivelGerarA": "Зараз не вдалося створити зображення.",
         "m_aguardandoASuaAprovacao": "Очікує твого схвалення",
-        "m_aguardandoLiberacaoDoDonoDo": "Очікує дозволу власника дошки",
+        "m_aguardandoLiberacaoDoDonoDo": "Очікує схвалення",
         "m_segredoEDoPinz": "Секретність — функція PINZ+",
         "m_aprovaEDeixaEmSegredo": "Схвалює й залишає секретним: відвідувачі бачать розмитий пін",
         "x_compartilhar": "<n0></n0>Поділитися",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Секретний пін",
-        "aguardandoLiberacaoDoDonoDo": "Очікує дозволу власника дошки",
+        "aguardandoLiberacaoDoDonoDo": "Очікує схвалення",
         "segredo": "Секретно"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Відкрито з Капсули PINZ",
         "m_irAoMuralDe": "Перейти до дошки @{v0}",
         "m_aguardandoASuaAprovacao": "Очікує твого схвалення",
-        "m_aguardandoLiberacaoDoDonoDo": "Очікує дозволу власника дошки"
+        "m_aguardandoLiberacaoDoDonoDo": "Очікує схвалення"
       },
       "MusicCard": {
         "musica": "Музика",

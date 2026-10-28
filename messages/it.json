@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Immagine salvata! Ora devi solo pubblicarla.",
         "m_naoFoiPossivelGerarA": "Non siamo riusciti a generare l'immagine ora.",
         "m_aguardandoASuaAprovacao": "In attesa della tua approvazione",
-        "m_aguardandoLiberacaoDoDonoDo": "In attesa del via libera del proprietario della bacheca",
+        "m_aguardandoLiberacaoDoDonoDo": "In attesa di approvazione",
         "m_segredoEDoPinz": "Segreto è una funzione PINZ+",
         "m_aprovaEDeixaEmSegredo": "Approva e mantiene segreto: i visitatori vedono il pin sfocato",
         "x_compartilhar": "<n0></n0>Condividi",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Pin segreto",
-        "aguardandoLiberacaoDoDonoDo": "In attesa del via libera del proprietario della bacheca",
+        "aguardandoLiberacaoDoDonoDo": "In attesa di approvazione",
         "segredo": "Segreto"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Aperto da una Capsula PINZ",
         "m_irAoMuralDe": "Vai alla bacheca di @{v0}",
         "m_aguardandoASuaAprovacao": "In attesa della tua approvazione",
-        "m_aguardandoLiberacaoDoDonoDo": "In attesa del via libera del proprietario della bacheca"
+        "m_aguardandoLiberacaoDoDonoDo": "In attesa di approvazione"
       },
       "MusicCard": {
         "musica": "Musica",

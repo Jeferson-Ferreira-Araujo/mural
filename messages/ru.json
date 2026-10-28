@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Изображение сохранено! Теперь осталось опубликовать.",
         "m_naoFoiPossivelGerarA": "Сейчас не удалось создать изображение.",
         "m_aguardandoASuaAprovacao": "Ожидает вашего одобрения",
-        "m_aguardandoLiberacaoDoDonoDo": "Ожидает одобрения владельца доски",
+        "m_aguardandoLiberacaoDoDonoDo": "Ожидает одобрения",
         "m_segredoEDoPinz": "«Секретный» — функция PINZ+",
         "m_aprovaEDeixaEmSegredo": "Одобряет и оставляет секретным: посетители видят пин размытым",
         "x_compartilhar": "<n0></n0>Поделиться",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Секретный пин",
-        "aguardandoLiberacaoDoDonoDo": "Ожидает одобрения владельца доски",
+        "aguardandoLiberacaoDoDonoDo": "Ожидает одобрения",
         "segredo": "Секретный"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Открыто из капсулы PINZ",
         "m_irAoMuralDe": "Перейти на доску @{v0}",
         "m_aguardandoASuaAprovacao": "Ожидает вашего одобрения",
-        "m_aguardandoLiberacaoDoDonoDo": "Ожидает одобрения владельца доски"
+        "m_aguardandoLiberacaoDoDonoDo": "Ожидает одобрения"
       },
       "MusicCard": {
         "musica": "Музыка",

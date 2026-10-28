@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Görsel kaydedildi! Şimdi sadece paylaş.",
         "m_naoFoiPossivelGerarA": "Görseli şu anda oluşturamadık.",
         "m_aguardandoASuaAprovacao": "Onayını bekliyor",
-        "m_aguardandoLiberacaoDoDonoDo": "Pano sahibinin onayını bekliyor",
+        "m_aguardandoLiberacaoDoDonoDo": "Onay bekliyor",
         "m_segredoEDoPinz": "Gizli, PINZ+ özelliğidir",
         "m_aprovaEDeixaEmSegredo": "Onaylar ve gizli tutar: ziyaretçiler pini bulanık görür",
         "x_compartilhar": "<n0></n0>Paylaş",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Gizli pin",
-        "aguardandoLiberacaoDoDonoDo": "Pano sahibinin onayını bekliyor",
+        "aguardandoLiberacaoDoDonoDo": "Onay bekliyor",
         "segredo": "Gizli"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "PINZ Kapsülünden açıldı",
         "m_irAoMuralDe": "@{v0} panosuna git",
         "m_aguardandoASuaAprovacao": "Onayını bekliyor",
-        "m_aguardandoLiberacaoDoDonoDo": "Pano sahibinin onayını bekliyor"
+        "m_aguardandoLiberacaoDoDonoDo": "Onay bekliyor"
       },
       "MusicCard": {
         "musica": "Müzik",

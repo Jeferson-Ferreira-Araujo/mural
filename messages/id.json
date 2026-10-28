@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Gambar disimpan! Tinggal posting.",
         "m_naoFoiPossivelGerarA": "Kami belum bisa membuat gambar saat ini.",
         "m_aguardandoASuaAprovacao": "Menunggu persetujuanmu",
-        "m_aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan pemilik papan",
+        "m_aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan",
         "m_segredoEDoPinz": "Rahasia adalah fitur PINZ+",
         "m_aprovaEDeixaEmSegredo": "Menyetujui dan menjaganya rahasia: pengunjung melihat pin buram",
         "x_compartilhar": "<n0></n0>Bagikan",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Pin rahasia",
-        "aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan pemilik papan",
+        "aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan",
         "segredo": "Rahasia"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Dibuka dari Kapsul PINZ",
         "m_irAoMuralDe": "Ke papan @{v0}",
         "m_aguardandoASuaAprovacao": "Menunggu persetujuanmu",
-        "m_aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan pemilik papan"
+        "m_aguardandoLiberacaoDoDonoDo": "Menunggu persetujuan"
       },
       "MusicCard": {
         "musica": "Musik",

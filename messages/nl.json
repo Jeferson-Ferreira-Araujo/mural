@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Afbeelding opgeslagen! Nu alleen nog plaatsen.",
         "m_naoFoiPossivelGerarA": "We konden de afbeelding nu niet genereren.",
         "m_aguardandoASuaAprovacao": "Wacht op jouw goedkeuring",
-        "m_aguardandoLiberacaoDoDonoDo": "Wacht op vrijgave door de eigenaar van het bord",
+        "m_aguardandoLiberacaoDoDonoDo": "Wacht op goedkeuring",
         "m_segredoEDoPinz": "Geheim is een PINZ+-functie",
         "m_aprovaEDeixaEmSegredo": "Keurt goed en houdt geheim: bezoekers zien de pin wazig",
         "x_compartilhar": "<n0></n0>Delen",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Geheime pin",
-        "aguardandoLiberacaoDoDonoDo": "Wacht op vrijgave door de eigenaar van het bord",
+        "aguardandoLiberacaoDoDonoDo": "Wacht op goedkeuring",
         "segredo": "Geheim"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Geopend uit een PINZ-capsule",
         "m_irAoMuralDe": "Ga naar het bord van @{v0}",
         "m_aguardandoASuaAprovacao": "Wacht op jouw goedkeuring",
-        "m_aguardandoLiberacaoDoDonoDo": "Wacht op vrijgave door de eigenaar van het bord"
+        "m_aguardandoLiberacaoDoDonoDo": "Wacht op goedkeuring"
       },
       "MusicCard": {
         "musica": "Muziek",

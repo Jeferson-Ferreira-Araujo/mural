@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "تم حفظ الصورة! ما عليك الآن سوى نشرها.",
         "m_naoFoiPossivelGerarA": "تعذّر إنشاء الصورة الآن.",
         "m_aguardandoASuaAprovacao": "بانتظار موافقتك",
-        "m_aguardandoLiberacaoDoDonoDo": "بانتظار إتاحة صاحب اللوحة",
+        "m_aguardandoLiberacaoDoDonoDo": "بانتظار الموافقة",
         "m_segredoEDoPinz": "السرّية ميزة في PINZ+",
         "m_aprovaEDeixaEmSegredo": "يوافق ويبقيه سريًا: يرى الزوار الدبّوس ضبابيًا",
         "x_compartilhar": "<n0></n0>مشاركة",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "دبّوس سرّي",
-        "aguardandoLiberacaoDoDonoDo": "بانتظار إتاحة صاحب اللوحة",
+        "aguardandoLiberacaoDoDonoDo": "بانتظار الموافقة",
         "segredo": "سرّي"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "فُتح من كبسولة PINZ",
         "m_irAoMuralDe": "اذهب إلى لوحة @{v0}",
         "m_aguardandoASuaAprovacao": "بانتظار موافقتك",
-        "m_aguardandoLiberacaoDoDonoDo": "بانتظار إتاحة صاحب اللوحة"
+        "m_aguardandoLiberacaoDoDonoDo": "بانتظار الموافقة"
       },
       "MusicCard": {
         "musica": "موسيقى",

@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Image enregistrée ! Il ne reste qu'à la publier.",
         "m_naoFoiPossivelGerarA": "Impossible de générer l'image pour le moment.",
         "m_aguardandoASuaAprovacao": "En attente de ton approbation",
-        "m_aguardandoLiberacaoDoDonoDo": "En attente de la validation du propriétaire du tableau",
+        "m_aguardandoLiberacaoDoDonoDo": "En attente d'approbation",
         "m_segredoEDoPinz": "Le secret est une fonctionnalité PINZ+",
         "m_aprovaEDeixaEmSegredo": "Approuve et garde secret : les visiteurs voient l'épingle floutée",
         "x_compartilhar": "<n0></n0>Partager",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Épingle secrète",
-        "aguardandoLiberacaoDoDonoDo": "En attente de la validation du propriétaire du tableau",
+        "aguardandoLiberacaoDoDonoDo": "En attente d'approbation",
         "segredo": "Secret"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Ouverte depuis une Capsule PINZ",
         "m_irAoMuralDe": "Aller au tableau de @{v0}",
         "m_aguardandoASuaAprovacao": "En attente de ton approbation",
-        "m_aguardandoLiberacaoDoDonoDo": "En attente de la validation du propriétaire du tableau"
+        "m_aguardandoLiberacaoDoDonoDo": "En attente d'approbation"
       },
       "MusicCard": {
         "musica": "Musique",

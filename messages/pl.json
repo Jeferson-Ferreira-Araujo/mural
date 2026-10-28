@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Obraz zapisany! Teraz wystarczy go opublikować.",
         "m_naoFoiPossivelGerarA": "Nie udało się teraz wygenerować obrazu.",
         "m_aguardandoASuaAprovacao": "Czeka na Twoje zatwierdzenie",
-        "m_aguardandoLiberacaoDoDonoDo": "Czeka na zgodę właściciela tablicy",
+        "m_aguardandoLiberacaoDoDonoDo": "Czeka na zatwierdzenie",
         "m_segredoEDoPinz": "Tajność to funkcja PINZ+",
         "m_aprovaEDeixaEmSegredo": "Zatwierdza i zachowuje w tajemnicy: odwiedzający widzą pin rozmyty",
         "x_compartilhar": "<n0></n0>Udostępnij",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Tajny pin",
-        "aguardandoLiberacaoDoDonoDo": "Czeka na zgodę właściciela tablicy",
+        "aguardandoLiberacaoDoDonoDo": "Czeka na zatwierdzenie",
         "segredo": "Tajne"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Otwarte z Kapsuły PINZ",
         "m_irAoMuralDe": "Przejdź do tablicy @{v0}",
         "m_aguardandoASuaAprovacao": "Czeka na Twoje zatwierdzenie",
-        "m_aguardandoLiberacaoDoDonoDo": "Czeka na zgodę właściciela tablicy"
+        "m_aguardandoLiberacaoDoDonoDo": "Czeka na zatwierdzenie"
       },
       "MusicCard": {
         "musica": "Muzyka",

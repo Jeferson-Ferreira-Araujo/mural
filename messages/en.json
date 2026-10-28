@@ -915,7 +915,7 @@
         "m_imagemSalvaAgoraESo": "Image saved! Now just post it.",
         "m_naoFoiPossivelGerarA": "We couldn't generate the image right now.",
         "m_aguardandoASuaAprovacao": "Waiting for your approval",
-        "m_aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release",
+        "m_aguardandoLiberacaoDoDonoDo": "Awaiting approval",
         "m_segredoEDoPinz": "Secret is a PINZ+ feature",
         "m_aprovaEDeixaEmSegredo": "Approves and keeps it secret: visitors see the pin blurred",
         "x_compartilhar": "<n0></n0>Share",
@@ -1177,7 +1177,7 @@
       },
       "HiddenPin": {
         "pinEmSegredo": "Secret pin",
-        "aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release",
+        "aguardandoLiberacaoDoDonoDo": "Awaiting approval",
         "segredo": "Secret"
       },
       "ListCard": {
@@ -1191,7 +1191,7 @@
         "abertaDeUmaCapsulaPinz": "Opened from a PINZ Capsule",
         "m_irAoMuralDe": "Go to @{v0}'s board",
         "m_aguardandoASuaAprovacao": "Waiting for your approval",
-        "m_aguardandoLiberacaoDoDonoDo": "Waiting for the board owner's release"
+        "m_aguardandoLiberacaoDoDonoDo": "Awaiting approval"
       },
       "MusicCard": {
         "musica": "Music",
