@@ -88,8 +88,8 @@ export function takeNext(): string | null {
 }
 
 /** Endereço do login que volta para `next` depois de entrar. */
-/** Depois de sair da conta: no desktop a tela principal já é o login; no celular (ou tela em pé) vai direto para a página de login. */
-export const afterSignOutUrl = () => (window.matchMedia("(min-width: 1024px) and (orientation: landscape)").matches ? "/" : "/entrar?modo=entrar");
+/** Depois de sair da conta: a página inicial (no desktop e no celular), que já tem os botões de entrar e criar conta, sem abrir o formulário. */
+export const afterSignOutUrl = () => "/";
 
 /** Sai da conta: vai para /sair, que encerra a sessão e leva ao login (a navegação é imediata, não depende do mural em que a pessoa estava). */
 export function signOutAndLeave(): void {
