@@ -3,7 +3,7 @@
 import { forgetGeoChoice } from "@/lib/geo";
 import { useRef, useState, type FormEvent } from "react";
 import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
-import { getBrowserSupabase } from "@/lib/supabase";
+import { clearLocalSession, getBrowserSupabase } from "@/lib/supabase";
 import { ConsentLink } from "../ConsentBanner";
 import { TwoFactorSettings } from "./TwoFactorSettings";
 import { useFeatureFlags } from "@/lib/features";
@@ -126,8 +126,12 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     }).catch(() => null);
     if (res?.ok) {
       forgetGeoChoice(); // conta excluída: a escolha de localização deste aparelho também
-      await sb.auth.signOut();
-      window.location.assign(afterSignOutUrl());
+      // a conta já não existe no servidor: o logout pode falhar, então a sessão é apagada aqui mesmo e a pessoa volta à tela inicial (sem voltar para trás)
+      try {
+        await sb.auth.signOut({ scope: "local" });
+      } catch {}
+      clearLocalSession();
+      window.location.replace(afterSignOutUrl());
       return;
     }
     setDelBusy(false);

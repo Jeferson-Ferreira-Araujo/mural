@@ -56,6 +56,15 @@ const sessionStore = {
   },
 };
 
+/** Apaga de vez o login e os restos dele neste aparelho (conta excluída): não depende de o servidor ainda reconhecer a sessão. */
+export function clearLocalSession() {
+  for (const store of [localStorage, sessionStorage]) {
+    try {
+      for (const k of Object.keys(store)) if (k === AUTH_STORAGE_KEY || k.startsWith("sb-") || k.startsWith("pinz:mural-setup:") || k === EMAIL_KEY) store.removeItem(k);
+    } catch {}
+  }
+}
+
 let browserClient: SupabaseClient | null = null;
 
 /** Cliente do navegador: guarda a sessão (login do dono do mural) e usa PKCE. */
