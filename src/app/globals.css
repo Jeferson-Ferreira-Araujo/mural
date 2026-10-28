@@ -513,3 +513,7 @@ html[data-consent] .h-dvh { height: calc(100dvh - var(--consent-h, 0px)); }
 
 /* abertura do logo: desde a primeira pintura a tela fica escura, para não aparecer o corte vertical entre a coluna bege e o mural (que ainda está carregando) */
 html[data-intro="play"]:not([data-intro-veil="off"]) body::before { content: ""; position: fixed; inset: 0; z-index: 199; background: #1a0f06; pointer-events: none; }
+
+/* o próprio detalhe (dialog) nunca mostra contorno de foco */
+dialog:focus,
+dialog:focus-visible { outline: none; }

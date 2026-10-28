@@ -168,6 +168,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       if (index === null) return;
       if (e.key === "ArrowRight" && index < items.length - 1) onIndex(index + 1);
       if (e.key === "ArrowLeft" && index > 0) onIndex(index - 1);
+      // navegar com as setas não deve deixar um contorno de foco em botões (ex.: o de fechar, que recebe o foco ao abrir)
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        const f = document.activeElement;
+        if (f instanceof HTMLButtonElement || f instanceof HTMLAnchorElement) f.blur();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
