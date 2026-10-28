@@ -62,13 +62,13 @@ export function DesktopBoard(props: ViewProps) {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
     } catch {}
   }, []);
-  // ao entrar no mural de outra pessoa o menu lateral recolhe (mural em tela cheia); ao voltar ao próprio, volta ao que a pessoa tinha escolhido
+  // ao entrar no mural de outra pessoa o menu lateral fica aberto (a pessoa pode recolher, só para esta visita); ao voltar ao próprio, volta ao que tinha escolhido
   const visitNick = visit?.nick ?? null;
   const wasVisiting = useRef(false);
   useEffect(() => {
     if (visitNick) {
       wasVisiting.current = true;
-      setCollapsed(true);
+      setCollapsed(false);
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
     } else if (wasVisiting.current) {
       wasVisiting.current = false;
