@@ -135,13 +135,15 @@ export function NicknameField({
   const tx = useTranslations("components.ui");
   const tl = useLit();
   const bad = state === "taken" || state === "invalid" || state === "denied";
+  const inside = state === "ok" || state === "checking"; // "Disponível" e "Verificando…" ficam dentro da caixa, à direita; os erros continuam embaixo
   return (
     <Field
       label={tx("nomeDeUsuario")}
       error={bad && nickMessage[state] ? tl(nickMessage[state] as string) : null}
-      hint={nickMessage[state] ? tl(nickMessage[state] as string) : null}
+      hint={!inside && nickMessage[state] ? tl(nickMessage[state] as string) : null}
     >
       {(id) => (
+        <div className="relative">
         <input
           id={id}
           value={value}
@@ -153,8 +155,14 @@ export function NicknameField({
           placeholder={tx("seuUsuario")}
           autoFocus={autoFocus}
           aria-invalid={bad}
-          className={inputClass}
+          className={`${inputClass} ${inside ? "pr-32" : ""}`}
         />
+        {inside && (
+          <span aria-live="polite" className={`pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-semibold ${state === "ok" ? "text-[#2f7d3a]" : "text-[#6b5440]"}`}>
+            {tl(nickMessage[state] as string)}
+          </span>
+        )}
+        </div>
       )}
     </Field>
   );
