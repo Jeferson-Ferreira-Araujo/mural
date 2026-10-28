@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { Spinner } from "@/components/ui";
 import { afterSignOutUrl } from "@/lib/auth";
-import { getBrowserSupabase } from "@/lib/supabase";
+import { clearLocalSession, getBrowserSupabase } from "@/lib/supabase";
 
 /**
  * Sair da conta: a pessoa vem para esta página (navegação imediata, sem depender do mural em que estava); aqui a sessão é encerrada
@@ -18,6 +18,7 @@ export default function Sair() {
       .catch(() => undefined)
       .finally(() => {
         window.clearTimeout(t);
+        clearLocalSession(); // se o servidor não reconheceu a sessão (conta excluída), o login some do aparelho do mesmo jeito
         go();
       });
   }, []);

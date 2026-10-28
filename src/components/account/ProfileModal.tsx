@@ -2,7 +2,7 @@
 
 import { forgetGeoChoice } from "@/lib/geo";
 import { useRef, useState, type FormEvent } from "react";
-import { afterSignOutUrl, callbackUrl, rememberNext } from "@/lib/auth";
+import { callbackUrl, rememberNext } from "@/lib/auth";
 import { clearLocalSession, getBrowserSupabase } from "@/lib/supabase";
 import { ConsentLink } from "../ConsentBanner";
 import { TwoFactorSettings } from "./TwoFactorSettings";
@@ -128,10 +128,11 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
       forgetGeoChoice(); // conta excluída: a escolha de localização deste aparelho também
       // a conta já não existe no servidor: o logout pode falhar, então a sessão é apagada aqui mesmo e a pessoa volta à tela inicial (sem voltar para trás)
       try {
+        await sb.auth.stopAutoRefresh(); // nada pode regravar o login depois de apagado
         await sb.auth.signOut({ scope: "local" });
       } catch {}
       clearLocalSession();
-      window.location.replace(afterSignOutUrl());
+      window.location.replace("/sair"); // página nova: limpa o login de novo e leva à tela inicial (sem depender desta página, que ainda tem o login na memória)
       return;
     }
     setDelBusy(false);
