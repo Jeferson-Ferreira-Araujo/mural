@@ -184,7 +184,7 @@ function MuralViewer({ muralId, onClose, onBan }: { muralId: string | null; onCl
 }
 
 /** Ficha do usuário: créditos, plano de cada mural, bloqueio e histórico. */
-function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string | null; onClose: () => void; onChanged: () => void; onOpenMural: (id: string) => void }) {
+function UserModal({ userId, onClose, onChanged, onOpenMural, onDeleted }: { userId: string | null; onClose: () => void; onChanged: () => void; onOpenMural: (id: string) => void; onDeleted: (nick: string) => void }) {
   const [u, setU] = useState<UserDetail | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [amount, setAmount] = useState("");
@@ -233,6 +233,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
     }).catch(() => null);
     setBusy(false);
     if (res?.ok) {
+      onDeleted(u.nickname);
       onChanged();
       onClose();
       return;
@@ -736,7 +737,7 @@ export default function Admin() {
         )}
       </div>
 
-      <UserModal userId={userId} onClose={() => setUserId(null)} onChanged={() => void loadUsers()} onOpenMural={(id) => setMuralId(id)} />
+      <UserModal userId={userId} onClose={() => setUserId(null)} onChanged={() => void loadUsers()} onOpenMural={(id) => setMuralId(id)} onDeleted={(nick) => { setToast(`@${nick} excluído. Uma cópia fica 7 dias na aba Excluídos, para restaurar.`); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
       <MuralViewer muralId={muralId} onClose={() => setMuralId(null)} onBan={(id, label) => setBanTarget({ id, label })} />
       <Modal open={!!banTarget} onClose={() => setBanTarget(null)} title={`Bloquear ${banTarget?.label ?? ""}`}>
         <p className="text-sm text-[#6b5440]">Impede o login, esconde o mural e impede que envie pins. Dá para desbloquear depois.</p>
