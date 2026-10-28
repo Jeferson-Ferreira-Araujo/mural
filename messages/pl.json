@@ -2285,7 +2285,8 @@
     "hy08rc0": "Zamknij",
     "h4fk97e": "Zarejestruj się",
     "hchz2n7": "Statystyki globalne",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "Dodaj PIN"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

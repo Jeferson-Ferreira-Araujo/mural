@@ -2285,7 +2285,8 @@
     "hy08rc0": "बंद करें",
     "h4fk97e": "साइन अप",
     "hchz2n7": "वैश्विक आँकड़े",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "PIN जोड़ें"
   },
   "notifications": {
     "pinNew": "@{actor} ने बोर्ड “{mural}” पर एक PINZ छोड़ा{pending, select, yes { · आपकी स्वीकृति की प्रतीक्षा में} other {}}",

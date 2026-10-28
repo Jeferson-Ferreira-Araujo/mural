@@ -2285,7 +2285,8 @@
     "hy08rc0": "Tutup",
     "h4fk97e": "Daftar",
     "hchz2n7": "Statistik global",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "Tambah PIN"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

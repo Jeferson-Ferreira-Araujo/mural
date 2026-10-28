@@ -2285,7 +2285,8 @@
     "hy08rc0": "Kapat",
     "h4fk97e": "Kaydol",
     "hchz2n7": "Genel istatistikler",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "PIN ekle"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

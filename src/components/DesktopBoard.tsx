@@ -177,7 +177,7 @@ export function DesktopBoard(props: ViewProps) {
           {/* à esquerda da barra: o botão "+ pin" (Pins e Displays); "Novo mural" agora é a 1ª opção do menu do nome do mural */}
           <div aria-hidden className="w-[1.5rem] shrink-0" />
           <div className="flex min-w-0 flex-1 flex-col items-center gap-2" style={{ "--bb": "3.5rem" } as React.CSSProperties}>
-            {visit ? canAdd && <AddPinButton visitor={visitor} className="!size-[var(--bb)]" /> : <BadgeBar className="pointer-events-auto w-[min(60rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} className="!size-[var(--bb)]" /> : undefined} />}
+            {visit ? canAdd && <AddPinButton visitor={visitor} label className="!h-[var(--bb)]" /> : <BadgeBar className="pointer-events-auto w-[min(60rem,100%)]" storeRight leading={canAdd ? <AddPinButton visitor={visitor} label className="!h-[var(--bb)]" /> : undefined} />}
           </div>
           {/* à direita da barra ficam os botões + e − do zoom */}
           <div aria-hidden className="w-[13rem] shrink-0" />

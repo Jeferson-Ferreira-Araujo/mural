@@ -2285,7 +2285,8 @@
     "hy08rc0": "Close",
     "h4fk97e": "Sign up",
     "hchz2n7": "Global statistics",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "Add PIN"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

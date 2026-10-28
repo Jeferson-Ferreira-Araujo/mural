@@ -2285,7 +2285,8 @@
     "hy08rc0": "关闭",
     "h4fk97e": "注册",
     "hchz2n7": "全球统计",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "添加 PIN"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

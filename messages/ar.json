@@ -2285,7 +2285,8 @@
     "hy08rc0": "إغلاق",
     "h4fk97e": "إنشاء حساب",
     "hchz2n7": "إحصائيات عامة",
-    "h1ycuwmi": "PINZ"
+    "h1ycuwmi": "PINZ",
+    "h10hkdt2": "إضافة PIN"
   },
   "notifications": {
     "pinNew": "ترك @{actor} PINZ على اللوحة «{mural}»{pending, select, yes { · بانتظار موافقتك} other {}}",
