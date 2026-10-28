@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Mot de passe faible",
     "htunl24": "Bon mot de passe",
     "h1wjdchi": "Mot de passe fort",
-    "h18s0ku5": "Exigences"
+    "h18s0ku5": "Exigences",
+    "hd4cqsc": "Étape",
+    "hp98wjw": "Ton espace est presque prêt !",
+    "htfg86q": "Commence gratuitement et découvre tout ce que tu peux créer sur PINZ.",
+    "h179k9": "Ton offre actuelle",
+    "h1s72mpn": "Ton premier tableau est déjà inclus.",
+    "h5xxwot": "Découvre PINZ+",
+    "h159ajj6": "Facultatif",
+    "h1kkqbsh": "Plus de tableaux, des contenus spéciaux et plus de personnalisation.",
+    "h1u8cy0e": "Voir tous les avantages",
+    "hf2u2xs": "Masquer les avantages",
+    "h1fs29ls": "Tu peux découvrir PINZ+ quand tu veux.",
+    "h1f21sgs": "Ton premier tableau"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

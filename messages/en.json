@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Weak password",
     "htunl24": "Good password",
     "h1wjdchi": "Strong password",
-    "h18s0ku5": "Requirements"
+    "h18s0ku5": "Requirements",
+    "hd4cqsc": "Step",
+    "hp98wjw": "Your space is almost ready!",
+    "htfg86q": "Start for free and discover everything you can create on PINZ.",
+    "h179k9": "Your current plan",
+    "h1s72mpn": "Your first board is already included.",
+    "h5xxwot": "Meet PINZ+",
+    "h159ajj6": "Optional",
+    "h1kkqbsh": "More boards, special content and more ways to personalize.",
+    "h1u8cy0e": "See all benefits",
+    "hf2u2xs": "Hide benefits",
+    "h1fs29ls": "You can explore PINZ+ whenever you like.",
+    "h1f21sgs": "Your first board"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

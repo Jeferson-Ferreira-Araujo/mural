@@ -2293,7 +2293,19 @@
     "h10q8ahp": "密码较弱",
     "htunl24": "密码良好",
     "h1wjdchi": "密码强",
-    "h18s0ku5": "要求"
+    "h18s0ku5": "要求",
+    "hd4cqsc": "步骤",
+    "hp98wjw": "你的空间就快准备好了!",
+    "htfg86q": "免费开始,探索你在 PINZ 上能创作的一切。",
+    "h179k9": "当前套餐",
+    "h1s72mpn": "你的第一个留言板已包含在内。",
+    "h5xxwot": "了解 PINZ+",
+    "h159ajj6": "可选",
+    "h1kkqbsh": "更多留言板、特别内容和更多个性化可能。",
+    "h1u8cy0e": "查看所有权益",
+    "hf2u2xs": "隐藏权益",
+    "h1fs29ls": "你随时可以了解 PINZ+。",
+    "h1f21sgs": "你的第一个留言板"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

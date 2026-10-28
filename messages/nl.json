@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Zwak wachtwoord",
     "htunl24": "Goed wachtwoord",
     "h1wjdchi": "Sterk wachtwoord",
-    "h18s0ku5": "Vereisten"
+    "h18s0ku5": "Vereisten",
+    "hd4cqsc": "Stap",
+    "hp98wjw": "Je ruimte is bijna klaar!",
+    "htfg86q": "Begin gratis en ontdek alles wat je op PINZ kunt maken.",
+    "h179k9": "Je huidige abonnement",
+    "h1s72mpn": "Je eerste bord is al inbegrepen.",
+    "h5xxwot": "Maak kennis met PINZ+",
+    "h159ajj6": "Optioneel",
+    "h1kkqbsh": "Meer borden, speciale inhoud en meer mogelijkheden om te personaliseren.",
+    "h1u8cy0e": "Bekijk alle voordelen",
+    "hf2u2xs": "Voordelen verbergen",
+    "h1fs29ls": "Je kunt PINZ+ ontdekken wanneer je wilt.",
+    "h1f21sgs": "Je eerste bord"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

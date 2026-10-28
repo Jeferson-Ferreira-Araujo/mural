@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Password debole",
     "htunl24": "Password buona",
     "h1wjdchi": "Password forte",
-    "h18s0ku5": "Requisiti"
+    "h18s0ku5": "Requisiti",
+    "hd4cqsc": "Passo",
+    "hp98wjw": "Il tuo spazio è quasi pronto!",
+    "htfg86q": "Inizia gratis e scopri tutto ciò che puoi creare su PINZ.",
+    "h179k9": "Il tuo piano attuale",
+    "h1s72mpn": "La tua prima bacheca è già inclusa.",
+    "h5xxwot": "Scopri PINZ+",
+    "h159ajj6": "Facoltativo",
+    "h1kkqbsh": "Più bacheche, contenuti speciali e più personalizzazione.",
+    "h1u8cy0e": "Vedi tutti i vantaggi",
+    "hf2u2xs": "Nascondi i vantaggi",
+    "h1fs29ls": "Puoi scoprire PINZ+ quando vuoi.",
+    "h1f21sgs": "La tua prima bacheca"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

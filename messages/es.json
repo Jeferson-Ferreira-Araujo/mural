@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Contraseña débil",
     "htunl24": "Contraseña buena",
     "h1wjdchi": "Contraseña fuerte",
-    "h18s0ku5": "Requisitos"
+    "h18s0ku5": "Requisitos",
+    "hd4cqsc": "Paso",
+    "hp98wjw": "¡Tu espacio está casi listo!",
+    "htfg86q": "Empieza gratis y descubre todo lo que puedes crear en PINZ.",
+    "h179k9": "Tu plan actual",
+    "h1s72mpn": "Tu primer mural ya está incluido.",
+    "h5xxwot": "Conoce PINZ+",
+    "h159ajj6": "Opcional",
+    "h1kkqbsh": "Más murales, contenidos especiales y más formas de personalizar.",
+    "h1u8cy0e": "Ver todos los beneficios",
+    "hf2u2xs": "Ocultar beneficios",
+    "h1fs29ls": "Puedes conocer PINZ+ cuando quieras.",
+    "h1f21sgs": "Tu primer mural"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Zayıf şifre",
     "htunl24": "İyi şifre",
     "h1wjdchi": "Güçlü şifre",
-    "h18s0ku5": "Gereksinimler"
+    "h18s0ku5": "Gereksinimler",
+    "hd4cqsc": "Adım",
+    "hp98wjw": "Alanın neredeyse hazır!",
+    "htfg86q": "Ücretsiz başla ve PINZ'de neler oluşturabileceğini keşfet.",
+    "h179k9": "Mevcut planın",
+    "h1s72mpn": "İlk panon zaten dahil.",
+    "h5xxwot": "PINZ+'ı tanı",
+    "h159ajj6": "İsteğe bağlı",
+    "h1kkqbsh": "Daha fazla pano, özel içerikler ve kişiselleştirme olanakları.",
+    "h1u8cy0e": "Tüm avantajları gör",
+    "hf2u2xs": "Avantajları gizle",
+    "h1fs29ls": "PINZ+'ı istediğin zaman tanıyabilirsin.",
+    "h1f21sgs": "İlk panon"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

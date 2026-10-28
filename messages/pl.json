@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Słabe hasło",
     "htunl24": "Dobre hasło",
     "h1wjdchi": "Silne hasło",
-    "h18s0ku5": "Wymagania"
+    "h18s0ku5": "Wymagania",
+    "hd4cqsc": "Krok",
+    "hp98wjw": "Twoja przestrzeń jest prawie gotowa!",
+    "htfg86q": "Zacznij za darmo i odkryj, co możesz stworzyć w PINZ.",
+    "h179k9": "Twój obecny plan",
+    "h1s72mpn": "Twoja pierwsza tablica jest już wliczona.",
+    "h5xxwot": "Poznaj PINZ+",
+    "h159ajj6": "Opcjonalnie",
+    "h1kkqbsh": "Więcej tablic, wyjątkowe treści i więcej możliwości personalizacji.",
+    "h1u8cy0e": "Zobacz wszystkie korzyści",
+    "hf2u2xs": "Ukryj korzyści",
+    "h1fs29ls": "Możesz poznać PINZ+ w dowolnej chwili.",
+    "h1f21sgs": "Twoja pierwsza tablica"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Schwaches Passwort",
     "htunl24": "Gutes Passwort",
     "h1wjdchi": "Starkes Passwort",
-    "h18s0ku5": "Anforderungen"
+    "h18s0ku5": "Anforderungen",
+    "hd4cqsc": "Schritt",
+    "hp98wjw": "Dein Bereich ist fast fertig!",
+    "htfg86q": "Starte kostenlos und entdecke, was du auf PINZ alles erstellen kannst.",
+    "h179k9": "Dein aktueller Plan",
+    "h1s72mpn": "Deine erste Pinnwand ist schon inklusive.",
+    "h5xxwot": "Lerne PINZ+ kennen",
+    "h159ajj6": "Optional",
+    "h1kkqbsh": "Mehr Pinnwände, besondere Inhalte und mehr Möglichkeiten zur Anpassung.",
+    "h1u8cy0e": "Alle Vorteile ansehen",
+    "hf2u2xs": "Vorteile ausblenden",
+    "h1fs29ls": "Du kannst PINZ+ jederzeit kennenlernen.",
+    "h1f21sgs": "Deine erste Pinnwand"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

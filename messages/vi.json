@@ -2293,7 +2293,19 @@
     "h10q8ahp": "Mật khẩu yếu",
     "htunl24": "Mật khẩu tốt",
     "h1wjdchi": "Mật khẩu mạnh",
-    "h18s0ku5": "Yêu cầu"
+    "h18s0ku5": "Yêu cầu",
+    "hd4cqsc": "Bước",
+    "hp98wjw": "Không gian của bạn sắp xong rồi!",
+    "htfg86q": "Bắt đầu miễn phí và khám phá mọi thứ bạn có thể tạo trên PINZ.",
+    "h179k9": "Gói hiện tại của bạn",
+    "h1s72mpn": "Bảng đầu tiên của bạn đã được bao gồm.",
+    "h5xxwot": "Khám phá PINZ+",
+    "h159ajj6": "Tùy chọn",
+    "h1kkqbsh": "Nhiều bảng hơn, nội dung đặc biệt và nhiều cách cá nhân hóa hơn.",
+    "h1u8cy0e": "Xem tất cả lợi ích",
+    "hf2u2xs": "Ẩn lợi ích",
+    "h1fs29ls": "Bạn có thể tìm hiểu PINZ+ bất cứ lúc nào.",
+    "h1f21sgs": "Bảng đầu tiên của bạn"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",
