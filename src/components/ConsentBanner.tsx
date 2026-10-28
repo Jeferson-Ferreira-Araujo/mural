@@ -15,6 +15,8 @@ export function ConsentBanner() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const bar = useRef<HTMLDivElement>(null);
+  const [policy, setPolicy] = useState(false);
+  const framed = typeof window !== "undefined" && window.self !== window.top; // dentro do modal da política: não repete o aviso
 
   useEffect(() => {
     // na primeira visita espera a abertura animada do logo terminar (o <html> perde data-intro); a trava evita ficar escondido para sempre
@@ -45,7 +47,7 @@ export function ConsentBanner() {
     };
   }, []);
 
-  const shown = open && !path?.startsWith("/admin");
+  const shown = open && !framed && !path?.startsWith("/admin");
   // a barra empurra o site para cima (ver globals.css) e, ao sumir, o site volta à altura normal
   useEffect(() => {
     const el = bar.current;
@@ -67,30 +69,57 @@ export function ConsentBanner() {
     };
   }, [shown]);
 
-  if (!open || path?.startsWith("/admin")) return null;
+  useEffect(() => {
+    if (!policy) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setPolicy(false);
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [policy]);
+
+  if (framed || !open || path?.startsWith("/admin")) return null;
   const choose = (yes: boolean) => {
     setConsent(yes);
     setOpen(false);
   };
   const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
-    <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 bottom-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-[0_-0.3rem_1rem_rgba(0,0,0,.2)]">
-      <p className="min-w-[16rem] flex-1 text-[0.72rem] leading-tight text-[#4a3826]">
-        {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}{" "}
-        {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}
-        <Link href="/privacidade" className="font-semibold whitespace-nowrap underline">
-          {tl("Política de Privacidade")}
-        </Link>
-      </p>
-      <div className="flex gap-2">
-        <button type="button" onClick={() => choose(true)} className={btn}>
-          {tl("Aceitar")}
-        </button>
-        <button type="button" onClick={() => choose(false)} className={btn}>
-          {tl("Apenas o essencial")}
-        </button>
+    <>
+      <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 bottom-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-[0_-0.3rem_1rem_rgba(0,0,0,.2)]">
+        <p className="min-w-[16rem] flex-1 text-[0.72rem] leading-tight text-[#4a3826]">
+          {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}{" "}
+          {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}
+          <Link
+            href="/privacidade"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+              e.preventDefault();
+              setPolicy(true);
+            }}
+            className="font-semibold whitespace-nowrap underline"
+          >
+            {tl("Política de Privacidade")}
+          </Link>
+        </p>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => choose(true)} className={btn}>
+            {tl("Aceitar")}
+          </button>
+          <button type="button" onClick={() => choose(false)} className={btn}>
+            {tl("Apenas o essencial")}
+          </button>
+        </div>
       </div>
-    </div>
+      {policy && (
+        <div className="fixed inset-0 z-[600] grid place-items-center bg-black/60 p-3" onClick={() => setPolicy(false)}>
+          <div role="dialog" aria-modal="true" aria-label={tl("Política de Privacidade")} onClick={(e) => e.stopPropagation()} className="relative flex h-[88dvh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-[#fffaf0] shadow-2xl">
+            <button type="button" onClick={() => setPolicy(false)} aria-label={tl("Fechar")} className="absolute top-2 right-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-black/60 text-lg font-bold text-white hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]">
+              ×
+            </button>
+            <iframe src="/privacidade" title={tl("Política de Privacidade")} className="size-full border-0" />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

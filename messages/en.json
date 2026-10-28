@@ -2281,7 +2281,8 @@
     "hdw50fj": "Only what the site needs to work and, if you allow it, anonymous usage metrics. No ads or trackers.",
     "hbyzkbv": "PINZ only uses the storage needed to make the site work and save your preferences. With your permission, we also collect anonymous usage data to improve your experience.",
     "hrwy4g2": "No ads, no third-party tracking, and respect for your privacy.",
-    "hy2j6yt": "Essential only"
+    "hy2j6yt": "Essential only",
+    "hy08rc0": "Close"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

@@ -2281,7 +2281,8 @@
     "hdw50fj": "Solo lo esencial para que el sitio funcione y, si lo permites, métricas anónimas de uso. Sin publicidad ni rastreadores.",
     "hbyzkbv": "PINZ solo usa el almacenamiento necesario para que el sitio funcione y guardar tus preferencias. Con tu autorización, también recopilamos datos anónimos de uso para mejorar tu experiencia.",
     "hrwy4g2": "Sin anuncios, sin rastreo de terceros y con respeto a tu privacidad.",
-    "hy2j6yt": "Solo lo esencial"
+    "hy2j6yt": "Solo lo esencial",
+    "hy08rc0": "Cerrar"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",
