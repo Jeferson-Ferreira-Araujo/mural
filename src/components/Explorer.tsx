@@ -355,10 +355,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     if (!ok) {
       setFollowingState(!next);
       notify(tx("m_naoFoiPossivelAgoraTente"));
-    } else {
-      notify(next ? tx("m_voceSegueEleFicaEm", { v0: followNick }) : tx("m_voceDeixouDeSeguir", { v0: followNick }));
-      if (next) void claimReward("follow");
-    }
+    } else if (next) void claimReward("follow");
   }, [followNick, followBusy, following, notify]);
   const [inventory, setInventory] = useState<BadgeInventory | null>(null); // créditos e pins que a conta tem
   const reloadOwn = useCallback(async () => {
