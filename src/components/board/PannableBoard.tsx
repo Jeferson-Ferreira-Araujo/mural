@@ -545,7 +545,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     };
   };
 
-  // teclado (desktop): ← e → levam o mural até a ponta de cada lado e ↓ volta ao centro; + e − aproximam e afastam como o botão Aproximar/Afastar
+  // teclado (desktop): ← e → levam o mural até a ponta de cada lado e ↑/↓ voltam ao centro; + e − aproximam e afastam como o botão Aproximar/Afastar
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
@@ -561,7 +561,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
         setHint(false);
         view.current = clampView(e.key === "ArrowLeft" ? 1e6 : -1e6, view.current.y, view.current.s);
         apply(true, 700);
-      } else if (e.key === "ArrowDown") {
+      } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         // volta ao centro do mural (depois de ir para os lados com ← e →)
         e.preventDefault();
         touched.current = true;

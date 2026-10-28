@@ -38,6 +38,7 @@ export function Pin({
       className={`pointer-events-none absolute z-20 -mt-[0.85em] -mr-[0.55em] -ml-[0.95em] block w-[3em] select-none ${className}`}
       style={{
         filter: `${recolor}drop-shadow(${flip ? "-" : ""}0.22em 0.4em 0.22em rgba(30, 12, 0, 0.5))`,
+        ["--tack-hue" as string]: recolor.trim() || "none", // durante o zoom/arraste só a cor da tachinha fica (a sombra sai); sem isso ela voltava ao vermelho
         ...(pos ? { left: `${PIN_LEFT[pos]}em` } : {}),
         ...(flip ? { transform: "scaleX(-1)" } : {}),
         ...style,

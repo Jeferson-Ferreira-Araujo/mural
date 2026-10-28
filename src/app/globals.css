@@ -83,6 +83,10 @@ body {
   filter: none !important;
   backdrop-filter: none !important;
 }
+/* a cor da tachinha não é enfeite: continua durante o movimento (só a sombra sai) */
+.zooming [data-tack] {
+  filter: var(--tack-hue, none) !important;
+}
 
 @keyframes drop-in {
   from {
