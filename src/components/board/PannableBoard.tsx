@@ -652,7 +652,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
           onClick={eye.onToggle}
           aria-pressed={eye.hidden}
           aria-label={eye.hidden ? tl("Mostrar os botões") : tl("Esconder os botões")}
-          className={`absolute ${eye.pos} z-20 grid size-11 cursor-pointer place-items-center rounded-xl border-2 border-white/80 bg-[#17110c]/95 text-white opacity-55 shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition hover:opacity-100 focus-visible:opacity-100 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
+          className={`absolute ${eye.pos} z-20 grid size-11 cursor-pointer place-items-center rounded-xl border-2 border-white/80 bg-[#17110c]/95 text-white shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             {/* tela cheia: setas para fora (esconder os botões) ou para dentro (mostrar de novo) */}
