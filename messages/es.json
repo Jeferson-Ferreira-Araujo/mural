@@ -2278,7 +2278,10 @@
     "hgnp01v": "Tu mural recibe pins de dibujo, música, vídeo, voz y lugar",
     "hlcr3nv": "Estos formatos valen para tu mural: quien lo visita puede dejarlos allí. Suscribirte a PINZ+ no te permite poner estos pins en los murales de otras personas.",
     "h1e1glef": "Displays en secreto para los visitantes",
-    "hdw50fj": "Solo lo esencial para que el sitio funcione y, si lo permites, métricas anónimas de uso. Sin publicidad ni rastreadores."
+    "hdw50fj": "Solo lo esencial para que el sitio funcione y, si lo permites, métricas anónimas de uso. Sin publicidad ni rastreadores.",
+    "hbyzkbv": "PINZ solo usa el almacenamiento necesario para que el sitio funcione y guardar tus preferencias. Con tu autorización, también recopilamos datos anónimos de uso para mejorar tu experiencia.",
+    "hrwy4g2": "Sin anuncios, sin rastreo de terceros y con respeto a tu privacidad.",
+    "hy2j6yt": "Solo lo esencial"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

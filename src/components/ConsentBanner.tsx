@@ -77,14 +77,17 @@ export function ConsentBanner() {
   return (
     <div role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} style={{ left: box.left, width: box.width }} className="fixed right-2 bottom-2 z-[500] flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-[#e1d3ba] bg-[#fffaf0] px-3 py-2 shadow-xl">
       <p className="min-w-[14rem] flex-1 text-[0.8rem] leading-snug text-[#4a3826]">
-        {tl("Usamos só o armazenamento essencial para o site funcionar (login, idioma e acessibilidade). Se você deixar, também medimos o uso do site de forma anônima, com ferramentas próprias, para melhorar o Pinz. Não usamos publicidade nem rastreadores de terceiros.")}{" "}
-        <Link href="/privacidade" className="font-semibold whitespace-nowrap underline">
-          {tl("Política de Privacidade")}
-        </Link>
+        {tl("O PINZ utiliza apenas o armazenamento necessário para garantir o funcionamento do site e salvar suas preferências. Com sua autorização, também coletamos dados anônimos de uso para melhorar sua experiência.")}
+        <span className="mt-1 block">
+          {tl("Sem anúncios, sem rastreamento de terceiros e com respeito à sua privacidade.")}{" "}
+          <Link href="/privacidade" className="font-semibold whitespace-nowrap underline">
+            {tl("Política de Privacidade")}
+          </Link>
+        </span>
       </p>
       <div className="ml-auto flex gap-2">
         <button type="button" onClick={() => choose(false)} className={btn}>
-          {tl("Recusar")}
+          {tl("Apenas o essencial")}
         </button>
         <button type="button" onClick={() => choose(true)} className={btn}>
           {tl("Aceitar")}

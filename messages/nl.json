@@ -2278,7 +2278,10 @@
     "hgnp01v": "Je bord ontvangt pins met tekening, muziek, video, spraak en plaats",
     "hlcr3nv": "Deze formaten gelden voor je eigen bord: wie je bord bezoekt, kan ze daar achterlaten. Met PINZ+ kun je deze pins niet op de borden van anderen plaatsen.",
     "h1e1glef": "Displays geheim houden voor bezoekers",
-    "hdw50fj": "Alleen het hoogstnodige om de site te laten werken en, als je dat toestaat, anonieme gebruiksstatistieken. Geen advertenties of trackers."
+    "hdw50fj": "Alleen het hoogstnodige om de site te laten werken en, als je dat toestaat, anonieme gebruiksstatistieken. Geen advertenties of trackers.",
+    "hbyzkbv": "PINZ gebruikt alleen de opslag die nodig is om de site te laten werken en je voorkeuren te bewaren. Met jouw toestemming verzamelen we ook anonieme gebruiksgegevens om je ervaring te verbeteren.",
+    "hrwy4g2": "Geen advertenties, geen tracking door derden en met respect voor je privacy.",
+    "hy2j6yt": "Alleen het essentiële"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

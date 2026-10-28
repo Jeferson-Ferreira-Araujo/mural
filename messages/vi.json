@@ -2278,7 +2278,10 @@
     "hgnp01v": "Bảng của bạn nhận được pin hình vẽ, nhạc, video, giọng nói và địa điểm",
     "hlcr3nv": "Các định dạng này áp dụng cho bảng của chính bạn: người ghé thăm bảng của bạn có thể để chúng ở đó. Đăng ký PINZ+ không cho phép bạn đặt các pin này lên bảng của người khác.",
     "h1e1glef": "Màn hình hiển thị được giữ bí mật với khách",
-    "hdw50fj": "Chỉ những gì cần để trang hoạt động và, nếu bạn cho phép, số liệu sử dụng ẩn danh. Không quảng cáo, không trình theo dõi."
+    "hdw50fj": "Chỉ những gì cần để trang hoạt động và, nếu bạn cho phép, số liệu sử dụng ẩn danh. Không quảng cáo, không trình theo dõi.",
+    "hbyzkbv": "PINZ chỉ dùng bộ nhớ cần thiết để trang hoạt động và lưu tùy chọn của bạn. Khi được bạn cho phép, chúng tôi cũng thu thập dữ liệu sử dụng ẩn danh để cải thiện trải nghiệm của bạn.",
+    "hrwy4g2": "Không quảng cáo, không theo dõi của bên thứ ba và tôn trọng quyền riêng tư của bạn.",
+    "hy2j6yt": "Chỉ những gì cần thiết"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

@@ -2278,7 +2278,10 @@
     "hgnp01v": "Your board receives drawing, music, video, voice and place pins",
     "hlcr3nv": "These formats apply to your own board: people who visit your board can leave them there. Subscribing to PINZ+ does not let you place these pins on other people's boards.",
     "h1e1glef": "Displays kept secret from visitors",
-    "hdw50fj": "Only what the site needs to work and, if you allow it, anonymous usage metrics. No ads or trackers."
+    "hdw50fj": "Only what the site needs to work and, if you allow it, anonymous usage metrics. No ads or trackers.",
+    "hbyzkbv": "PINZ only uses the storage needed to make the site work and save your preferences. With your permission, we also collect anonymous usage data to improve your experience.",
+    "hrwy4g2": "No ads, no third-party tracking, and respect for your privacy.",
+    "hy2j6yt": "Essential only"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

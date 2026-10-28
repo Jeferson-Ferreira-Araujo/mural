@@ -2278,7 +2278,10 @@
     "hgnp01v": "Deine Pinnwand erhält Pins für Zeichnung, Musik, Video, Sprache und Ort",
     "hlcr3nv": "Diese Formate gelten für deine eigene Pinnwand: Wer sie besucht, kann sie dort hinterlassen. Mit PINZ+ kannst du diese Pins nicht auf den Pinnwänden anderer Personen anbringen.",
     "h1e1glef": "Displays vor Besuchern geheim halten",
-    "hdw50fj": "Nur das, was die Seite zum Funktionieren braucht, und – wenn du erlaubst – anonyme Nutzungsstatistiken. Keine Werbung, keine Tracker."
+    "hdw50fj": "Nur das, was die Seite zum Funktionieren braucht, und – wenn du erlaubst – anonyme Nutzungsstatistiken. Keine Werbung, keine Tracker.",
+    "hbyzkbv": "PINZ nutzt nur den Speicher, der für den Betrieb der Seite und das Speichern deiner Einstellungen nötig ist. Mit deiner Erlaubnis erheben wir außerdem anonyme Nutzungsdaten, um dein Erlebnis zu verbessern.",
+    "hrwy4g2": "Keine Werbung, kein Tracking durch Dritte und mit Respekt vor deiner Privatsphäre.",
+    "hy2j6yt": "Nur das Nötigste"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

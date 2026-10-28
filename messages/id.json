@@ -2278,7 +2278,10 @@
     "hgnp01v": "Mural-mu menerima pin gambar, musik, video, suara, dan lokasi",
     "hlcr3nv": "Format ini berlaku untuk mural-mu sendiri: orang yang mengunjungi mural-mu bisa meninggalkannya di sana. Berlangganan PINZ+ tidak memungkinkanmu menaruh pin ini di mural orang lain.",
     "h1e1glef": "Display dirahasiakan dari pengunjung",
-    "hdw50fj": "Hanya yang penting agar situs berjalan dan, jika kamu izinkan, metrik penggunaan anonim. Tanpa iklan dan pelacak."
+    "hdw50fj": "Hanya yang penting agar situs berjalan dan, jika kamu izinkan, metrik penggunaan anonim. Tanpa iklan dan pelacak.",
+    "hbyzkbv": "PINZ hanya memakai penyimpanan yang diperlukan agar situs berjalan dan menyimpan preferensimu. Dengan izinmu, kami juga mengumpulkan data penggunaan anonim untuk meningkatkan pengalamanmu.",
+    "hrwy4g2": "Tanpa iklan, tanpa pelacakan pihak ketiga, dan menghormati privasimu.",
+    "hy2j6yt": "Hanya yang penting"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

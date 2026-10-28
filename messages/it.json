@@ -2278,7 +2278,10 @@
     "hgnp01v": "La tua bacheca riceve pin di disegno, musica, video, voce e luogo",
     "hlcr3nv": "Questi formati valgono per la tua bacheca: chi la visita può lasciarli lì. Abbonarsi a PINZ+ non permette di mettere questi pin nelle bacheche degli altri.",
     "h1e1glef": "Display segreti per i visitatori",
-    "hdw50fj": "Solo lo stretto necessario al funzionamento del sito e, se lo consenti, metriche d'uso anonime. Niente pubblicità né tracker."
+    "hdw50fj": "Solo lo stretto necessario al funzionamento del sito e, se lo consenti, metriche d'uso anonime. Niente pubblicità né tracker.",
+    "hbyzkbv": "PINZ utilizza solo l'archiviazione necessaria al funzionamento del sito e al salvataggio delle tue preferenze. Con la tua autorizzazione, raccogliamo anche dati d'uso anonimi per migliorare la tua esperienza.",
+    "hrwy4g2": "Senza pubblicità, senza tracciamento di terze parti e nel rispetto della tua privacy.",
+    "hy2j6yt": "Solo l'essenziale"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",
