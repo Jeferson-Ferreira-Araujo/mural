@@ -81,7 +81,7 @@ export function ConsentBanner() {
     setConsent(yes);
     setOpen(false);
   };
-  const btn = "cursor-pointer rounded-md border border-[#d9c9ad] bg-white px-3 py-1 text-xs font-bold text-[#2a1c12] transition hover:bg-[#efe4cf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
+  const btn = "cursor-pointer rounded-md border border-[#17110c] bg-[#2a1c12] px-3 py-1 text-xs font-bold text-white shadow-sm transition hover:bg-[#17110c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]";
   return (
     <>
       <div ref={bar} role="dialog" aria-modal="false" aria-label={tl("Privacidade e cookies")} className="fixed inset-x-0 bottom-0 z-[500] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-[#e1d3ba] bg-[#fffaf0] px-4 py-1.5 shadow-[0_-0.3rem_1rem_rgba(0,0,0,.2)]">
