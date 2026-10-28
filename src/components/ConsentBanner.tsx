@@ -86,11 +86,11 @@ export function ConsentBanner() {
         </span>
       </p>
       <div className="ml-auto flex gap-2">
-        <button type="button" onClick={() => choose(false)} className={btn}>
-          {tl("Apenas o essencial")}
-        </button>
         <button type="button" onClick={() => choose(true)} className={btn}>
           {tl("Aceitar")}
+        </button>
+        <button type="button" onClick={() => choose(false)} className={btn}>
+          {tl("Apenas o essencial")}
         </button>
       </div>
     </div>
