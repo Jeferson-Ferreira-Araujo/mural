@@ -2282,7 +2282,8 @@
     "hbyzkbv": "PINZ solo usa el almacenamiento necesario para que el sitio funcione y guardar tus preferencias. Con tu autorización, también recopilamos datos anónimos de uso para mejorar tu experiencia.",
     "hrwy4g2": "Sin anuncios, sin rastreo de terceros y con respeto a tu privacidad.",
     "hy2j6yt": "Solo lo esencial",
-    "hy08rc0": "Cerrar"
+    "hy08rc0": "Cerrar",
+    "h4fk97e": "Registrarse"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2282,7 +2282,8 @@
     "hbyzkbv": "PINZ hanya memakai penyimpanan yang diperlukan agar situs berjalan dan menyimpan preferensimu. Dengan izinmu, kami juga mengumpulkan data penggunaan anonim untuk meningkatkan pengalamanmu.",
     "hrwy4g2": "Tanpa iklan, tanpa pelacakan pihak ketiga, dan menghormati privasimu.",
     "hy2j6yt": "Hanya yang penting",
-    "hy08rc0": "Tutup"
+    "hy08rc0": "Tutup",
+    "h4fk97e": "Daftar"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

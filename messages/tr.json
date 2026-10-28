@@ -2282,7 +2282,8 @@
     "hbyzkbv": "PINZ yalnızca sitenin çalışması ve tercihlerini kaydetmek için gereken depolamayı kullanır. İznin olursa deneyimini iyileştirmek için anonim kullanım verileri de topluyoruz.",
     "hrwy4g2": "Reklam yok, üçüncü taraf takibi yok ve gizliliğine saygıyla.",
     "hy2j6yt": "Yalnızca gerekli olanlar",
-    "hy08rc0": "Kapat"
+    "hy08rc0": "Kapat",
+    "h4fk97e": "Kaydol"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

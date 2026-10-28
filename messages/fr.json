@@ -2282,7 +2282,8 @@
     "hbyzkbv": "PINZ n'utilise que le stockage nécessaire au fonctionnement du site et à l'enregistrement de vos préférences. Avec votre autorisation, nous collectons aussi des données d'usage anonymes pour améliorer votre expérience.",
     "hrwy4g2": "Sans publicité, sans suivi par des tiers et dans le respect de votre vie privée.",
     "hy2j6yt": "Seulement l'essentiel",
-    "hy08rc0": "Fermer"
+    "hy08rc0": "Fermer",
+    "h4fk97e": "S'inscrire"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",
