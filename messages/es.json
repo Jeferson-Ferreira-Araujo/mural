@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Sin anuncios, sin rastreo de terceros y con respeto a tu privacidad.",
     "hy2j6yt": "Solo lo esencial",
     "hy08rc0": "Cerrar",
-    "h4fk97e": "Registrarse"
+    "h4fk97e": "Registrarse",
+    "hchz2n7": "Estadísticas globales",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

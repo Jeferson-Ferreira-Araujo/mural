@@ -5,6 +5,7 @@ import { LanguagePicker } from "./LanguagePicker";
 import { A11yButton } from "./A11yButton";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
 
 const icon = "size-8";
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
@@ -24,6 +25,7 @@ function Stat({ icon: Icon, value, label }: { icon: React.ReactNode; value: numb
 /** Coluna esquerda do desktop: logo, criar mural em destaque, busca/pergunta e números do mural. */
 export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle, guestNext, account, menu, collapsed = false }: Pick<ViewProps, "siteStats" | "panel" | "notice" | "panelTitle" | "guestNext"> & { account?: AccountApi; /** atalhos da conta (desktop) */ menu?: React.ReactNode; /** há um mural escolhido: botões pequenos, o foco é a pergunta */ compact?: boolean; /** desktop: coluna recolhida (escondida), o mural fica centralizado */ collapsed?: boolean }) {
   const tx = useTranslations("components.Sidebar");
+  const tl = useLit();
   return (
     <aside
       data-collapsed={collapsed} data-account={!!account} className="paper-grain data-[account=true]:text-[clamp(14px,calc(0.4vw+7.5px),17px)] data-[account=true]:[scrollbar-color:#cdbb97_transparent] data-[account=true]:[scrollbar-width:thin] landscape:transition-[margin-left,visibility] landscape:duration-[450ms,0s] landscape:ease-[cubic-bezier(.22,.7,.2,1)] landscape:[transition-delay:0s,0s] landscape:data-[collapsed=true]:-ml-[clamp(330px,17vw,420px)] landscape:data-[collapsed=true]:invisible landscape:data-[collapsed=true]:[transition-delay:0s,450ms] relative z-20 flex h-full w-[clamp(330px,17vw,420px)] min-w-[330px] flex-none flex-col overflow-x-hidden overflow-y-auto data-[account=false]:[scrollbar-width:none] data-[account=false]:[&::-webkit-scrollbar]:hidden portrait:h-auto portrait:max-h-[48dvh] portrait:w-full portrait:min-w-0 portrait:max-w-none portrait:flex-none bg-[#f2e8d3] px-[1.6em] py-[1.1em] text-[clamp(14px,min(calc(0.5vw+7.5px),2.2dvh),22px)] shadow-[0.4em_0_2em_rgba(30,12,0,.35)] portrait:text-[clamp(15px,1.6vw,22px)] portrait:shadow-[0_0.4em_2em_rgba(30,12,0,.35)] [&>*]:mx-auto [&>*]:w-full [&>*]:max-w-[32em]"
@@ -77,7 +79,9 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
 
       {/* os números do site aparecem só na tela inicial de login (sem conta e sem mural aberto) */}
       {siteStats && !compact && !account && (
-        <ul className="mt-[0.9em] grid grid-cols-2 gap-[0.4em] border-t border-[#d9c9ad] pt-[0.7em] text-[#2f2218]" aria-label={tx("pinzEmNumeros")}>
+        <div className="mt-[0.9em] border-t border-[#d9c9ad] pt-[0.6em]">
+        <h2 className="mb-[0.4em] text-center text-[0.78em] font-bold tracking-wider text-[#6b5440] uppercase">{tl("Estatísticas globais")}</h2>
+        <ul className="grid grid-cols-2 gap-[0.4em] text-[#2f2218]" aria-label={tx("pinzEmNumeros")}>
           <Stat
             value={siteStats.murals}
             label={tx("murais")}
@@ -90,7 +94,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
           />
           <Stat
             value={siteStats.cards}
-            label={tx("pinzColocados")}
+            label={tl("PINZ")}
             icon={
               <svg viewBox="0 0 24 24" className={icon} {...stroke} aria-hidden>
                 <path d="M5 4h14v12l-4 4H5V4Z" />
@@ -99,6 +103,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
             }
           />
         </ul>
+        </div>
       )}
 
     </aside>

@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Không quảng cáo, không theo dõi của bên thứ ba và tôn trọng quyền riêng tư của bạn.",
     "hy2j6yt": "Chỉ những gì cần thiết",
     "hy08rc0": "Đóng",
-    "h4fk97e": "Đăng ký"
+    "h4fk97e": "Đăng ký",
+    "hchz2n7": "Thống kê toàn cầu",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

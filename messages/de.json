@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Keine Werbung, kein Tracking durch Dritte und mit Respekt vor deiner Privatsphäre.",
     "hy2j6yt": "Nur das Nötigste",
     "hy08rc0": "Schließen",
-    "h4fk97e": "Registrieren"
+    "h4fk97e": "Registrieren",
+    "hchz2n7": "Globale Statistiken",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

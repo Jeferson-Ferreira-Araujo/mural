@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Bez reklam, bez śledzenia przez osoby trzecie i z szacunkiem dla Twojej prywatności.",
     "hy2j6yt": "Tylko niezbędne",
     "hy08rc0": "Zamknij",
-    "h4fk97e": "Zarejestruj się"
+    "h4fk97e": "Zarejestruj się",
+    "hchz2n7": "Statystyki globalne",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

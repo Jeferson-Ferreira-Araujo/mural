@@ -2283,7 +2283,9 @@
     "hrwy4g2": "无广告，无第三方跟踪，尊重你的隐私。",
     "hy2j6yt": "仅必要项",
     "hy08rc0": "关闭",
-    "h4fk97e": "注册"
+    "h4fk97e": "注册",
+    "hchz2n7": "全球统计",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

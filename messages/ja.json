@@ -2283,7 +2283,9 @@
     "hrwy4g2": "広告なし、第三者による追跡なし、プライバシーを尊重します。",
     "hy2j6yt": "必須のみ",
     "hy08rc0": "閉じる",
-    "h4fk97e": "登録"
+    "h4fk97e": "登録",
+    "hchz2n7": "全体の統計",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

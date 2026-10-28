@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Tanpa iklan, tanpa pelacakan pihak ketiga, dan menghormati privasimu.",
     "hy2j6yt": "Hanya yang penting",
     "hy08rc0": "Tutup",
-    "h4fk97e": "Daftar"
+    "h4fk97e": "Daftar",
+    "hchz2n7": "Statistik global",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

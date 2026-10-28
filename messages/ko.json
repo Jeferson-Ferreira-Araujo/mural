@@ -2283,7 +2283,9 @@
     "hrwy4g2": "광고 없음, 제3자 추적 없음, 개인정보를 존중합니다.",
     "hy2j6yt": "필수만",
     "hy08rc0": "닫기",
-    "h4fk97e": "가입"
+    "h4fk97e": "가입",
+    "hchz2n7": "전체 통계",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

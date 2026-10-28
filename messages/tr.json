@@ -2283,7 +2283,9 @@
     "hrwy4g2": "Reklam yok, üçüncü taraf takibi yok ve gizliliğine saygıyla.",
     "hy2j6yt": "Yalnızca gerekli olanlar",
     "hy08rc0": "Kapat",
-    "h4fk97e": "Kaydol"
+    "h4fk97e": "Kaydol",
+    "hchz2n7": "Genel istatistikler",
+    "h1ycuwmi": "PINZ"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
