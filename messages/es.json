@@ -2277,7 +2277,8 @@
     "hykbb39": "Un pin fijado no desaparece cuando vence la validez del mural.",
     "hgnp01v": "Tu mural recibe pins de dibujo, música, vídeo, voz y lugar",
     "hlcr3nv": "Estos formatos valen para tu mural: quien lo visita puede dejarlos allí. Suscribirte a PINZ+ no te permite poner estos pins en los murales de otras personas.",
-    "h1e1glef": "Displays en secreto para los visitantes"
+    "h1e1glef": "Displays en secreto para los visitantes",
+    "hdw50fj": "Solo lo esencial para que el sitio funcione y, si lo permites, métricas anónimas de uso. Sin publicidad ni rastreadores."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

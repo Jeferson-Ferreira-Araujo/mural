@@ -2277,7 +2277,8 @@
     "hykbb39": "Een vastgezette pin blijft staan als de geldigheid van het bord verloopt.",
     "hgnp01v": "Je bord ontvangt pins met tekening, muziek, video, spraak en plaats",
     "hlcr3nv": "Deze formaten gelden voor je eigen bord: wie je bord bezoekt, kan ze daar achterlaten. Met PINZ+ kun je deze pins niet op de borden van anderen plaatsen.",
-    "h1e1glef": "Displays geheim houden voor bezoekers"
+    "h1e1glef": "Displays geheim houden voor bezoekers",
+    "hdw50fj": "Alleen het hoogstnodige om de site te laten werken en, als je dat toestaat, anonieme gebruiksstatistieken. Geen advertenties of trackers."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

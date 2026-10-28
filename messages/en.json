@@ -2277,7 +2277,8 @@
     "hykbb39": "A fixed pin stays when the board's pin lifetime runs out.",
     "hgnp01v": "Your board receives drawing, music, video, voice and place pins",
     "hlcr3nv": "These formats apply to your own board: people who visit your board can leave them there. Subscribing to PINZ+ does not let you place these pins on other people's boards.",
-    "h1e1glef": "Displays kept secret from visitors"
+    "h1e1glef": "Displays kept secret from visitors",
+    "hdw50fj": "Only what the site needs to work and, if you allow it, anonymous usage metrics. No ads or trackers."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

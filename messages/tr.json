@@ -2277,7 +2277,8 @@
     "hykbb39": "Sabitlenen pin, panonun geçerlilik süresi dolunca kaybolmaz.",
     "hgnp01v": "Panon çizim, müzik, video, ses ve konum pinleri alır",
     "hlcr3nv": "Bu biçimler senin panon için geçerlidir: panonu ziyaret edenler bunları orada bırakabilir. PINZ+ aboneliği, bu pinleri başkalarının panolarına koymana izin vermez.",
-    "h1e1glef": "Ziyaretçilerden gizlenen ekranlar"
+    "h1e1glef": "Ziyaretçilerden gizlenen ekranlar",
+    "hdw50fj": "Yalnızca sitenin çalışması için gerekenler ve izin verirsen anonim kullanım ölçümleri. Reklam ve izleyici yok."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

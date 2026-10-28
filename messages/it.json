@@ -2277,7 +2277,8 @@
     "hykbb39": "Un pin fissato non sparisce alla scadenza della validità della bacheca.",
     "hgnp01v": "La tua bacheca riceve pin di disegno, musica, video, voce e luogo",
     "hlcr3nv": "Questi formati valgono per la tua bacheca: chi la visita può lasciarli lì. Abbonarsi a PINZ+ non permette di mettere questi pin nelle bacheche degli altri.",
-    "h1e1glef": "Display segreti per i visitatori"
+    "h1e1glef": "Display segreti per i visitatori",
+    "hdw50fj": "Solo lo stretto necessario al funzionamento del sito e, se lo consenti, metriche d'uso anonime. Niente pubblicità né tracker."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

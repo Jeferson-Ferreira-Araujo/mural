@@ -2277,7 +2277,8 @@
     "hykbb39": "Pin yang disematkan tidak hilang saat masa berlaku mural habis.",
     "hgnp01v": "Mural-mu menerima pin gambar, musik, video, suara, dan lokasi",
     "hlcr3nv": "Format ini berlaku untuk mural-mu sendiri: orang yang mengunjungi mural-mu bisa meninggalkannya di sana. Berlangganan PINZ+ tidak memungkinkanmu menaruh pin ini di mural orang lain.",
-    "h1e1glef": "Display dirahasiakan dari pengunjung"
+    "h1e1glef": "Display dirahasiakan dari pengunjung",
+    "hdw50fj": "Hanya yang penting agar situs berjalan dan, jika kamu izinkan, metrik penggunaan anonim. Tanpa iklan dan pelacak."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

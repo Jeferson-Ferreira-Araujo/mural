@@ -2277,7 +2277,8 @@
     "hykbb39": "Przypięty pin nie znika, gdy mija ważność tablicy.",
     "hgnp01v": "Twoja tablica przyjmuje piny z rysunkiem, muzyką, wideo, głosem i miejscem",
     "hlcr3nv": "Te formaty dotyczą Twojej tablicy: osoby, które ją odwiedzają, mogą je tam zostawiać. Subskrypcja PINZ+ nie pozwala umieszczać tych pinów na tablicach innych osób.",
-    "h1e1glef": "Wyświetlacze ukryte przed odwiedzającymi"
+    "h1e1glef": "Wyświetlacze ukryte przed odwiedzającymi",
+    "hdw50fj": "Tylko to, co niezbędne do działania serwisu, a za Twoją zgodą anonimowe statystyki użycia. Bez reklam i trackerów."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

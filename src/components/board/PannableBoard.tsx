@@ -655,9 +655,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
           className={`absolute ${eye.pos} z-20 grid size-11 cursor-pointer place-items-center rounded-xl border-2 border-white/80 bg-[#17110c]/95 text-white opacity-55 shadow-[0_0_0_2px_rgba(23,17,12,.55),0_0.3rem_0.9rem_rgba(0,0,0,.5)] backdrop-blur transition hover:opacity-100 focus-visible:opacity-100 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f0dd]`}
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-            <circle cx="12" cy="12" r="3" />
-            {eye.hidden && <path d="m3 3 18 18" />}
+            {/* tela cheia: setas para fora (esconder os botões) ou para dentro (mostrar de novo) */}
+            {eye.hidden ? <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /> : <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />}
           </svg>
         </button>
       )}
