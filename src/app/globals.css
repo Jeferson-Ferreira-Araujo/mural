@@ -467,7 +467,9 @@ html[data-a11y-contrast="1"] :focus-visible {
 .pz-swap [data-tape] { animation: pz-peel 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) both; }
 
 /* segredo: só o cartão gira (as duas faces trocam no meio, na borda); a tachinha/fita fica no lugar, levanta e prende de novo */
-.pz-face { backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; }
+.pz-face { transform-origin: 50% 50%; }
+/* só durante a virada: deixar o cartão como camada própria o tempo todo faz o texto ficar borrado quando o mural aproxima */
+.pz-run .pz-face { backface-visibility: hidden; will-change: transform; }
 .pz-blank * { visibility: hidden; } /* verso em branco: tudo some, menos o corpo do cartão (papel ou aparelho), marcado com data-body */
 .pz-blank [data-body] { visibility: visible; }
 .pz-blank { pointer-events: none; }
