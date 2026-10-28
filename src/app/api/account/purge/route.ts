@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/mercadopago";
 import { eraseAccount } from "@/lib/eraseAccount";
+import { purgeExpiredBackups } from "@/lib/userBackup";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,5 +20,6 @@ export async function POST(req: Request) {
   const { data } = await adminClient().from("profiles").select("user_id").not("deleted_at", "is", null).lt("deleted_at", limit).limit(20);
   let done = 0;
   for (const r of data ?? []) if (await eraseAccount(r.user_id as string)) done++;
-  return NextResponse.json({ ok: true, apagadas: done });
+  const backups = await purgeExpiredBackups(); // cópias de excluídos pelo admin: vencem em 7 dias
+  return NextResponse.json({ ok: true, apagadas: done, copias_vencidas: backups });
 }

@@ -10,6 +10,7 @@ import { AnalyticsPanel } from "./AnalyticsPanel";
 import { CouponsPanel } from "./CouponsPanel";
 import { FeaturesPanel } from "./FeaturesPanel";
 import { TestsPanel } from "./TestsPanel";
+import { DeletedPanel } from "./DeletedPanel";
 import { PayModeSwitch } from "./PayModeSwitch";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -393,7 +394,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
           {!u.isAdmin && (
             <section aria-label="Excluir definitivamente" className="rounded-2xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
               <h3 className="font-title text-base font-semibold text-[#6b2a1c]">Excluir definitivamente</h3>
-              <p className="mt-1 text-xs text-[#6b2a1c]">Apaga agora, sem os 30 dias de espera: conta, login, murais, pins, bottons, créditos e arquivos. Os pins que ele deixou em outros murais também somem. Não tem volta.</p>
+              <p className="mt-1 text-xs text-[#6b2a1c]">Apaga agora, sem os 30 dias de espera: conta, login, murais, pins, bottons, créditos e arquivos. Os pins que ele deixou em outros murais também somem. Uma cópia fica guardada por 7 dias na aba Excluídos, para restaurar se for preciso.</p>
               <input className={`${input} mt-2`} placeholder={`Digite ${u.nickname} para confirmar`} value={eraseText} onChange={(e) => setEraseText(e.target.value)} aria-label="Confirmar o nome do usuário" autoComplete="off" />
               <button type="button" className={`${danger} mt-2`} disabled={busy || eraseText.trim().toLowerCase() !== u.nickname.toLowerCase()} onClick={() => void eraseNow()}>
                 Excluir definitivamente
@@ -409,7 +410,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests" | "coupons">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests" | "coupons" | "deleted">("users");
   const [payQ, setPayQ] = useState("");
   const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
@@ -427,9 +428,18 @@ export default function Admin() {
     void rpc<boolean>("is_admin").then((r) => setAllowed(r.ok && r.data === true));
   }, [session]);
 
-  const loadUsers = useCallback(async (term: string) => {
-    const r = await rpc<{ total: number; rows: UserRow[] }>("admin_list_users", { p_q: term, p_limit: 50, p_offset: 0 });
-    if (r.ok) setUsers(r.data);
+  // carrega todos os usuários de uma vez (de 100 em 100); a busca é feita aqui mesmo, no navegador, sem novas requisições
+  const loadUsers = useCallback(async () => {
+    const rows: UserRow[] = [];
+    let total = 0;
+    for (let off = 0; off < 5000; off += 100) {
+      const r = await rpc<{ total: number; rows: UserRow[] }>("admin_list_users", { p_q: "", p_limit: 100, p_offset: off });
+      if (!r.ok) return;
+      total = r.data.total;
+      rows.push(...r.data.rows);
+      if (rows.length >= total || r.data.rows.length === 0) break;
+    }
+    setUsers({ total, rows });
   }, []);
   const loadReports = useCallback(async () => {
     const r = await rpc<Report[]>("admin_reports", { p_limit: 100 });
@@ -440,9 +450,8 @@ export default function Admin() {
 
   useEffect(() => {
     if (!allowed) return;
-    const t = setTimeout(() => void loadUsers(q), 250);
-    return () => clearTimeout(t);
-  }, [allowed, q, loadUsers]);
+    void loadUsers();
+  }, [allowed, loadUsers]);
   useEffect(() => {
     if (allowed && tab === "reports") void loadReports();
   }, [allowed, tab, loadReports]);
@@ -461,7 +470,7 @@ export default function Admin() {
     setToast(r.ok ? `${banTarget.label} foi bloqueado.` : "Não foi possível bloquear (admins não podem ser bloqueados).");
     setBanTarget(null);
     setBanReason("");
-    void loadUsers(q);
+    void loadUsers();
     if (tab === "reports") void loadReports();
   }
 
@@ -510,7 +519,7 @@ export default function Admin() {
         {/* ambiente dos pagamentos (teste/produção): sempre à vista, qualquer que seja a seção */}
         <PayModeSwitch onToast={setToast} />
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-3xl grid-cols-3 sm:grid-cols-6 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-3xl grid-cols-3 sm:grid-cols-8 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
@@ -519,6 +528,7 @@ export default function Admin() {
               ["features", "Recursos"],
               ["analytics", "Analytics"],
               ["coupons", "Cupons"],
+              ["deleted", "Excluídos"],
               ["tests", "Testes"],
             ] as const
           ).map(([id, label]) => (
@@ -538,6 +548,8 @@ export default function Admin() {
           <TestsPanel onToast={setToast} />
         ) : tab === "features" ? (
           <FeaturesPanel onToast={setToast} />
+        ) : tab === "deleted" ? (
+          <DeletedPanel onToast={setToast} onRestored={() => void loadUsers()} />
         ) : tab === "coupons" ? (
           <CouponsPanel onToast={setToast} />
         ) : tab === "analytics" ? (
@@ -586,33 +598,63 @@ export default function Admin() {
           </section>
         ) : tab === "users" ? (
           <section className="mt-4" aria-label="Usuários">
-            <input className={input} placeholder="Buscar por e-mail ou nome de usuário…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar usuário" />
+            <input className={input} placeholder="Buscar por nome de usuário, e-mail ou nome do mural…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar usuário" />
             {!users ? (
               <div className="py-8">
                 <Spinner />
               </div>
-            ) : users.rows.length === 0 ? (
-              <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum usuário encontrado.</p>
             ) : (
-              <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                {users.rows.map((u) => (
-                  <li key={u.id}>
-                    <button type="button" onClick={() => setUserId(u.id)} className="w-full cursor-pointer rounded-2xl border border-[#e1d3ba] bg-white/70 p-4 text-left transition hover:bg-white">
-                      <p className="flex flex-wrap items-center gap-2">
-                        <strong className="font-title text-lg">{u.nickname}</strong>
-                        {u.banned && <Tag tone="red">bloqueado</Tag>}
-                        {u.isAdmin && <Tag tone="dark">admin</Tag>}
-                        {u.murals.some((m) => m.plan === "full") && <Tag tone="gold">plus</Tag>}
-                      </p>
-                      <p className="truncate text-sm text-[#6b5440]">{u.email}</p>
-                      <p className="mt-1 text-xs text-[#6b5440]">
-                        {u.credits} créditos · {u.murals.length} mural · {u.pinsReceived} pins recebidos · {u.pinsSent} enviados
-                      </p>
-                      <p className="text-xs text-[#8a7b69]">Criado em {fmt(u.createdAt)}</p>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              (() => {
+                const term = q.trim().toLowerCase();
+                const rows = term ? users.rows.filter((u) => u.nickname.toLowerCase().includes(term) || u.email.toLowerCase().includes(term) || u.murals.some((m) => m.title.toLowerCase().includes(term))) : users.rows;
+                return (
+                  <>
+                    <p className="mt-2 text-xs text-[#6b5440]">
+                      {rows.length === users.total ? `${users.total} usuários` : `${rows.length} de ${users.total} usuários`}
+                    </p>
+                    {rows.length === 0 ? (
+                      <p className="py-8 text-center text-sm text-[#6b5440]">Nenhum usuário encontrado.</p>
+                    ) : (
+                      <div className="mt-2 max-h-[65dvh] overflow-auto rounded-2xl border border-[#e1d3ba] bg-white/70">
+                        <table className="w-full min-w-[44rem] text-left text-sm">
+                          <thead className="sticky top-0 bg-[#f1e6cf] text-[11px] tracking-wide text-[#6b5440] uppercase">
+                            <tr>
+                              <th className="px-3 py-2 font-semibold">Usuário</th>
+                              <th className="px-3 py-2 font-semibold">E-mail</th>
+                              <th className="px-3 py-2 font-semibold">Situação</th>
+                              <th className="px-3 py-2 text-right font-semibold">Créditos</th>
+                              <th className="px-3 py-2 text-right font-semibold">Murais</th>
+                              <th className="px-3 py-2 text-right font-semibold">Pins rec./env.</th>
+                              <th className="px-3 py-2 font-semibold">Criado em</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[#eadfc8]">
+                            {rows.map((u) => (
+                              <tr key={u.id} onClick={() => setUserId(u.id)} onKeyDown={(e) => e.key === "Enter" && setUserId(u.id)} tabIndex={0} className="cursor-pointer transition hover:bg-[#fff6dd] focus-visible:bg-[#fff6dd] focus-visible:outline-none">
+                                <td className="px-3 py-2 font-semibold">@{u.nickname}</td>
+                                <td className="max-w-[16rem] truncate px-3 py-2 text-[#6b5440]">{u.email}</td>
+                                <td className="px-3 py-2">
+                                  <span className="flex flex-wrap gap-1">
+                                    {u.banned && <Tag tone="red">bloqueado</Tag>}
+                                    {u.isAdmin && <Tag tone="dark">admin</Tag>}
+                                    {u.murals.some((m) => m.plan === "full") && <Tag tone="gold">plus</Tag>}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 text-right tabular-nums">{u.credits}</td>
+                                <td className="px-3 py-2 text-right tabular-nums">{u.murals.length}</td>
+                                <td className="px-3 py-2 text-right whitespace-nowrap tabular-nums">
+                                  {u.pinsReceived} / {u.pinsSent}
+                                </td>
+                                <td className="px-3 py-2 whitespace-nowrap text-[#6b5440]">{fmt(u.createdAt)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                );
+              })()
             )}
           </section>
         ) : (
@@ -694,7 +736,7 @@ export default function Admin() {
         )}
       </div>
 
-      <UserModal userId={userId} onClose={() => setUserId(null)} onChanged={() => void loadUsers(q)} onOpenMural={(id) => setMuralId(id)} />
+      <UserModal userId={userId} onClose={() => setUserId(null)} onChanged={() => void loadUsers()} onOpenMural={(id) => setMuralId(id)} />
       <MuralViewer muralId={muralId} onClose={() => setMuralId(null)} onBan={(id, label) => setBanTarget({ id, label })} />
       <Modal open={!!banTarget} onClose={() => setBanTarget(null)} title={`Bloquear ${banTarget?.label ?? ""}`}>
         <p className="text-sm text-[#6b5440]">Impede o login, esconde o mural e impede que envie pins. Dá para desbloquear depois.</p>
