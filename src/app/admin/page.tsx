@@ -190,6 +190,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
   const [note, setNote] = useState("");
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [eraseText, setEraseText] = useState("");
 
   const load = useCallback(async (id: string) => {
     const r = await rpc<UserDetail>("admin_user_detail", { p_id: id });
@@ -201,6 +202,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
     setAmount("");
     setNote("");
     setReason("");
+    setEraseText("");
     if (userId) void load(userId);
   }, [userId, load]);
 
@@ -216,6 +218,27 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
     } else setMsg({ ok: false, text: "Não foi possível concluir." });
   }
   const n = Number.parseInt(amount, 10);
+
+  /** Exclusão definitiva (sem os 30 dias de espera): apaga dados, arquivos e o login. Não tem volta. */
+  async function eraseNow() {
+    if (!u || busy) return;
+    setBusy(true);
+    setMsg(null);
+    const { data } = await getBrowserSupabase().auth.getSession();
+    const res = await fetch("/api/admin/delete-user", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${data.session?.access_token ?? ""}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: u.id }),
+    }).catch(() => null);
+    setBusy(false);
+    if (res?.ok) {
+      onChanged();
+      onClose();
+      return;
+    }
+    const err = (await res?.json().catch(() => null)) as { error?: string } | null;
+    setMsg({ ok: false, text: err?.error === "is_admin" ? "Contas de administrador não podem ser excluídas." : err?.error === "self" ? "Você não pode excluir a própria conta por aqui." : "Não foi possível excluir agora." });
+  }
 
   return (
     <Modal open={!!userId} onClose={onClose} title={u ? u.nickname : "Usuário"} wide>
@@ -364,6 +387,17 @@ function UserModal({ userId, onClose, onChanged, onOpenMural }: { userId: string
                   </button>
                 </>
               )}
+            </section>
+          )}
+
+          {!u.isAdmin && (
+            <section aria-label="Excluir definitivamente" className="rounded-2xl border border-[#e3b3a8] bg-[#fbeae5] p-4">
+              <h3 className="font-title text-base font-semibold text-[#6b2a1c]">Excluir definitivamente</h3>
+              <p className="mt-1 text-xs text-[#6b2a1c]">Apaga agora, sem os 30 dias de espera: conta, login, murais, pins, bottons, créditos e arquivos. Os pins que ele deixou em outros murais também somem. Não tem volta.</p>
+              <input className={`${input} mt-2`} placeholder={`Digite ${u.nickname} para confirmar`} value={eraseText} onChange={(e) => setEraseText(e.target.value)} aria-label="Confirmar o nome do usuário" autoComplete="off" />
+              <button type="button" className={`${danger} mt-2`} disabled={busy || eraseText.trim().toLowerCase() !== u.nickname.toLowerCase()} onClick={() => void eraseNow()}>
+                Excluir definitivamente
+              </button>
             </section>
           )}
         </div>
