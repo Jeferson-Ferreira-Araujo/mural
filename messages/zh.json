@@ -2327,7 +2327,10 @@
     "h1nliv7y": "请输入邮件中收到的验证码。",
     "hrhkac4": "验证码错误或已过期。请检查数字或重新获取。",
     "h1vg4cdf": "验证码",
-    "h1nutfz2": "请用英文键盘（拉丁字母）输入邮箱。"
+    "h1nutfz2": "请用英文键盘（拉丁字母）输入邮箱。",
+    "hpr9eda": "查看图钉",
+    "hqd7bvx": "隐藏图钉",
+    "hfvgov": "查看展示牌"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

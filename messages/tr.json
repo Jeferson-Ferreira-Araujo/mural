@@ -2327,7 +2327,10 @@
     "h1nliv7y": "E-postana gelen kodu gir.",
     "hrhkac4": "Kod yanlış veya süresi dolmuş. Rakamları kontrol et ya da yenisini iste.",
     "h1vg4cdf": "Onay kodu",
-    "h1nutfz2": "E-postayı İngilizce klavyeyle (Latin harfleri) yaz."
+    "h1nutfz2": "E-postayı İngilizce klavyeyle (Latin harfleri) yaz.",
+    "hpr9eda": "Pini göster",
+    "hqd7bvx": "Pini gizle",
+    "hfvgov": "Ekranı göster"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

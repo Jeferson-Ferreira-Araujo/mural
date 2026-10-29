@@ -2327,7 +2327,10 @@
     "h1nliv7y": "Saisissez le code reçu par e-mail.",
     "hrhkac4": "Code incorrect ou expiré. Vérifiez les chiffres ou demandez-en un nouveau.",
     "h1vg4cdf": "Code de confirmation",
-    "h1nutfz2": "Saisissez l'e-mail avec le clavier anglais (lettres latines)."
+    "h1nutfz2": "Saisissez l'e-mail avec le clavier anglais (lettres latines).",
+    "hpr9eda": "Voir le pin",
+    "hqd7bvx": "Masquer le pin",
+    "hfvgov": "Voir le display"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

@@ -2327,7 +2327,10 @@
     "h1nliv7y": "Escribe el código que llegó a tu correo.",
     "hrhkac4": "Código incorrecto o vencido. Revisa los números o pide uno nuevo.",
     "h1vg4cdf": "Código de confirmación",
-    "h1nutfz2": "Escribe el correo con el teclado en inglés (letras latinas)."
+    "h1nutfz2": "Escribe el correo con el teclado en inglés (letras latinas).",
+    "hpr9eda": "Ver pin",
+    "hqd7bvx": "Ocultar pin",
+    "hfvgov": "Ver display"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2327,7 +2327,10 @@
     "h1nliv7y": "Wpisz kod, który przyszedł e-mailem.",
     "hrhkac4": "Kod nieprawidłowy lub wygasł. Sprawdź cyfry albo poproś o nowy.",
     "h1vg4cdf": "Kod potwierdzający",
-    "h1nutfz2": "Wpisz e-mail na klawiaturze angielskiej (litery łacińskie)."
+    "h1nutfz2": "Wpisz e-mail na klawiaturze angielskiej (litery łacińskie).",
+    "hpr9eda": "Pokaż pin",
+    "hqd7bvx": "Ukryj pin",
+    "hfvgov": "Pokaż wyświetlacz"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

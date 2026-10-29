@@ -2327,7 +2327,10 @@
     "h1nliv7y": "Nhập mã đã gửi đến email của bạn.",
     "hrhkac4": "Mã sai hoặc đã hết hạn. Kiểm tra lại các số hoặc yêu cầu mã mới.",
     "h1vg4cdf": "Mã xác nhận",
-    "h1nutfz2": "Nhập email bằng bàn phím tiếng Anh (chữ cái Latin)."
+    "h1nutfz2": "Nhập email bằng bàn phím tiếng Anh (chữ cái Latin).",
+    "hpr9eda": "Xem ghim",
+    "hqd7bvx": "Ẩn ghim",
+    "hfvgov": "Xem màn hình"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

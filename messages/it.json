@@ -2327,7 +2327,10 @@
     "h1nliv7y": "Inserisci il codice arrivato via e-mail.",
     "hrhkac4": "Codice errato o scaduto. Controlla i numeri o richiedine uno nuovo.",
     "h1vg4cdf": "Codice di conferma",
-    "h1nutfz2": "Scrivi l'e-mail con la tastiera inglese (lettere latine)."
+    "h1nutfz2": "Scrivi l'e-mail con la tastiera inglese (lettere latine).",
+    "hpr9eda": "Mostra pin",
+    "hqd7bvx": "Nascondi pin",
+    "hfvgov": "Mostra display"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",
