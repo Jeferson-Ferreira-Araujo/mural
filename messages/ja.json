@@ -2331,7 +2331,8 @@
     "hpr9eda": "ピンを表示",
     "hqd7bvx": "ピンを隠す",
     "hfvgov": "ディスプレイを表示",
-    "h1nlpf14": "このピンを見る権限がありません。"
+    "h1nlpf14": "このピンを見る権限がありません。",
+    "h1al7dn": "このディスプレイを見る権限がありません。"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

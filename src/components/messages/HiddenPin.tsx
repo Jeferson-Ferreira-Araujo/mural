@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { HiddenItem, Message } from "@/lib/types";
 import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
@@ -44,12 +45,20 @@ export function placeholderFor(h: HiddenItem): Message | null {
  * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
 /** Selo no meio do pin em segredo (virado de costas): só o olho fechado, sem texto. */
-export function SecretBadge({ locked = false }: { /** quem vê não tem permissão para revelar (visitante): tocar no selo avisa */ locked?: boolean }) {
+export function SecretBadge({ locked = false, what = "pin", scale = "2.4em" }: { /** quem vê não tem permissão para revelar (visitante): tocar no selo avisa */ locked?: boolean; /** o que está em segredo (muda o texto do aviso) */ what?: "pin" | "display"; /** tamanho do selo no mural (no detalhe é sempre 1em) */ scale?: string }) {
   const tx = useTranslations("components.messages.HiddenPin");
   const tl = useLit();
   const inDetail = useInDetail();
   const sec = useSecretToggle(); // no detalhe, quem pode ver o pin revela e esconde pelo selo
-  const action = sec ? () => sec.toggle() : locked ? () => window.dispatchEvent(new CustomEvent("pinz:notify", { detail: tl("Você não tem permissão para ver esse pin.") })) : null;
+  const [warn, setWarn] = useState(false);
+  useEffect(() => {
+    if (!warn) return;
+    const t = window.setTimeout(() => setWarn(false), 3000);
+    return () => window.clearTimeout(t);
+  }, [warn]);
+  const noPerm = what === "display" ? tl("Você não tem permissão para ver esse display.") : tl("Você não tem permissão para ver esse pin.");
+  // no detalhe (janela por cima de tudo) o aviso aparece ali mesmo; no mural, vira o aviso comum da tela
+  const action = sec ? () => sec.toggle() : locked ? () => (inDetail ? setWarn(true) : window.dispatchEvent(new CustomEvent("pinz:notify", { detail: noPerm }))) : null;
   const cls = "grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]";
   const icon = (
     <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -58,7 +67,7 @@ export function SecretBadge({ locked = false }: { /** quem vê não tem permiss�
     </svg>
   );
   return (
-    <span className="pz-fade pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
+    <span className="pz-fade pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : scale }}>
       {action ? (
         <button
           type="button"
@@ -75,6 +84,11 @@ export function SecretBadge({ locked = false }: { /** quem vê não tem permiss�
       ) : (
         <span role="img" aria-label={tx("segredo")} className={cls}>
           {icon}
+        </span>
+      )}
+      {warn && (
+        <span role="status" className="pz-fade absolute top-[calc(50%+2.2em)] left-1/2 w-max max-w-[90%] -translate-x-1/2 rounded-xl bg-black/80 px-[1em] py-[0.5em] text-center text-[0.9em] font-semibold text-white shadow-lg">
+          {noPerm}
         </span>
       )}
     </span>

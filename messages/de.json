@@ -2331,7 +2331,8 @@
     "hpr9eda": "Pin ansehen",
     "hqd7bvx": "Pin verbergen",
     "hfvgov": "Display ansehen",
-    "h1nlpf14": "Du hast keine Berechtigung, diesen Pin zu sehen."
+    "h1nlpf14": "Du hast keine Berechtigung, diesen Pin zu sehen.",
+    "h1al7dn": "Du hast keine Berechtigung, dieses Display zu sehen."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

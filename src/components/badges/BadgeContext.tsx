@@ -685,12 +685,12 @@ export function BadgeProvider({
   }
   const openDetail = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);
-    if (!b?.data) return;
+    if (!b || (!b.data && !b.hidden)) return;
     setSelId(null);
     setHoverId(null);
     // o detalhe do quadro (BoardCanvas) abre o widget na fila de pins; sem quadro denso por perto, abre a janela própria
     const ev = new CustomEvent("pinz:open-widget", { detail: { id }, cancelable: true });
-    if (window.dispatchEvent(ev)) setDetail({ ...b.data, id: b.id });
+    if (window.dispatchEvent(ev) && b.data) setDetail({ ...b.data, id: b.id });
   }, []);
   const editDisplay = useCallback((id: string) => {
     const b = live.current.badges.find((x) => x.id === id);

@@ -100,8 +100,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-id={b.id}
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
-        {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": tl("Ver o display em tamanho grande"), onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
-        className={`pz-badge-in group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : b.hidden ? "" : "pointer-events-auto cursor-zoom-in"}`}
+        {...(!editable ? { role: "button", tabIndex: 0, "aria-label": tl("Ver o display em tamanho grande"), onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
+        className={`pz-badge-in group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : "pointer-events-auto cursor-zoom-in"}`}
         style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1, animationDelay: `${(0.1 + (b.y / 100) * 0.6).toFixed(2)}s` }}
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
@@ -109,7 +109,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         <div className="pointer-events-none transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:-translate-y-[0.35em] [@media(hover:hover)]:group-hover:scale-[1.2]" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
           {b.hidden ? (
             // display em segredo: o mesmo cartão borrado do pin em segredo (quem visita nem recebe os dados; o dono vê o conteúdo no detalhe)
-            <SecretCover style={b.data?.style} />
+            <SecretCover style={b.data?.style} locked={!editable} />
           ) : b.data ? (
             <DisplayCard data={b.data} badgeId={b.id} />
           ) : null}

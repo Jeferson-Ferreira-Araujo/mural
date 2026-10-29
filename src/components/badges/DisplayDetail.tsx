@@ -9,6 +9,7 @@ import { Modal } from "../account/Modal";
 import { DetailProvider } from "../board/ListEditContext";
 import { DisplayCard, withLiveText, type DisplayData } from "../widgets";
 import { SecretCover } from "./SecretCover";
+import { SecretHideButton, SecretProvider } from "../messages/SecretContext";
 import { ghostButton } from "../ui";
 import { useTranslations, useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
@@ -76,20 +77,22 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
           {/* o widget tem 24 em de largura: a fonte do contêiner o leva a quase toda a largura da janela */}
           <div style={{ fontSize: shapeOfStyle(data.style) === "square" ? "calc(min(66vw, 24rem, 40dvh) / 12)" : shapeOfStyle(data.style) === "tall" ? "calc(min(54vw, 18rem, 30dvh) / 12)" : "calc(min(82vw, 31rem, 80dvh) / 24)" }}>
             <DetailProvider value>
-              {hidden && !reveal ? <SecretCover style={data.style} /> : <DisplayCard data={data} badgeId={data.id} />}
+              <SecretProvider value={own && hidden ? { revealed: reveal, toggle: () => setReveal((v) => !v) } : null}>
+                {hidden && !reveal ? (
+                  <SecretCover style={data.style} locked={!own} />
+                ) : own && hidden ? (
+                  <div className="relative">
+                    <DisplayCard data={data} badgeId={data.id} />
+                    <SecretHideButton onClick={() => setReveal(false)} label="Esconder display" />
+                  </div>
+                ) : (
+                  <DisplayCard data={data} badgeId={data.id} />
+                )}
+              </SecretProvider>
             </DetailProvider>
           </div>
         </div>
-        {own && hidden && (
-          <button type="button" onClick={() => setReveal((v) => !v)} aria-pressed={reveal} aria-label={reveal ? tl("Esconder display") : tl("Revelar display")} className={`${ghostButton} mx-auto grid size-11 place-items-center !p-0`}>
-            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-              <circle cx="12" cy="12" r="3" />
-              {!reveal && <path d="m3 3 18 18" />}
-            </svg>
-          </button>
-        )}
-        {!data.id ? null /* display do mural de exemplo: sem compartilhar */ : text ? (
+        {!data.id || (hidden && !reveal) ? null /* display do mural de exemplo ou em segredo: sem compartilhar */ : text ? (
           <button type="button" onClick={() => void share()} className={`${ghostButton} w-full`}>
             {copied ? tl("Texto copiado!") : tl("Compartilhar o texto")}
           </button>

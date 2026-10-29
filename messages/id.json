@@ -2331,7 +2331,8 @@
     "hpr9eda": "Lihat pin",
     "hqd7bvx": "Sembunyikan pin",
     "hfvgov": "Lihat display",
-    "h1nlpf14": "Kamu tidak punya izin untuk melihat pin ini."
+    "h1nlpf14": "Kamu tidak punya izin untuk melihat pin ini.",
+    "h1al7dn": "Kamu tidak punya izin untuk melihat tampilan ini."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

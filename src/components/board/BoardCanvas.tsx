@@ -108,7 +108,8 @@ export function BoardCanvas({
   const coverBy = new Map<number, string>();
   for (const it of items) for (const sl of it.fcov ?? []) coverBy.set(sl, it.id);
   // o detalhe (clique no pin) só existe para pins com conteúdo; espaços em blur não abrem nada
-  const placed = layout.filter((x): x is BoardItem => !!x && !isHidden(x));
+  const openable = (x: BoardItem) => !isHidden(x) || (!x.pending && !x.backdrop); // pin em segredo: o visitante abre o detalhe, só para ver o aviso
+  const placed = layout.filter((x): x is BoardItem => !!x && openable(x));
   const [detail, setDetail] = useState<number | null>(null);
   // pins que ainda não tinham aparecido neste quadro ganham a animação de entrada; os que só mudam de espaço, não
   const known = useRef(new Set<string>());
@@ -128,9 +129,9 @@ export function BoardCanvas({
   const detailList: DetailEntry[] = (() => {
     const keyed: { k: number; e: DetailEntry }[] = placed.map((it) => ({ k: it.slot ?? 0, e: it }));
     for (const b of badges) {
-      if (b.kind !== "display" || !b.data || (b.hidden && !badgesEditable)) continue;
+      if (b.kind !== "display" || (!b.data && !b.hidden)) continue;
       const k = b.slots && b.slots.length ? Math.min(...b.slots) : Math.floor((b.y / 100) * rows) * cols + Math.floor((b.x / 100) * cols);
-      keyed.push({ k: k - 0.5, e: { id: b.id, widget: true, data: b.data } });
+      keyed.push({ k: k - 0.5, e: { id: b.id, widget: true, data: b.data ?? ({} as NonNullable<typeof b.data>) } });
     }
     return keyed.sort((a, c) => a.k - c.k).map((x) => x.e);
   })();
@@ -541,7 +542,7 @@ export function BoardCanvas({
                               } as CSSProperties
                             }
                           >
-                            {dense && !isHidden(item) ? (
+                            {dense && openable(item) ? (
                               <div
                                 role="button"
                                 tabIndex={0}

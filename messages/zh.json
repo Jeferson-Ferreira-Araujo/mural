@@ -2331,7 +2331,8 @@
     "hpr9eda": "查看图钉",
     "hqd7bvx": "隐藏图钉",
     "hfvgov": "查看展示牌",
-    "h1nlpf14": "您无权查看此图钉。"
+    "h1nlpf14": "您无权查看此图钉。",
+    "h1al7dn": "您无权查看此显示屏。"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

@@ -12,7 +12,7 @@ import { DetailProvider } from "./ListEditContext";
 import { ReactionBar } from "./ReactionBar";
 import { useReactionsAccess } from "./ReactionsContext";
 import { useFeatureFlags } from "@/lib/features";
-import { SecretProvider } from "../messages/SecretContext";
+import { SecretHideButton, SecretProvider } from "../messages/SecretContext";
 import { shapeOfStyle } from "@/lib/displayShape";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
@@ -346,7 +346,6 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {shareMsg}
             </p>
           )}
-          {ownWidget && widgetHidden && revealBtn()}
           {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
           <div className="flex w-full items-center justify-center px-12 sm:px-16">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label={tx("anterior")} className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
@@ -359,7 +358,18 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               <DetailProvider value>
                 <div className="relative">
                   {widget ? (
-                    widgetHidden && !showSecret ? <SecretCover style={widget.data.style} /> : <DisplayCard data={widget.data} badgeId={widget.id} />
+                    <SecretProvider value={ownWidget && widgetHidden ? { revealed: showSecret, toggle: () => setShowSecret((v) => !v) } : null}>
+                      {widgetHidden && !showSecret ? (
+                        <SecretCover style={widget.data.style} locked={!ownWidget} />
+                      ) : ownWidget && widgetHidden ? (
+                        <div className="relative">
+                          <DisplayCard data={widget.data} badgeId={widget.id} />
+                          <SecretHideButton onClick={() => setShowSecret(false)} label="Esconder display" />
+                        </div>
+                      ) : (
+                        <DisplayCard data={widget.data} badgeId={widget.id} />
+                      )}
+                    </SecretProvider>
                   ) : item ? (
                     <>
                       {/* no detalhe os bottons não aparecem: só o pin */}

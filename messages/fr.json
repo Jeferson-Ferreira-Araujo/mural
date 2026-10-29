@@ -2331,7 +2331,8 @@
     "hpr9eda": "Voir le pin",
     "hqd7bvx": "Masquer le pin",
     "hfvgov": "Voir le display",
-    "h1nlpf14": "Vous n'avez pas la permission de voir ce pin."
+    "h1nlpf14": "Vous n'avez pas la permission de voir ce pin.",
+    "h1al7dn": "Vous n'avez pas la permission de voir cet affichage."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",
