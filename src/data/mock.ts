@@ -1,5 +1,5 @@
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
-import { isHidden, isMessage, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
+import { isHidden, isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
 import { localizeDemo, type DemoLocale } from "./demoText";
 
 /**
@@ -8,11 +8,11 @@ import { localizeDemo, type DemoLocale } from "./demoText";
  * então um PINZ FREE (15 espaços) e um PINZ+ (28 espaços) ficam coerentes.
  */
 
-/** Pins em segredo dos murais de exemplo: só o tipo e o estilo (o conteúdo nunca existe), como o servidor entrega a quem visita. */
-const SECRETS: HiddenItem[] = [
-  { id: "s1", hidden: true, type: "postit", color: "pink", pin: "red" },
-  { id: "s2", hidden: true, type: "photo", media: true, ratio: 1.25, tape: "yellow" },
-  { id: "s3", hidden: true, type: "text", variant: "notebook", tape: "yellow" },
+/** Pins em segredo dos murais de exemplo: de costas no mural; ao abrir o detalhe e tocar no olho, o pin vira e mostra o conteúdo. */
+const SECRETS: Message[] = [
+  { id: "s1", type: "postit", color: "pink", pin: "red", ownerHidden: true, text: "Surpresa! 🎉 Este pin era segredo: os visitantes só veem o verso dele." },
+  { id: "s2", type: "photo", scene: "sunset", tape: "yellow", ownerHidden: true, caption: "Foto secreta 🤫" },
+  { id: "s3", type: "text", variant: "notebook", tape: "yellow", ownerHidden: true, text: "Você decide quais pins ficam em segredo. Ligue o segredo no detalhe do pin e ele vira de costas para todos, menos para você." },
 ];
 
 const MIN = 60_000;
@@ -116,9 +116,9 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
 /** Mural de exemplo aleatório (todos os espaços, em ordem embaralhada) para a página inicial: sem espaços vazios. */
 export function randomMural(nowMs: number, locale: DemoLocale = "pt"): BoardItem[] {
   // 28 espaços = os 15 exemplos + 13 extras, todos diferentes (nada de cartão repetido na tela)
-  const pool = buildPool(nowMs, locale).items.filter((i) => !isHidden(i));
+  const pool = buildPool(nowMs, locale).items.filter((i) => !SECRETS.some((x) => x.id === i.id));
   const items = [...pool, ...extraPool(locale)].slice(0, BOARD_CAPACITY - SECRETS.length);
-  items.push(...SECRETS); // o embaralhamento abaixo espalha os segredos pelo mural
+  items.push(...SECRETS.map((i) => localizeDemo(i, locale))); // o embaralhamento abaixo espalha os segredos pelo mural
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
