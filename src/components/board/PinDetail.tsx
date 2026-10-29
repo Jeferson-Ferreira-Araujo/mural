@@ -126,9 +126,11 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       onClick={() => setShowSecret((v) => !v)}
       aria-pressed={showSecret}
       aria-label={showSecret ? (widget ? tl("Esconder display") : tx("m_esconderPin")) : widget ? tl("Revelar display") : tx("m_revelarPin")}
-      className={`${ghost} grid size-11 place-items-center !p-0`}
+      className={`${ghost} inline-flex h-11 min-w-11 items-center justify-center gap-2 !p-0 md:!px-4`}
     >
       {showSecret ? <EyeOpen /> : <EyeClosed />}
+      {/* no computador o botão diz o que faz; no celular fica só o olho */}
+      <span className="hidden md:inline">{showSecret ? (widget ? tl("Esconder display") : tl("Esconder pin")) : widget ? tl("Visualizar display") : tl("Visualizar pin")}</span>
     </button>
   );
   const ghost = "cursor-pointer rounded-xl border border-white/25 bg-[#17110c]/80 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2b1c12] disabled:cursor-not-allowed disabled:opacity-50";
