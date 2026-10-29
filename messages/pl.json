@@ -2322,7 +2322,11 @@
     "h1mshro4": "Potwierdź adres e-mail, aby się zalogować: wysłaliśmy link do Twojej skrzynki.",
     "h5me6ua": "Wysłaliśmy e-mail ponownie. Sprawdź skrzynkę odbiorczą i spam.",
     "h1dp5161": "Nie dotarł? Wyślij e-mail ponownie",
-    "h16kh8x2": "Wyślij e-mail z potwierdzeniem ponownie"
+    "h16kh8x2": "Wyślij e-mail z potwierdzeniem ponownie",
+    "hpjv6cp": "Wysłaliśmy kod na adres {email}. Wpisz go poniżej, aby potwierdzić konto.",
+    "h1nliv7y": "Wpisz kod, który przyszedł e-mailem.",
+    "hrhkac4": "Kod nieprawidłowy lub wygasł. Sprawdź cyfry albo poproś o nowy.",
+    "h1vg4cdf": "Kod potwierdzający"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

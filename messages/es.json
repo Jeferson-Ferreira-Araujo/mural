@@ -2322,7 +2322,11 @@
     "h1mshro4": "Confirma tu correo para entrar: te enviamos un enlace a tu bandeja de entrada.",
     "h5me6ua": "Enviamos el correo de nuevo. Revisa tu bandeja de entrada y el spam.",
     "h1dp5161": "¿No lo recibiste? Enviar el correo de nuevo",
-    "h16kh8x2": "Enviar de nuevo el correo de confirmación"
+    "h16kh8x2": "Enviar de nuevo el correo de confirmación",
+    "hpjv6cp": "Enviamos un código a {email}. Escríbelo abajo para confirmar tu cuenta.",
+    "h1nliv7y": "Escribe el código que llegó a tu correo.",
+    "hrhkac4": "Código incorrecto o vencido. Revisa los números o pide uno nuevo.",
+    "h1vg4cdf": "Código de confirmación"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

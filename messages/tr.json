@@ -2322,7 +2322,11 @@
     "h1mshro4": "Giriş yapmak için e-postanı onayla: gelen kutuna bir bağlantı gönderdik.",
     "h5me6ua": "E-postayı yeniden gönderdik. Gelen kutunu ve spam klasörünü kontrol et.",
     "h1dp5161": "Gelmedi mi? E-postayı yeniden gönder",
-    "h16kh8x2": "Onay e-postasını yeniden gönder"
+    "h16kh8x2": "Onay e-postasını yeniden gönder",
+    "hpjv6cp": "{email} adresine bir kod gönderdik. Hesabını onaylamak için aşağıya gir.",
+    "h1nliv7y": "E-postana gelen kodu gir.",
+    "hrhkac4": "Kod yanlış veya süresi dolmuş. Rakamları kontrol et ya da yenisini iste.",
+    "h1vg4cdf": "Onay kodu"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

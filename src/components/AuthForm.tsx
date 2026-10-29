@@ -54,8 +54,9 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
-  const [unconfirmed, setUnconfirmed] = useState(false); // tentou entrar sem ter confirmado o e-mail: oferece reenviar o link
   const [resent, setResent] = useState<string | null>(null);
+  const [otp, setOtp] = useState(""); // código de confirmação que chega por e-mail
+  const [otpBusy, setOtpBusy] = useState(false);
   const [codeStep, setCodeStep] = useState(false); // nome reservado: confirmação por código enviado ao e-mail
   const nickState = useNicknameStatus(mode === "signup" ? nick : "");
   const signup = mode === "signup";
@@ -105,8 +106,9 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       setBusy(false);
       if (err) {
         if (err.code === "email_not_confirmed" || /not confirmed/i.test(err.message)) {
-          setUnconfirmed(true);
-          return setError(tl("Confirme seu e-mail para entrar: enviamos um link para a sua caixa de entrada."));
+          setError(null);
+          setNeedsConfirm(true); // vai para a tela do código
+          return;
         }
         setError(err.status === 400 ? t("errors.badCredentials") : t("errors.loginFail"));
         return;
@@ -136,6 +138,20 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
     setResent(err ? (err.status === 429 ? t("errors.tooMany") : t("errors.signupFail")) : tl("Enviamos o e-mail de novo. Confira a caixa de entrada e o spam."));
   }
 
+  async function verifyOtp(e: FormEvent) {
+    e.preventDefault();
+    const code = otp.replace(/\s/g, "");
+    if (otpBusy) return;
+    if (!/^\d{6,10}$/.test(code)) return setResent(tl("Digite o código que chegou no seu e-mail."));
+    setOtpBusy(true);
+    setResent(null);
+    const sb = getBrowserSupabase();
+    const { error: err } = await sb.auth.verifyOtp({ email: email.trim(), token: code, type: "signup" });
+    setOtpBusy(false);
+    if (err) return setResent(tl("Código incorreto ou vencido. Confira os números ou peça um novo."));
+    router.push(takeNext() ?? (await homeRouteFor(sb))); // confirmou: a sessão já começou
+  }
+
   if (codeStep) {
     return (
       <CodeStep
@@ -152,20 +168,37 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
     return (
       <section role="status" className="rounded-2xl bg-[#fbf6ea] p-5 text-[15px] text-[#2f2218] shadow-[0_0.8rem_2rem_rgba(0,0,0,.3)]">
         <p className="font-title text-xl font-semibold">{t("confirm.title")}</p>
-        <p className="mt-2 text-[#4a3826]">
-          {t.rich("confirm.body", { email: email.trim(), strong: (c) => <strong>{c}</strong> })}
-        </p>
+        <p className="mt-2 text-[#4a3826]">{tl("Enviamos um código para {email}. Digite-o abaixo para confirmar sua conta.").replace("{email}", email.trim())}</p>
+        <form onSubmit={verifyOtp} noValidate className="mt-3 space-y-3">
+          <input
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            autoFocus
+            maxLength={10}
+            value={otp}
+            onChange={(e) => {
+              setOtp(e.target.value.replace(/\D/g, ""));
+              setResent(null);
+            }}
+            placeholder="000000"
+            aria-label={tl("Código de confirmação")}
+            className={`${inputClass} text-center text-xl tracking-[0.35em]`}
+          />
+          {resent && <p role="status" className="text-sm text-[#4a3826]">{resent}</p>}
+          <button type="submit" disabled={otpBusy} className={primaryButton}>
+            {otpBusy ? t("wait") : tl("Confirmar")}
+          </button>
+        </form>
         <button type="button" onClick={() => void resend()} className="mt-3 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
           {tl("Não recebeu? Enviar o e-mail de novo")}
         </button>
-        {resent && <p role="status" className="mt-2 text-sm text-[#4a3826]">{resent}</p>}
         <button
           type="button"
           onClick={() => {
             setNeedsConfirm(false);
             setMode("login");
           }}
-          className={`${primaryButton} mt-4`}
+          className="mt-3 block cursor-pointer text-sm font-semibold text-[#6b5440] underline"
         >
           {t("confirm.done")}
         </button>
@@ -244,14 +277,6 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
             </div>
           )}
         </Field>
-        {unconfirmed && !signup && (
-          <div className="text-sm">
-            <button type="button" onClick={() => void resend()} className="cursor-pointer font-semibold text-[#6b5440] underline">
-              {tl("Enviar o e-mail de confirmação de novo")}
-            </button>
-            {resent && <p role="status" className="mt-1 text-[#4a3826]">{resent}</p>}
-          </div>
-        )}
         {!signup && (
           <label className="flex cursor-pointer items-center gap-2 text-sm text-[#4a3826]">
             <input type="checkbox" checked={remember} onChange={(e) => setRememberState(e.target.checked)} className="size-4 cursor-pointer accent-[#1f232b]" />

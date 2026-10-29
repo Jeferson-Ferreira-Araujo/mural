@@ -2322,7 +2322,11 @@
     "h1mshro4": "Hãy xác nhận email để đăng nhập: chúng tôi đã gửi liên kết vào hộp thư của bạn.",
     "h5me6ua": "Chúng tôi đã gửi lại email. Hãy kiểm tra hộp thư đến và thư rác.",
     "h1dp5161": "Chưa nhận được? Gửi lại email",
-    "h16kh8x2": "Gửi lại email xác nhận"
+    "h16kh8x2": "Gửi lại email xác nhận",
+    "hpjv6cp": "Chúng tôi đã gửi mã đến {email}. Nhập mã bên dưới để xác nhận tài khoản.",
+    "h1nliv7y": "Nhập mã đã gửi đến email của bạn.",
+    "hrhkac4": "Mã sai hoặc đã hết hạn. Kiểm tra lại các số hoặc yêu cầu mã mới.",
+    "h1vg4cdf": "Mã xác nhận"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

@@ -2322,7 +2322,11 @@
     "h1mshro4": "Confirm your email to sign in: we sent a link to your inbox.",
     "h5me6ua": "We sent the email again. Check your inbox and spam folder.",
     "h1dp5161": "Didn't get it? Send the email again",
-    "h16kh8x2": "Send the confirmation email again"
+    "h16kh8x2": "Send the confirmation email again",
+    "hpjv6cp": "We sent a code to {email}. Enter it below to confirm your account.",
+    "h1nliv7y": "Enter the code we emailed you.",
+    "hrhkac4": "Wrong or expired code. Check the numbers or ask for a new one.",
+    "h1vg4cdf": "Confirmation code"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

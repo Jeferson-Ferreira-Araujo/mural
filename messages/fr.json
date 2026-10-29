@@ -2322,7 +2322,11 @@
     "h1mshro4": "Confirmez votre e-mail pour vous connecter : nous avons envoyé un lien dans votre boîte de réception.",
     "h5me6ua": "Nous avons renvoyé l'e-mail. Vérifiez votre boîte de réception et vos spams.",
     "h1dp5161": "Pas reçu ? Renvoyer l'e-mail",
-    "h16kh8x2": "Renvoyer l'e-mail de confirmation"
+    "h16kh8x2": "Renvoyer l'e-mail de confirmation",
+    "hpjv6cp": "Nous avons envoyé un code à {email}. Saisissez-le ci-dessous pour confirmer votre compte.",
+    "h1nliv7y": "Saisissez le code reçu par e-mail.",
+    "hrhkac4": "Code incorrect ou expiré. Vérifiez les chiffres ou demandez-en un nouveau.",
+    "h1vg4cdf": "Code de confirmation"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

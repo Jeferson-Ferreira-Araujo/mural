@@ -2322,7 +2322,11 @@
     "h1mshro4": "Konfirmasi email Anda untuk masuk: kami mengirim tautan ke kotak masuk Anda.",
     "h5me6ua": "Kami mengirim email lagi. Periksa kotak masuk dan spam.",
     "h1dp5161": "Belum terima? Kirim email lagi",
-    "h16kh8x2": "Kirim ulang email konfirmasi"
+    "h16kh8x2": "Kirim ulang email konfirmasi",
+    "hpjv6cp": "Kami mengirim kode ke {email}. Masukkan di bawah untuk mengonfirmasi akun Anda.",
+    "h1nliv7y": "Masukkan kode yang dikirim ke email Anda.",
+    "hrhkac4": "Kode salah atau kedaluwarsa. Periksa angkanya atau minta kode baru.",
+    "h1vg4cdf": "Kode konfirmasi"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

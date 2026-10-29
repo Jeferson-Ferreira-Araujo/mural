@@ -2322,7 +2322,11 @@
     "h1mshro4": "Bestätige deine E-Mail, um dich anzumelden: Wir haben einen Link an dein Postfach gesendet.",
     "h5me6ua": "Wir haben die E-Mail erneut gesendet. Prüfe Posteingang und Spam.",
     "h1dp5161": "Nicht erhalten? E-Mail erneut senden",
-    "h16kh8x2": "Bestätigungs-E-Mail erneut senden"
+    "h16kh8x2": "Bestätigungs-E-Mail erneut senden",
+    "hpjv6cp": "Wir haben einen Code an {email} gesendet. Gib ihn unten ein, um dein Konto zu bestätigen.",
+    "h1nliv7y": "Gib den Code aus deiner E-Mail ein.",
+    "hrhkac4": "Code falsch oder abgelaufen. Prüfe die Ziffern oder fordere einen neuen an.",
+    "h1vg4cdf": "Bestätigungscode"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
