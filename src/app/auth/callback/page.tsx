@@ -22,6 +22,18 @@ export default function AuthCallback() {
       const sb = getBrowserSupabase();
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
+      const tokenHash = params.get("token_hash");
+      const type = params.get("type");
+      if (tokenHash && type) {
+        // link do e-mail do Pinz (confirmar o cadastro ou redefinir a senha): confere no navegador, sem depender de ser o mesmo aparelho do cadastro
+        const { error: err } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: type as "signup" | "recovery" | "email" | "invite" | "magiclink" | "email_change" });
+        if (err) {
+          setError(tx("m_oLinkExpirouOuJa"));
+          return;
+        }
+        router.replace(type === "recovery" ? "/auth/nova-senha" : (takeNext() ?? (await homeRouteFor(sb))));
+        return;
+      }
       if (params.get("error") || !code) {
         // sessão pode já existir (ex.: página recarregada)
         const { data } = await sb.auth.getSession();

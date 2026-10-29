@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 import { callbackUrl, homeRouteFor, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
@@ -41,6 +42,7 @@ export const authIntent: { mode: Mode; /** a pessoa escolheu a aba num dos botõ
 export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entrar) */ initialMode?: Mode } = {}) {
   const tl = useLit();
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations("auth");
   const [mode, setMode] = useState<Mode>(() => (authIntent.touched ? authIntent.mode : (initialMode ?? authIntent.mode)));
   const [nick, setNick] = useState("");
@@ -117,7 +119,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       return;
     }
 
-    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick, birth: birthIso } } });
+    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick, birth: birthIso, locale } } });
     setBusy(false);
     if (err) {
       if (/registered|already/i.test(err.message)) setError(t("errors.emailExists"));
