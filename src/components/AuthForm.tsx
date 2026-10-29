@@ -240,7 +240,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
               inputMode="email"
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value);
+                setEmail(e.target.value.replace(/["]/g, "@")); // teclado ucraniano/russo: Shift+2 digita aspas, e aspas nunca fazem parte de um e-mail
                 setError(null);
               }}
               placeholder={t("emailPlaceholder")}
