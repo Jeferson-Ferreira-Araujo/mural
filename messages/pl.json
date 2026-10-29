@@ -2317,7 +2317,8 @@
     "hoamnpv": "Podaj datę urodzenia (dzień/miesiąc/rok).",
     "hi5dd4t": "Dzień",
     "hgblxzz": "Miesiąc",
-    "hxhqvrf": "Rok"
+    "hxhqvrf": "Rok",
+    "haion2k": "Nadchodzące aktualizacje"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

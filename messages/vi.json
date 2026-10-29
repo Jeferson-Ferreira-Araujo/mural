@@ -2317,7 +2317,8 @@
     "hoamnpv": "Nhập ngày sinh của bạn (ngày/tháng/năm).",
     "hi5dd4t": "Ngày",
     "hgblxzz": "Tháng",
-    "hxhqvrf": "Năm"
+    "hxhqvrf": "Năm",
+    "haion2k": "Bản cập nhật sắp tới"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

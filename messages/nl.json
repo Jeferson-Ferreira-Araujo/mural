@@ -2317,7 +2317,8 @@
     "hoamnpv": "Vul je geboortedatum in (dag/maand/jaar).",
     "hi5dd4t": "Dag",
     "hgblxzz": "Maand",
-    "hxhqvrf": "Jaar"
+    "hxhqvrf": "Jaar",
+    "haion2k": "Aankomende updates"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

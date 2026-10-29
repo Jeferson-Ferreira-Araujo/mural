@@ -2317,7 +2317,8 @@
     "hoamnpv": "Doğum tarihinizi girin (gün/ay/yıl).",
     "hi5dd4t": "Gün",
     "hgblxzz": "Ay",
-    "hxhqvrf": "Yıl"
+    "hxhqvrf": "Yıl",
+    "haion2k": "Gelecek güncellemeler"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

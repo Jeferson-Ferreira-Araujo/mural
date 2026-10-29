@@ -2317,7 +2317,8 @@
     "hoamnpv": "Gib dein Geburtsdatum ein (Tag/Monat/Jahr).",
     "hi5dd4t": "Tag",
     "hgblxzz": "Monat",
-    "hxhqvrf": "Jahr"
+    "hxhqvrf": "Jahr",
+    "haion2k": "Kommende Updates"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

@@ -36,7 +36,7 @@ export function FeaturesPanel({ onToast }: { onToast: (m: string) => void }) {
       <p className="text-sm text-[#6b5440]">Formatos de pin e recursos. Ao desligar, a opção some para todos; o que já foi criado continua no mural.</p>
       <ul className="mt-3 divide-y divide-[#e6d8bd] rounded-2xl border border-[#e1d3ba] bg-white/70">
         {[...TOGGLEABLE_FORMATS, ...TOGGLEABLE_FEATURES].map((f) => {
-          const on = flags[f.key] !== false;
+          const on = "off" in f && f.off ? flags[f.key] === true : flags[f.key] !== false;
           return (
             <li key={f.key} className="flex items-center justify-between gap-3 px-4 py-3">
               <div className="min-w-0">

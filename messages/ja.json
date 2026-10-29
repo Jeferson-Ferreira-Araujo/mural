@@ -2317,7 +2317,8 @@
     "hoamnpv": "生年月日を入力してください（日/月/年）。",
     "hi5dd4t": "日",
     "hgblxzz": "月",
-    "hxhqvrf": "年"
+    "hxhqvrf": "年",
+    "haion2k": "今後のアップデート"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

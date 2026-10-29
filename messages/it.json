@@ -2317,7 +2317,8 @@
     "hoamnpv": "Inserisci la tua data di nascita (giorno/mese/anno).",
     "hi5dd4t": "Giorno",
     "hgblxzz": "Mese",
-    "hxhqvrf": "Anno"
+    "hxhqvrf": "Anno",
+    "haion2k": "Aggiornamenti in arrivo"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

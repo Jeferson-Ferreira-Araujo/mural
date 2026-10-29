@@ -2317,7 +2317,8 @@
     "hoamnpv": "Indica tu fecha de nacimiento (día/mes/año).",
     "hi5dd4t": "Día",
     "hgblxzz": "Mes",
-    "hxhqvrf": "Año"
+    "hxhqvrf": "Año",
+    "haion2k": "Próximas actualizaciones"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

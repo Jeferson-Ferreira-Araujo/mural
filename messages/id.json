@@ -2317,7 +2317,8 @@
     "hoamnpv": "Masukkan tanggal lahir Anda (hari/bulan/tahun).",
     "hi5dd4t": "Hari",
     "hgblxzz": "Bulan",
-    "hxhqvrf": "Tahun"
+    "hxhqvrf": "Tahun",
+    "haion2k": "Pembaruan mendatang"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

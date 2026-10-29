@@ -14,13 +14,14 @@ export const TOGGLEABLE_FORMATS: { key: string; type: MessageType; label: string
 ];
 
 /** Recursos do site (não são formatos de pin). Desligado: some a opção; o que já foi criado continua. */
-export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string }[] = [
+export const TOGGLEABLE_FEATURES: { key: string; label: string; hint: string; /** desligado por padrão: só liga quando o administrador ligar */ off?: boolean }[] = [
   { key: "pin_daily", label: "Versículo e frase do dia", hint: "Pins da loja: um texto novo todo dia, colocado em qualquer lugar do mural" },
   { key: "pin_clock", label: "Relógio", hint: "Pin da loja: a hora passando no mural" },
   { key: "pin_weather", label: "Clima", hint: "Pin da loja: o tempo da cidade escolhida" },
   { key: "mural_swipe", label: "Trocar de mural arrastando (celular)", hint: "Arrastar o mural para o lado passa para o próximo mural da pessoa. Desligado por padrão" },
   { key: "live_presence", label: "Visitantes no mural em tempo real", hint: "O dono vê quem está no mural agora (cada pessoa liga no perfil). Desligado por padrão: ninguém manda sinais e o botão some do perfil" },
   { key: "secret_flip", label: "Segredo: pin virado ao contrário", hint: "O pin em segredo aparece virado de costas (a tachinha ou fita levanta, ele vira e prende de novo). Desligado: o segredo volta a ser o pin borrado" },
+  { key: "news_soon", label: "Atualizações futuras", hint: "Botão no menu lateral que abre a lista de novidades (o texto das novidades é escrito na aba Atualizações futuras). Desligado por padrão: o botão some, e o que foi escrito fica guardado", off: true },
   { key: "reactions", label: "Reações aos pins", hint: "O dono do mural reage com emoji no detalhe do pin (e o autor é avisado no sino)" },
 ];
 

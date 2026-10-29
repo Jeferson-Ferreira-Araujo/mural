@@ -2317,7 +2317,8 @@
     "hoamnpv": "Укажите дату рождения (день/месяц/год).",
     "hi5dd4t": "День",
     "hgblxzz": "Месяц",
-    "hxhqvrf": "Год"
+    "hxhqvrf": "Год",
+    "haion2k": "Будущие обновления"
   },
   "notifications": {
     "pinNew": "@{actor} оставил(а) PINZ на доске «{mural}»{pending, select, yes { · ждёт вашего одобрения} other {}}",

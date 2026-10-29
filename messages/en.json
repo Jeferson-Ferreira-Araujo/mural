@@ -2317,7 +2317,8 @@
     "hoamnpv": "Enter your date of birth (day/month/year).",
     "hi5dd4t": "Day",
     "hgblxzz": "Month",
-    "hxhqvrf": "Year"
+    "hxhqvrf": "Year",
+    "haion2k": "Upcoming updates"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
