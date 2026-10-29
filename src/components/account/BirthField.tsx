@@ -26,7 +26,7 @@ export const BIRTH_ERROR = { too_young: "O Pinz é para maiores de 13 anos.", in
 
 /** Põe as barras sozinho enquanto a pessoa digita só os números. */
 function maskDate(raw: string): string {
-  const n = raw.replace(/D/g, "").slice(0, 8);
+  const n = raw.replace(/\D/g, "").slice(0, 8);
   return n.length > 4 ? `${n.slice(0, 2)}/${n.slice(2, 4)}/${n.slice(4)}` : n.length > 2 ? `${n.slice(0, 2)}/${n.slice(2)}` : n;
 }
 
