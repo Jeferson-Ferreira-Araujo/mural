@@ -119,6 +119,8 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       return;
     }
 
+    // e-mail já cadastrado e ainda não confirmado: o Supabase só reenvia, sem atualizar os dados; o idioma de agora vale para o e-mail
+    await sb.rpc("set_pending_locale", { p_email: mail, p_locale: locale });
     const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick, birth: birthIso, locale } } });
     setBusy(false);
     if (err) {
@@ -136,6 +138,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
 
   async function resend() {
     setResent(null);
+    await getBrowserSupabase().rpc("set_pending_locale", { p_email: email.trim(), p_locale: locale });
     const { error: err } = await getBrowserSupabase().auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: callbackUrl() } });
     setResent(err ? (err.status === 429 ? t("errors.tooMany") : t("errors.signupFail")) : tl("Enviamos o e-mail de novo. Confira a caixa de entrada e o spam."));
   }
