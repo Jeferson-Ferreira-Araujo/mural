@@ -30,8 +30,16 @@ python3 /opt/mural/backup/restore.py /opt/mural/backups/pontos/2026-10-28 --arqu
 
 O que existe é sobrescrito e o que falta volta (pela chave primária). Não recria logins: a API não entrega o hash da senha. Para isso, use o backup do Supabase.
 
+## Cópia fora do VPS (Google Drive)
+
+Todo dia, logo após o backup, o `/opt/mural/backup/offsite.sh` envia a cópia **criptografada** ao Drive de `pinz.projeto@gmail.com` (pasta `PINZ-backups`, 14 dias de diários + os pontos de restauração). Nomes e conteúdo aparecem embaralhados no Drive.
+- Configuração do rclone: `/root/.config/rclone/rclone.conf` (remotos `pinzdrive` e `pinzcrypt`). Credencial OAuth própria, app "PINZ Backup" em produção no Google Cloud (conta pinz.projeto).
+- **Guarde as duas chaves de criptografia (password e password2 do `pinzcrypt`) fora do VPS** (gerenciador de senhas): sem elas, o que está no Drive não abre. Para vê-las no VPS: `rclone config show pinzcrypt` (aparecem ofuscadas; para o valor original use `rclone reveal <valor>`).
+- Baixar um backup do Drive para o VPS: `rclone copy pinzcrypt:pontos/2026-10-28 /opt/mural/backups/pontos/2026-10-28` e depois restaurar com `restore.py`.
+- Se o envio parar com erro de autorização (acesso revogado), refaça o login: `rclone authorize drive <client_id> <client_secret>` e atualize o token do `pinzdrive`.
+
 ## Limites (leia)
 
-- O backup próprio fica no mesmo VPS: se o VPS morrer, ele morre junto. O Supabase (banco) e o GitHub (código) continuam existindo. Para proteção total, copie periodicamente a pasta de pontos para outro lugar.
+- Se o VPS morrer, o backup do Drive (criptografado) continua; sem as chaves de criptografia, porém, ele não abre.
 - Migrações do banco não estão no Git; o esquema está nos backups do Supabase.
 - Backup completo com **recuperação a qualquer minuto** (PITR) é um complemento pago do Supabase; não está ligado.
