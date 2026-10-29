@@ -2311,7 +2311,9 @@
     "h12eqpv4": "Novità",
     "h1byjsop": "Ci sono novità",
     "h14uy13j": "Resta aggiornato sulle ultime novità di PINZ.",
-    "hle01w1": "NUOVO"
+    "hle01w1": "NUOVO",
+    "h1r4qsbk": "Novità in arrivo",
+    "hk0iw8m": "Scopri cosa arriva su PINZ."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

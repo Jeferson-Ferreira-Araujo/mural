@@ -2311,7 +2311,9 @@
     "h12eqpv4": "What's new",
     "h1byjsop": "New updates",
     "h14uy13j": "Stay up to date with the latest PINZ updates.",
-    "hle01w1": "NEW"
+    "hle01w1": "NEW",
+    "h1r4qsbk": "Upcoming features",
+    "hk0iw8m": "See what's coming to PINZ."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

@@ -48,14 +48,14 @@ export function NovidadesLink() {
           <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" />
           <path d="M19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7L19 16Z" />
         </svg>
-        {tl("Novidades")}
+        {tl("Novidades futuras")}
         {fresh && <span className="size-[0.55em] rounded-full bg-[#d9a21b]" aria-label={tl("Tem novidade")} />}
         <svg viewBox="0 0 24 24" className="size-[0.95em]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="m9 5 7 7-7 7" />
         </svg>
       </button>
-      <Modal open={open} onClose={() => setOpen(false)} title={tl("Novidades")} wide>
-        <p className="-mt-1 mb-3 text-sm text-[#6b5440]">{tl("Fique por dentro das últimas atualizações do PINZ.")}</p>
+      <Modal open={open} onClose={() => setOpen(false)} title={tl("Novidades futuras")} wide>
+        <p className="-mt-1 mb-3 text-sm text-[#6b5440]">{tl("Veja o que vem por aí no PINZ.")}</p>
         <ul className="space-y-3">
           {items.map((n, i) => {
             const x = newsText(n.texts, locale);

@@ -530,7 +530,7 @@ export default function Admin() {
               ["features", "Recursos"],
               ["analytics", "Analytics"],
               ["coupons", "Cupons"],
-              ["news", "Novidades"],
+              ["news", "Novidades futuras"],
               ["deleted", "Excluídos"],
               ["tests", "Testes"],
             ] as const
