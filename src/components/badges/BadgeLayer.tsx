@@ -101,8 +101,8 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         data-badge-kind="display"
         // quem vê o mural (não é o dono): tocar no widget abre o detalhe
         {...(!editable && !b.hidden ? { role: "button", tabIndex: 0, "aria-label": tl("Ver o display em tamanho grande"), onClick: () => ctx.openDetail(b.id), onKeyDown: (e: React.KeyboardEvent) => e.key === "Enter" && ctx.openDetail(b.id) } : {})}
-        className={`group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : b.hidden ? "" : "pointer-events-auto cursor-zoom-in"}`}
-        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1 }}
+        className={`pz-badge-in group absolute ${editable ? "pointer-events-auto cursor-zoom-in touch-none" : b.hidden ? "" : "pointer-events-auto cursor-zoom-in"}`}
+        style={{ left: `${b.x}%`, top: `${b.y}%`, width: `${w}em`, aspectRatio: ratioOfBadge(b.key, b.data), transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`, opacity: draggingId === b.id ? 0.25 : 1, animationDelay: `${(0.1 + (b.y / 100) * 0.6).toFixed(2)}s` }}
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
@@ -122,7 +122,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
     <div
       ref={ref}
       data-badge-id={b.id}
-      className={`absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
+      className={`pz-badge-in absolute ${editable ? "pointer-events-auto cursor-grab touch-none active:cursor-grabbing" : ""}`}
       style={{
         left: `${b.x}%`,
         top: `${b.y}%`,
@@ -131,6 +131,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
         transform: `translate(-50%, -50%) rotate(${b.rotation ?? 0}deg)`,
         opacity: draggingId === b.id ? 0.25 : 1,
         filter: "drop-shadow(0.12em 0.22em 0.2em rgba(30,12,0,.5))",
+        animationDelay: `${(0.1 + (b.y / 100) * 0.6).toFixed(2)}s`,
       }}
     >
       {/* área de toque maior no celular: o botton é pequeno para acertar com o dedo */}

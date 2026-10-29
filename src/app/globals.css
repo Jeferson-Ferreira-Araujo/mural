@@ -98,6 +98,17 @@ body {
     transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(1) rotate(var(--rot, 0deg));
   }
 }
+/* displays e bottons entram junto com os pins (usa opacity e translate: não briga com o transform de posição) */
+@keyframes pz-badge-in {
+  from {
+    opacity: 0;
+    translate: 0 -1.2em;
+    scale: 1.04;
+  }
+}
+.pz-badge-in {
+  animation: pz-badge-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
 /* o deslocamento do dono (--ox, --oy) vai na propriedade `translate`, fora da lista de transições: soltar o pin não anima */
 .pinned {
   translate: var(--ox, 0px) var(--oy, 0px);
