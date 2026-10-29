@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export const NEWS_LOCALES = ["pt", "en", "es", "fr", "it", "de", "nl", "pl", "uk", "ru", "tr", "ar", "hi", "id", "vi", "th", "ko", "ja", "zh"] as const;
 
 export type NewsTexts = Record<string, { t: string; b: string }>;
-export type NewsItem = { id: string; createdAt: string; texts: NewsTexts };
+export type NewsItem = { id: string; createdAt: string; texts: NewsTexts; image?: string | null };
 
 export async function fetchNews(sb: SupabaseClient): Promise<NewsItem[]> {
   const { data, error } = await sb.rpc("list_news");

@@ -31,9 +31,11 @@ async function translate(text: string, to: string): Promise<string | null> {
 export async function POST(req: Request) {
   const who = await requireAdmin(req);
   if (typeof who !== "string") return who;
-  const { id, title, body, published } = (await req.json().catch(() => ({}))) as { id?: string; title?: string; body?: string; published?: boolean };
+  const { id, title, body, published, image } = (await req.json().catch(() => ({}))) as { id?: string; title?: string; body?: string; published?: boolean; image?: string };
   if (!title?.trim() || !body?.trim() || title.length > 120 || body.length > 450) return fail(400, "invalid_text");
   if (id && !/^[0-9a-f-]{36}$/i.test(id)) return fail(400, "invalid_id");
+  const img = image?.trim() || null;
+  if (img && (img.length > 300 || !/^(\/|https:\/\/)[^\s"<>]+$/.test(img))) return fail(400, "invalid_image");
   const texts: NewsTexts = { pt: { t: title.trim(), b: body.trim() } };
   const failed: string[] = [];
   const langs = NEWS_LOCALES.filter((l) => l !== "pt");
@@ -47,7 +49,7 @@ export async function POST(req: Request) {
     );
   }
   const admin = adminClient();
-  const row = { texts, published: published !== false, updated_at: new Date().toISOString() };
+  const row = { texts, published: published !== false, image_url: img, updated_at: new Date().toISOString() };
   const { error } = id ? await admin.from("site_news").update(row).eq("id", id) : await admin.from("site_news").insert(row);
   if (error) return fail(500, "save_failed");
   return NextResponse.json({ ok: true, failed });

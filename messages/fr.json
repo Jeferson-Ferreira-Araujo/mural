@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ n'utilise que le stockage essentiel et, avec ton accord, des données d'usage anonymes.",
     "hlsbx0h": "Sans publicité ni suivi par des tiers.",
     "h12eqpv4": "Nouveautés",
-    "h1byjsop": "Du nouveau"
+    "h1byjsop": "Du nouveau",
+    "h14uy13j": "Restez informé des dernières mises à jour de PINZ.",
+    "hle01w1": "NOUVEAU"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

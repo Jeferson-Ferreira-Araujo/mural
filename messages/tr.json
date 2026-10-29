@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ yalnızca gerekli depolamayı ve, iznin olursa, anonim kullanım verilerini kullanır.",
     "hlsbx0h": "Reklam yok, üçüncü taraf takibi yok.",
     "h12eqpv4": "Yenilikler",
-    "h1byjsop": "Yenilik var"
+    "h1byjsop": "Yenilik var",
+    "h14uy13j": "PINZ'in son güncellemelerinden haberdar olun.",
+    "hle01w1": "YENİ"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

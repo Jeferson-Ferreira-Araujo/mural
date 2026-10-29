@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ gebruikt alleen essentiële opslag en, met jouw toestemming, anonieme gebruiksgegevens.",
     "hlsbx0h": "Geen advertenties en geen tracking door derden.",
     "h12eqpv4": "Nieuw",
-    "h1byjsop": "Er is nieuws"
+    "h1byjsop": "Er is nieuws",
+    "h14uy13j": "Blijf op de hoogte van de laatste PINZ-updates.",
+    "hle01w1": "NIEUW"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

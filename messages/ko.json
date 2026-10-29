@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ는 필수 저장소만 사용하며, 허락하신 경우에만 익명 이용 데이터를 사용합니다.",
     "hlsbx0h": "광고도, 제3자 추적도 없습니다.",
     "h12eqpv4": "새 소식",
-    "h1byjsop": "새 소식 있음"
+    "h1byjsop": "새 소식 있음",
+    "h14uy13j": "PINZ의 최신 업데이트를 확인하세요.",
+    "hle01w1": "NEW"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

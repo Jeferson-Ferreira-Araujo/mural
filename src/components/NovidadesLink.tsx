@@ -8,6 +8,7 @@ import { fetchNews, newsText, type NewsItem } from "@/lib/news";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Modal } from "./account/Modal";
 
+const TONES = ["border-[#efdfa8] bg-[#fdf4d9]", "border-[#f0cfc8] bg-[#fbe9e5]", "border-[#cfe2c2] bg-[#e9f4e2]", "border-[#d3d0ee] bg-[#ebe9f9]"];
 const SEEN_KEY = "pinz:news-seen";
 
 /** "Novidades": link discreto abaixo das estatísticas; abre a lista de novidades do site, no idioma da pessoa. A bolinha dourada some depois que ela abre. */
@@ -18,6 +19,7 @@ export function NovidadesLink() {
   const [items, setItems] = useState<NewsItem[] | null>(null);
   const [open, setOpen] = useState(false);
   const [seen, setSeen] = useState<string | null>(null);
+  const [lastSeen, setLastSeen] = useState<string | null>(null); // o que já tinha visto antes de abrir (marca o que é NOVO)
 
   useEffect(() => {
     try {
@@ -31,6 +33,7 @@ export function NovidadesLink() {
   const fresh = !seen || new Date(latest).getTime() > new Date(seen).getTime();
 
   function show() {
+    setLastSeen(seen);
     setOpen(true);
     try {
       localStorage.setItem(SEEN_KEY, latest);
@@ -51,15 +54,26 @@ export function NovidadesLink() {
           <path d="m9 5 7 7-7 7" />
         </svg>
       </button>
-      <Modal open={open} onClose={() => setOpen(false)} title={tl("Novidades")}>
+      <Modal open={open} onClose={() => setOpen(false)} title={tl("Novidades")} wide>
+        <p className="-mt-1 mb-3 text-sm text-[#6b5440]">{tl("Fique por dentro das últimas atualizações do PINZ.")}</p>
         <ul className="space-y-3">
-          {items.map((n) => {
+          {items.map((n, i) => {
             const x = newsText(n.texts, locale);
+            const isNew = !lastSeen || new Date(n.createdAt).getTime() > new Date(lastSeen).getTime();
             return (
-              <li key={n.id} className="rounded-2xl border border-[#e1d3ba] bg-white/70 p-3.5">
-                <p className="text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">{new Date(n.createdAt).toLocaleDateString(tag, { day: "2-digit", month: "long", year: "numeric" })}</p>
-                <h3 className="font-title mt-0.5 text-lg font-semibold text-[#2a1c12]">{x.t}</h3>
-                <p className="mt-1 text-[15px] leading-snug whitespace-pre-line text-[#3a2c1d]">{x.b}</p>
+              <li key={n.id} className={`flex items-center gap-3 rounded-2xl border p-4 ${TONES[i % TONES.length]}`}>
+                <div className="min-w-0 flex-1">
+                  <p className="flex flex-wrap items-center gap-2 text-xs font-semibold tracking-wide text-[#8a7b69] uppercase">
+                    {new Date(n.createdAt).toLocaleDateString(tag, { day: "2-digit", month: "long", year: "numeric" })}
+                    {isNew && <span className="rounded-full bg-[#f7c948] px-2.5 py-0.5 text-[11px] font-extrabold text-[#3a2a08]">{tl("NOVO")}</span>}
+                  </p>
+                  <h3 className="font-title mt-1 text-xl leading-tight font-bold text-[#2a1c12]">{x.t}</h3>
+                  <p className="mt-1.5 text-[15px] leading-snug whitespace-pre-line text-[#3a2c1d]">{x.b}</p>
+                </div>
+                {n.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={n.image} alt="" loading="lazy" className="hidden h-28 w-[34%] max-w-44 shrink-0 object-contain sm:block" />
+                )}
               </li>
             );
           })}

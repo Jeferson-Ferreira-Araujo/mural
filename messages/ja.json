@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ は必須のストレージのみを使用し、許可いただいた場合に匿名の利用データを使用します。",
     "hlsbx0h": "広告も第三者トラッキングもありません。",
     "h12eqpv4": "新着情報",
-    "h1byjsop": "新着あり"
+    "h1byjsop": "新着あり",
+    "h14uy13j": "PINZの最新アップデートをチェックしましょう。",
+    "hle01w1": "NEW"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

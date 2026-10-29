@@ -5,7 +5,7 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { Spinner } from "@/components/ui";
 import type { NewsTexts } from "@/lib/news";
 
-type Row = { id: string; createdAt: string; texts: NewsTexts; published: boolean };
+type Row = { id: string; createdAt: string; texts: NewsTexts; published: boolean; image?: string | null };
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 const field = "w-full rounded-xl border border-[#d9c9ad] bg-white px-3.5 py-2 text-base text-[#2a1c12] outline-none focus:border-[#d9a21b]";
@@ -16,6 +16,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
   const [editing, setEditing] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [image, setImage] = useState("");
   const [published, setPublished] = useState(true);
   const [busy, setBusy] = useState(false);
 
@@ -31,6 +32,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
     setEditing(null);
     setTitle("");
     setBody("");
+    setImage("");
     setPublished(true);
   }
 
@@ -41,7 +43,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
     const res = await fetch("/api/admin/news", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ id: editing ?? undefined, title, body, published }),
+      body: JSON.stringify({ id: editing ?? undefined, title, body, published, image }),
     }).catch(() => null);
     const d = (await res?.json().catch(() => null)) as { failed?: string[] } | null;
     setBusy(false);
@@ -68,6 +70,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
         <p className="mt-0.5 text-xs text-[#6b5440]">Escreva em português, com palavras simples. Ao publicar, o texto é traduzido sozinho para os outros 18 idiomas.</p>
         <input className={`${field} mt-3`} placeholder="Título (ex.: Agora você pode seguir pessoas)" value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} aria-label="Título" />
         <textarea className={`${field} mt-2 min-h-24`} placeholder="Texto curto explicando a novidade" value={body} maxLength={450} onChange={(e) => setBody(e.target.value)} aria-label="Texto" />
+        <input className={`${field} mt-2`} placeholder="Imagem (opcional): endereço, ex.: /novidades/sino.png" value={image} maxLength={300} onChange={(e) => setImage(e.target.value)} aria-label="Imagem" />
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <label className="flex cursor-pointer items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} /> Visível no site
@@ -118,6 +121,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
                         setEditing(r.id);
                         setTitle(r.texts.pt?.t ?? "");
                         setBody(r.texts.pt?.b ?? "");
+                        setImage(r.image ?? "");
                         setPublished(r.published);
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}

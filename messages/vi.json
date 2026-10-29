@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ chỉ dùng bộ nhớ thiết yếu và, khi bạn cho phép, dữ liệu sử dụng ẩn danh.",
     "hlsbx0h": "Không quảng cáo, không theo dõi của bên thứ ba.",
     "h12eqpv4": "Có gì mới",
-    "h1byjsop": "Có điều mới"
+    "h1byjsop": "Có điều mới",
+    "h14uy13j": "Cập nhật những thay đổi mới nhất của PINZ.",
+    "hle01w1": "MỚI"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

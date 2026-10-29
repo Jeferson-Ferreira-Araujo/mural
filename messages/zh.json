@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ 仅使用必要的存储,并在你授权后使用匿名使用数据。",
     "hlsbx0h": "无广告,无第三方跟踪。",
     "h12eqpv4": "新动态",
-    "h1byjsop": "有新动态"
+    "h1byjsop": "有新动态",
+    "h14uy13j": "了解 PINZ 的最新动态。",
+    "hle01w1": "新"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ nutzt nur den notwendigen Speicher und, mit deiner Erlaubnis, anonyme Nutzungsdaten.",
     "hlsbx0h": "Keine Werbung, kein Tracking durch Dritte.",
     "h12eqpv4": "Neuigkeiten",
-    "h1byjsop": "Es gibt Neues"
+    "h1byjsop": "Es gibt Neues",
+    "h14uy13j": "Bleib auf dem Laufenden über die neuesten PINZ-Updates.",
+    "hle01w1": "NEU"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

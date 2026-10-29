@@ -2309,7 +2309,9 @@
     "h1q4n215": "PINZ uses only essential storage and, with your permission, anonymous usage data.",
     "hlsbx0h": "No ads and no third-party tracking.",
     "h12eqpv4": "What's new",
-    "h1byjsop": "New updates"
+    "h1byjsop": "New updates",
+    "h14uy13j": "Stay up to date with the latest PINZ updates.",
+    "hle01w1": "NEW"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
