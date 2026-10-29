@@ -2314,7 +2314,10 @@
     "hle01w1": "NEW",
     "h1r4qsbk": "今後の新機能",
     "hk0iw8m": "PINZに近日登場する機能をチェック。",
-    "hoamnpv": "生年月日を入力してください（日/月/年）。"
+    "hoamnpv": "生年月日を入力してください（日/月/年）。",
+    "hi5dd4t": "日",
+    "hgblxzz": "月",
+    "hxhqvrf": "年"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

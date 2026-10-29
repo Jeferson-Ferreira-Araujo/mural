@@ -1,22 +1,17 @@
 "use client";
 
 import { useRef } from "react";
-import { Field, inputClass } from "../ui";
+import { inputClass } from "../ui";
+import { useLit } from "@/i18n/literal";
 import { useTranslations } from "next-intl";
 
 /** DD/MM/AAAA digitado -> AAAA-MM-DD, ou null se a data não existe. */
 export function toIso(text: string): string | null {
-  const m = text.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const m = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (!m) return null;
   const [d, mo, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
   const dt = new Date(Date.UTC(y, mo - 1, d));
-  return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d ? `${m[3]}-${m[2]}-${m[1]}` : null;
-}
-
-/** Põe as barras sozinho enquanto a pessoa digita só os números. */
-function maskDate(raw: string): string {
-  const n = raw.replace(/\D/g, "").slice(0, 8);
-  return n.length > 4 ? `${n.slice(0, 2)}/${n.slice(2, 4)}/${n.slice(4)}` : n.length > 2 ? `${n.slice(0, 2)}/${n.slice(2)}` : n;
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d ? `${m[3]}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}` : null;
 }
 
 /** Menor de 13 anos (data AAAA-MM-DD): o Pinz não é para essa idade. */
@@ -30,40 +25,32 @@ export function isUnder13(iso: string): boolean {
 export const BIRTH_FORMAT_HINT = "Digite a data assim: dia/mês/ano, por exemplo 25/12/1990.";
 export const BIRTH_ERROR = { too_young: "O Pinz é para maiores de 13 anos.", invalid_birth: "Confira a data de nascimento.", failed: "Não foi possível salvar agora. Tente de novo." } as const;
 
-/** Data de nascimento: dá para digitar (as barras entram sozinhas) ou escolher no calendário. `value` fica em dd/mm/aaaa. */
+/** Data de nascimento em três campos na mesma linha (dia, mês, ano); o foco avança sozinho. `value` fica em dd/mm/aaaa (ou parcial, enquanto digita). */
 export function BirthField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const tx = useTranslations("components.account.BirthField");
-  const picker = useRef<HTMLInputElement>(null);
-  const today = useRef(new Date().toISOString().slice(0, 10));
+  const tl = useLit();
+  const [d = "", m = "", y = ""] = value.split("/");
+  const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const set = (i: 0 | 1 | 2, raw: string) => {
+    const len = i === 2 ? 4 : 2;
+    const v = raw.replace(/D/g, "").slice(0, len);
+    const parts = [d, m, y];
+    parts[i] = v;
+    onChange(parts.every((p) => !p) ? "" : parts.join("/"));
+    if (v.length === len && i < 2) refs[i + 1].current?.focus();
+  };
+  const back = (i: 1 | 2, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !e.currentTarget.value) refs[i - 1].current?.focus();
+  };
+  const cls = `${inputClass} text-center`;
   return (
-    <div>
-      <Field label={tx("dataDeNascimento")}>
-        {(id) => (
-          <div className="relative">
-            <input id={id} inputMode="numeric" autoComplete="bday" placeholder={tx("ddMmAaaa")} maxLength={10} value={value} onChange={(e) => onChange(maskDate(e.target.value))} className={`${inputClass} pr-12`} />
-            {/* calendário para quem prefere escolher */}
-            <button type="button" aria-label={tx("escolherADataNoCalendario")} onClick={() => picker.current?.showPicker?.()} className="absolute inset-y-0 right-1 grid w-11 cursor-pointer place-items-center text-[#6b5440] hover:text-[#2f2218]">
-              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <rect x="3.5" y="5" width="17" height="15" rx="2" />
-                <path d="M3.5 10h17M8 3v4M16 3v4" />
-              </svg>
-            </button>
-            <input
-              ref={picker}
-              type="date"
-              tabIndex={-1}
-              aria-hidden
-              min="1900-01-01"
-              max={today.current}
-              onChange={(e) => {
-                const [y, mo, d] = e.target.value.split("-");
-                if (y) onChange(`${d}/${mo}/${y}`);
-              }}
-              className="pointer-events-none absolute right-0 bottom-0 size-px opacity-0"
-            />
-          </div>
-        )}
-      </Field>
-    </div>
+    <fieldset>
+      <legend className="mb-1 block text-sm font-semibold">{tx("dataDeNascimento")}</legend>
+      <div className="grid grid-cols-[1fr_1fr_1.6fr] gap-2">
+        <input ref={refs[0]} inputMode="numeric" autoComplete="bday-day" placeholder={tl("Dia")} aria-label={tl("Dia")} maxLength={2} value={d} onChange={(e) => set(0, e.target.value)} className={cls} />
+        <input ref={refs[1]} inputMode="numeric" autoComplete="bday-month" placeholder={tl("Mês")} aria-label={tl("Mês")} maxLength={2} value={m} onChange={(e) => set(1, e.target.value)} onKeyDown={(e) => back(1, e)} className={cls} />
+        <input ref={refs[2]} inputMode="numeric" autoComplete="bday-year" placeholder={tl("Ano")} aria-label={tl("Ano")} maxLength={4} value={y} onChange={(e) => set(2, e.target.value)} onKeyDown={(e) => back(2, e)} className={cls} />
+      </div>
+    </fieldset>
   );
 }

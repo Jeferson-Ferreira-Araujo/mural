@@ -2314,7 +2314,10 @@
     "hle01w1": "NEW",
     "h1r4qsbk": "다가올 새 기능",
     "hk0iw8m": "PINZ에 곧 찾아올 소식을 확인하세요.",
-    "hoamnpv": "생년월일을 입력하세요 (일/월/년)."
+    "hoamnpv": "생년월일을 입력하세요 (일/월/년).",
+    "hi5dd4t": "일",
+    "hgblxzz": "월",
+    "hxhqvrf": "년"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

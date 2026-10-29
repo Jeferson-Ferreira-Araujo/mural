@@ -2314,7 +2314,10 @@
     "hle01w1": "BARU",
     "h1r4qsbk": "Fitur mendatang",
     "hk0iw8m": "Lihat apa yang akan hadir di PINZ.",
-    "hoamnpv": "Masukkan tanggal lahir Anda (hari/bulan/tahun)."
+    "hoamnpv": "Masukkan tanggal lahir Anda (hari/bulan/tahun).",
+    "hi5dd4t": "Hari",
+    "hgblxzz": "Bulan",
+    "hxhqvrf": "Tahun"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

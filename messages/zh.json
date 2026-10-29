@@ -2314,7 +2314,10 @@
     "hle01w1": "新",
     "h1r4qsbk": "即将推出",
     "hk0iw8m": "看看 PINZ 即将带来什么。",
-    "hoamnpv": "请输入您的出生日期（日/月/年）。"
+    "hoamnpv": "请输入您的出生日期（日/月/年）。",
+    "hi5dd4t": "日",
+    "hgblxzz": "月",
+    "hxhqvrf": "年"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

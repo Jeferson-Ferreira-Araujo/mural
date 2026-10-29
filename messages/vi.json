@@ -2314,7 +2314,10 @@
     "hle01w1": "MỚI",
     "h1r4qsbk": "Tính năng sắp ra mắt",
     "hk0iw8m": "Xem điều gì sắp đến với PINZ.",
-    "hoamnpv": "Nhập ngày sinh của bạn (ngày/tháng/năm)."
+    "hoamnpv": "Nhập ngày sinh của bạn (ngày/tháng/năm).",
+    "hi5dd4t": "Ngày",
+    "hgblxzz": "Tháng",
+    "hxhqvrf": "Năm"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

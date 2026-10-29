@@ -2314,7 +2314,10 @@
     "hle01w1": "NUEVO",
     "h1r4qsbk": "Próximas novedades",
     "hk0iw8m": "Mira lo que viene en PINZ.",
-    "hoamnpv": "Indica tu fecha de nacimiento (día/mes/año)."
+    "hoamnpv": "Indica tu fecha de nacimiento (día/mes/año).",
+    "hi5dd4t": "Día",
+    "hgblxzz": "Mes",
+    "hxhqvrf": "Año"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2314,7 +2314,10 @@
     "hle01w1": "جديد",
     "h1r4qsbk": "ميزات قادمة",
     "hk0iw8m": "اكتشف ما سيصل قريبًا إلى PINZ.",
-    "hoamnpv": "أدخل تاريخ ميلادك (يوم/شهر/سنة)."
+    "hoamnpv": "أدخل تاريخ ميلادك (يوم/شهر/سنة).",
+    "hi5dd4t": "يوم",
+    "hgblxzz": "شهر",
+    "hxhqvrf": "سنة"
   },
   "notifications": {
     "pinNew": "ترك @{actor} PINZ على اللوحة «{mural}»{pending, select, yes { · بانتظار موافقتك} other {}}",
