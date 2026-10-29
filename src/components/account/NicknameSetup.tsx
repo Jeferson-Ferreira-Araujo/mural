@@ -63,7 +63,7 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
     if (busy || !ok) return;
     setError(null);
     const iso = birth ? toIso(birth) : null;
-    if (birth && !iso) return setError(tl(BIRTH_FORMAT_HINT));
+    if (!iso) return setError(tl(birth ? BIRTH_FORMAT_HINT : "Informe sua data de nascimento (dia/mês/ano)."));
     if (iso && isUnder13(iso)) return setError(tl(BIRTH_ERROR.too_young)); // confere antes de salvar o nome (que depois não muda)
     setBusy(true);
     const { data, error: err } = await getBrowserSupabase().rpc("claim_nickname", { p_nick: nick });

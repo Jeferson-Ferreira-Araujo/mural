@@ -2313,7 +2313,8 @@
     "h14uy13j": "Stay up to date with the latest PINZ updates.",
     "hle01w1": "NEW",
     "h1r4qsbk": "Upcoming features",
-    "hk0iw8m": "See what's coming to PINZ."
+    "hk0iw8m": "See what's coming to PINZ.",
+    "hoamnpv": "Enter your date of birth (day/month/year)."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

@@ -8,10 +8,26 @@ import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
+import { BIRTH_ERROR, BirthField, isUnder13, toIso } from "./account/BirthField";
 import { CodeStep } from "./CodeStep";
 import { OAuthButtons } from "./OAuthButtons";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
 import { useLit } from "@/i18n/literal";
+
+/** Quem já informou uma idade abaixo do mínimo não consegue tentar de novo outra data neste aparelho. */
+const MINOR_KEY = "pinz:minor";
+const blockedMinor = () => {
+  try {
+    return localStorage.getItem(MINOR_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+const markMinor = () => {
+  try {
+    localStorage.setItem(MINOR_KEY, "1");
+  } catch {}
+};
 
 type Mode = "login" | "signup";
 
@@ -30,6 +46,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
   const [nick, setNick] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [birth, setBirth] = useState("");
   const [show, setShow] = useState(false);
   const [remember, setRememberState] = useState(true);
   // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
@@ -45,6 +62,15 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
     e.preventDefault();
     const mail = email.trim();
     if (signup && nickState !== "ok") return setError(nickState === "taken" ? t("errors.nickTaken") : t("errors.nickInvalid"));
+    let birthIso: string | null = null;
+    if (signup) {
+      birthIso = toIso(birth);
+      if (!birthIso) return setError(tl("Informe sua data de nascimento (dia/mês/ano)."));
+      if (isUnder13(birthIso) || blockedMinor()) {
+        markMinor();
+        return setError(tl(BIRTH_ERROR.too_young));
+      }
+    }
     if (!/^\S+@\S+\.\S+$/.test(mail)) return setError(t("errors.emailInvalid"));
     if (!password) return setError(t("errors.passwordRequired"));
     if (mode === "signup") {
@@ -83,7 +109,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       return;
     }
 
-    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick } } });
+    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick, birth: birthIso } } });
     setBusy(false);
     if (err) {
       if (/registered|already/i.test(err.message)) setError(t("errors.emailExists"));
@@ -164,6 +190,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
             state={nickState}
           />
         )}
+        {signup && <BirthField value={birth} onChange={(v) => { setBirth(v); setError(null); }} />}
         <Field label={t("email")}>
           {(id) => (
             <input

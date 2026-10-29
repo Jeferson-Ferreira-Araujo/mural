@@ -2313,7 +2313,8 @@
     "h14uy13j": "PINZ'in son güncellemelerinden haberdar olun.",
     "hle01w1": "YENİ",
     "h1r4qsbk": "Gelecek yenilikler",
-    "hk0iw8m": "PINZ'e neler geleceğini görün."
+    "hk0iw8m": "PINZ'e neler geleceğini görün.",
+    "hoamnpv": "Doğum tarihinizi girin (gün/ay/yıl)."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

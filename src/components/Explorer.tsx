@@ -1339,7 +1339,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         onDone={async () => window.location.assign(await homeRouteFor(getBrowserSupabase()))}
       />
       {companyWelcome && <FirstTimeTip uid={session?.user.id} createdAt={session?.user.created_at} ready={isOwner && unlocked && !nickPending} nick={myNick ?? ""} company />}
-      {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); setOnbInfo((o) => (o ? { ...o, done: true, setup: true } : o)); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} profile={!onbInfo?.done} mural={needsSetup ? firstOwn : null} onSaved={() => void reloadOwn()} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
+      {everOnb && <OnboardingModal open={onbOpen} onClose={() => { setOnbOpen(false); setOnbInfo((o) => (o ? { ...o, done: true, setup: true } : o)); window.setTimeout(() => window.dispatchEvent(new CustomEvent("pinz:pan-hint")), 400); }} profile={!onbInfo?.done} birthKnown={!!onbInfo?.birth} mural={needsSetup ? firstOwn : null} onSaved={() => void reloadOwn()} nick={myNick ?? ""} plus={selected?.plan === "full"} uid={session?.user.id} />}
       {everTour && <Tour open={tourOpen} onClose={() => setTourOpen(false)} />}
       <Modal open={!!archivedNote} onClose={() => closeArchivedNote(false)} title="" label={tx("pinsArquivados")}>
         {archivedNote && (

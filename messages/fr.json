@@ -2313,7 +2313,8 @@
     "h14uy13j": "Restez informé des dernières mises à jour de PINZ.",
     "hle01w1": "NOUVEAU",
     "h1r4qsbk": "Nouveautés à venir",
-    "hk0iw8m": "Découvrez ce qui arrive sur PINZ."
+    "hk0iw8m": "Découvrez ce qui arrive sur PINZ.",
+    "hoamnpv": "Indiquez votre date de naissance (jour/mois/année)."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

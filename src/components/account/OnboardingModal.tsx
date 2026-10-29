@@ -24,7 +24,7 @@ const PLUS_LIST = [0, 2, 3, 4].map((i) => FEATURES.full[i].text).concat("Display
  * 1) foto e data de nascimento (opcionais; só se ainda não foram feitas); 2) o primeiro mural: nome, público ou privado e validade dos pins de outras pessoas;
  * 3) o que o plano grátis tem e o que o PINZ+ acrescenta. O banco guarda o que já foi feito (a configuração do mural nunca mais aparece).
  */
-export function OnboardingModal({ open, onClose, nick, plus = false, uid, profile = true, mural, onSaved }: { open: boolean; onClose: () => void; nick: string; plus?: boolean; uid?: string; /** pede foto e data de nascimento */ profile?: boolean; /** primeiro mural a configurar (null = não precisa) */ mural?: OwnMural | null; onSaved?: () => void }) {
+export function OnboardingModal({ open, onClose, nick, plus = false, uid, profile = true, birthKnown = false, mural, onSaved }: { open: boolean; onClose: () => void; nick: string; plus?: boolean; uid?: string; /** pede foto e data de nascimento */ profile?: boolean; /** a data de nascimento já foi informada no cadastro */ birthKnown?: boolean; /** primeiro mural a configurar (null = não precisa) */ mural?: OwnMural | null; onSaved?: () => void }) {
   const tl = useLit();
   const tx = useTranslations("components.account.OnboardingModal");
   const ts = useTranslations("components.account.MuralSetupModal");
@@ -62,7 +62,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
     const sb = getBrowserSupabase();
     if (step === "profile") {
       const iso = birth ? toIso(birth) : null;
-      if (birth && !iso) return setError(tl(BIRTH_FORMAT_HINT));
+      if (!birthKnown && !iso) return setError(tl(birth ? BIRTH_FORMAT_HINT : "Informe sua data de nascimento (dia/mês/ano)."));
       if (iso) {
         setBusy(true);
         const err = await saveOnboarding(sb, iso, false);
@@ -144,13 +144,15 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
               <h3 className="font-title text-xl font-semibold">{tx("m_ola", { v0: nick })}</h3>
             </div>
             <AvatarUploader nickname={nick} plus={plus} compact />
-            <BirthField
-              value={birth}
-              onChange={(v) => {
-                setBirth(v);
-                setError(null);
-              }}
-            />
+            {!birthKnown && (
+              <BirthField
+                value={birth}
+                onChange={(v) => {
+                  setBirth(v);
+                  setError(null);
+                }}
+              />
+            )}
           </div>
         )}
         {step === "mural" && (

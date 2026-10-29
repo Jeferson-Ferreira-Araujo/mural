@@ -52,7 +52,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
       {/* my-auto: o grupo fica no meio da faixa (e rola normalmente se não couber) */}
       <div className={`flex flex-col gap-[0.9em] ${menu || account ? "" : "my-auto"}`}>
       <div className="flex justify-center">
-        <Brand className="h-[calc(clamp(6.5rem,19dvh,14rem)*var(--logo-k,1))]" />
+        <Brand className={account ? "h-[calc(clamp(6.5rem,19dvh,14rem)*var(--logo-k,1))]" : "h-[calc(clamp(5rem,13dvh,9.5rem)*var(--logo-k,1))]"} />
       </div>
       {!compact && <p className="text-center text-[14px] leading-snug text-[#6b5440]">{tx("compartilheMomentosEspeciaisRecebaRecados")}</p>}
 

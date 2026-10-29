@@ -52,7 +52,7 @@ export function MobileCarousel({ items, plan, locked, hasSelection, unlocked, pa
         <div className={`flex flex-1 flex-col transition-[gap] duration-500 ${landing ? "justify-center gap-6" : "gap-4"}`}>
           <header className="rise mx-auto flex w-[min(90vw,30rem)] flex-col items-center gap-3">
             <h1 className="sr-only">{tx("pinz")}</h1>
-            <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(9rem,27vh,13rem)]" : "h-[4.6rem]"}`} />
+            <Brand className={`transition-[height] duration-500 ease-out ${landing ? "h-[clamp(7rem,20vh,10rem)]" : "h-[4.6rem]"}`} />
           </header>
 
           {/* busca, escolha do mural e pergunta de desbloqueio (e os controles da demonstração) */}

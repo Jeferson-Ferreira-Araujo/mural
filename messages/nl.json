@@ -2313,7 +2313,8 @@
     "h14uy13j": "Blijf op de hoogte van de laatste PINZ-updates.",
     "hle01w1": "NIEUW",
     "h1r4qsbk": "Aankomende nieuwigheden",
-    "hk0iw8m": "Zie wat er aankomt bij PINZ."
+    "hk0iw8m": "Zie wat er aankomt bij PINZ.",
+    "hoamnpv": "Vul je geboortedatum in (dag/maand/jaar)."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
