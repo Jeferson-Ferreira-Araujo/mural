@@ -2307,7 +2307,9 @@
     "h1fs29ls": "Du kannst PINZ+ jederzeit kennenlernen.",
     "h1f21sgs": "Deine erste Pinnwand",
     "h1q4n215": "PINZ nutzt nur den notwendigen Speicher und, mit deiner Erlaubnis, anonyme Nutzungsdaten.",
-    "hlsbx0h": "Keine Werbung, kein Tracking durch Dritte."
+    "hlsbx0h": "Keine Werbung, kein Tracking durch Dritte.",
+    "h12eqpv4": "Neuigkeiten",
+    "h1byjsop": "Es gibt Neues"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

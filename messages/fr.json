@@ -2307,7 +2307,9 @@
     "h1fs29ls": "Tu peux découvrir PINZ+ quand tu veux.",
     "h1f21sgs": "Ton premier tableau",
     "h1q4n215": "PINZ n'utilise que le stockage essentiel et, avec ton accord, des données d'usage anonymes.",
-    "hlsbx0h": "Sans publicité ni suivi par des tiers."
+    "hlsbx0h": "Sans publicité ni suivi par des tiers.",
+    "h12eqpv4": "Nouveautés",
+    "h1byjsop": "Du nouveau"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

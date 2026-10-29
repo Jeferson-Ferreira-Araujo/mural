@@ -2307,7 +2307,9 @@
     "h1fs29ls": "PINZ+는 언제든지 알아볼 수 있어요.",
     "h1f21sgs": "첫 번째 보드",
     "h1q4n215": "PINZ는 필수 저장소만 사용하며, 허락하신 경우에만 익명 이용 데이터를 사용합니다.",
-    "hlsbx0h": "광고도, 제3자 추적도 없습니다."
+    "hlsbx0h": "광고도, 제3자 추적도 없습니다.",
+    "h12eqpv4": "새 소식",
+    "h1byjsop": "새 소식 있음"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

@@ -2307,7 +2307,9 @@
     "h1fs29ls": "Puedes conocer PINZ+ cuando quieras.",
     "h1f21sgs": "Tu primer mural",
     "h1q4n215": "PINZ usa solo el almacenamiento esencial y, con tu autorización, datos anónimos de uso.",
-    "hlsbx0h": "Sin anuncios ni rastreo de terceros."
+    "hlsbx0h": "Sin anuncios ni rastreo de terceros.",
+    "h12eqpv4": "Novedades",
+    "h1byjsop": "Hay novedades"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

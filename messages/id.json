@@ -2307,7 +2307,9 @@
     "h1fs29ls": "Kamu bisa mengenal PINZ+ kapan saja.",
     "h1f21sgs": "Papan pertamamu",
     "h1q4n215": "PINZ hanya memakai penyimpanan esensial dan, dengan izinmu, data penggunaan anonim.",
-    "hlsbx0h": "Tanpa iklan dan tanpa pelacakan pihak ketiga."
+    "hlsbx0h": "Tanpa iklan dan tanpa pelacakan pihak ketiga.",
+    "h12eqpv4": "Hal baru",
+    "h1byjsop": "Ada yang baru"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

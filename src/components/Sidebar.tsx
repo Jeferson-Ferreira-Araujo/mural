@@ -3,6 +3,7 @@ import { FitSidebar } from "./FitSidebar";
 import { GuestLinks, type AccountApi } from "./account/AccountActions";
 import { LanguagePicker } from "./LanguagePicker";
 import { A11yButton } from "./A11yButton";
+import { NovidadesLink } from "./NovidadesLink";
 import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
@@ -103,6 +104,7 @@ export function Sidebar({ compact = false, siteStats, panel, notice, panelTitle,
             }
           />
         </ul>
+        <NovidadesLink />
         </div>
       )}
 
