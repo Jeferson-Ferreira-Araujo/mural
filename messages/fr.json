@@ -2330,7 +2330,8 @@
     "h1nutfz2": "Saisissez l'e-mail avec le clavier anglais (lettres latines).",
     "hpr9eda": "Voir le pin",
     "hqd7bvx": "Masquer le pin",
-    "hfvgov": "Voir le display"
+    "hfvgov": "Voir le display",
+    "h1nlpf14": "Vous n'avez pas la permission de voir ce pin."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

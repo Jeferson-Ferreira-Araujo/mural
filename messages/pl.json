@@ -2330,7 +2330,8 @@
     "h1nutfz2": "Wpisz e-mail na klawiaturze angielskiej (litery łacińskie).",
     "hpr9eda": "Pokaż pin",
     "hqd7bvx": "Ukryj pin",
-    "hfvgov": "Pokaż wyświetlacz"
+    "hfvgov": "Pokaż wyświetlacz",
+    "h1nlpf14": "Nie masz uprawnień do wyświetlenia tego pina."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

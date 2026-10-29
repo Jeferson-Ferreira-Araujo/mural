@@ -2330,7 +2330,8 @@
     "h1nutfz2": "Ketik email dengan keyboard bahasa Inggris (huruf Latin).",
     "hpr9eda": "Lihat pin",
     "hqd7bvx": "Sembunyikan pin",
-    "hfvgov": "Lihat display"
+    "hfvgov": "Lihat display",
+    "h1nlpf14": "Kamu tidak punya izin untuk melihat pin ini."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

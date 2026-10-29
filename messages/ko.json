@@ -2330,7 +2330,8 @@
     "h1nutfz2": "이메일은 영어 키보드(라틴 문자)로 입력하세요.",
     "hpr9eda": "핀 보기",
     "hqd7bvx": "핀 숨기기",
-    "hfvgov": "디스플레이 보기"
+    "hfvgov": "디스플레이 보기",
+    "h1nlpf14": "이 핀을 볼 권한이 없습니다."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

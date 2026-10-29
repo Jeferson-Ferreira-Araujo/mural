@@ -16,6 +16,15 @@ export function useToast(ms = 2800) {
     [ms],
   );
   useEffect(() => () => clearTimeout(timer.current), []);
+  // qualquer componente pode pedir um aviso: window.dispatchEvent(new CustomEvent("pinz:notify", { detail: "texto" }))
+  useEffect(() => {
+    const on = (e: Event) => {
+      const text = (e as CustomEvent<string>).detail;
+      if (typeof text === "string" && text) notify(text);
+    };
+    window.addEventListener("pinz:notify", on);
+    return () => window.removeEventListener("pinz:notify", on);
+  }, [notify]);
 
   return { message, notify };
 }

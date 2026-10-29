@@ -2330,7 +2330,8 @@
     "h1nutfz2": "Scrivi l'e-mail con la tastiera inglese (lettere latine).",
     "hpr9eda": "Mostra pin",
     "hqd7bvx": "Nascondi pin",
-    "hfvgov": "Mostra display"
+    "hfvgov": "Mostra display",
+    "h1nlpf14": "Non hai il permesso di vedere questo pin."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

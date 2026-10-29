@@ -2,6 +2,8 @@ import type { HiddenItem, Message } from "@/lib/types";
 import { useInDetail } from "../board/ListEditContext";
 import { MessageView } from "./MessageView";
 import { useTranslations } from "next-intl";
+import { useLit } from "@/i18n/literal";
+import { useSecretToggle } from "./SecretContext";
 
 /** Imagem transparente de 1×1: só para a foto de enchimento ter fita (como a de verdade) sem mostrar nada. */
 const PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -42,17 +44,39 @@ export function placeholderFor(h: HiddenItem): Message | null {
  * (PINZ+) deixou oculto). Mostra o mesmo tipo de card, borrado e sem interação.
  */
 /** Selo no meio do pin em segredo (virado de costas): só o olho fechado, sem texto. */
-export function SecretBadge() {
+export function SecretBadge({ locked = false }: { /** quem vê não tem permissão para revelar (visitante): tocar no selo avisa */ locked?: boolean }) {
   const tx = useTranslations("components.messages.HiddenPin");
+  const tl = useLit();
   const inDetail = useInDetail();
+  const sec = useSecretToggle(); // no detalhe, quem pode ver o pin revela e esconde pelo selo
+  const action = sec ? () => sec.toggle() : locked ? () => window.dispatchEvent(new CustomEvent("pinz:notify", { detail: tl("Você não tem permissão para ver esse pin.") })) : null;
+  const cls = "grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]";
+  const icon = (
+    <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
+    </svg>
+  );
   return (
     <span className="pz-fade pointer-events-none absolute inset-0 z-30 grid place-items-center" style={{ fontSize: inDetail ? "1em" : "2.4em" }}>
-      <span role="img" aria-label={tx("segredo")} className="grid size-[2.6em] place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)]">
-        <svg viewBox="0 0 24 24" className="size-[1.4em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.4-1" />
-          <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
-        </svg>
-      </span>
+      {action ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            action();
+          }}
+          aria-label={sec ? tl("Visualizar pin") : tx("segredo")}
+          title={sec ? tl("Visualizar pin") : tx("segredo")}
+          className={`${cls} pointer-events-auto cursor-pointer transition hover:bg-black/65 active:scale-95`}
+        >
+          {icon}
+        </button>
+      ) : (
+        <span role="img" aria-label={tx("segredo")} className={cls}>
+          {icon}
+        </span>
+      )}
     </span>
   );
 }

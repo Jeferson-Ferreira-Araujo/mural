@@ -2330,7 +2330,8 @@
     "h1nutfz2": "メールアドレスは英語キーボード（ラテン文字）で入力してください。",
     "hpr9eda": "ピンを表示",
     "hqd7bvx": "ピンを隠す",
-    "hfvgov": "ディスプレイを表示"
+    "hfvgov": "ディスプレイを表示",
+    "h1nlpf14": "このピンを見る権限がありません。"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

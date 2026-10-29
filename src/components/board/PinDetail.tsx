@@ -12,6 +12,7 @@ import { DetailProvider } from "./ListEditContext";
 import { ReactionBar } from "./ReactionBar";
 import { useReactionsAccess } from "./ReactionsContext";
 import { useFeatureFlags } from "@/lib/features";
+import { SecretProvider } from "../messages/SecretContext";
 import { shapeOfStyle } from "@/lib/displayShape";
 import { cardToPng, deliverImage } from "@/lib/exportImage";
 import { badgeDef, badgeSrc } from "@/lib/badges";
@@ -345,7 +346,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               {shareMsg}
             </p>
           )}
-          {((item && !isSealed(item) && !isHidden(item) && item.ownerHidden) || (ownWidget && widgetHidden)) && revealBtn()}
+          {ownWidget && widgetHidden && revealBtn()}
           {/* as setas ficam sempre na mesma altura (meio da janela), qualquer que seja o pin ou display mostrado */}
           <div className="flex w-full items-center justify-center px-12 sm:px-16">
             <button type="button" onClick={() => onIndex(index - 1)} disabled={index <= 0} aria-label={tx("anterior")} className={`${arrow} absolute top-1/2 left-0 z-10 -translate-y-1/2`}>
@@ -362,7 +363,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                   ) : item ? (
                     <>
                       {/* no detalhe os bottons não aparecem: só o pin */}
-                      <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+                      <SecretProvider value={!isSealed(item) && !isHidden(item) && item.ownerHidden && !item.pending ? { revealed: showSecret, toggle: () => setShowSecret((v) => !v) } : null}>
+                        <MessageView message={isSealed(item) || isHidden(item) ? item : { ...item, pending: false }} revealSecret={showSecret} />
+                      </SecretProvider>
                     </>
                   ) : null}
                 </div>

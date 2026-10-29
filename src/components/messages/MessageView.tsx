@@ -3,6 +3,8 @@ import { isHidden, isSealed, type BoardItem, type HiddenItem, type Message } fro
 import { useInDetail, useListEdit, useListToggle } from "../board/ListEditContext";
 import { DrawingCard } from "./DrawingCard";
 import { HiddenPin, placeholderFor, SecretBadge } from "./HiddenPin";
+import { useSecretToggle } from "./SecretContext";
+import { useLit } from "@/i18n/literal";
 import { useEffect, useState, type ReactNode } from "react";
 import { PinFx } from "./PinFx";
 import { useFeatureFlags } from "@/lib/features";
@@ -168,7 +170,7 @@ function SecretFlip({ back, front, fake }: { back: boolean; front: ReactNode; fa
           <div className="pz-blank">
             <FakeCard item={fake} />
           </div>
-          {!run && <SecretBadge />}
+          {!run && <SecretBadge locked={!front} />}
         </div>
       )}
       {showBack && (
@@ -182,7 +184,10 @@ function SecretFlip({ back, front, fake }: { back: boolean; front: ReactNode; fa
 
 function MessageBody({ message, revealSecret, flip }: { message: BoardItem; revealSecret: boolean; flip: boolean }) {
   const tx = useTranslations("components.messages.MessageView");
+  const sec = useSecretToggle();
+  const tl = useLit();
   let m = message;
+  let wasSecret = false;
   if (isSealed(m)) return null;
   // segredo virado: quem visita vê o pin de costas (espelhado), sem conteúdo
   if (isHidden(m)) return flip && !m.pending && !m.backdrop ? <SecretFlip back front={null} fake={m} /> : <HiddenPin item={m} />;
@@ -195,10 +200,25 @@ function MessageBody({ message, revealSecret, flip }: { message: BoardItem; reve
       return <SecretFlip back front={<Plain m={{ ...m, ownerHidden: false }} />} fake={hid} />;
     }
     m = { ...m, ownerHidden: false }; // revelado: o pin aparece limpo
+    wasSecret = true;
   }
   if (m.pending || m.ownerHidden) return <Marked m={m} />;
   // mesma árvore do pin em segredo: ao ligar ou desligar o segredo o pin vira (com a animação) em vez de trocar de cartão
-  return flip ? <SecretFlip back={false} front={<Plain m={m} />} fake={hiddenOf(m)} /> : <Plain m={m} />;
+  // pin em segredo que o dono revelou no detalhe: o olho aparece em cima do pin e, ao tocar, ele esconde de novo
+  const shown = wasSecret && sec ? (
+    <div className="relative">
+      <Plain m={m} />
+      <button type="button" onClick={sec.toggle} aria-label={tl("Esconder pin")} title={tl("Esconder pin")} className="absolute top-[0.6em] right-[0.6em] z-30 grid size-[2.4em] cursor-pointer place-items-center rounded-full bg-black/45 text-white shadow-[0_0.2em_0.6em_rgba(0,0,0,.4)] transition hover:bg-black/65 active:scale-95">
+        <svg viewBox="0 0 24 24" className="size-[1.3em]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
+    </div>
+  ) : (
+    <Plain m={m} />
+  );
+  return flip ? <SecretFlip back={false} front={shown} fake={hiddenOf(m)} /> : shown;
 }
 
 /** O pin à vista: sozinho, ou com assinatura, reação e lacre de Cápsula. */

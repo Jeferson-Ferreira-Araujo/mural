@@ -2330,7 +2330,8 @@
     "h1nutfz2": "Typ het e-mailadres met het Engelse toetsenbord (Latijnse letters).",
     "hpr9eda": "Pin bekijken",
     "hqd7bvx": "Pin verbergen",
-    "hfvgov": "Display bekijken"
+    "hfvgov": "Display bekijken",
+    "h1nlpf14": "Je hebt geen toestemming om deze pin te zien."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
