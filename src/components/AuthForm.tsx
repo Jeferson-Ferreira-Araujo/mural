@@ -180,17 +180,6 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       <OAuthButtons onError={setError} className="mt-4" />
 
       <form onSubmit={submit} noValidate className="mt-3 space-y-3">
-        {signup && (
-          <NicknameField
-            value={nick}
-            onChange={(v) => {
-              setNick(v);
-              setError(null);
-            }}
-            state={nickState}
-          />
-        )}
-        {signup && <BirthField value={birth} onChange={(v) => { setBirth(v); setError(null); }} />}
         <Field label={t("email")}>
           {(id) => (
             <input
@@ -208,6 +197,17 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
             />
           )}
         </Field>
+        {signup && (
+          <NicknameField
+            value={nick}
+            onChange={(v) => {
+              setNick(v);
+              setError(null);
+            }}
+            state={nickState}
+          />
+        )}
+        {signup && <BirthField value={birth} onChange={(v) => { setBirth(v); setError(null); }} />}
         <Field label={t("password")} error={error}>
           {(id) => (
             <div className="relative">
