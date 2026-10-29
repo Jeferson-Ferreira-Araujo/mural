@@ -1,5 +1,5 @@
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
-import { isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { isHidden, isMessage, isSealed, type BoardItem, type HiddenItem, type Message } from "@/lib/types";
 import { localizeDemo, type DemoLocale } from "./demoText";
 
 /**
@@ -7,6 +7,13 @@ import { localizeDemo, type DemoLocale } from "./demoText";
  * A ordem do pool é a ordem dos espaços no mural: os 5 primeiros só usam formatos FREE,
  * então um PINZ FREE (15 espaços) e um PINZ+ (28 espaços) ficam coerentes.
  */
+
+/** Pins em segredo dos murais de exemplo: só o tipo e o estilo (o conteúdo nunca existe), como o servidor entrega a quem visita. */
+const SECRETS: HiddenItem[] = [
+  { id: "s1", hidden: true, type: "postit", color: "pink", pin: "red" },
+  { id: "s2", hidden: true, type: "photo", media: true, ratio: 1.25, tape: "yellow" },
+  { id: "s3", hidden: true, type: "text", variant: "notebook", tape: "yellow" },
+];
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;
@@ -66,6 +73,7 @@ export function buildPool(nowMs: number, locale: DemoLocale = "pt"): { items: Bo
     { id: "m12", type: "postit", color: "green", text: "Valeu por tudo, parceiro. Conta comigo sempre!" },
     { id: "m13", type: "voice", caption: "Sua voz sempre me faz sorrir! ♡", duration: "0:27" },
     { id: "m14", type: "place", name: "Cristo Redentor", address: "Rio de Janeiro - RJ", lat: -22.951916, lon: -43.210487, caption: "Um dos lugares que mais amo!" },
+    ...SECRETS,
   ];
   return { items: items.map((i) => localizeDemo(i, locale)), vault: Object.fromEntries(Object.entries(SEED_VAULT).map(([k, v]) => [k, localizeDemo(v, locale)])) };
 }
@@ -89,6 +97,7 @@ function extraPool(locale: DemoLocale = "pt"): BoardItem[] {
   ].map((i) => localizeDemo(i as BoardItem, locale));
 }
 
+
 /** Os primeiros `count` itens do pool que o plano permite (formatos e cápsula). */
 export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = BOARD_CAPACITY, locale: DemoLocale = "pt"): { items: BoardItem[]; vault: Record<string, Message> } {
   const { items: base, vault } = buildPool(nowMs, locale);
@@ -99,7 +108,7 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
     for (const it of extra) if (isSealed(it) && vault[it.id.replace(/-b$/, "")]) vault[it.id] = { ...vault[it.id.replace(/-b$/, "")], id: it.id };
     items = [...base, ...extra].slice(0, capacity);
   }
-  const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : isMessage(i) && formatsFor(plan).includes(i.type)));
+  const allowed = items.filter((i) => (isSealed(i) ? canUseCapsule(plan) : isHidden(i) || (isMessage(i) && formatsFor(plan).includes(i.type))));
   // cada exemplo já nasce no seu espaço, para colar um novo em outro lugar não empurrar os demais
   return { items: allowed.slice(0, count).map((it, i) => ({ ...it, slot: i }) as BoardItem), vault };
 }
@@ -107,7 +116,9 @@ export function itemsFor(plan: PlanId, count: number, nowMs: number, capacity = 
 /** Mural de exemplo aleatório (todos os espaços, em ordem embaralhada) para a página inicial: sem espaços vazios. */
 export function randomMural(nowMs: number, locale: DemoLocale = "pt"): BoardItem[] {
   // 28 espaços = os 15 exemplos + 13 extras, todos diferentes (nada de cartão repetido na tela)
-  const items = [...buildPool(nowMs, locale).items, ...extraPool(locale)].slice(0, BOARD_CAPACITY);
+  const pool = buildPool(nowMs, locale).items.filter((i) => !isHidden(i));
+  const items = [...pool, ...extraPool(locale)].slice(0, BOARD_CAPACITY - SECRETS.length);
+  items.push(...SECRETS); // o embaralhamento abaixo espalha os segredos pelo mural
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
