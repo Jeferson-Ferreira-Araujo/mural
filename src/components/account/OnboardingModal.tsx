@@ -142,7 +142,6 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
           <div className="space-y-3">
             <div>
               <h3 className="font-title text-xl font-semibold">{tx("m_ola", { v0: nick })}</h3>
-              <p className="mt-0.5 text-sm leading-snug text-[#4a3826]">{tx("completeOSeuPerfilPara")}</p>
             </div>
             <AvatarUploader nickname={nick} plus={plus} compact />
             <BirthField
