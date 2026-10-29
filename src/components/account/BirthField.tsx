@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo } from "react";
 import { inputClass } from "../ui";
 import { useLit } from "@/i18n/literal";
+import { useTag } from "@/i18n/useTag";
 import { useTranslations } from "next-intl";
 
 /** DD/MM/AAAA digitado -> AAAA-MM-DD, ou null se a data não existe. */
@@ -25,31 +26,42 @@ export function isUnder13(iso: string): boolean {
 export const BIRTH_FORMAT_HINT = "Digite a data assim: dia/mês/ano, por exemplo 25/12/1990.";
 export const BIRTH_ERROR = { too_young: "O Pinz é para maiores de 13 anos.", invalid_birth: "Confira a data de nascimento.", failed: "Não foi possível salvar agora. Tente de novo." } as const;
 
-/** Data de nascimento em três campos na mesma linha (dia, mês, ano); o foco avança sozinho. `value` fica em dd/mm/aaaa (ou parcial, enquanto digita). */
+/** Data de nascimento em três listas na mesma linha (dia, mês, ano). `value` fica em d/m/aaaa (ou parcial, enquanto escolhe). */
 export function BirthField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const tx = useTranslations("components.account.BirthField");
   const tl = useLit();
+  const tag = useTag();
   const [d = "", m = "", y = ""] = value.split("/");
-  const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-  const set = (i: 0 | 1 | 2, raw: string) => {
-    const len = i === 2 ? 4 : 2;
-    const v = raw.replace(/D/g, "").slice(0, len);
+  const set = (i: 0 | 1 | 2, v: string) => {
     const parts = [d, m, y];
     parts[i] = v;
     onChange(parts.every((p) => !p) ? "" : parts.join("/"));
-    if (v.length === len && i < 2) refs[i + 1].current?.focus();
   };
-  const back = (i: 1 | 2, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !e.currentTarget.value) refs[i - 1].current?.focus();
-  };
-  const cls = `${inputClass} text-center`;
+  const months = useMemo(() => Array.from({ length: 12 }, (_, i) => new Intl.DateTimeFormat(tag, { month: "long" }).format(new Date(2000, i, 1))), [tag]);
+  const thisYear = new Date().getFullYear();
+  const cls = `${inputClass} cursor-pointer !px-2.5`;
   return (
     <fieldset>
       <legend className="mb-1 block text-sm font-semibold">{tx("dataDeNascimento")}</legend>
-      <div className="grid grid-cols-[1fr_1fr_1.6fr] gap-2">
-        <input ref={refs[0]} inputMode="numeric" autoComplete="bday-day" placeholder={tl("Dia")} aria-label={tl("Dia")} maxLength={2} value={d} onChange={(e) => set(0, e.target.value)} className={cls} />
-        <input ref={refs[1]} inputMode="numeric" autoComplete="bday-month" placeholder={tl("Mês")} aria-label={tl("Mês")} maxLength={2} value={m} onChange={(e) => set(1, e.target.value)} onKeyDown={(e) => back(1, e)} className={cls} />
-        <input ref={refs[2]} inputMode="numeric" autoComplete="bday-year" placeholder={tl("Ano")} aria-label={tl("Ano")} maxLength={4} value={y} onChange={(e) => set(2, e.target.value)} onKeyDown={(e) => back(2, e)} className={cls} />
+      <div className="grid grid-cols-[0.8fr_1.5fr_1fr] gap-2">
+        <select autoComplete="bday-day" aria-label={tl("Dia")} value={d} onChange={(e) => set(0, e.target.value)} className={cls}>
+          <option value="">{tl("Dia")}</option>
+          {Array.from({ length: 31 }, (_, i) => (
+            <option key={i} value={String(i + 1)}>{i + 1}</option>
+          ))}
+        </select>
+        <select autoComplete="bday-month" aria-label={tl("Mês")} value={m} onChange={(e) => set(1, e.target.value)} className={cls}>
+          <option value="">{tl("Mês")}</option>
+          {months.map((n, i) => (
+            <option key={i} value={String(i + 1)}>{n}</option>
+          ))}
+        </select>
+        <select autoComplete="bday-year" aria-label={tl("Ano")} value={y} onChange={(e) => set(2, e.target.value)} className={cls}>
+          <option value="">{tl("Ano")}</option>
+          {Array.from({ length: thisYear - 1899 }, (_, i) => thisYear - i).map((n) => (
+            <option key={n} value={String(n)}>{n}</option>
+          ))}
+        </select>
       </div>
     </fieldset>
   );
