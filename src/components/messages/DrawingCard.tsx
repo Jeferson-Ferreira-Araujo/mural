@@ -1,6 +1,7 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { Tape } from "./fasteners";
 import { useTranslations } from "next-intl";
+import { fitSize } from "@/lib/fitText";
 import { useLit } from "@/i18n/literal";
 
 /** Desenho feito pela pessoa: folha de papel presa com fita. `src` = imagem do desenho; sem `src`, mostra uma folha em branco. */
@@ -18,7 +19,7 @@ export function DrawingCard({ caption, src, font, tape }: { caption: string; src
         ) : null}
       </div>
       {caption && (
-        <p className="mt-[0.4em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.5 * hand.scale}em` }}>
+        <p className="mt-[0.4em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${fitSize(caption, { w: 13.6, h: 3.4, lh: 1.05, max: 1.5, min: 1.0, hand: hand.scale }) * hand.scale}em` }}>
           {caption}
         </p>
       )}

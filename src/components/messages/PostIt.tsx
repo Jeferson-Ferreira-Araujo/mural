@@ -2,6 +2,7 @@ import type { PostItColor } from "@/lib/types";
 import { handOf, type HandId, type PinColor, type PinPos } from "@/lib/style";
 import { PinSlot } from "./fasteners";
 import { useTranslations } from "next-intl";
+import { fitSize } from "@/lib/fitText";
 
 const palette: Record<PostItColor, { bg: string; edge: string; pin: "red" | "blue" }> = {
   yellow: { bg: "#fbe36a", edge: "#e9c93f", pin: "red" },
@@ -15,6 +16,7 @@ export function PostIt({ color, text, font, pin, pos }: { color: PostItColor; te
   const tx = useTranslations("components.messages.PostIt");
   const c = palette[color];
   const hand = handOf(font);
+  const size = fitSize(text, { w: 11.4, h: 10.3, lh: 1.08, max: 1.7, min: 1.0, hand: hand.scale }); // a folha tem altura fixa: a letra diminui até o texto caber
   return (
     <article data-body
       aria-label={tx("postIt")}
@@ -25,7 +27,7 @@ export function PostIt({ color, text, font, pin, pos }: { color: PostItColor; te
       }}
     >
       <PinSlot tone={pin ?? c.pin} pos={pos} top="top-[0.55em]" />
-      <p className="leading-[1.08] text-[#34281a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.7 * hand.scale}em` }}>
+      <p className="leading-[1.08] text-[#34281a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${size * hand.scale}em` }}>
         {text}
       </p>
     </article>

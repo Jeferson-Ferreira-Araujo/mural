@@ -5,6 +5,7 @@ import { useInDetail } from "../board/ListEditContext";
 import { PinSlot, TapeSlot } from "./fasteners";
 import { Scene, type SceneVariant } from "./Scene";
 import { useTranslations } from "next-intl";
+import { fitSize } from "@/lib/fitText";
 import { useLit } from "@/i18n/literal";
 
 /** Foto em Polaroid. `src` = foto escolhida pela pessoa; sem `src`, usa uma cena ilustrada de exemplo. */
@@ -38,7 +39,7 @@ export function PolaroidPhoto({ caption, scene = "hills", src, font, pin, tape, 
         )}
         <span aria-hidden className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_40%)]" />
       </div>
-      {caption && <p className="mt-[0.4em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.5 * hand.scale}em` }}>
+      {caption && <p className="mt-[0.4em] leading-[1.05] text-[#2b2b3a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${fitSize(caption, { w: cardW - frame * 2, h: 3.4, lh: 1.05, max: 1.5, min: 1.0, hand: hand.scale }) * hand.scale}em` }}>
           {caption}
         </p>}
     </article>

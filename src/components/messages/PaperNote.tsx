@@ -1,6 +1,7 @@
 import { handOf, tapeOf, type HandId, type TapeColor } from "@/lib/style";
 import { TapeSlot } from "./fasteners";
 import { useTranslations } from "next-intl";
+import { fitSize } from "@/lib/fitText";
 
 /**
  * Texto em folha. `letter`: papel liso rasgado com tinta azul.
@@ -10,6 +11,9 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
   const tx = useTranslations("components.messages.PaperNote");
   const hand = handOf(font);
   const tone = tape ? tapeOf(tape).tone : undefined;
+  // texto longo: a letra diminui para o papel não ficar enorme
+  const letterSize = fitSize(text, { w: 11.4, h: 18, lh: 1.18, max: 1.55, min: 0.95, hand: hand.scale });
+  const noteSize = fitSize(text, { w: 10.1, h: 24, lh: 1, lineEm: 1.55, max: 1.6, min: 1.0, hand: hand.scale });
   if (variant === "letter") {
     return (
       <div className="relative w-[14em]">
@@ -22,7 +26,7 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
           backgroundImage: "linear-gradient(120deg, rgba(0,0,0,.05), transparent 30%, rgba(255,255,255,.4) 60%, rgba(0,0,0,.04))",
         }}
       >
-        <p className="leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.55 * hand.scale}em` }}>
+        <p className="leading-[1.18] text-[#243a7a] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${letterSize * hand.scale}em` }}>
           {text}
         </p>
       </article>
@@ -53,7 +57,7 @@ export function PaperNote({ text, variant, font, tape }: { text: string; variant
       ))}
       <TapeSlot top="-top-[0.8em]" at="right" tone={tone} />
       {/* a pauta tem 1,55em por linha; a altura de linha do texto é igual, qualquer que seja a letra */}
-      <p className="text-[#232838] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${1.6 * hand.scale}em`, lineHeight: `${1.55 / (1.6 * hand.scale)}` }}>
+      <p className="text-[#232838] [overflow-wrap:anywhere]" style={{ fontFamily: hand.family, fontSize: `${noteSize * hand.scale}em`, lineHeight: `${1.55 / (noteSize * hand.scale)}` }}>
         {text}
       </p>
     </article>
