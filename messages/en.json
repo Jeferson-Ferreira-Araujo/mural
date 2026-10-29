@@ -2326,7 +2326,8 @@
     "hpjv6cp": "We sent a code to {email}. Enter it below to confirm your account.",
     "h1nliv7y": "Enter the code we emailed you.",
     "hrhkac4": "Wrong or expired code. Check the numbers or ask for a new one.",
-    "h1vg4cdf": "Confirmation code"
+    "h1vg4cdf": "Confirmation code",
+    "h1nutfz2": "Type the email with the English keyboard (Latin letters)."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

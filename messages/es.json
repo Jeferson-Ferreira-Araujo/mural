@@ -2326,7 +2326,8 @@
     "hpjv6cp": "Enviamos un código a {email}. Escríbelo abajo para confirmar tu cuenta.",
     "h1nliv7y": "Escribe el código que llegó a tu correo.",
     "hrhkac4": "Código incorrecto o vencido. Revisa los números o pide uno nuevo.",
-    "h1vg4cdf": "Código de confirmación"
+    "h1vg4cdf": "Código de confirmación",
+    "h1nutfz2": "Escribe el correo con el teclado en inglés (letras latinas)."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2326,7 +2326,8 @@
     "hpjv6cp": "Wir haben einen Code an {email} gesendet. Gib ihn unten ein, um dein Konto zu bestätigen.",
     "h1nliv7y": "Gib den Code aus deiner E-Mail ein.",
     "hrhkac4": "Code falsch oder abgelaufen. Prüfe die Ziffern oder fordere einen neuen an.",
-    "h1vg4cdf": "Bestätigungscode"
+    "h1vg4cdf": "Bestätigungscode",
+    "h1nutfz2": "Gib die E-Mail mit der englischen Tastatur ein (lateinische Buchstaben)."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

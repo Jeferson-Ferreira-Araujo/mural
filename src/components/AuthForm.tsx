@@ -231,7 +231,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       <OAuthButtons onError={setError} className="mt-4" />
 
       <form onSubmit={submit} noValidate className="mt-3 space-y-3">
-        <Field label={t("email")}>
+        <Field label={t("email")} hint={locale === "uk" || locale === "ru" ? tl("Digite o e-mail com o teclado em inglês (letras latinas).") : undefined}>
           {(id) => (
             <input
               id={id}

@@ -2326,7 +2326,8 @@
     "hpjv6cp": "We hebben een code naar {email} gestuurd. Vul hem hieronder in om je account te bevestigen.",
     "h1nliv7y": "Vul de code uit je e-mail in.",
     "hrhkac4": "Code onjuist of verlopen. Controleer de cijfers of vraag een nieuwe aan.",
-    "h1vg4cdf": "Bevestigingscode"
+    "h1vg4cdf": "Bevestigingscode",
+    "h1nutfz2": "Typ het e-mailadres met het Engelse toetsenbord (Latijnse letters)."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

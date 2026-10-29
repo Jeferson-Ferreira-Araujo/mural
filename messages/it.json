@@ -2326,7 +2326,8 @@
     "hpjv6cp": "Abbiamo inviato un codice a {email}. Inseriscilo qui sotto per confermare il tuo account.",
     "h1nliv7y": "Inserisci il codice arrivato via e-mail.",
     "hrhkac4": "Codice errato o scaduto. Controlla i numeri o richiedine uno nuovo.",
-    "h1vg4cdf": "Codice di conferma"
+    "h1vg4cdf": "Codice di conferma",
+    "h1nutfz2": "Scrivi l'e-mail con la tastiera inglese (lettere latine)."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",
