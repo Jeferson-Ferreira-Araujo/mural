@@ -19,6 +19,7 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
   const [image, setImage] = useState("");
   const [published, setPublished] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await getBrowserSupabase().rpc("admin_list_news");
@@ -53,6 +54,19 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
     void load();
   }
 
+  async function upload(file: File | undefined) {
+    if (!file || sending) return;
+    setSending(true);
+    const token = (await getBrowserSupabase().auth.getSession()).data.session?.access_token ?? "";
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/admin/news-image", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd }).catch(() => null);
+    const d = (await res?.json().catch(() => null)) as { url?: string; error?: string } | null;
+    setSending(false);
+    if (!res?.ok || !d?.url) return onToast(d?.error === "too_large" ? "Imagem grande demais (máximo 3 MB)." : d?.error === "invalid_type" ? "Use uma imagem PNG, JPG ou WebP." : "Não foi possível enviar a imagem.");
+    setImage(d.url);
+  }
+
   async function toggle(r: Row) {
     await getBrowserSupabase().rpc("admin_save_news", { p_id: r.id, p_texts: r.texts, p_published: !r.published });
     void load();
@@ -70,7 +84,20 @@ export function NewsPanel({ onToast }: { onToast: (t: string) => void }) {
         <p className="mt-0.5 text-xs text-[#6b5440]">Escreva em português, com palavras simples. Ao publicar, o texto é traduzido sozinho para os outros 18 idiomas.</p>
         <input className={`${field} mt-3`} placeholder="Título (ex.: Agora você pode seguir pessoas)" value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} aria-label="Título" />
         <textarea className={`${field} mt-2 min-h-24`} placeholder="Texto curto explicando a novidade" value={body} maxLength={450} onChange={(e) => setBody(e.target.value)} aria-label="Texto" />
-        <input className={`${field} mt-2`} placeholder="Imagem (opcional): endereço, ex.: /novidades/sino.png" value={image} maxLength={300} onChange={(e) => setImage(e.target.value)} aria-label="Imagem" />
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <label className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold">
+            {sending ? "Enviando…" : image ? "Trocar imagem" : "Escolher imagem"}
+            <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={sending} onChange={(e) => { void upload(e.target.files?.[0]); e.target.value = ""; }} />
+          </label>
+          {image && (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={image} alt="" className="h-12 w-20 rounded-lg border border-[#e1d3ba] bg-white object-contain" />
+              <button type="button" className="cursor-pointer text-xs font-semibold text-[#a23b2a] underline" onClick={() => setImage("")}>Remover</button>
+            </>
+          )}
+          <input className={`${field} min-w-48 flex-1 !py-1.5 text-sm`} placeholder="ou o endereço da imagem (ex.: /novidades/sino.png)" value={image} maxLength={300} onChange={(e) => setImage(e.target.value)} aria-label="Endereço da imagem" />
+        </div>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <label className="flex cursor-pointer items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} /> Visível no site
