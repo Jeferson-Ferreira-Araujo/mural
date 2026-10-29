@@ -64,6 +64,8 @@ export type ViewProps = {
   /** Desktop: atalhos da conta desenhados na coluna bege (no lugar do menu hambúrguer). */
   sidebarMenu?: ReactNode;
   /** Desktop: vendo o mural de OUTRA pessoa estando logado (não o próprio nem um compartilhado): menu lateral recolhido e foto, @ e botões no canto do mural. */
+  /** conta nova passando pelos passos de boas-vindas: o menu lateral fica recolhido e abre quando terminam */
+  onboarding?: boolean;
   visit?: { nick: string; avatar?: string | null; plus?: boolean } | null;
   /** Os murais da pessoa dona deste mural (rodapé, com setas para trocar). */
   muralSwitch?: MuralSwitch;

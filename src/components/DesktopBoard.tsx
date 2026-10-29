@@ -78,6 +78,19 @@ export function DesktopBoard(props: ViewProps) {
       window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
     }
   }, [visitNick]);
+  // conta nova nos passos de boas-vindas: menu recolhido (sem gravar a preferência); ao terminar, o menu abre
+  const onboarding = !!props.onboarding;
+  const wasOnboarding = useRef(false);
+  useEffect(() => {
+    if (onboarding) {
+      wasOnboarding.current = true;
+      setCollapsed(true);
+    } else if (wasOnboarding.current) {
+      wasOnboarding.current = false;
+      if (!visitNick) setCollapsed(false);
+    } else return;
+    window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+  }, [onboarding, visitNick]);
   const toggleCollapsed = () => {
     const next = !collapsed;
     setCollapsed(next);

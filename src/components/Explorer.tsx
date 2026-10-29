@@ -1242,6 +1242,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
           boardPending={boardPendingNow}
           // convite para ver o mural (ícone ao lado do nome do mural); o mural compartilhado entre duas pessoas é privado e não tem
           follow={followNick ? { following, busy: followBusy, onToggle: () => void toggleFollow() } : null}
+          onboarding={onbOpen || (!!onbInfo && isOwner && !(onbInfo.done && onbInfo.setup))}
           visit={selected && logged && !isOwner && !isShared ? { nick: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full" } : null}
           share={isOwner && selected && unlocked && !isShared && nick && slug ? { title: tx("m_muralDeNoPinz", { v0: selected.nickname }), text: tx("m_venhaVerOMuralDe", { v0: selected.nickname }), path: `/${nick}/${slug}` } : null}
           muralInfo={selected ? { title: selected.title, owner: selected.nickname, avatar: selected.avatar, plus: selected.plan === "full", followers: unlocked && !isShared ? followers : null, topFollowers: unlocked && !isShared ? topFollowers : [], onProfile: isShared ? undefined : () => setProfileOpen(true) } : undefined}
