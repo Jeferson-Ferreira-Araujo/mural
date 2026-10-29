@@ -9,7 +9,7 @@ import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
 import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
-import { BIRTH_ERROR, BirthField, isUnder13, toIso } from "./account/BirthField";
+import { BIRTH_ERROR, BirthField, isUnder13, latinDigits, toIso } from "./account/BirthField";
 import { CodeStep } from "./CodeStep";
 import { OAuthButtons } from "./OAuthButtons";
 import { Field, inputClass, NicknameField, primaryButton, useNicknameStatus } from "./ui";
@@ -182,7 +182,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
             maxLength={10}
             value={otp}
             onChange={(e) => {
-              setOtp(e.target.value.replace(/\D/g, ""));
+              setOtp(latinDigits(e.target.value).replace(/\D/g, ""));
               setResent(null);
             }}
             placeholder="000000"

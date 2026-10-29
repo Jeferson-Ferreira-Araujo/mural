@@ -74,8 +74,8 @@ export function HabitWidget({ style = "q-light", title, note, days, badgeId, fra
   const tone = doneToday ? sk.ok : lost ? sk.fail : sk.wait;
   const name = (title ?? "").trim();
   const sub = (note ?? "").trim();
-  // a semana de hoje, de domingo a sábado
-  const week = today ? Array.from({ length: 7 }, (_, i) => back(today, today.getDay() - i)) : [];
+  // a semana de hoje, começando no primeiro dia da semana do idioma
+  const week = today ? Array.from({ length: 7 }, (_, i) => back(today, ((today.getDay() - wt.weekStart + 7) % 7) - i)) : [];
   const mark = canMark && !!badgeId && !!today;
   const label = n === 1 ? tl("dia seguido") : tl("dias seguidos");
 
@@ -120,7 +120,7 @@ export function HabitWidget({ style = "q-light", title, note, days, badgeId, fra
             return (
               <span key={k} className="flex w-[1.3em] flex-col items-center gap-[0.15em]">
                 <span className="grid h-[0.95em] min-w-[0.95em] place-items-center rounded-full px-[0.2em] text-[0.6em] leading-none font-bold" style={isToday ? { background: sk.today, color: sk.onSolid } : { color: sk.sub }}>
-                  {wt.weekInitials[i]}
+                  {wt.weekInitials[(i + wt.weekStart) % 7]}
                 </span>
                 <span className="grid size-[0.95em] place-items-center rounded-full" style={on ? { background: sk.done } : { boxShadow: `inset 0 0 0 0.1em ${isToday ? sk.today : sk.ring}`, opacity: future ? 0.55 : 1 }}>
                   {on && <Check color={sk.onSolid} />}

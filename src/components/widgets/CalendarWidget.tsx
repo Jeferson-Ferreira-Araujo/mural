@@ -66,7 +66,7 @@ export function CalendarWidget({ style = "paper", dates, frame }: { style?: stri
   const now = today ?? new Date(2026, 0, 15); // até montar: um mês qualquer, sem destaque
   const year = now.getFullYear();
   const month = now.getMonth();
-  const first = new Date(year, month, 1).getDay();
+  const first = (new Date(year, month, 1).getDay() - wt.weekStart + 7) % 7;
   const days = new Date(year, month + 1, 0).getDate();
   const marks = new Map<number, string>();
   for (const c of list) {
@@ -88,14 +88,14 @@ export function CalendarWidget({ style = "paper", dates, frame }: { style?: stri
     <div className={`flex min-w-0 flex-col ${square ? "flex-1 px-[0.9em] pt-[0.85em] pb-[0.6em]" : "flex-[1.55] px-[0.9em] pt-[0.7em] pb-[0.5em]"}`}>
       <div className="flex items-baseline justify-between leading-none">
         <span className={`font-bold tracking-wide uppercase ${square ? "text-[1.45em]" : "text-[1.25em]"}`} style={{ color: accent }}>
-          {new Intl.DateTimeFormat(wt.tag, { month: "long" }).format(new Date(year, month, 1))}
+          {new Intl.DateTimeFormat(wt.tag, { month: "long", calendar: "gregory", numberingSystem: "latn" }).format(new Date(year, month, 1))}
         </span>
         <span className="text-[0.85em] font-semibold" style={{ color: soft }}>
-          {year}
+          {wt.year(year)}
         </span>
       </div>
       <div className={`grid grid-cols-7 text-center font-bold ${square ? "mt-[0.6em] text-[0.7em]" : "mt-[0.45em] text-[0.62em]"}`} style={{ color: soft }}>
-        {wt.weekInitials.map((w, i) => (
+        {Array.from({ length: 7 }, (_, i) => wt.weekInitials[(i + wt.weekStart) % 7]).map((w, i) => (
           <span key={i}>{w}</span>
         ))}
       </div>

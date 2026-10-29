@@ -127,10 +127,16 @@ function fromPack(loc: Locale, p: WtPack): Dict {
 const DICT: Partial<Record<Locale, Dict>> = { pt: PT, en: EN, es: ES };
 for (const [loc, pack] of Object.entries(PACKS)) if (isLocale(loc) && pack) DICT[loc] = fromPack(loc, pack.wt);
 
-export function useWT(): Dict & { loc: Locale; tag: string } {
+/** Primeiro dia da semana no calendário de cada idioma (0 = domingo, 1 = segunda, 6 = sábado), como no CLDR. */
+const WEEK_START: Partial<Record<Locale, number>> = { es: 1, fr: 1, it: 1, de: 1, nl: 1, pl: 1, uk: 1, ru: 1, tr: 1, vi: 1, ar: 6 };
+const weekStartOf = (loc: Locale) => WEEK_START[loc] ?? 0;
+/** Ano como se escreve no idioma: o tailandês usa o ano budista (gregoriano + 543). */
+const yearIn = (loc: Locale, y: number) => (loc === "th" ? y + 543 : y);
+
+export function useWT(): Dict & { loc: Locale; tag: string; weekStart: number; year: (y: number) => number } {
   const l = useLocale();
   const loc: Locale = isLocale(l) ? l : "pt";
-  return { ...(DICT[loc] ?? EN), loc, tag: LOCALE_TAGS[loc] };
+  return { ...(DICT[loc] ?? EN), loc, tag: LOCALE_TAGS[loc], weekStart: weekStartOf(loc), year: (y) => yearIn(loc, y) };
 }
 
 /** Mesma coisa fora de um componente (ex.: a lista de fusos). */

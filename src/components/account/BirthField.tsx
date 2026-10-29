@@ -25,8 +25,17 @@ export const BIRTH_FORMAT_HINT = "Digite a data assim: dia/mês/ano, por exemplo
 export const BIRTH_ERROR = { too_young: "O Pinz é para maiores de 13 anos.", invalid_birth: "Confira a data de nascimento.", failed: "Não foi possível salvar agora. Tente de novo." } as const;
 
 /** Põe as barras sozinho enquanto a pessoa digita só os números. */
+/** Teclados árabe, persa, hindi e japonês/chinês (largura total) digitam outros algarismos: viram 0-9. */
+export function latinDigits(raw: string): string {
+  return Array.from(raw, (c) => {
+    const k = c.codePointAt(0)!;
+    for (const z of [0x660, 0x6f0, 0x966, 0xff10]) if (k >= z && k <= z + 9) return String(k - z);
+    return c;
+  }).join("");
+}
+
 function maskDate(raw: string): string {
-  const n = raw.replace(/\D/g, "").slice(0, 8);
+  const n = latinDigits(raw).replace(/\D/g, "").slice(0, 8);
   return n.length > 4 ? `${n.slice(0, 2)}/${n.slice(2, 4)}/${n.slice(4)}` : n.length > 2 ? `${n.slice(0, 2)}/${n.slice(2)}` : n;
 }
 

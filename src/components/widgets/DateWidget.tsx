@@ -41,9 +41,9 @@ export function DateWidget({ style = "page", frame }: { style?: string; frame?: 
   const base = baseStyle(style);
   const d = today ?? new Date(2026, 0, 15); // até montar: uma data qualquer
   const day = String(d.getDate());
-  const weekday = new Intl.DateTimeFormat(wt.tag, { weekday: "long" }).format(d).toLowerCase();
-  const month = new Intl.DateTimeFormat(wt.tag, { month: "long" }).format(d).toLowerCase();
-  const year = d.getFullYear();
+  const weekday = new Intl.DateTimeFormat(wt.tag, { weekday: "long", calendar: "gregory" }).format(d).toLowerCase();
+  const month = new Intl.DateTimeFormat(wt.tag, { month: "long", calendar: "gregory" }).format(d).toLowerCase();
+  const year = wt.year(d.getFullYear());
   const wd = weekday.replace("-feira", "");
 
   // desenhos de origem (só no retangular)

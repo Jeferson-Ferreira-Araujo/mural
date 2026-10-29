@@ -121,7 +121,7 @@ export type Now = { dm: string; dateLine: string; hh: string; mm: string; hour: 
 
 function partsIn(tz: string, d: Date, tag = "pt-BR"): Now {
   const zone = tz === "local" ? undefined : tz;
-  const get = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(tag, { ...opts, timeZone: zone }).format(d);
+  const get = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(tag, { ...opts, timeZone: zone, calendar: "gregory", numberingSystem: "latn" }).format(d);
   const hh = get({ hour: "2-digit", hour12: false }).replace(/\D/g, "").padStart(2, "0").slice(-2);
   const mm = get({ minute: "2-digit" }).padStart(2, "0");
   const second = Number(get({ second: "2-digit" }));
@@ -131,8 +131,10 @@ function partsIn(tz: string, d: Date, tag = "pt-BR"): Now {
   const weekdayShort = cap(clean(get({ weekday: "short" })));
   const dayN = Number(get({ day: "numeric" }));
   const mon = cap(clean(get({ month: "short" })));
-  const dm = lang === "en" ? `${mon} ${dayN}` : `${dayN} ${mon}`;
-  const dateLine = lang === "en" ? `${weekdayShort}, ${mon} ${dayN}` : `${weekdayShort}, ${dayN} de ${mon}`;
+  // a ordem e as palavras de ligação ("29 de out", "Oct 29", "10月29日") vêm do próprio idioma
+  const noDots = (t: string) => t.split(".").join("");
+  const dm = cap(noDots(get({ day: "numeric", month: "short" })));
+  const dateLine = cap(noDots(get({ weekday: "short", day: "numeric", month: "short" })));
   return { dm, dateLine, hh, mm, hour: Number(hh) % 24, minute: Number(mm), second, weekday: clean(get({ weekday: "long" })), weekdayShort, day: Number(get({ day: "numeric" })), monthShort: clean(get({ month: "short" })) };
 }
 
