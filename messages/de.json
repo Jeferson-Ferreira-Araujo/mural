@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Tag",
     "hgblxzz": "Monat",
     "hxhqvrf": "Jahr",
-    "haion2k": "Kommende Updates"
+    "haion2k": "Kommende Updates",
+    "h1mshro4": "Bestätige deine E-Mail, um dich anzumelden: Wir haben einen Link an dein Postfach gesendet.",
+    "h5me6ua": "Wir haben die E-Mail erneut gesendet. Prüfe Posteingang und Spam.",
+    "h1dp5161": "Nicht erhalten? E-Mail erneut senden",
+    "h16kh8x2": "Bestätigungs-E-Mail erneut senden"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

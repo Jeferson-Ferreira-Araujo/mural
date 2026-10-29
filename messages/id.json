@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Hari",
     "hgblxzz": "Bulan",
     "hxhqvrf": "Tahun",
-    "haion2k": "Pembaruan mendatang"
+    "haion2k": "Pembaruan mendatang",
+    "h1mshro4": "Konfirmasi email Anda untuk masuk: kami mengirim tautan ke kotak masuk Anda.",
+    "h5me6ua": "Kami mengirim email lagi. Periksa kotak masuk dan spam.",
+    "h1dp5161": "Belum terima? Kirim email lagi",
+    "h16kh8x2": "Kirim ulang email konfirmasi"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

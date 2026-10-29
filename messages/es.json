@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Día",
     "hgblxzz": "Mes",
     "hxhqvrf": "Año",
-    "haion2k": "Próximas actualizaciones"
+    "haion2k": "Próximas actualizaciones",
+    "h1mshro4": "Confirma tu correo para entrar: te enviamos un enlace a tu bandeja de entrada.",
+    "h5me6ua": "Enviamos el correo de nuevo. Revisa tu bandeja de entrada y el spam.",
+    "h1dp5161": "¿No lo recibiste? Enviar el correo de nuevo",
+    "h16kh8x2": "Enviar de nuevo el correo de confirmación"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

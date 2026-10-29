@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Dag",
     "hgblxzz": "Maand",
     "hxhqvrf": "Jaar",
-    "haion2k": "Aankomende updates"
+    "haion2k": "Aankomende updates",
+    "h1mshro4": "Bevestig je e-mail om in te loggen: we hebben een link naar je inbox gestuurd.",
+    "h5me6ua": "We hebben de e-mail opnieuw gestuurd. Controleer je inbox en spam.",
+    "h1dp5161": "Niet ontvangen? Stuur de e-mail opnieuw",
+    "h16kh8x2": "Stuur de bevestigingsmail opnieuw"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

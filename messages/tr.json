@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Gün",
     "hgblxzz": "Ay",
     "hxhqvrf": "Yıl",
-    "haion2k": "Gelecek güncellemeler"
+    "haion2k": "Gelecek güncellemeler",
+    "h1mshro4": "Giriş yapmak için e-postanı onayla: gelen kutuna bir bağlantı gönderdik.",
+    "h5me6ua": "E-postayı yeniden gönderdik. Gelen kutunu ve spam klasörünü kontrol et.",
+    "h1dp5161": "Gelmedi mi? E-postayı yeniden gönder",
+    "h16kh8x2": "Onay e-postasını yeniden gönder"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

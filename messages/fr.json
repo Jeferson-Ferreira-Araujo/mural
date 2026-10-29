@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Jour",
     "hgblxzz": "Mois",
     "hxhqvrf": "Année",
-    "haion2k": "Mises à jour à venir"
+    "haion2k": "Mises à jour à venir",
+    "h1mshro4": "Confirmez votre e-mail pour vous connecter : nous avons envoyé un lien dans votre boîte de réception.",
+    "h5me6ua": "Nous avons renvoyé l'e-mail. Vérifiez votre boîte de réception et vos spams.",
+    "h1dp5161": "Pas reçu ? Renvoyer l'e-mail",
+    "h16kh8x2": "Renvoyer l'e-mail de confirmation"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

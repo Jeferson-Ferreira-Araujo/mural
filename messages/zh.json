@@ -2318,7 +2318,11 @@
     "hi5dd4t": "日",
     "hgblxzz": "月",
     "hxhqvrf": "年",
-    "haion2k": "即将到来的更新"
+    "haion2k": "即将到来的更新",
+    "h1mshro4": "请先确认邮箱再登录：我们已向您的收件箱发送了链接。",
+    "h5me6ua": "我们已重新发送邮件。请查看收件箱和垃圾邮件。",
+    "h1dp5161": "没收到？重新发送邮件",
+    "h16kh8x2": "重新发送确认邮件"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

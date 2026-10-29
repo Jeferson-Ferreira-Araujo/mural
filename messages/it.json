@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Giorno",
     "hgblxzz": "Mese",
     "hxhqvrf": "Anno",
-    "haion2k": "Aggiornamenti in arrivo"
+    "haion2k": "Aggiornamenti in arrivo",
+    "h1mshro4": "Conferma la tua e-mail per accedere: ti abbiamo inviato un link nella posta in arrivo.",
+    "h5me6ua": "Abbiamo inviato di nuovo l'e-mail. Controlla la posta in arrivo e lo spam.",
+    "h1dp5161": "Non l'hai ricevuta? Invia di nuovo l'e-mail",
+    "h16kh8x2": "Invia di nuovo l'e-mail di conferma"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

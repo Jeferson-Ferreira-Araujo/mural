@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Ngày",
     "hgblxzz": "Tháng",
     "hxhqvrf": "Năm",
-    "haion2k": "Bản cập nhật sắp tới"
+    "haion2k": "Bản cập nhật sắp tới",
+    "h1mshro4": "Hãy xác nhận email để đăng nhập: chúng tôi đã gửi liên kết vào hộp thư của bạn.",
+    "h5me6ua": "Chúng tôi đã gửi lại email. Hãy kiểm tra hộp thư đến và thư rác.",
+    "h1dp5161": "Chưa nhận được? Gửi lại email",
+    "h16kh8x2": "Gửi lại email xác nhận"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

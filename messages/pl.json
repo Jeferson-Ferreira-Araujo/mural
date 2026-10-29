@@ -2318,7 +2318,11 @@
     "hi5dd4t": "Dzień",
     "hgblxzz": "Miesiąc",
     "hxhqvrf": "Rok",
-    "haion2k": "Nadchodzące aktualizacje"
+    "haion2k": "Nadchodzące aktualizacje",
+    "h1mshro4": "Potwierdź adres e-mail, aby się zalogować: wysłaliśmy link do Twojej skrzynki.",
+    "h5me6ua": "Wysłaliśmy e-mail ponownie. Sprawdź skrzynkę odbiorczą i spam.",
+    "h1dp5161": "Nie dotarł? Wyślij e-mail ponownie",
+    "h16kh8x2": "Wyślij e-mail z potwierdzeniem ponownie"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

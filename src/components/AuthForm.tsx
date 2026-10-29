@@ -54,6 +54,8 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [unconfirmed, setUnconfirmed] = useState(false); // tentou entrar sem ter confirmado o e-mail: oferece reenviar o link
+  const [resent, setResent] = useState<string | null>(null);
   const [codeStep, setCodeStep] = useState(false); // nome reservado: confirmação por código enviado ao e-mail
   const nickState = useNicknameStatus(mode === "signup" ? nick : "");
   const signup = mode === "signup";
@@ -102,6 +104,10 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       const { error: err } = await sb.auth.signInWithPassword({ email: mail, password });
       setBusy(false);
       if (err) {
+        if (err.code === "email_not_confirmed" || /not confirmed/i.test(err.message)) {
+          setUnconfirmed(true);
+          return setError(tl("Confirme seu e-mail para entrar: enviamos um link para a sua caixa de entrada."));
+        }
         setError(err.status === 400 ? t("errors.badCredentials") : t("errors.loginFail"));
         return;
       }
@@ -124,6 +130,12 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
     else router.push(takeNext() ?? (await homeRouteFor(getBrowserSupabase()))); // conta criada (o primeiro mural já nasce junto)
   }
 
+  async function resend() {
+    setResent(null);
+    const { error: err } = await getBrowserSupabase().auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: callbackUrl() } });
+    setResent(err ? (err.status === 429 ? t("errors.tooMany") : t("errors.signupFail")) : tl("Enviamos o e-mail de novo. Confira a caixa de entrada e o spam."));
+  }
+
   if (codeStep) {
     return (
       <CodeStep
@@ -143,6 +155,10 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
         <p className="mt-2 text-[#4a3826]">
           {t.rich("confirm.body", { email: email.trim(), strong: (c) => <strong>{c}</strong> })}
         </p>
+        <button type="button" onClick={() => void resend()} className="mt-3 cursor-pointer text-sm font-semibold text-[#6b5440] underline">
+          {tl("Não recebeu? Enviar o e-mail de novo")}
+        </button>
+        {resent && <p role="status" className="mt-2 text-sm text-[#4a3826]">{resent}</p>}
         <button
           type="button"
           onClick={() => {
@@ -228,6 +244,14 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
             </div>
           )}
         </Field>
+        {unconfirmed && !signup && (
+          <div className="text-sm">
+            <button type="button" onClick={() => void resend()} className="cursor-pointer font-semibold text-[#6b5440] underline">
+              {tl("Enviar o e-mail de confirmação de novo")}
+            </button>
+            {resent && <p role="status" className="mt-1 text-[#4a3826]">{resent}</p>}
+          </div>
+        )}
         {!signup && (
           <label className="flex cursor-pointer items-center gap-2 text-sm text-[#4a3826]">
             <input type="checkbox" checked={remember} onChange={(e) => setRememberState(e.target.checked)} className="size-4 cursor-pointer accent-[#1f232b]" />
