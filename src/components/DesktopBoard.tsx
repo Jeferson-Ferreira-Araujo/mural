@@ -164,15 +164,15 @@ export function DesktopBoard(props: ViewProps) {
           aria-expanded={!collapsed}
           aria-label={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
           title={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
-          className={`absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden ${hint && collapsed ? "menu-tab-glow" : ""} focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
+          className={`absolute top-1/2 start-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-e-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden ${hint && collapsed ? "menu-tab-glow" : ""} focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
         >
-          <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180 rtl:rotate-0" : "rtl:rotate-180"}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="m15 6-6 6 6 6" />
           </svg>
         </button>
         {/* só na primeira vez (conta nova, menu ainda fechado): um aviso ao lado do botão diz o que ele faz */}
         {hint && collapsed && (
-          <span aria-hidden className="menu-tab-tip pointer-events-none absolute top-1/2 left-8 z-30 -translate-y-1/2 rounded-lg bg-[#2a1c12] px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-[#fbf6ea] shadow-[0_0.3rem_1rem_rgba(0,0,0,.4)] portrait:hidden">
+          <span aria-hidden className="menu-tab-tip pointer-events-none absolute top-1/2 start-8 z-30 -translate-y-1/2 rounded-lg bg-[#2a1c12] px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-[#fbf6ea] shadow-[0_0.3rem_1rem_rgba(0,0,0,.4)] portrait:hidden">
             {tl("Mostrar o menu lateral")}
           </span>
         )}
