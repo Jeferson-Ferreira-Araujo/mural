@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { fetchNotice, noticeText, type SiteNotice as Notice } from "@/lib/notice";
@@ -32,9 +32,34 @@ export function SiteNotice() {
     };
   }, []);
 
+  // outra janela que abre depois do aviso ficaria na frente dele: fecha e reabre o aviso para ele voltar ao topo
+  const reopening = useRef(false);
+  useEffect(() => {
+    if (!open) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const obs = new MutationObserver((list) => {
+      // o próprio aviso se reconhece pelo título (é o nome da janela)
+      const mine = notice ? noticeText(notice.texts, locale).t : "";
+      const other = list.some((m) => m.target instanceof HTMLDialogElement && m.target.open && m.oldValue === null && m.target.getAttribute("aria-label") !== mine);
+      if (!other || reopening.current) return;
+      reopening.current = true;
+      setOpen(false);
+      timer = setTimeout(() => {
+        setOpen(true);
+        reopening.current = false;
+      }, 60);
+    });
+    obs.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["open"], attributeOldValue: true });
+    return () => {
+      obs.disconnect();
+      clearTimeout(timer);
+    };
+  }, [open, notice, locale]);
+
   if (!notice) return null;
   const x = noticeText(notice.texts, locale);
   const close = () => {
+    if (reopening.current) return;
     setOpen(false);
     try {
       localStorage.setItem(key(notice), "1");
