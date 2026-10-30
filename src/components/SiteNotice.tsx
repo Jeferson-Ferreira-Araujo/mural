@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { fetchNotice, noticeText, type SiteNotice as Notice } from "@/lib/notice";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { getOnboarding } from "@/lib/onboarding";
 import { RichBody } from "@/lib/richText";
 import { Modal } from "./account/Modal";
 
@@ -19,14 +20,32 @@ export function SiteNotice() {
     let alive = true;
     const sb = getBrowserSupabase();
     // só para quem está logada (a tela inicial dela); quem ainda vê a tela de entrada não recebe o aviso
-    const load = () =>
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let running = false;
+    // o aviso espera a vez: só aparece depois das boas-vindas (nome, foto, data, mural, tour) e de qualquer outra janela aberta
+    const load = () => {
+      if (running) return;
+      running = true;
       void fetchNotice(sb).then((n) => {
-        if (!alive || !n) return;
-        // uma vez só por conta: já fica registrado ao aparecer (mesmo que a pessoa nem feche), e vale em qualquer aparelho
-        void sb.rpc("mark_site_notice_seen", { p_id: n.id });
-        setNotice(n);
-        setOpen(true);
+        if (!alive || !n) return void (running = false);
+        let calm = 0;
+        const wait = async () => {
+          if (!alive) return;
+          const busy = !!document.querySelector("dialog[open]");
+          const onb = busy ? null : await getOnboarding(sb);
+          calm = busy || !onb || !onb.done || !onb.setup ? 0 : calm + 1;
+          if (calm < 3) {
+            timer = setTimeout(() => void wait(), 1000);
+            return;
+          }
+          // uma vez só por conta: já fica registrado ao aparecer (mesmo que a pessoa nem feche), e vale em qualquer aparelho
+          void sb.rpc("mark_site_notice_seen", { p_id: n.id });
+          setNotice(n);
+          setOpen(true);
+        };
+        void wait();
       });
+    };
     void sb.auth.getSession().then(({ data }) => alive && data.session && load());
     const { data: sub } = sb.auth.onAuthStateChange((ev) => {
       if (ev === "SIGNED_IN") load();
@@ -34,6 +53,7 @@ export function SiteNotice() {
     });
     return () => {
       alive = false;
+      clearTimeout(timer);
       sub.subscription.unsubscribe();
     };
   }, []);
