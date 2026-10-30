@@ -28,6 +28,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   useEffect(() => setMounted(true), []);
   const ready = mounted && !boardPending;
   const ref = useRef<HTMLDialogElement>(null);
+  const root = useRef<HTMLDivElement>(null);
   useBackClose(open, () => setOpen(false));
 
   useEffect(() => {
@@ -40,6 +41,8 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   // página /entrar (ex.: depois de sair da conta): a folha do formulário já abre, na aba pedida (?modo=entrar = Entrar; sem isso, Criar conta)
   useEffect(() => {
     if (window.location.pathname !== "/entrar") return;
+    // no computador esta tela fica escondida: abrir a janela mesmo assim a deixaria invisível, travando todos os cliques da página
+    if (!root.current || root.current.getClientRects().length === 0) return;
     authIntent.mode = new URLSearchParams(window.location.search).get("modo") === "entrar" ? "login" : "signup";
     authIntent.touched = true;
     setOpen(true);
@@ -52,7 +55,7 @@ export function MobileLanding({ items, plan, board, capacity, hasSelection, unlo
   };
   
   return (
-    <div className={`fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e] transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}>
+    <div ref={root} className={`fixed inset-0 flex flex-col overflow-hidden bg-[#2a1a0e] transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}>
       {/* fundo: a mesma névoa colorida do mural (a foto do quadro bem desfocada), igual por trás do logo, do mural e do rodapé */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={boardImageS(look)} alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-80 blur-md" />
