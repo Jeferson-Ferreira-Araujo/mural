@@ -2342,7 +2342,8 @@
     "hzwste3": "Acheter le pack",
     "hlhlbj5": "Nouveau pack",
     "h1ifxlo9": "Les badges du pack sont maintenant sur ton compte.",
-    "h1ejy8tl": "Pack de badges débloqué : ils sont sur ton compte."
+    "h1ejy8tl": "Pack de badges débloqué : ils sont sur ton compte.",
+    "h3a5zaf": "Tous les tableaux de la boutique débloqués"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

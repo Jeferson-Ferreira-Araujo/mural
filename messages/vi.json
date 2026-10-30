@@ -2342,7 +2342,8 @@
     "hzwste3": "Mua gói",
     "hlhlbj5": "Gói mới",
     "h1ifxlo9": "Các huy hiệu trong gói đã có trong tài khoản của bạn.",
-    "h1ejy8tl": "Đã mở gói huy hiệu: chúng đã có trong tài khoản của bạn."
+    "h1ejy8tl": "Đã mở gói huy hiệu: chúng đã có trong tài khoản của bạn.",
+    "h3a5zaf": "Mở khóa tất cả bảng trong cửa hàng"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

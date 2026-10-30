@@ -2342,7 +2342,8 @@
     "hzwste3": "Compra il pacchetto",
     "hlhlbj5": "Nuovo pacchetto",
     "h1ifxlo9": "I badge del pacchetto sono ora nel tuo account.",
-    "h1ejy8tl": "Pacchetto di badge sbloccato: sono nel tuo account."
+    "h1ejy8tl": "Pacchetto di badge sbloccato: sono nel tuo account.",
+    "h3a5zaf": "Tutte le bacheche del negozio sbloccate"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

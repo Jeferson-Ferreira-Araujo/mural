@@ -2342,7 +2342,8 @@
     "hzwste3": "Comprar paquete",
     "hlhlbj5": "Paquete nuevo",
     "h1ifxlo9": "Los botones del paquete ya están en tu cuenta.",
-    "h1ejy8tl": "Paquete de botones desbloqueado: ya están en tu cuenta."
+    "h1ejy8tl": "Paquete de botones desbloqueado: ya están en tu cuenta.",
+    "h3a5zaf": "Todos los tableros de la tienda desbloqueados"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

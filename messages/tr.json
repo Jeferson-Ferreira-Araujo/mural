@@ -2342,7 +2342,8 @@
     "hzwste3": "Paketi satın al",
     "hlhlbj5": "Yeni paket",
     "h1ifxlo9": "Paketteki rozetler hesabında.",
-    "h1ejy8tl": "Rozet paketi açıldı: hesabında."
+    "h1ejy8tl": "Rozet paketi açıldı: hesabında.",
+    "h3a5zaf": "Mağazadaki tüm panolar açık"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

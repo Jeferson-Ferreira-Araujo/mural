@@ -2342,7 +2342,8 @@
     "hzwste3": "Pakket kopen",
     "hlhlbj5": "Nieuw pakket",
     "h1ifxlo9": "De buttons van het pakket staan nu in je account.",
-    "h1ejy8tl": "Buttonpakket ontgrendeld: ze staan nu in je account."
+    "h1ejy8tl": "Buttonpakket ontgrendeld: ze staan nu in je account.",
+    "h3a5zaf": "Alle winkelborden ontgrendeld"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

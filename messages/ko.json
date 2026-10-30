@@ -2342,7 +2342,8 @@
     "hzwste3": "팩 구매",
     "hlhlbj5": "새 팩",
     "h1ifxlo9": "팩의 버튼이 계정에 들어왔어요.",
-    "h1ejy8tl": "버튼 팩이 열렸어요: 계정에 들어왔어요."
+    "h1ejy8tl": "버튼 팩이 열렸어요: 계정에 들어왔어요.",
+    "h3a5zaf": "스토어의 모든 보드 해제"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

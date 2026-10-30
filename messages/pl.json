@@ -2342,7 +2342,8 @@
     "hzwste3": "Kup pakiet",
     "hlhlbj5": "Nowy pakiet",
     "h1ifxlo9": "Przypinki z pakietu są już na Twoim koncie.",
-    "h1ejy8tl": "Pakiet przypinek odblokowany: są już na Twoim koncie."
+    "h1ejy8tl": "Pakiet przypinek odblokowany: są już na Twoim koncie.",
+    "h3a5zaf": "Wszystkie tablice ze sklepu odblokowane"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

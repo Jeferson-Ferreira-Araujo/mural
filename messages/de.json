@@ -2342,7 +2342,8 @@
     "hzwste3": "Paket kaufen",
     "hlhlbj5": "Neues Paket",
     "h1ifxlo9": "Die Buttons des Pakets sind jetzt in deinem Konto.",
-    "h1ejy8tl": "Button-Paket freigeschaltet: sie sind jetzt in deinem Konto."
+    "h1ejy8tl": "Button-Paket freigeschaltet: sie sind jetzt in deinem Konto.",
+    "h3a5zaf": "Alle Shop-Tafeln freigeschaltet"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

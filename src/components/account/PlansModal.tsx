@@ -22,6 +22,7 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Cápsulas PINZ (abrem numa data)", on: false },
     { text: "Deixar pins e displays em segredo", on: true },
     { text: "Comprar pins e temas na loja com créditos", on: true },
+    { text: "Todos os quadros da loja liberados", on: false },
     { text: "Mais de um mural", on: false },
   ],
   full: [
@@ -31,6 +32,7 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
     { text: "Pins e temas da loja, com créditos", on: true },
+    { text: "Todos os quadros da loja liberados", on: true },
   ],
 };
 

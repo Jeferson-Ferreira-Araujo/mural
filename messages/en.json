@@ -2342,7 +2342,8 @@
     "hzwste3": "Buy pack",
     "hlhlbj5": "New pack",
     "h1ifxlo9": "The pack's buttons are now in your account.",
-    "h1ejy8tl": "Button pack unlocked: they're now in your account."
+    "h1ejy8tl": "Button pack unlocked: they're now in your account.",
+    "h3a5zaf": "All store boards unlocked"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",
