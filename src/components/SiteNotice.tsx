@@ -19,16 +19,25 @@ export function SiteNotice() {
 
   useEffect(() => {
     let alive = true;
-    void fetchNotice(getBrowserSupabase()).then((n) => {
-      if (!alive || !n) return;
-      try {
-        if (localStorage.getItem(key(n)) === "1") return;
-      } catch {}
-      setNotice(n);
-      setOpen(true);
+    const sb = getBrowserSupabase();
+    // só para quem está logada (a tela inicial dela); quem ainda vê a tela de entrada não recebe o aviso
+    const load = () =>
+      void fetchNotice(sb).then((n) => {
+        if (!alive || !n) return;
+        try {
+          if (localStorage.getItem(key(n)) === "1") return;
+        } catch {}
+        setNotice(n);
+        setOpen(true);
+      });
+    void sb.auth.getSession().then(({ data }) => alive && data.session && load());
+    const { data: sub } = sb.auth.onAuthStateChange((ev) => {
+      if (ev === "SIGNED_IN") load();
+      if (ev === "SIGNED_OUT") setOpen(false);
     });
     return () => {
       alive = false;
+      sub.subscription.unsubscribe();
     };
   }, []);
 
