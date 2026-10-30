@@ -101,7 +101,6 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
     onClose();
   }
 
-  const [more, setMore] = useState(false);
   const stepLabel = `${tl("Etapa")} ${i + 1}/${steps.length}`;
 
   return (
@@ -109,6 +108,7 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
       open={open}
       onClose={onClose}
       required
+      wide={step === "intro"}
       title=""
       label={tx("m_ola", { v0: nick })}
       headerLeft={
@@ -173,6 +173,8 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
               <h3 className="font-title mt-3 text-xl font-semibold">{tl("Seu espaço está quase pronto!")}</h3>
               <p className="mt-1 text-sm leading-snug text-[#6b5440]">{tl("Comece gratuitamente e descubra tudo o que você pode criar no PINZ.")}</p>
             </div>
+            {/* os dois planos lado a lado (um sobre o outro só em telas estreitas) */}
+            <div className="grid items-stretch gap-3 min-[560px]:grid-cols-2">
             <section className="rounded-2xl border-2 border-[#e0b04a] bg-white/80 p-3.5">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="flex items-center gap-2 font-semibold">
@@ -202,23 +204,16 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
                 </h4>
                 <span className="rounded-full bg-[#ece3d0] px-2.5 py-0.5 text-xs font-semibold text-[#6b5440]">{tl("Opcional")}</span>
               </div>
-              {more && (
-                <ul className="mt-2 space-y-1.5 text-[13px] leading-snug text-[#3a2c1d]">
-                  {PLUS_LIST.map((t) => (
-                    <li key={t} className="flex gap-2">
-                      <Tick />
-                      {tl(t)}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <button type="button" onClick={() => setMore((m) => !m)} aria-expanded={more} className="mt-2.5 flex w-full cursor-pointer items-center justify-between text-sm font-semibold text-[#8a6410] focus-visible:outline-2 focus-visible:outline-[#d98a2b]">
-                {more ? tl("Ocultar benefícios") : tl("Ver todos os benefícios")}
-                <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${more ? "rotate-90" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="m9 5 7 7-7 7" />
-                </svg>
-              </button>
+              <ul className="mt-2 space-y-1.5 text-[13px] leading-snug text-[#3a2c1d]">
+                {PLUS_LIST.map((t) => (
+                  <li key={t} className="flex gap-2">
+                    <Tick />
+                    {tl(t)}
+                  </li>
+                ))}
+              </ul>
             </section>
+            </div>
           </div>
         )}
         {error && (
