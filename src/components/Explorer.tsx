@@ -59,7 +59,7 @@ import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import { BoardLoadingProvider } from "./board/BoardLoadingContext";
 import type { ReportReason } from "./board/PinsManager";
 import { BadgeProvider } from "./badges/BadgeContext";
-import { buyBadgeQty, buyBoard, buyMuralSlot, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
+import { buyBadgePack, buyBadgeQty, buyBoard, buyMuralSlot, buyPinProduct, FREE_BADGES, fetchBadges, fetchInventory, stockFor, type BadgeInventory, type PlacedBadge, type Stock } from "@/lib/badges";
 import { StoreModal, sampleFor, type BuyItem } from "./badges/StoreModal";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { isFinalizing, takeCompanyWelcome } from "@/lib/reserved";
@@ -775,9 +775,9 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
   const buy = useCallback(
     async (item: BuyItem) => {
       const sb = getBrowserSupabase();
-      const res = item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
+      const res = item.kind === "pack" ? await buyBadgePack(sb, item.id) : item.kind === "badge" || item.kind === "unit" ? await buyBadgeQty(sb, item.key, item.qty) : item.kind === "board" ? await buyBoard(sb, item.id) : item.kind === "product" ? await buyPinProduct(sb, item.id) : await buyMuralSlot(sb);
       if (res.ok) {
-        notify(item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : tl("+1 unidade adicionada.")) : item.kind === "badge" ? (item.qty > 1 ? tx("m_bottonLiberadoComUnidadesJa", { v0: item.qty }) : tx("m_bottonLiberadoJaEstaNa")) : item.kind === "board" ? tx("m_fundoLiberadoApliqueEmEditar") : item.kind === "product" ? tx("m_displayLiberadoEleJaEsta") : tx("m_muralExtraLiberadoCrieO"));
+        notify(item.kind === "pack" ? tl("Pacote de bottons liberado: já estão na sua conta.") : item.kind === "unit" ? (item.qty > 1 ? `+${item.qty} unidades adicionadas.` : tl("+1 unidade adicionada.")) : item.kind === "badge" ? (item.qty > 1 ? tx("m_bottonLiberadoComUnidadesJa", { v0: item.qty }) : tx("m_bottonLiberadoJaEstaNa")) : item.kind === "board" ? tx("m_fundoLiberadoApliqueEmEditar") : item.kind === "product" ? tx("m_displayLiberadoEleJaEsta") : tx("m_muralExtraLiberadoCrieO"));
         await reloadInventory();
         return true;
       }

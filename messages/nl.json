@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "Mijn gegevens downloaden",
     "h8yp7m2": "Heb je een kortingscode?",
     "h5c1rfn": "Couponcode",
-    "hsolq20": "Inwisselen",
+    "hsolq20": "Claimen",
     "h110a5op": "Bezig met inwisselen…",
     "hecw5pr": "Coupon ingewisseld:",
     "hxsuxma": "credits",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "Pins en displays geheim houden",
     "h1kh8r1j": "Nieuwe winkelbuttons beschikbaar om te kopen",
     "hohtd0d": "Nieuw: alleen voor PINZ+-leden",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "Nieuwe winkelbuttons krijg je gratis",
+    "h1ieaz5e": "Pakket claimen",
+    "hzwste3": "Pakket kopen",
+    "hlhlbj5": "Nieuw pakket",
+    "h1ifxlo9": "De buttons van het pakket staan nu in je account.",
+    "h1ejy8tl": "Buttonpakket ontgrendeld: ze staan nu in je account."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

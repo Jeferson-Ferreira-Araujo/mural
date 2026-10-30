@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "Verilerimi indir",
     "h8yp7m2": "Kuponunuz var mı?",
     "h5c1rfn": "Kupon kodu",
-    "hsolq20": "Kullan",
+    "hsolq20": "Al",
     "h110a5op": "Kullanılıyor…",
     "hecw5pr": "Kupon kullanıldı:",
     "hxsuxma": "kredi",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "Pinleri ve ekranları gizli tut",
     "h1kh8r1j": "Mağazadaki yeni rozetler satın almaya açık",
     "hohtd0d": "Yeni: yalnızca PINZ+ üyeleri için",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "Mağazadaki yeni rozetleri ücretsiz alabilirsin",
+    "h1ieaz5e": "Paketi al",
+    "hzwste3": "Paketi satın al",
+    "hlhlbj5": "Yeni paket",
+    "h1ifxlo9": "Paketteki rozetler hesabında.",
+    "h1ejy8tl": "Rozet paketi açıldı: hesabında."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

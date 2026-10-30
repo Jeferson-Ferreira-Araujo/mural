@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "Tải dữ liệu của tôi",
     "h8yp7m2": "Bạn có mã giảm giá?",
     "h5c1rfn": "Mã phiếu",
-    "hsolq20": "Đổi",
+    "hsolq20": "Nhận",
     "h110a5op": "Đang đổi…",
     "hecw5pr": "Đã đổi phiếu:",
     "hxsuxma": "tín dụng",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "Giữ ghim và màn hình ở chế độ bí mật",
     "h1kh8r1j": "Huy hiệu mới của cửa hàng được mở để mua",
     "hohtd0d": "Mới: chỉ dành cho người dùng PINZ+",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "Huy hiệu mới của cửa hàng nhận miễn phí",
+    "h1ieaz5e": "Nhận gói",
+    "hzwste3": "Mua gói",
+    "hlhlbj5": "Gói mới",
+    "h1ifxlo9": "Các huy hiệu trong gói đã có trong tài khoản của bạn.",
+    "h1ejy8tl": "Đã mở gói huy hiệu: chúng đã có trong tài khoản của bạn."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

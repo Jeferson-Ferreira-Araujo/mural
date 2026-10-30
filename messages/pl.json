@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "Pobierz moje dane",
     "h8yp7m2": "Masz kupon?",
     "h5c1rfn": "Kod kuponu",
-    "hsolq20": "Zrealizuj",
+    "hsolq20": "Odbierz",
     "h110a5op": "Realizowanie…",
     "hecw5pr": "Kupon zrealizowany:",
     "hxsuxma": "kredytów",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "Ukrywaj piny i wyświetlacze",
     "h1kh8r1j": "Nowe przypinki ze sklepu dostępne do zakupu",
     "hohtd0d": "Nowość: tylko dla posiadaczy PINZ+",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "Nowe przypinki ze sklepu odbierzesz za darmo",
+    "h1ieaz5e": "Odbierz pakiet",
+    "hzwste3": "Kup pakiet",
+    "hlhlbj5": "Nowy pakiet",
+    "h1ifxlo9": "Przypinki z pakietu są już na Twoim koncie.",
+    "h1ejy8tl": "Pakiet przypinek odblokowany: są już na Twoim koncie."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

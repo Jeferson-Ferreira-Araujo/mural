@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "내 데이터 내려받기",
     "h8yp7m2": "쿠폰이 있으세요?",
     "h5c1rfn": "쿠폰 코드",
-    "hsolq20": "사용하기",
+    "hsolq20": "받기",
     "h110a5op": "사용 중…",
     "hecw5pr": "쿠폰 사용 완료:",
     "hxsuxma": "크레딧",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "핀과 디스플레이를 비밀로 두기",
     "h1kh8r1j": "스토어의 새 버튼을 구매할 수 있어요",
     "hohtd0d": "신규: PINZ+ 회원 전용",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "스토어의 새 버튼은 무료로 받을 수 있어요",
+    "h1ieaz5e": "팩 받기",
+    "hzwste3": "팩 구매",
+    "hlhlbj5": "새 팩",
+    "h1ifxlo9": "팩의 버튼이 계정에 들어왔어요.",
+    "h1ejy8tl": "버튼 팩이 열렸어요: 계정에 들어왔어요."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

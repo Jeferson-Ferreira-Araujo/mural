@@ -2193,7 +2193,7 @@
     "h1l1w5sj": "Unduh data saya",
     "h8yp7m2": "Punya kupon?",
     "h5c1rfn": "Kode kupon",
-    "hsolq20": "Tukar",
+    "hsolq20": "Klaim",
     "h110a5op": "Menukar…",
     "hecw5pr": "Kupon ditukar:",
     "hxsuxma": "kredit",
@@ -2336,7 +2336,13 @@
     "h1wetvnd": "Rahasiakan pin dan tampilan",
     "h1kh8r1j": "Tombol baru di toko terbuka untuk dibeli",
     "hohtd0d": "Baru: hanya untuk pengguna PINZ+",
-    "h1lfdgem": "🔒 PINZ+"
+    "h1lfdgem": "🔒 PINZ+",
+    "h1gehwil": "Tombol baru di toko bisa didapat gratis",
+    "h1ieaz5e": "Klaim paket",
+    "hzwste3": "Beli paket",
+    "hlhlbj5": "Paket baru",
+    "h1ifxlo9": "Tombol dalam paket sudah ada di akunmu.",
+    "h1ejy8tl": "Paket tombol terbuka: sudah ada di akunmu."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

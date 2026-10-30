@@ -21,7 +21,7 @@ import { SAMPLE_TEXT, demoLocaleOf, type DemoLocale } from "@/data/demoText";
 import { useLit } from "@/i18n/literal";
 import { useMoney } from "@/lib/useMoney";
 
-export type BuyItem = { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
+export type BuyItem = { kind: "pack"; id: string } | { kind: "badge"; key: number; qty: number } | { kind: "unit"; key: number; qty: number } | { kind: "board"; id: string } | { kind: "product"; id: string } | { kind: "mural" };
 type Tab = "pins" | "boards" | "formats";
 
 const MAX_QTY = 20;
@@ -350,6 +350,28 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <GridSkeleton count={9} label={tx("carregandoALoja")} />
       ) : tab === "pins" ? (
         <>
+          {(inventory.packs ?? []).filter((p) => p.missing > 0).map((p) => (
+            <div key={p.id} className="mb-3 flex items-center gap-3 rounded-2xl border border-[#ecd9a0] bg-[#fff8e4] p-3">
+              <span className="rounded-full bg-[#e8554a] px-2 py-px text-[10px] font-extrabold tracking-wide text-white uppercase">{tl("Pacote novo")}</span>
+              <p className="min-w-0 flex-1 truncate text-sm font-semibold">
+                {p.name} <span className="font-normal text-[#6b5440]">· {p.missing}/{p.total}</span>
+              </p>
+              <button
+                type="button"
+                disabled={busy === `k${p.id}`}
+                onClick={() => buy(`k${p.id}`, { kind: "pack", id: p.id }, { title: p.name, text: tl("Os bottons do pacote já estão na sua conta."), spent: p.price })}
+                className={`${buyBtn} !gap-1 !px-3 !text-xs`}
+              >
+                {p.price === 0 ? (
+                  tl("Resgatar pacote")
+                ) : (
+                  <>
+                    {tl("Comprar pacote")} <Coin className="size-3.5" /> {p.price}
+                  </>
+                )}
+              </button>
+            </div>
+          ))}
           <div role="tablist" aria-label={tx("categoriasDeBottons")} className="mb-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
               <button key={c.id} role="tab" type="button" aria-selected={filter === c.id} onClick={() => (setFilter(c.id), setPage(0))} className={`shrink-0 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${filter === c.id ? "border-[#1f232b] bg-[#1f232b] text-white" : "border-[#e1d3ba] bg-white/70 text-[#4a3826] hover:bg-[#efe4cf]"}`}>
@@ -366,7 +388,6 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               {shown.slice(pageSafe * PER_PAGE, pageSafe * PER_PAGE + PER_PAGE).map((b) => {
                 const c = byKey.get(b.key)!;
                 const owned = c.starter || c.owned;
-                const lockedPlus = !owned && !!c.plusOnly && !inventory?.plus; // botton novo: a compra é do PINZ+
                 const n = qtyOf(b.key);
                 const cost = owned ? c.unitPrice * n : c.price + c.unitPrice * (n - 1);
                 const name = b.name ? tl(b.name) : tx("x_botton", { key: b.key });
@@ -394,9 +415,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <button
                         type="button"
                         disabled={busy === `p${b.key}`}
-                        aria-label={lockedPlus ? tl("Novo: só para quem tem PINZ+") : tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : tl("Comprar"), v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
+                        aria-label={tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : tl("Comprar"), v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
                         onClick={() =>
-                          lockedPlus ? window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } })) : buy(
+                          buy(
                             `p${b.key}`,
                             owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n },
                             {
@@ -411,8 +432,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       >
                         {busy === `p${b.key}` ? (
                           tl("Comprando…")
-                        ) : lockedPlus ? (
-                          tl("🔒 PINZ+")
+                        ) : !owned && cost === 0 ? (
+                          tl("Resgatar")
                         ) : (
                           tl("Comprar")
                         )}
