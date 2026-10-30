@@ -38,7 +38,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
     id: "full",
     name: "PINZ+",
     slots: 28,
-    formats: ["postit", "text", "list", "photo", "draw", "music", "video", "voice", "place"],
+    formats: ["postit", "text", "list", "photo", "draw", "music", "video", "voice", "place", "seal"],
     capsule: true,
     murals: 1, // mais murais se compram com créditos (loja)
     price: "R$ 9,90/mês",
@@ -79,4 +79,4 @@ export const CREDIT_PACKS: readonly { id: string; credits: number; cents: number
 export const NEW_MURAL_COST = 5;
 
 /** Recursos listados nos planos (apenas informativo). */
-export const FULL_EXTRAS = ["Vídeo, Voz e Local", ...(CAPSULE_ENABLED ? ["Cápsulas PINZ"] : []), "Futuras personalizações", "Futuras estatísticas avançadas"];
+export const FULL_EXTRAS = ["Vídeo, Voz e Local", "Carta Selada", "Futuras personalizações", "Futuras estatísticas avançadas"];

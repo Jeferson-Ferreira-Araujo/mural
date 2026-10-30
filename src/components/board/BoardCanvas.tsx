@@ -556,7 +556,7 @@ export function BoardCanvas({
                                     setDetail(detailIndexOf(item.id));
                                   }
                                 }}
-                                aria-label={tx("x_viewDetail", { what: isSealed(item) ? tl("Cápsula PINZ") : isHidden(item) ? tl("Pin em segredo") : tl(typeLabel[item.type]) })}
+                                aria-label={tx("x_viewDetail", { what: isSealed(item) ? (item.style ? tl("Carta Selada") : tl("Cápsula PINZ")) : isHidden(item) ? tl("Pin em segredo") : tl(typeLabel[item.type]) })}
                                 className="group block cursor-zoom-in rounded-[0.4em] focus-visible:outline-2 focus-visible:outline-offset-[0.3em] focus-visible:outline-[#f7f0dd]"
                               >
                                 <div className="pointer-events-none origin-center transition-transform duration-150 group-hover:scale-[1.06]">

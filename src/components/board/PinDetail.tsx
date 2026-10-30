@@ -3,6 +3,7 @@
 import { useBackClose } from "@/lib/backStack";
 import { useEffect, useRef } from "react";
 import { isHidden, isSealed, type BoardItem } from "@/lib/types";
+import { sealDetailSize } from "../messages/SealCard";
 import { useState } from "react";
 import { MessageView } from "../messages/MessageView";
 import { useModeration } from "./ModerationContext";
@@ -283,6 +284,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
       const sh = shapeOfStyle(widget.data.style);
       return sh === "square" ? { h: 13, w: 13 } : sh === "tall" ? { h: 19, w: 13 } : { h: 13, w: 25.5 };
     } // widgets: 24 em de largura por 12 de altura (o quadrado, 12 por 12)
+    if (item && isSealed(item) && item.style) return { h: 26, w: 16 }; // carta fechada: o envelope e a contagem por baixo
     if (!item || isSealed(item) || isHidden(item)) return { h: 21, w: 16 };
     if (item.type === "photo") {
       const r = Math.min(2, Math.max(0.5, item.ratio ?? 1));
@@ -291,6 +293,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     }
     // players e mapa são cartões baixos (14em de largura, ~10em de altura); a legenda é um papelzinho que pende embaixo
     if (item.type === "place" || item.type === "voice" || item.type === "video" || item.type === "music") return { h: 12.5 + ("caption" in item && item.caption ? 5.5 : 0), w: 16 };
+    if (item.type === "seal") return sealDetailSize(item);
     if (item.type === "draw") return { h: 19 + ("caption" in item && item.caption ? 4 : 0), w: 17 };
     return { h: 23, w: 16 };
   })();

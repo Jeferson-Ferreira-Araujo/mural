@@ -25,6 +25,8 @@ export function placeholderFor(h: HiddenItem): Message | null {
       return { id: h.id, type: "list", title: "————— ———", items: [{ text: "———— ———", done: false }, { text: "—— ————— ——", done: true }, { text: "———— ——", done: false }], ...style };
     case "photo":
       return { id: h.id, type: "photo", caption: "", scene: "hills", src: h.media ? PIXEL : undefined, ratio: h.ratio, ...style };
+    case "seal":
+      return { id: h.id, type: "text", variant: "letter", text: `${LOREM} ${LOREM}`, ...style };
     case "draw":
       return { id: h.id, type: "draw", caption: "", ...style };
     case "music":

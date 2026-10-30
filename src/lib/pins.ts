@@ -57,7 +57,17 @@ async function verifyImage(sb: SupabaseClient, path: string): Promise<{ exp: num
 export async function sendPin(sb: SupabaseClient, ref: MuralRef, token: string | null, payload: SendPayload, ownerFolder?: string): Promise<SendResult> {
   const { type, ...content } = payload.message as Record<string, unknown> & { type: string };
   try {
-    if (typeof content.src === "string" && content.src.startsWith("blob:")) {
+    if (type === "seal") {
+      // carta selada: foto (src), vídeo (video) e áudio (voice) sobem juntos; foto e vídeo passam pelo detector de nudez
+      for (const key of ["src", "video", "voice"] as const) {
+        const v = content[key];
+        if (typeof v !== "string" || !v.startsWith("blob:")) continue;
+        const up = await uploadMedia(sb, token ?? ownerFolder ?? "", v);
+        content[key] = up.url;
+        if (key === "src") content.approval = await verifyImage(sb, up.path);
+        if (key === "video") content.vapproval = await verifyImage(sb, up.path);
+      }
+    } else if (typeof content.src === "string" && content.src.startsWith("blob:")) {
       const up = await uploadMedia(sb, token ?? ownerFolder ?? "", content.src);
       content.src = up.url;
       if (type === "photo" || type === "draw" || type === "video") content.approval = await verifyImage(sb, up.path);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CAPSULE_ENABLED, CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, PLUS_PRICE_CENTS, type PlanId } from "@/lib/plans";
+import { CREDIT_PACKS, PAYMENTS_ENABLED, PLANS, PLUS_PRICE_CENTS, type PlanId } from "@/lib/plans";
 import { cancelSubscription, fetchSubscription, PAY_EVENT, startCheckout, type Subscription } from "@/lib/payments";
 import { PlanBadge } from "../board/PlanBadge";
 import { Carousel } from "./Carousel";
@@ -19,7 +19,7 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: false },
     { text: "Bottons novos da loja podem ser adquiridos de graça", on: false },
-    { text: "Cápsulas PINZ (abrem numa data)", on: false },
+    { text: "Carta Selada (abre numa data)", on: false },
     { text: "Deixar pins e displays em segredo", on: true },
     { text: "Comprar pins e temas na loja com créditos", on: true },
     { text: "Mais de um mural", on: false },
@@ -29,7 +29,7 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "Post-it, texto, lista e foto", on: true },
     { text: "Bottons novos da loja podem ser adquiridos de graça", on: true },
     { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: true },
-    { text: "Cápsulas PINZ (abrem numa data)", on: true },
+    { text: "Carta Selada (abre numa data)", on: true },
     { text: "Pins e temas da loja, com créditos", on: true },
   ],
 };
@@ -49,7 +49,7 @@ function PlanCard({ id, current, footer }: { id: PlanId; current: boolean; foote
       <p className="font-title mt-3 text-3xl font-semibold">{full ? money(PLUS_PRICE_CENTS) + tl("/mês") : tl(p.price)}</p>
       {(!full || !PAYMENTS_ENABLED) && <p className="text-sm text-[#6b5440]">{full ? tx("m_cobrancaEmBreve") : tx("m_paraSempre")}</p>}
       <ul className="mt-4 space-y-2 text-sm">
-        {FEATURES[id].filter((f) => CAPSULE_ENABLED || !f.text.startsWith("Cápsulas")).map((f) => (
+        {FEATURES[id].map((f) => (
           <li key={f.text} className={`flex items-start gap-2 ${f.on ? "text-[#2f2218]" : "text-[#8a7b69]"}`}>
             <span aria-hidden className={`mt-0.5 font-bold ${f.on ? "text-[#2f6a3c]" : "text-[#b0a08a]"}`}>
               {f.on ? "✓" : "–"}

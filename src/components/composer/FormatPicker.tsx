@@ -63,6 +63,12 @@ const THUMBS: Record<MessageType, ReactNode> = {
       </span>
     </span>
   ),
+  seal: (
+    <span className="relative block h-8 w-12 rotate-[-3deg] rounded-[3px] bg-[#eadfc6] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#cdbb94]">
+      <span className="absolute inset-x-0 top-0 h-[17px] bg-[#f5ecd7]" style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }} />
+      <span className="absolute top-[11px] left-1/2 size-[11px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_35%_30%,#e0454a,#9c1c1f)] shadow-[0_1px_2px_rgba(0,0,0,.4)]" />
+    </span>
+  ),
   video: (
     <span className="block w-10 rounded-[6px] bg-gradient-to-br from-[#3b3b40] to-[#19191b] p-[3px] shadow-[0_0.15rem_0.3rem_rgba(0,0,0,.3)] ring-1 ring-[#d6a062]/60">
       <span className="grid aspect-[16/10] place-items-center rounded-[3px] bg-black text-[9px] text-white">▶</span>

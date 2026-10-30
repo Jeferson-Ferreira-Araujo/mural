@@ -147,7 +147,7 @@ export const MAX_BADGES = 200; // teto técnico de bottons por mural
 /** Pins sobre os quais um botton pode ficar: foto, post-it, papel (texto e lista) e desenho. Em mapa, vídeo, música, voz, cápsula e display não vale. */
 export const BADGE_OK_TYPES: ReadonlySet<string> = new Set(["photo", "postit", "text", "list", "draw"]);
 
-export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "capsule"];
+export const PHYSICAL_TYPES: readonly (MessageType | "capsule")[] = ["music", "video", "voice", "place", "seal", "capsule"];
 
 /** Displays da loja (versículo, frase, relógio, clima): usam as chaves 1001 a 1007 e ficam em qualquer lugar do mural, não em um espaço. */
 export const DISPLAY_KEYS: Record<string, number> = { bible: 1001, motivation: 1002, clock: 1003, weather: 1004, calendar: 1005, cookie: 1006, date: 1007, countdown: 1008, daycount: 1009, book: 1010, top3: 1011, poll: 1013, habit: 1014, mood: 1015 };

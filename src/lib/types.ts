@@ -41,6 +41,10 @@ type Base = {
   ownerReview?: boolean;
 };
 
+/** Estilos do envelope da Carta Selada. */
+export type SealStyle = "classica" | "minimalista" | "colorida" | "rustica" | "elegante" | "tematica";
+export const SEAL_STYLES: readonly SealStyle[] = ["classica", "minimalista", "colorida", "rustica", "elegante", "tematica"];
+
 export type DailyCategory = "versiculo" | "frase";
 
 /** Os formatos. FREE: postit, text, list, photo. PINZ+: + music, video, voice, place. */
@@ -53,7 +57,9 @@ export type Message =
   | (Base & { type: "music"; title: string; artist: string; caption: string; duration?: string; link?: string; playerColor?: PlayerColor })
   | (Base & { type: "video"; caption: string; duration?: string; src?: string; /** vídeo do YouTube (no lugar do arquivo) */ link?: string; playerColor?: PlayerColor })
   | (Base & { type: "voice"; caption: string; duration?: string; src?: string; playerColor?: PlayerColor })
-  | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor });
+  | (Base & { type: "place"; name: string; address: string; lat: number; lon: number; caption: string; playerColor?: PlayerColor })
+  /** Carta Selada: texto e, se houver, 1 foto (`src`), 1 vídeo (`video`) e 1 áudio (`voice`). Só abre na data (`opensAt`); antes disso o mural recebe apenas o estilo (ver `ClosedCapsuleItem`). */
+  | (Base & { type: "seal"; style: SealStyle; text: string; opensAt?: string; src?: string; ratio?: number; video?: string; vdur?: string; voice?: string; adur?: string });
 
 export type MessageType = Message["type"];
 
@@ -61,7 +67,7 @@ export type MessageType = Message["type"];
  * Cápsula ainda fechada. De propósito NÃO tem nenhum campo de conteúdo (nem o formato):
  * o frontend nunca recebe o que está dentro antes da data de abertura.
  */
-export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; slot?: number | null; ox?: number; oy?: number; fcov?: number[] };
+export type ClosedCapsuleItem = { id: string; sealed: true; opensAt: string; /** carta selada: só o estilo do envelope vem antes da data */ type?: "seal"; style?: SealStyle; slot?: number | null; ox?: number; oy?: number; fcov?: number[] };
 
 /**
  * Espaço ocupado cujo conteúdo o servidor NÃO enviou: pin aguardando aprovação de outra pessoa ou pin que o dono (PINZ+)
@@ -114,6 +120,7 @@ export const formatInfo: Record<MessageType, FormatInfo> = {
   video: { label: "Vídeo", hint: "Um vídeo no seu mini player", tier: "full" },
   voice: { label: "Voz", hint: "Uma mensagem de voz", tier: "full" },
   place: { label: "Local", hint: "Um lugar no mapa", tier: "full" },
+  seal: { label: "Carta Selada", hint: "Uma carta que só abre numa data", tier: "full" },
 };
 
 export const typeLabel: Record<MessageType, string> = Object.fromEntries(

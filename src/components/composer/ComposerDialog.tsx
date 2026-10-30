@@ -17,6 +17,8 @@ import { SEND_ERROR_TEXT } from "@/lib/pins";
 import { SlotPicker } from "./SlotPicker";
 import { DisplayChooser } from "../badges/DisplayChooser";
 import { DrawForm } from "./DrawForm";
+import { SealForm } from "./SealForm";
+import { ClosedSeal } from "../messages/SealCard";
 import { ListForm, MusicForm, PhotoForm, PlaceForm, PostItForm, TextForm, VideoForm, VoiceForm } from "./forms";
 import type { DraftMessage, SendPayload } from "./types";
 import { useTranslations } from "next-intl";
@@ -66,6 +68,8 @@ function FormFor({ format, onChange }: { format: MessageType; onChange: (d: Draf
       return <VoiceForm onChange={onChange} />;
     case "place":
       return <PlaceForm onChange={onChange} />;
+    case "seal":
+      return <SealForm onChange={onChange} />;
   }
 }
 
@@ -87,6 +91,7 @@ const SAMPLE: Record<MessageType, DraftMessage> = {
   music: { type: "music", title: "Nome da música", artist: "Artista", caption: "", playerColor: "black" },
   video: { type: "video", caption: "", playerColor: "black" },
   voice: { type: "voice", caption: "", playerColor: "cream" },
+  seal: { type: "seal", style: "classica", text: "Sua mensagem aparece aqui.", opensAt: new Date(Date.now() + 86_400_000).toISOString() },
   // só o desenho do aparelho (não carrega o mapa)
   place: { type: "place", name: "Nome do lugar", address: "", lat: 0, lon: 0, caption: "", playerColor: "silver", blank: true } as unknown as DraftMessage,
 };
@@ -154,7 +159,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
       onSubmit={(e) => {
         e.preventDefault();
         if (!draft || !canSend || slot === null) return;
-        onSend({ message: withPos(draft), slot, capsuleAt: capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
+        onSend({ message: withPos(draft), slot, capsuleAt: draft.type === "seal" ? draft.opensAt : capsule.enabled ? new Date(capsule.at).toISOString() : undefined });
       }}
       className={`space-y-5 ${format !== "draw" ? "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-x-8 lg:space-y-0" : ""}`}
     >
@@ -165,13 +170,19 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
           {hasPos && <p className="mb-2 text-center text-xs text-[#6b5440]">{tx("toqueNaSilhuetaParaMudar")}</p>}
           <div className="flex justify-center">
             <div className="text-[11px] lg:text-[17px]">
-              {capsule.enabled ? (
-                <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">{tx("noMuralElaApareceComo")}</p>
+              {capsule.enabled || shown.type === "seal" ? (
+                <p className="mb-2 max-w-[16em] text-center text-[1.15em] text-[#6b5440]">{shown.type === "seal" ? tl("No mural, a carta aparece fechada, assim:") : tx("noMuralElaApareceComo")}</p>
               ) : null}
               <div className={empty ? "opacity-70" : ""}>
-                <FastenerPicker value={hasPos ? { onPick: setPos } : null}>
-                  <MessageView message={{ ...shown, id: "preview", signedBy: signAs ?? undefined } as Message} />
-                </FastenerPicker>
+                {shown.type === "seal" ? (
+                  <div className="pb-[1.6em]">
+                    <ClosedSeal style={shown.style} opensAt={shown.opensAt ?? new Date(Date.now() + 86_400_000).toISOString()} />
+                  </div>
+                ) : (
+                  <FastenerPicker value={hasPos ? { onPick: setPos } : null}>
+                    <MessageView message={{ ...shown, id: "preview", signedBy: signAs ?? undefined } as Message} />
+                  </FastenerPicker>
+                )}
               </div>
             </div>
           </div>
@@ -191,7 +202,7 @@ function Body({ plan, capacity = BOARD_CAPACITY, taken, fixedSlot = null, sendin
         </p>
       )}
       <button type="submit" data-tour="compose-send" disabled={!canSend} className={primaryButton}>
-        {sending ? tl("Colocando…") : capsule.enabled ? tx("m_fecharACapsulaEColocar") : tx("m_colocarNoMural")}
+        {sending ? tl("Colocando…") : format === "seal" ? tl("Selar a carta e colocar no mural") : capsule.enabled ? tx("m_fecharACapsulaEColocar") : tx("m_colocarNoMural")}
       </button>
       </div>
     </form>

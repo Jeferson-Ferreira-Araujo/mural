@@ -9,6 +9,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { PinFx } from "./PinFx";
 import { useFeatureFlags } from "@/lib/features";
 import { ClosedCapsule } from "./ClosedCapsule";
+import { ClosedSeal, OpenSeal } from "./SealCard";
 import { ListCard } from "./ListCard";
 import { MusicCard } from "./MusicCard";
 import { PaperNote } from "./PaperNote";
@@ -40,6 +41,8 @@ function Content({ m }: { m: Message }) {
       return <VideoPrint caption={m.caption} duration={m.duration} src={m.src} link={m.link} color={m.playerColor} />;
     case "voice":
       return <VoiceNote caption={m.caption} duration={m.duration} src={m.src} color={m.playerColor} />;
+    case "seal":
+      return <OpenSeal m={m} />;
     case "place":
       return <PlaceCard name={m.name} address={m.address} lat={m.lat} lon={m.lon} caption={m.caption} color={m.playerColor} blank={(m as { blank?: boolean }).blank} />;
   }
@@ -126,7 +129,7 @@ function Marked({ m }: { m: Message }) {
  */
 export function MessageView({ message, revealSecret = false }: { message: BoardItem; revealSecret?: boolean }) {
   const flip = useFeatureFlags().secret_flip !== false;
-  if (isSealed(message)) return <ClosedCapsule opensAt={message.opensAt} />;
+  if (isSealed(message)) return message.style ? <ClosedSeal style={message.style} opensAt={message.opensAt} /> : <ClosedCapsule opensAt={message.opensAt} />;
   // fixado: tachinha/fita dourada (PinFx); o resto é o pin de sempre
   return (
     <PinFx pinned={!!message.pinned && !(isHidden(message) && message.pending)} type={message.type}>
@@ -230,7 +233,7 @@ function Plain({ m }: { m: Message }) {
     <div className="relative">
       <Content m={m} />
       <Signature name={m.signedBy} reaction={m.reaction} />
-      {m.fromCapsule && (
+      {m.fromCapsule && m.type !== "seal" && (
       <span
         title={tx("abertaDeUmaCapsulaPinz")}
         className="absolute -top-[0.7em] -right-[0.6em] z-30 grid size-[2em] place-items-center rounded-full text-white shadow-[0_0.15em_0.4em_rgba(60,10,5,.5)]"
