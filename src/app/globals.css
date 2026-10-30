@@ -539,3 +539,14 @@ html[data-intro="play"]:not([data-intro-veil="off"]) body::before { content: "";
 /* o próprio detalhe (dialog) nunca mostra contorno de foco */
 dialog:focus,
 dialog:focus-visible { outline: none; }
+
+/* botão que abre o menu lateral: brilho que pulsa para chamar a atenção (conta nova que terminou as boas-vindas) */
+@keyframes menu-tab-glow {
+  0%, 100% { box-shadow: 0 0.3rem 1rem rgba(0,0,0,.35), 0 0 0 0 rgba(242,194,48,.0); background-color: rgba(251,246,234,.95); }
+  50% { box-shadow: 0 0.3rem 1rem rgba(0,0,0,.35), 0 0 0 0.45rem rgba(242,194,48,.65), 0 0 1.6rem 0.5rem rgba(242,194,48,.8); background-color: #fff3c4; }
+}
+.menu-tab-glow { animation: menu-tab-glow 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .menu-tab-glow { animation: none; box-shadow: 0 0 0 0.3rem rgba(242,194,48,.8); } }
+@keyframes menu-tab-tip { 0%, 100% { transform: translate(0,-50%); } 50% { transform: translate(0.4rem,-50%); } }
+.menu-tab-tip { animation: menu-tab-tip 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .menu-tab-tip { animation: none; } }

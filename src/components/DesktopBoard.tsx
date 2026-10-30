@@ -17,6 +17,8 @@ import type { ViewProps } from "./viewProps";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useLit } from "@/i18n/literal";
+import { getBrowserSupabase } from "@/lib/supabase";
+import { getOnboarding } from "@/lib/onboarding";
 
 const COLLAPSE_KEY = "pinz:sidebar-collapsed";
 
@@ -81,17 +83,53 @@ export function DesktopBoard(props: ViewProps) {
   // conta nova nos passos de boas-vindas: menu recolhido (sem gravar a preferência); ao terminar, o menu abre
   const onboarding = !!props.onboarding;
   const wasOnboarding = useRef(false);
+  const freshAccount = useRef(false);
+  const [hint, setHint] = useState(false); // brilho no botão que abre o menu lateral
   useEffect(() => {
     if (onboarding) {
       wasOnboarding.current = true;
       setCollapsed(true);
     } else if (wasOnboarding.current) {
       wasOnboarding.current = false;
-      if (!visitNick) setCollapsed(false);
+      let pref = false;
+      try {
+        pref = localStorage.getItem(COLLAPSE_KEY) === "1";
+      } catch {}
+      // conta nova (ou menu que a pessoa já deixava recolhido): o menu segue fechado e o botão que o abre ganha um brilho para chamar a atenção
+      if (!visitNick) {
+        if (freshAccount.current || pref) setHint(true);
+        else setCollapsed(false);
+      }
+      freshAccount.current = false;
     } else return;
     window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
   }, [onboarding, visitNick]);
+  // conta recém-criada: o mural já aparece com o menu lateral fechado, antes mesmo das boas-vindas abrirem (sem gravar a preferência)
+  useEffect(() => {
+    let alive = true;
+    const sb = getBrowserSupabase();
+    void sb.auth.getSession().then(async ({ data }) => {
+      const u = data.session?.user;
+      if (!alive || !u || Date.now() - new Date(u.created_at).getTime() > 30 * 60_000) return;
+      const o = await getOnboarding(sb);
+      if (!alive || !o || (o.done && o.setup)) return;
+      freshAccount.current = true;
+      wasOnboarding.current = true;
+      setCollapsed(true);
+      window.setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  // o brilho no botão do menu some sozinho
+  useEffect(() => {
+    if (!hint) return;
+    const t = window.setTimeout(() => setHint(false), 12000);
+    return () => window.clearTimeout(t);
+  }, [hint]);
   const toggleCollapsed = () => {
+    setHint(false);
     const next = !collapsed;
     setCollapsed(next);
     try {
@@ -126,12 +164,18 @@ export function DesktopBoard(props: ViewProps) {
           aria-expanded={!collapsed}
           aria-label={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
           title={collapsed ? tl("Mostrar o menu lateral") : tl("Recolher o menu lateral")}
-          className={`absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
+          className={`absolute top-1/2 left-0 z-30 grid h-16 w-6 -translate-y-1/2 cursor-pointer place-items-center rounded-r-xl bg-[#fbf6ea]/95 text-[#4a3826] shadow-[0_0.3rem_1rem_rgba(0,0,0,.35)] transition hover:w-7 hover:bg-white portrait:hidden ${hint && collapsed ? "menu-tab-glow" : ""} focus-visible:outline-2 focus-visible:outline-[#d98a2b]`}
         >
           <svg viewBox="0 0 24 24" className={`size-4 transition-transform ${collapsed ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="m15 6-6 6 6 6" />
           </svg>
         </button>
+        {/* só na primeira vez (conta nova, menu ainda fechado): um aviso ao lado do botão diz o que ele faz */}
+        {hint && collapsed && (
+          <span aria-hidden className="menu-tab-tip pointer-events-none absolute top-1/2 left-8 z-30 -translate-y-1/2 rounded-lg bg-[#2a1c12] px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-[#fbf6ea] shadow-[0_0.3rem_1rem_rgba(0,0,0,.4)] portrait:hidden">
+            {tl("Mostrar o menu lateral")}
+          </span>
+        )}
 
         <div className={`relative h-full shrink-0 overflow-hidden portrait:h-auto portrait:w-[min(100%,78dvh)] portrait:aspect-[3/2] ${look.wide ? "w-full" : "w-[min(100%,150dvh)]"}`}>
 
