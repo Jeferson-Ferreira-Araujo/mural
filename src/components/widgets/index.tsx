@@ -195,7 +195,7 @@ export function DisplayCard({ data, preview = false, badgeId }: { data: DisplayD
     case "calendar":
       return <CalendarWidget style={data.style} dates={data.dates} frame={data.frame} />;
     case "poll":
-      return <PollWidget style={data.style} title={data.title} options={data.options} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} />;
+      return <PollWidget style={data.style} title={data.title} options={data.options} badgeId={preview ? undefined : (badgeId ?? data.id)} frame={data.frame} local={!preview && badgeId === ""} />;
     case "top3":
       return <Top3Widget style={data.style} title={data.title} items={data.items} frame={data.frame} />;
     case "book":

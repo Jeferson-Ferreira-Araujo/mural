@@ -20,7 +20,7 @@ const SKINS: Record<string, { bg: string; ink: string; sub: string; row: string;
  * Enquete (quadrada): a pergunta e duas respostas com a porcentagem de cada uma, ao vivo. No mural mostra o resultado;
  * ao tocar no display abre o detalhe, onde as opções viram botões para votar (dá para trocar o voto).
  */
-export function PollWidget({ style = "q-paper", title, options, badgeId, frame }: { style?: string; title?: string; options?: string[]; badgeId?: string; frame?: string | null }) {
+export function PollWidget({ style = "q-paper", title, options, badgeId, frame, local = false }: { style?: string; title?: string; options?: string[]; badgeId?: string; frame?: string | null; /** mural de teste: dá para clicar e ver o voto contado na hora, sem guardar em lugar nenhum */ local?: boolean }) {
   const tx = useTranslations("components.widgets.PollWidget");
   const wt = useWT();
   const inDetail = useInDetail();
@@ -30,14 +30,18 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
   // sem id (prévia na loja e no formulário): resultado de exemplo
   const demo = !badgeId;
   const { state, vote, logged } = usePoll(badgeId, !demo, opts.length);
-  const counts = demo ? opts.map((_, i) => [14, 6, 3, 2][i] ?? 1) : (state?.counts ?? opts.map(() => 0));
+  const [tryVote, setTryVote] = useState<number | null>(null); // voto de brincadeira (só nesta tela, não é guardado)
+  const sample = opts.map((_, i) => [14, 6, 3, 2][i] ?? 1);
+  if (local && tryVote !== null) sample[tryVote]++;
+  const counts = demo ? sample : (state?.counts ?? opts.map(() => 0));
   const total = demo ? counts.reduce((a, b) => a + b, 0) : (state?.total ?? 0);
-  const mine = demo ? null : (state?.mine ?? null);
+  const mine = demo ? (local ? tryVote : null) : (state?.mine ?? null);
   const [err, setErr] = useState(false);
   const [askLogin, setAskLogin] = useState(false); // tentou votar sem conta: mostra o caminho para entrar ou criar a conta
 
   async function pick(i: number) {
     setErr(false);
+    if (local) return setTryVote(i);
     if (!logged) return setAskLogin(true);
     if (!(await vote(i))) setErr(true);
   }
@@ -70,7 +74,7 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
             );
             const cls = "relative flex min-h-0 items-center overflow-hidden rounded-[0.55em] px-[0.6em]";
             const st = { background: sk.row, boxShadow: chosen ? `inset 0 0 0 0.12em ${sk.mine}` : undefined } as const;
-            return inDetail && !demo ? (
+            return inDetail && (!demo || local) ? (
               <button key={i} type="button" onClick={() => void pick(i)} aria-pressed={chosen} className={`${cls} w-full cursor-pointer transition active:scale-[0.99]`} style={st}>
                 {inner}
               </button>
@@ -99,7 +103,7 @@ export function PollWidget({ style = "q-paper", title, options, badgeId, frame }
           <span>
             {total} {total === 1 ? wt.vote : wt.votes}
           </span>
-          <span>{err ? tx("m_naoFoiPossivelVotarAgora") : demo ? "" : inDetail ? (!logged ? tx("m_entreParaVotar") : mine !== null ? tx("m_toqueParaTrocarOVoto") : tx("m_toqueNumaOpcao")) : mine !== null ? tx("m_voceJaVotou") : tx("m_toqueParaVotar")}</span>
+          <span>{err ? tx("m_naoFoiPossivelVotarAgora") : demo ? (local && inDetail ? (mine !== null ? tx("m_toqueParaTrocarOVoto") : tx("m_toqueNumaOpcao")) : "") : inDetail ? (!logged ? tx("m_entreParaVotar") : mine !== null ? tx("m_toqueParaTrocarOVoto") : tx("m_toqueNumaOpcao")) : mine !== null ? tx("m_voceJaVotou") : tx("m_toqueParaVotar")}</span>
         </p>
       </div>
     </WidgetFrame>
