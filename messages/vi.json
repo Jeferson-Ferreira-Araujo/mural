@@ -2348,7 +2348,8 @@
     "h8emh4p": "Bức tường này đang tạm dừng và tạm thời không nhận ghim mới.",
     "hsknttd": "PINZ+ của bạn đã hết. Sau {n} ngày, các bức tường sau bức đầu tiên trong danh sách sẽ tạm dừng: vẫn hiển thị nhưng không nhận ghim mới. Kéo để chọn bức nào giữ hoạt động, hoặc quay lại PINZ+.",
     "h1jprjp4": "PINZ+ của bạn đã hết và các bức tường sau bức đầu tiên trong danh sách đang tạm dừng. Chúng trở lại ngay khi bạn gia hạn, không có gì bị xóa.",
-    "h1aq2qvk": "Tạm dừng"
+    "h1aq2qvk": "Tạm dừng",
+    "h1lomfji": "Nhận miễn phí"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

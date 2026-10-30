@@ -670,7 +670,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                 <div className="p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-title text-base font-semibold">{tl(b.name)}</p>
-                    {!owned ? (
+                    {!owned && info?.price === 0 ? (
+                      <span className="inline-flex shrink-0 items-center rounded-full bg-[#e3f3e7] px-2.5 py-1 text-xs font-bold text-[#2f6a3c]">{tl("Grátis")}</span>
+                    ) : !owned ? (
                       <p className="flex items-center gap-1 text-sm font-bold" aria-label={tx("m_creditos", { v0: info?.price ?? 25 })}>
                         <Coin className="size-5" />
                         {info?.price ?? 25}
@@ -686,7 +688,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                   </div>
                   {owned ? null : (
                     <button type="button" disabled={busy === `t${b.id}`} onClick={() => buy(`t${b.id}`, { kind: "board", id: b.id }, { title: tx("x_boardBg", { name: tl(b.name) }), text: tx("m_liberadoApliqueEmEditarMural"), img: b.image, spent: info?.price ?? 25 })} className={buyBtn}>
-                      {busy === `t${b.id}` ? tl("Comprando…") : tl("Comprar")}
+                      {busy === `t${b.id}` ? tl("Comprando…") : info?.price === 0 ? tl("Adquirir grátis") : tl("Comprar")}
                     </button>
                   )}
                 </div>

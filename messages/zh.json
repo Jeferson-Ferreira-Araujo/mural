@@ -2348,7 +2348,8 @@
     "h8emh4p": "此墙已暂停，暂时不接收新图钉。",
     "hsknttd": "你的 PINZ+ 已到期。{n} 天后，列表中第一面之后的墙将被暂停：仍可查看，但不再接收新图钉。拖动可选择保持启用的墙，或回到 PINZ+。",
     "h1jprjp4": "你的 PINZ+ 已到期，列表中第一面之后的墙已暂停。续订后立即恢复，没有任何内容被删除。",
-    "h1aq2qvk": "已暂停"
+    "h1aq2qvk": "已暂停",
+    "h1lomfji": "免费领取"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

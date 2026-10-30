@@ -2348,7 +2348,8 @@
     "h8emh4p": "Ce mur est en pause et ne reçoit pas de nouveaux pins pour le moment.",
     "hsknttd": "Ton PINZ+ est terminé. Dans {n} jours, les murs après le premier de la liste seront mis en pause : ils restent visibles mais ne reçoivent plus de nouveaux pins. Fais glisser pour choisir celui qui reste actif, ou reviens à PINZ+.",
     "h1jprjp4": "Ton PINZ+ est terminé et les murs après le premier de la liste sont en pause. Ils reviennent aussitôt au renouvellement, et rien n'a été supprimé.",
-    "h1aq2qvk": "En pause"
+    "h1aq2qvk": "En pause",
+    "h1lomfji": "Obtenir gratuitement"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

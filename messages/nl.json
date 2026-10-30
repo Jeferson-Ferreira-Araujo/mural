@@ -2348,7 +2348,8 @@
     "h8emh4p": "Dit mural is gepauzeerd en ontvangt voorlopig geen nieuwe pins.",
     "hsknttd": "Je PINZ+ is afgelopen. Over {n} dagen worden de murals na de eerste in de lijst gepauzeerd: ze blijven zichtbaar maar ontvangen geen nieuwe pins. Sleep om te kiezen welke actief blijft, of ga terug naar PINZ+.",
     "h1jprjp4": "Je PINZ+ is afgelopen en de murals na de eerste in de lijst zijn gepauzeerd. Ze zijn direct terug als je verlengt; er is niets verwijderd.",
-    "h1aq2qvk": "Gepauzeerd"
+    "h1aq2qvk": "Gepauzeerd",
+    "h1lomfji": "Gratis ophalen"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

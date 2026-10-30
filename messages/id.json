@@ -2348,7 +2348,8 @@
     "h8emh4p": "Mural ini dijeda dan sementara tidak menerima pin baru.",
     "hsknttd": "PINZ+ kamu sudah berakhir. Dalam {n} hari, mural setelah yang pertama di daftar akan dijeda: tetap terlihat tetapi tidak menerima pin baru. Seret untuk memilih yang tetap aktif, atau kembali ke PINZ+.",
     "h1jprjp4": "PINZ+ kamu sudah berakhir dan mural setelah yang pertama di daftar dijeda. Langsung kembali saat kamu memperpanjang, tidak ada yang dihapus.",
-    "h1aq2qvk": "Dijeda"
+    "h1aq2qvk": "Dijeda",
+    "h1lomfji": "Dapatkan gratis"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

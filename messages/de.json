@@ -2348,7 +2348,8 @@
     "h8emh4p": "Diese Wand ist pausiert und erhält vorerst keine neuen Pins.",
     "hsknttd": "Dein PINZ+ ist abgelaufen. In {n} Tagen werden die Wände nach der ersten in der Liste pausiert: Sie bleiben sichtbar, erhalten aber keine neuen Pins. Ziehe, um die aktive zu wählen, oder kehre zu PINZ+ zurück.",
     "h1jprjp4": "Dein PINZ+ ist abgelaufen und die Wände nach der ersten in der Liste sind pausiert. Sie sind sofort wieder da, wenn du verlängerst; nichts wurde gelöscht.",
-    "h1aq2qvk": "Pausiert"
+    "h1aq2qvk": "Pausiert",
+    "h1lomfji": "Kostenlos holen"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

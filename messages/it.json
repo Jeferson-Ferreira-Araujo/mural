@@ -2348,7 +2348,8 @@
     "h8emh4p": "Questa bacheca è in pausa e per ora non riceve nuovi pin.",
     "hsknttd": "Il tuo PINZ+ è finito. Tra {n} giorni le bacheche dopo la prima dell'elenco andranno in pausa: restano visibili ma non ricevono nuovi pin. Trascina per scegliere quale resta attiva, o torna a PINZ+.",
     "h1jprjp4": "Il tuo PINZ+ è finito e le bacheche dopo la prima dell'elenco sono in pausa. Tornano subito al rinnovo e nulla è stato eliminato.",
-    "h1aq2qvk": "In pausa"
+    "h1aq2qvk": "In pausa",
+    "h1lomfji": "Ottieni gratis"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

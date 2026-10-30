@@ -1597,7 +1597,7 @@
     "hqscy0m": "Co najmniej jedna cyfra",
     "h9klpbl": "Symbol (!@#$…)",
     "h1iwjysn": "Wybierz mniej oczywiste hasło.",
-    "h18357yh": "Darmowy",
+    "h18357yh": "Za darmo",
     "hlmyga6": "R$ 9,90/miesiąc",
     "h1svf0ng": "+1 bonus",
     "h12rbnkt": "+4 bonus",
@@ -2348,7 +2348,8 @@
     "h8emh4p": "Ten mural jest wstrzymany i na razie nie przyjmuje nowych pinów.",
     "hsknttd": "Twój PINZ+ się skończył. Za {n} dni murale po pierwszym na liście zostaną wstrzymane: pozostaną widoczne, ale nie będą przyjmować nowych pinów. Przeciągnij, by wybrać aktywny, albo wróć do PINZ+.",
     "h1jprjp4": "Twój PINZ+ się skończył, a murale po pierwszym na liście są wstrzymane. Wrócą od razu po odnowieniu, nic nie zostało usunięte.",
-    "h1aq2qvk": "Wstrzymany"
+    "h1aq2qvk": "Wstrzymany",
+    "h1lomfji": "Odbierz za darmo"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

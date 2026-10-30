@@ -2348,7 +2348,8 @@
     "h8emh4p": "Bu mural duraklatıldı ve şimdilik yeni pin almıyor.",
     "hsknttd": "PINZ+ süren bitti. {n} gün sonra listedeki ilk muraldan sonrakiler duraklatılacak: görünür kalır ama yeni pin almaz. Hangisinin aktif kalacağını seçmek için sürükle ya da PINZ+ a dön.",
     "h1jprjp4": "PINZ+ süren bitti ve listedeki ilk muraldan sonrakiler duraklatıldı. Yenilediğinde hemen geri gelir, hiçbir şey silinmedi.",
-    "h1aq2qvk": "Duraklatıldı"
+    "h1aq2qvk": "Duraklatıldı",
+    "h1lomfji": "Ücretsiz al"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
