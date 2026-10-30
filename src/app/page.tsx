@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Explorer } from "@/components/Explorer";
+import { SiteNotice } from "@/components/SiteNotice";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { SITE_HOST } from "@/lib/mural";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -48,6 +49,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }} />
       ))}
       <Explorer />
+      <SiteNotice />
     </>
   );
 }

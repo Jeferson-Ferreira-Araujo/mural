@@ -2349,7 +2349,12 @@
     "hsknttd": "Twój PINZ+ się skończył. Za {n} dni murale po pierwszym na liście zostaną wstrzymane: pozostaną widoczne, ale nie będą przyjmować nowych pinów. Przeciągnij, by wybrać aktywny, albo wróć do PINZ+.",
     "h1jprjp4": "Twój PINZ+ się skończył, a murale po pierwszym na liście są wstrzymane. Wrócą od razu po odnowieniu, nic nie zostało usunięte.",
     "h1aq2qvk": "Wstrzymany",
-    "h1lomfji": "Odbierz za darmo"
+    "h1lomfji": "Odbierz za darmo",
+    "h19ydc9h": "Przypięty pin zostaje na muralu nawet po upływie ważności muralu. Nie znika sam.",
+    "h17u8d46": "Możesz go odpiąć, kiedy chcesz. To powiadomienie pojawia się tylko za pierwszym razem.",
+    "hwry6uj": "Przypnij",
+    "h1qa4qju": "Rozumiem",
+    "h1fyyw9h": "Dowiedz się więcej"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

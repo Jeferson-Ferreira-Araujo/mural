@@ -2349,7 +2349,12 @@
     "hsknttd": "Il tuo PINZ+ è finito. Tra {n} giorni le bacheche dopo la prima dell'elenco andranno in pausa: restano visibili ma non ricevono nuovi pin. Trascina per scegliere quale resta attiva, o torna a PINZ+.",
     "h1jprjp4": "Il tuo PINZ+ è finito e le bacheche dopo la prima dell'elenco sono in pausa. Tornano subito al rinnovo e nulla è stato eliminato.",
     "h1aq2qvk": "In pausa",
-    "h1lomfji": "Ottieni gratis"
+    "h1lomfji": "Ottieni gratis",
+    "h19ydc9h": "Un pin fissato resta sulla bacheca anche dopo la scadenza della bacheca. Non sparisce da solo.",
+    "h17u8d46": "Puoi sbloccarlo quando vuoi. Questo avviso compare solo questa prima volta.",
+    "hwry6uj": "Fissa",
+    "h1qa4qju": "Ho capito",
+    "h1fyyw9h": "Scopri di più"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

@@ -2349,7 +2349,12 @@
     "hsknttd": "Tu PINZ+ terminó. En {n} días, los murales posteriores al primero de la lista se pausarán: siguen visibles pero no reciben pins nuevos. Arrastra para elegir cuál queda activo o vuelve a PINZ+.",
     "h1jprjp4": "Tu PINZ+ terminó y los murales posteriores al primero de la lista están en pausa. Vuelven al instante al renovar y no se borró nada.",
     "h1aq2qvk": "En pausa",
-    "h1lomfji": "Obtener gratis"
+    "h1lomfji": "Obtener gratis",
+    "h19ydc9h": "Un pin fijado sigue en el mural aunque termine la vigencia del mural. No desaparece solo.",
+    "h17u8d46": "Puedes desfijarlo cuando quieras. Este aviso solo aparece esta primera vez.",
+    "hwry6uj": "Fijar",
+    "h1qa4qju": "Entendido",
+    "h1fyyw9h": "Saber más"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2349,7 +2349,12 @@
     "hsknttd": "PINZ+ của bạn đã hết. Sau {n} ngày, các bức tường sau bức đầu tiên trong danh sách sẽ tạm dừng: vẫn hiển thị nhưng không nhận ghim mới. Kéo để chọn bức nào giữ hoạt động, hoặc quay lại PINZ+.",
     "h1jprjp4": "PINZ+ của bạn đã hết và các bức tường sau bức đầu tiên trong danh sách đang tạm dừng. Chúng trở lại ngay khi bạn gia hạn, không có gì bị xóa.",
     "h1aq2qvk": "Tạm dừng",
-    "h1lomfji": "Nhận miễn phí"
+    "h1lomfji": "Nhận miễn phí",
+    "h19ydc9h": "Ghim đã được cố định vẫn ở lại trên bức tường kể cả khi bức tường hết hạn. Nó không tự biến mất.",
+    "h17u8d46": "Bạn có thể bỏ cố định bất cứ lúc nào. Thông báo này chỉ hiện lần đầu tiên.",
+    "hwry6uj": "Cố định",
+    "h1qa4qju": "Đã hiểu",
+    "h1fyyw9h": "Tìm hiểu thêm"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

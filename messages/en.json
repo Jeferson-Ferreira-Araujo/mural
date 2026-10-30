@@ -2349,7 +2349,12 @@
     "hsknttd": "Your PINZ+ has ended. In {n} days, the murals after the first one in the list will be paused: they stay visible but stop receiving new pins. Drag to choose which one stays active, or go back to PINZ+.",
     "h1jprjp4": "Your PINZ+ has ended and the murals after the first one in the list are paused. They come back instantly when you renew, and nothing was deleted.",
     "h1aq2qvk": "Paused",
-    "h1lomfji": "Get for free"
+    "h1lomfji": "Get for free",
+    "h19ydc9h": "A pinned pin stays on the mural even after the mural's validity ends. It doesn't disappear on its own.",
+    "h17u8d46": "You can unpin it whenever you want. This notice only appears this first time.",
+    "hwry6uj": "Pin",
+    "h1qa4qju": "Got it",
+    "h1fyyw9h": "Learn more"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

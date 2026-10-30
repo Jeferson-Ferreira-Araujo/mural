@@ -2349,7 +2349,12 @@
     "hsknttd": "Dein PINZ+ ist abgelaufen. In {n} Tagen werden die Wände nach der ersten in der Liste pausiert: Sie bleiben sichtbar, erhalten aber keine neuen Pins. Ziehe, um die aktive zu wählen, oder kehre zu PINZ+ zurück.",
     "h1jprjp4": "Dein PINZ+ ist abgelaufen und die Wände nach der ersten in der Liste sind pausiert. Sie sind sofort wieder da, wenn du verlängerst; nichts wurde gelöscht.",
     "h1aq2qvk": "Pausiert",
-    "h1lomfji": "Kostenlos holen"
+    "h1lomfji": "Kostenlos holen",
+    "h19ydc9h": "Ein angehefteter Pin bleibt auf der Wand, auch wenn die Gültigkeit der Wand endet. Er verschwindet nicht von selbst.",
+    "h17u8d46": "Du kannst ihn jederzeit lösen. Dieser Hinweis erscheint nur beim ersten Mal.",
+    "hwry6uj": "Anheften",
+    "h1qa4qju": "Verstanden",
+    "h1fyyw9h": "Mehr erfahren"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

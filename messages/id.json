@@ -2349,7 +2349,12 @@
     "hsknttd": "PINZ+ kamu sudah berakhir. Dalam {n} hari, mural setelah yang pertama di daftar akan dijeda: tetap terlihat tetapi tidak menerima pin baru. Seret untuk memilih yang tetap aktif, atau kembali ke PINZ+.",
     "h1jprjp4": "PINZ+ kamu sudah berakhir dan mural setelah yang pertama di daftar dijeda. Langsung kembali saat kamu memperpanjang, tidak ada yang dihapus.",
     "h1aq2qvk": "Dijeda",
-    "h1lomfji": "Dapatkan gratis"
+    "h1lomfji": "Dapatkan gratis",
+    "h19ydc9h": "Pin yang disematkan tetap ada di mural meski masa berlaku mural berakhir. Pin itu tidak hilang sendiri.",
+    "h17u8d46": "Kamu bisa melepas sematannya kapan saja. Pemberitahuan ini hanya muncul sekali ini.",
+    "hwry6uj": "Sematkan",
+    "h1qa4qju": "Mengerti",
+    "h1fyyw9h": "Pelajari selengkapnya"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

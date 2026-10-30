@@ -12,6 +12,7 @@ import { FeaturesPanel } from "./FeaturesPanel";
 import { TestsPanel } from "./TestsPanel";
 import { DeletedPanel } from "./DeletedPanel";
 import { NewsPanel } from "./NewsPanel";
+import { NoticePanel } from "./NoticePanel";
 import { PayModeSwitch } from "./PayModeSwitch";
 import { loginUrl, useSession } from "@/lib/auth";
 import { getBrowserSupabase } from "@/lib/supabase";
@@ -412,7 +413,7 @@ function UserModal({ userId, onClose, onChanged, onOpenMural, onDeleted }: { use
 export default function Admin() {
   const { session, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests" | "coupons" | "deleted" | "news">("users");
+  const [tab, setTab] = useState<"users" | "reports" | "payments" | "features" | "analytics" | "tests" | "coupons" | "deleted" | "news" | "notice">("users");
   const [payQ, setPayQ] = useState("");
   const [pays, setPays] = useState<PayRow[] | null>(null);
   const [q, setQ] = useState("");
@@ -521,7 +522,7 @@ export default function Admin() {
         {/* ambiente dos pagamentos (teste/produção): sempre à vista, qualquer que seja a seção */}
         <PayModeSwitch onToast={setToast} />
 
-        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-3xl grid-cols-3 sm:grid-cols-9 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
+        <div role="tablist" aria-label="Seções" className="mt-5 grid max-w-3xl grid-cols-3 sm:grid-cols-10 rounded-xl border border-[#e1d3ba] bg-white/60 p-1">
           {(
             [
               ["users", `Usuários${users ? ` (${users.total})` : ""}`],
@@ -531,6 +532,7 @@ export default function Admin() {
               ["analytics", "Analytics"],
               ["coupons", "Cupons"],
               ["news", "Atualizações futuras"],
+              ["notice", "Aviso"],
               ["deleted", "Excluídos"],
               ["tests", "Testes"],
             ] as const
@@ -553,6 +555,8 @@ export default function Admin() {
           <FeaturesPanel onToast={setToast} />
         ) : tab === "news" ? (
           <NewsPanel onToast={setToast} />
+        ) : tab === "notice" ? (
+          <NoticePanel onToast={setToast} />
         ) : tab === "deleted" ? (
           <DeletedPanel onToast={setToast} onRestored={() => void loadUsers()} />
         ) : tab === "coupons" ? (
