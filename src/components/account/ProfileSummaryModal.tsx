@@ -227,27 +227,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
           </div>
         </div>
       ) : view === "shared" ? (
-        !data.plus ? (
-          // a outra pessoa ainda não tem o PINZ+: não dá para criar o mural; dá para presenteá-la (1 mês, com o desconto de presente)
-          <div className="space-y-4 text-center">
-            <div className="text-5xl" aria-hidden>
-              🎁
-            </div>
-            <p className="font-title text-xl leading-snug font-semibold">{tl("Para criar um mural compartilhado, a outra pessoa precisa ser assinante PINZ+.")}</p>
-            <p className="text-sm text-[#4a3826]">{tl("O mural compartilhado só funciona quando as duas pessoas têm o PINZ+. Que tal presentear {nick} com 1 mês de PINZ+?").replace("{nick}", `@${data.nickname}`)}</p>
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: `gift:${data.nickname}` } }));
-              }}
-              className={primaryButton}
-            >
-              {tl("Presentear {nick} com PINZ+").replace("{nick}", `@${data.nickname}`)}
-            </button>
-            <p className="text-xs text-[#6b5440]">{tl("Quando o pagamento for confirmado, ela é avisada do presente e vocês já podem criar murais compartilhados.")}</p>
-          </div>
-        ) : (
           <form onSubmit={sendShared} noValidate className="space-y-4">
             <p className="text-sm text-[#4a3826]">
               {tx.rich("x_umMuralSoDeVoces", { v0: data.nickname, s0: (c) => <strong>{c}</strong> })}</p>
@@ -265,7 +244,6 @@ export function ProfileSummaryModal({ open, onClose, nick, logged, viewerPlus, s
               {busy ? tl("Enviando…") : tl("Enviar convite")}
             </button>
           </form>
-        )
       ) : (
         <form onSubmit={sendReport} noValidate className="space-y-4">
           <p className="text-sm text-[#4a3826]">

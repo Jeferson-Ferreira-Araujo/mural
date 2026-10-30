@@ -275,7 +275,7 @@ export function AccountDrawer({
                       </svg>
                     }
                   />
-                  {account.plan === "full" && (
+                  {(account.plan === "full" || sharedInvites > 0) && (
                   <Row
                     onClick={() => setModal("shared")}
                     label={t("shared")}

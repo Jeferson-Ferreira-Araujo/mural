@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "Un botón no puede quedar sobre otro botón.",
     "h496zsv": "25 Botones",
     "hf70rb1": "Acceso a la tienda",
-    "hixbez6": "Todos los tipos de pins"
+    "hixbez6": "Todos los tipos de pins",
+    "h1jy697d": "El mural compartido es de PINZ+: quien envía la invitación necesita el plan."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

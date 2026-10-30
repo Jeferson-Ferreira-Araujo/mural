@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "배지는 다른 배지 위에 놓을 수 없어요.",
     "h496zsv": "버튼 25개",
     "hf70rb1": "상점 이용",
-    "hixbez6": "모든 종류의 핀"
+    "hixbez6": "모든 종류의 핀",
+    "h1jy697d": "공유 보드는 PINZ+ 기능입니다. 초대를 보내는 사람에게 플랜이 필요해요."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

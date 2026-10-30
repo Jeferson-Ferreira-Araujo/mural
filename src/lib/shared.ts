@@ -31,7 +31,7 @@ const KNOWN: SharedFailure[] = ["partner_plus_required", "plus_required", "partn
 const failure = (message: string): SharedFailure => KNOWN.find((k) => message.includes(k)) ?? "error";
 
 export const SHARED_ERROR_TEXT: Record<SharedFailure, string> = {
-  plus_required: "O mural compartilhado é do PINZ+, e as duas pessoas precisam ter o plano.",
+  plus_required: "O mural compartilhado é do PINZ+: quem cria o convite precisa ter o plano.",
   partner_not_found: "Não encontramos ninguém com esse nome de usuário.",
   partner_self: "Escolha outra pessoa: você não pode compartilhar o mural com você mesmo.",
   shared_limit: "Você já criou o máximo de 3 murais compartilhados.",

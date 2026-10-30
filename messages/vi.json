@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "Huy hiệu không thể đặt lên huy hiệu khác.",
     "h496zsv": "25 Huy hiệu",
     "hf70rb1": "Truy cập cửa hàng",
-    "hixbez6": "Tất cả các loại pin"
+    "hixbez6": "Tất cả các loại pin",
+    "h1jy697d": "Bảng chung là tính năng của PINZ+: người gửi lời mời cần có gói này."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

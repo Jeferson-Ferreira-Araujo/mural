@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "Rozet başka bir rozetin üzerine konamaz.",
     "h496zsv": "25 Rozet",
     "hf70rb1": "Mağaza erişimi",
-    "hixbez6": "Tüm pin türleri"
+    "hixbez6": "Tüm pin türleri",
+    "h1jy697d": "Ortak pano PINZ+ özelliğidir: daveti gönderen kişinin planı olmalıdır."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

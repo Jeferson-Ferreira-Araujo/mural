@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "Ein Button darf nicht auf einem anderen Button liegen.",
     "h496zsv": "25 Buttons",
     "hf70rb1": "Zugang zum Shop",
-    "hixbez6": "Alle Pin-Arten"
+    "hixbez6": "Alle Pin-Arten",
+    "h1jy697d": "Die geteilte Pinnwand gehört zu PINZ+: Wer die Einladung sendet, braucht den Tarif."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

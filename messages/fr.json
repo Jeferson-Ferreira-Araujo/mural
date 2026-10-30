@@ -2359,7 +2359,8 @@
     "h1m4vtoo": "Un badge ne peut pas être posé sur un autre badge.",
     "h496zsv": "25 Badges",
     "hf70rb1": "Accès à la boutique",
-    "hixbez6": "Tous les types de pins"
+    "hixbez6": "Tous les types de pins",
+    "h1jy697d": "Le mur partagé est une fonction PINZ+ : la personne qui envoie l'invitation doit avoir l'abonnement."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",
