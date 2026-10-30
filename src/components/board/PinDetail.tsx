@@ -509,6 +509,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
           <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+            {mod?.nick && <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 18, fontWeight: 800, color: "#8a5a00", textAlign: "left", lineHeight: 1.2 }}>@{mod.nick}</p>}
             <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "left", lineHeight: 1.25 }}>{tx("crieSeuMuralECompartilhe")}</p>
             <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 17, fontWeight: 700, color: "#2f2218", textAlign: "left" }}>{tx("acessePinzDigital")}</p>
           </div>

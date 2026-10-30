@@ -10,6 +10,8 @@ import type { ReportReason } from "./PinsManager";
  */
 export type Moderation = {
   plan: PlanId;
+  /** nome de usuário do dono do mural (vai na imagem de compartilhar) */
+  nick?: string;
   moderate: (id: string, approve: boolean, secret?: boolean) => Promise<boolean>;
   /** apaga um pin que o dono já aprovou (mesma operação de recusar, com o aviso certo: "Pin apagado.") */
   remove: (id: string) => Promise<boolean>;
