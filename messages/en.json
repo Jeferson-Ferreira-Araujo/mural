@@ -2358,7 +2358,8 @@
     "h1f2phd8": "A button can't sit on a map, video, music, voice or capsule pin.",
     "h1m4vtoo": "A button can't sit on top of another button.",
     "h496zsv": "25 Buttons",
-    "hf70rb1": "Store access"
+    "hf70rb1": "Store access",
+    "hixbez6": "All types of pins"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

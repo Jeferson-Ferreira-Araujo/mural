@@ -2358,7 +2358,8 @@
     "h1f2phd8": "배지는 지도, 영상, 음악, 음성, 캡슐 위에 놓을 수 없어요.",
     "h1m4vtoo": "배지는 다른 배지 위에 놓을 수 없어요.",
     "h496zsv": "버튼 25개",
-    "hf70rb1": "상점 이용"
+    "hf70rb1": "상점 이용",
+    "hixbez6": "모든 종류의 핀"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

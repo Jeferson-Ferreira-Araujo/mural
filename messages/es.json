@@ -2358,7 +2358,8 @@
     "h1f2phd8": "Un botón no puede quedar sobre un mapa, vídeo, música, voz o cápsula.",
     "h1m4vtoo": "Un botón no puede quedar sobre otro botón.",
     "h496zsv": "25 Botones",
-    "hf70rb1": "Acceso a la tienda"
+    "hf70rb1": "Acceso a la tienda",
+    "hixbez6": "Todos los tipos de pins"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

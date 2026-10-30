@@ -2358,7 +2358,8 @@
     "h1f2phd8": "Lencana tidak boleh diletakkan di atas peta, video, musik, suara, atau kapsul.",
     "h1m4vtoo": "Lencana tidak boleh diletakkan di atas lencana lain.",
     "h496zsv": "25 Pin lencana",
-    "hf70rb1": "Akses ke toko"
+    "hf70rb1": "Akses ke toko",
+    "hixbez6": "Semua jenis pin"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",
