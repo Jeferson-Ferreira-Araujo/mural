@@ -26,6 +26,20 @@ import { useLit } from "@/i18n/literal";
 /** Botton que está sobre o pin no mural: posição (relativa ao pin), tamanho e inclinação, para aparecer igual no detalhe. */
 type Over = { id: string; key: number; rot: number; rx: number; ry: number; wr: number };
 
+const PIN_TIP_KEY = "pinz:fixar-aviso";
+const pinTipSeen = () => {
+  try {
+    return localStorage.getItem(PIN_TIP_KEY) === "1";
+  } catch {
+    return true; // sem armazenamento não dá para lembrar: não insiste
+  }
+};
+const markPinTipSeen = () => {
+  try {
+    localStorage.setItem(PIN_TIP_KEY, "1");
+  } catch {}
+};
+
 function BadgesOver({ list }: { list: Over[] }) {
   return (
     <>
@@ -117,6 +131,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
   const [reporting, setReporting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmArchive, setConfirmArchive] = useState(false);
+  const [confirmPin, setConfirmPin] = useState(false); // primeira vez que a pessoa fixa um pin: explica o que acontece
   const [sharing, setSharing] = useState(false);
   const [shareMsg, setShareMsg] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -155,6 +170,7 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
     setShowSecret(false);
     setConfirmDelete(false);
     setConfirmArchive(false);
+    setConfirmPin(false);
     setShareMsg(null);
   }, [index, open]);
 
@@ -441,7 +457,10 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                       <Trash />
                       <span className="hidden sm:inline">{tx("excluirPin")}</span>
                     </button>
-                    <button type="button" disabled={busy} title={tl("O pin fixado não some quando passa a validade do mural.")} aria-pressed={!!item.pinned} onClick={() => void run(() => mod.setPinned(item.id, !item.pinned), false)} className={`${ghost} flex items-center justify-center gap-2`}>
+                    <button type="button" disabled={busy} title={tl("O pin fixado não some quando passa a validade do mural.")} aria-pressed={!!item.pinned} onClick={() => {
+                      if (!item.pinned && !pinTipSeen()) setConfirmPin(true);
+                      else void run(() => mod.setPinned(item.id, !item.pinned), false);
+                    }} className={`${ghost} flex items-center justify-center gap-2`}>
                       <svg {...icon}>
                         <path d="M12 17v5M8 3h8l-1 6 3 3H6l3-3-1-6Z" />
                       </svg>
@@ -512,6 +531,29 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               className="flex-1 cursor-pointer rounded-xl bg-[#a23b2a] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#8c3022] disabled:opacity-60"
             >
               {tx("excluir")}</button>
+          </div>
+        </div>
+      </Modal>
+    )}
+    {mod?.setPinned && item && !isSealed(item) && !isHidden(item) && !item.pending && (
+      <Modal open={confirmPin} onClose={() => setConfirmPin(false)} title={tl("Fixar pin")} label={tl("Fixar pin")}>
+        <div className="space-y-4">
+          <p className="text-sm text-[#4a3826]">{tl("Um pin fixado continua no mural mesmo depois que a validade do mural termina. Ele não some sozinho.")}</p>
+          <p className="rounded-xl bg-[#fff6dd] px-3 py-2.5 text-sm text-[#4a3826]">{tl("Você pode desafixar quando quiser. Este aviso aparece só nesta primeira vez.")}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setConfirmPin(false)} className="flex-1 cursor-pointer rounded-xl border border-[#d9c9ad] bg-white/70 px-4 py-3 text-sm font-semibold text-[#4a3826] transition hover:bg-white">
+              {tx("cancelar")}</button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                setConfirmPin(false);
+                markPinTipSeen();
+                void run(() => mod.setPinned(item.id, true), false);
+              }}
+              className="flex-1 cursor-pointer rounded-xl bg-[#d9a21b] px-4 py-3 text-sm font-bold text-[#2a1c12] transition hover:bg-[#e6ae22] disabled:opacity-60"
+            >
+              {tl("Fixar")}</button>
           </div>
         </div>
       </Modal>
