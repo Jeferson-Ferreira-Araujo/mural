@@ -362,6 +362,7 @@ export function BoardCanvas({
           if (!under) continue;
         }
         const r = el.getBoundingClientRect();
+        if (el.offsetWidth && Math.abs(r.width / el.offsetWidth - 1) > 0.02) continue; // com o zoom aplicado não reajusta: as medidas em pixel ficam ampliadas e o pin ficaria se mexendo
         const sig = `${id}:${item.slot}:${item.ox}:${item.oy}:${Math.round(r.width)}:${Math.round(r.height)}`; // inclui a altura: foto que carrega depois cresce
         if (fitted.current.get(id) === sig) continue;
         fitted.current.set(id, sig);
@@ -372,7 +373,7 @@ export function BoardCanvas({
         if ("error" in sol) continue;
         const moved = Math.hypot((sol.box.left + sol.box.right) / 2 - (r.left + r.right) / 2, (sol.box.top + sol.box.bottom) / 2 - (r.top + r.bottom) / 2);
         const same = sol.slot === item.slot && sol.cov.join() === (item.fcov ?? []).join();
-        if (moved < 2 && same) continue;
+        if (moved < Math.max(2, 0.25 * em) && same) continue; // diferença pequena demais (em relação ao tamanho do pin) não vale um novo ajuste
         void mod.nudge(id, sol.slot, sol.ox, sol.oy, sol.cov);
         break; // um por vez; o próximo é conferido depois que este assentar
       }
