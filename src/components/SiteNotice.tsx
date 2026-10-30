@@ -8,8 +8,6 @@ import { getBrowserSupabase } from "@/lib/supabase";
 import { RichBody } from "@/lib/richText";
 import { Modal } from "./account/Modal";
 
-const key = (n: Notice) => `pinz:aviso:${n.id}:${n.rev}`;
-
 /** Aviso do administrador na tela inicial: aparece uma vez para cada pessoa (até ela fechar) e some quando o admin o desativa ou apaga. */
 export function SiteNotice() {
   const tl = useLit();
@@ -24,9 +22,8 @@ export function SiteNotice() {
     const load = () =>
       void fetchNotice(sb).then((n) => {
         if (!alive || !n) return;
-        try {
-          if (localStorage.getItem(key(n)) === "1") return;
-        } catch {}
+        // uma vez só por conta: já fica registrado ao aparecer (mesmo que a pessoa nem feche), e vale em qualquer aparelho
+        void sb.rpc("mark_site_notice_seen", { p_id: n.id });
         setNotice(n);
         setOpen(true);
       });
@@ -70,9 +67,6 @@ export function SiteNotice() {
   const close = () => {
     if (reopening.current) return;
     setOpen(false);
-    try {
-      localStorage.setItem(key(notice), "1");
-    } catch {}
   };
   const external = !!notice.link && !notice.link.startsWith("/");
 
