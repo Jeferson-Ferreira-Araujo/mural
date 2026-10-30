@@ -504,10 +504,21 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
             </div>
           ) : null}
         </div>
+        {mod?.avatar && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ position: "absolute", top: 22, right: 22, height: 56, padding: "6px 10px", borderRadius: 16, background: "rgba(251,246,234,.93)", boxShadow: "0 4px 12px rgba(0,0,0,.25)" }} />
+        )}
         {/* rodapé: logo e convite numa etiqueta clara (legível em qualquer quadro), longe do pin */}
         <div style={{ position: "absolute", left: 40, right: 40, bottom: 34, display: "flex", flexDirection: "row", alignItems: "center", gap: 16, padding: "12px 18px 12px 14px", borderRadius: 20, background: "rgba(251,246,234,.93)", boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
+          {mod?.avatar ? (
+            // com foto de perfil: a foto ocupa o lugar do logo (o logo vai para o canto de cima)
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={mod.avatar} alt="" crossOrigin="anonymous" draggable={false} style={{ width: 64, height: 64, flexShrink: 0, borderRadius: "50%", objectFit: "cover", border: "3px solid #fff", boxShadow: "0 2px 8px rgba(0,0,0,.3)" }} />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src="/img/pinz-logo.webp" alt="" draggable={false} style={{ height: 64, flexShrink: 0 }} />
+          )}
           <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
             {mod?.nick && <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 18, fontWeight: 800, color: "#8a5a00", textAlign: "left", lineHeight: 1.2 }}>@{mod.nick}</p>}
             <p style={{ margin: 0, fontFamily: "var(--font-jakarta), system-ui, sans-serif", fontSize: 16, fontWeight: 600, color: "#4a3826", textAlign: "left", lineHeight: 1.25 }}>{tx("crieSeuMuralECompartilhe")}</p>

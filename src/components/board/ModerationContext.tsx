@@ -12,6 +12,8 @@ export type Moderation = {
   plan: PlanId;
   /** nome de usuário do dono do mural (vai na imagem de compartilhar) */
   nick?: string;
+  /** foto de perfil do dono do mural (vai na imagem de compartilhar, no lugar do logo) */
+  avatar?: string | null;
   moderate: (id: string, approve: boolean, secret?: boolean) => Promise<boolean>;
   /** apaga um pin que o dono já aprovou (mesma operação de recusar, com o aviso certo: "Pin apagado.") */
   remove: (id: string) => Promise<boolean>;
