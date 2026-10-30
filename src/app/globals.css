@@ -233,6 +233,13 @@ body.badge-dragging * {
   -webkit-user-select: none !important;
 }
 
+/* arrastando um botton por cima de pins e displays: eles ficam normais (nada de crescer ao passar o mouse) */
+body.badge-dragging .group > div {
+  scale: none !important;
+  translate: none !important;
+  transition: none !important;
+}
+
 /* abertura animada (IntroAnimation): enquanto toca, o logo e o formulário reais esperam */
 [data-intro="play"] [data-explorer] .brand-real {
   visibility: hidden;
