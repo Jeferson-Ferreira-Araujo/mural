@@ -2356,7 +2356,9 @@
     "h1qa4qju": "Ho capito",
     "h1fyyw9h": "Scopri di più",
     "h1f2phd8": "Un bottone non può stare su mappa, video, musica, voce o capsula.",
-    "h1m4vtoo": "Un bottone non può stare sopra un altro bottone."
+    "h1m4vtoo": "Un bottone non può stare sopra un altro bottone.",
+    "h496zsv": "25 Spille",
+    "hf70rb1": "Accesso al negozio"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

@@ -2356,7 +2356,9 @@
     "h1qa4qju": "Rozumiem",
     "h1fyyw9h": "Dowiedz się więcej",
     "h1f2phd8": "Przypinka nie może leżeć na mapie, wideo, muzyce, głosie ani kapsule.",
-    "h1m4vtoo": "Przypinka nie może leżeć na innej przypince."
+    "h1m4vtoo": "Przypinka nie może leżeć na innej przypince.",
+    "h496zsv": "25 przypinek",
+    "hf70rb1": "Dostęp do sklepu"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

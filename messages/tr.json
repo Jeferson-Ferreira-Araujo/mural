@@ -2356,7 +2356,9 @@
     "h1qa4qju": "Anladım",
     "h1fyyw9h": "Daha fazla bilgi",
     "h1f2phd8": "Rozet harita, video, müzik, ses veya kapsülün üzerine konamaz.",
-    "h1m4vtoo": "Rozet başka bir rozetin üzerine konamaz."
+    "h1m4vtoo": "Rozet başka bir rozetin üzerine konamaz.",
+    "h496zsv": "25 Rozet",
+    "hf70rb1": "Mağaza erişimi"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

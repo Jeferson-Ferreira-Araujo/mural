@@ -2356,7 +2356,9 @@
     "h1qa4qju": "Begrepen",
     "h1fyyw9h": "Meer info",
     "h1f2phd8": "Een button mag niet op een kaart, video, muziek, stem of capsule staan.",
-    "h1m4vtoo": "Een button mag niet op een andere button staan."
+    "h1m4vtoo": "Een button mag niet op een andere button staan.",
+    "h496zsv": "25 Buttons",
+    "hf70rb1": "Toegang tot de winkel"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

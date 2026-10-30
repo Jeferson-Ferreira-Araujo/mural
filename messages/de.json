@@ -2356,7 +2356,9 @@
     "h1qa4qju": "Verstanden",
     "h1fyyw9h": "Mehr erfahren",
     "h1f2phd8": "Ein Button darf nicht auf Karte, Video, Musik, Sprachnachricht oder Kapsel liegen.",
-    "h1m4vtoo": "Ein Button darf nicht auf einem anderen Button liegen."
+    "h1m4vtoo": "Ein Button darf nicht auf einem anderen Button liegen.",
+    "h496zsv": "25 Buttons",
+    "hf70rb1": "Zugang zum Shop"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

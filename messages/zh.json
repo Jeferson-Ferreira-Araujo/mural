@@ -2356,7 +2356,9 @@
     "h1qa4qju": "知道了",
     "h1fyyw9h": "了解更多",
     "h1f2phd8": "徽章不能放在地图、视频、音乐、语音或胶囊上。",
-    "h1m4vtoo": "徽章不能放在另一枚徽章上。"
+    "h1m4vtoo": "徽章不能放在另一枚徽章上。",
+    "h496zsv": "25 枚徽章",
+    "hf70rb1": "商店访问"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

@@ -16,7 +16,8 @@ import { useLit } from "@/i18n/literal";
 
 type Step = "profile" | "mural" | "intro";
 
-const FREE_LIST = [0, 1, 2, 3, 6].map((i) => FEATURES.free[i].text);
+// o plano grátis sem as cápsulas (só PINZ+) e com "25 Bottons" simples
+const FREE_LIST = [0, 1, 2].map((i) => FEATURES.free[i].text).concat("25 Bottons", "Acesso à loja");
 const PLUS_LIST = [0, 1, 2, 3].map((i) => FEATURES.full[i].text).concat("Mural compartilhado entre duas pessoas");
 
 /**
@@ -182,7 +183,6 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
                 </h4>
                 <span className="rounded-full bg-[#d8efd9] px-2.5 py-0.5 text-xs font-semibold text-[#2f7d3a]">{tl("Seu plano atual")}</span>
               </div>
-              <p className="mt-2 text-sm text-[#6b5440]">{tl("Seu primeiro mural já está incluído.")}</p>
               <ul className="mt-2 space-y-1.5 text-[13px] leading-snug text-[#3a2c1d]">
                 {FREE_LIST.map((t) => (
                   <li key={t} className="flex gap-2">
