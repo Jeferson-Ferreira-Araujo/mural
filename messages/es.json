@@ -2332,7 +2332,8 @@
     "hqd7bvx": "Ocultar pin",
     "hfvgov": "Ver display",
     "h1nlpf14": "No tienes permiso para ver este pin.",
-    "h1al7dn": "No tienes permiso para ver este display."
+    "h1al7dn": "No tienes permiso para ver este display.",
+    "h1wetvnd": "Dejar pins y displays en secreto"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

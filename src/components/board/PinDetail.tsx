@@ -408,15 +408,14 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
               </button>
               <button
                 type="button"
-                disabled={busy || mod?.plan !== "full"}
-                title={mod?.plan === "full" ? "" : tx("m_segredoEDoPinz")}
+                disabled={busy}
                 onClick={() => {
                   setShowSecret(false);
                   void run(() => setDisplaySecret(widget.id, !widgetHidden), false);
                 }}
                 className={ghost}
               >
-                {mod?.plan !== "full" ? tl("Segredo (PINZ+)") : widgetHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
+                {widgetHidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
               </button>
             </div>
           )}

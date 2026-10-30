@@ -113,8 +113,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
               {tx("excluirDisplay")}</button>
             <button
               type="button"
-              disabled={busy || (!!mod && mod.plan !== "full")}
-              title={!mod || mod.plan === "full" ? "" : tx("m_segredoEDoPinz")}
+              disabled={busy}
               onClick={async () => {
                 setBusy(true);
                 setReveal(false);
@@ -123,7 +122,7 @@ export function DisplayDetail({ data, onClose }: { data: DisplayData; onClose: (
               }}
               className={`${ghostButton} flex-1`}
             >
-              {mod && mod.plan !== "full" ? tl("Segredo (PINZ+)") : hidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
+              {hidden ? tl("Desabilitar segredo") : tl("Habilitar segredo")}
             </button>
           </div>
         )}

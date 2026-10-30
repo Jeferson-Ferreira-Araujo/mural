@@ -21,7 +21,6 @@ const brl = (cents: number) => (cents / 100).toLocaleString("pt-BR", { style: "c
 const BENEFITS = [
   "Até 10 murais",
   "Seu mural recebe pins de desenho, música, vídeo, voz e local",
-  "Displays em segredo para os visitantes",
   "Mural compartilhado entre duas pessoas",
   "Mensagem de boas-vindas para quem entra no seu mural",
 ];

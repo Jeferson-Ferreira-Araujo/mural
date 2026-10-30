@@ -2332,7 +2332,8 @@
     "hqd7bvx": "Pini gizle",
     "hfvgov": "Ekranı göster",
     "h1nlpf14": "Bu pini görme izniniz yok.",
-    "h1al7dn": "Bu ekranı görme izniniz yok."
+    "h1al7dn": "Bu ekranı görme izniniz yok.",
+    "h1wetvnd": "Pinleri ve ekranları gizli tut"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

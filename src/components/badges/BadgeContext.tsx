@@ -499,7 +499,7 @@ export function BadgeProvider({
   const setDisplaySecret = useCallback(async (id: string, hidden: boolean) => {
     const ok = await setDisplayHidden(getBrowserSupabase(), id, hidden);
     if (ok) setBadges((l) => l.map((b) => (b.id === id ? { ...b, hidden } : b)));
-    else live.current.notify(hidden ? tx("m_segredoEDoPinz") : tx("m_naoFoiPossivelMudarAgora"));
+    else live.current.notify(tx("m_naoFoiPossivelMudarAgora"));
     return ok;
   }, [setBadges]);
 

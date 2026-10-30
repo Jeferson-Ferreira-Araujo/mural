@@ -2332,7 +2332,8 @@
     "hqd7bvx": "Ukryj pin",
     "hfvgov": "Pokaż wyświetlacz",
     "h1nlpf14": "Nie masz uprawnień do wyświetlenia tego pina.",
-    "h1al7dn": "Nie masz uprawnień do wyświetlenia tego wyświetlacza."
+    "h1al7dn": "Nie masz uprawnień do wyświetlenia tego wyświetlacza.",
+    "h1wetvnd": "Ukrywaj piny i wyświetlacze"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

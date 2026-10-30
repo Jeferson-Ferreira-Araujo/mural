@@ -19,7 +19,7 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "10 Bottons (1 unidade de cada)", on: true },
     { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: false },
     { text: "Cápsulas PINZ (abrem numa data)", on: false },
-    { text: "Deixar pins específicos em segredo", on: true },
+    { text: "Deixar pins e displays em segredo", on: true },
     { text: "Comprar pins e temas na loja com créditos", on: true },
     { text: "Mais de um mural", on: false },
   ],
@@ -29,7 +29,6 @@ export const FEATURES: Record<PlanId, { text: string; on: boolean }[]> = {
     { text: "25 Bottons (1 unidade de cada)", on: true },
     { text: "Seu mural recebe pins de desenho, música, vídeo, voz e local", on: true },
     { text: "Cápsulas PINZ (abrem numa data)", on: true },
-    { text: "Deixar pins específicos em segredo", on: true },
     { text: "Pins e temas da loja, com créditos", on: true },
   ],
 };

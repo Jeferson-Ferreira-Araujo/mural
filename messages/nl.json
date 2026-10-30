@@ -2332,7 +2332,8 @@
     "hqd7bvx": "Pin verbergen",
     "hfvgov": "Display bekijken",
     "h1nlpf14": "Je hebt geen toestemming om deze pin te zien.",
-    "h1al7dn": "Je hebt geen toestemming om dit display te zien."
+    "h1al7dn": "Je hebt geen toestemming om dit display te zien.",
+    "h1wetvnd": "Pins en displays geheim houden"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

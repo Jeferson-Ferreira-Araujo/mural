@@ -2332,7 +2332,8 @@
     "hqd7bvx": "핀 숨기기",
     "hfvgov": "디스플레이 보기",
     "h1nlpf14": "이 핀을 볼 권한이 없습니다.",
-    "h1al7dn": "이 디스플레이를 볼 권한이 없습니다."
+    "h1al7dn": "이 디스플레이를 볼 권한이 없습니다.",
+    "h1wetvnd": "핀과 디스플레이를 비밀로 두기"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",
