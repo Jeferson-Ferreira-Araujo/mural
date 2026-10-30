@@ -2354,7 +2354,9 @@
     "h17u8d46": "Tu peux le désépingler quand tu veux. Cet avis n'apparaît que cette première fois.",
     "hwry6uj": "Épingler",
     "h1qa4qju": "Compris",
-    "h1fyyw9h": "En savoir plus"
+    "h1fyyw9h": "En savoir plus",
+    "h1f2phd8": "Un badge ne peut pas être posé sur une carte, une vidéo, une musique, une voix ou une capsule.",
+    "h1m4vtoo": "Un badge ne peut pas être posé sur un autre badge."
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

@@ -2354,7 +2354,9 @@
     "h17u8d46": "Du kannst ihn jederzeit lösen. Dieser Hinweis erscheint nur beim ersten Mal.",
     "hwry6uj": "Anheften",
     "h1qa4qju": "Verstanden",
-    "h1fyyw9h": "Mehr erfahren"
+    "h1fyyw9h": "Mehr erfahren",
+    "h1f2phd8": "Ein Button darf nicht auf Karte, Video, Musik, Sprachnachricht oder Kapsel liegen.",
+    "h1m4vtoo": "Ein Button darf nicht auf einem anderen Button liegen."
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

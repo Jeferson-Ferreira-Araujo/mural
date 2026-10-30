@@ -2354,7 +2354,9 @@
     "h17u8d46": "Puoi sbloccarlo quando vuoi. Questo avviso compare solo questa prima volta.",
     "hwry6uj": "Fissa",
     "h1qa4qju": "Ho capito",
-    "h1fyyw9h": "Scopri di più"
+    "h1fyyw9h": "Scopri di più",
+    "h1f2phd8": "Un bottone non può stare su mappa, video, musica, voce o capsula.",
+    "h1m4vtoo": "Un bottone non può stare sopra un altro bottone."
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

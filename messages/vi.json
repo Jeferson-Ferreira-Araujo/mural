@@ -2354,7 +2354,9 @@
     "h17u8d46": "Bạn có thể bỏ cố định bất cứ lúc nào. Thông báo này chỉ hiện lần đầu tiên.",
     "hwry6uj": "Cố định",
     "h1qa4qju": "Đã hiểu",
-    "h1fyyw9h": "Tìm hiểu thêm"
+    "h1fyyw9h": "Tìm hiểu thêm",
+    "h1f2phd8": "Huy hiệu không thể đặt lên bản đồ, video, nhạc, giọng nói hay viên nang.",
+    "h1m4vtoo": "Huy hiệu không thể đặt lên huy hiệu khác."
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

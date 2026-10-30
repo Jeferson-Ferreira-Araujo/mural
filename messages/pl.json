@@ -2354,7 +2354,9 @@
     "h17u8d46": "Możesz go odpiąć, kiedy chcesz. To powiadomienie pojawia się tylko za pierwszym razem.",
     "hwry6uj": "Przypnij",
     "h1qa4qju": "Rozumiem",
-    "h1fyyw9h": "Dowiedz się więcej"
+    "h1fyyw9h": "Dowiedz się więcej",
+    "h1f2phd8": "Przypinka nie może leżeć na mapie, wideo, muzyce, głosie ani kapsule.",
+    "h1m4vtoo": "Przypinka nie może leżeć na innej przypince."
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

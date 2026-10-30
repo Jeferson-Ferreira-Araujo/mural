@@ -2354,7 +2354,9 @@
     "h17u8d46": "İstediğin zaman sabitlemeyi kaldırabilirsin. Bu uyarı yalnızca bu ilk seferde görünür.",
     "hwry6uj": "Sabitle",
     "h1qa4qju": "Anladım",
-    "h1fyyw9h": "Daha fazla bilgi"
+    "h1fyyw9h": "Daha fazla bilgi",
+    "h1f2phd8": "Rozet harita, video, müzik, ses veya kapsülün üzerine konamaz.",
+    "h1m4vtoo": "Rozet başka bir rozetin üzerine konamaz."
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

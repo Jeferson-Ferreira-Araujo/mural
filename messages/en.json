@@ -2354,7 +2354,9 @@
     "h17u8d46": "You can unpin it whenever you want. This notice only appears this first time.",
     "hwry6uj": "Pin",
     "h1qa4qju": "Got it",
-    "h1fyyw9h": "Learn more"
+    "h1fyyw9h": "Learn more",
+    "h1f2phd8": "A button can't sit on a map, video, music, voice or capsule pin.",
+    "h1m4vtoo": "A button can't sit on top of another button."
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

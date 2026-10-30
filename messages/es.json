@@ -2354,7 +2354,9 @@
     "h17u8d46": "Puedes desfijarlo cuando quieras. Este aviso solo aparece esta primera vez.",
     "hwry6uj": "Fijar",
     "h1qa4qju": "Entendido",
-    "h1fyyw9h": "Saber más"
+    "h1fyyw9h": "Saber más",
+    "h1f2phd8": "Un botón no puede quedar sobre un mapa, vídeo, música, voz o cápsula.",
+    "h1m4vtoo": "Un botón no puede quedar sobre otro botón."
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

@@ -2354,7 +2354,9 @@
     "h17u8d46": "Kamu bisa melepas sematannya kapan saja. Pemberitahuan ini hanya muncul sekali ini.",
     "hwry6uj": "Sematkan",
     "h1qa4qju": "Mengerti",
-    "h1fyyw9h": "Pelajari selengkapnya"
+    "h1fyyw9h": "Pelajari selengkapnya",
+    "h1f2phd8": "Lencana tidak boleh diletakkan di atas peta, video, musik, suara, atau kapsul.",
+    "h1m4vtoo": "Lencana tidak boleh diletakkan di atas lencana lain."
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

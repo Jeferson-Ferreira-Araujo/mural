@@ -2354,7 +2354,9 @@
     "h17u8d46": "Je kunt hem losmaken wanneer je wilt. Deze melding verschijnt alleen de eerste keer.",
     "hwry6uj": "Vastzetten",
     "h1qa4qju": "Begrepen",
-    "h1fyyw9h": "Meer info"
+    "h1fyyw9h": "Meer info",
+    "h1f2phd8": "Een button mag niet op een kaart, video, muziek, stem of capsule staan.",
+    "h1m4vtoo": "Een button mag niet op een andere button staan."
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

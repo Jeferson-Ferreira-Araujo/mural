@@ -363,11 +363,11 @@ export function BadgeProvider({
           return sendBack(at);
         }
         if (drop.kind === "physical") {
-          notify(tx("m_naoEPossivelColocarSobre"));
+          notify(tl("Um botton não pode ficar sobre mapa, vídeo, música, voz ou cápsula."));
           return sendBack(at);
         }
         if (drop.kind === "badge") {
-          notify(tx("m_naoEPossivelColocarSobre"));
+          notify(displayDrag ? tx("m_naoEPossivelColocarSobre") : tl("Um botton não pode ficar sobre outro botton."));
           return sendBack(at);
         }
         if (drop.kind === "out") {
@@ -586,11 +586,11 @@ export function BadgeProvider({
         }
         if (drop.kind === "physical") {
           back();
-          return notify(tx("m_naoEPossivelColocarSobre"));
+          return notify(tl("Um botton não pode ficar sobre mapa, vídeo, música, voz ou cápsula."));
         }
         if (drop.kind === "badge") {
           back();
-          return notify(tx("m_naoEPossivelColocarSobre"));
+          return notify(isDisp ? tx("m_naoEPossivelColocarSobre") : tl("Um botton não pode ficar sobre outro botton."));
         }
         if (drop.kind === "ok") {
           nx = drop.x;

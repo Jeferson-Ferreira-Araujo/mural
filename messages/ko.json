@@ -2354,7 +2354,9 @@
     "h17u8d46": "언제든 고정을 해제할 수 있어요. 이 안내는 처음 한 번만 나와요.",
     "hwry6uj": "고정",
     "h1qa4qju": "알겠어요",
-    "h1fyyw9h": "자세히 보기"
+    "h1fyyw9h": "자세히 보기",
+    "h1f2phd8": "배지는 지도, 영상, 음악, 음성, 캡슐 위에 놓을 수 없어요.",
+    "h1m4vtoo": "배지는 다른 배지 위에 놓을 수 없어요."
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",
