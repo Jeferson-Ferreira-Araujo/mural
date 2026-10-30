@@ -583,6 +583,14 @@ export function BoardCanvas({
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={look.image} alt={tx("m_muralQuadro", { v0: look.name })} className="absolute inset-0 size-full select-none" draggable={false} />
+                {hasSelection && unlocked && !locked && !loading && items.length === 0 && !badges.some((b) => b.kind === "display") && (
+                  <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
+                    {/* fica dentro do mural, atrás dos pins e dos bottons (assim eles passam por cima da folha); a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
+                    <div className="-rotate-2" style={{ fontSize: "1.4cqw" }}>
+                      <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: tx("m_nenhumPinPorAquiAinda") }} />
+                    </div>
+                  </div>
+                )}
 
                 <div
                   className="absolute"
@@ -647,14 +655,6 @@ export function BoardCanvas({
                   {/* círculo girando, grande e dourado, sem texto */}
                   <span aria-hidden className="block animate-spin rounded-full border-white/25 border-t-[#f2c230] border-r-[#f2c230]/70 drop-shadow-[0_0.2em_0.5em_rgba(0,0,0,.5)]" style={{ width: "9cqw", height: "9cqw", borderWidth: "1.1cqw", borderStyle: "solid" }} />
                   <span className="sr-only">{tx("carregandoMural2")}</span>
-                </div>
-              )}
-              {hasSelection && unlocked && !locked && !loading && items.length === 0 && !badges.some((b) => b.kind === "display") && (
-                <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] grid place-items-center">
-                  {/* a mesma folha branca de papel dos pins de texto, com a escrita à mão */}
-                  <div className="-rotate-2" style={{ fontSize: "1.4cqw" }}>
-                    <MessageView message={{ id: "empty-note", type: "text", variant: "letter", text: tx("m_nenhumPinPorAquiAinda") }} />
-                  </div>
                 </div>
               )}
               {children}
