@@ -79,7 +79,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <body>
         {/* abertura animada: antes de qualquer pintura, esconde o logo e o formulário até a animação decidir se toca (ver IntroAnimation) */}
-        <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1")document.documentElement.dataset.intro="play"}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("pinz:intro")!=="1"&&!/^\/(admin|termos|privacidade|pagamento|sair|exclusao-de-dados|auth|api)(\/|$)/.test(location.pathname))document.documentElement.dataset.intro="play"}catch(e){}` }} />
         {/* acessibilidade: o tamanho do texto, a fonte e o contraste escolhidos já valem na primeira pintura */}
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT }} />
         <NextIntlClientProvider locale={locale} messages={messages}>
