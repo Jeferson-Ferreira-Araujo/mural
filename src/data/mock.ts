@@ -11,7 +11,7 @@ import { localizeDemo, type DemoLocale } from "./demoText";
 
 /** Pins em segredo dos murais de exemplo: de costas no mural; ao abrir o detalhe e tocar no olho, o pin vira e mostra o conteúdo. */
 const SECRETS: Message[] = [
-  { id: "s1", type: "postit", color: "pink", pin: "red", ownerHidden: true, text: "Surpresa! 🎉 Este pin era segredo: os visitantes só veem o verso dele." },
+  { id: "s1", type: "postit", color: "pink", pin: "red", ownerHidden: true, text: "Surpresa! 🎉 Só o dono do mural e quem colou este pin conseguem vê-lo." },
   { id: "s2", type: "photo", scene: "sunset", tape: "yellow", ownerHidden: true, caption: "Foto secreta 🤫" },
   { id: "s3", type: "text", variant: "notebook", tape: "yellow", ownerHidden: true, text: "Você decide quais pins ficam em segredo. Ligue o segredo no detalhe do pin e ele vira de costas para todos, menos para você." },
 ];
