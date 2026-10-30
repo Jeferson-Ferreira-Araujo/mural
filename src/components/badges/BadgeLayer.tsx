@@ -14,7 +14,9 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
   const tl = useLit();
   const ctx = useBadges();
   const { begin, draggingId, select } = ctx;
-  const editable = ctx.editable && b.mine !== false; // no mural compartilhado, o botom da outra pessoa só ela mexe
+  const display0 = isDisplayKey(b.key) || b.kind === "display";
+  // no mural compartilhado, o botom da outra pessoa só ela mexe; no mural de exemplo, qualquer pessoa arrasta os bottons (os displays só abrem)
+  const editable = (ctx.editable && b.mine !== false) || (ctx.demo && !display0);
   const ref = useRef<HTMLDivElement>(null);
   const beginRef = useRef(begin);
   beginRef.current = begin;

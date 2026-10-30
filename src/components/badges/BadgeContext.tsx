@@ -21,6 +21,8 @@ type Ctx = {
   badges: PlacedBadge[];
   /** só o dono, no próprio mural */
   editable: boolean;
+  /** mural de exemplo: os bottons podem ser arrastados por qualquer pessoa, só na tela */
+  demo: boolean;
   /** botom que está sendo arrastado (some do lugar de origem até soltar) */
   draggingId: string | null;
   /** arrastando um botton NOVO da barra para o mural */
@@ -60,7 +62,7 @@ type Ctx = {
 };
 
 const unlimited = (): Stock => ({ owned: true, left: 1, total: 1 }); // padrão sem loja carregada
-const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, placeDisplayDataAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
+const BadgeCtx = createContext<Ctx>({ badges: [], editable: false, demo: false, draggingId: null, draggingNew: false, stock: unlimited, acquiredAt: () => undefined, openStore: () => undefined, begin: () => undefined, hover: () => undefined, select: () => undefined, removeOver: () => undefined, displays: [], pickDisplay: () => undefined, editDisplay: () => undefined, placing: false, openDetail: () => undefined, canDisplays: false, placeDisplayAtSlot: () => undefined, placeDisplayDataAtSlot: () => undefined, removeDisplay: () => undefined, setDisplaySecret: async () => false });
 export const useBadges = () => useContext(BadgeCtx);
 
 type Drop = { kind: "ok"; x: number; y: number; /** displays: espaços do quadro cobertos */ slots?: number[]; /** displays: a área que ocupam na tela (os bottons ali voltam para a barra) */ rect?: { left: number; right: number; top: number; bottom: number } } | { kind: "physical" } | { kind: "tack" } | { kind: "badge" } | { kind: "out" } | { kind: "bar" } | { kind: "occupied" };
@@ -180,9 +182,12 @@ export function BadgeProvider({
   displays = [],
   canDisplays = false,
   onDisplaysChanged,
+  demo = false,
   children,
 }: {
   muralId?: string;
+  /** mural de exemplo: qualquer pessoa arrasta os bottons, só na tela (nada vai ao servidor) */
+  demo?: boolean;
   editable: boolean;
   badges: PlacedBadge[];
   setBadges: (fn: (prev: PlacedBadge[]) => PlacedBadge[]) => void;
@@ -216,14 +221,14 @@ export function BadgeProvider({
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [placing, setPlacing] = useState<{ product: string; data: DisplayPayload } | null>(null);
   const [detail, setDetail] = useState<DisplayPayload | null>(null); // detalhe (widget grande) aberto
-  const live = useRef({ muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged });
-  live.current = { muralId, editable, badges, notify, stock, onSynced, onDisplaysChanged };
+  const live = useRef({ muralId, editable, demo, badges, notify, stock, onSynced, onDisplaysChanged });
+  live.current = { muralId, editable, demo, badges, notify, stock, onSynced, onDisplaysChanged };
   const cleanup = useRef<(() => void) | null>(null);
   const removeOverRef = useRef<((rect: { left: number; right: number; top: number; bottom: number }, minOverlap?: number) => void) | null>(null);
 
   const begin = useCallback(
     (e: PointerEvent, src: DragSrc, sourceEl: HTMLElement, anyDirection = false) => {
-      if (!live.current.editable || e.button > 0) return;
+      if ((!live.current.editable && !(live.current.demo && src.kind === "placed")) || e.button > 0) return;
       if (src.kind === "new") {
         const st = live.current.stock(src.key);
         if (!st.owned || st.left === 0) {
@@ -338,6 +343,7 @@ export function BadgeProvider({
         const drop = evaluate(at.x, at.y, size.w, size.h, layer, sourceEl, displayDrag);
 
         if (drop.kind === "bar") {
+          if (live.current.demo) return sendBack(at); // exemplo: não há barra nem estoque
           if (src.kind === "placed") {
             setGhost(null);
             const prev = cur;
@@ -390,6 +396,7 @@ export function BadgeProvider({
         }
         if (src.kind === "placed") {
           setBadges((l) => l.map((b) => (b.id === src.id ? { ...b, x: drop.x, y: drop.y } : b)));
+          if (live.current.demo) return;
           void moveBadge(getBrowserSupabase(), src.id, drop.x, drop.y).then((ok) => {
             if (!ok) notify(tx("m_naoFoiPossivelMoverO2"));
           });
@@ -800,7 +807,7 @@ export function BadgeProvider({
     void minOverlap;
   }, []);
   removeOverRef.current = removeOver;
-  const value = useMemo(() => ({ badges, editable, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeById, setDisplaySecret]);
+  const value = useMemo(() => ({ badges, editable, demo, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, demo, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeById, setDisplaySecret]);
   const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
 
   return (
