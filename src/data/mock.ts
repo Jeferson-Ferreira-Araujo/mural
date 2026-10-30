@@ -1,5 +1,6 @@
 import { BOARD_CAPACITY, canUseCapsule, formatsFor, type PlanId } from "@/lib/plans";
 import { isHidden, isMessage, isSealed, type BoardItem, type Message } from "@/lib/types";
+import { signerFor } from "./demoNames";
 import { localizeDemo, type DemoLocale } from "./demoText";
 
 /**
@@ -131,6 +132,9 @@ export function relocalize(items: BoardItem[], locale: DemoLocale): BoardItem[] 
   const pool = new Map<string, BoardItem>([...buildPool(0, locale).items, ...extraPool(locale)].map((i) => [i.id, i]));
   return items.map((it) => {
     const src = pool.get(it.id.replace(/-b$/, "")) as Record<string, unknown> | undefined;
+    // pin assinado de exemplo: troca o nome por um da língua nova (decorDisplays.ts guarda o número do nome em nameIx)
+    const ix = (it as { nameIx?: number }).nameIx;
+    if (typeof ix === "number") it = { ...it, signedBy: signerFor(locale, ix) } as BoardItem;
     if (!src) return it;
     const r = { ...it } as Record<string, unknown>;
     for (const k of ["text", "caption", "title", "name"]) if (k in src && k in r) r[k] = src[k];

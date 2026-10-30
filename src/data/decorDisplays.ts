@@ -1,3 +1,4 @@
+import { NAME_COUNT, signerFor } from "./demoNames";
 import { sampleFor } from "@/components/badges/StoreModal";
 import type { DemoLocale } from "./demoText";
 import { WIDGET_STYLES } from "@/components/widgets";
@@ -11,13 +12,6 @@ import { isMessage, type BoardItem } from "@/lib/types";
  * Cada um cobre alguns espaços (os pins de exemplo desses espaços saem) e não responde a toques.
  * Não há clima nem livro aqui de propósito: o clima pediria a localização de quem só abriu a tela de login e o livro precisa de uma capa.
  */
-/** Nomes de usuário inventados (com números no fim, para não coincidir com gente de verdade) que assinam os pins do mural de exemplo. */
-const HANDLES = [
-  "ana_luiza92", "bruno_rocha07", "carol_lima21", "dudu_alves88", "fer_matos15", "gabi_souza33", "hugo_pires04", "isa_camargo19", "joao_vitor66", "kau_ribeiro12",
-  "lari_gomes58", "mateus_cruz71", "nanda_reis27", "otavio_lins09", "paula_dias44", "rafa_moura30", "sara_neves82", "thiago_luz16", "vivi_castro53", "yuri_batista25",
-  "bia_santos61", "caio_freitas38", "duda_ramos47", "enzo_falcao90", "flavia_ceu14", "gui_teixeira77", "helena_mar23", "igor_prado68", "julia_flor05", "leo_barros41",
-  "malu_arruda36", "nico_vidal59", "olivia_sol18", "pedro_lago72", "quel_viana29", "rubens_paz84", "sofia_brito10", "tati_melo95", "vini_costa02", "wesley_dantas63",
-];
 
 /** No mural de exemplo os bottons ficam só sobre foto, post-it e papel de texto (nunca sobre lista nem desenho, mesmo sendo permitido nos murais reais). */
 const DECOR_OK_TYPES: ReadonlySet<string> = new Set(["photo", "postit", "text"]);
@@ -124,8 +118,9 @@ export function decorLayout(items: BoardItem[], locale: DemoLocale = "pt"): { it
 
   const covered = new Set(spots.flatMap((s) => s.slots));
   const free = Array.from({ length: COLS * ROWS }, (_, i) => i).filter((i) => !covered.has(i));
-  const names = shuffle(HANDLES);
-  const pins = items.slice(0, free.length).map((it, i) => ({ ...it, slot: free[i], ...(isMessage(it) ? { signedBy: names[i % names.length] } : {}) }) as BoardItem);
+  // cada pin ganha um número de nome (guardado nele): ao trocar de idioma o mesmo pin passa a ser assinado por um nome daquela língua
+  const order = shuffle(Array.from({ length: NAME_COUNT }, (_, i) => i));
+  const pins = items.slice(0, free.length).map((it, i) => ({ ...it, slot: free[i], ...(isMessage(it) ? { nameIx: order[i % order.length], signedBy: signerFor(locale, order[i % order.length]) } : {}) }) as BoardItem);
   const badges: PlacedBadge[] = spots.map((s, i) => {
     const { x, y } = center(s.slots);
     return {
