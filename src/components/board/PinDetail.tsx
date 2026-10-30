@@ -326,8 +326,9 @@ export function PinDetail({ items, index, onIndex, onClose, board = "cortica" }:
                 {tl("Arquivar")}
               </button>
             )}
-            {shareable && (
-              <button type="button" disabled={sharing} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
+            {/* em segredo ou aguardando aprovação o botão continua aqui, só desabilitado (não some e reaparece) */}
+            {!!mod && !!item && !isSealed(item) && !isHidden(item) && (
+              <button type="button" disabled={sharing || !shareable} aria-label={tx("compartilharEstePin")} title={tx("compartilharEstePin")} onClick={() => void sharePin()} className={shareBtn}>
                 {tx.rich("x_compartilhar", { n0: () => <ShareIcon /> })}</button>
             )}
             {/* frase ou versículo: o mesmo botão de compartilhar de cima leva o texto */}
