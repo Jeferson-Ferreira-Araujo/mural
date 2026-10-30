@@ -9,6 +9,8 @@ import { Field, inputClass, primaryButton } from "../ui";
 import { BIRTH_ERROR, BIRTH_FORMAT_HINT, BirthField, toIso } from "./BirthField";
 import { Modal } from "./Modal";
 import { FEATURES } from "./PlansModal";
+import { PAYMENTS_ENABLED } from "@/lib/plans";
+import { PAY_EVENT } from "@/lib/payments";
 import { PinTtlField, type PinTtl } from "./PinTtlField";
 import { PrivacyField, privacyError, type Privacy } from "./PrivacyField";
 import { useTranslations } from "next-intl";
@@ -212,6 +214,11 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
                   </li>
                 ))}
               </ul>
+              {PAYMENTS_ENABLED && !plus && (
+                <button type="button" onClick={() => window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } }))} className="mt-3 w-full cursor-pointer rounded-xl bg-gradient-to-r from-[#f2c230] to-[#e39a1c] px-4 py-2.5 text-sm font-bold text-[#3a2300] shadow-[0_0.1rem_0.4rem_rgba(150,90,0,.35)] transition hover:brightness-105 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d98a2b]">
+                  {tl("Assinar o PINZ+")}
+                </button>
+              )}
             </section>
             </div>
           </div>
@@ -224,7 +231,6 @@ export function OnboardingModal({ open, onClose, nick, plus = false, uid, profil
         <button type="submit" disabled={busy} className={primaryButton}>
           {busy ? tl("Salvando…") : last ? tx("comecar") : tl("Continuar")}
         </button>
-        {step === "intro" && <p className="text-center text-xs text-[#8a7b69]">{tl("Você pode conhecer o PINZ+ quando quiser.")}</p>}
       </form>
     </Modal>
   );
