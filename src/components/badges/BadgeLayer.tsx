@@ -108,7 +108,7 @@ function PlacedItem({ b }: { b: PlacedBadge }) {
       >
         {editable && <span aria-hidden className="absolute inset-0" />}
         {/* o widget tem NATURAL_W em de largura na própria fonte (24 no retangular, 12 no quadrado): a fonte do contêiner o ajusta à largura w */}
-        <div className="pointer-events-none transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:-translate-y-[0.35em] [@media(hover:hover)]:group-hover:scale-[1.2]" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
+        <div className="pointer-events-none transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:-translate-y-[0.35em] [@media(hover:hover)]:group-hover:scale-[1.07]" style={{ fontSize: `${w / NATURAL_W[shape]}em` }}>
           {b.hidden ? (
             // display em segredo: o mesmo cartão borrado do pin em segredo (quem visita nem recebe os dados; o dono vê o conteúdo no detalhe)
             <SecretCover style={b.data?.style} locked={!editable} />
