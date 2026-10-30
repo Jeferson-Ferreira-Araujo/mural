@@ -525,6 +525,10 @@ export function BadgeProvider({
     const deg = b.rotation ?? 0;
     const before = tiltSaved.current[id] ?? 0;
     if (deg === before) return;
+    if (live.current.demo) {
+      tiltSaved.current[id] = deg; // exemplo: só na tela
+      return;
+    }
     void setBadgeRotation(getBrowserSupabase(), id, deg).then((ok) => {
       if (ok) tiltSaved.current[id] = deg;
       else {
@@ -593,6 +597,12 @@ export function BadgeProvider({
           ny = drop.y;
         }
       }
+    }
+    if (live.current.demo) {
+      // exemplo: o tamanho vale só na tela, nada vai ao servidor
+      if (nx !== b.x || ny !== b.y) setBadges((l) => l.map((x) => (x.id === id ? { ...x, x: nx, y: ny } : x)));
+      scaleSaved.current[id] = pct;
+      return;
     }
     const sb = getBrowserSupabase();
     if (isDisp) {
@@ -808,7 +818,10 @@ export function BadgeProvider({
   }, []);
   removeOverRef.current = removeOver;
   const value = useMemo(() => ({ badges, editable, demo, draggingId, draggingNew, stock, acquiredAt, openStore: () => openStoreRef.current(), begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing: !!placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeDisplay: removeById, setDisplaySecret }), [badges, editable, demo, draggingId, draggingNew, stock, acquiredAt, begin, hover, select, removeOver, displays, pickDisplay, editDisplay, placing, openDetail, canDisplays, placeDisplayAtSlot, placeDisplayDataAtSlot, removeById, setDisplaySecret]);
-  const controlsId = editable && !draggingId ? (selId ?? hoverId) : null;
+  // no mural de exemplo, o botton clicado também mostra tamanho e inclinação (sem a lixeira); os displays não
+  const wanted = selId ?? hoverId;
+  const demoPick = demo && !editable && !!wanted && !!badges.find((b) => b.id === wanted && !isDisplayKey(b.key) && b.kind !== "display");
+  const controlsId = (editable || demoPick) && !draggingId ? wanted : null;
 
   return (
     <BadgeCtx.Provider value={value}>
@@ -830,7 +843,7 @@ export function BadgeProvider({
       )}
       {detail && <DisplayDetail data={detail} onClose={() => setDetail(null)} />}
       {placing && <PlacingOverlay product={placing.product} data={placing.data} onCancel={() => setPlacing(null)} onDrop={(x, y, slots, rect) => void placeDisplay(placing.product, placing.data, x, y, slots, rect)} notify={notify} />}
-      {controlsId && <BadgeControls onEdit={editDisplay} onDetail={openDetail} onPages={changePages} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
+      {controlsId && <BadgeControls noActions={demo && !editable} onEdit={editDisplay} onDetail={openDetail} onPages={changePages} id={controlsId} badge={badges.find((b) => b.id === controlsId)} onScale={rescale} onScaleEnd={commitScale} onRemove={removeById} onKeep={hover} onClose={closeControls} onTilt={tilt} onTiltEnd={commitTilt} />}
       {ghost && isDisplayKey(ghost.key) && (
         <div
           aria-hidden
@@ -877,7 +890,7 @@ export function BadgeProvider({
  * Tamanho de tela fixo (não encolhe com o zoom do celular) e posição presa ao CENTRO do botton, a uma distância fixa:
  * não anda quando o botton cresce ou gira. Seguem o botton se o quadro for arrastado ou ampliado.
  */
-function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { onEdit: (id: string) => void; onDetail: (id: string) => void; /** display de leitura: mais ou menos páginas lidas, sem abrir a edição */ onPages: (id: string, delta: number) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
+function BadgeControls({ noActions = false, id, badge, onEdit, onDetail, onPages, onScale, onScaleEnd, onRemove, onKeep, onClose, onTilt, onTiltEnd }: { /** mural de exemplo: só tamanho e inclinação, sem excluir */ noActions?: boolean; onEdit: (id: string) => void; onDetail: (id: string) => void; /** display de leitura: mais ou menos páginas lidas, sem abrir a edição */ onPages: (id: string, delta: number) => void; id: string; badge?: PlacedBadge; onScale: (id: string, pct: number) => void; onScaleEnd: (id: string) => void; onRemove: (id: string) => void; onKeep: (id: string | null) => void; onClose: () => void; onTilt: (id: string, deg: number) => void; onTiltEnd: (id: string) => void }) {
   const tx = useTranslations("components.badges.BadgeContext");
   const [g, setG] = useState<{ cx: number; cy: number; Rx: number; Ry: number } | null>(null);
   useEffect(() => {
@@ -979,7 +992,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
         <span aria-hidden className="size-1.5 rounded-full bg-white/80" title={tx("menor")} />
       </div>
 
-      <div
+      {!noActions && <div
         data-badge-controls
         role="toolbar"
         aria-label={tx("acoesDoBotton")}
@@ -1018,7 +1031,7 @@ function BadgeControls({ id, badge, onEdit, onDetail, onPages, onScale, onScaleE
             <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3" />
           </svg>
         </button>
-      </div>
+      </div>}
       <button
         type="button"
         data-badge-controls
