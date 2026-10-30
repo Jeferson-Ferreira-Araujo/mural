@@ -31,6 +31,12 @@ export type Moderation = {
   report: (id: string, r: { reason: ReportReason; details: string; block: boolean }) => Promise<boolean>;
 };
 
+/** Só o arraste de pins: o mural de exemplo da tela de entrada deixa qualquer pessoa mexer nos pins (só na tela, sem guardar nada). */
+export type DragMod = Pick<Moderation, "move" | "nudge" | "notify">;
+const DemoCtx = createContext<DragMod | null>(null);
+export const DemoDragProvider = DemoCtx.Provider;
+export const useDemoDrag = () => useContext(DemoCtx);
+
 const Ctx = createContext<Moderation | null>(null);
 export const ModerationProvider = Ctx.Provider;
 export const useModeration = () => useContext(Ctx);

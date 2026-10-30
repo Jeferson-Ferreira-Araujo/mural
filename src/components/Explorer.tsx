@@ -53,7 +53,7 @@ function useEver(v: boolean) {
 }
 import { getProfileSummary, isFollowing, setFollowing } from "@/lib/social";
 import { BOARD_CAPACITY, PLUS_MAX_MURALS } from "@/lib/plans";
-import { ModerationProvider } from "./board/ModerationContext";
+import { DemoDragProvider, ModerationProvider } from "./board/ModerationContext";
 import { ReactionsProvider } from "./board/ReactionsContext";
 import { ListEditProvider, type ListData } from "./board/ListEditContext";
 import { BoardLoadingProvider } from "./board/BoardLoadingContext";
@@ -797,6 +797,27 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
     [loadBoard],
   );
   const [decor, setDecor] = useState<BoardItem[]>(() => buildPool(0, demoLocale).items);
+  // mural de exemplo da tela de entrada: qualquer pessoa arrasta os pins (mesmas regras do dono), só na tela, nada é guardado
+  const demoDrag = useMemo(
+    () => ({
+      notify,
+      move: async (id: string, slot: number) => {
+        setDecor((prev) => {
+          const cur = prev.find((i) => i.id === id);
+          const from = cur?.slot;
+          if (!cur || typeof from !== "number") return prev;
+          const reset = { ox: undefined, oy: undefined, fcov: undefined };
+          return prev.map((i) => (i.id === id ? { ...i, slot, ...reset } : i.slot === slot ? { ...i, slot: from, ...reset } : i));
+        });
+        return true;
+      },
+      nudge: async (id: string, slot: number, ox: number, oy: number, cov: number[]) => {
+        setDecor((prev) => prev.map((i) => (i.id === id ? { ...i, slot, ox, oy, fcov: cov } : i)));
+        return true;
+      },
+    }),
+    [notify],
+  );
   // marcar/desmarcar um item da lista: aparece na hora e o servidor confirma (se falhar, volta)
   const toggleListItem = useCallback(
     async (id: string, index: number) => {
@@ -1223,6 +1244,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
       <PollAccess.Provider value={{ token }}>
       <BoardLoadingProvider value={unlocked && !boardLoaded}>
       <ModerationProvider value={isOwner || isMember ? moderation : null}>
+      <DemoDragProvider value={!selected && !initialRef ? demoDrag : null}>
       <ReactionsProvider value={isOwner || isMember ? { onChanged: () => void loadBoard() } : null}>
         <ListEditProvider onSave={saveList} onToggle={(id, i) => void toggleListItem(id, i)}>
         <BadgeProvider muralId={isMember ? (selected?.id ?? undefined) : own.find((m) => m.slug === slug)?.id} editable={(isOwner && !!own.find((m) => m.slug === slug)) || isMember} badges={selected ? badges.filter((b) => !(b.kind === "display" && b.data && !isDisplayOn(b.data.product))) : decorBadges} setBadges={setBadges} notify={notify} stock={badgeStock} acquiredAt={acquiredAt} onSynced={() => void reloadInventory()} onOpenStore={() => setStoreOpen(true)} displays={(inventory?.pinProducts ?? []).filter((p) => p.owned && !isPackId(p.id) && isDisplayOn(p.id.split(":")[0])).map((p) => p.id)} canDisplays={isOwner && !isShared && !!own.find((m) => m.slug === slug)} onDisplaysChanged={() => void loadBoard()}>
@@ -1287,6 +1309,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
         </BadgeProvider>
         </ListEditProvider>
       </ReactionsProvider>
+      </DemoDragProvider>
       </ModerationProvider>
       </BoardLoadingProvider>
       </PollAccess.Provider>

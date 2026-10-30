@@ -12,7 +12,7 @@ import { BadgeLayer } from "../badges/BadgeLayer";
 import { useBadges } from "../badges/BadgeContext";
 import { useBoardLoading } from "./BoardLoadingContext";
 import { PHYSICAL_TYPES } from "@/lib/badges";
-import { useModeration } from "./ModerationContext";
+import { useDemoDrag, useModeration } from "./ModerationContext";
 import { usePinDrag } from "./usePinDrag";
 import { paddedBox, pinBox } from "@/lib/pinBox";
 import { FREE_MURAL } from "@/lib/slots";
@@ -120,7 +120,9 @@ export function BoardCanvas({
       entering.current.add(it.id);
     }
   }
-  const mod = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços
+  const owner = useModeration(); // só quem cuida do mural: pode arrastar os pins para outros espaços (no mural de exemplo, qualquer pessoa)
+  const demoDrag = useDemoDrag();
+  const mod = owner ?? demoDrag;
   const { removeOver, badges, editable: badgesEditable } = useBadges();
   const loading = useBoardLoading(); // os pins ainda estão chegando: mostra "Carregando mural…" em vez do bilhete de mural vazio
   // espaços cobertos por pins da loja (relógio, clima…): ficam sem receber post-its, fotos e vídeos
