@@ -2343,7 +2343,12 @@
     "hlhlbj5": "Gói mới",
     "h1ifxlo9": "Các huy hiệu trong gói đã có trong tài khoản của bạn.",
     "h1ejy8tl": "Đã mở gói huy hiệu: chúng đã có trong tài khoản của bạn.",
-    "h3a5zaf": "Mở khóa tất cả bảng trong cửa hàng"
+    "h3a5zaf": "Mở khóa tất cả bảng trong cửa hàng",
+    "h1ovxowb": "Bức tường này đang tạm dừng. Quay lại PINZ+ để kích hoạt lại.",
+    "h8emh4p": "Bức tường này đang tạm dừng và tạm thời không nhận ghim mới.",
+    "hsknttd": "PINZ+ của bạn đã hết. Sau {n} ngày, các bức tường sau bức đầu tiên trong danh sách sẽ tạm dừng: vẫn hiển thị nhưng không nhận ghim mới. Kéo để chọn bức nào giữ hoạt động, hoặc quay lại PINZ+.",
+    "h1jprjp4": "PINZ+ của bạn đã hết và các bức tường sau bức đầu tiên trong danh sách đang tạm dừng. Chúng trở lại ngay khi bạn gia hạn, không có gì bị xóa.",
+    "h1aq2qvk": "Tạm dừng"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

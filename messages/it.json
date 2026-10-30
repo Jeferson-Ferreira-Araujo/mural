@@ -2343,7 +2343,12 @@
     "hlhlbj5": "Nuovo pacchetto",
     "h1ifxlo9": "I badge del pacchetto sono ora nel tuo account.",
     "h1ejy8tl": "Pacchetto di badge sbloccato: sono nel tuo account.",
-    "h3a5zaf": "Tutte le bacheche del negozio sbloccate"
+    "h3a5zaf": "Tutte le bacheche del negozio sbloccate",
+    "h1ovxowb": "Questa bacheca è in pausa. Torna a PINZ+ per riattivarla.",
+    "h8emh4p": "Questa bacheca è in pausa e per ora non riceve nuovi pin.",
+    "hsknttd": "Il tuo PINZ+ è finito. Tra {n} giorni le bacheche dopo la prima dell'elenco andranno in pausa: restano visibili ma non ricevono nuovi pin. Trascina per scegliere quale resta attiva, o torna a PINZ+.",
+    "h1jprjp4": "Il tuo PINZ+ è finito e le bacheche dopo la prima dell'elenco sono in pausa. Tornano subito al rinnovo e nulla è stato eliminato.",
+    "h1aq2qvk": "In pausa"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

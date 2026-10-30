@@ -1256,6 +1256,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
             isOwner
               ? {
                   mode: "demo", // o dono também publica no próprio mural: o pin já entra aprovado
+                  canOpen: async () => (selected?.paused ? tl("Este mural está pausado. Volte ao PINZ+ para reativar.") : null),
                   onSend: onSendPin,
                   sentNote: tx("m_pinColocadoNoSeuMural"),
                   onTried: () => undefined,
@@ -1272,7 +1273,7 @@ export function Explorer({ initialRef, authMode, nextPath }: { initialRef?: { ni
                     if (nick && slug) void getBrowserSupabase().rpc("record_pin_attempt", { p_nick: nick, p_slug: slug, p_visitor_id: getVisitorId() }).then(() => undefined);
                   },
                   triedAlready: tried,
-                  canOpen: async () => (nick && slug ? sendBlockedText(await getSendStatus(getBrowserSupabase(), { nick, slug }, token)) : null),
+                  canOpen: async () => (selected?.paused ? tl("Este mural está pausado e não recebe pins novos por enquanto.") : nick && slug ? sendBlockedText(await getSendStatus(getBrowserSupabase(), { nick, slug }, token)) : null),
                 signAs: myNick,
                   // sem conta não dá para publicar: avisa, leva a criar a conta (ou entrar) e volta para este mural
                   signupHref: !logged && nick && slug ? loginUrl(`/${nick}/${slug}`, true) : undefined,

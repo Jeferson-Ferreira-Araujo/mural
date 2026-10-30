@@ -2343,7 +2343,12 @@
     "hlhlbj5": "New pack",
     "h1ifxlo9": "The pack's buttons are now in your account.",
     "h1ejy8tl": "Button pack unlocked: they're now in your account.",
-    "h3a5zaf": "All store boards unlocked"
+    "h3a5zaf": "All store boards unlocked",
+    "h1ovxowb": "This mural is paused. Go back to PINZ+ to reactivate it.",
+    "h8emh4p": "This mural is paused and isn't receiving new pins for now.",
+    "hsknttd": "Your PINZ+ has ended. In {n} days, the murals after the first one in the list will be paused: they stay visible but stop receiving new pins. Drag to choose which one stays active, or go back to PINZ+.",
+    "h1jprjp4": "Your PINZ+ has ended and the murals after the first one in the list are paused. They come back instantly when you renew, and nothing was deleted.",
+    "h1aq2qvk": "Paused"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

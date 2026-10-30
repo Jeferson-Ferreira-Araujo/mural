@@ -42,6 +42,8 @@ export type PublicMural = {
   partner?: string | null;
   /** compartilhado: alguém dos dois perdeu o PINZ+, o mural está bloqueado */
   locked?: boolean;
+  /** mural extra pausado (o dono ficou sem PINZ+): continua visível, mas não recebe pins novos */
+  paused?: boolean;
   stats: MuralStats;
 };
 

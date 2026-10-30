@@ -2343,7 +2343,12 @@
     "hlhlbj5": "Nowy pakiet",
     "h1ifxlo9": "Przypinki z pakietu są już na Twoim koncie.",
     "h1ejy8tl": "Pakiet przypinek odblokowany: są już na Twoim koncie.",
-    "h3a5zaf": "Wszystkie tablice ze sklepu odblokowane"
+    "h3a5zaf": "Wszystkie tablice ze sklepu odblokowane",
+    "h1ovxowb": "Ten mural jest wstrzymany. Wróć do PINZ+, aby go reaktywować.",
+    "h8emh4p": "Ten mural jest wstrzymany i na razie nie przyjmuje nowych pinów.",
+    "hsknttd": "Twój PINZ+ się skończył. Za {n} dni murale po pierwszym na liście zostaną wstrzymane: pozostaną widoczne, ale nie będą przyjmować nowych pinów. Przeciągnij, by wybrać aktywny, albo wróć do PINZ+.",
+    "h1jprjp4": "Twój PINZ+ się skończył, a murale po pierwszym na liście są wstrzymane. Wrócą od razu po odnowieniu, nic nie zostało usunięte.",
+    "h1aq2qvk": "Wstrzymany"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

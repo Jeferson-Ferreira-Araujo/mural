@@ -23,6 +23,8 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [flash, setFlash] = useState(false); // "salvo com sucesso" por cima da janela
+  // o PINZ+ acabou: carência de 30 dias e quais murais extras ficam (ou já estão) pausados
+  const [lapse, setLapse] = useState<{ active: boolean; daysLeft?: number; allowed?: number; total?: number; paused?: string[] } | null>(null);
 
   // ao abrir: volta para a lista e lê o tipo (fundo) de cada mural
   useEffect(() => {
@@ -32,6 +34,10 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
     setConfirmId(null);
     setErr(null);
   }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    void getBrowserSupabase().rpc("get_plus_lapse").then(({ data }) => setLapse((data as typeof lapse) ?? null));
+  }, [open, murals]);
   useEffect(() => {
     if (!open || murals.length === 0) return;
     void getBrowserSupabase()
@@ -203,6 +209,13 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
               {err}
             </p>
           )}
+          {lapse?.active && (lapse.total ?? 0) > (lapse.allowed ?? 1) && (
+            <p role="status" className="mb-3 rounded-xl border border-[#e0b04a] bg-[#fff8e4] px-3 py-2 text-sm text-[#5a3d00]">
+              {(lapse.daysLeft ?? 0) > 0
+                ? tl("Seu PINZ+ acabou. Em {n} dias, os murais além do primeiro da lista serão pausados: continuam visíveis, mas não recebem pins novos. Arraste para escolher qual fica ativo ou volte ao PINZ+.").replace("{n}", String(lapse.daysLeft))
+                : tl("Seu PINZ+ acabou e os murais além do primeiro da lista estão pausados. Eles voltam na hora quando você renovar, e nada foi apagado.")}
+            </p>
+          )}
           <ul className="space-y-2.5">
             {ordered.map((m, i) => {
               const b = boardById(boards[m.id]);
@@ -235,7 +248,10 @@ export function MyMuralsModal({ open, onClose, murals, currentId, onNewMural, on
                   )}
                   {/* só a imagem do mural (com o cadeado, se tiver pergunta de segurança) e os botões de editar e apagar */}
                   <button type="button" onClick={() => setEditId(m.id)} className="relative w-[min(27rem,calc(100%-6.5rem))] min-w-0 shrink-0 cursor-pointer text-left" aria-label={tx("x_editTitle", { title: m.title, locked: m.question ? "yes" : "no" })} title={m.title}>
-                    <span className="mb-1.5 block h-6 max-w-full truncate text-base leading-6 font-bold">{m.title}</span>
+                    <span className="mb-1.5 flex h-6 max-w-full items-center gap-2 truncate text-base leading-6 font-bold">
+                      <span className="truncate">{m.title}</span>
+                      {lapse?.paused?.includes(m.id) && <span className="shrink-0 rounded-md bg-[#8a7b69] px-1.5 py-px text-[10px] font-extrabold tracking-wide text-white uppercase">{tl("Pausado")}</span>}
+                    </span>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={boardPreview(b)} alt="" draggable={false} className="aspect-[12/5] w-full rounded-xl object-cover shadow-[0_0.2rem_0.7rem_rgba(60,30,0,.25)]" />
                     {/* abaixo da imagem: se o mural é público ou privado (com pergunta de segurança) */}

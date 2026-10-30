@@ -2343,7 +2343,12 @@
     "hlhlbj5": "Nieuw pakket",
     "h1ifxlo9": "De buttons van het pakket staan nu in je account.",
     "h1ejy8tl": "Buttonpakket ontgrendeld: ze staan nu in je account.",
-    "h3a5zaf": "Alle winkelborden ontgrendeld"
+    "h3a5zaf": "Alle winkelborden ontgrendeld",
+    "h1ovxowb": "Dit mural is gepauzeerd. Ga terug naar PINZ+ om het te heractiveren.",
+    "h8emh4p": "Dit mural is gepauzeerd en ontvangt voorlopig geen nieuwe pins.",
+    "hsknttd": "Je PINZ+ is afgelopen. Over {n} dagen worden de murals na de eerste in de lijst gepauzeerd: ze blijven zichtbaar maar ontvangen geen nieuwe pins. Sleep om te kiezen welke actief blijft, of ga terug naar PINZ+.",
+    "h1jprjp4": "Je PINZ+ is afgelopen en de murals na de eerste in de lijst zijn gepauzeerd. Ze zijn direct terug als je verlengt; er is niets verwijderd.",
+    "h1aq2qvk": "Gepauzeerd"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",
