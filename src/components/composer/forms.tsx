@@ -109,9 +109,13 @@ export function TextForm({ onChange }: { onChange: DraftChange }) {
       </div>
       <TapeColorPicker value={tape} onChange={setTape} />
       <FontPicker value={font} onChange={setFont} />
-      <Field label={tx("suaMensagem")} hint={<Counter value={text} max={320} />}>
-        {(id) => <textarea id={id} value={text} onChange={(e) => setText(e.target.value)} maxLength={320} rows={6} placeholder={tx("escrevaComCalmaEUma")} className={area} />}
-      </Field>
+      {/* o título "Sua mensagem" vai dentro do campo, como dica */}
+      <div>
+        <textarea aria-label={tx("suaMensagem")} value={text} onChange={(e) => setText(e.target.value)} maxLength={320} rows={6} placeholder={tx("suaMensagem")} className={area} />
+        <div className="mt-1 text-right text-xs text-[#8a7b69]">
+          <Counter value={text} max={320} />
+        </div>
+      </div>
     </div>
   );
 }
