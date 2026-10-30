@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz (pinz.digital) bir mesaj panosudur. Bu sayfa hangi verileri neden kullandığımızı açıklar.",
         "x_dadosQueColetamos": "Topladığımız veriler",
         "x_contaEMailNomeDe": "Hesap: e-posta, kullanıcı adı (takma ad) ve yüklerseniz profil fotoğrafı. Google ile giriş yaparsanız, Google hesabının e-postasını ve adını alırız.",
-        "x_dataDeNascimentoOpcionalSe": "Doğum tarihi (isteğe bağlı): karşılama adımında girerseniz, 13 yaş veya üzerinde olduğunuzu doğrulamak için saklarız. Yalnızca siz erişebilirsiniz; kimseye gösterilmez.",
+        "x_dataDeNascimentoOpcionalSe": "Doğum tarihi (zorunlu): kayıt olurken veya karşılama adımlarında girersiniz; 13 yaş ve üzerinde olduğunuzu doğrulamak için saklarız. Yalnızca siz erişebilirsiniz; kimseye gösterilmez.",
         "x_conteudoOsPinsQueVoce": "İçerik: paylaştığınız pinler (metinler, listeler, fotoğraflar, çizimler, ses, videolar, şarkılar ve yerler), panonuzu koruyan soru ve cevap ile ortak panonun şifresi (şifreli saklanır).",
         "x_visitasESeguidoresQuandoVoce": "Ziyaretler ve takipçiler: giriş yaptığınızda ve başka birinin panosunu ziyaret ettiğinizde, @ adınız ve profil fotoğrafınız onun ziyaretçi listesinde (tarihsiz) görünür. Takip ettiğiniz kişiler yalnızca sizin gördüğünüz bir listededir; sizi takip edenler yalnızca bir sayı olarak görünür.",
         "x_enquetesAoVotarNumaEnquete": "Anketler: bir ankette oy verdiğinizde, seçtiğiniz seçeneği hesabınıza bağlı olarak saklarız (kişi başına bir oy); pano sahibi yalnızca toplamı ve yüzdeleri görür, kimin neye oy verdiğini asla görmez.",

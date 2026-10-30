@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz (pinz.digital) is een prikbord voor berichten. Deze pagina legt uit welke gegevens we gebruiken en waarom.",
         "x_dadosQueColetamos": "Gegevens die we verzamelen",
         "x_contaEMailNomeDe": "Account: e-mailadres, gebruikersnaam (bijnaam) en, als je die uploadt, de profielfoto. Als je inlogt met Google, ontvangen we het e-mailadres en de naam van het Google-account.",
-        "x_dataDeNascimentoOpcionalSe": "Geboortedatum (optioneel): als je die invult bij de welkomststap, bewaren we hem om te bevestigen dat je 13 jaar of ouder bent. Alleen jij hebt er toegang toe; hij wordt aan niemand getoond.",
+        "x_dataDeNascimentoOpcionalSe": "Geboortedatum (verplicht): je geeft die op bij het aanmelden of in de welkomststappen, en wij bewaren hem om te bevestigen dat je 13 jaar of ouder bent. Alleen jij hebt er toegang toe; hij wordt aan niemand getoond.",
         "x_conteudoOsPinsQueVoce": "Inhoud: de pins die je plaatst (teksten, lijsten, foto's, tekeningen, audio, video's, liedjes en plaatsen), de vraag en het antwoord die je prikbord beschermen, en het wachtwoord van het gedeelde prikbord (versleuteld opgeslagen).",
         "x_visitasESeguidoresQuandoVoce": "Bezoeken en volgers: als je bent ingelogd en het prikbord van iemand anders bezoekt, verschijnen je @ en profielfoto in diens bezoekerslijst (zonder datum). De mensen die je volgt staan in een lijst die alleen jij ziet, en mensen die jou volgen verschijnen alleen als getal.",
         "x_enquetesAoVotarNumaEnquete": "Polls: als je stemt in een poll, slaan we de gekozen optie gekoppeld aan je account op (één stem per persoon); de eigenaar van het prikbord ziet alleen het totaal en de percentages, nooit wie waarop heeft gestemd.",

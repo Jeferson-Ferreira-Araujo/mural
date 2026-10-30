@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz (pinz.digital) est un tableau de messages. Cette page explique quelles données nous utilisons et pourquoi.",
         "x_dadosQueColetamos": "Données que nous collectons",
         "x_contaEMailNomeDe": "Compte : e-mail, nom d'utilisateur (pseudo) et, si tu en téléverses une, la photo de profil. Si tu te connectes avec Google, nous recevons l'e-mail et le nom du compte Google.",
-        "x_dataDeNascimentoOpcionalSe": "Date de naissance (facultatif) : si tu la saisis à l'étape d'accueil, nous la conservons pour confirmer que tu as 13 ans ou plus. Toi seul y as accès ; elle n'est montrée à personne.",
+        "x_dataDeNascimentoOpcionalSe": "Date de naissance (obligatoire) : vous l'indiquez à l'inscription ou lors de l'accueil, et nous la conservons pour confirmer que vous avez 13 ans ou plus. Vous seul y avez accès ; elle n'apparaît pour personne.",
         "x_conteudoOsPinsQueVoce": "Contenu : les pins que tu publies (textes, listes, photos, dessins, audio, vidéos, chansons et lieux), la question et la réponse qui protègent ton tableau, et le mot de passe du tableau partagé (stocké chiffré).",
         "x_visitasESeguidoresQuandoVoce": "Visites et abonnés : quand tu es connecté et que tu visites le tableau d'une autre personne, ton @ et ta photo de profil apparaissent dans sa liste de visiteurs (sans date). Les personnes que tu suis figurent dans une liste que toi seul vois, et celles qui te suivent apparaissent seulement sous forme de nombre.",
         "x_enquetesAoVotarNumaEnquete": "Sondages : quand tu votes dans un sondage, nous enregistrons l'option choisie, liée à ton compte (un vote par personne) ; le propriétaire du tableau voit seulement le total et les pourcentages, jamais qui a voté pour quoi.",

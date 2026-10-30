@@ -19,7 +19,7 @@ export async function getOnboarding(sb: SupabaseClient): Promise<Onboarding | nu
   return { done: d.done === true, birth: d.birth ?? null, setup: d.setup !== false };
 }
 
-/** Salva a data de nascimento (AAAA-MM-DD, opcional) e, com `finish`, marca as boas-vindas como concluídas. Devolve o código do erro, ou null se deu certo. */
+/** Salva a data de nascimento (AAAA-MM-DD, obrigatória no cadastro) e, com `finish`, marca as boas-vindas como concluídas. Devolve o código do erro, ou null se deu certo. */
 export async function saveOnboarding(sb: SupabaseClient, birth: string | null, finish: boolean): Promise<"too_young" | "invalid_birth" | "failed" | null> {
   const { error } = await sb.rpc("save_onboarding", { p_birth: birth, p_finish: finish });
   if (!error) return null;

@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz (pinz.digital) to tablica wiadomości. Ta strona wyjaśnia, jakich danych używamy i dlaczego.",
         "x_dadosQueColetamos": "Dane, które zbieramy",
         "x_contaEMailNomeDe": "Konto: e-mail, nazwa użytkownika (pseudonim) i, jeśli ją prześlesz, zdjęcie profilowe. Jeśli logujesz się przez Google, otrzymujemy e-mail i imię z konta Google.",
-        "x_dataDeNascimentoOpcionalSe": "Data urodzenia (opcjonalnie): jeśli podasz ją w kroku powitalnym, przechowujemy ją, aby potwierdzić, że masz 13 lat lub więcej. Dostęp masz tylko Ty; nie jest nikomu pokazywana.",
+        "x_dataDeNascimentoOpcionalSe": "Data urodzenia (wymagana): podajesz ją przy rejestracji lub w powitaniu, a my ją przechowujemy, aby potwierdzić, że masz co najmniej 13 lat. Tylko Ty masz do niej dostęp; nie jest nikomu pokazywana.",
         "x_conteudoOsPinsQueVoce": "Treści: piny, które publikujesz (teksty, listy, zdjęcia, rysunki, audio, filmy, piosenki i miejsca), pytanie i odpowiedź chroniące Twoją tablicę oraz hasło wspólnej tablicy (przechowywane w postaci zaszyfrowanej).",
         "x_visitasESeguidoresQuandoVoce": "Odwiedziny i obserwujący: gdy jesteś zalogowany(-a) i odwiedzasz tablicę innej osoby, Twój @ i zdjęcie profilowe pojawiają się na jej liście odwiedzających (bez daty). Osoby, które obserwujesz, są na liście widocznej tylko dla Ciebie, a osoby, które Cię obserwują, pojawiają się tylko jako liczba.",
         "x_enquetesAoVotarNumaEnquete": "Ankiety: gdy głosujesz w ankiecie, zapisujemy wybraną opcję powiązaną z Twoim kontem (jeden głos na osobę); właściciel tablicy widzi tylko sumę i procenty, nigdy kto na co głosował.",

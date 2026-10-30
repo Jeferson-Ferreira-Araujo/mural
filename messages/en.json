@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz (pinz.digital) is a message board. This page explains which data we use and why.",
         "x_dadosQueColetamos": "Data we collect",
         "x_contaEMailNomeDe": "Account: email, username (nickname) and, if you upload one, the profile photo. If you sign in with Google, we receive the email and name of the Google account.",
-        "x_dataDeNascimentoOpcionalSe": "Date of birth (optional): if you enter it at the welcome step, we keep it to confirm you are 13 or older. Only you can access it; it is not shown to anyone.",
+        "x_dataDeNascimentoOpcionalSe": "Date of birth (required): you provide it when you sign up or in the welcome steps, and we keep it to confirm that you are 13 or older. Only you can access it; it is not shown to anyone.",
         "x_conteudoOsPinsQueVoce": "Content: the pins you post (texts, lists, photos, drawings, audio, videos, songs and places), the question and answer that protect your board, and the shared board password (stored encrypted).",
         "x_visitasESeguidoresQuandoVoce": "Visits and followers: when you sign in and visit another person's board, your @ and profile photo appear in their visitor list (without a date). The people you follow are in a list only you see, and people who follow you appear only as a number.",
         "x_enquetesAoVotarNumaEnquete": "Polls: when you vote in a poll, we store the option you chose linked to your account (one vote per person); the board owner sees only the total and percentages, never who voted for what.",

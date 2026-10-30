@@ -162,7 +162,7 @@
         "x_oPinzPinzDigitalE": "Pinz（pinz.digital）是一个留言板。本页说明我们使用哪些数据以及原因。",
         "x_dadosQueColetamos": "我们收集的数据",
         "x_contaEMailNomeDe": "账号：邮箱、用户名（昵称），以及你上传的头像（如有）。如果你使用 Google 登录，我们会收到该 Google 账号的邮箱和姓名。",
-        "x_dataDeNascimentoOpcionalSe": "出生日期（可选）：如果你在欢迎步骤中填写，我们会保存它以确认你已年满 13 岁。只有你本人可以查看，不会向任何人显示。",
+        "x_dataDeNascimentoOpcionalSe": "出生日期（必填）：你在注册或欢迎步骤中填写，我们保存它以确认你已年满 13 岁。只有你本人可以访问，不会向任何人显示。",
         "x_conteudoOsPinsQueVoce": "内容：你发布的图钉（文字、清单、照片、绘画、音频、视频、歌曲和地点）、保护你留言板的问题和答案，以及共享留言板的密码（加密存储）。",
         "x_visitasESeguidoresQuandoVoce": "访问与粉丝：登录后访问他人留言板时，你的 @ 和头像会出现在对方的访客列表中（不含日期）。你关注的人在只有你能看到的列表里，关注你的人只显示为数字。",
         "x_enquetesAoVotarNumaEnquete": "投票：当你参与投票时，我们会把你选择的选项与你的账号关联保存（每人一票）；留言板所有者只能看到总数和百分比，永远看不到谁投了什么。",

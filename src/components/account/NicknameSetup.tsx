@@ -73,7 +73,7 @@ export function NicknameSetup({ open, suggested, onDone }: { open: boolean; sugg
       return setError(key ? tl(ERROR[key]) : tx("m_naoFoiPossivelSalvarAgora"));
     }
     const sb = getBrowserSupabase();
-    if (iso) await saveOnboarding(sb, iso, false); // a data é opcional: se falhar, o nome já salvo segue valendo
+    await saveOnboarding(sb, iso, false); // a data é obrigatória e já foi conferida acima; se o salvamento falhar, o nome já salvo segue valendo e a data é pedida de novo nas boas-vindas
     try {
       const uid = (await sb.auth.getUser()).data.user?.id;
       if (uid) localStorage.setItem(PROFILE_STEP_DONE_KEY(uid), "1");
