@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { RichBody } from "@/lib/richText";
 import { Spinner } from "@/components/ui";
 import type { NoticeTexts } from "@/lib/notice";
 
 type Row = { id: string; createdAt: string; texts: NoticeTexts; active: boolean; image?: string | null; link?: string | null; rev: number };
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
-const field = "w-full rounded-xl border border-[#d9c9ad] bg-white px-3.5 py-2 text-base text-[#2a1c12] outline-none focus:border-[#d9a21b]";
+const tool = "cursor-pointer rounded-lg border border-[#d9c9ad] bg-white px-3 py-1.5 text-sm font-semibold text-[#2a1c12] hover:bg-[#f7efdc]";
+const field ="w-full rounded-xl border border-[#d9c9ad] bg-white px-3.5 py-2 text-base text-[#2a1c12] outline-none focus:border-[#d9a21b]";
 
 /** Aviso na tela inicial: uma janela que aparece uma vez para todo mundo. Só o aviso ativo mais recente é mostrado; desative ou apague para tirar do ar. */
 export function NoticePanel({ onToast }: { onToast: (t: string) => void }) {
@@ -23,6 +25,7 @@ export function NoticePanel({ onToast }: { onToast: (t: string) => void }) {
   const [again, setAgain] = useState(false);
   const [busy, setBusy] = useState(false);
   const [sending, setSending] = useState(false);
+  const area = useRef<HTMLTextAreaElement>(null);
 
   const load = useCallback(async () => {
     const { data } = await getBrowserSupabase().rpc("admin_list_notices");
@@ -57,7 +60,7 @@ export function NoticePanel({ onToast }: { onToast: (t: string) => void }) {
     }).catch(() => null);
     const d = (await res?.json().catch(() => null)) as { failed?: string[]; error?: string } | null;
     setBusy(false);
-    if (!res?.ok) return onToast(d?.error === "invalid_link" ? "O link deve começar com https:// ou com /." : "Não foi possível salvar agora.");
+    if (!res?.ok) return onToast(d?.error === "invalid_link" ? "O link deve começar com https:// ou com /." : d?.error === "too_long" ? "Texto longo demais para traduzir: quebre as linhas muito compridas (até 440 letras por linha) e use no máximo 12 trechos entre imagens." : "Não foi possível salvar agora.");
     onToast(d?.failed?.length ? `Salvo. ${d.failed.length} idioma(s) ficaram em português por falha na tradução (${d.failed.join(", ")}); salve de novo para tentar outra vez.` : "Salvo e traduzido para os 19 idiomas.");
     reset();
     void load();
@@ -72,7 +75,32 @@ export function NoticePanel({ onToast }: { onToast: (t: string) => void }) {
     const d = (await res?.json().catch(() => null)) as { url?: string; error?: string } | null;
     setSending(false);
     if (!res?.ok || !d?.url) return onToast(d?.error === "too_large" ? "Imagem grande demais (máximo 3 MB)." : d?.error === "invalid_type" ? "Use uma imagem PNG, JPG ou WebP." : "Não foi possível enviar a imagem.");
-    setImage(d.url);
+    insertAtCursor(`\n![](${d.url})\n`);
+  }
+
+  // editor: os botões mexem no texto onde está o cursor/seleção
+  function edit(fn: (before: string, sel: string, after: string) => { text: string; from: number; to: number }) {
+    const el = area.current;
+    const a = el?.selectionStart ?? body.length;
+    const b = el?.selectionEnd ?? body.length;
+    const r = fn(body.slice(0, a), body.slice(a, b), body.slice(b));
+    setBody(r.text);
+    requestAnimationFrame(() => {
+      el?.focus();
+      el?.setSelectionRange(r.from, r.to);
+    });
+  }
+  const insertAtCursor = (s: string) => edit((x, sel, y) => ({ text: x + s + sel + y, from: x.length + s.length, to: x.length + s.length }));
+  const wrap = (m: string) => edit((x, sel, y) => ({ text: `${x}${m}${sel || "texto"}${m}${y}`, from: x.length + m.length, to: x.length + m.length + (sel || "texto").length }));
+  const lineMark = (m: string) =>
+    edit((x, sel, y) => {
+      const start = x.lastIndexOf("\n") + 1;
+      return { text: `${x.slice(0, start)}${m}${x.slice(start)}${sel}${y}`, from: x.length + m.length, to: x.length + m.length + sel.length };
+    });
+  function addLink() {
+    const url = window.prompt("Endereço do link (https://… ou /criar):");
+    if (!url?.trim()) return;
+    edit((x, sel, y) => ({ text: `${x}[${sel || "clique aqui"}](${url.trim()})${y}`, from: x.length + 1, to: x.length + 1 + (sel || "clique aqui").length }));
   }
 
   async function toggle(r: Row) {
@@ -93,23 +121,28 @@ export function NoticePanel({ onToast }: { onToast: (t: string) => void }) {
         <h3 className="font-title text-base font-semibold">{editing ? "Editar aviso" : "Novo aviso"}</h3>
         <p className="mt-0.5 text-xs text-[#6b5440]">Aparece como uma janela na tela inicial, uma vez para cada pessoa. Escreva em português: o texto é traduzido sozinho para os outros 18 idiomas. Se houver mais de um ativo, só o mais novo aparece.</p>
         <input className={`${field} mt-3`} placeholder="Título (ex.: Estamos de visual novo!)" value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} aria-label="Título" />
-        <textarea className={`${field} mt-2 min-h-24`} placeholder="Texto do aviso" value={body} maxLength={600} onChange={(e) => setBody(e.target.value)} aria-label="Texto" />
-        <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          <input className={field} placeholder="Link (opcional: https://… ou /criar)" value={link} maxLength={300} onChange={(e) => setLink(e.target.value)} aria-label="Link" />
-          <input className={field} placeholder="Texto do botão (ex.: Ver agora)" value={button} maxLength={40} disabled={!link.trim()} onChange={(e) => setButton(e.target.value)} aria-label="Texto do botão" />
-        </div>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <label className="cursor-pointer rounded-xl border border-[#d9c9ad] bg-white px-4 py-2 text-sm font-semibold">
-            {sending ? "Enviando…" : image ? "Trocar imagem" : "Escolher imagem (opcional)"}
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <button type="button" title="Título" className={tool} onClick={() => lineMark("# ")}>Título</button>
+          <button type="button" title="Negrito" className={`${tool} font-extrabold`} onClick={() => wrap("**")}>B</button>
+          <button type="button" title="Itálico" className={`${tool} italic`} onClick={() => wrap("*")}>I</button>
+          <button type="button" title="Lista" className={tool} onClick={() => lineMark("- ")}>• Lista</button>
+          <button type="button" title="Link no texto selecionado" className={tool} onClick={addLink}>Link</button>
+          <label className={`${tool} ${sending ? "opacity-60" : ""}`}>
+            {sending ? "Enviando…" : "Imagem"}
             <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={sending} onChange={(e) => { void upload(e.target.files?.[0]); e.target.value = ""; }} />
           </label>
-          {image && (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={image} alt="" className="h-12 w-20 rounded-lg border border-[#e1d3ba] bg-white object-contain" />
-              <button type="button" className="cursor-pointer text-xs font-semibold text-[#a23b2a] underline" onClick={() => setImage("")}>Remover</button>
-            </>
-          )}
+          <span className="ml-auto text-xs text-[#6b5440]">{body.length}/3000</span>
+        </div>
+        <textarea ref={area} className={`${field} mt-1.5 min-h-40 font-mono text-sm`} placeholder={"Escreva o aviso aqui.\nA imagem entra no ponto onde está o cursor."} value={body} maxLength={3000} onChange={(e) => setBody(e.target.value)} aria-label="Texto" />
+        {body.trim() && (
+          <div className="mt-2 rounded-xl border border-dashed border-[#d9c9ad] bg-[#fbf6ea] p-3">
+            <p className="mb-1 text-[11px] font-semibold tracking-wide text-[#8a7b69] uppercase">Como vai aparecer</p>
+            <RichBody text={body} />
+          </div>
+        )}
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <input className={field} placeholder="Botão com link (opcional: https://… ou /criar)" value={link} maxLength={300} onChange={(e) => setLink(e.target.value)} aria-label="Link do botão" />
+          <input className={field} placeholder="Texto do botão (ex.: Ver agora)" value={button} maxLength={40} disabled={!link.trim()} onChange={(e) => setButton(e.target.value)} aria-label="Texto do botão" />
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
           <span className="flex flex-wrap gap-x-4 gap-y-1">

@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { fetchNotice, noticeText, type SiteNotice as Notice } from "@/lib/notice";
 import { getBrowserSupabase } from "@/lib/supabase";
+import { RichBody } from "@/lib/richText";
 import { Modal } from "./account/Modal";
 
 const key = (n: Notice) => `pinz:aviso:${n.id}:${n.rev}`;
@@ -47,7 +48,7 @@ export function SiteNotice() {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={notice.image} alt="" className="mx-auto mb-3 max-h-48 w-auto max-w-full object-contain" />
       )}
-      <p className="text-[15px] leading-snug whitespace-pre-line text-[#3a2c1d]">{x.b}</p>
+      <RichBody text={x.b} />
       <div className="mt-4 flex gap-2">
         {notice.link ? (
           <>

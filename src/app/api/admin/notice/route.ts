@@ -4,6 +4,7 @@ import { adminClient } from "@/lib/mercadopago";
 import { NEWS_LOCALES } from "@/lib/news";
 import type { NoticeTexts } from "@/lib/notice";
 import { translateText } from "@/lib/translateText";
+import { isImageLine } from "@/lib/richText";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
   const who = await requireAdmin(req);
   if (typeof who !== "string") return who;
   const { id, title, body, button, link, image, active, again } = (await req.json().catch(() => ({}))) as { id?: string; title?: string; body?: string; button?: string; link?: string; image?: string; active?: boolean; again?: boolean };
-  if (!title?.trim() || !body?.trim() || title.length > 120 || body.length > 600) return fail(400, "invalid_text");
+  if (!title?.trim() || !body?.trim() || title.length > 120 || body.length > 3000) return fail(400, "invalid_text");
   if (id && !/^[0-9a-f-]{36}$/i.test(id)) return fail(400, "invalid_id");
   const img = image?.trim() || null;
   if (img && (img.length > 300 || !/^(\/|https:\/\/)[^\s"<>]+$/.test(img))) return fail(400, "invalid_image");
@@ -28,13 +29,41 @@ export async function POST(req: Request) {
   if (btn.length > 40) return fail(400, "invalid_button");
   const label = url ? btn || "Saiba mais" : "";
 
+  const lines = body.trim().split("\n").map((s) => s.replace(/\s+$/, ""));
+  // trechos de texto entre as imagens (imagem não se traduz); cada trecho vai em pedaços de até 450 caracteres
+  type Part = { from: number; prefixes: string[]; lines: string[] };
+  const parts: Part[] = [];
+  lines.forEach((ln, ix) => {
+    if (isImageLine(ln) || !ln.trim()) return;
+    const last = parts[parts.length - 1];
+    const m = /^(# |- )?(.*)$/.exec(ln.trim())!;
+    const txt = m[2];
+    if (last && last.from + last.lines.length === ix && last.lines.join("\n").length + txt.length < 440) {
+      last.prefixes.push(m[1] ?? "");
+      last.lines.push(txt);
+    } else parts.push({ from: ix, prefixes: [m[1] ?? ""], lines: [txt] });
+  });
+  if (parts.length > 12 || lines.some((l) => l.length > 440 && !isImageLine(l))) return fail(400, "too_long");
+
   const texts: NoticeTexts = { pt: { t: title.trim(), b: body.trim(), ...(label ? { c: label } : {}) } };
   const failed: string[] = [];
   const langs = NEWS_LOCALES.filter((l) => l !== "pt");
+  async function translateBody(l: string): Promise<string | null> {
+    const out = [...lines];
+    for (const p of parts) {
+      const res = await translateText(p.lines.join("\n"), l);
+      const got = res?.split("\n");
+      if (!got || got.length !== p.lines.length) return null;
+      got.forEach((g, k) => {
+        out[p.from + k] = `${p.prefixes[k]}${g.trim()}`;
+      });
+    }
+    return out.join("\n");
+  }
   for (let i = 0; i < langs.length; i += 6) {
     await Promise.all(
       langs.slice(i, i + 6).map(async (l) => {
-        const [t, b, c] = await Promise.all([translateText(title.trim(), l), translateText(body.trim(), l), label ? translateText(label, l) : Promise.resolve("")]);
+        const [t, b, c] = await Promise.all([translateText(title.trim(), l), translateBody(l), label ? translateText(label, l) : Promise.resolve("")]);
         if (t && b && c !== null) texts[l] = { t, b, ...(c ? { c } : {}) };
         else failed.push(l);
       }),
