@@ -2333,7 +2333,10 @@
     "hfvgov": "View display",
     "h1nlpf14": "You don't have permission to see this pin.",
     "h1al7dn": "You don't have permission to see this display.",
-    "h1wetvnd": "Keep pins and displays secret"
+    "h1wetvnd": "Keep pins and displays secret",
+    "h1kh8r1j": "New store buttons unlocked for purchase",
+    "hohtd0d": "New: only for PINZ+ members",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

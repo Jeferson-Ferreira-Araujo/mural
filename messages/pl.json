@@ -2333,7 +2333,10 @@
     "hfvgov": "Pokaż wyświetlacz",
     "h1nlpf14": "Nie masz uprawnień do wyświetlenia tego pina.",
     "h1al7dn": "Nie masz uprawnień do wyświetlenia tego wyświetlacza.",
-    "h1wetvnd": "Ukrywaj piny i wyświetlacze"
+    "h1wetvnd": "Ukrywaj piny i wyświetlacze",
+    "h1kh8r1j": "Nowe przypinki ze sklepu dostępne do zakupu",
+    "hohtd0d": "Nowość: tylko dla posiadaczy PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} zostawił(a) PINZ na tablicy „{mural}”{pending, select, yes { · czeka na Twoje zatwierdzenie} other {}}",

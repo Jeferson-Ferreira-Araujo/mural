@@ -2333,7 +2333,10 @@
     "hfvgov": "ディスプレイを表示",
     "h1nlpf14": "このピンを見る権限がありません。",
     "h1al7dn": "このディスプレイを見る権限がありません。",
-    "h1wetvnd": "ピンとディスプレイを秘密にする"
+    "h1wetvnd": "ピンとディスプレイを秘密にする",
+    "h1kh8r1j": "ストアの新しいバッジを購入できます",
+    "hohtd0d": "新着：PINZ+会員限定",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

@@ -2333,7 +2333,10 @@
     "hfvgov": "Display bekijken",
     "h1nlpf14": "Je hebt geen toestemming om deze pin te zien.",
     "h1al7dn": "Je hebt geen toestemming om dit display te zien.",
-    "h1wetvnd": "Pins en displays geheim houden"
+    "h1wetvnd": "Pins en displays geheim houden",
+    "h1kh8r1j": "Nieuwe winkelbuttons beschikbaar om te kopen",
+    "hohtd0d": "Nieuw: alleen voor PINZ+-leden",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

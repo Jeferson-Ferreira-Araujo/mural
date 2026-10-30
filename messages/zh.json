@@ -2333,7 +2333,10 @@
     "hfvgov": "查看展示牌",
     "h1nlpf14": "您无权查看此图钉。",
     "h1al7dn": "您无权查看此显示屏。",
-    "h1wetvnd": "将图钉和显示屏设为秘密"
+    "h1wetvnd": "将图钉和显示屏设为秘密",
+    "h1kh8r1j": "商店新徽章开放购买",
+    "hohtd0d": "新品：仅限 PINZ+ 会员",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} 在留言板“{mural}”上留下了一个 PINZ{pending, select, yes { · 等待你的批准} other {}}",

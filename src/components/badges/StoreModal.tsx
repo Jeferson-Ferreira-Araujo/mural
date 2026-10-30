@@ -366,6 +366,7 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
               {shown.slice(pageSafe * PER_PAGE, pageSafe * PER_PAGE + PER_PAGE).map((b) => {
                 const c = byKey.get(b.key)!;
                 const owned = c.starter || c.owned;
+                const lockedPlus = !owned && !!c.plusOnly && !inventory?.plus; // botton novo: a compra é do PINZ+
                 const n = qtyOf(b.key);
                 const cost = owned ? c.unitPrice * n : c.price + c.unitPrice * (n - 1);
                 const name = b.name ? tl(b.name) : tx("x_botton", { key: b.key });
@@ -393,9 +394,9 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       <button
                         type="button"
                         disabled={busy === `p${b.key}`}
-                        aria-label={tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : tl("Comprar"), v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
+                        aria-label={lockedPlus ? tl("Novo: só para quem tem PINZ+") : tx("m_porCredito", { v0: owned ? "Comprar mais " + n + " de" : tl("Comprar"), v1: name, v2: cost, v3: cost > 1 ? "s" : "" })}
                         onClick={() =>
-                          buy(
+                          lockedPlus ? window.dispatchEvent(new CustomEvent(PAY_EVENT, { detail: { product: "plus" } })) : buy(
                             `p${b.key}`,
                             owned ? { kind: "unit", key: b.key, qty: n } : { kind: "badge", key: b.key, qty: n },
                             {
@@ -410,6 +411,8 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
                       >
                         {busy === `p${b.key}` ? (
                           tl("Comprando…")
+                        ) : lockedPlus ? (
+                          tl("🔒 PINZ+")
                         ) : (
                           tl("Comprar")
                         )}

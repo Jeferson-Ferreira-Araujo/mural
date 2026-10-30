@@ -2333,7 +2333,10 @@
     "hfvgov": "Ver display",
     "h1nlpf14": "No tienes permiso para ver este pin.",
     "h1al7dn": "No tienes permiso para ver este display.",
-    "h1wetvnd": "Dejar pins y displays en secreto"
+    "h1wetvnd": "Dejar pins y displays en secreto",
+    "h1kh8r1j": "Botones nuevos de la tienda disponibles para comprar",
+    "hohtd0d": "Nuevo: solo para quien tiene PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

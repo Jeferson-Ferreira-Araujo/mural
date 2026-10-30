@@ -17,7 +17,7 @@ import { useLit } from "@/i18n/literal";
 type Step = "profile" | "mural" | "intro";
 
 const FREE_LIST = [0, 1, 2, 3, 6].map((i) => FEATURES.free[i].text);
-const PLUS_LIST = [0, 2, 3, 4].map((i) => FEATURES.full[i].text).concat("Mural compartilhado entre duas pessoas");
+const PLUS_LIST = [0, 1, 2, 3].map((i) => FEATURES.full[i].text).concat("Mural compartilhado entre duas pessoas");
 
 /**
  * Boas-vindas de quem acabou de criar a conta, passo a passo e obrigatórias (sem fechar):

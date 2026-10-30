@@ -2333,7 +2333,10 @@
     "hfvgov": "Voir le display",
     "h1nlpf14": "Vous n'avez pas la permission de voir ce pin.",
     "h1al7dn": "Vous n'avez pas la permission de voir cet affichage.",
-    "h1wetvnd": "Garder des pins et des displays secrets"
+    "h1wetvnd": "Garder des pins et des displays secrets",
+    "h1kh8r1j": "Nouveaux badges de la boutique disponibles à l'achat",
+    "hohtd0d": "Nouveau : réservé aux membres PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

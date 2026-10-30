@@ -2333,7 +2333,10 @@
     "hfvgov": "Xem màn hình",
     "h1nlpf14": "Bạn không có quyền xem ghim này.",
     "h1al7dn": "Bạn không có quyền xem màn hình này.",
-    "h1wetvnd": "Giữ ghim và màn hình ở chế độ bí mật"
+    "h1wetvnd": "Giữ ghim và màn hình ở chế độ bí mật",
+    "h1kh8r1j": "Huy hiệu mới của cửa hàng được mở để mua",
+    "hohtd0d": "Mới: chỉ dành cho người dùng PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

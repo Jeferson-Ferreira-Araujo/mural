@@ -2333,7 +2333,10 @@
     "hfvgov": "Ekranı göster",
     "h1nlpf14": "Bu pini görme izniniz yok.",
     "h1al7dn": "Bu ekranı görme izniniz yok.",
-    "h1wetvnd": "Pinleri ve ekranları gizli tut"
+    "h1wetvnd": "Pinleri ve ekranları gizli tut",
+    "h1kh8r1j": "Mağazadaki yeni rozetler satın almaya açık",
+    "hohtd0d": "Yeni: yalnızca PINZ+ üyeleri için",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",

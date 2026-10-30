@@ -2333,7 +2333,10 @@
     "hfvgov": "Lihat display",
     "h1nlpf14": "Kamu tidak punya izin untuk melihat pin ini.",
     "h1al7dn": "Kamu tidak punya izin untuk melihat tampilan ini.",
-    "h1wetvnd": "Rahasiakan pin dan tampilan"
+    "h1wetvnd": "Rahasiakan pin dan tampilan",
+    "h1kh8r1j": "Tombol baru di toko terbuka untuk dibeli",
+    "hohtd0d": "Baru: hanya untuk pengguna PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} meninggalkan PINZ di papan “{mural}”{pending, select, yes { · menunggu persetujuanmu} other {}}",

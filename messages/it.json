@@ -2333,7 +2333,10 @@
     "hfvgov": "Mostra display",
     "h1nlpf14": "Non hai il permesso di vedere questo pin.",
     "h1al7dn": "Non hai il permesso di vedere questo display.",
-    "h1wetvnd": "Tenere pin e display segreti"
+    "h1wetvnd": "Tenere pin e display segreti",
+    "h1kh8r1j": "Nuovi badge del negozio disponibili all'acquisto",
+    "hohtd0d": "Novità: solo per chi ha PINZ+",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

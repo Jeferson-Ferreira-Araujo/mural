@@ -2333,7 +2333,10 @@
     "hfvgov": "Display ansehen",
     "h1nlpf14": "Du hast keine Berechtigung, diesen Pin zu sehen.",
     "h1al7dn": "Du hast keine Berechtigung, dieses Display zu sehen.",
-    "h1wetvnd": "Pins und Displays geheim halten"
+    "h1wetvnd": "Pins und Displays geheim halten",
+    "h1kh8r1j": "Neue Shop-Buttons zum Kauf freigeschaltet",
+    "hohtd0d": "Neu: nur für PINZ+-Mitglieder",
+    "h1lfdgem": "🔒 PINZ+"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",
