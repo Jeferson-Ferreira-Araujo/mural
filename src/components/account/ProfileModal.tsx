@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { AvatarUploader } from "../AvatarUploader";
 import { Field, inputClass, primaryButton } from "../ui";
 import { Modal } from "./Modal";
+import { useCaptcha } from "../Captcha";
 import { useTranslations } from "next-intl";
 import { useLit } from "@/i18n/literal";
 import { LanguagePicker } from "../LanguagePicker";
@@ -28,6 +29,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
   const [pw2, setPw2] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
+  const captcha = useCaptcha();
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   // privacidade do perfil: público ou privado (pergunta e resposta de segurança, valendo para todos os murais)
   const [priv, setPriv] = useState(false);
@@ -152,7 +154,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
     setMsg(null);
     setBusy(true);
     rememberNext("/auth/nova-senha"); // o e-mail volta pelo mesmo caminho do login e cai direto na tela da nova senha
-    const { error } = await getBrowserSupabase().auth.resetPasswordForEmail(email, { redirectTo: callbackUrl() });
+    const { error } = await getBrowserSupabase().auth.resetPasswordForEmail(email, { redirectTo: callbackUrl(), captchaToken: await captcha.token() });
     setBusy(false);
     if (error) {
       rememberNext(null);
@@ -211,6 +213,7 @@ export function ProfileModal({ open, onClose, nick, email, onSignOut, onPrivacyS
                 {msg.text}
               </p>
             )}
+            <div ref={captcha.box} />
             <button type="button" onClick={() => void sendResetLink()} disabled={busy || !email} className={primaryButton}>
               {busy ? tl("Enviando…") : tx("m_enviarLinkParaTrocarA")}
             </button>

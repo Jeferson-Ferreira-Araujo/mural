@@ -13,8 +13,8 @@ export async function checkSignup(sb: SupabaseClient, nick: string, email: strin
 }
 
 /** Envia o código de confirmação para o e-mail (cria a conta sem acesso: só entra quem confirmar). */
-export async function sendEmailCode(sb: SupabaseClient, email: string, nick: string): Promise<boolean> {
-  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, data: { nickname: nick } } });
+export async function sendEmailCode(sb: SupabaseClient, email: string, nick: string, captchaToken?: string): Promise<boolean> {
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, data: { nickname: nick }, captchaToken } });
   return !error;
 }
 

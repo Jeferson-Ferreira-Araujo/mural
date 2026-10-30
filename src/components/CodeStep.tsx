@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useCaptcha } from "./Captcha";
 import { confirmEmailCode, markCompanyWelcome, sendEmailCode, setFinalizing, type ConfirmFailure } from "@/lib/reserved";
 import { getBrowserSupabase } from "@/lib/supabase";
 import { Field, ghostButton, inputClass, primaryButton } from "./ui";
@@ -23,6 +24,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
   const tl = useLit();
   const tx = useTranslations("components.CodeStep");
   const [code, setCode] = useState("");
+  const captcha = useCaptcha();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
     if (wait > 0) return;
     setError(null);
     setInfo(null);
-    const ok = await sendEmailCode(getBrowserSupabase(), email, nick);
+    const ok = await sendEmailCode(getBrowserSupabase(), email, nick, await captcha.token());
     if (ok) {
       setInfo(tx("m_enviamosUmNovoCodigo"));
       setWait(45);
@@ -68,6 +70,7 @@ export function CodeStep({ email, nick, password, onDone, onBack }: { email: str
       <p role="status" className="mt-2 text-[#4a3826]">
         {tx.rich("x_umCodigoFoiEnviadoPara", { v0: email, s0: (c) => <strong>{c}</strong> })}</p>
       <form onSubmit={submit} noValidate className="mt-4 space-y-3">
+        <div ref={captcha.box} />
         <Field label={tx("codigo")} error={error}>
           {(id) => <input id={id} value={code} onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 10)); setError(null); }} inputMode="numeric" autoComplete="one-time-code" placeholder="000000" className={`${inputClass} text-center text-xl tracking-[0.4em]`} />}
         </Field>

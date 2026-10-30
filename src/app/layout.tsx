@@ -55,6 +55,7 @@ export const viewport: Viewport = {
 };
 
 import { preconnect } from "react-dom";
+import { CaptchaKeyProvider } from "@/components/Captcha";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = (await getLocale()) as Locale;
@@ -72,6 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang={LOCALE_TAGS[locale]}
+      dir={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
       className={`${jakarta.variable} ${playfair.variable} ${silkscreen.variable} ${caveat.variable} ${kalam.variable} ${patrick.variable} ${indie.variable} ${reenie.variable} ${atkinson.variable}`}
     >
@@ -81,6 +83,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* acessibilidade: o tamanho do texto, a fonte e o contraste escolhidos já valem na primeira pintura */}
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT }} />
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <CaptchaKeyProvider siteKey={process.env.TURNSTILE_SITE_KEY ?? ""}>
           {children}
           <A11yHost />
           <SiteTracker />
@@ -88,6 +91,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ConsentBanner />
           <LocaleSync />
           <TwoFactorGate />
+          </CaptchaKeyProvider>
         </NextIntlClientProvider>
         <PwaRegister />
       </body>

@@ -8,6 +8,7 @@ import { callbackUrl, homeRouteFor, takeNext } from "@/lib/auth";
 import { passwordProblem } from "@/lib/password";
 import { PasswordHints } from "@/components/PasswordHints";
 import { getBrowserSupabase, getRememberedEmail, setRemember } from "@/lib/supabase";
+import { useCaptcha } from "./Captcha";
 import { checkSignup, NAME_DENIED_TEXT, sendEmailCode } from "@/lib/reserved";
 import { BIRTH_ERROR, BirthField, isUnder13, latinDigits, toIso } from "./account/BirthField";
 import { CodeStep } from "./CodeStep";
@@ -54,6 +55,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
   // e-mail lembrado do último login (a senha fica por conta do gerenciador do navegador)
   useEffect(() => setEmail((cur) => cur || getRememberedEmail()), []);
   const [busy, setBusy] = useState(false);
+  const captcha = useCaptcha();
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const [resent, setResent] = useState<string | null>(null);
@@ -94,7 +96,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
         return setError(tl(NAME_DENIED_TEXT));
       }
       if (check === "verify") {
-        const sent = await sendEmailCode(sb, mail, nick);
+        const sent = await sendEmailCode(sb, mail, nick, await captcha.token());
         setBusy(false);
         if (!sent) return setError(t("errors.codeFail"));
         setCodeStep(true);
@@ -104,7 +106,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
 
     if (!signup) {
       setRemember(remember, mail);
-      const { error: err } = await sb.auth.signInWithPassword({ email: mail, password });
+      const { error: err } = await sb.auth.signInWithPassword({ email: mail, password, options: { captchaToken: await captcha.token() } });
       setBusy(false);
       if (err) {
         if (err.code === "email_not_confirmed" || /not confirmed/i.test(err.message)) {
@@ -121,7 +123,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
 
     // e-mail já cadastrado e ainda não confirmado: o Supabase só reenvia, sem atualizar os dados; o idioma de agora vale para o e-mail
     await sb.rpc("set_pending_locale", { p_email: mail, p_locale: locale });
-    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), data: { nickname: nick, birth: birthIso, locale } } });
+    const { data, error: err } = await sb.auth.signUp({ email: mail, password, options: { emailRedirectTo: callbackUrl(), captchaToken: await captcha.token(), data: { nickname: nick, birth: birthIso, locale } } });
     setBusy(false);
     if (err) {
       if (/registered|already/i.test(err.message)) setError(t("errors.emailExists"));
@@ -139,7 +141,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
   async function resend() {
     setResent(null);
     await getBrowserSupabase().rpc("set_pending_locale", { p_email: email.trim(), p_locale: locale });
-    const { error: err } = await getBrowserSupabase().auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: callbackUrl() } });
+    const { error: err } = await getBrowserSupabase().auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: callbackUrl(), captchaToken: await captcha.token() } });
     setResent(err ? (err.status === 429 ? t("errors.tooMany") : t("errors.signupFail")) : tl("Enviamos o e-mail de novo. Confira a caixa de entrada e o spam."));
   }
 
@@ -175,6 +177,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
         <p className="font-title text-xl font-semibold">{t("confirm.title")}</p>
         <p className="mt-2 text-[#4a3826]">{tl("Enviamos um código para {email}. Digite-o abaixo para confirmar sua conta.").replace("{email}", email.trim())}</p>
         <form onSubmit={verifyOtp} noValidate className="mt-3 space-y-3">
+        <div ref={captcha.box} />
           <input
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -234,6 +237,7 @@ export function AuthForm({ initialMode }: { /** aba pedida pelo endereço (/entr
       <OAuthButtons onError={setError} className="mt-4" />
 
       <form onSubmit={submit} noValidate className="mt-3 space-y-3">
+        <div ref={captcha.box} />
         <Field label={t("email")} hint={locale === "uk" || locale === "ru" ? tl("Digite o e-mail com o teclado em inglês (letras latinas).") : undefined}>
           {(id) => (
             <input
