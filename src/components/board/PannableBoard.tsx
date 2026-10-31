@@ -585,8 +585,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     const { minS, defS } = limits();
     const cx = w / 2;
     const cy = h / 2;
-    // celular: "Aproximar" vai ao zoom padrão (1×), que é mais perto que o de abertura; só a pinça passa disso (até 2×)
-    zoomTo(zoomedOutRef.current ? (w < 700 ? defS : openS.current || defS) : minS, cx, cy, true);
+    // celular: "Aproximar" vai a 1,5× o zoom padrão; só a pinça passa disso (até 2×)
+    zoomTo(zoomedOutRef.current ? (w < 700 ? defS * 1.5 : openS.current || defS) : minS, cx, cy, true);
   }
 
   return (
