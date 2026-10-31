@@ -274,7 +274,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       if (w <= 0 || (w >= 700 && !onceRef.current)) return; // a tela larga só passeia na tela de entrada (hintOnce)
       // a abertura animada do logo ainda está tocando: espera ela terminar (para as duas animações não acontecerem juntas) e só então passeia pelo mural
       // (sem contar tempo: celulares lentos demoram mais; a dica começa quando a abertura avisa que acabou)
-      if (document.documentElement.dataset.intro === "play") {
+      if (document.documentElement.dataset.intro === "play" || document.getElementById("pinz-intro")) {
         if (!introWatch.current) {
           const onEnd = () => {
             window.removeEventListener("pinz:intro-end", onEnd);

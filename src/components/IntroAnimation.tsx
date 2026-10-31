@@ -173,12 +173,11 @@ export function IntroAnimation() {
       cancelled = true;
       anims.forEach((a) => a.cancel());
       done();
-      introEnd();
     };
   }, []);
 
   return (
-    <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
+    <div ref={root} id="pinz-intro" aria-hidden className="pointer-events-none fixed inset-0 z-[200]">
       <div ref={back} className="absolute inset-0 bg-[#1a0f06]/90" />
       <div ref={note} className="absolute origin-center will-change-transform" style={{ opacity: 0, aspectRatio: LOGO_RATIO }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
