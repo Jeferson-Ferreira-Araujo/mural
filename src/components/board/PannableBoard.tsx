@@ -66,7 +66,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     // telas largas (desktop): ~1,25 cartão, senão a ampliação fica enorme
     const perScreen = w >= 700 ? wideRef.current : 1.6;
     const defS = Math.max(minS, w / (130 * perScreen));
-    const maxS = Math.max(minS * 1.001, defS);
+    // celular: a pinça (e o zoom manual) vai até 2× o aproximar padrão; o botão e o toque duplo continuam parando no padrão
+    const maxS = Math.max(minS * 1.001, w < 700 ? defS * 2 : defS);
     return { minS, maxS, defS };
   }, []);
 
