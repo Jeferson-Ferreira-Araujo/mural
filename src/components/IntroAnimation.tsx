@@ -18,7 +18,11 @@ export function introSeen(): boolean {
 export const introSkip = () => {
   delete document.documentElement.dataset.intro;
   delete document.documentElement.dataset.introVeil;
+  introEnd();
 };
+
+/** Avisa o resto do site que a abertura acabou de vez (o mural só faz a própria animação depois disso, não por tempo). */
+const introEnd = () => window.dispatchEvent(new Event("pinz:intro-end"));
 
 const done = () => {
   delete document.documentElement.dataset.intro;
@@ -51,6 +55,7 @@ export function IntroAnimation() {
     if (reduced || late || !target || !root.current || !back.current || !note.current || !tack.current) {
       done();
       root.current?.remove();
+      introEnd();
       return;
     }
     document.documentElement.dataset.intro = "play";
@@ -150,6 +155,7 @@ export function IntroAnimation() {
           const fade = root.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: "forwards" });
           await fade?.finished.catch(() => undefined);
           root.current?.remove();
+          introEnd();
         }
       }
     };
@@ -160,12 +166,14 @@ export function IntroAnimation() {
       anims.forEach((a) => a.cancel());
       done();
       root.current?.remove();
+      introEnd();
     }, 3400);
     return () => {
       window.clearTimeout(watchdog);
       cancelled = true;
       anims.forEach((a) => a.cancel());
       done();
+      introEnd();
     };
   }, []);
 
