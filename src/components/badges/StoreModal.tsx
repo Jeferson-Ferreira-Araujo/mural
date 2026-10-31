@@ -631,8 +631,10 @@ export function StoreModal({ open, onClose, inventory, onBuy }: { open: boolean;
         <>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[...BOARDS]
-            // os que ainda não são seus primeiro; entre eles (e entre os seus) os lançamentos mais novos vêm antes
+            // cortiça (o padrão) em 1º e minimalista em 2º; depois deles, os que ainda não são seus primeiro; entre eles (e entre os seus) os lançamentos mais novos vêm antes
             .sort((a, b) => {
+              const pin = (id: string) => ["cortica", "minimalista"].indexOf(id);
+              if (pin(a.id) >= 0 || pin(b.id) >= 0) return (pin(a.id) < 0 ? 9 : pin(a.id)) - (pin(b.id) < 0 ? 9 : pin(b.id));
               const oa = boards.get(a.id)?.owned ?? a.id === "cortica";
               const ob = boards.get(b.id)?.owned ?? b.id === "cortica";
               if (oa !== ob) return oa ? 1 : -1;
