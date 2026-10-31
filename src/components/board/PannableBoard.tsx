@@ -174,6 +174,11 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       const wx = (cx - x) / s;
       const wy = (cy - y) / s;
       view.current = clampView(cx - wx * newS, cy - wy * newS, newS);
+      // afastado ao mínimo (mural inteiro): sempre centralizado, venha de onde vier o zoom
+      if (newS <= minS * 1.001) {
+        const { w, h } = size.current;
+        view.current = { x: (w - WORLD_W * newS) / 2, y: (h - WORLD_H * newS) / 2, s: newS };
+      }
       if (animate) apply(true);
       else scheduleApply();
     },
