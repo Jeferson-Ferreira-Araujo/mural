@@ -2391,7 +2391,8 @@
     "h2gamh7": "音声を追加",
     "h2u86hv": "ボードでは手紙はこのように封をされた状態で表示されます：",
     "h1irs3zg": "手紙に封をしてボードに貼る",
-    "h1m3ifeo": "封印の手紙（日時に開く）"
+    "h1m3ifeo": "封印の手紙（日時に開く）",
+    "hvtw1je": "2本の指でズームできます"
   },
   "notifications": {
     "pinNew": "@{actor}さんがボード「{mural}」に PINZ を残しました{pending, select, yes { · あなたの承認待ち} other {}}",

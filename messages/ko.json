@@ -2391,7 +2391,8 @@
     "h2gamh7": "오디오 추가",
     "h2u86hv": "보드에서는 편지가 이렇게 봉인된 모습으로 보여요:",
     "h1irs3zg": "편지를 봉인해서 보드에 붙이기",
-    "h1m3ifeo": "봉인된 편지 (정한 날짜에 열림)"
+    "h1m3ifeo": "봉인된 편지 (정한 날짜에 열림)",
+    "hvtw1je": "두 손가락으로 확대하세요"
   },
   "notifications": {
     "pinNew": "@{actor}님이 “{mural}” 보드에 PINZ를 남겼습니다{pending, select, yes { · 내 승인을 기다리는 중} other {}}",

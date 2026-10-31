@@ -269,6 +269,8 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
   // (some sozinho ou assim que a pessoa mexe). Vale para qualquer conta. Conta recém-criada: o site pede a dica de novo (evento "pinz:pan-hint")
   // assim que as boas-vindas fecham, mesmo que o aparelho já tenha visto a dica hoje; e o mural também volta ao zoom inicial se ainda não foi mexido.
   const [hint, setHint] = useState(false);
+  // depois da dica de arrastar, na primeira vez da vida do aparelho: dois dedos se afastando mostram que dá para dar zoom com a pinça
+  const [pinchTip, setPinchTip] = useState(false);
   const hintDone = useRef(false);
   const introWatch = useRef<{ disconnect: () => void } | null>(null);
   useEffect(() => () => introWatch.current?.disconnect(), []);
@@ -327,6 +329,17 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
       go(2150, 1e6, 1700);
       go(3950, base, 1100);
       hintTimers.current.push(window.setTimeout(() => setHint(false), 5600));
+      hintTimers.current.push(
+        window.setTimeout(() => {
+          if (touched.current) return;
+          try {
+            if (localStorage.getItem("pinz:pinch-hint") === "1") return;
+            localStorage.setItem("pinz:pinch-hint", "1");
+          } catch {}
+          setPinchTip(true);
+        }, 5900),
+      );
+      hintTimers.current.push(window.setTimeout(() => setPinchTip(false), 9900));
     },
     [apply, clampView, limits],
   );
@@ -494,6 +507,7 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
     lastType.current = e.pointerType;
     touched.current = true;
     setHint(false);
+    setPinchTip(false);
     // mouse sobre um pin que o dono pode arrastar: quem cuida disso é o próprio pin, o quadro não começa a mover
     if (e.pointerType === "mouse" && e.target instanceof Element && e.target.closest("[data-pin-drag]")) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -631,6 +645,16 @@ export function PannableBoard({ children, ambient, scene, cornerLeft, controlPos
           {tx("x_arrasteParaOsLados")}<svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="m6 3 5 5-5 5" />
           </svg>
+        </div>
+      )}
+
+      {pinchTip && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-20 grid place-items-center">
+          <div className="relative size-40">
+            <span className="pz-pinch-a absolute top-1/2 left-1/2 size-9 rounded-full border-2 border-white/90 bg-white/45 opacity-0 shadow-[0_0.2rem_0.7rem_rgba(0,0,0,.4)]" />
+            <span className="pz-pinch-b absolute top-1/2 left-1/2 size-9 rounded-full border-2 border-white/90 bg-white/45 opacity-0 shadow-[0_0.2rem_0.7rem_rgba(0,0,0,.4)]" />
+          </div>
+          <p className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap text-white shadow-[0_0.2rem_0.7rem_rgba(0,0,0,.4)] backdrop-blur-sm">{tl("Use dois dedos para dar zoom")}</p>
         </div>
       )}
 

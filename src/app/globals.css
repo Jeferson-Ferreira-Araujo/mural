@@ -557,3 +557,22 @@ dialog:focus-visible { outline: none; }
 html[dir="rtl"] [data-board-capture] [data-pin-id],
 html[dir="rtl"] [data-board-capture] [data-badge-id],
 html[dir="rtl"] [data-board-capture] [data-empty-slot] { direction: rtl; }
+
+/* dica da pinça (PannableBoard): dois dedos começam juntos e se afastam na diagonal, repetindo, para mostrar o gesto de zoom */
+@keyframes pz-pinch-a {
+  0%, 12% { transform: translate(-50%, -50%) translate(-0.6rem, 0.6rem); opacity: 0; }
+  25% { opacity: 1; }
+  70%, 85% { transform: translate(-50%, -50%) translate(-3.6rem, 3.6rem); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(-3.6rem, 3.6rem); opacity: 0; }
+}
+@keyframes pz-pinch-b {
+  0%, 12% { transform: translate(-50%, -50%) translate(0.6rem, -0.6rem); opacity: 0; }
+  25% { opacity: 1; }
+  70%, 85% { transform: translate(-50%, -50%) translate(3.6rem, -3.6rem); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(3.6rem, -3.6rem); opacity: 0; }
+}
+.pz-pinch-a { animation: pz-pinch-a 1.6s ease-in-out 2; }
+.pz-pinch-b { animation: pz-pinch-b 1.6s ease-in-out 2; }
+@media (prefers-reduced-motion: reduce) {
+  .pz-pinch-a, .pz-pinch-b { animation: none; opacity: 1; }
+}

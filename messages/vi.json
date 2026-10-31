@@ -2391,7 +2391,8 @@
     "h2gamh7": "Thêm âm thanh",
     "h2u86hv": "Trên bảng, lá thư hiện ra đang đóng, như thế này:",
     "h1irs3zg": "Niêm phong thư và dán lên bảng",
-    "h1m3ifeo": "Thư niêm phong (mở vào một ngày)"
+    "h1m3ifeo": "Thư niêm phong (mở vào một ngày)",
+    "hvtw1je": "Dùng hai ngón tay để phóng to"
   },
   "notifications": {
     "pinNew": "@{actor} đã để lại một PINZ trên bảng “{mural}”{pending, select, yes { · đang chờ bạn duyệt} other {}}",

@@ -2391,7 +2391,8 @@
     "h2gamh7": "Audio hinzufügen",
     "h2u86hv": "Auf der Pinnwand erscheint der Brief verschlossen, so:",
     "h1irs3zg": "Brief versiegeln und auf die Pinnwand setzen",
-    "h1m3ifeo": "Versiegelter Brief (öffnet sich an einem Datum)"
+    "h1m3ifeo": "Versiegelter Brief (öffnet sich an einem Datum)",
+    "hvtw1je": "Mit zwei Fingern zoomen"
   },
   "notifications": {
     "pinNew": "@{actor} hat einen PINZ auf der Pinnwand „{mural}“ hinterlassen{pending, select, yes { · wartet auf deine Freigabe} other {}}",

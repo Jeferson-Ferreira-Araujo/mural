@@ -2391,7 +2391,8 @@
     "h2gamh7": "Añadir audio",
     "h2u86hv": "En el mural, la carta aparece cerrada, así:",
     "h1irs3zg": "Sellar la carta y ponerla en el mural",
-    "h1m3ifeo": "Carta Sellada (se abre en una fecha)"
+    "h1m3ifeo": "Carta Sellada (se abre en una fecha)",
+    "hvtw1je": "Usa dos dedos para hacer zoom"
   },
   "notifications": {
     "pinNew": "@{actor} dejó un PINZ en el mural “{mural}”{pending, select, yes { · esperando tu aprobación} other {}}",

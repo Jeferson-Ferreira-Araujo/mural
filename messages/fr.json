@@ -2391,7 +2391,8 @@
     "h2gamh7": "Ajouter un audio",
     "h2u86hv": "Sur le mur, la lettre apparaît scellée, comme ceci :",
     "h1irs3zg": "Sceller la lettre et la placer sur le mur",
-    "h1m3ifeo": "Lettre scellée (s'ouvre à une date)"
+    "h1m3ifeo": "Lettre scellée (s'ouvre à une date)",
+    "hvtw1je": "Utilisez deux doigts pour zoomer"
   },
   "notifications": {
     "pinNew": "@{actor} a laissé un PINZ sur le tableau « {mural} »{pending, select, yes { · en attente de ton approbation} other {}}",

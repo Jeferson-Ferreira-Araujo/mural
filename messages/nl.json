@@ -2391,7 +2391,8 @@
     "h2gamh7": "Audio toevoegen",
     "h2u86hv": "Op het bord verschijnt de brief verzegeld, zo:",
     "h1irs3zg": "Brief verzegelen en op het bord plaatsen",
-    "h1m3ifeo": "Verzegelde brief (gaat open op een datum)"
+    "h1m3ifeo": "Verzegelde brief (gaat open op een datum)",
+    "hvtw1je": "Zoom met twee vingers"
   },
   "notifications": {
     "pinNew": "@{actor} liet een PINZ achter op het bord “{mural}”{pending, select, yes { · wacht op jouw goedkeuring} other {}}",

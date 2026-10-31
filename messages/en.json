@@ -2391,7 +2391,8 @@
     "h2gamh7": "Add audio",
     "h2u86hv": "On the board, the letter shows up sealed, like this:",
     "h1irs3zg": "Seal the letter and put it on the board",
-    "h1m3ifeo": "Sealed Letter (opens on a date)"
+    "h1m3ifeo": "Sealed Letter (opens on a date)",
+    "hvtw1je": "Use two fingers to zoom"
   },
   "notifications": {
     "pinNew": "@{actor} left a PINZ on the board “{mural}”{pending, select, yes { · waiting for your approval} other {}}",

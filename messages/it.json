@@ -2391,7 +2391,8 @@
     "h2gamh7": "Aggiungi audio",
     "h2u86hv": "Sulla bacheca la lettera appare sigillata, così:",
     "h1irs3zg": "Sigilla la lettera e mettila sulla bacheca",
-    "h1m3ifeo": "Lettera sigillata (si apre in una data)"
+    "h1m3ifeo": "Lettera sigillata (si apre in una data)",
+    "hvtw1je": "Usa due dita per ingrandire"
   },
   "notifications": {
     "pinNew": "@{actor} ha lasciato un PINZ sulla bacheca «{mural}»{pending, select, yes { · in attesa della tua approvazione} other {}}",

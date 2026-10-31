@@ -2391,7 +2391,8 @@
     "h2gamh7": "Ses ekle",
     "h2u86hv": "Panoda mektup şöyle kapalı görünür:",
     "h1irs3zg": "Mektubu mühürle ve panoya koy",
-    "h1m3ifeo": "Mühürlü Mektup (bir tarihte açılır)"
+    "h1m3ifeo": "Mühürlü Mektup (bir tarihte açılır)",
+    "hvtw1je": "Yakınlaştırmak için iki parmağınızı kullanın"
   },
   "notifications": {
     "pinNew": "@{actor}, “{mural}” panosuna bir PINZ bıraktı{pending, select, yes { · onayını bekliyor} other {}}",
